@@ -1,9 +1,12 @@
 // Esto de aquí es para la pantalla de crear cuenta (signup).
 
-import AppButton from '../components/AppButton.tsx'
+import { useTranslation } from 'react-i18next'
+import Button from '../components/ui/Button.tsx'
+import LanguageSwitcher from '../components/LanguageSwitcher.tsx'
 import { useRegister } from '../hooks/useRegister.ts'
 
 function SignUpPage() {
+  const { t } = useTranslation()
   /*
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -15,13 +18,15 @@ function SignUpPage() {
 
   return (
     <section id="signup">
-      <h1>Crear cuenta</h1>
+      <h1>{t('signup.title')}</h1>
+      <LanguageSwitcher />
 
-        <AppButton
-          text={loading ? '...' : '...'}
-          disabled={loading}
+        <Button
+          loading={loading}
           onClick={() => {}}
-        />
+        >
+          {loading ? t('signup.loading') : t('signup.buttonLabel')}
+        </Button>
       
 
     </section>

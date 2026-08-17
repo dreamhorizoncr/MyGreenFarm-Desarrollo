@@ -11,4 +11,3 @@ export const registerSchema = z.object({
 export const forgotPasswordSchema = z.object({
   email: z.email(),
 });
-

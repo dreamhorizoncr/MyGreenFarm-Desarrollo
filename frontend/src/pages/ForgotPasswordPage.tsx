@@ -1,9 +1,12 @@
 // Esto de aquí es para la pantalla de recuperar contraseña.
 
-import AppButton from '../components/AppButton.tsx'
+import { useTranslation } from 'react-i18next'
+import Button from '../components/ui/Button.tsx'
+import LanguageSwitcher from '../components/LanguageSwitcher.tsx'
 import { useForgotPassword } from '../hooks/useForgotPassword.ts'
 
 function ForgotPasswordPage() {
+  const { t } = useTranslation()
   /*
   const [email, setEmail] = useState('')
   const { submitForgotPassword, loading, error, success } = useForgotPassword()
@@ -12,13 +15,15 @@ function ForgotPasswordPage() {
 
   return (
     <section id="forgot-password">
-      <h1>Recuperar contraseña</h1>
+      <h1>{t('forgotPassword.title')}</h1>
+      <LanguageSwitcher />
 
-        <AppButton
-          text={loading ? '...' : '...'}
-          disabled={loading}
+        <Button
+          loading={loading}
           onClick={() => {}}
-        />
+        >
+          {loading ? t('forgotPassword.loading') : t('forgotPassword.buttonLabel')}
+        </Button>
      
     </section>
   )
