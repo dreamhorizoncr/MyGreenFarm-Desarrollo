@@ -1,21 +1,83 @@
 package taller.multimedia.backend.config;
 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration
-public class SecurityConfig {
 
-    // Este método es porque por la dependencia de Spring Security me muestra un login obligatorio
-    // Entonces esto lo quita
-    @Bean // Lo que sea de seguridad se usa con el endpoint Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception { 
-        http
-            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()) 
-            .csrf(csrf -> csrf.disable()) // desactiva CSRF para pruebas
-            .formLogin(form -> form.disable()); // quita el formulario por defecto
-        return http.build();
-    }
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import taller.multimedia.backend.security.services.UserDetailsServiceImpl;
+import taller.multimedia.backend.security.jwt.AuthEntryPointJwt;
+import taller.multimedia.backend.security.jwt.AuthTokenFilter;
+import taller.multimedia.backend.security.jwt.JwtUtils;
+
+@Configuration
+@EnableMethodSecurity
+public class SecurityConfig {
+  private final UserDetailsServiceImpl userDetailsService;
+  private final AuthEntryPointJwt unauthorizedHandler;
+  private final JwtUtils jwtUtils;
+
+  //
+  public SecurityConfig(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt unauthorizedHandler,
+      JwtUtils jwtUtils) {
+    this.userDetailsService = userDetailsService;
+    this.unauthorizedHandler = unauthorizedHandler;
+    this.jwtUtils = jwtUtils;
+  }
+
+  // Create the authentication token filter
+  @Bean
+  public AuthTokenFilter authenticationJwtTokenFilter() {
+    return new AuthTokenFilter(jwtUtils, userDetailsService);
+  }
+
+  // Create the authentication provider
+  @Bean
+  public DaoAuthenticationProvider authenticationProvider() {
+    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
+    authProvider.setPasswordEncoder(passwordEncoder());
+    return authProvider;
+  }
+
+  // Create the authentication manager
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+    return authConfig.getAuthenticationManager();
+  }
+
+  // Create the password encoder
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
+
+  // Este método es porque por la dependencia de Spring Security me muestra un
+  // login obligatorio
+  // Entonces esto lo quita
+  @Bean // Lo que sea de seguridad se usa con el endpoint Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/api/auth/**").permitAll() 
+            .anyRequest().authenticated() 
+        )
+        .csrf(csrf -> csrf.disable())
+        .formLogin(form -> form.disable())
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Disable session creation
+        .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler)) // Handle authentication exceptions
+        .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class); // Add the JWT token filter before the username/password authentication filter
+    return http.build();
+  }
+
 }
