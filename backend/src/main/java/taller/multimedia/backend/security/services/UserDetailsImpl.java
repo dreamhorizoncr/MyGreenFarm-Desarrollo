@@ -3,6 +3,7 @@ package taller.multimedia.backend.security.services;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,7 +18,7 @@ public class UserDetailsImpl implements UserDetails {
 
     private static final long serialVersionUID = 1L;
 
-    private Integer id;
+    private UUID id;
     private String email;
 
     @JsonIgnore
@@ -30,7 +31,7 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Integer id, String email, String password, String firstName, String lastName,
+    public UserDetailsImpl(UUID id, String email, String password, String firstName, String lastName,
             String role, boolean isActive,
             Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
@@ -58,7 +59,7 @@ public class UserDetailsImpl implements UserDetails {
                 authorities);
     }
 
-    public Integer getId() {
+    public UUID getId() {
         return id;
     }
 
