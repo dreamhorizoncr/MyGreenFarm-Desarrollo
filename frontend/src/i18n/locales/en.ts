@@ -13,10 +13,26 @@ export default {
   languageSwitcher: {
     label: 'Select language',
   },
+  login: {
+    title: 'Sign in',
+    buttonLabel: 'Sign in',
+    loading: 'Signing in...',
+    email: 'Email',
+    password: 'Password',
+    noAccount: "Don't have an account?",
+    goToSignup: 'Create account',
+  },
   signup: {
     title: 'Create account',
+    firstName: 'First name',
+    lastName: 'Last name',
+    email: 'Email',
+    password: 'Password',
     buttonLabel: 'Sign up',
     loading: 'Signing up...',
+    success: 'Account created! You can now sign in.',
+    hasAccount: 'Already have an account?',
+    goToLogin: 'Sign in',
   },
   forgotPassword: {
     title: 'Recover password',
@@ -26,5 +42,12 @@ export default {
   common: {
     error: 'An error has occurred',
     retry: 'Retry',
+  },
+  validation: {
+    emailRequired: 'Email is required',
+    emailInvalid: 'Enter a valid email',
+    passwordRequired: 'Password is required',
+    passwordMinLength: 'Password must be at least 8 characters',
+    fieldRequired: '{{field}} is required',
   },
 }

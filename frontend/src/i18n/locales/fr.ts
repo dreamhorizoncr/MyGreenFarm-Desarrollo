@@ -12,10 +12,26 @@ export default {
   languageSwitcher: {
     label: 'Choisir la langue',
   },
+  login: {
+    title: 'Se connecter',
+    buttonLabel: 'Entrer',
+    loading: 'Connexion...',
+    email: 'E-mail',
+    password: 'Mot de passe',
+    noAccount: "Vous n'avez pas de compte ?",
+    goToSignup: 'Créer un compte',
+  },
   signup: {
     title: 'Créer un compte',
+    firstName: 'Prénom',
+    lastName: 'Nom',
+    email: 'E-mail',
+    password: 'Mot de passe',
     buttonLabel: "S'inscrire",
     loading: 'Inscription...',
+    success: 'Compte créé ! Vous pouvez maintenant vous connecter.',
+    hasAccount: 'Vous avez déjà un compte ?',
+    goToLogin: 'Se connecter',
   },
   forgotPassword: {
     title: 'Récupérer le mot de passe',
@@ -25,5 +41,12 @@ export default {
   common: {
     error: 'Une erreur est survenue',
     retry: 'Réessayer',
+  },
+  validation: {
+    emailRequired: "L'e-mail est obligatoire",
+    emailInvalid: "Entrez un e-mail valide",
+    passwordRequired: 'Le mot de passe est obligatoire',
+    passwordMinLength: 'Le mot de passe doit contenir au moins 8 caractères',
+    fieldRequired: '{{field}} est obligatoire',
   },
 }
