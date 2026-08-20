@@ -1,6 +1,9 @@
 package taller.multimedia.backend.service;
 
 
+import java.time.LocalDateTime;
+
+import java.util.UUID;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -91,5 +94,31 @@ public class AuthService {
         } catch (IllegalArgumentException e) {
             return Role.USER;
         }
+    }
+
+    public void forgotPassword(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        
+        String token = UUID.randomUUID().toString();
+        user.setResetPasswordToken(token);
+        user.setTokenExpirationDate(LocalDateTime.now().plusMinutes(15));
+        userRepository.save(user);
+
+        // Aquí envías el correo electrónico con el token
+    }
+
+    public void resetPassword(String token, String newPassword) {
+        User user = userRepository.findByResetPasswordToken(token)
+                .orElseThrow(() -> new RuntimeException("Token inválido"));
+
+        if (user.getTokenExpirationDate().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("El token ha expirado");
+        }
+
+        user.setPassword(encoder.encode(newPassword));
+        user.setResetPasswordToken(null);
+        user.setTokenExpirationDate(null);
+        userRepository.save(user);
     }
 }

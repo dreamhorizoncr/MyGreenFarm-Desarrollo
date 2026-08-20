@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import taller.multimedia.backend.dto.ForgotPasswordRequest;
 import taller.multimedia.backend.dto.LoginRequest;
 import taller.multimedia.backend.dto.MessageResponse;
+import taller.multimedia.backend.dto.ResetPasswordRequest;
 import taller.multimedia.backend.dto.SignupRequest;
 import taller.multimedia.backend.dto.UserInfoResponse;
 import taller.multimedia.backend.security.services.UserDetailsImpl;
@@ -65,5 +67,27 @@ public class AuthController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(new MessageResponse("You've been signed out!"));
+    }
+
+    // Endpoint para solicitar la recuperación de contraseña
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        try {
+            authService.forgotPassword(request.getEmail());
+            return ResponseEntity.ok(new MessageResponse("Correo de recuperación enviado con éxito."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
+    }
+
+    // Endpoint para restablecer la contraseña con el token
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        try {
+            authService.resetPassword(request.getToken(), request.getNewPassword());
+            return ResponseEntity.ok(new MessageResponse("Contraseña actualizada exitosamente."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
     }
 }
