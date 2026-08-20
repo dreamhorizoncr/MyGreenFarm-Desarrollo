@@ -1,11 +1,13 @@
 package taller.multimedia.backend.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
 import taller.multimedia.backend.dto.UpdateUserRequest;
 import taller.multimedia.backend.dto.UserInfoResponse;
+import taller.multimedia.backend.model.Role;
 import taller.multimedia.backend.model.User;
 import taller.multimedia.backend.repository.UserRepository;
 
@@ -18,6 +20,19 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    public List<UserInfoResponse> getAllUsers(String currentEmail) {
+        User currentUser = userRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> new RuntimeException("Current user not found"));
+
+        if (currentUser.getRole() != Role.ADMIN) {
+            throw new RuntimeException("Only admins can list users");
+        }
+
+        return userRepository.findAll().stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
     public UserInfoResponse getUser(UUID targetId, String currentEmail) {
         User currentUser = userRepository.findByEmail(currentEmail)
                 .orElseThrow(() -> new RuntimeException("Current user not found"));
@@ -25,7 +40,7 @@ public class UserService {
         User targetUser = userRepository.findById(targetId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        boolean isAdmin = currentUser.getRole() == taller.multimedia.backend.model.Role.ADMIN;
+        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
         boolean isSelf = currentUser.getId().equals(targetUser.getId());
 
         if (!isAdmin && !isSelf) {
@@ -39,7 +54,7 @@ public class UserService {
         User currentUser = userRepository.findByEmail(currentEmail)
                 .orElseThrow(() -> new RuntimeException("Current user not found"));
 
-        boolean isAdmin = currentUser.getRole() == taller.multimedia.backend.model.Role.ADMIN;
+        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
 
         if (!isAdmin) {
             throw new RuntimeException("Only admins can edit users");

@@ -35,3 +35,9 @@ export interface ForgotPasswordResponse {
   message: string
   resetToken: string
 }
+
+export interface UpdateUserData {
+  firstName: string
+  lastName: string
+  email: string
+}

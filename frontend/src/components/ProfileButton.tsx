@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { ChevronDown, LogOut } from 'lucide-react'
+import { ChevronDown, LogOut, Users } from 'lucide-react'
 import { useLogin } from '../hooks/useLogin.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import type { UserInfo } from '../types/auth.ts'
@@ -63,6 +63,17 @@ function ProfileButton() {
 
       {open && (
         <div className="profile-button__dropdown" role="menu">
+          {user.role === 'ADMIN' && (
+            <button
+              type="button"
+              className="profile-button__option"
+              role="menuitem"
+              onClick={() => { navigate('/admin/users'); setOpen(false) }}
+            >
+              <Users size={16} />
+              <span>{t('profile.admin')}</span>
+            </button>
+          )}
           <button
             type="button"
             className="profile-button__option profile-button__option--danger"

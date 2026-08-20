@@ -1,5 +1,6 @@
 package taller.multimedia.backend.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,17 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllUsers() {
+        try {
+            String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+            List<UserInfoResponse> users = userService.getAllUsers(currentEmail);
+            return ResponseEntity.ok(users);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
     }
 
     @GetMapping("/{id}")

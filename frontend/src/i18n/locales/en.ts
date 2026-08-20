@@ -42,6 +42,7 @@ export default {
   common: {
     error: 'An error has occurred',
     retry: 'Retry',
+    loading: 'Loading...',
   },
   validation: {
     emailRequired: 'Email is required',
@@ -53,5 +54,18 @@ export default {
   },
   profile: {
     logout: 'Sign out',
+    admin: 'User management',
+  },
+  admin: {
+    title: 'User management',
+    firstName: 'First name',
+    lastName: 'Last name',
+    email: 'Email',
+    role: 'Role',
+    edit: 'Edit',
+    save: 'Save',
+    cancel: 'Cancel',
+    updated: 'User updated',
+    loadError: 'Error loading users',
   },
 }

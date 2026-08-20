@@ -41,6 +41,7 @@ export default {
   common: {
     error: 'Une erreur est survenue',
     retry: 'Réessayer',
+    loading: 'Chargement...',
   },
   validation: {
     emailRequired: "L'e-mail est obligatoire",
@@ -52,5 +53,18 @@ export default {
   },
   profile: {
     logout: 'Déconnexion',
+    admin: 'Gestion des utilisateurs',
+  },
+  admin: {
+    title: 'Gestion des utilisateurs',
+    firstName: 'Prénom',
+    lastName: 'Nom',
+    email: 'E-mail',
+    role: 'Rôle',
+    edit: 'Modifier',
+    save: 'Enregistrer',
+    cancel: 'Annuler',
+    updated: 'Utilisateur mis à jour',
+    loadError: 'Erreur lors du chargement',
   },
 }
