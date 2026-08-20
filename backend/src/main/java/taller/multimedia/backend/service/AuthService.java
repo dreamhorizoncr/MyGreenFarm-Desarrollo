@@ -106,6 +106,7 @@ public class AuthService {
         userRepository.save(user);
 
         // Aquí envías el correo electrónico con el token
+        System.out.println(">>> TOKEN DE RECUPERACIÓN: " + token + " <<<");
     }
 
     public void resetPassword(String token, String newPassword) {
