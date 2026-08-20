@@ -50,4 +50,7 @@ export default {
     passwordPattern: 'Le mot de passe doit contenir au moins 8 caractères, avec majuscule, minuscule, chiffre et symbole',
     fieldRequired: '{{field}} est obligatoire',
   },
+  profile: {
+    logout: 'Déconnexion',
+  },
 }

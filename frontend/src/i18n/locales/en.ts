@@ -51,4 +51,7 @@ export default {
     passwordPattern: 'Password must be at least 8 characters with uppercase, lowercase, number and symbol',
     fieldRequired: '{{field}} is required',
   },
+  profile: {
+    logout: 'Sign out',
+  },
 }

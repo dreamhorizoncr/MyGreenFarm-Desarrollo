@@ -12,6 +12,10 @@ export const authService = {
     return response.data
   },
 
+  async signout(): Promise<void> {
+    await apiClient.post('/auth/signout')
+  },
+
   // Pendiente, el endpoint /auth/forgot-password no existe en el backend todavía
   async forgotPassword(data: ForgotPasswordRequest): Promise<ForgotPasswordResponse> {
     const response = await apiClient.post<ForgotPasswordResponse>('/auth/forgot-password', data)

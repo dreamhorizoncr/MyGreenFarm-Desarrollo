@@ -52,4 +52,7 @@ export default {
     passwordPattern: 'La contraseña debe tener al menos 8 caracteres, con mayúscula, minúscula, número y símbolo',
     fieldRequired: 'El {{field}} es obligatorio',
   },
+  profile: {
+    logout: 'Cerrar sesión',
+  },
 }
