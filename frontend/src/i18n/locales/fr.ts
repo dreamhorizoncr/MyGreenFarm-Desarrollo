@@ -41,6 +41,7 @@ export default {
   common: {
     error: 'Une erreur est survenue',
     retry: 'Réessayer',
+    loading: 'Chargement...',
   },
   validation: {
     emailRequired: "L'e-mail est obligatoire",
@@ -49,5 +50,21 @@ export default {
     passwordMinLength: 'Le mot de passe doit contenir au moins 8 caractères',
     passwordPattern: 'Le mot de passe doit contenir au moins 8 caractères, avec majuscule, minuscule, chiffre et symbole',
     fieldRequired: '{{field}} est obligatoire',
+  },
+  profile: {
+    logout: 'Déconnexion',
+    admin: 'Gestion des utilisateurs',
+  },
+  admin: {
+    title: 'Gestion des utilisateurs',
+    firstName: 'Prénom',
+    lastName: 'Nom',
+    email: 'E-mail',
+    role: 'Rôle',
+    edit: 'Modifier',
+    save: 'Enregistrer',
+    cancel: 'Annuler',
+    updated: 'Utilisateur mis à jour',
+    loadError: 'Erreur lors du chargement',
   },
 }
