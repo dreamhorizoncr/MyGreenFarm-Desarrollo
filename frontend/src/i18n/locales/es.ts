@@ -43,6 +43,7 @@ export default {
   common: {
     error: 'Ha ocurrido un error',
     retry: 'Reintentar',
+    loading: 'Cargando...',
   },
   validation: {
     emailRequired: 'El correo electrónico es obligatorio',
@@ -51,5 +52,21 @@ export default {
     passwordMinLength: 'La contraseña debe tener al menos 8 caracteres',
     passwordPattern: 'La contraseña debe tener al menos 8 caracteres, con mayúscula, minúscula, número y símbolo',
     fieldRequired: 'El {{field}} es obligatorio',
+  },
+  profile: {
+    logout: 'Cerrar sesión',
+    admin: 'Gestión de usuarios',
+  },
+  admin: {
+    title: 'Gestión de usuarios',
+    firstName: 'Nombre',
+    lastName: 'Apellido',
+    email: 'Correo electrónico',
+    role: 'Rol',
+    edit: 'Editar',
+    save: 'Guardar',
+    cancel: 'Cancelar',
+    updated: 'Usuario actualizado',
+    loadError: 'Error al cargar usuarios',
   },
 }
