@@ -49,6 +49,7 @@ export default {
     emailInvalid: 'Ingresa un correo electrónico válido',
     passwordRequired: 'La contraseña es obligatoria',
     passwordMinLength: 'La contraseña debe tener al menos 8 caracteres',
+    passwordPattern: 'La contraseña debe tener al menos 8 caracteres, con mayúscula, minúscula, número y símbolo',
     fieldRequired: 'El {{field}} es obligatorio',
   },
 }

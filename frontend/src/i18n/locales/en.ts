@@ -48,6 +48,7 @@ export default {
     emailInvalid: 'Enter a valid email',
     passwordRequired: 'Password is required',
     passwordMinLength: 'Password must be at least 8 characters',
+    passwordPattern: 'Password must be at least 8 characters with uppercase, lowercase, number and symbol',
     fieldRequired: '{{field}} is required',
   },
 }

@@ -14,6 +14,9 @@ export function validateEmail(value: string, t: TFunction): string | null {
 export function validatePassword(value: string, t: TFunction): string | null {
   if (!value) return t('validation.passwordRequired')
   if (value.length < 8) return t('validation.passwordMinLength')
+  if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/.test(value)) {
+    return t('validation.passwordPattern')
+  }
   return null
 }
 
