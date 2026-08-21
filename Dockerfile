@@ -4,11 +4,11 @@
 FROM node:20-alpine AS frontend-build
 WORKDIR /app/frontend
 
-# Copiar dependencias e instalar
+# Copiar dependencias del frontend
 COPY frontend/package*.json ./
 RUN npm ci
 
-# Copiar código fuente y construir estáticos
+# Copiar el código fuente y construir los archivos estáticos
 COPY frontend/ ./
 RUN npm run build
 
@@ -18,29 +18,34 @@ RUN npm run build
 FROM eclipse-temurin:21-jdk-alpine AS backend-build
 WORKDIR /app
 
-# Copiar wrapper y pom.xml para aprovechar la caché de Docker
-COPY mvnw .
-COPY .mvn .mvn
-COPY pom.xml .
+# Copiar archivos de Maven desde la carpeta backend/
+COPY backend/mvnw .
+COPY backend/.mvn .mvn
+COPY backend/pom.xml .
+
+# Dar permisos al wrapper
+RUN chmod +x mvnw
+
+# Descargar dependencias para aprovechar la caché de Docker
 RUN ./mvnw dependency:go-offline
 
 # Copiar el código fuente del backend
-COPY src src
+COPY backend/src src
 
-# COPIAR los archivos estáticos de React al directorio de recursos de Spring Boot
+# COPIAR los estáticos de React dentro del directorio estático de Spring Boot
+# NOTA: Si usas Create React App en lugar de Vite, cambia 'dist' por 'build'
 COPY --from=frontend-build /app/frontend/dist src/main/resources/static/
 
-# Dar permisos y empaquetar el JAR
-RUN chmod +x mvnw
+# Compilar el JAR final con los archivos de React ya incluidos
 RUN ./mvnw clean package -DskipTests
 
 # ==========================================
-# ETAPA 3: Imagen de Ejecución (Ligera)
+# ETAPA 3: Imagen de Ejecución
 # ==========================================
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-# Copiar el JAR desde la etapa de construcción
+# Copiar el JAR generado desde la etapa de construcción del backend
 COPY --from=backend-build /app/target/*.jar app.jar
 
 EXPOSE 8080
