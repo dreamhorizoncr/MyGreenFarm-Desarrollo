@@ -1,0 +1,22 @@
+# Archivos de Git y entorno local
+.git
+.gitignore
+.env*.local
+*.md
+
+# Frontend (React)
+frontend/node_modules
+frontend/dist
+frontend/build
+frontend/.npm
+
+# Backend (Spring Boot / Maven / Gradle)
+backend/target
+backend/build
+.mvn/wrapper/maven-wrapper.jar
+
+# IDEs y Editores
+.idea
+.vscode
+*.iml
+*.DS_Store
