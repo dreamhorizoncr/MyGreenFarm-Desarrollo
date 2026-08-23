@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class RegisterController {
-    @GetMapping("/")
+    @GetMapping("/api/health")
     public String hello() {
-        return "¡Hola, Spring Boot está corriendo!";
+        return "OK";
     }
 }

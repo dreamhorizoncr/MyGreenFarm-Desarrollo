@@ -104,7 +104,8 @@ public class SecurityConfig {
                 "/api/auth/signin",
                 "/api/auth/signout",
                 "/api/auth/forgot-password",
-                "/api/auth/reset-password"
+                "/api/auth/reset-password",
+                "/api/health"
             ).permitAll()
             .anyRequest().authenticated()
         )
