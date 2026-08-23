@@ -13,11 +13,13 @@ export default {
     label: 'Choisir la langue',
   },
   login: {
+    overtitle: 'Portail Administratif',
     title: 'Se connecter',
-    buttonLabel: 'Entrer',
+    buttonLabel: 'Se connecter',
     loading: 'Connexion...',
     email: 'E-mail',
     password: 'Mot de passe',
+    forgotPassword: 'Mot de passe oublié ?',
     noAccount: "Vous n'avez pas de compte ?",
     goToSignup: 'Créer un compte',
   },
@@ -35,8 +37,12 @@ export default {
   },
   forgotPassword: {
     title: 'Récupérer le mot de passe',
+    description: 'Entrez votre e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.',
+    email: 'E-mail',
     buttonLabel: "Envoyer l'e-mail",
     loading: 'Envoi...',
+    success: "L'e-mail de récupération a été envoyé avec succès. Veuillez vérifier votre boîte de réception.",
+    backToLogin: 'Retour à la connexion',
   },
   common: {
     error: 'Une erreur est survenue',

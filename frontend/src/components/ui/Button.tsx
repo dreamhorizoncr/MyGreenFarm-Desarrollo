@@ -4,13 +4,14 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { tv } from 'tailwind-variants'
 
 const button = tv({
-  base: 'inline-flex items-center justify-center gap-3 w-full rounded-2xl font-semibold leading-none transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer hover:opacity-90 active:scale-[0.98]',
+  base: 'inline-flex items-center justify-center gap-3 w-full rounded-2xl font-heading font-normal leading-none transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer hover:opacity-90 active:scale-[0.98]',
   variants: {
     variant: {
       primary: 'bg-primary text-white',
       secondary: 'bg-white text-primary border border-primary-200',
       ghost: 'bg-transparent text-primary',
       danger: 'bg-danger text-white',
+      success: 'bg-success text-heading',
     },
     size: {
       sm: 'px-4 py-3 text-sm',
@@ -30,7 +31,7 @@ const button = tv({
   },
 })
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'|'success'
 type ButtonSize = 'sm' | 'md' | 'lg'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

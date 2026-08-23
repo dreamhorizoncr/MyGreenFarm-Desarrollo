@@ -14,11 +14,13 @@ export default {
     label: 'Select language',
   },
   login: {
+    overtitle: 'Administrative Portal',
     title: 'Sign in',
     buttonLabel: 'Sign in',
     loading: 'Signing in...',
     email: 'Email',
     password: 'Password',
+    forgotPassword: 'Forgot your password?',
     noAccount: "Don't have an account?",
     goToSignup: 'Create account',
   },
@@ -36,8 +38,12 @@ export default {
   },
   forgotPassword: {
     title: 'Recover password',
+    description: 'Enter your email and we will send you a link to reset your password.',
+    email: 'Email',
     buttonLabel: 'Send email',
     loading: 'Sending...',
+    success: 'The recovery email was sent successfully. Please check your inbox.',
+    backToLogin: 'Back to sign in',
   },
   common: {
     error: 'An error has occurred',
