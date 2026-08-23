@@ -88,8 +88,26 @@ public class SecurityConfig {
     http
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/auth/signin", "/api/auth/signout", "/").permitAll() 
-            .anyRequest().authenticated() 
+            .requestMatchers(
+                "/",
+                "/index.html",
+                "/favicon.ico",
+                "/assets/**",
+                "/**/*.js",
+                "/**/*.css",
+                "/**/*.svg",
+                "/**/*.png",
+                "/**/*.jpg",
+                "/**/*.jpeg",
+                "/**/*.webp",
+                "/error",
+                "/api/auth/signin",
+                "/api/auth/signout",
+                "/api/auth/forgot-password",
+                "/api/auth/reset-password",
+                "/api/health"
+            ).permitAll()
+            .anyRequest().authenticated()
         )
         .csrf(csrf -> csrf.disable())
         .formLogin(form -> form.disable())

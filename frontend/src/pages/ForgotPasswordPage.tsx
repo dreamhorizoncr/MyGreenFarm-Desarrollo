@@ -1,32 +1,274 @@
 // Esto de aquí es para la pantalla de recuperar contraseña.
-
+//Oki
+import {useEffect, useState, type FormEvent} from  'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import Button from '../components/ui/Button.tsx'
 import LanguageSwitcher from '../components/LanguageSwitcher.tsx'
 import { useForgotPassword } from '../hooks/useForgotPassword.ts'
+import { validateEmail } from '../utils/validators.ts'
+import i18n from '../i18n/index.ts'
+import LandscapeBackground from '../assets/imgs/LogInLandscape.png'
+import loguitoProvisional from '../assets/imgs/loguitoProvisional.png'
 
 function ForgotPasswordPage() {
   const { t } = useTranslation()
-  /*
+  
+  //const { submitForgotPassword, loading, error, success } = useForgotPassword()
   const [email, setEmail] = useState('')
-  const { submitForgotPassword, loading, error, success } = useForgotPassword()
-  */
-  const { loading } = useForgotPassword()
+  const [emailValidationError, setEmailValidationError]= useState<string | null>(null)
+
+  const{submitForgotPassword, loading, error, success} = useForgotPassword()
+
+  useEffect(() => {
+    if (emailValidationError) {
+      setEmailValidationError(validateEmail(email, t))
+    }
+
+  }, [i18n.language])//Le lanza el error en el idioma que esté
+
+  const handleForgotPassword = async (
+    e: FormEvent<HTMLFormElement>,
+  ) => {
+    e.preventDefault()
+
+    const emailErrorMessage = validateEmail(email, t)
+
+    setEmailValidationError(emailErrorMessage)
+
+    if (emailErrorMessage) return
+
+    await submitForgotPassword({ email })
+  }
 
   return (
-    <section id="forgot-password">
-      <h1>{t('forgotPassword.title')}</h1>
-      <LanguageSwitcher />
+    <div className="min-h-screen overflow-hidden bg-cream-100">
+      {/* NAVBAR */}
+      <header className="relative z-40 h-[120px] bg-cream-100">
+        <nav className="mx-auto flex h-full w-full items-center px-11">
+          {/* Marca */}
+          <Link
+            to="/"
+            className="font-heading text-[26px] text-heading"
+          >
+            My Green Farm
+          </Link>
 
-        <Button
-          loading={loading}
-          onClick={() => {}}
+          {/* Navegación */}
+          <div className="ml-auto flex items-center gap-7 font-link">
+            <Link
+              to="/"
+              className="text-body transition-opacity hover:opacity-70"
+            >
+              Home
+            </Link>
+
+            <Link
+              to="/news"
+              className="text-body transition-opacity hover:opacity-70"
+            >
+              News
+            </Link>
+
+            <Link
+              to="/multimedia"
+              className="text-body transition-opacity hover:opacity-70"
+            >
+              Multimedia
+            </Link>
+
+            <Link
+              to="/forum"
+              className="text-body transition-opacity hover:opacity-70"
+            >
+              Forum
+            </Link>
+
+            <Link
+              to="/services"
+              className="text-body transition-opacity hover:opacity-70"
+            >
+              Services
+            </Link>
+
+            <Link
+              to="/login"
+              className="rounded-full bg-success px-11 py-4 text-white transition-opacity hover:opacity-90"
+            >
+              Sign In
+            </Link>
+
+            <Link
+              to="/signup"
+              className="rounded-full border border-heading px-11 py-[15px] text-body transition-colors hover:bg-cream-200"
+            >
+              Sign up
+            </Link>
+          </div>
+        </nav>
+      </header>
+
+      {/* FORGOT PASSWORD */}
+      <main className="relative h-[calc(100vh-120px)] min-h-[700px] overflow-hidden">
+        {/* Paisaje */}
+        <img
+          src={LandscapeBackground}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        />
+        {/*Loguito Provisional */}
+        <img 
+          src={loguitoProvisional} 
+          alt="My Green Farm" 
+          className="absolute left-[25%] top-[20%] z-10 w-[700px] max-w-[4vw0] object-contain" 
+          />
+
+        {/* PANEL */}
+        <section
+          className="
+            absolute
+            right-[3.1%]
+            top-[5%]
+            z-20
+            w-[437px]
+            rounded-[45px]
+            bg-[#EEF0E5]
+            px-[18px]
+            pb-[38px]
+            pt-[32px]
+          "
         >
-          {loading ? t('forgotPassword.loading') : t('forgotPassword.buttonLabel')}
-        </Button>
-     
-    </section>
+          {/* Título */}
+          <div className="text-center">
+            <h2
+              className="
+                mb-7
+                mt-6
+                font-heading
+                text-[32px]
+                font-normal
+                leading-none
+                text-heading
+              "
+            >
+              {t('forgotPassword.title')}
+            </h2>
+          </div>
+
+          {/* FORMULARIO */}
+          <div className="rounded-[38px] bg-white px-[19px] pb-[42px] pt-[34px]">
+            <form
+              onSubmit={handleForgotPassword}
+              noValidate
+              className="font-body"
+            >
+              {/* Descripción */}
+              <p className="mb-14 text-sm leading-relaxed text-body">
+                {t('forgotPassword.description')}
+              </p>
+
+              {/* Correo */}
+              <div>
+                <label
+                  htmlFor="forgot-password-email"
+                  className="
+                    mb-3
+                    block
+                    text-left
+                    font-heading
+                    text-[25px]
+                    font-normal
+                    leading-none
+                    text-heading
+                  "
+                >
+                  {t('forgotPassword.email')}
+                </label>
+
+                <input
+                  id="forgot-password-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value)
+
+                    if (emailValidationError) {
+                      setEmailValidationError(null)
+                    }
+                  }}
+                  className="
+                    h-[37px]
+                    w-full
+                    rounded-full
+                    bg-[#F0EEEE]
+                    px-5
+                    font-body
+                    text-body
+                    outline-none
+                    focus:ring-2
+                    focus:ring-heading
+                  "
+                />
+
+                {/* Error de validación */}
+                {emailValidationError && (
+                  <p className="mt-2 text-sm text-danger">
+                    {emailValidationError}
+                  </p>
+                )}
+              </div>
+
+              {/* Error del backend */}
+              {error && (
+                <p className="mt-4 text-center text-sm text-danger">
+                  {error}
+                </p>
+              )}
+
+              {/* Mensaje de éxito */}
+              {success && (
+                <p className="mt-4 text-center text-sm text-body">
+                  {t('forgotPassword.success')}
+                </p>
+              )}
+
+              {/* Botón */}
+              <div className="mt-10">
+                <Button
+                  type="submit"
+                  loading={loading}
+                  variant="success"
+                  className="text-xl"
+                >
+                  {loading
+                    ? t('forgotPassword.loading')
+                    : t('forgotPassword.buttonLabel')}
+                </Button>
+              </div>
+
+              {/* Volver al Login */}
+              <p className="mt-9 text-center font-body text-sm text-primary">
+                <Link
+                  to="/login"
+                  className="transition-opacity hover:opacity-70"
+                >
+                  {t('forgotPassword.backToLogin')}
+                </Link>
+              </p>
+            </form>
+          </div>
+        </section>
+
+        {/* Selector de idioma */}
+        <div className="absolute left-8 top-8 z-30">
+          <LanguageSwitcher />
+        </div>
+      </main>
+    </div>
   )
+
+
 }
 
 export default ForgotPasswordPage

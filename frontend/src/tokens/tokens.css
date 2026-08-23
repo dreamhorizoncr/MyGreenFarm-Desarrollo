@@ -255,10 +255,12 @@
   --color-info: var(--info-accent);
 
   /*TIPOGRAFÍA*/
-  --font-heading:
-    -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-body:
-    -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+   --font-heading:
+   "Cherry Bomb One", cursive;
+   --font-body:
+   "Coming Soon", cursive;
+   --font-link: 
+   "Nunito", sans-serif;
 
   --text-h1: clamp(36px, 2.25rem + 1vw, 52px);
   --text-h1--line-height: 1.2;

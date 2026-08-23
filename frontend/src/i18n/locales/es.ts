@@ -15,9 +15,11 @@ export default {
     label: 'Seleccionar idioma',
   },
   login: {
+    overtitle: 'Portal Administrativo',
     title: 'Iniciar sesión',
-    buttonLabel: 'Entrar',
+    buttonLabel: 'Iniciar Sesión',
     loading: 'Entrando...',
+    forgotPassword: '¿Olvidaste tu contraseña?',
     email: 'Correo electrónico',
     password: 'Contraseña',
     noAccount: '¿No tenés cuenta?',
@@ -37,8 +39,12 @@ export default {
   },
   forgotPassword: {
     title: 'Recuperar contraseña',
+    description: 'Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.',
+    email: 'Correo electrónico',
     buttonLabel: 'Enviar correo',
     loading: 'Enviando...',
+    success: 'El correo de recuperación fue enviado correctamente. Por favor revisa tu bandeja de entrada.',
+    backToLogin: 'Regresar al inicio de sesión',
   },
   common: {
     error: 'Ha ocurrido un error',

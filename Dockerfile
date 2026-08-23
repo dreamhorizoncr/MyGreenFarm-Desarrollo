@@ -1,14 +1,12 @@
 # ==========================================
-# ETAPA 1: Compilar el Frontend (React)
+# ETAPA 1: Compilar el Frontend (React/Vite)
 # ==========================================
 FROM node:20-alpine AS frontend-build
 WORKDIR /app/frontend
 
-# Copiar dependencias del frontend
 COPY frontend/package*.json ./
 RUN npm ci
 
-# Copiar el código fuente y construir los archivos estáticos
 COPY frontend/ ./
 RUN npm run build
 
@@ -18,25 +16,19 @@ RUN npm run build
 FROM eclipse-temurin:21-jdk-alpine AS backend-build
 WORKDIR /app
 
-# Copiar archivos de Maven desde la carpeta backend/
-COPY backend/mvnw .
+COPY backend/mvnw ./
 COPY backend/.mvn .mvn
-COPY backend/pom.xml .
+COPY backend/pom.xml ./
 
-# Dar permisos al wrapper
 RUN chmod +x mvnw
-
-# Descargar dependencias para aprovechar la caché de Docker
 RUN ./mvnw dependency:go-offline
 
-# Copiar el código fuente del backend
-COPY backend/src src
+COPY backend/src ./src
 
-# COPIAR los estáticos de React dentro del directorio estático de Spring Boot
-# NOTA: Si usas Create React App en lugar de Vite, cambia 'dist' por 'build'
-COPY --from=frontend-build /app/frontend/dist src/main/resources/static/
+# Copia la build de Vite a src/main/resources/static
+# para que Spring sirva la SPA cuando el usuario accede a la raíz
+COPY --from=frontend-build /app/frontend/dist/ ./src/main/resources/static/
 
-# Compilar el JAR final con los archivos de React ya incluidos
 RUN ./mvnw clean package -DskipTests
 
 # ==========================================
@@ -45,7 +37,8 @@ RUN ./mvnw clean package -DskipTests
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-# Copiar el JAR generado desde la etapa de construcción del backend
+ENV PORT=8080
+
 COPY --from=backend-build /app/target/*.jar app.jar
 
 EXPOSE 8080

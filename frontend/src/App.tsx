@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+
 import HomePage from './pages/HomePage.tsx'
 import LoginPage from './pages/LoginPage.tsx'
 import SignUpPage from './pages/SignUpPage.tsx'
+import ForgotPasswordPage from './pages/ForgotPasswordPage.tsx'
 import AdminUsersPage from './pages/AdminUsersPage.tsx'
 import ProtectedRoute from './components/ProtectedRoute.tsx'
 import AdminRoute from './components/AdminRoute.tsx'
@@ -18,7 +20,7 @@ function App() {
         </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
-
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         {/* Redirigir cualquier ruta no definida a la página de inicio */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
