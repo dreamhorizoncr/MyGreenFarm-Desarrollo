@@ -28,13 +28,15 @@ public class AuthService {
     private final PasswordEncoder encoder; // Password encoder for hashing passwords
     private final AuthenticationManager authenticationManager; // Authentication manager for handling authentication
     private final JwtUtils jwtUtils; // Utility class for generating and validating JWT tokens
+    private final EmailService emailService;
 
     public AuthService(UserRepository userRepository, PasswordEncoder encoder,
-            AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
+            AuthenticationManager authenticationManager, JwtUtils jwtUtils, EmailService emailService) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
+        this.emailService = emailService;
     }
 
     // Register a new user
@@ -105,8 +107,7 @@ public class AuthService {
         user.setTokenExpirationDate(LocalDateTime.now().plusMinutes(15));
         userRepository.save(user);
 
-        // Aquí envías el correo electrónico con el token
-        System.out.println(">>> TOKEN DE RECUPERACIÓN: " + token + " <<<");
+        emailService.sendPasswordResetEmail(user.getEmail(), token);
     }
 
     public void resetPassword(String token, String newPassword) {

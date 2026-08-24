@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "resend.token",
+    "type": "java.lang.String",
+    "description": "A description for 'resend.token'"
+  },
+  {
+    "name": "resend.email.to",
+    "type": "java.lang.String",
+    "description": "A description for 'resend.email.to'"
+  }
+]}
