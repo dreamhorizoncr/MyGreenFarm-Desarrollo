@@ -35,7 +35,9 @@ function LoginPage() {
     setEmailValidationError(emailErrorMessage);
     setPasswordValidationError(passwordErrorMessage);
     if (emailErrorMessage || passwordErrorMessage) return;
-    submitLogin({ email, password }, () => navigate("/"));
+    submitLogin({ email, password }, (user) =>
+      navigate(user.role === "ADMIN" ? "/admin/users" : "/")
+    );
   };
 
   return (
@@ -54,49 +56,49 @@ function LoginPage() {
               to="/"
               className="text-body transition-opacity hover:opacity-70"
             >
-              Home
+              {t('navbar.home')}
             </Link>
 
             <Link
               to="/news"
               className="text-body transition-opacity hover:opacity-70"
             >
-              News
+              {t('navbar.news')}
             </Link>
 
             <Link
               to="/multimedia"
               className="text-body transition-opacity hover:opacity-70"
             >
-              Multimedia
+              {t('navbar.multimedia')}
             </Link>
 
             <Link
               to="/forum"
               className="text-body transition-opacity hover:opacity-70"
             >
-              Forum
+              {t('navbar.forum')}
             </Link>
 
             <Link
               to="/services"
               className="text-body transition-opacity hover:opacity-70"
             >
-              Services
+              {t('navbar.services')}
             </Link>
 
             <Link
               to="/login"
               className="rounded-full bg-success px-11 py-4 text-white transition-opacity hover:opacity-90"
             >
-              Sign In
+              {t('navbar.signIn')}
             </Link>
 
             <Link
               to="/signup"
               className="rounded-full border border-heading px-11 py-[15px] text-body transition-colors hover:bg-cream-200"
             >
-              Sign up
+              {t('navbar.signUp')}
             </Link>
           </div>
         </nav>
@@ -118,7 +120,7 @@ function LoginPage() {
           alt="Ruty"
           className="
           absolute
-          bottom-[7%]
+          bottom-[15%]
           left-[25%]
           z-10
           w-[425px]

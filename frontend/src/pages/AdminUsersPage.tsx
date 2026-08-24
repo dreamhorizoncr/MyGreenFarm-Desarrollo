@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { Pencil } from 'lucide-react'
 import LanguageSwitcher from '../components/LanguageSwitcher.tsx'
 import ProfileButton from '../components/ProfileButton.tsx'
@@ -27,50 +28,72 @@ function AdminUsersPage() {
   }
 
   return (
-    <section id="admin-users">
+    <section id="admin-users" className="min-h-screen bg-cream-100">
+      {/* Encabezado */}
       <div className="home-header">
-        <LanguageSwitcher />
-        <ProfileButton />
+        <Link to="/" className="font-heading text-[26px] text-heading no-underline">
+          My Green Farm
+        </Link>
+
+        <div className="flex items-center gap-7">
+          <LanguageSwitcher />
+          <ProfileButton />
+        </div>
       </div>
 
-      <h1>{t('admin.title')}</h1>
+      <main className="mx-auto w-full max-w-[1200px] px-11 pb-16 pt-10">
+        <h1 className="m-0 mb-9 text-center font-heading text-h2 font-normal leading-none text-heading">
+          {t('admin.title')}
+        </h1>
 
-      {loading && <p>{t('common.loading')}</p>}
-      {error && <p className="text-danger">{error}</p>}
+        {loading && (
+          <p className="m-0 text-center font-body text-body">{t('common.loading')}</p>
+        )}
 
-      {!loading && !error && (
-        <table className="admin-table">
-          <thead>
-            <tr>
-              <th>{t('admin.firstName')}</th>
-              <th>{t('admin.lastName')}</th>
-              <th>{t('admin.email')}</th>
-              <th>{t('admin.role')}</th>
-              <th>{t('admin.edit')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.firstName}</td>
-                <td>{user.lastName}</td>
-                <td>{user.email}</td>
-                <td>{user.role}</td>
-                <td>
-                  <button
-                    type="button"
-                    className="admin-table__edit"
-                    onClick={() => setUserToEdit(user)}
-                    aria-label={t('admin.edit')}
-                  >
-                    <Pencil size={16} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+        {error && (
+          <p className="m-0 text-center font-link text-sm text-danger">{error}</p>
+        )}
+
+        {!loading && !error && (
+          users.length === 0 ? (
+            <p className="admin-table-empty">{t('common.noUsers')}</p>
+          ) : (
+            <div className="admin-table-card">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>{t('admin.firstName')}</th>
+                    <th>{t('admin.lastName')}</th>
+                    <th>{t('admin.email')}</th>
+                    <th>{t('admin.role')}</th>
+                    <th>{t('admin.edit')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user) => (
+                    <tr key={user.id}>
+                      <td>{user.firstName}</td>
+                      <td>{user.lastName}</td>
+                      <td>{user.email}</td>
+                      <td>{user.role}</td>
+                      <td>
+                        <button
+                          type="button"
+                          className="admin-table__edit"
+                          onClick={() => setUserToEdit(user)}
+                          aria-label={t('admin.edit')}
+                        >
+                          <Pencil size={18} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
+        )}
+      </main>
 
       {userToEdit && currentUser && (
         <EditUserModal
