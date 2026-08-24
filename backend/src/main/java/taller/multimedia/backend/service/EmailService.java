@@ -19,7 +19,6 @@ public class EmailService {
     public void sendPasswordResetEmail(String toEmail, String resetToken) {
         Resend resend = new Resend(emailToken);
 
-        // Aquí ya existe resetToken porque viene en los parámetros
         String resetLink = frontendUrl + "/reset-password?token=" + resetToken;
 
         try {
