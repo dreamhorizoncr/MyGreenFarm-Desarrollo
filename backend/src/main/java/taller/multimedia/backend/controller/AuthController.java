@@ -6,7 +6,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,9 +28,6 @@ import taller.multimedia.backend.service.AuthService;
 Antes
 @CrossOrigin(origins = "*", maxAge = 3600) // Allow cross-origin requests from any origin with a maximum age of 3600 seconds
 */
-
-// AHORA: esto es para permitir solicitudes desde el frontend en localhost:5173 y permitir el envío de cookies
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true", maxAge = 3600)
 
 @RestController
 @RequestMapping("/api/auth")
@@ -101,7 +97,11 @@ public class AuthController {
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
         try {
+            // 1. Generar token único de recuperación
+            // 2. Guardarlo en base de datos con expiración
+            // 3. Enviar el correo inmediatamente al usuario específico
             authService.forgotPassword(request.getEmail());
+
             return ResponseEntity.ok(new MessageResponse("Correo de recuperación enviado con éxito."));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
