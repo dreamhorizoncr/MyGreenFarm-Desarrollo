@@ -13,6 +13,15 @@ export default {
   languageSwitcher: {
     label: 'Select language',
   },
+  navbar: {
+    home: 'Home',
+    news: 'News',
+    multimedia: 'Multimedia',
+    forum: 'Forum',
+    services: 'Services',
+    signIn: 'Sign In',
+    signUp: 'Sign up',
+  },
   login: {
     overtitle: 'Administrative Portal',
     title: 'Sign in',
@@ -25,11 +34,16 @@ export default {
     goToSignup: 'Create account',
   },
   signup: {
+    overtitle: 'Administrative Portal',
     title: 'Create account',
     firstName: 'First name',
     lastName: 'Last name',
     email: 'Email',
     password: 'Password',
+    role: 'Role',
+    selectRole: 'Select role',
+    userRole: 'User',
+    adminRole: 'Administrator',
     buttonLabel: 'Sign up',
     loading: 'Signing up...',
     success: 'Account created! You can now sign in.',
@@ -45,10 +59,23 @@ export default {
     success: 'The recovery email was sent successfully. Please check your inbox.',
     backToLogin: 'Back to sign in',
   },
+  resetPassword: {
+    title: 'Reset password',
+    newPassword: 'New password',
+    confirmPassword: 'Confirm password',
+    buttonLabel: 'Change password',
+    loading: 'Changing...',
+    success: 'Your password was updated successfully. You can now sign in with your new one.',
+    missingToken: 'This link is not valid. The recovery token is missing.',
+    requestNewLink: 'Request a new link',
+    passwordMismatch: 'Passwords do not match',
+    backToLogin: 'Sign in',
+  },
   common: {
     error: 'An error has occurred',
     retry: 'Retry',
     loading: 'Loading...',
+    noUsers: 'No registered users',
   },
   validation: {
     emailRequired: 'Email is required',
@@ -73,5 +100,6 @@ export default {
     cancel: 'Cancel',
     updated: 'User updated',
     loadError: 'Error loading users',
+    emailLockedHint: 'You can only edit your own email',
   },
 }

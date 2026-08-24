@@ -3,6 +3,7 @@ export interface RegisterData {
   password: string
   firstName: string
   lastName: string
+  role: string
 }
 
 export interface RegisterResponse {
@@ -33,7 +34,15 @@ export interface ForgotPasswordRequest {
 
 export interface ForgotPasswordResponse {
   message: string
-  resetToken: string
+}
+
+export interface ResetPasswordRequest {
+  token: string
+  newPassword: string
+}
+
+export interface ResetPasswordResponse {
+  message: string
 }
 
 export interface UpdateUserData {

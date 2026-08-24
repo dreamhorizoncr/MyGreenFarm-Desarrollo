@@ -10,7 +10,7 @@ export function useLogin() {
   const [error, setError] = useState<string | null>(null)
   const [user, setUser] = useState<UserInfo | null>(null)
 
-  const submitLogin = async (payload: LoginData, onSuccess?: () => void) => {
+  const submitLogin = async (payload: LoginData, onSuccess?: (user: UserInfo) => void) => {
     setLoading(true)
     setError(null)
     try {
@@ -18,7 +18,7 @@ export function useLogin() {
       tokenStorage.setToken(data.token)
       userStorage.setUser(data.user)
       setUser(data.user)
-      onSuccess?.()
+      onSuccess?.(data.user)
     } catch (err) {
       setError(err instanceof Error ? err.message : i18n.t('common.error'))
     } finally {
