@@ -20,7 +20,8 @@ public class EmailService {
         Resend resend = new Resend(emailToken);
 
         // Aquí ya existe resetToken porque viene en los parámetros
-        String resetLink = frontendUrl + "/reset-password?token=" + resetToken;
+        String resetLink = frontendUrl.replaceAll("/+$", "")
+            + "/reset-password?token=" + resetToken;
 
         try {
             CreateEmailOptions params = CreateEmailOptions.builder()
