@@ -14,6 +14,15 @@ export default {
   languageSwitcher: {
     label: 'Seleccionar idioma',
   },
+  navbar: {
+    home: 'Inicio',
+    news: 'Noticias',
+    multimedia: 'Multimedia',
+    forum: 'Foro',
+    services: 'Servicios',
+    signIn: 'Iniciar Sesión',
+    signUp: 'Registrarse',
+  },
   login: {
     overtitle: 'Portal Administrativo',
     title: 'Iniciar sesión',
@@ -26,11 +35,16 @@ export default {
     goToSignup: 'Crear cuenta',
   },
   signup: {
+    overtitle: 'Portal Administrativo',
     title: 'Crear cuenta',
     firstName: 'Nombre',
     lastName: 'Apellido',
     email: 'Correo electrónico',
     password: 'Contraseña',
+    role: 'Rol',
+    selectRole: 'Seleccionar rol',
+    userRole: 'Usuario',
+    adminRole: 'Administrador',
     buttonLabel: 'Registrarse',
     loading: 'Registrando...',
     success: '¡Cuenta creada! Ahora podés iniciar sesión.',
@@ -46,10 +60,23 @@ export default {
     success: 'El correo de recuperación fue enviado correctamente. Por favor revisa tu bandeja de entrada.',
     backToLogin: 'Regresar al inicio de sesión',
   },
+  resetPassword: {
+    title: 'Restablecer contraseña',
+    newPassword: 'Nueva contraseña',
+    confirmPassword: 'Confirmar contraseña',
+    buttonLabel: 'Cambiar contraseña',
+    loading: 'Cambiando...',
+    success: '¡Tu contraseña fue actualizada! Ya podés iniciar sesión con la nueva.',
+    missingToken: 'Este enlace no es válido. Falta el token de recuperación.',
+    requestNewLink: 'Solicitar un nuevo enlace',
+    passwordMismatch: 'Las contraseñas no coinciden',
+    backToLogin: 'Iniciar sesión',
+  },
   common: {
     error: 'Ha ocurrido un error',
     retry: 'Reintentar',
     loading: 'Cargando...',
+    noUsers: 'No hay usuarios registrados',
   },
   validation: {
     emailRequired: 'El correo electrónico es obligatorio',
@@ -74,5 +101,6 @@ export default {
     cancel: 'Cancelar',
     updated: 'Usuario actualizado',
     loadError: 'Error al cargar usuarios',
+    emailLockedHint: 'Solo podés editar tu propio correo',
   },
 }

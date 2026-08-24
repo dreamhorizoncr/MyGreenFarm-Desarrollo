@@ -1,5 +1,5 @@
 import { apiClient } from './api.ts'
-import type { RegisterData, RegisterResponse, LoginData, LoginResponse, ForgotPasswordRequest, ForgotPasswordResponse } from '../types/auth.ts'
+import type { RegisterData, RegisterResponse, LoginData, LoginResponse, ForgotPasswordRequest, ForgotPasswordResponse, ResetPasswordRequest, ResetPasswordResponse } from '../types/auth.ts'
 
 export const authService = {
   async register(data: RegisterData): Promise<RegisterResponse> {
@@ -16,9 +16,13 @@ export const authService = {
     await apiClient.post('/auth/signout')
   },
 
-  // Pendiente, el endpoint /auth/forgot-password no existe en el backend todavía
   async forgotPassword(data: ForgotPasswordRequest): Promise<ForgotPasswordResponse> {
     const response = await apiClient.post<ForgotPasswordResponse>('/auth/forgot-password', data)
+    return response.data
+  },
+
+  async resetPassword(data: ResetPasswordRequest): Promise<ResetPasswordResponse> {
+    const response = await apiClient.post<ResetPasswordResponse>('/auth/reset-password', data)
     return response.data
   },
 }

@@ -6,6 +6,8 @@ import LanguageSwitcher from '../components/LanguageSwitcher.tsx'
 import { useRegister } from '../hooks/useRegister.ts'
 import { validateEmail, validatePassword, validateRequired } from '../utils/validators.ts'
 import i18n from '../i18n/index.ts'
+import rutySitted from '../assets/imgs/RutySitted.png'
+import loginBackground from '../assets/imgs/LogInLandscape.png'
 
 function SignUpPage() {
   const { t } = useTranslation()
@@ -15,17 +17,20 @@ function SignUpPage() {
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [role, setRole] = useState('')
   
   const [firstNameValidationError, setFirstNameValidationError] = useState<string | null>(null)
   const [lastNameValidationError, setLastNameValidationError] = useState<string | null>(null)
   const [emailValidationError, setEmailValidationError] = useState<string | null>(null)
   const [passwordValidationError, setPasswordValidationError] = useState<string | null>(null)
+  const [roleValidationError, setRoleValidationError] = useState<string | null>(null)
 
   useEffect(() => {
     if (firstNameValidationError) setFirstNameValidationError(validateRequired(firstName, t('signup.firstName'), t))
     if (lastNameValidationError) setLastNameValidationError(validateRequired(lastName, t('signup.lastName'), t))
     if (emailValidationError) setEmailValidationError(validateEmail(email, t))
     if (passwordValidationError) setPasswordValidationError(validatePassword(password, t))
+    if(roleValidationError){setRoleValidationError(validateRequired(role, t('signup.role'), t))}
   }, [i18n.language])
 
   const handleSignUp = (event: FormEvent<HTMLFormElement>) => {
@@ -35,95 +40,543 @@ function SignUpPage() {
     const lastNameErrorMessage = validateRequired(lastName, t('signup.lastName'), t)
     const emailErrorMessage = validateEmail(email, t)
     const passwordErrorMessage = validatePassword(password, t)
+    const roleErrorMessage = validateRequired(role, t('signup.role'), t)
     
     setFirstNameValidationError(firstNameErrorMessage)
     setLastNameValidationError(lastNameErrorMessage)
     setEmailValidationError(emailErrorMessage)
     setPasswordValidationError(passwordErrorMessage)
+    setRoleValidationError(roleErrorMessage)
     
-    if (firstNameErrorMessage || lastNameErrorMessage || emailErrorMessage || passwordErrorMessage) return
+    if (firstNameErrorMessage || lastNameErrorMessage || emailErrorMessage || passwordErrorMessage || roleErrorMessage) return
     
-    submitRegister({ firstName, lastName, email, password })
+    submitRegister({ firstName, lastName, email, password, role })
   }
 
   return (
-    <section id="signup">
-      <h1>{t('signup.title')}</h1>
-      <LanguageSwitcher />
+    <div className="min-h-screen overflow-hidden bg-cream-100">
+      {/* NAVBAR */}
+      <header className="relative z-40 h-[120px] bg-cream-100">
+        <nav className="mx-auto flex h-full w-full items-center px-11">
+          {/* Marca */}
+          <Link
+            to="/"
+            className="font-heading text-[26px] text-heading"
+          >
+            My Green Farm
+          </Link>
 
-      {success ? (
-        <p>{t('signup.success')}</p>
-      ) : (
-        <form onSubmit={handleSignUp} noValidate>
-          <div>
-            <label htmlFor="signup-firstname">{t('signup.firstName')}</label>
-            <input
-              id="signup-firstname"
-              type="text"
-              value={firstName}
-              onChange={(e) => { 
-                setFirstName(e.target.value)
-                if (firstNameValidationError) setFirstNameValidationError(null) 
-              }}
-            />
-            {firstNameValidationError && <p className="text-danger">{firstNameValidationError}</p>}
+          {/* Navegación */}
+          <div className="ml-auto flex items-center gap-7 font-link">
+            <Link
+              to="/"
+              className="text-body transition-opacity hover:opacity-70"
+            >
+              {t('navbar.home')}
+            </Link>
+
+            <Link
+              to="/news"
+              className="text-body transition-opacity hover:opacity-70"
+            >
+              {t('navbar.news')}
+            </Link>
+
+            <Link
+              to="/multimedia"
+              className="text-body transition-opacity hover:opacity-70"
+            >
+              {t('navbar.multimedia')}
+            </Link>
+
+            <Link
+              to="/forum"
+              className="text-body transition-opacity hover:opacity-70"
+            >
+              {t('navbar.forum')}
+            </Link>
+
+            <Link
+              to="/services"
+              className="text-body transition-opacity hover:opacity-70"
+            >
+              {t('navbar.services')}
+            </Link>
+
+            <Link
+              to="/login"
+              className="
+                rounded-full
+                bg-success
+                px-11
+                py-4
+                text-white
+                transition-opacity
+                hover:opacity-90
+              "
+            >
+              {t('navbar.signIn')}
+            </Link>
+
+            <Link
+              to="/signup"
+              className="
+                rounded-full
+                border
+                border-heading
+                px-11
+                py-[15px]
+                text-body
+                transition-colors
+                hover:bg-cream-200
+              "
+            >
+              {t('navbar.signUp')}
+            </Link>
+          </div>
+        </nav>
+      </header>
+
+      {/* SIGN UP / ILUSTRACIONES */}
+      <main className="relative h-[calc(100vh-120px)] min-h-[700px] overflow-hidden">
+        {/* Paisaje */}
+        <img
+          src={loginBackground}
+          alt=""
+          aria-hidden="true"
+          className="
+            absolute
+            inset-0
+            h-full
+            w-full
+            object-cover
+            object-center
+          "
+        />
+
+        {/* Ruty */}
+        <img
+          src={rutySitted}
+          alt="Ruty"
+          className="
+            absolute
+            bottom-[15%]
+            left-[25%]
+            z-10
+            w-[425px]
+            max-w-[32vw]
+            object-contain
+          "
+        />
+
+        {/* PORTAL ADMINISTRATIVO */}
+        <section
+          className="
+            absolute
+            right-[3.1%]
+            top-[4%]
+            z-20
+            w-[660px]
+            rounded-[45px]
+            bg-[#EEF0E5]
+            px-[22px]
+            pb-[30px]
+            pt-[28px]
+          "
+        >
+          {/* Títulos */}
+          <div className="text-center">
+            <p
+              className="
+                m-0
+                font-body
+                text-[32px]
+                font-normal
+                leading-tight
+                text-body
+              "
+            >
+              {t('signup.overtitle')}
+            </p>
+
+            <h2
+              className="
+                mb-7
+                mt-5
+                font-heading
+                text-[32px]
+                font-normal
+                leading-none
+                text-heading
+              "
+            >
+              {t('signup.title')}
+            </h2>
           </div>
 
-          <div>
-            <label htmlFor="signup-lastname">{t('signup.lastName')}</label>
-            <input
-              id="signup-lastname"
-              type="text"
-              value={lastName}
-              onChange={(e) => { 
-                setLastName(e.target.value)
-                if (lastNameValidationError) setLastNameValidationError(null) 
-              }}
-            />
-            {lastNameValidationError && <p className="text-danger">{lastNameValidationError}</p>}
+          {/* CONTENEDOR BLANCO */}
+          <div
+            className="
+              rounded-[38px]
+              bg-white
+              px-[28px]
+              pb-[32px]
+              pt-[30px]
+            "
+          >
+            {success ? (
+              <div className="py-10 text-center">
+                <p className="font-body text-base text-body">
+                  {t('signup.success')}
+                </p>
+
+                <Link
+                  to="/login"
+                  className="
+                    mt-5
+                    inline-block
+                    font-body
+                    text-sm
+                    text-primary
+                    transition-opacity
+                    hover:opacity-70
+                  "
+                >
+                  {t('signup.goToLogin')}
+                </Link>
+              </div>
+            ) : (
+              <form
+                onSubmit={handleSignUp}
+                noValidate
+                className="font-body"
+              >
+                {/* Nombre y Apellido */}
+                <div className="grid grid-cols-2 gap-8">
+                  {/* Nombre */}
+                  <div>
+                    <label
+                      htmlFor="signup-firstname"
+                      className="
+                        mb-3
+                        block
+                        text-left
+                        font-heading
+                        text-[23px]
+                        font-normal
+                        leading-none
+                        text-heading
+                      "
+                    >
+                      {t('signup.firstName')}
+                    </label>
+
+                    <input
+                      id="signup-firstname"
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => {
+                        setFirstName(e.target.value)
+
+                        if (firstNameValidationError) {
+                          setFirstNameValidationError(null)
+                        }
+                      }}
+                      className="
+                        h-[37px]
+                        w-full
+                        rounded-full
+                        bg-[#F0EEEE]
+                        px-5
+                        font-body
+                        text-body
+                        outline-none
+                        focus:ring-2
+                        focus:ring-heading
+                      "
+                    />
+
+                    {firstNameValidationError && (
+                      <p className="mt-2 text-sm text-danger">
+                        {firstNameValidationError}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Apellido */}
+                  <div>
+                    <label
+                      htmlFor="signup-lastname"
+                      className="
+                        mb-3
+                        block
+                        text-left
+                        font-heading
+                        text-[23px]
+                        font-normal
+                        leading-none
+                        text-heading
+                      "
+                    >
+                      {t('signup.lastName')}
+                    </label>
+
+                    <input
+                      id="signup-lastname"
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => {
+                        setLastName(e.target.value)
+
+                        if (lastNameValidationError) {
+                          setLastNameValidationError(null)
+                        }
+                      }}
+                      className="
+                        h-[37px]
+                        w-full
+                        rounded-full
+                        bg-[#F0EEEE]
+                        px-5
+                        font-body
+                        text-body
+                        outline-none
+                        focus:ring-2
+                        focus:ring-heading
+                      "
+                    />
+
+                    {lastNameValidationError && (
+                      <p className="mt-2 text-sm text-danger">
+                        {lastNameValidationError}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Correo y Contraseña */}
+                <div className="mt-7 grid grid-cols-2 gap-8">
+                  {/* Correo */}
+                  <div>
+                    <label
+                      htmlFor="signup-email"
+                      className="
+                        mb-3
+                        block
+                        text-left
+                        font-heading
+                        text-[23px]
+                        font-normal
+                        leading-none
+                        text-heading
+                      "
+                    >
+                      {t('signup.email')}
+                    </label>
+
+                    <input
+                      id="signup-email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value)
+
+                        if (emailValidationError) {
+                          setEmailValidationError(null)
+                        }
+                      }}
+                      className="
+                        h-[37px]
+                        w-full
+                        rounded-full
+                        bg-[#F0EEEE]
+                        px-5
+                        font-body
+                        text-body
+                        outline-none
+                        focus:ring-2
+                        focus:ring-heading
+                      "
+                    />
+
+                    {emailValidationError && (
+                      <p className="mt-2 text-sm text-danger">
+                        {emailValidationError}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Contraseña */}
+                  <div>
+                    <label
+                      htmlFor="signup-password"
+                      className="
+                        mb-3
+                        block
+                        text-left
+                        font-heading
+                        text-[23px]
+                        font-normal
+                        leading-none
+                        text-heading
+                      "
+                    >
+                      {t('signup.password')}
+                    </label>
+
+                    <input
+                      id="signup-password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value)
+
+                        if (passwordValidationError) {
+                          setPasswordValidationError(null)
+                        }
+                      }}
+                      className="
+                        h-[37px]
+                        w-full
+                        rounded-full
+                        bg-[#F0EEEE]
+                        px-5
+                        font-body
+                        text-body
+                        outline-none
+                        focus:ring-2
+                        focus:ring-heading
+                      "
+                    />
+
+                    {passwordValidationError && (
+                      <p className="mt-2 text-sm text-danger">
+                        {passwordValidationError}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Rol y Botón */}
+                <div className="mt-8 grid grid-cols-2 items-end gap-8">
+                  {/* Rol */}
+                  <div>
+                    <label
+                      htmlFor="signup-role"
+                      className="
+                        mb-3
+                        block
+                        text-left
+                        font-heading
+                        text-[23px]
+                        font-normal
+                        leading-none
+                        text-heading
+                      "
+                    >
+                      {t('signup.role')}
+                    </label>
+
+                    <select
+                      id="signup-role"
+                      value={role}
+                      onChange={(e) => {
+                        setRole(e.target.value)
+
+                        if (roleValidationError) {
+                          setRoleValidationError(null)
+                        }
+                      }}
+                      className="
+                        h-[37px]
+                        w-full
+                        appearance-none
+                        rounded-full
+                        bg-[#F0EEEE]
+                        px-5
+                        pr-12
+                        font-body
+                        text-body
+                        outline-none
+                        focus:ring-2
+                        focus:ring-heading
+                      "
+                    >
+                      <option value="">
+                        {t('signup.selectRole')}
+                      </option>
+
+                      <option value="User">
+                        {t('signup.userRole')}
+                      </option>
+
+                      <option value="Admin">
+                        {t('signup.adminRole')}
+                      </option>
+                    </select>
+
+                    {roleValidationError && (
+                      <p className="mt-2 text-sm text-danger">
+                        {roleValidationError}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Crear cuenta */}
+                  <div>
+                    <Button
+                      type="submit"
+                      loading={loading}
+                      variant="success"
+                      className="text-xl"
+                    >
+                      {loading
+                        ? t('signup.loading')
+                        : t('signup.buttonLabel')}
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Error backend */}
+                {error && (
+                  <p className="mt-4 text-center text-sm text-danger">
+                    {error}
+                  </p>
+                )}
+
+                {/* Regresar al Login */}
+                <p
+                  className="
+                    mt-6
+                    text-center
+                    font-body
+                    text-sm
+                    text-primary
+                  "
+                >
+                  {t('signup.hasAccount')}{' '}
+
+                  <Link
+                    to="/login"
+                    className="
+                      transition-opacity
+                      hover:opacity-70
+                    "
+                  >
+                    {t('signup.goToLogin')}
+                  </Link>
+                </p>
+              </form>
+            )}
           </div>
+        </section>
 
-          <div>
-            <label htmlFor="signup-email">{t('signup.email')}</label>
-            <input
-              id="signup-email"
-              type="email"
-              value={email}
-              onChange={(e) => { 
-                setEmail(e.target.value)
-                if (emailValidationError) setEmailValidationError(null) 
-              }}
-            />
-            {emailValidationError && <p className="text-danger">{emailValidationError}</p>}
-          </div>
-
-          <div>
-            <label htmlFor="signup-password">{t('signup.password')}</label>
-            <input
-              id="signup-password"
-              type="password"
-              value={password}
-              onChange={(e) => { 
-                setPassword(e.target.value)
-                if (passwordValidationError) setPasswordValidationError(null) 
-              }}
-            />
-            {passwordValidationError && <p className="text-danger">{passwordValidationError}</p>}
-          </div>
-
-          {error && <p className="text-danger">{error}</p>}
-
-          <Button type="submit" loading={loading}>
-            {loading ? t('signup.loading') : t('signup.buttonLabel')}
-          </Button>
-        </form>
-      )}
-
-      <p>
-        {t('signup.hasAccount')}{' '}
-        <Link to="/login">{t('signup.goToLogin')}</Link>
-      </p>
-    </section>
+        {/* Language switcher */}
+        <div className="absolute left-8 top-8 z-30">
+          <LanguageSwitcher />
+        </div>
+      </main>
+    </div>
   )
 }
 
