@@ -67,14 +67,18 @@ function Navbar({ variant = 'full' }: NavbarProps) {
           My Green Farm
         </Link>
 
-        <button
-          type="button"
-          onClick={() => setDrawerOpen(true)}
-          className="text-heading"
-          aria-label="Open menu"
-        >
-          <Menu size={28} />
-        </button>
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+
+          <button
+            type="button"
+            onClick={() => setDrawerOpen(true)}
+            className="text-heading"
+            aria-label="Open menu"
+          >
+            <Menu size={28} />
+          </button>
+        </div>
       </nav>
 
       {/* Drawer overlay */}

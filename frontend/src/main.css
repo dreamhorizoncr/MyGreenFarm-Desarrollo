@@ -99,6 +99,17 @@
     }
   }
 
+  @media (max-width: 767px) {
+    .language-switcher__button {
+      min-width: 0;
+      padding: var(--spacing-xs);
+    }
+
+    .language-switcher__menu {
+      min-width: 168px;
+    }
+  }
+
   /* ---------------------------------------------------------------------------
      HOME HEADER — fila superior con idioma y perfil
      --------------------------------------------------------------------------- */

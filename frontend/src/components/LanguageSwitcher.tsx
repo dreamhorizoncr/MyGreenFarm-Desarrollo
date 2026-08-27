@@ -49,10 +49,12 @@ function LanguageSwitcher() {
         aria-expanded={open}
       >
         <Globe size={18} />
-        <span className="language-switcher__label">{currentLanguageLabel}</span>
+        <span className="language-switcher__label hidden md:block">
+          {currentLanguageLabel}
+        </span>
         <ChevronDown
           size={16}
-          className={open ? 'language-switcher__chevron is-open' : 'language-switcher__chevron'}
+          className={`language-switcher__chevron hidden md:block ${open ? 'is-open' : ''}`}
         />
       </button>
 
