@@ -22,7 +22,7 @@
     border: 1px solid var(--neutral-200);
     border-radius: var(--radius-2xl);
     color: var(--heading-default);
-    background: var(--color-white);
+    background: var(--white);
     cursor: pointer;
     font-family: var(--font-body);
     font-size: 14px;
@@ -31,11 +31,11 @@
       background-color 0.2s;
 
     &:hover {
-      border-color: var(--primary-accent);
+      border-color: var(--link-default);
     }
 
     &:focus-visible {
-      outline: 2px solid var(--primary-accent);
+      outline: 2px solid var(--link-default);
       outline-offset: 2px;
     }
   }
@@ -63,7 +63,7 @@
     list-style: none;
     border: 1px solid var(--neutral-200);
     border-radius: var(--radius-xl);
-    background: var(--color-white);
+    background: var(--white);
     width: 100%;
     box-sizing: border-box;
     animation: language-switcher-in 0.15s ease-out;
@@ -86,16 +86,16 @@
     transition: background-color 0.15s;
 
     &:hover {
-      background: var(--primary-100);
+      background: var(--orange-100);
     }
   }
 
   .language-switcher__option--active {
-    color: var(--primary-default);
+    color: var(--link-default);
     font-weight: var(--font-weight-semibold);
 
     &:hover {
-      color: var(--primary-default);
+      color: var(--link-default);
     }
   }
 
@@ -136,7 +136,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--primary-accent);
+      outline: 2px solid var(--link-default);
       outline-offset: 2px;
     }
   }
@@ -149,7 +149,7 @@
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    color: var(--color-white);
+    color: var(--white);
     background: var(--success-default);
     font-family: var(--font-heading);
     font-size: 16px;
@@ -168,7 +168,7 @@
     list-style: none;
     border: 1px solid var(--neutral-200);
     border-radius: var(--radius-xl);
-    background: var(--color-white);
+    background: var(--white);
     animation: profile-button-in 0.15s ease-out;
   }
 
@@ -176,7 +176,7 @@
     margin: 0 0 var(--spacing-xs);
     padding: var(--spacing-sm) var(--spacing-md);
     border-bottom: 1px solid var(--neutral-100);
-    color: var(--body-default);
+    color: var(--body-text-default);
     font-family: var(--font-body);
     font-size: 14px;
     font-weight: var(--font-weight-semibold);
@@ -194,7 +194,7 @@
     text-align: left;
     font-family: var(--font-body);
     font-size: 14px;
-    color: var(--body-default);
+    color: var(--body-text-default);
     background: transparent;
     cursor: pointer;
     white-space: nowrap;
@@ -203,11 +203,11 @@
       color 0.15s;
 
     &:hover {
-      background: var(--primary-100);
+      background: var(--orange-100);
     }
 
     &:focus-visible {
-      outline: 2px solid var(--primary-accent);
+      outline: 2px solid var(--link-default);
       outline-offset: -2px;
     }
   }
@@ -227,7 +227,7 @@
   .admin-table-card {
     overflow-x: auto;
     border-radius: var(--radius-xl);
-    background: var(--color-white);
+    background: var(--white);
   }
 
   .admin-table {
@@ -239,7 +239,7 @@
   .admin-table th {
     padding: var(--spacing-sm) var(--spacing-lg);
     text-align: left;
-    color: var(--color-white);
+    color: var(--white);
     background: var(--success-default);
     font-family: var(--font-heading);
     font-size: 20px;
@@ -250,7 +250,7 @@
   .admin-table td {
     padding: var(--spacing-sm) var(--spacing-lg);
     border-bottom: 1px solid var(--neutral-100);
-    color: var(--body-default);
+    color: var(--body-text-default);
     font-size: 15px;
   }
 
@@ -266,17 +266,17 @@
     height: 36px;
     border: none;
     border-radius: 50%;
-    color: var(--primary-accent);
+    color: var(--link-default);
     background: transparent;
     cursor: pointer;
     transition: background-color 0.15s;
 
     &:hover {
-      background: var(--primary-100);
+      background: var(--orange-100);
     }
 
     &:focus-visible {
-      outline: 2px solid var(--primary-accent);
+      outline: 2px solid var(--link-default);
       outline-offset: 2px;
     }
   }
@@ -310,7 +310,7 @@
     overflow-y: auto;
     padding: 28px 22px 30px;
     border-radius: 45px;
-    background: #eef0e5;
+    background: var(--bg-surface);
     animation: modal-in 0.2s ease-out;
   }
 
@@ -341,7 +341,7 @@
     height: 40px;
     border: none;
     border-radius: 50%;
-    color: var(--body-default);
+    color: var(--body-text-default);
     background: transparent;
     cursor: pointer;
     transition: opacity 0.15s;
@@ -351,7 +351,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--primary-accent);
+      outline: 2px solid var(--link-default);
       outline-offset: 2px;
     }
   }
@@ -362,7 +362,7 @@
     gap: var(--spacing-md);
     padding: 30px 28px 32px;
     border-radius: 38px;
-    background: var(--color-white);
+    background: var(--white);
   }
 
   .modal__field {
@@ -372,7 +372,7 @@
 
   .modal__field label {
     margin-bottom: var(--spacing-sm);
-    font-family: var(--font-heading);
+    font-family: var(--font-subtitle);
     font-size: 23px;
     font-weight: var(--font-weight-regular);
     line-height: 1;
@@ -385,8 +385,8 @@
     padding: 0 20px;
     border: none;
     border-radius: 999px;
-    background: #f0eeee;
-    color: var(--body-default);
+    background: var(--bg-surface);
+    color: var(--body-text-default);
     font-family: var(--font-body);
     font-size: 16px;
     outline: none;
@@ -471,4 +471,31 @@
     opacity: 1;
     transform: none;
   }
+}
+
+/* ---------------------------------------------------------------------------
+   NAVBAR DRAWER — Menú móvil
+   --------------------------------------------------------------------------- */
+.navbar-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(18, 18, 18, 0.4);
+}
+
+.navbar-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 60;
+  height: 100dvh;
+  width: 280px;
+  background: var(--bg-page);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+}
+
+.navbar-drawer--open {
+  transform: translateX(0);
 }

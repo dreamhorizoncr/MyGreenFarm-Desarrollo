@@ -11,8 +11,8 @@
     font: var(--font-weight-regular)
       var(--text-body)/var(--text-body--line-height) var(--font-body);
     letter-spacing: 0.18px;
-    color: var(--body-default);
-    background: var(--color-cream-100);
+    color: var(--body-text-default);
+    background: var(--bg-page);
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -36,7 +36,7 @@
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    background: var(--color-cream-100);
+    background: var(--bg-page);
   }
 
   /* ---------------------------------------------------------------------------
@@ -49,7 +49,7 @@
   h5,
   h6 {
     font-family: var(--font-heading);
-    font-weight: var(--font-weight-regular);
+    font-weight: var(--font-weight-bold);
     color: var(--heading-default);
   }
 
@@ -92,6 +92,14 @@
   }
 
   /* ---------------------------------------------------------------------------
+   LINKS
+   --------------------------------------------------------------------------- */
+  a {
+    font-family: var(--font-link);
+    font-weight: 300;
+  }
+
+  /* ---------------------------------------------------------------------------
    CODE
    --------------------------------------------------------------------------- */
   code {
@@ -108,7 +116,7 @@
    FOCUS — override preflight
    --------------------------------------------------------------------------- */
   :focus-visible {
-    outline: 2px solid var(--primary-accent);
+    outline: 2px solid var(--link-default);
     outline-offset: 2px;
   }
 
@@ -125,5 +133,26 @@
 
   :where(button:disabled, input:disabled, select:disabled, textarea:disabled) {
     cursor: not-allowed;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   FONT WEIGHT OVERRIDES — Combina familia + peso para utilidades Tailwind
+   --------------------------------------------------------------------------- */
+@layer base {
+  .font-heading {
+    font-weight: 700;
+  }
+
+  .font-body {
+    font-weight: 400;
+  }
+
+  .font-link {
+    font-weight: 300;
+  }
+
+  .font-subtitle {
+    font-weight: 400;
   }
 }

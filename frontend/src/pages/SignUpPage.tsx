@@ -2,7 +2,7 @@ import { useState, useEffect, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import Button from '../components/ui/Button.tsx'
-import LanguageSwitcher from '../components/LanguageSwitcher.tsx'
+import Navbar from '../components/Navbar.tsx'
 import { useRegister } from '../hooks/useRegister.ts'
 import { validateEmail, validatePassword, validateRequired } from '../utils/validators.ts'
 import i18n from '../i18n/index.ts'
@@ -56,89 +56,10 @@ function SignUpPage() {
   return (
     <div className="min-h-screen overflow-hidden bg-cream-100">
       {/* NAVBAR */}
-      <header className="relative z-40 h-[120px] bg-cream-100">
-        <nav className="mx-auto flex h-full w-full items-center px-11">
-          {/* Marca */}
-          <Link
-            to="/"
-            className="font-heading text-[26px] text-heading"
-          >
-            My Green Farm
-          </Link>
-
-          {/* Navegación */}
-          <div className="ml-auto flex items-center gap-7 font-link">
-            <Link
-              to="/"
-              className="text-body transition-opacity hover:opacity-70"
-            >
-              {t('navbar.home')}
-            </Link>
-
-            <Link
-              to="/news"
-              className="text-body transition-opacity hover:opacity-70"
-            >
-              {t('navbar.news')}
-            </Link>
-
-            <Link
-              to="/multimedia"
-              className="text-body transition-opacity hover:opacity-70"
-            >
-              {t('navbar.multimedia')}
-            </Link>
-
-            <Link
-              to="/forum"
-              className="text-body transition-opacity hover:opacity-70"
-            >
-              {t('navbar.forum')}
-            </Link>
-
-            <Link
-              to="/services"
-              className="text-body transition-opacity hover:opacity-70"
-            >
-              {t('navbar.services')}
-            </Link>
-
-            <Link
-              to="/login"
-              className="
-                rounded-full
-                bg-success
-                px-11
-                py-4
-                text-white
-                transition-opacity
-                hover:opacity-90
-              "
-            >
-              {t('navbar.signIn')}
-            </Link>
-
-            <Link
-              to="/signup"
-              className="
-                rounded-full
-                border
-                border-heading
-                px-11
-                py-[15px]
-                text-body
-                transition-colors
-                hover:bg-cream-200
-              "
-            >
-              {t('navbar.signUp')}
-            </Link>
-          </div>
-        </nav>
-      </header>
+      <Navbar variant="full" />
 
       {/* SIGN UP / ILUSTRACIONES */}
-      <main className="relative h-[calc(100vh-120px)] min-h-[700px] overflow-hidden">
+      <main className="relative h-[calc(100vh-64px)] min-h-[700px] overflow-hidden">
         {/* Paisaje */}
         <img
           src={loginBackground}
@@ -178,7 +99,7 @@ function SignUpPage() {
             z-20
             w-[660px]
             rounded-[45px]
-            bg-[#EEF0E5]
+            bg-[var(--bg-surface)]
             px-[22px]
             pb-[30px]
             pt-[28px]
@@ -189,8 +110,8 @@ function SignUpPage() {
             <p
               className="
                 m-0
-                font-body
-                text-[32px]
+                font-heading
+                text-h4
                 font-normal
                 leading-tight
                 text-body
@@ -204,7 +125,7 @@ function SignUpPage() {
                 mb-7
                 mt-5
                 font-heading
-                text-[32px]
+                text-h2
                 font-normal
                 leading-none
                 text-heading
@@ -261,8 +182,8 @@ function SignUpPage() {
                         mb-3
                         block
                         text-left
-                        font-heading
-                        text-[23px]
+                        font-subtitle
+                        text-h5
                         font-normal
                         leading-none
                         text-heading
@@ -286,7 +207,7 @@ function SignUpPage() {
                         h-[37px]
                         w-full
                         rounded-full
-                        bg-[#F0EEEE]
+                        bg-[var(--bg-surface)]
                         px-5
                         font-body
                         text-body
@@ -311,8 +232,8 @@ function SignUpPage() {
                         mb-3
                         block
                         text-left
-                        font-heading
-                        text-[23px]
+                        font-subtitle
+                        text-h5
                         font-normal
                         leading-none
                         text-heading
@@ -336,7 +257,7 @@ function SignUpPage() {
                         h-[37px]
                         w-full
                         rounded-full
-                        bg-[#F0EEEE]
+                        bg-[var(--bg-surface)]
                         px-5
                         font-body
                         text-body
@@ -364,8 +285,8 @@ function SignUpPage() {
                         mb-3
                         block
                         text-left
-                        font-heading
-                        text-[23px]
+                        font-subtitle
+                        text-h5
                         font-normal
                         leading-none
                         text-heading
@@ -389,7 +310,7 @@ function SignUpPage() {
                         h-[37px]
                         w-full
                         rounded-full
-                        bg-[#F0EEEE]
+                        bg-[var(--bg-surface)]
                         px-5
                         font-body
                         text-body
@@ -414,8 +335,8 @@ function SignUpPage() {
                         mb-3
                         block
                         text-left
-                        font-heading
-                        text-[23px]
+                        font-subtitle
+                        text-h5
                         font-normal
                         leading-none
                         text-heading
@@ -439,7 +360,7 @@ function SignUpPage() {
                         h-[37px]
                         w-full
                         rounded-full
-                        bg-[#F0EEEE]
+                        bg-[var(--bg-surface)]
                         px-5
                         font-body
                         text-body
@@ -467,8 +388,8 @@ function SignUpPage() {
                         mb-3
                         block
                         text-left
-                        font-heading
-                        text-[23px]
+                        font-subtitle
+                        text-h5
                         font-normal
                         leading-none
                         text-heading
@@ -492,7 +413,7 @@ function SignUpPage() {
                         w-full
                         appearance-none
                         rounded-full
-                        bg-[#F0EEEE]
+                        bg-[var(--bg-surface)]
                         px-5
                         pr-12
                         font-body
@@ -571,10 +492,6 @@ function SignUpPage() {
           </div>
         </section>
 
-        {/* Language switcher */}
-        <div className="absolute left-8 top-8 z-30">
-          <LanguageSwitcher />
-        </div>
       </main>
     </div>
   )
