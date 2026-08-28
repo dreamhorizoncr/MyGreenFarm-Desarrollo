@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next'
-import LanguageSwitcher from '../components/LanguageSwitcher.tsx'
 import ProfileButton from '../components/ProfileButton.tsx'
 
 function HomePage() {
@@ -8,7 +7,6 @@ function HomePage() {
   return (
     <section id="home">
       <div className="home-header">
-        <LanguageSwitcher />
         <ProfileButton />
       </div>
       <h1>{t('app.title')}</h1>

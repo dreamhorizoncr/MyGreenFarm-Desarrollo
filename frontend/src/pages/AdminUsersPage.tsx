@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Pencil } from 'lucide-react'
-import LanguageSwitcher from '../components/LanguageSwitcher.tsx'
 import ProfileButton from '../components/ProfileButton.tsx'
 import EditUserModal from '../components/EditUserModal.tsx'
 import { useAdmin } from '../hooks/useAdmin.ts'
@@ -31,12 +30,11 @@ function AdminUsersPage() {
     <section id="admin-users" className="min-h-screen bg-cream-100">
       {/* Encabezado */}
       <div className="home-header">
-        <Link to="/" className="font-heading text-[26px] text-heading no-underline">
+        <Link to="/" className="font-heading text-h6 text-heading no-underline">
           My Green Farm
         </Link>
 
         <div className="flex items-center gap-7">
-          <LanguageSwitcher />
           <ProfileButton />
         </div>
       </div>
