@@ -23,10 +23,10 @@ export default {
     signUp: 'Sign up',
   },
   login: {
-    overtitle: 'Administrative Portal',
-    title: 'Sign in',
-    buttonLabel: 'Sign in',
-    loading: 'Signing in...',
+    overtitle: 'Welcome',
+    title: 'LOGIN',
+    buttonLabel: 'Login',
+    loading: 'Logging in...',
     email: 'Email',
     password: 'Password',
     forgotPassword: 'Forgot your password?',
@@ -34,7 +34,7 @@ export default {
     goToSignup: 'Create account',
   },
   signup: {
-    overtitle: 'Administrative Portal',
+    overtitle: 'Welcome',
     title: 'Create account',
     firstName: 'First name',
     lastName: 'Last name',
@@ -51,6 +51,7 @@ export default {
     goToLogin: 'Sign in',
   },
   forgotPassword: {
+    overtitle: 'Welcome',
     title: 'Recover password',
     description: 'Enter your email and we will send you a link to reset your password.',
     email: 'Email',
@@ -60,6 +61,7 @@ export default {
     backToLogin: 'Back to sign in',
   },
   resetPassword: {
+    overtitle: 'Welcome',
     title: 'Reset password',
     newPassword: 'New password',
     confirmPassword: 'Confirm password',
