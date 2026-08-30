@@ -24,7 +24,7 @@ export default {
     signUp: 'Registrarse',
   },
   login: {
-    overtitle: 'Portal Administrativo',
+    overtitle: 'Bienvenido',
     title: 'Iniciar sesión',
     buttonLabel: 'Iniciar Sesión',
     loading: 'Entrando...',
@@ -35,7 +35,7 @@ export default {
     goToSignup: 'Crear cuenta',
   },
   signup: {
-    overtitle: 'Portal Administrativo',
+    overtitle: 'Bienvenido',
     title: 'Crear cuenta',
     firstName: 'Nombre',
     lastName: 'Apellido',
@@ -52,6 +52,7 @@ export default {
     goToLogin: 'Iniciar sesión',
   },
   forgotPassword: {
+    overtitle: 'Bienvenido',
     title: 'Recuperar contraseña',
     description: 'Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.',
     email: 'Correo electrónico',
@@ -61,6 +62,7 @@ export default {
     backToLogin: 'Regresar al inicio de sesión',
   },
   resetPassword: {
+    overtitle: 'Bienvenido',
     title: 'Restablecer contraseña',
     newPassword: 'Nueva contraseña',
     confirmPassword: 'Confirmar contraseña',

@@ -1,13 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button.tsx";
-import Navbar from "../components/Navbar.tsx";
+import LanguageSwitcher from "../components/LanguageSwitcher.tsx";
 import { useLogin } from "../hooks/useLogin.ts";
 import { useState, useEffect, type FormEvent } from "react";
 import { validateEmail, validatePassword } from "../utils/validators.ts";
 import i18n from "../i18n/index.ts";
-import rutySitted from "../assets/imgs/RutySitted.png";
-import loginBackground from "../assets/imgs/LogInLandscape.png";
+import loginIlustration from "../assets/imgs/IlustrationAuth.png";
 
 function LoginPage() {
   const { t } = useTranslation();
@@ -36,102 +35,52 @@ function LoginPage() {
     setPasswordValidationError(passwordErrorMessage);
     if (emailErrorMessage || passwordErrorMessage) return;
     submitLogin({ email, password }, (user) =>
-      navigate(user.role === "ADMIN" ? "/admin/users" : "/")
+      navigate(user.role === "ADMIN" ? "/admin/users" : "/"),
     );
   };
 
   return (
-    <div className="min-h-screen overflow-hidden bg-cream-100">
-      {/*NAVBAR*/}
-      <Navbar variant="full" />
+    <main className="flex min-h-screen items-center justify-center bg-bg-page px-6 py-10">
+      {/*Contenedor Principal*/}
+      <section className="relative flex h-[650px] w-full max-w-[1180px] overflow-hidden rounded-2xl bg-bg-card shadow">
+        {/*Panel Izquierdo*/}
+        <div className="relative hidden w-1/2 overflow-hidden md:block">
+          {/*Ilustración*/}
+          <img
+            src={loginIlustration}
+            alt="My Green Farm"
+            className="absolute inset-0 h-full w-full object-cover object-center"
+          />
 
-      {/*LOGIN / ILUSTRACIONES*/}
-      <main className="relative h-[calc(100vh-64px)] min-h-[700px] overflow-hidden">
-        {/* Paisaje */}
-        <img
-          src={loginBackground}
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 h-full w-full object-cover object-center"
-        />
+          {/*Welcome*/}
+          <div className="absolute left-0 top-[9%] z-10 w-full text-center">
+            <h1 className="m-0 font-heading text-[45px] leading-none tracking-wide text-white">
+              {t("login.overtitle")}
+            </h1>
+          </div>
+        </div>
 
-        {/* Ruty */}
-        <img
-          src={rutySitted}
-          alt="Ruty"
-          className="
-          absolute
-          bottom-[15%]
-          left-[25%]
-          z-10
-          w-[425px]
-          max-w-[32vw]
-          object-contain
-        "
-        />
-
-        {/*PORTAL ADMINISTRATIVO*/}
-        <section
-          className="
-          absolute
-          right-[3.1%]
-          top-[5%]
-          z-20
-          w-[437px]
-          rounded-[45px]
-          bg-[var(--bg-surface)]
-          px-[18px]
-          pb-[38px]
-          pt-[32px]
-        "
-        >
-          {/* Título del portal */}
-          <div className="text-center">
-            <p
-              className="
-              m-0
-              font-heading
-              text-h4
-              font-normal
-              leading-tight
-               text-body
-            "
-            >
-              {t('login.overtitle')}
-            </p>
-
-            <h2
-              className="
-              mt-6
-              mb-7
-              font-heading
-              text-h2
-              font-normal
-              leading-none
-              text-heading
-            "
-            >
-              {t("login.title")}
-            </h2>
+        {/*Panel Derecho*/}
+        <div className="relative flex w-full flex-col bg-bg-card px-[70px] py-[55px] md:w-1/2">
+          {/*Selector de idioma*/}
+          <div className="absolute right-[30px] top-[25px] z-20">
+            <LanguageSwitcher />
           </div>
 
-          {/*FORMULARIO*/}
-          <div className="rounded-[38px] bg-white px-[19px] pb-[42px] pt-[34px]">
-            <form onSubmit={handleLogin} noValidate className="font-body">
-              {/* Correo */}
-              <div className="mb-4">
+          {/*Contenido*/}
+          <div className="mx-auto flex h-full w-full max-w-[390px] flex-col justify-center">
+            {/*Título*/}
+            <h2 className="mb-[55px] text-center font-heading text-[42px] leading-none text-heading">
+              {t("login.title")}
+            </h2>
+
+            {/*Formulario*/}
+            <form onSubmit={handleLogin} noValidate>
+              {/*Correo*/}
+              <div className="mb-[30px]">
                 <label
                   htmlFor="login-email"
-                  className="
-                  mb-3
-                  block
-                  text-left
-                  font-subtitle
-                  text-h5
-                  font-normal
-                  leading-none
-                  text-heading
-                "
+                  className="mb-[4px] block text-left font-body text-[16px] text-body-text"
                 >
                   {t("login.email")}
                 </label>
@@ -147,41 +96,22 @@ function LoginPage() {
                       setEmailValidationError(null);
                     }
                   }}
-                  className="
-                  h-[37px]
-                  w-full
-                  rounded-full
-                  bg-[var(--bg-surface)]
-                  px-5
-                  font-body
-                  text-body
-                  outline-none
-                  focus:ring-2
-                  focus:ring-heading
-                "
+                  className="h-[38px] w-full border-b border-neutral-300 bg-transparent px-0 font-body text-[15px] text-body-text outline-none transition focus:border-green-500"
                 />
 
+                {/*Error de validación*/}
                 {emailValidationError && (
-                  <p className="mt-2 text-sm text-danger">
+                  <p className="mt-2 text-left font-body text-sm text-danger">
                     {emailValidationError}
                   </p>
                 )}
               </div>
 
-              {/* Contraseña */}
+              {/*Contraseña*/}
               <div>
                 <label
                   htmlFor="login-password"
-                  className="
-                  mb-3
-                  block
-                  text-left
-                  font-subtitle
-                  text-h5
-                  font-normal
-                  leading-none
-                  text-heading
-                "
+                  className="mb-[4px] block text-left font-body text-[16px] text-body-text"
                 >
                   {t("login.password")}
                 </label>
@@ -197,71 +127,61 @@ function LoginPage() {
                       setPasswordValidationError(null);
                     }
                   }}
-                  className="
-                  h-[37px]
-                  w-full
-                  rounded-full
-                  bg-[var(--bg-surface)]
-                  px-5
-                  font-body
-                  text-body
-                  outline-none
-                  focus:ring-2
-                  focus:ring-heading
-                "
+                  className="h-[38px] w-full border-b border-neutral-300 bg-transparent px-0 font-body text-[15px] text-body-text outline-none transition focus:border-green-500"
                 />
 
+                {/*Error de validación*/}
                 {passwordValidationError && (
-                  <p className="mt-2 text-sm text-danger">
+                  <p className="mt-2 text-left font-body text-sm text-danger">
                     {passwordValidationError}
                   </p>
                 )}
               </div>
 
-              {/* Recuperar contraseña */}
-              <div className="mt-4 text-right">
+              {/*Recuperar contraseña*/}
+              <div className="mt-[15px] text-right">
                 <Link
                   to="/forgot-password"
-                  className="
-                  font-body
-                  text-sm
-                  text-primary
-                  transition-opacity
-                  hover:opacity-70
-                "
+                  className="font-link text-[13px] text-heading transition-opacity hover:opacity-70"
                 >
-                  {t('login.forgotPassword')}
+                  {t("login.forgotPassword")}
                 </Link>
               </div>
 
-              {/* Error de autenticación */}
+              {/*Error de autenticación*/}
               {error && (
-                <p className="mt-4 text-center text-sm text-danger">{error}</p>
+                <p className="mt-4 text-center font-body text-sm text-danger">
+                  {error}
+                </p>
               )}
 
-              {/* Botón */}
-              <div className="mt-7">
-                <Button type="submit" loading={loading} variant="success" className= "text-xl">
+              {/*Botón*/}
+              <div className="mt-[35px]">
+                <Button
+                  type="submit"
+                  loading={loading}
+                  variant="success"
+                  className="h-[47px] w-full rounded-none bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
+                >
                   {loading ? t("login.loading") : t("login.buttonLabel")}
                 </Button>
               </div>
 
-              {/* Registro si no tiene una cuenta existente */}
-              <p className="mt-5 text-center font-body text-sm text-primary">
+              {/*Registro*/}
+              <p className="mt-[26px] text-center font-body text-[14px] text-body-text">
                 {t("login.noAccount")}{" "}
                 <Link
                   to="/signup"
-                  className="font-link font-bold hover:underline"
+                  className="font-link text-heading transition-opacity hover:opacity-70"
                 >
                   {t("login.goToSignup")}
                 </Link>
               </p>
             </form>
           </div>
-        </section>
-
-      </main>
-    </div>
+        </div>
+      </section>
+    </main>
   );
 }
 

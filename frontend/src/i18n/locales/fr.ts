@@ -22,7 +22,7 @@ export default {
     signUp: "S'inscrire",
   },
   login: {
-    overtitle: 'Portail Administratif',
+    overtitle: 'Bienvenue',
     title: 'Se connecter',
     buttonLabel: 'Se connecter',
     loading: 'Connexion...',
@@ -33,7 +33,7 @@ export default {
     goToSignup: 'Créer un compte',
   },
   signup: {
-    overtitle: 'Portail Administratif',
+    overtitle: 'Bienvenue',
     title: 'Créer un compte',
     firstName: 'Prénom',
     lastName: 'Nom',
@@ -50,6 +50,7 @@ export default {
     goToLogin: 'Se connecter',
   },
   forgotPassword: {
+    overtitle: 'Bienvenue',
     title: 'Récupérer le mot de passe',
     description: 'Entrez votre e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.',
     email: 'E-mail',
@@ -59,6 +60,7 @@ export default {
     backToLogin: 'Retour à la connexion',
   },
   resetPassword: {
+    overtitle: 'Bienvenue',
     title: 'Réinitialiser le mot de passe',
     newPassword: 'Nouveau mot de passe',
     confirmPassword: 'Confirmer le mot de passe',
