@@ -1,11 +1,13 @@
-package taller.multimedia.backend.service;
+package taller.multimedia.backend.service.announcement;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import taller.multimedia.backend.model.Announcement;
-import taller.multimedia.backend.dto.AnnouncementRequest;
-import taller.multimedia.backend.dto.AnnouncementResponse;
+
+import taller.multimedia.backend.dto.announcement.AnnouncementRequest;
+import taller.multimedia.backend.dto.announcement.AnnouncementResponse;
+import taller.multimedia.backend.model.announcement.Announcement;
 import taller.multimedia.backend.repository.AnnouncementRepository;
 
 import java.time.LocalDateTime;
@@ -17,10 +19,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AnnouncementService {
 
+    private final AnnouncementImageService announcementImageService;
     private final AnnouncementRepository announcementRepository;
 
     @Transactional
     public AnnouncementResponse create(AnnouncementRequest dto) {
+
         Announcement announcement = new Announcement();
         announcement.setTitle(dto.getTitle());
         announcement.setContent(dto.getContent());
@@ -81,17 +85,19 @@ public class AnnouncementService {
 
     @Transactional
     public void delete(UUID id) {
-        // 1. Verifica si existe antes de borrar para evitar errores silenciosos
-        if (!announcementRepository.existsById(id)) {
-            throw new RuntimeException("Anuncio no encontrado con ID: " + id);
-        }
-        // 2. Elimina el registro por su ID
-        announcementRepository.deleteById(id);
+        Announcement announcement = announcementRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Anuncio no encontrado con ID: " + id));
+
+        // 1. Borrar primero los archivos físicos del bucket usando el servicio de imágenes
+        announcementImageService.deleteAllImagesByAnnouncement(id);
+
+        // 2. Borrar el anuncio (y por cascada se limpian los registros de la BD)
+        announcementRepository.delete(announcement);
     }
 
     @Transactional(readOnly = true)
     public List<AnnouncementResponse> getAllActive(String lang) {
-        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(28);
         
         return announcementRepository.findByCreatedAtAfter(thirtyDaysAgo).stream()
                 .map(announcement -> mapToResponse(announcement, lang))

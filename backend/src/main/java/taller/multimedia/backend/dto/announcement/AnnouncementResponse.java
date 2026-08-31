@@ -1,10 +1,10 @@
-package taller.multimedia.backend.dto;
+package taller.multimedia.backend.dto.announcement;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import lombok.Data;
-import taller.multimedia.backend.model.AnnouncementType;
+import taller.multimedia.backend.model.announcement.AnnouncementType;
 
 @Data
 public class AnnouncementResponse {

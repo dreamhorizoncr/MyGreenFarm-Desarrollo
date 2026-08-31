@@ -1,4 +1,4 @@
-package taller.multimedia.backend.model;
+package taller.multimedia.backend.model.announcement;
 
 public enum AnnouncementType {
     NEWS,

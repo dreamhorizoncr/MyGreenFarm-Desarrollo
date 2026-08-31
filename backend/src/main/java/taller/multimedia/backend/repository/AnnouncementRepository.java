@@ -6,7 +6,8 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import taller.multimedia.backend.model.Announcement;
+
+import taller.multimedia.backend.model.announcement.Announcement;
 
 @Repository
 public interface AnnouncementRepository extends JpaRepository<Announcement, UUID>{
