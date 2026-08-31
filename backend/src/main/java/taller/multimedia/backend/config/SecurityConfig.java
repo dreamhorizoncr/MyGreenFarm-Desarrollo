@@ -113,8 +113,10 @@ public class SecurityConfig {
                 "/login",
                 "/signup",
                 "/forgot-password",
-                "/reset-password"
+                "/reset-password",
+                "/api/announcements"
             ).permitAll()
+            .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/announcements").permitAll()
             .anyRequest().authenticated()
         )
         .csrf(csrf -> csrf.disable())
