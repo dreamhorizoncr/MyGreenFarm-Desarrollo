@@ -2,6 +2,7 @@ import { useState, useEffect, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import Button from "../components/ui/Button.tsx";
+import PasswordInput from "../components/ui/PasswordInput.tsx";
 import LanguageSwitcher from "../components/LanguageSwitcher.tsx";
 import { useRegister } from "../hooks/useRegister.ts";
 import {
@@ -246,9 +247,8 @@ function SignUpPage() {
                       {t("signup.password")}
                     </label>
 
-                    <input
+                    <PasswordInput
                       id="signup-password"
-                      type="password"
                       value={password}
                       onChange={(e) => {
                         setPassword(e.target.value);
@@ -258,6 +258,8 @@ function SignUpPage() {
                         }
                       }}
                       className="h-[38px] w-full border-b border-neutral-300 bg-transparent px-0 font-body text-[15px] text-body-text outline-none transition focus:border-green-500"
+                      showAriaLabel={t("passwordInput.showPassword")}
+                      hideAriaLabel={t("passwordInput.hidePassword")}
                     />
 
                     {passwordValidationError && (

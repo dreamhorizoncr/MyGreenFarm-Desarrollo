@@ -11,8 +11,16 @@ export default {
     title: 'hola',
     tagline: 'Servicios Educativos',
   },
+  teacherDashboard: {
+    hello: 'Hola',
+    subtitle: 'Bienvenido a tu espacio de trabajo docente.',
+  },
   languageSwitcher: {
     label: 'Seleccionar idioma',
+  },
+  passwordInput: {
+    showPassword: 'Mostrar contraseña',
+    hidePassword: 'Ocultar contraseña',
   },
   navbar: {
     home: 'Inicio',
@@ -90,10 +98,15 @@ export default {
   },
   profile: {
     logout: 'Cerrar sesión',
-    admin: 'Gestión de usuarios',
   },
   admin: {
     title: 'Gestión de usuarios',
+    docentesTitle: 'Gestión de Docentes',
+    docentesSubtitle: 'Consulta y administra los docentes del centro educativo.',
+    searchPlaceholder: 'Buscar por nombre, apellido, correo o rol',
+    addDocente: 'Agregar docente',
+    actions: 'Acciones',
+    noResults: 'No se encontraron docentes',
     firstName: 'Nombre',
     lastName: 'Apellido',
     email: 'Correo electrónico',
@@ -104,5 +117,18 @@ export default {
     updated: 'Usuario actualizado',
     loadError: 'Error al cargar usuarios',
     emailLockedHint: 'Solo podés editar tu propio correo',
+    delete: 'Eliminar',
+    notAvailable: 'Próximamente',
+    dashboard: {
+      title: 'Dashboard',
+      subtitle: 'Resumen general del centro educativo.',
+    },
+    sidebar: {
+      dashboard: 'Dashboard',
+      docentes: 'Docentes',
+      cv: 'CV',
+      expedientes: 'Expedientes',
+      miPerfil: 'Mi perfil',
+    },
   },
 }

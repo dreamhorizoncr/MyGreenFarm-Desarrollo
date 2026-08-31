@@ -10,8 +10,16 @@ export default {
     title: 'hello',
     tagline: 'Educational Services',
   },
+  teacherDashboard: {
+    hello: 'Hello',
+    subtitle: 'Welcome to your teaching workspace.',
+  },
   languageSwitcher: {
     label: 'Select language',
+  },
+  passwordInput: {
+    showPassword: 'Show password',
+    hidePassword: 'Hide password',
   },
   navbar: {
     home: 'Home',
@@ -89,10 +97,15 @@ export default {
   },
   profile: {
     logout: 'Sign out',
-    admin: 'User management',
   },
   admin: {
     title: 'User management',
+    docentesTitle: 'Teacher Management',
+    docentesSubtitle: 'View and manage the educational center teachers.',
+    searchPlaceholder: 'Search by name, last name, email or role',
+    addDocente: 'Add teacher',
+    actions: 'Actions',
+    noResults: 'No teachers found',
     firstName: 'First name',
     lastName: 'Last name',
     email: 'Email',
@@ -103,5 +116,18 @@ export default {
     updated: 'User updated',
     loadError: 'Error loading users',
     emailLockedHint: 'You can only edit your own email',
+    delete: 'Delete',
+    notAvailable: 'Coming soon',
+    dashboard: {
+      title: 'Dashboard',
+      subtitle: 'General overview of the educational center.',
+    },
+    sidebar: {
+      dashboard: 'Dashboard',
+      docentes: 'Teachers',
+      cv: 'CV',
+      expedientes: 'Records',
+      miPerfil: 'My profile',
+    },
   },
 }

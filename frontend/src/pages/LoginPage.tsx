@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button.tsx";
+import PasswordInput from "../components/ui/PasswordInput.tsx";
 import LanguageSwitcher from "../components/LanguageSwitcher.tsx";
 import { useLogin } from "../hooks/useLogin.ts";
 import { useState, useEffect, type FormEvent } from "react";
@@ -35,7 +36,7 @@ function LoginPage() {
     setPasswordValidationError(passwordErrorMessage);
     if (emailErrorMessage || passwordErrorMessage) return;
     submitLogin({ email, password }, (user) =>
-      navigate(user.role === "ADMIN" ? "/admin/users" : "/"),
+      navigate(user.role === "ADMIN" ? "/admin/dashboard" : "/"),
     );
   };
 
@@ -116,9 +117,8 @@ function LoginPage() {
                   {t("login.password")}
                 </label>
 
-                <input
+                <PasswordInput
                   id="login-password"
-                  type="password"
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
@@ -128,6 +128,8 @@ function LoginPage() {
                     }
                   }}
                   className="h-[38px] w-full border-b border-neutral-300 bg-transparent px-0 font-body text-[15px] text-body-text outline-none transition focus:border-green-500"
+                  showAriaLabel={t("passwordInput.showPassword")}
+                  hideAriaLabel={t("passwordInput.hidePassword")}
                 />
 
                 {/*Error de validación*/}

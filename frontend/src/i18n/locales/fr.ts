@@ -9,8 +9,16 @@ export default {
     title: 'bonjour',
     tagline: 'Services éducatifs',
   },
+  teacherDashboard: {
+    hello: 'Bonjour',
+    subtitle: 'Bienvenue dans votre espace de travail enseignant.',
+  },
   languageSwitcher: {
     label: 'Choisir la langue',
+  },
+  passwordInput: {
+    showPassword: 'Afficher le mot de passe',
+    hidePassword: 'Masquer le mot de passe',
   },
   navbar: {
     home: 'Accueil',
@@ -88,10 +96,15 @@ export default {
   },
   profile: {
     logout: 'Déconnexion',
-    admin: 'Gestion des utilisateurs',
   },
   admin: {
     title: 'Gestion des utilisateurs',
+    docentesTitle: 'Gestion des enseignants',
+    docentesSubtitle: 'Consultez et gérez les enseignants du centre éducatif.',
+    searchPlaceholder: 'Rechercher par nom, prénom, e-mail ou rôle',
+    addDocente: 'Ajouter un enseignant',
+    actions: 'Actions',
+    noResults: 'Aucun enseignant trouvé',
     firstName: 'Prénom',
     lastName: 'Nom',
     email: 'E-mail',
@@ -105,5 +118,18 @@ export default {
     updated: 'Utilisateur mis à jour',
     loadError: 'Erreur lors du chargement',
     emailLockedHint: 'Vous ne pouvez modifier que votre propre e-mail',
+    delete: 'Supprimer',
+    notAvailable: 'Bientôt disponible',
+    dashboard: {
+      title: 'Tableau de bord',
+      subtitle: "Aperçu général du centre éducatif.",
+    },
+    sidebar: {
+      dashboard: 'Tableau de bord',
+      docentes: 'Enseignants',
+      cv: 'CV',
+      expedientes: 'Dossiers',
+      miPerfil: 'Mon profil',
+    },
   },
 }

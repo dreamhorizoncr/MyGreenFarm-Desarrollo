@@ -128,7 +128,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: EditUserMod
           </div>
 
           <div className="modal__footer">
-            <Button variant="secondary" onClick={onClose}>
+            <Button variant="secondary" onClick={onClose} className="rounded-none font-body uppercase tracking-wide">
               {t('admin.cancel')}
             </Button>
             <Button
@@ -136,6 +136,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: EditUserMod
               onClick={handleSave}
               loading={saving}
               disabled={!firstName.trim() || !lastName.trim()}
+              className="rounded-none bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
             >
               {saving ? t('common.loading') : t('admin.save')}
             </Button>
