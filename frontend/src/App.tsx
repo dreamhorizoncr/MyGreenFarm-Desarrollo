@@ -1,21 +1,26 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
-import HomePage from './pages/HomePage.tsx'
+import TeacherDashboardPage from './pages/TeacherDashboardPage.tsx'
 import LoginPage from './pages/LoginPage.tsx'
 import SignUpPage from './pages/SignUpPage.tsx'
 import ForgotPasswordPage from './pages/ForgotPasswordPage.tsx'
 import ResetPasswordPage from './pages/ResetPasswordPage.tsx'
 import AdminUsersPage from './pages/AdminUsersPage.tsx'
-import ProtectedRoute from './components/ProtectedRoute.tsx'
-import AdminRoute from './components/AdminRoute.tsx'
+import AdminDashboardPage from './pages/AdminDashboardPage.tsx'
+import ProtectedRoute from './routes/ProtectedRoute.tsx'
+import AdminRoute from './routes/AdminRoute.tsx'
+import TeacherRoute from './routes/TeacherRoute.tsx'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<HomePage />} />
+          <Route element={<TeacherRoute />}>
+            <Route path="/" element={<TeacherDashboardPage />} />
+          </Route>
           <Route element={<AdminRoute />}>
+            <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
           </Route>
         </Route>

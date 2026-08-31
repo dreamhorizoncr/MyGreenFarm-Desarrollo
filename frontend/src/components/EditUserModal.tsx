@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { X } from 'lucide-react'
 import Button from './ui/Button.tsx'
+import useDismiss from '../hooks/useDismiss.ts'
 import { validateEmail, validateRequired } from '../utils/validators.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 
@@ -27,13 +28,12 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: EditUserMod
   const [lastNameValidationError, setLastNameValidationError] = useState<string | null>(null)
   const [emailValidationError, setEmailValidationError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
-    }
-    document.addEventListener('keydown', handleEscape)
-    return () => document.removeEventListener('keydown', handleEscape)
-  }, [onClose])
+  useDismiss({
+    ref: overlayRef,
+    isOpen: true,
+    onClose,
+    includeClickOutside: false,
+  })
 
   const handleSave = async () => {
     const firstNameErrorMessage = validateRequired(firstName, t('admin.firstName'), t)
@@ -61,19 +61,37 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: EditUserMod
   }
 
   return (
-    <div className="modal-overlay" ref={overlayRef} onClick={handleOverlayClick}>
-      <div className="modal" role="dialog" aria-modal="true" aria-label={t('admin.edit')}>
-        <button type="button" className="modal__close" onClick={onClose} aria-label={t('admin.cancel')}>
+    <div
+      className="fixed inset-0 z-[100] grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]"
+      ref={overlayRef}
+      onClick={handleOverlayClick}
+    >
+      <div
+        className="relative w-[min(620px,92vw)] max-h-[90vh] overflow-y-auto rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
+        role="dialog"
+        aria-modal="true"
+        aria-label={t('admin.edit')}
+      >
+        <button
+          type="button"
+          className="absolute right-3 top-[26px] z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity duration-150 hover:opacity-65 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+          onClick={onClose}
+          aria-label={t('admin.cancel')}
+        >
           <X size={20} />
         </button>
 
-        <div className="modal__header">
-          <h2>{t('admin.edit')}</h2>
+        <div className="relative mb-lg text-center">
+          <h2 className="m-0 font-heading text-[42px] font-bold leading-none text-heading">
+            {t('admin.edit')}
+          </h2>
         </div>
 
-        <div className="modal__body">
-          <div className="modal__field">
-            <label htmlFor="admin-edit-firstname">{t('admin.firstName')}</label>
+        <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px]">
+          <div className="flex flex-col">
+            <label htmlFor="admin-edit-firstname" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+              {t('admin.firstName')}
+            </label>
             <input
               id="admin-edit-firstname"
               type="text"
@@ -82,15 +100,17 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: EditUserMod
                 setFirstName(e.target.value)
                 if (firstNameValidationError) setFirstNameValidationError(null)
               }}
-              className="modal__input"
+              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
             />
             {firstNameValidationError && (
-              <p className="modal__error">{firstNameValidationError}</p>
+              <p className="mt-2xs text-left font-body text-sm text-danger">{firstNameValidationError}</p>
             )}
           </div>
 
-          <div className="modal__field">
-            <label htmlFor="admin-edit-lastname">{t('admin.lastName')}</label>
+          <div className="flex flex-col">
+            <label htmlFor="admin-edit-lastname" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+              {t('admin.lastName')}
+            </label>
             <input
               id="admin-edit-lastname"
               type="text"
@@ -99,15 +119,17 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: EditUserMod
                 setLastName(e.target.value)
                 if (lastNameValidationError) setLastNameValidationError(null)
               }}
-              className="modal__input"
+              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
             />
             {lastNameValidationError && (
-              <p className="modal__error">{lastNameValidationError}</p>
+              <p className="mt-2xs text-left font-body text-sm text-danger">{lastNameValidationError}</p>
             )}
           </div>
 
-          <div className="modal__field">
-            <label htmlFor="admin-edit-email">{t('admin.email')}</label>
+          <div className="flex flex-col">
+            <label htmlFor="admin-edit-email" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+              {t('admin.email')}
+            </label>
             <input
               id="admin-edit-email"
               type="email"
@@ -117,18 +139,18 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: EditUserMod
                 if (emailValidationError) setEmailValidationError(null)
               }}
               disabled={!isEditingSelf}
-              className="modal__input"
+              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
             />
             {!isEditingSelf && (
-              <p className="modal__hint">{t('admin.emailLockedHint')}</p>
+              <p className="mt-2xs text-left font-body text-[13px] text-neutral-500">{t('admin.emailLockedHint')}</p>
             )}
             {emailValidationError && (
-              <p className="modal__error">{emailValidationError}</p>
+              <p className="mt-2xs text-left font-body text-sm text-danger">{emailValidationError}</p>
             )}
           </div>
 
-          <div className="modal__footer">
-            <Button variant="secondary" onClick={onClose}>
+          <div className="flex gap-md mt-sm">
+            <Button variant="secondary" onClick={onClose} className="h-[47px] flex-1 rounded-none font-body text-[17px] uppercase tracking-wide">
               {t('admin.cancel')}
             </Button>
             <Button
@@ -136,6 +158,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: EditUserMod
               onClick={handleSave}
               loading={saving}
               disabled={!firstName.trim() || !lastName.trim()}
+              className="h-[47px] flex-1 rounded-none bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
             >
               {saving ? t('common.loading') : t('admin.save')}
             </Button>

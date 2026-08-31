@@ -245,6 +245,17 @@
   --color-pink-400: var(--pink-400);
   --color-orange-500: var(--orange-500);
   --color-grey-500: var(--grey-500);
+  --color-white: var(--white);
+  --color-neutral-100: var(--neutral-100);
+  --color-neutral-200: var(--neutral-200);
+  --color-neutral-300: var(--neutral-300);
+  --color-neutral-400: var(--neutral-400);
+  --color-neutral-500: var(--neutral-500);
+  --color-neutral-default: var(--neutral-default);
+  --color-orange-100: var(--orange-100);
+  --color-danger-100: var(--danger-100);
+  --color-body-text-light: var(--body-text-light);
+  --color-scrim: rgba(18, 18, 18, 0.45);
 
   /*TIPOGRAFÍA*/
   --font-heading: "Dosis", sans-serif;

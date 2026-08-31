@@ -7,12 +7,16 @@
  */
 
 export default {
-  app: {
-    title: 'hola',
-    tagline: 'Servicios Educativos',
+  teacherDashboard: {
+    hello: 'Hola',
+    subtitle: 'Bienvenido a tu espacio de trabajo docente.',
   },
   languageSwitcher: {
     label: 'Seleccionar idioma',
+  },
+  passwordInput: {
+    showPassword: 'Mostrar contraseña',
+    hidePassword: 'Ocultar contraseña',
   },
   navbar: {
     home: 'Inicio',
@@ -20,8 +24,6 @@ export default {
     multimedia: 'Multimedia',
     forum: 'Foro',
     services: 'Servicios',
-    signIn: 'Iniciar Sesión',
-    signUp: 'Registrarse',
   },
   login: {
     overtitle: 'Bienvenido',
@@ -76,7 +78,6 @@ export default {
   },
   common: {
     error: 'Ha ocurrido un error',
-    retry: 'Reintentar',
     loading: 'Cargando...',
     noUsers: 'No hay usuarios registrados',
   },
@@ -90,10 +91,14 @@ export default {
   },
   profile: {
     logout: 'Cerrar sesión',
-    admin: 'Gestión de usuarios',
   },
   admin: {
-    title: 'Gestión de usuarios',
+    docentesTitle: 'Gestión de Docentes',
+    docentesSubtitle: 'Consulta y administra los docentes del centro educativo.',
+    searchPlaceholder: 'Buscar por nombre, apellido, correo o rol',
+    addDocente: 'Agregar docente',
+    actions: 'Acciones',
+    noResults: 'No se encontraron docentes',
     firstName: 'Nombre',
     lastName: 'Apellido',
     email: 'Correo electrónico',
@@ -101,8 +106,23 @@ export default {
     edit: 'Editar',
     save: 'Guardar',
     cancel: 'Cancelar',
-    updated: 'Usuario actualizado',
-    loadError: 'Error al cargar usuarios',
     emailLockedHint: 'Solo podés editar tu propio correo',
+    delete: 'Eliminar',
+    deleteConfirmTitle: 'Eliminar docente',
+    deleteConfirmMessage: '¿Seguro que deseas eliminar a "{{name}}"? Esta acción no se puede deshacer.',
+    deleteConfirmFieldLabel: 'Para confirmar, escribe "{{name}}"',
+    deleteConfirmPlaceholder: 'Escribe "{{name}}"',
+    selfDeleteNotAllowed: 'No puedes eliminar tu propia cuenta',
+    dashboard: {
+      title: 'Dashboard',
+      subtitle: 'Resumen general del centro educativo.',
+    },
+    sidebar: {
+      dashboard: 'Dashboard',
+      docentes: 'Docentes',
+      cv: 'CV',
+      expedientes: 'Expedientes',
+      miPerfil: 'Mi perfil',
+    },
   },
 }
