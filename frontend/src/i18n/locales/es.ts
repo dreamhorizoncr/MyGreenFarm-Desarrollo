@@ -7,10 +7,6 @@
  */
 
 export default {
-  app: {
-    title: 'hola',
-    tagline: 'Servicios Educativos',
-  },
   teacherDashboard: {
     hello: 'Hola',
     subtitle: 'Bienvenido a tu espacio de trabajo docente.',
@@ -28,8 +24,6 @@ export default {
     multimedia: 'Multimedia',
     forum: 'Foro',
     services: 'Servicios',
-    signIn: 'Iniciar Sesión',
-    signUp: 'Registrarse',
   },
   login: {
     overtitle: 'Bienvenido',
@@ -84,7 +78,6 @@ export default {
   },
   common: {
     error: 'Ha ocurrido un error',
-    retry: 'Reintentar',
     loading: 'Cargando...',
     noUsers: 'No hay usuarios registrados',
   },
@@ -100,7 +93,6 @@ export default {
     logout: 'Cerrar sesión',
   },
   admin: {
-    title: 'Gestión de usuarios',
     docentesTitle: 'Gestión de Docentes',
     docentesSubtitle: 'Consulta y administra los docentes del centro educativo.',
     searchPlaceholder: 'Buscar por nombre, apellido, correo o rol',
@@ -114,11 +106,13 @@ export default {
     edit: 'Editar',
     save: 'Guardar',
     cancel: 'Cancelar',
-    updated: 'Usuario actualizado',
-    loadError: 'Error al cargar usuarios',
     emailLockedHint: 'Solo podés editar tu propio correo',
     delete: 'Eliminar',
-    notAvailable: 'Próximamente',
+    deleteConfirmTitle: 'Eliminar docente',
+    deleteConfirmMessage: '¿Seguro que deseas eliminar a "{{name}}"? Esta acción no se puede deshacer.',
+    deleteConfirmFieldLabel: 'Para confirmar, escribe "{{name}}"',
+    deleteConfirmPlaceholder: 'Escribe "{{name}}"',
+    selfDeleteNotAllowed: 'No puedes eliminar tu propia cuenta',
     dashboard: {
       title: 'Dashboard',
       subtitle: 'Resumen general del centro educativo.',

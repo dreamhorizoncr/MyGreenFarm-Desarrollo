@@ -6,10 +6,6 @@
  */
 
 export default {
-  app: {
-    title: 'hello',
-    tagline: 'Educational Services',
-  },
   teacherDashboard: {
     hello: 'Hello',
     subtitle: 'Welcome to your teaching workspace.',
@@ -27,8 +23,6 @@ export default {
     multimedia: 'Multimedia',
     forum: 'Forum',
     services: 'Services',
-    signIn: 'Sign In',
-    signUp: 'Sign up',
   },
   login: {
     overtitle: 'Welcome',
@@ -83,7 +77,6 @@ export default {
   },
   common: {
     error: 'An error has occurred',
-    retry: 'Retry',
     loading: 'Loading...',
     noUsers: 'No registered users',
   },
@@ -99,7 +92,6 @@ export default {
     logout: 'Sign out',
   },
   admin: {
-    title: 'User management',
     docentesTitle: 'Teacher Management',
     docentesSubtitle: 'View and manage the educational center teachers.',
     searchPlaceholder: 'Search by name, last name, email or role',
@@ -113,11 +105,13 @@ export default {
     edit: 'Edit',
     save: 'Save',
     cancel: 'Cancel',
-    updated: 'User updated',
-    loadError: 'Error loading users',
     emailLockedHint: 'You can only edit your own email',
     delete: 'Delete',
-    notAvailable: 'Coming soon',
+    deleteConfirmTitle: 'Delete teacher',
+    deleteConfirmMessage: 'Are you sure you want to delete "{{name}}"? This action cannot be undone.',
+    deleteConfirmFieldLabel: 'To confirm, type "{{name}}"',
+    deleteConfirmPlaceholder: 'Type "{{name}}"',
+    selfDeleteNotAllowed: 'You cannot delete your own account',
     dashboard: {
       title: 'Dashboard',
       subtitle: 'General overview of the educational center.',

@@ -2,8 +2,8 @@
 // cargando, si hubo error y si salió bien, y llama al servicio para cambiar la contraseña.
 
 import { useState } from 'react'
-import i18n from '../i18n/index.ts'
 import { authService } from '../services/auth.ts'
+import { getErrorMessage } from '../utils/error.ts'
 import type { ResetPasswordRequest } from '../types/auth.ts'
 
 export function useResetPassword() {
@@ -20,7 +20,7 @@ export function useResetPassword() {
       await authService.resetPassword(payload)
       setSuccess(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : i18n.t('common.error'))
+      setError(getErrorMessage(err))
     } finally {
       setLoading(false)
     }

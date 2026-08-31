@@ -6,10 +6,6 @@ import LanguageSwitcher from './LanguageSwitcher.tsx'
 import ProfileButton from './ProfileButton.tsx'
 import { userStorage } from '../utils/userStorage.ts'
 
-interface NavbarProps {
-  variant?: 'full' | 'minimal' | 'panel'
-}
-
 function Brand() {
   const isAdminSection = useLocation().pathname.startsWith('/admin')
 
@@ -24,33 +20,23 @@ function Brand() {
   )
 }
 
-function Navbar({ variant = 'full' }: NavbarProps) {
+function Navbar() {
   const { t } = useTranslation()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const isAuthenticated = Boolean(userStorage.getUser())
 
-  const navLinks = variant !== 'minimal'
-    ? [
-        { to: '/', label: t('navbar.home') },
-        { to: '/news', label: t('navbar.news') },
-        { to: '/multimedia', label: t('navbar.multimedia') },
-        { to: '/forum', label: t('navbar.forum') },
-        { to: '/services', label: t('navbar.services') },
-      ]
-    : [
-        { to: '/', label: t('navbar.home') },
-      ]
+  const navLinks = [
+    { to: '/', label: t('navbar.home') },
+    { to: '/news', label: t('navbar.news') },
+    { to: '/multimedia', label: t('navbar.multimedia') },
+    { to: '/forum', label: t('navbar.forum') },
+    { to: '/services', label: t('navbar.services') },
+  ]
 
   return (
     <header className="relative z-40 h-16 border-b border-neutral-200 bg-bg-page">
       {/* Desktop nav */}
-      <nav
-        className={
-          variant === 'panel'
-            ? 'hidden h-full w-full items-center pl-4 pr-11 md:flex'
-            : 'mx-auto hidden h-full w-full max-w-[1200px] items-center px-11 md:flex'
-        }
-      >
+      <nav className="hidden h-full w-full items-center pl-4 pr-11 md:flex">
         <Brand />
 
         <div className="ml-auto flex items-center gap-7 font-link">
@@ -91,13 +77,17 @@ function Navbar({ variant = 'full' }: NavbarProps) {
       {/* Drawer overlay */}
       {drawerOpen && (
         <div
-          className="navbar-drawer-overlay"
+          className="fixed inset-0 z-50 bg-scrim"
           onClick={() => setDrawerOpen(false)}
         />
       )}
 
       {/* Drawer */}
-      <div className={`navbar-drawer ${drawerOpen ? 'navbar-drawer--open' : ''}`}>
+      <div
+        className={`fixed right-0 top-0 z-[60] h-dvh w-[280px] overflow-y-auto bg-bg-page transition-transform duration-300 ${
+          drawerOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
         <div className="flex items-center justify-between px-6 py-4">
           <Brand />
 

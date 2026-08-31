@@ -5,10 +5,6 @@
  * no se repitan en diferentes partes de la aplicación.
  */
 export default {
-  app: {
-    title: 'bonjour',
-    tagline: 'Services éducatifs',
-  },
   teacherDashboard: {
     hello: 'Bonjour',
     subtitle: 'Bienvenue dans votre espace de travail enseignant.',
@@ -26,8 +22,6 @@ export default {
     multimedia: 'Multimédia',
     forum: 'Forum',
     services: 'Services',
-    signIn: 'Se connecter',
-    signUp: "S'inscrire",
   },
   login: {
     overtitle: 'Bienvenue',
@@ -82,7 +76,6 @@ export default {
   },
   common: {
     error: 'Une erreur est survenue',
-    retry: 'Réessayer',
     loading: 'Chargement...',
     noUsers: 'Aucun utilisateur enregistré',
   },
@@ -98,7 +91,6 @@ export default {
     logout: 'Déconnexion',
   },
   admin: {
-    title: 'Gestion des utilisateurs',
     docentesTitle: 'Gestion des enseignants',
     docentesSubtitle: 'Consultez et gérez les enseignants du centre éducatif.',
     searchPlaceholder: 'Rechercher par nom, prénom, e-mail ou rôle',
@@ -109,17 +101,16 @@ export default {
     lastName: 'Nom',
     email: 'E-mail',
     role: 'Rôle',
-    selectRole: 'Sélectionner un rôle',
-    userRole: 'Utilisateur',
-    adminRole: 'Administrateur',
     edit: 'Modifier',
     save: 'Enregistrer',
     cancel: 'Annuler',
-    updated: 'Utilisateur mis à jour',
-    loadError: 'Erreur lors du chargement',
     emailLockedHint: 'Vous ne pouvez modifier que votre propre e-mail',
     delete: 'Supprimer',
-    notAvailable: 'Bientôt disponible',
+    deleteConfirmTitle: 'Supprimer le professeur',
+    deleteConfirmMessage: 'Voulez-vous vraiment supprimer "{{name}}" ? Cette action est irréversible.',
+    deleteConfirmFieldLabel: 'Pour confirmer, écrivez "{{name}}"',
+    deleteConfirmPlaceholder: 'Écrivez "{{name}}"',
+    selfDeleteNotAllowed: 'Vous ne pouvez pas supprimer votre propre compte',
     dashboard: {
       title: 'Tableau de bord',
       subtitle: "Aperçu général du centre éducatif.",

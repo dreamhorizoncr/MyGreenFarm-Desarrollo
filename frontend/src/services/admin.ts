@@ -11,4 +11,8 @@ export const adminService = {
     const response = await apiClient.put<UserInfo>(`/users/${id}`, data)
     return response.data
   },
+
+  async deleteUser(id: string): Promise<void> {
+    await apiClient.delete(`/users/${id}`)
+  },
 }

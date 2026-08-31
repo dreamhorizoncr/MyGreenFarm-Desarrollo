@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import i18n from '../i18n/index.ts'
 import { adminService } from '../services/admin.ts'
+import { getErrorMessage } from '../utils/error.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 
 export function useAdmin() {
@@ -15,7 +15,7 @@ export function useAdmin() {
       const data = await adminService.getUsers()
       setUsers(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : i18n.t('common.error'))
+      setError(getErrorMessage(err))
     } finally {
       setLoading(false)
     }
@@ -28,11 +28,24 @@ export function useAdmin() {
       const updated = await adminService.updateUser(id, data)
       setUsers((prev) => prev.map((u) => (u.id === id ? updated : u)))
     } catch (err) {
-      setError(err instanceof Error ? err.message : i18n.t('common.error'))
+      setError(getErrorMessage(err))
     } finally {
       setLoading(false)
     }
   }
 
-  return { users, loading, error, fetchUsers, updateUser }
+  const deleteUser = async (id: string) => {
+    setLoading(true)
+    setError(null)
+    try {
+      await adminService.deleteUser(id)
+      setUsers((prev) => prev.filter((u) => u.id !== id))
+    } catch (err) {
+      setError(getErrorMessage(err))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return { users, loading, error, fetchUsers, updateUser, deleteUser }
 }

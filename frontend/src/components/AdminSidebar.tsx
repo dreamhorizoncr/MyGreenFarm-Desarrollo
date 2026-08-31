@@ -38,13 +38,16 @@ function AdminSidebar() {
     navigate('/login')
   }
 
+  const itemClasses =
+    'flex w-full shrink-0 items-center gap-sm rounded-full px-md py-sm text-left font-body text-[15px] font-semibold text-body-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2'
+
   return (
-    <aside className="admin-sidebar">
-      <nav className="admin-sidebar__nav">
+    <aside className="flex w-full shrink-0 flex-col overflow-x-auto bg-bg-page p-md md:w-[260px] md:overflow-hidden md:py-lg">
+      <nav className="flex flex-1 flex-row gap-sm md:flex-col">
         {items.map(({ id, icon: Icon, path }) => {
           const isActive = path === pathname
           const label = t(`admin.sidebar.${id}`)
-          const className = `admin-sidebar__item${isActive ? ' admin-sidebar__item--active' : ''}`
+          const className = `${itemClasses}${isActive ? ' bg-heading text-white' : ''}`
 
           return path ? (
             <Link
@@ -53,7 +56,10 @@ function AdminSidebar() {
               className={className}
               aria-current={isActive ? 'page' : undefined}
             >
-              <span className="admin-sidebar__icon" aria-hidden="true">
+              <span
+                className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-heading"
+                aria-hidden="true"
+              >
                 <Icon size={18} />
               </span>
               <span>{label}</span>
@@ -65,7 +71,10 @@ function AdminSidebar() {
               className={className}
               aria-current={isActive ? 'page' : undefined}
             >
-              <span className="admin-sidebar__icon" aria-hidden="true">
+              <span
+                className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-heading"
+                aria-hidden="true"
+              >
                 <Icon size={18} />
               </span>
               <span>{label}</span>
@@ -75,10 +84,13 @@ function AdminSidebar() {
 
         <button
           type="button"
-          className="admin-sidebar__item admin-sidebar__item--logout"
+          className={`${itemClasses} mt-auto text-danger`}
           onClick={handleLogout}
         >
-          <span className="admin-sidebar__icon" aria-hidden="true">
+          <span
+            className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-danger"
+            aria-hidden="true"
+          >
             <LogOut size={18} />
           </span>
           <span>{t('profile.logout')}</span>

@@ -8,13 +8,15 @@ interface AdminLayoutProps {
 
 function AdminLayout({ children }: AdminLayoutProps) {
   return (
-    <div className="admin-shell">
-      <Navbar variant="panel" />
+    <div className="flex min-h-svh flex-col">
+      <Navbar />
 
-      <div className="admin-shell__body">
+      <div className="flex flex-1 flex-col items-stretch md:flex-row">
         <AdminSidebar />
 
-        <main className="admin-main">{children}</main>
+        <main className="min-w-0 flex-1 bg-bg-page px-[var(--spacing-md)] pb-[var(--scale-1200)] pt-[var(--scale-600)] md:px-[var(--scale-1100)] md:pb-[var(--scale-1500)] md:pt-[var(--scale-1000)]">
+          {children}
+        </main>
       </div>
     </div>
   )
