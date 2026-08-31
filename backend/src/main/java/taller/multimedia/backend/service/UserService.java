@@ -22,7 +22,7 @@ public class UserService {
 
     public List<UserInfoResponse> getAllUsers(String currentEmail) {
         User currentUser = userRepository.findByEmail(currentEmail)
-                .orElseThrow(() -> new RuntimeException("Current user not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (currentUser.getRole() != Role.ADMIN) {
             throw new RuntimeException("Only admins can list users");
@@ -52,7 +52,7 @@ public class UserService {
 
     public UserInfoResponse updateUser(UUID targetId, UpdateUserRequest request, String currentEmail) {
         User currentUser = userRepository.findByEmail(currentEmail)
-                .orElseThrow(() -> new RuntimeException("Current user not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         boolean isAdmin = currentUser.getRole() == Role.ADMIN;
 
@@ -81,6 +81,24 @@ public class UserService {
         userRepository.save(targetUser);
 
         return toResponse(targetUser);
+    }
+
+    public void deleteUser(UUID targetId, String currentEmail) {
+        User currentUser = userRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (currentUser.getRole() != Role.ADMIN) {
+            throw new RuntimeException("Only admins can delete users");
+        }
+
+        User targetUser = userRepository.findById(targetId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (currentUser.getId().equals(targetUser.getId())) {
+            throw new RuntimeException("You cannot delete your own account");
+        }
+
+        userRepository.delete(targetUser);
     }
 
     private UserInfoResponse toResponse(User user) {

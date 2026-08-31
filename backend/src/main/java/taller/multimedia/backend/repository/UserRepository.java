@@ -15,4 +15,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Boolean existsByEmail(String email); // Method to check if a user with the given email already exists
 
     Optional<User> findByResetPasswordToken(String token);
+
+    void deleteById(UUID id); // Method to delete a user by ID
 }
