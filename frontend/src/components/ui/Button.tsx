@@ -8,15 +8,9 @@ const button = tv({
   variants: {
     variant: {
       primary: 'bg-primary text-white',
-      secondary: 'bg-white text-primary border border-primary-200',
-      ghost: 'bg-transparent text-primary',
+      secondary: 'bg-white text-primary border border-neutral-200',
       danger: 'bg-danger text-white',
       success: 'bg-success text-heading',
-    },
-    size: {
-      sm: 'px-4 py-3 text-sm',
-      md: 'px-6 py-4 text-base',
-      lg: 'px-8 py-6 text-lg',
     },
     isDisabled: {
       true: 'opacity-50 cursor-not-allowed hover:opacity-50 active:scale-100',
@@ -27,23 +21,19 @@ const button = tv({
   },
   defaultVariants: {
     variant: 'primary',
-    size: 'md',
   },
 })
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'|'success'
-type ButtonSize = 'sm' | 'md' | 'lg'
+type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'success'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant
-  size?: ButtonSize
   loading?: boolean
   children: ReactNode
 }
 
 function Button({
   variant = 'primary',
-  size = 'md',
   loading = false,
   disabled = false,
   type = 'button',
@@ -56,7 +46,6 @@ function Button({
       type={type}
       className={button({
         variant,
-        size,
         isDisabled: disabled,
         isLoading: loading,
         className,

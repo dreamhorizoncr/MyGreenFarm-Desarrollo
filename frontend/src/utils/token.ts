@@ -1,6 +1,6 @@
 // Esto de aquí es para guardar y leer el token de sesión en el navegador.
 
-const TOKEN_KEY = 'mgf_token' //modifcable
+const TOKEN_KEY = 'mgf_token' // modificable
 
 export const tokenStorage = {
   getToken(): string | null {

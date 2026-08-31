@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import i18n from '../i18n/index.ts'
 import { authService } from '../services/auth.ts'
 import { tokenStorage } from '../utils/token.ts'
 import { userStorage } from '../utils/userStorage.ts'
+import { getErrorMessage } from '../utils/error.ts'
 import type { LoginData, UserInfo } from '../types/auth.ts'
 
 export function useLogin() {
@@ -20,7 +20,7 @@ export function useLogin() {
       setUser(data.user)
       onSuccess?.(data.user)
     } catch (err) {
-      setError(err instanceof Error ? err.message : i18n.t('common.error'))
+      setError(getErrorMessage(err))
     } finally {
       setLoading(false)
     }
