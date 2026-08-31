@@ -18,21 +18,21 @@ function ForgotPasswordPage() {
 
   useEffect(() => {
     if (emailValidationError) {
-      setEmailValidationError(validateEmail(email, t))
+      setEmailValidationError(validateEmail(email, t));
     }
   }, [i18n.language]) //Le lanza el error en el idioma que esté
 
   const handleForgotPassword = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const emailErrorMessage = validateEmail(email, t)
+    const emailErrorMessage = validateEmail(email, t);
 
-    setEmailValidationError(emailErrorMessage)
+    setEmailValidationError(emailErrorMessage);
 
-    if (emailErrorMessage) return
+    if (emailErrorMessage) return;
 
-    await submitForgotPassword({ email })
-  }
+    await submitForgotPassword({ email });
+  };
 
   return (
     <AuthLayout overtitle={t('forgotPassword.overtitle')}>
