@@ -257,4 +257,4 @@ function SignUpPage() {
   );
 }
 
-export default SignUpPage;
+export default SignUpPage

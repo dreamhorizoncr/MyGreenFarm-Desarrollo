@@ -10,30 +10,34 @@ import { validatePassword } from '../utils/validators.ts'
 import i18n from '../i18n/index.ts'
 
 function ResetPasswordPage() {
-  const { t } = useTranslation()
-  const [searchParams] = useSearchParams()
-  const token = searchParams.get('token')
+  const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
 
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [passwordValidationError, setPasswordValidationError] = useState<string | null>(null)
-  const [confirmValidationError, setConfirmValidationError] = useState<string | null>(null)
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordValidationError, setPasswordValidationError] = useState<
+    string | null
+  >(null);
+  const [confirmValidationError, setConfirmValidationError] = useState<
+    string | null
+  >(null);
 
-  const { submitResetPassword, loading, error, success } = useResetPassword()
+  const { submitResetPassword, loading, error, success } = useResetPassword();
 
   useEffect(() => {
     if (passwordValidationError) {
-      setPasswordValidationError(validatePassword(newPassword, t))
+      setPasswordValidationError(validatePassword(newPassword, t));
     }
-  }, [i18n.language])
+  }, [i18n.language]);
 
   const handleResetPassword = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (!token) return
+    if (!token) return;
 
-    const passwordErrorMessage = validatePassword(newPassword, t)
-    setPasswordValidationError(passwordErrorMessage)
+    const passwordErrorMessage = validatePassword(newPassword, t);
+    setPasswordValidationError(passwordErrorMessage);
 
     const confirmErrorMessage =
       confirmPassword === newPassword
@@ -41,10 +45,10 @@ function ResetPasswordPage() {
         : t('resetPassword.passwordMismatch')
     setConfirmValidationError(confirmErrorMessage)
 
-    if (passwordErrorMessage || confirmErrorMessage) return
+    if (passwordErrorMessage || confirmErrorMessage) return;
 
-    await submitResetPassword({ token, newPassword })
-  }
+    await submitResetPassword({ token, newPassword });
+  };
 
   return (
     <AuthLayout overtitle={t('resetPassword.overtitle')}>
