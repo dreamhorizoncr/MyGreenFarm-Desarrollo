@@ -45,7 +45,7 @@ function LanguageSwitcher() {
 
       {open && (
         <ul
-          className="absolute left-0 top-[calc(100%+var(--spacing-xs))] z-10 m-0 w-full min-w-[168px] list-none rounded-xl border border-neutral-200 bg-white p-xs animate-[language-switcher-in_0.15s_ease-out]"
+          className="absolute right-0 top-[calc(100%+var(--spacing-xs))] z-10 m-0 min-w-[168px] list-none rounded-xl border border-neutral-200 bg-white p-xs animate-[language-switcher-in_0.15s_ease-out] md:left-0 md:right-auto md:w-full"
           role="menu"
         >
           {SUPPORTED_LANGUAGES.map((language) => (
