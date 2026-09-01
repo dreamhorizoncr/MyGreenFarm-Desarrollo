@@ -12,7 +12,7 @@ function AuthButton({ loading, children }: AuthButtonProps) {
       type="submit"
       loading={loading}
       variant="success"
-      className="h-[55px] w-full rounded-xl bg-green-500 font-body text-[17px] font-normal text-white"
+      className="h-[43px] w-full rounded-xl bg-green-500 font-body text-[15px] font-normal text-white md:h-[55px] md:text-[17px]"
     >
       {children}
     </Button>

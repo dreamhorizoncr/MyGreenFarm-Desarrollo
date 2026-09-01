@@ -34,11 +34,11 @@ export default {
     email: 'Correo electrónico',
     password: 'Contraseña',
     noAccount: '¿No tenés cuenta?',
-    goToSignup: 'Crear cuenta',
+    goToSignup: 'Registrarse',
   },
   signup: {
     overtitle: 'Bienvenido',
-    title: 'Crear cuenta',
+    title: 'Registrarse',
     firstName: 'Nombre',
     lastName: 'Apellido',
     email: 'Correo electrónico',
