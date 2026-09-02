@@ -126,8 +126,6 @@ public class AnnouncementImageService {
                 }
             }
         }
-        // Opcional: imageRepository.deleteAll(images); 
-        // (Si tienes CascadeType.ALL en Announcement, esto se borrará solo al eliminar el anuncio padre)
     }
 
     // Método auxiliar para limpiar la URL y obtener la ruta interna del bucket
