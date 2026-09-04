@@ -113,7 +113,8 @@ public class SecurityConfig {
                 "/login",
                 "/signup",
                 "/forgot-password",
-                "/reset-password"
+                "/reset-password",
+                "/api/translations"
             ).permitAll()
             .anyRequest().authenticated()
         )
