@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { LogOut, Users } from 'lucide-react'
+import { LogOut } from 'lucide-react'
+import useDismiss from '../hooks/useDismiss.ts'
 import { useLogin } from '../hooks/useLogin.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import type { UserInfo } from '../types/auth.ts'
@@ -20,23 +21,7 @@ function ProfileButton() {
     if (stored) setUser(stored)
   }, [])
 
-  useEffect(() => {
-    if (!open) return
-    const handleClickOutside = (event: MouseEvent) => {
-      if (rootRef.current && !rootRef.current.contains(event.target as Node)) {
-        setOpen(false)
-      }
-    }
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false)
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    document.addEventListener('keydown', handleEscape)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('keydown', handleEscape)
-    }
-  }, [open])
+  useDismiss({ ref: rootRef, isOpen: open, onClose: () => setOpen(false) })
 
   if (!user) return null
 
@@ -47,45 +32,39 @@ function ProfileButton() {
     navigate('/login')
   }
 
+  const optionClasses =
+    'flex w-full items-center gap-sm rounded-lg px-md py-sm text-left font-body text-sm text-body-text whitespace-nowrap bg-transparent transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-[-2px]'
+
   return (
-    <div className="profile-button" ref={rootRef}>
+    <div className="relative inline-flex" ref={rootRef}>
       <button
         type="button"
-        className="profile-button__trigger"
+        className="inline-flex items-center justify-center rounded-full bg-transparent transition-shadow duration-150 hover:shadow-[0_0_0_4px_var(--heading-100)] focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={`${user.firstName} ${user.lastName}`}
       >
-        <span className="profile-button__avatar" aria-hidden="true">
+        <span
+          className="inline-flex size-[38px] shrink-0 select-none items-center justify-center rounded-full bg-green-500 font-heading text-base leading-none text-white"
+          aria-hidden="true"
+        >
           {initials}
         </span>
       </button>
 
       {open && (
-        <div className="profile-button__dropdown" role="menu">
-          <p className="profile-button__user-info">
+        <div
+          className="absolute right-0 top-[calc(100%+var(--spacing-xs))] z-50 m-0 min-w-[230px] list-none rounded-xl border border-neutral-200 bg-white p-xs animate-[profile-button-in_0.15s_ease-out]"
+          role="menu"
+        >
+          <p className="m-0 mb-2 whitespace-nowrap border-b border-neutral-100 px-md py-sm font-body text-sm font-semibold text-body-text">
             {user.firstName} {user.lastName}
           </p>
 
-          {user.role === 'ADMIN' && (
-            <button
-              type="button"
-              className="profile-button__option"
-              role="menuitem"
-              onClick={() => {
-                navigate('/admin/users')
-                setOpen(false)
-              }}
-            >
-              <Users size={16} />
-              <span>{t('profile.admin')}</span>
-            </button>
-          )}
-
           <button
             type="button"
-            className="profile-button__option profile-button__option--danger"
+            className={`${optionClasses} hover:bg-danger-100 text-danger hover:text-danger`}
             role="menuitem"
             onClick={handleLogout}
           >

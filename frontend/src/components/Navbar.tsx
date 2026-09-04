@@ -1,36 +1,43 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Menu, X } from 'lucide-react'
 import LanguageSwitcher from './LanguageSwitcher.tsx'
+import ProfileButton from './ProfileButton.tsx'
+import { userStorage } from '../utils/userStorage.ts'
 
-interface NavbarProps {
-  variant?: 'full' | 'minimal'
-}
-
-function Navbar({ variant = 'full' }: NavbarProps) {
-  const { t } = useTranslation()
-  const [drawerOpen, setDrawerOpen] = useState(false)
-
-  const navLinks = variant === 'full'
-    ? [
-        { to: '/', label: t('navbar.home') },
-        { to: '/news', label: t('navbar.news') },
-        { to: '/multimedia', label: t('navbar.multimedia') },
-        { to: '/forum', label: t('navbar.forum') },
-        { to: '/services', label: t('navbar.services') },
-      ]
-    : [
-        { to: '/', label: t('navbar.home') },
-      ]
+function Brand() {
+  const isAdminSection = useLocation().pathname.startsWith('/admin')
 
   return (
-    <header className="relative z-40 h-16 bg-cream-100">
+    <Link
+      to={isAdminSection ? '/admin/dashboard' : '/'}
+      className="flex items-center gap-3 no-underline"
+    >
+      <span className="inline-flex size-9 items-center justify-center rounded-full bg-green-500" aria-hidden="true" />
+      <span className="font-heading text-h6 text-heading">My Green Farm</span>
+    </Link>
+  )
+}
+
+function Navbar() {
+  const { t } = useTranslation()
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const isAuthenticated = Boolean(userStorage.getUser())
+
+  const navLinks = [
+    { to: '/', label: t('navbar.home') },
+    { to: '/news', label: t('navbar.news') },
+    { to: '/multimedia', label: t('navbar.multimedia') },
+    { to: '/forum', label: t('navbar.forum') },
+    { to: '/services', label: t('navbar.services') },
+  ]
+
+  return (
+    <header className="relative z-40 h-16 border-b border-neutral-200 bg-bg-page">
       {/* Desktop nav */}
-      <nav className="mx-auto hidden h-full w-full max-w-[1200px] items-center px-11 md:flex">
-        <Link to="/" className="font-heading text-h6 text-heading">
-          My Green Farm
-        </Link>
+      <nav className="hidden h-full w-full items-center pl-4 pr-11 md:flex">
+        <Brand />
 
         <div className="ml-auto flex items-center gap-7 font-link">
           {navLinks.map((link) => (
@@ -43,29 +50,15 @@ function Navbar({ variant = 'full' }: NavbarProps) {
             </Link>
           ))}
 
-          <Link
-            to="/login"
-            className="rounded-full bg-success px-8 py-2 text-white transition-opacity hover:opacity-90"
-          >
-            {t('navbar.signIn')}
-          </Link>
-
-          <Link
-            to="/signup"
-            className="rounded-full border border-heading px-8 py-2 text-body transition-colors hover:bg-cream-200"
-          >
-            {t('navbar.signUp')}
-          </Link>
-
           <LanguageSwitcher />
+
+          {isAuthenticated && <ProfileButton />}
         </div>
       </nav>
 
       {/* Mobile nav */}
       <nav className="flex h-full w-full items-center justify-between px-6 md:hidden">
-        <Link to="/" className="font-heading text-h6 text-heading">
-          My Green Farm
-        </Link>
+        <Brand />
 
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
@@ -84,21 +77,19 @@ function Navbar({ variant = 'full' }: NavbarProps) {
       {/* Drawer overlay */}
       {drawerOpen && (
         <div
-          className="navbar-drawer-overlay"
+          className="fixed inset-0 z-50 bg-scrim"
           onClick={() => setDrawerOpen(false)}
         />
       )}
 
       {/* Drawer */}
-      <div className={`navbar-drawer ${drawerOpen ? 'navbar-drawer--open' : ''}`}>
+      <div
+        className={`fixed right-0 top-0 z-[60] h-dvh w-[280px] overflow-y-auto bg-bg-page transition-transform duration-300 ${
+          drawerOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
         <div className="flex items-center justify-between px-6 py-4">
-          <Link
-            to="/"
-            className="font-heading text-h6 text-heading"
-            onClick={() => setDrawerOpen(false)}
-          >
-            My Green Farm
-          </Link>
+          <Brand />
 
           <button
             type="button"
@@ -123,23 +114,11 @@ function Navbar({ variant = 'full' }: NavbarProps) {
           ))}
         </nav>
 
-        <div className="flex flex-col gap-4 px-6 pt-8">
-          <Link
-            to="/login"
-            className="rounded-full bg-success px-8 py-2 text-center text-white transition-opacity hover:opacity-90"
-            onClick={() => setDrawerOpen(false)}
-          >
-            {t('navbar.signIn')}
-          </Link>
-
-          <Link
-            to="/signup"
-            className="rounded-full border border-heading px-8 py-2 text-center text-body transition-colors hover:bg-cream-200"
-            onClick={() => setDrawerOpen(false)}
-          >
-            {t('navbar.signUp')}
-          </Link>
-        </div>
+        {isAuthenticated && (
+          <div className="px-6 pt-8">
+            <ProfileButton />
+          </div>
+        )}
       </div>
     </header>
   )
