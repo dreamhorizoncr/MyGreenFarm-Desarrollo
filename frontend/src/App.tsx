@@ -10,6 +10,7 @@ import AdminDashboardPage from './pages/AdminDashboardPage.tsx'
 import ProtectedRoute from './routes/ProtectedRoute.tsx'
 import AdminRoute from './routes/AdminRoute.tsx'
 import TeacherRoute from './routes/TeacherRoute.tsx'
+import NewsPage from './pages/NewsPage.tsx'
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/news" element={<NewsPage />} />
         {/* Redirigir cualquier ruta no definida a la página de inicio */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
