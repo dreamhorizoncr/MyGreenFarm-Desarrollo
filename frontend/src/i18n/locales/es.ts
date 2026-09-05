@@ -25,6 +25,14 @@ export default {
     forum: 'Foro',
     services: 'Servicios',
   },
+  newspage:{
+      title: 'Noticias',
+      description: 'Mantente informado sobre las últimas noticias y actualizaciones del centro educativo.',
+      category1: 'Todas',
+      category2: 'Académicas',
+      category3: 'Eventos',
+      category4: 'Comunidad',
+    },
   login: {
     overtitle: 'Bienvenido',
     title: 'Iniciar sesión',
