@@ -23,6 +23,14 @@ export default {
     forum: 'Forum',
     services: 'Services',
   },
+  newspage:{
+      title: 'Nouvelles',
+      description: 'Restez informé des dernières actualités et mises à jour du centre éducatif.',
+      category1: 'Toutes',
+      category2: 'Académiques',
+      category3: 'Événements',
+      category4: 'Communauté',
+    },
   login: {
     overtitle: 'Bienvenue',
     title: 'Se connecter',
