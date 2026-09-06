@@ -5,6 +5,7 @@ import { Lock, Menu, X } from 'lucide-react'
 import LanguageSwitcher from './LanguageSwitcher.tsx'
 import ProfileButton from './ProfileButton.tsx'
 import { userStorage } from '../utils/userStorage.ts'
+import logo from '../assets/imgs/Logo.svg'
 
 function Brand() {
   const isAdminSection = useLocation().pathname.startsWith('/admin')
@@ -14,7 +15,7 @@ function Brand() {
       to={isAdminSection ? '/admin/dashboard' : '/'}
       className="flex items-center gap-3 no-underline"
     >
-      <span className="inline-flex size-9 items-center justify-center rounded-full bg-green-500" aria-hidden="true" />
+      <img src={logo} alt="My Green Farm" className="h-12 w-auto max-w-[48px] object-contain" />
       <span className="font-heading text-h6 text-heading">My Green Farm</span>
     </Link>
   )
@@ -25,7 +26,10 @@ function Navbar() {
   const { pathname } = useLocation()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const isAuthenticated = Boolean(userStorage.getUser())
-  const isHome = pathname === '/'
+  const isProtectedPage =
+    pathname === '/profile' ||
+    pathname === '/teacher' ||
+    pathname.startsWith('/admin')
 
   const navLinks = [
     { to: '/', label: t('navbar.home') },
@@ -47,7 +51,9 @@ function Navbar() {
               <Link
                 key={link.to}
                 to={link.to}
-                className="text-body transition-opacity hover:opacity-70"
+                className={`relative font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:bg-green-500 after:transition-all after:content-[''] ${
+                  pathname === link.to ? 'after:w-full' : 'after:w-0'
+                }`}
               >
                 {link.label}
               </Link>
@@ -55,7 +61,7 @@ function Navbar() {
 
             <LanguageSwitcher />
 
-            {(!isAuthenticated || isHome) && (
+            {(!isAuthenticated || !isProtectedPage) && (
               <Link
                 to="/login"
                 aria-label={t('navbar.adminLogin')}
@@ -66,7 +72,7 @@ function Navbar() {
               </Link>
             )}
 
-            {isAuthenticated && !isHome && <ProfileButton />}
+            {isAuthenticated && isProtectedPage && <ProfileButton />}
           </div>
         </div>
       </nav>
@@ -123,13 +129,15 @@ function Navbar() {
             <Link
               key={link.to}
               to={link.to}
-              className="text-body transition-opacity hover:opacity-70"
+              className={`relative font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:bg-green-500 after:transition-all after:content-[''] ${
+                pathname === link.to ? 'after:w-full' : 'after:w-0'
+              }`}
               onClick={() => setDrawerOpen(false)}
             >
               {link.label}
             </Link>
           ))}
-{(!isAuthenticated || isHome) && (
+{(!isAuthenticated || !isProtectedPage) && (
             <Link
               to="/login"
               aria-label={t('navbar.adminLogin')}
@@ -142,7 +150,7 @@ function Navbar() {
           )}
         </nav>
 
-        {isAuthenticated && !isHome && (
+        {isAuthenticated && isProtectedPage && (
           <div className="px-6 pt-8">
             <ProfileButton />
           </div>

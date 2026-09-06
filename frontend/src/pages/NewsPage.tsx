@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
-import NavBar from "../components/Navbar";
+import Navbar from "../components/Navbar";
+import Container from "../components/home/Container";
 import { useTranslation } from "react-i18next";
 
 import { useAnnouncements } from "../hooks/useAnnouncements";
@@ -71,7 +72,7 @@ function NewsPage() {
 
   return (
     <div id="news-page" className="min-h-screen bg-bg-page">
-      <NavBar />
+      <Navbar />
 
       {/* Hero de Noticias */}
       <section className="flex min-h-[360px] items-center bg-green-500 px-[30px] py-[60px] text-center text-white md:min-h-[420px]">
@@ -134,7 +135,8 @@ function NewsPage() {
       </section>
 
       {/* Sección de Noticias */}
-      <main className="mx-auto max-w-[1120px] px-[30px] py-[70px] md:px-[40px] md:py-[80px]">
+      <main>
+        <Container className="py-[70px] md:py-[80px]">
         {loading && <p className="m-0 p-xl text-center font-body text-base text-neutral-500">{t("common.loading")}</p>}
 
         {error && <p className="m-0 p-xl text-center font-body text-base text-danger">{error}</p>}
@@ -231,6 +233,7 @@ function NewsPage() {
             ))}
           </div>
         )}
+        </Container>
       </main>
     </div>
   );
