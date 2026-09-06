@@ -27,9 +27,10 @@ export default {
       title: 'Nouvelles',
       description: 'Restez informé des dernières actualités et mises à jour du centre éducatif.',
       category1: 'Toutes',
-      category2: 'Académiques',
+      category2: 'Actualités',
       category3: 'Événements',
-      category4: 'Communauté',
+      category4: 'Avis',
+      category5: 'Général',
     },
   login: {
     overtitle: 'Bienvenue',

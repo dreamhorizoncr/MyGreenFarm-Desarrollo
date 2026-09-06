@@ -29,9 +29,10 @@ export default {
       title: 'Noticias',
       description: 'Mantente informado sobre las últimas noticias y actualizaciones del centro educativo.',
       category1: 'Todas',
-      category2: 'Académicas',
+      category2: 'Noticias',
       category3: 'Eventos',
-      category4: 'Comunidad',
+      category4: 'Avisos',
+      category5: 'General',
     },
   login: {
     overtitle: 'Bienvenido',
