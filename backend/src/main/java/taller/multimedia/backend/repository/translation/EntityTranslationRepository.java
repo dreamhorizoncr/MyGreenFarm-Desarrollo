@@ -3,10 +3,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import taller.multimedia.backend.model.translations.EntityTranslation;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.List;
 
 public interface EntityTranslationRepository extends JpaRepository<EntityTranslation, UUID> {
 
     Optional<EntityTranslation> findByEntityTypeAndEntityIdAndFieldNameAndLanguageCode(
         String entityType, UUID entityId, String fieldName, String languageCode
     );
+
+    List<EntityTranslation> findByEntityTypeAndLanguageCode(String entityType, String languageCode);
 }
