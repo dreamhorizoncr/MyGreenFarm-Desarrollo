@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import Button from "../components/ui/Button.tsx";
 import PasswordInput from "../components/ui/PasswordInput.tsx";
 import TextField from "../components/ui/TextField.tsx";
@@ -36,9 +37,9 @@ function LoginPage() {
     setPasswordValidationError(passwordErrorMessage);
     if (emailErrorMessage || passwordErrorMessage) return;
     submitLogin({ email, password }, (user) =>
-      navigate(user.role === "ADMIN" ? "/admin/dashboard" : "/"),
-    );
-  };
+      navigate(user.role === 'ADMIN' ? '/admin/dashboard' : '/teacher'),
+    )
+  }
 
   return (
     <AuthLayout
@@ -115,23 +116,14 @@ function LoginPage() {
             type="submit"
             loading={loading}
             variant="success"
-            className="h-[43px] w-[209px] rounded-[10px] bg-green-500 font-body text-[15px] font-normal uppercase tracking-wide text-white md:h-[47px] md:w-full md:text-[17px]"
+            className="h-[47px] w-full rounded-full bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
           >
             {loading ? t("login.loading") : t("login.buttonLabel")}
+            {!loading && <ArrowRight size={18} aria-hidden="true" />}
           </Button>
         </div>
 
-        {/* Registro */}
-        <p className="mt-[22px] text-center font-body text-[12px] text-body-text md:mt-[26px] md:text-[14px]">
-          {t("login.noAccount")}{" "}
-          <Link
-            to="/signup"
-            className="font-link text-heading transition-opacity hover:opacity-70"
-          >
-            {t("login.goToSignup")}
-          </Link>
-        </p>
-      </form>
+        </form>
     </AuthLayout>
   );
 }
