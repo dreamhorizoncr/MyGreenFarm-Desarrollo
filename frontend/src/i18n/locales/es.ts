@@ -84,6 +84,14 @@ export default {
     },
     rights: 'Todos los derechos reservados.',
   },
+  newspage:{
+      title: 'Noticias',
+      description: 'Mantente informado sobre las últimas noticias y actualizaciones del centro educativo.',
+      category1: 'Todas',
+      category2: 'Académicas',
+      category3: 'Eventos',
+      category4: 'Comunidad',
+    },
   login: {
     overtitle: 'Bienvenido',
     title: 'Iniciar sesión',
@@ -93,9 +101,10 @@ export default {
     email: 'Correo electrónico',
     password: 'Contraseña',
   },
+  
   signup: {
     overtitle: 'Bienvenido',
-    title: 'Crear cuenta',
+    title: 'Registrarse',
     firstName: 'Nombre',
     lastName: 'Apellido',
     email: 'Correo electrónico',

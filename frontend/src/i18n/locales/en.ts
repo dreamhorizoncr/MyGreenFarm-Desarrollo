@@ -83,6 +83,14 @@ export default {
     },
     rights: 'All rights reserved.',
   },
+  newspage:{
+      title: 'News',
+      description: 'Stay informed about the latest news and updates from the educational center.',
+      category1: 'All',
+      category2: 'Academic',
+      category3: 'Events',
+      category4: 'Community',
+    },
   login: {
     overtitle: 'Welcome',
     title: 'LOGIN',
