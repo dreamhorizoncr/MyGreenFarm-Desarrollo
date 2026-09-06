@@ -88,9 +88,10 @@ export default {
       title: 'News',
       description: 'Stay informed about the latest news and updates from the educational center.',
       category1: 'All',
-      category2: 'Academic',
+      category2: 'News',
       category3: 'Events',
-      category4: 'Community',
+      category4: 'Notices',
+      category5: 'General',
     },
   booking: {
     title: 'Book an appointment',

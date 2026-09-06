@@ -18,6 +18,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import taller.multimedia.backend.model.translations.EntityTranslation;
 import taller.multimedia.backend.repository.translation.EntityTranslationRepository;
 import taller.multimedia.backend.dto.translation.TranslationItem;
@@ -35,14 +37,15 @@ public class TranslationService {
 
     private final OkHttpClient httpClient = new OkHttpClient();
 
-     public String getOrTranslate(String entityType, UUID entityId, String fieldName,
-                                   String originalText, String targetLanguage) throws IOException {
+    public String getOrTranslate(String entityType, UUID entityId, String fieldName,
+            String originalText, String targetLanguage) throws IOException {
 
         Optional<EntityTranslation> existing = repository
-            .findByEntityTypeAndEntityIdAndFieldNameAndLanguageCode(entityType, entityId, fieldName, targetLanguage);
+                .findByEntityTypeAndEntityIdAndFieldNameAndLanguageCode(entityType, entityId, fieldName,
+                        targetLanguage);
 
         if (existing.isPresent()) {
-            return existing.get().getTranslatedText();
+            return unescapeHtml(existing.get().getTranslatedText());
         }
 
         List<String> translated = callTranslateApiBatch(List.of(originalText), targetLanguage);
@@ -59,13 +62,13 @@ public class TranslationService {
         return translatedText;
     }
 
-
-    public Map<String, String> getOrTranslateBatch(String entityType, List<TranslationItem> items, String targetLanguage) throws IOException {
+    public Map<String, String> getOrTranslateBatch(String entityType, List<TranslationItem> items,
+            String targetLanguage) throws IOException {
         List<EntityTranslation> existing = repository.findByEntityTypeAndLanguageCode(entityType, targetLanguage);
         Map<String, String> cache = existing.stream()
                 .collect(Collectors.toMap(
                         e -> key(e.getEntityId(), e.getFieldName()),
-                        EntityTranslation::getTranslatedText));
+                        e -> unescapeHtml(e.getTranslatedText())));
 
         Map<String, String> result = new HashMap<>();
         List<TranslationItem> toTranslate = new ArrayList<>();
@@ -106,6 +109,10 @@ public class TranslationService {
         return result;
     }
 
+    private String unescapeHtml(String text) {
+        return StringEscapeUtils.unescapeHtml4(text);
+    }
+
     private String key(UUID entityId, String fieldName) {
         return entityId + ":" + fieldName;
     }
@@ -135,13 +142,13 @@ public class TranslationService {
             JsonNode root = objectMapper.readTree(response.body().string());
             List<String> results = new ArrayList<>();
             for (JsonNode node : root.path("translations")) {
-                results.add(node.path("translatedText").asString());
+                String translatedText = node.path("translatedText").asString();
+                results.add(unescapeHtml(translatedText));
             }
             return results;
         }
     }
 }
-
 
 // Optional<EntityTranslation> existing = repository
 // .findByEntityTypeAndEntityIdAndFieldNameAndLanguageCode(entityType, entityId,
