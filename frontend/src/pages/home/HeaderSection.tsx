@@ -1,10 +1,12 @@
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import nubesUp from '../../assets/imgs/nubesUp.svg'
 import Container from '../../components/home/Container.tsx'
 import PillButton from '../../components/ui/PillButton.tsx'
 
 function HeaderSection() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
   return (
     <section id="header" className="relative flex min-h-[100svh] w-full flex-col text-left">
@@ -26,7 +28,10 @@ function HeaderSection() {
                 {t('home.header.description')}
               </p>
 
-              <PillButton className="w-fit bg-accent font-heading text-h6 text-white">
+              <PillButton
+                className="w-fit bg-accent font-heading text-h6 text-white"
+                onClick={() => navigate('/booking')}
+              >
                 {t('home.header.cta')}
               </PillButton>
             </div>

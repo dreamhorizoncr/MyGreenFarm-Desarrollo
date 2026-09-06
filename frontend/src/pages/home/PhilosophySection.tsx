@@ -44,7 +44,7 @@ function PhilosophySection() {
                 ))}
               </ul>
 
-              <PillButton className="w-fit border-2 border-accent font-heading text-body-sm uppercase text-accent">
+              <PillButton className="w-fit !border border-pink-400 !px-[16px] !py-[7px] font-body !text-[11px] !font-normal uppercase text-pink-500">
                 {t('home.philosophy.cta')}
               </PillButton>
             </div>

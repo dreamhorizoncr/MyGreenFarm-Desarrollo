@@ -1,10 +1,10 @@
 import type { IconType } from 'react-icons'
-import { SiFacebook, SiInstagram, SiYoutube } from 'react-icons/si'
+import { SiFacebook, SiInstagram, SiWhatsapp } from 'react-icons/si'
 import { useTranslation } from 'react-i18next'
 
-type SocialLabel =
-  | 'footer.instagram'
+type SocialLabel =| 'footer.instagram'
   | 'footer.facebook'
+  | 'footer.whatsapp'
   | 'footer.youtube'
 
 type SocialLink = {
@@ -14,9 +14,9 @@ type SocialLink = {
 }
 
 const socialLinks: SocialLink[] = [
-  { label: 'footer.instagram', href: '#', Icon: SiInstagram },
-  { label: 'footer.facebook', href: '#', Icon: SiFacebook },
-  { label: 'footer.youtube', href: '#', Icon: SiYoutube },
+  { label: 'footer.instagram', href: 'https://www.instagram.com/my_green_farm__preescolar?stkn=MTF4MDRnd2s2bXo0Ng==', Icon: SiInstagram },
+  { label: 'footer.facebook', href: 'https://www.facebook.com/share/1TJMKrTDfr/', Icon: SiFacebook },
+  { label: 'footer.whatsapp', href: 'https://wa.me/50683278347', Icon: SiWhatsapp },
 ]
 
 function FooterSocialLinks() {

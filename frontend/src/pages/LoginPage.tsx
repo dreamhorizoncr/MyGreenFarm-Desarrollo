@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import Button from "../components/ui/Button.tsx";
 import PasswordInput from "../components/ui/PasswordInput.tsx";
 import TextField from "../components/ui/TextField.tsx";
@@ -118,6 +119,7 @@ function LoginPage() {
             className="h-[47px] w-full rounded-full bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
           >
             {loading ? t("login.loading") : t("login.buttonLabel")}
+            {!loading && <ArrowRight size={18} aria-hidden="true" />}
           </Button>
         </div>
 

@@ -1,14 +1,17 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   ChevronDown,
   FileText,
   FolderOpen,
   GraduationCap,
   LayoutDashboard,
+  LogOut,
   User,
   type LucideIcon,
 } from 'lucide-react'
+import { useLogin } from '../hooks/useLogin.ts'
 
 type SidebarItemId =
   | "dashboard"
@@ -25,7 +28,10 @@ interface SidebarItem {
 
 function AdminSidebar() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
+  const { logout } = useLogin()
   const { pathname } = useLocation()
+  const [open, setOpen] = useState(false)
 
   const items: SidebarItem[] = [
     { id: 'dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
@@ -34,6 +40,14 @@ function AdminSidebar() {
     { id: 'expedientes', icon: FolderOpen },
     { id: 'miPerfil', icon: User, path: '/profile' },
   ]
+
+  const activeItem = items.find((item) => item.path === pathname) ?? items[0]
+  const ActiveIcon = activeItem.icon
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/login')
+  }
 
   const itemClasses =
     'flex shrink-0 items-center gap-sm rounded-full px-md py-sm text-left font-body text-[15px] font-semibold text-body-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:w-full'

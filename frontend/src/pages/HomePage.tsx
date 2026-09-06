@@ -1,5 +1,4 @@
 import Navbar from '../components/Navbar.tsx'
-import Footer from '../layout/Footer.tsx'
 import HeaderSection from './home/HeaderSection.tsx'
 import PhilosophySection from './home/PhilosophySection.tsx'
 import TestimonialsSection from './home/TestimonialsSection.tsx'
@@ -18,8 +17,6 @@ function HomePage() {
         <MultimediaSection />
         <JoinSection />
       </main>
-
-      <Footer />
     </>
   )
 }
