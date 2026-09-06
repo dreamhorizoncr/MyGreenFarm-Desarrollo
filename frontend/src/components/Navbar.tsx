@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Menu, X } from 'lucide-react'
+import { Lock, Menu, X } from 'lucide-react'
 import LanguageSwitcher from './LanguageSwitcher.tsx'
 import ProfileButton from './ProfileButton.tsx'
 import { userStorage } from '../utils/userStorage.ts'
@@ -22,8 +22,10 @@ function Brand() {
 
 function Navbar() {
   const { t } = useTranslation()
+  const { pathname } = useLocation()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const isAuthenticated = Boolean(userStorage.getUser())
+  const isHome = pathname === '/'
 
   const navLinks = [
     { to: '/', label: t('navbar.home') },
@@ -36,41 +38,56 @@ function Navbar() {
   return (
     <header className="relative z-40 h-16 border-b border-neutral-200 bg-bg-page">
       {/* Desktop nav */}
-      <nav className="hidden h-full w-full items-center pl-4 pr-11 md:flex">
-        <Brand />
+      <nav className="hidden h-full w-full md:flex">
+        <div className="mx-auto flex h-full w-full max-w-[var(--container-max-width)] items-center px-[var(--scale-1100)]">
+          <Brand />
 
-        <div className="ml-auto flex items-center gap-7 font-link">
-          {navLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className="text-body transition-opacity hover:opacity-70"
-            >
-              {link.label}
-            </Link>
-          ))}
+          <div className="ml-auto flex items-center gap-7 font-link">
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className="text-body transition-opacity hover:opacity-70"
+              >
+                {link.label}
+              </Link>
+            ))}
 
-          <LanguageSwitcher />
+            <LanguageSwitcher />
 
-          {isAuthenticated && <ProfileButton />}
+            {(!isAuthenticated || isHome) && (
+              <Link
+                to="/login"
+                aria-label={t('navbar.adminLogin')}
+                title={t('navbar.adminLogin')}
+                className="text-green-500 transition-opacity hover:opacity-70"
+              >
+                <Lock size={18} aria-hidden="true" />
+              </Link>
+            )}
+
+            {isAuthenticated && !isHome && <ProfileButton />}
+          </div>
         </div>
       </nav>
 
       {/* Mobile nav */}
-      <nav className="flex h-full w-full items-center justify-between px-6 md:hidden">
-        <Brand />
+      <nav className="flex h-full w-full md:hidden">
+        <div className="mx-auto flex h-full w-full max-w-[var(--container-max-width)] items-center justify-between px-[var(--scale-1100)]">
+          <Brand />
 
-        <div className="flex items-center gap-2">
-          <LanguageSwitcher />
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
 
-          <button
-            type="button"
-            onClick={() => setDrawerOpen(true)}
-            className="text-heading"
-            aria-label="Open menu"
-          >
-            <Menu size={28} />
-          </button>
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(true)}
+              className="text-heading"
+              aria-label="Open menu"
+            >
+              <Menu size={28} />
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -112,9 +129,20 @@ function Navbar() {
               {link.label}
             </Link>
           ))}
+{(!isAuthenticated || isHome) && (
+            <Link
+              to="/login"
+              aria-label={t('navbar.adminLogin')}
+              title={t('navbar.adminLogin')}
+              onClick={() => setDrawerOpen(false)}
+              className="text-green-500 transition-opacity hover:opacity-70"
+            >
+              <Lock size={18} aria-hidden="true" />
+            </Link>
+          )}
         </nav>
 
-        {isAuthenticated && (
+        {isAuthenticated && !isHome && (
           <div className="px-6 pt-8">
             <ProfileButton />
           </div>

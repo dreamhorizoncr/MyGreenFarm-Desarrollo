@@ -31,7 +31,7 @@ function LoginPage() {
     setPasswordValidationError(passwordErrorMessage)
     if (emailErrorMessage || passwordErrorMessage) return
     submitLogin({ email, password }, (user) =>
-      navigate(user.role === 'ADMIN' ? '/admin/dashboard' : '/'),
+      navigate(user.role === 'ADMIN' ? '/admin/dashboard' : '/teacher'),
     )
   }
 
@@ -110,23 +110,13 @@ function LoginPage() {
             type="submit"
             loading={loading}
             variant="success"
-            className="h-[47px] w-full rounded-none bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
+            className="h-[47px] w-full rounded-full bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
           >
             {loading ? t('login.loading') : t('login.buttonLabel')}
           </Button>
         </div>
 
-        {/*Registro*/}
-        <p className="mt-[26px] text-center font-body text-[14px] text-body-text">
-          {t('login.noAccount')}{' '}
-          <Link
-            to="/signup"
-            className="font-link text-heading transition-opacity hover:opacity-70"
-          >
-            {t('login.goToSignup')}
-          </Link>
-        </p>
-      </form>
+        </form>
     </AuthLayout>
   )
 }

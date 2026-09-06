@@ -22,6 +22,65 @@ export default {
     multimedia: 'Multimédia',
     forum: 'Forum',
     services: 'Services',
+    adminLogin: 'Connexion administrateurs',
+  },
+  home: {
+    header: {
+      badge: 'Apprentissage naturel',
+      welcome: 'Bienvenue à',
+      description:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      cta: 'Réserver un rendez-vous',
+      heroAlt: 'Image de couverture',
+    },
+    philosophy: {
+      title: 'Notre philosophie',
+      description:
+        'Nous croyons en une éducation qui grandit avec la nature. Chez Green Farm, nous accompagnons chaque enfant de ses premiers mois à ses 12 ans, dans un environnement sûr et accrédité par le MEP, où le jeu en plein air et l’affection font partie de l’apprentissage quotidien.',
+      item: 'Une phrase de test qui ne fait que tester en est une de test',
+      cta: 'Lire la suite',
+    },
+    testimonials: {
+      title: 'Témoignages',
+      description:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    },
+    multimedia: {
+      title: 'Multimédia',
+      description:
+        'Description de la section multimédia. Vous y trouverez les albums photos de nos activités.',
+      viewMore: 'Voir plus',
+      albumTitle: 'Albums',
+      albumCount: '20 photos',
+      cardText:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    },
+    join: {
+      title1: 'Rejoignez',
+      title2: 'notre ferme',
+      description:
+        'Recevez dans votre boîte mail les dernières actualités, activités et moments spéciaux de nos petits chez Green Farm.',
+      emailPlaceholder: 'Votre adresse e-mail',
+      subscribe: 'S’abonner',
+    },
+  },
+  footer: {
+    tagline: "Le second foyer de vos enfants.",
+    navigation: 'Navigation',
+    contact: 'Contact',
+    contactEmail: 'mygreenfarmcr@gmail.com',
+    contactPhone: '+506 0000-0000',
+    contactAddress: 'Liberia, Guanacaste, Costa Rica',
+    socialLabel: 'Réseaux sociaux',
+    instagram: 'Instagram',
+    facebook: 'Facebook',
+    youtube: 'YouTube',
+    legalLabel: 'Mentions légales',
+    legal: {
+      terms: 'Conditions générales',
+      privacy: 'Politique de confidentialité',
+    },
+    rights: 'Tous droits réservés.',
   },
   login: {
     overtitle: 'Bienvenue',
@@ -31,8 +90,6 @@ export default {
     email: 'E-mail',
     password: 'Mot de passe',
     forgotPassword: 'Mot de passe oublié ?',
-    noAccount: "Vous n'avez pas de compte ?",
-    goToSignup: 'Créer un compte',
   },
   signup: {
     overtitle: 'Bienvenue',
@@ -42,13 +99,11 @@ export default {
     email: 'E-mail',
     password: 'Mot de passe',
     role: 'Rôle',
-    selectRole: 'Sélectionner un rôle',
     userRole: 'Utilisateur',
     adminRole: 'Administrateur',
     buttonLabel: "S'inscrire",
     loading: 'Inscription...',
     success: 'Compte créé ! Vous pouvez maintenant vous connecter.',
-    hasAccount: 'Vous avez déjà un compte ?',
     goToLogin: 'Se connecter',
   },
   forgotPassword: {
@@ -88,6 +143,17 @@ export default {
     fieldRequired: '{{field}} est obligatoire',
   },
   profile: {
+    title: 'Mon profil',
+    description: 'Ici, vous pouvez voir vos informations personnelles.',
+    firstName: 'Prénom',
+    lastName: 'Noms',
+    email: 'E-mail',
+    role: 'Rôle',
+    roles: {
+      user: 'Utilisateur',
+      admin: 'Administrateur',
+      moderator: 'Modérateur',
+    },
     logout: 'Déconnexion',
   },
   admin: {

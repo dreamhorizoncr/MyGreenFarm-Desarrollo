@@ -1,15 +1,13 @@
 import { useTranslation } from 'react-i18next'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import {
   FileText,
   FolderOpen,
   GraduationCap,
   LayoutDashboard,
-  LogOut,
   User,
   type LucideIcon,
 } from 'lucide-react'
-import { useLogin } from '../hooks/useLogin.ts'
 
 type SidebarItemId = 'dashboard' | 'docentes' | 'cv' | 'expedientes' | 'miPerfil'
 
@@ -21,8 +19,6 @@ interface SidebarItem {
 
 function AdminSidebar() {
   const { t } = useTranslation()
-  const navigate = useNavigate()
-  const { logout } = useLogin()
   const { pathname } = useLocation()
 
   const items: SidebarItem[] = [
@@ -30,16 +26,11 @@ function AdminSidebar() {
     { id: 'docentes', icon: GraduationCap, path: '/admin/users' },
     { id: 'cv', icon: FileText },
     { id: 'expedientes', icon: FolderOpen },
-    { id: 'miPerfil', icon: User },
+    { id: 'miPerfil', icon: User, path: '/profile' },
   ]
 
-  const handleLogout = async () => {
-    await logout()
-    navigate('/login')
-  }
-
   const itemClasses =
-    'flex w-full shrink-0 items-center gap-sm rounded-full px-md py-sm text-left font-body text-[15px] font-semibold text-body-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2'
+    'flex shrink-0 items-center gap-sm rounded-full px-md py-sm text-left font-body text-[15px] font-semibold text-body-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:w-full'
 
   return (
     <aside className="flex w-full shrink-0 flex-col overflow-x-auto bg-bg-page p-md md:w-[260px] md:overflow-hidden md:py-lg">
@@ -81,20 +72,6 @@ function AdminSidebar() {
             </button>
           )
         })}
-
-        <button
-          type="button"
-          className={`${itemClasses} mt-auto text-danger`}
-          onClick={handleLogout}
-        >
-          <span
-            className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-danger"
-            aria-hidden="true"
-          >
-            <LogOut size={18} />
-          </span>
-          <span>{t('profile.logout')}</span>
-        </button>
       </nav>
     </aside>
   )

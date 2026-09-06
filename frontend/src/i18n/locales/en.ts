@@ -23,6 +23,65 @@ export default {
     multimedia: 'Multimedia',
     forum: 'Forum',
     services: 'Services',
+    adminLogin: 'Admin login',
+  },
+  home: {
+    header: {
+      badge: 'Natural Learning',
+      welcome: 'Welcome to',
+      description:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      cta: 'Book an appointment',
+      heroAlt: 'Cover image',
+    },
+    philosophy: {
+      title: 'Our Philosophy',
+      description:
+        'We believe in an education that grows with nature. At Green Farm we accompany each child from their first months until age 12, in a safe environment accredited by the MEP, where outdoor play and affection are part of daily learning.',
+      item: 'A test sentence only testing is a test one',
+      cta: 'Read more',
+    },
+    testimonials: {
+      title: 'Testimonials',
+      description:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    },
+    multimedia: {
+      title: 'Multimedia',
+      description:
+        'Description of the multimedia section. Here you will find the photo albums of our activities.',
+      viewMore: 'See more',
+      albumTitle: 'Albums',
+      albumCount: '20 photos',
+      cardText:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    },
+    join: {
+      title1: 'Join our',
+      title2: 'farm',
+      description:
+        'Get the latest news, activities and special moments of our little ones at Green Farm delivered to your inbox.',
+      emailPlaceholder: 'Your email address',
+      subscribe: 'Subscribe',
+    },
+  },
+  footer: {
+    tagline: 'The second home of your children.',
+    navigation: 'Navigation',
+    contact: 'Contact',
+    contactEmail: 'mygreenfarmcr@gmail.com',
+    contactPhone: '+506 0000-0000',
+    contactAddress: 'Liberia, Guanacaste, Costa Rica',
+    socialLabel: 'Social media',
+    instagram: 'Instagram',
+    facebook: 'Facebook',
+    youtube: 'YouTube',
+    legalLabel: 'Legal',
+    legal: {
+      terms: 'Terms and Conditions',
+      privacy: 'Privacy Policy',
+    },
+    rights: 'All rights reserved.',
   },
   login: {
     overtitle: 'Welcome',
@@ -32,8 +91,6 @@ export default {
     email: 'Email',
     password: 'Password',
     forgotPassword: 'Forgot your password?',
-    noAccount: "Don't have an account?",
-    goToSignup: 'Create account',
   },
   signup: {
     overtitle: 'Welcome',
@@ -43,13 +100,11 @@ export default {
     email: 'Email',
     password: 'Password',
     role: 'Role',
-    selectRole: 'Select role',
     userRole: 'User',
     adminRole: 'Administrator',
     buttonLabel: 'Sign up',
     loading: 'Signing up...',
     success: 'Account created! You can now sign in.',
-    hasAccount: 'Already have an account?',
     goToLogin: 'Sign in',
   },
   forgotPassword: {
@@ -89,6 +144,17 @@ export default {
     fieldRequired: '{{field}} is required',
   },
   profile: {
+    title: 'My profile',
+    description: 'Here you can see your personal information.',
+    firstName: 'First name',
+    lastName: 'Last names',
+    email: 'Email',
+    role: 'Role',
+    roles: {
+      user: 'User',
+      admin: 'Administrator',
+      moderator: 'Moderator',
+    },
     logout: 'Sign out',
   },
   admin: {
