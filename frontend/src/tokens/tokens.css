@@ -229,6 +229,8 @@
   --color-primary: var(--link-default);
   --color-heading: var(--heading-default);
   --color-body-text: var(--body-text-default);
+  --color-body-text-light: var(--body-text-light);
+  --color-body-text-dark: var(--body-text-dark);
   --color-link: var(--link-default);
   --color-accent: var(--accent-pink);
   --color-bg-page: var(--bg-page);
@@ -254,7 +256,6 @@
   --color-neutral-default: var(--neutral-default);
   --color-orange-100: var(--orange-100);
   --color-danger-100: var(--danger-100);
-  --color-body-text-light: var(--body-text-light);
   --color-scrim: rgba(18, 18, 18, 0.45);
 
   /*TIPOGRAFÍA*/
@@ -292,6 +293,17 @@
   --spacing-xl: var(--scale-800);
   --spacing-2xl: var(--scale-1200);
   --spacing-3xl: var(--scale-1600);
+
+  /* SPACING — pasos numéricos de la escala (aliases de --scale-*) */
+  --spacing-500: var(--scale-500);
+  --spacing-700: var(--scale-700);
+  --spacing-900: var(--scale-900);
+  --spacing-1000: var(--scale-1000);
+  --spacing-1100: var(--scale-1100);
+  --spacing-1200: var(--scale-1200);
+  --spacing-1400: var(--scale-1400);
+  --spacing-1500: var(--scale-1500);
+  --spacing-1600: var(--scale-1600);
 
   /* BORDER RADIUS — referencia a scale*/
   --radius-none: var(--scale-0);

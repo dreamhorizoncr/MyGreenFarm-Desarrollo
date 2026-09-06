@@ -24,6 +24,66 @@ export default {
     multimedia: 'Multimedia',
     forum: 'Foro',
     services: 'Servicios',
+    adminLogin: 'Ingreso de Administradores',
+  },
+  home: {
+    header: {
+      badge: 'Aprendizaje Natural',
+      welcome: 'Bienvenidos a',
+      description:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      cta: 'Reservar cita',
+      heroAlt: 'Imagen de portada',
+    },
+    philosophy: {
+      title: 'Nuestra Filosofía',
+      description:
+        'Creemos en una educación que crece junto a la naturaleza. En Green Farm acompañamos a cada niño desde sus primeros meses hasta los 12 años, en un ambiente seguro y acreditado por el MEP, donde el juego al aire libre y el cariño son parte del aprendizaje diario.',
+      item: 'Una oración de prueba solo probando es una de prueba',
+      cta: 'Leer más',
+    },
+    testimonials: {
+      title: 'Testimonios',
+      description:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    },
+    multimedia: {
+      title: 'Multimedia',
+      description:
+        'Descripción del apartado multimedia. Aquí encontrarás los álbumes con las fotos de nuestras actividades.',
+      viewMore: 'Ver más',
+      albumTitle: 'Álbumes',
+      albumCount: '20 fotos',
+      cardText:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    },
+    join: {
+      title1: 'Únete a nuestra',
+      title2: 'granja',
+      description:
+        'Recibe en tu correo las últimas novedades, actividades y momentos especiales de nuestros pequeños en Green Farm.',
+      emailPlaceholder: 'Tu correo electrónico',
+      subscribe: 'Suscribirse',
+    },
+  },
+  footer: {
+    tagline: 'El segundo hogar de tus hijos.',
+    navigation: 'Navegación',
+    contact: 'Contacto',
+    contactEmail: 'mygreenfarmcr@gmail.com',
+    contactPhone: '+506 0000-0000',
+    contactAddress: 'Liberia, Guanacaste, Costa Rica',
+    socialLabel: 'Redes sociales',
+    instagram: 'Instagram',
+    facebook: 'Facebook',
+    whatsapp: 'WhatsApp',
+    youtube: 'YouTube',
+    legalLabel: 'Legal',
+    legal: {
+      terms: 'Términos y condiciones',
+      privacy: 'Política de privacidad',
+    },
+    rights: 'Todos los derechos reservados.',
   },
   newspage:{
       title: 'Noticias',
@@ -33,6 +93,32 @@ export default {
       category3: 'Eventos',
       category4: 'Comunidad',
     },
+  booking: {
+    title: 'Reservar cita',
+    fullName: 'Nombre completo',
+    idNumber: 'Número de identificación',
+    email: 'Correo electrónico',
+    phone: 'Número telefónico',
+    occupation: 'Ocupación',
+    childName: 'Nombre del niño',
+    reason: 'Motivo',
+    scheduleTitle: 'Horarios de cita',
+    scheduleDescription: 'Seleccione el siguiente horario de cita a reservar',
+    days: {
+      monday: 'Lunes',
+      tuesday: 'Martes',
+      wednesday: 'Miércoles',
+      thursday: 'Jueves',
+      friday: 'Viernes',
+    },
+    morning: 'Mañana',
+    afternoon: 'Tarde',
+    back: 'Volver',
+    submit: 'Enviar Solicitud',
+    modalTitle: 'Solicitud Enviada',
+    modalDescription: 'Nos pondremos en contacto contigo para confirmar la cita.',
+    close: 'Cerrar',
+  },
   login: {
     overtitle: 'Bienvenido',
     title: 'Iniciar sesión',
@@ -41,9 +127,8 @@ export default {
     forgotPassword: '¿Olvidaste tu contraseña?',
     email: 'Correo electrónico',
     password: 'Contraseña',
-    noAccount: '¿No tenés cuenta?',
-    goToSignup: 'Registrarse',
   },
+  
   signup: {
     overtitle: 'Bienvenido',
     title: 'Registrarse',
@@ -52,13 +137,11 @@ export default {
     email: 'Correo electrónico',
     password: 'Contraseña',
     role: 'Rol',
-    selectRole: 'Seleccionar rol',
     userRole: 'Usuario',
     adminRole: 'Administrador',
     buttonLabel: 'Registrarse',
     loading: 'Registrando...',
     success: '¡Cuenta creada! Ahora podés iniciar sesión.',
-    hasAccount: '¿Ya tenés cuenta?',
     goToLogin: 'Iniciar sesión',
   },
   forgotPassword: {
@@ -96,8 +179,21 @@ export default {
     passwordMinLength: 'La contraseña debe tener al menos 8 caracteres',
     passwordPattern: 'La contraseña debe tener al menos 8 caracteres, con mayúscula, minúscula, número y símbolo',
     fieldRequired: 'El {{field}} es obligatorio',
+    idNumberInvalid: 'El número de identificación debe contener solo números',
+    phoneInvalid: 'Ingresa un número telefónico válido',
   },
   profile: {
+    title: 'Mi perfil',
+    description: 'Aquí puedes ver tu información personal.',
+    firstName: 'Nombre',
+    lastName: 'Apellidos',
+    email: 'Correo',
+    role: 'Rol',
+    roles: {
+      user: 'Usuario',
+      admin: 'Administrador',
+      moderator: 'Moderador',
+    },
     logout: 'Cerrar sesión',
   },
   admin: {
