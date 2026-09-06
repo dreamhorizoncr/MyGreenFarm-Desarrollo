@@ -1,4 +1,4 @@
-package taller.multimedia.backend.dto;
+package taller.multimedia.backend.dto.translation;
 import java.util.UUID;
 
 public record TranslationRequest(
