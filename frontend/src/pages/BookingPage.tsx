@@ -1,8 +1,4 @@
-import {
-  useState,
-  type FormEvent,
-  type InputHTMLAttributes,
-} from 'react'
+import { useCallback, useEffect, useState, type FormEvent, type InputHTMLAttributes } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ArrowLeft } from 'lucide-react'
 import PhoneInput from 'react-phone-number-input'
@@ -11,6 +7,7 @@ import 'react-phone-number-input/style.css'
 import BookingSuccessModal from '../components/BookingSuccessModal.tsx'
 import LanguageSwitcher from '../components/LanguageSwitcher.tsx'
 import TextField from '../components/ui/TextField.tsx'
+import { useBooking } from '../hooks/useBooking.ts'
 import {
   validateEmail,
   validateIdNumber,
@@ -22,56 +19,73 @@ function BookingPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="h-[38px] w-full border-b border-neutral-300 bg-transparent px-0 font-body text-[15px] text-body-text outline-none transition focus:border-green-500"
+      className="h-[38px] w-full border-b border-neutral-300 bg-transparent pl-2 font-body text-[15px] text-body-text outline-none transition focus:border-green-500"
     />
   )
 }
 
-const MORNING_TIMES = [
-  '6:00',
-  '6:45',
-  '7:45',
-  '8:00',
-  '8:30',
-  '8:45',
-  '9:00',
-  '9:30',
-  '10:00',
-  '11:00',
-  '11:30',
-]
+const WEEKDAY_BOOKING_KEYS: Record<
+  number,
+  'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | null
+> = {
+  0: null,
+  1: 'monday',
+  2: 'tuesday',
+  3: 'wednesday',
+  4: 'thursday',
+  5: 'friday',
+  6: null,
+}
 
-const AFTERNOON_TIMES = [
-  '13:00',
-  '13:30',
-  '14:00',
-  '14:30',
-  '15:00',
-  '15:30',
-  '16:00',
-  '16:30',
-  '17:00',
-  '17:30',
-  '17:45',
-]
+function toISODate(date: Date): string {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
 
-type DayKey = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday'
+function getNextMonday(): Date {
+  const today = new Date()
+  const daysUntilMonday = ((8 - today.getDay()) % 7) || 7
+  const nextMonday = new Date(today)
+  nextMonday.setDate(today.getDate() + daysUntilMonday)
+  return nextMonday
+}
 
-const DAYS: DayKey[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+type Slot = { start: string }
+
+const ID_TYPES = ['Costarricense', 'Extranjero']
+
+function parseSlots(slots: string[]): Slot[] {
+  return slots.map((slot) => ({ start: slot.slice(0, 5) }))
+}
 
 function BookingPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
+  const {
+    availability,
+    slotsLoading,
+    slotsError,
+    submitting,
+    submitError,
+    success,
+    fetchWeek,
+    submit,
+    setSuccess,
+  } = useBooking()
+
   const [fullName, setFullName] = useState('')
+  const [idType, setIdType] = useState('Costarricense')
   const [idNumber, setIdNumber] = useState('')
   const [email, setEmail] = useState('')
+  const [phoneCountry, setPhoneCountry] = useState<string | undefined>(undefined)
   const [phone, setPhone] = useState('')
   const [occupation, setOccupation] = useState('')
   const [childName, setChildName] = useState('')
   const [reason, setReason] = useState('')
-  const [day, setDay] = useState<DayKey>('monday')
-  const [time, setTime] = useState('6:00')
-  const [submitted, setSubmitted] = useState(false)
+  const [day, setDay] = useState<string | null>(null)
+  const [time, setTime] = useState<string | null>(null)
 
   const [fullNameError, setFullNameError] = useState(false)
   const [idNumberError, setIdNumberError] = useState(false)
@@ -81,13 +95,45 @@ function BookingPage() {
   const [childNameError, setChildNameError] = useState(false)
   const [reasonError, setReasonError] = useState(false)
 
+  useEffect(() => {
+    fetchWeek(toISODate(getNextMonday()))
+  }, [fetchWeek])
+
+  const availableDates = Object.keys(availability)
+  const effectiveDay = day ?? availableDates[0] ?? null
+  const effectiveTime =
+    time ??
+    (effectiveDay ? availability[effectiveDay]?.[0]?.slice(0, 5) ?? null : null)
+  const selectedDaySlots = effectiveDay ? availability[effectiveDay] : []
+  const morningSlots = selectedDaySlots ? parseSlots(selectedDaySlots.filter((slot) => Number(slot.slice(0, 2)) < 12)) : []
+  const afternoonSlots = selectedDaySlots ? parseSlots(selectedDaySlots.filter((slot) => Number(slot.slice(0, 2)) >= 12)) : []
+
   const handlePhoneChange = (value?: string) => {
     const next = value ?? ''
     setPhone(next)
     setPhoneError(validatePhoneNumber(next, t) !== null)
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleCountryChange = (country?: string) => {
+    setPhoneCountry(country)
+    if (!country) {
+      setPhoneError(true)
+    } else {
+      setPhoneError(phone ? validatePhoneNumber(phone, t) !== null : false)
+    }
+  }
+
+  const handlePhoneBlur = () => {
+    if (!phoneCountry || !phone.trim()) setPhoneError(true)
+  }
+
+  const selectDay = (date: string) => {
+    setDay(date)
+    const firstSlot = availability[date]?.[0]
+    setTime(firstSlot ? firstSlot.slice(0, 5) : null)
+  }
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     const fullNameErrorMessage = validateRequired(
@@ -97,12 +143,13 @@ function BookingPage() {
     )
     const idNumberErrorMessage =
       validateRequired(idNumber, t('booking.idNumber'), t) ??
-      validateIdNumber(idNumber, t)
+      validateIdNumber(idNumber, idType, t)
     const emailErrorMessage =
       validateRequired(email, t('booking.email'), t) ?? validateEmail(email, t)
-    const phoneErrorMessage =
-      validateRequired(phone, t('booking.phone'), t) ??
-      validatePhoneNumber(phone, t)
+    const phoneErrorMessage = phoneCountry
+      ? validateRequired(phone, t('booking.phone'), t) ??
+        validatePhoneNumber(phone, t)
+      : t('validation.countryRequired')
     const occupationErrorMessage = validateRequired(
       occupation,
       t('booking.occupation'),
@@ -134,17 +181,55 @@ function BookingPage() {
     )
       return
 
-    setSubmitted(true)
+    if (!effectiveDay || !effectiveTime) return
+
+    const ok = await submit({
+      idType,
+      parentIdentification: idNumber,
+      parentName: fullName,
+      parentEmail: email,
+      parentPhone: phone,
+      parentOccupation: occupation,
+      childName,
+      appointmentDate: `${effectiveDay}T${effectiveTime}:00`,
+      parentNotes: reason,
+      language: (i18n.language ?? 'es').split('-')[0],
+    })
+    if (ok) resetForm()
   }
+
+  const resetForm = useCallback(() => {
+    setFullName('')
+    setIdType('Costarricense')
+    setIdNumber('')
+    setEmail('')
+    setPhoneCountry(undefined)
+    setPhone('')
+    setOccupation('')
+    setChildName('')
+    setReason('')
+    setDay(null)
+    setTime(null)
+    setFullNameError(false)
+    setIdNumberError(false)
+    setEmailError(false)
+    setPhoneError(false)
+    setOccupationError(false)
+    setChildNameError(false)
+    setReasonError(false)
+  }, [])
 
   const isComplete =
     fullName.trim() !== '' &&
     idNumber.trim() !== '' &&
     email.trim() !== '' &&
+    phoneCountry !== undefined &&
     phone.trim() !== '' &&
     occupation.trim() !== '' &&
     childName.trim() !== '' &&
-    reason.trim() !== ''
+    reason.trim() !== '' &&
+    effectiveDay !== null &&
+    effectiveTime !== null
 
   const selectableClassName = (active: boolean) =>
     `rounded-full px-md py-sm font-body text-sm font-semibold transition-colors ${
@@ -158,14 +243,16 @@ function BookingPage() {
     : null
   const idNumberErrorMessage = idNumberError
     ? validateRequired(idNumber, t('booking.idNumber'), t) ??
-      validateIdNumber(idNumber, t)
+      validateIdNumber(idNumber, idType, t)
     : null
   const emailErrorMessage = emailError
     ? validateRequired(email, t('booking.email'), t) ?? validateEmail(email, t)
     : null
   const phoneErrorMessage = phoneError
-    ? validateRequired(phone, t('booking.phone'), t) ??
-      validatePhoneNumber(phone, t)
+    ? phoneCountry
+      ? validateRequired(phone, t('booking.phone'), t) ??
+        validatePhoneNumber(phone, t)
+      : t('validation.countryRequired')
     : null
   const occupationErrorMessage = occupationError
     ? validateRequired(occupation, t('booking.occupation'), t)
@@ -176,6 +263,36 @@ function BookingPage() {
   const reasonErrorMessage = reasonError
     ? validateRequired(reason, t('booking.reason'), t)
     : null
+
+  const dayLabel = (date: string) => {
+    const parsed = new Date(`${date}T12:00:00`)
+    const weekdayKey = WEEKDAY_BOOKING_KEYS[parsed.getDay()]
+    if (!weekdayKey) return date
+    const dayShort = String(parsed.getDate()).padStart(2, '0')
+    const monthShort = String(parsed.getMonth() + 1).padStart(2, '0')
+    return `${t(`booking.days.${weekdayKey}`)} ${dayShort}/${monthShort}`
+  }
+
+  const renderSlots = (slots: Slot[]) =>
+    slots.length > 0 ? (
+      <div className="grid grid-cols-3 gap-sm md:grid-cols-4">
+        {slots.map((slot) => (
+          <button
+            key={slot.start}
+            type="button"
+            aria-pressed={effectiveTime === slot.start}
+            onClick={() => setTime(slot.start)}
+            className={selectableClassName(effectiveTime === slot.start)}
+          >
+            {slot.start}
+          </button>
+        ))}
+      </div>
+    ) : (
+      <p className="m-0 text-left font-body text-body-sm text-body-text">
+        {t('booking.noSlots')}
+      </p>
+    )
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-bg-page px-[30px] py-[30px] md:px-6 md:py-10">
@@ -217,6 +334,29 @@ function BookingPage() {
                 }}
                 error={fullNameErrorMessage}
               />
+              <div className="flex flex-col gap-sm">
+                <label className="mb-[4px] block text-left font-body text-[16px] text-body-text">
+                  {t('booking.idType')}
+                </label>
+                <div className="flex flex-wrap gap-sm">
+                  {ID_TYPES.map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      aria-pressed={idType === option}
+                      onClick={() => {
+                        setIdType(option)
+                        setIdNumberError(
+                          idNumber ? validateIdNumber(idNumber, option, t) !== null : false,
+                        )
+                      }}
+                      className={selectableClassName(idType === option)}
+                    >
+                      {t(`booking.idTypeOptions.${option.toLowerCase()}` as 'booking.idTypeOptions.costarricense')}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <TextField
                 id="booking-id"
                 label={t('booking.idNumber')}
@@ -224,7 +364,7 @@ function BookingPage() {
                 onChange={(e) => {
                   const next = e.target.value
                   setIdNumber(next)
-                  setIdNumberError(validateIdNumber(next, t) !== null)
+                  setIdNumberError(validateIdNumber(next, idType, t) !== null)
                 }}
                 error={idNumberErrorMessage}
               />
@@ -248,9 +388,10 @@ function BookingPage() {
                 <PhoneInput
                   id="booking-phone"
                   className="h-[38px]"
-                  defaultCountry="CR"
                   value={phone}
                   onChange={handlePhoneChange}
+                  onCountryChange={handleCountryChange}
+                  onBlur={handlePhoneBlur}
                   inputComponent={BookingPhoneInput}
                 />
               </TextField>
@@ -309,66 +450,78 @@ function BookingPage() {
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-sm">
-              {DAYS.map((d) => (
+            {slotsLoading && (
+              <p className="m-0 text-left font-body text-body-sm text-body-text">
+                {t('booking.loadingSlots')}
+              </p>
+            )}
+
+            {!slotsLoading && slotsError && (
+              <div className="flex flex-col gap-sm">
+                <p className="m-0 text-left font-body text-body-sm text-danger">
+                  {slotsError}
+                </p>
                 <button
-                  key={d}
                   type="button"
-                  aria-pressed={day === d}
-                  onClick={() => setDay(d)}
-                  className={selectableClassName(day === d)}
+                  onClick={() => fetchWeek(toISODate(getNextMonday()))}
+                  className="w-fit rounded-full bg-green-500 px-lg py-sm font-body text-sm font-semibold text-white transition-colors hover:bg-green-600"
                 >
-                  {t(`booking.days.${d}`)}
+                  {t('booking.retry')}
                 </button>
-              ))}
-            </div>
-
-            <div className="flex flex-col gap-sm">
-              <h4 className="m-0 text-left font-body text-base font-bold text-body-text">
-                {t('booking.morning')}
-              </h4>
-              <div className="grid grid-cols-3 gap-sm md:grid-cols-4">
-                {MORNING_TIMES.map((slot) => (
-                  <button
-                    key={slot}
-                    type="button"
-                    aria-pressed={time === slot}
-                    onClick={() => setTime(slot)}
-                    className={selectableClassName(time === slot)}
-                  >
-                    {slot}
-                  </button>
-                ))}
               </div>
-            </div>
+            )}
 
-            <div className="flex flex-col gap-sm">
-              <h4 className="m-0 text-left font-body text-base font-bold text-body-text">
-                {t('booking.afternoon')}
-              </h4>
-              <div className="grid grid-cols-3 gap-sm md:grid-cols-4">
-                {AFTERNOON_TIMES.map((slot) => (
-                  <button
-                    key={slot}
-                    type="button"
-                    aria-pressed={time === slot}
-                    onClick={() => setTime(slot)}
-                    className={selectableClassName(time === slot)}
-                  >
-                    {slot}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {!slotsLoading && !slotsError && availableDates.length === 0 && (
+              <p className="m-0 text-left font-body text-body-sm text-body-text">
+                {t('booking.noSlots')}
+              </p>
+            )}
+
+            {!slotsLoading && !slotsError && availableDates.length > 0 && (
+              <>
+                <div className="flex flex-wrap gap-sm">
+                  {availableDates.map((date) => (
+                    <button
+                      key={date}
+                      type="button"
+                      aria-pressed={effectiveDay === date}
+                      onClick={() => selectDay(date)}
+                      className={selectableClassName(effectiveDay === date)}
+                    >
+                      {dayLabel(date)}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex flex-col gap-sm">
+                  <h4 className="m-0 text-left font-body text-base font-bold text-body-text">
+                    {t('booking.morning')}
+                  </h4>
+                  {renderSlots(morningSlots)}
+                </div>
+
+                <div className="flex flex-col gap-sm">
+                  <h4 className="m-0 text-left font-body text-base font-bold text-body-text">
+                    {t('booking.afternoon')}
+                  </h4>
+                  {renderSlots(afternoonSlots)}
+                </div>
+              </>
+            )}
 
             <div className="mt-auto flex flex-col gap-md">
+              {submitError && (
+                <p className="m-0 text-right font-body text-sm text-danger">
+                  {submitError}
+                </p>
+              )}
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  disabled={!isComplete}
+                  disabled={!isComplete || submitting}
                   className="w-48 rounded-full bg-green-500 px-lg py-sm font-body text-sm font-semibold text-white transition-colors hover:bg-green-600 disabled:cursor-not-allowed disabled:bg-[var(--grey-600)] disabled:hover:bg-[var(--grey-600)]"
                 >
-                  {t('booking.submit')}
+                  {submitting ? t('booking.submitting') : t('booking.submit')}
                 </button>
               </div>
             </div>
@@ -376,7 +529,7 @@ function BookingPage() {
         </form>
       </section>
 
-      {submitted && <BookingSuccessModal onClose={() => setSubmitted(false)} />}
+      {success && <BookingSuccessModal onClose={() => setSuccess(false)} />}
     </main>
   )
 }
