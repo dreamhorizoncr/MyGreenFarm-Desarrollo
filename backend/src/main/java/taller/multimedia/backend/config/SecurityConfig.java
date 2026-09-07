@@ -75,7 +75,7 @@ public class SecurityConfig {
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowedOrigins(List.of(frontendOrigin));
-    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
     config.setAllowedHeaders(List.of("*"));
     config.setAllowCredentials(true);
     config.setMaxAge(3600L);
@@ -114,7 +114,8 @@ public class SecurityConfig {
                 "/signup",
                 "/forgot-password",
                 "/reset-password",
-                "/api/announcements"
+                "/api/announcements",
+                "/api/appointments/**"
             ).permitAll()
             .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/announcements").permitAll()
             .anyRequest().authenticated()
