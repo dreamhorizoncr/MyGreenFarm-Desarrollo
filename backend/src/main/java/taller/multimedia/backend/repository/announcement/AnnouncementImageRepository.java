@@ -1,4 +1,4 @@
-package taller.multimedia.backend.repository;
+package taller.multimedia.backend.repository.announcement;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
