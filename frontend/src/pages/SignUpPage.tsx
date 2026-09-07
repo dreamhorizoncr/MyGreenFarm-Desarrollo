@@ -91,6 +91,12 @@ function SignUpPage() {
 
     submitRegister({ firstName, lastName, email, password, role });
   };
+
+  const roleOptions = [
+  { value: 'TEACHER', label: t('signup.teacherRole') },
+  { value: 'ADMIN', label: t('signup.adminRole') }
+] as const;
+
   return (
     <AuthLayout
       overtitle={t("signup.overtitle")}
@@ -202,11 +208,11 @@ function SignUpPage() {
             </legend>
 
             <div className="flex flex-wrap gap-sm">
-              {(['User', 'Admin'] as const).map((option) => (
+              {roleOptions.map((option) => (
                 <label
-                  key={option}
+                  key={option.value}
                   className={`flex cursor-pointer items-center gap-xs rounded-lg border px-lg py-sm font-body text-[15px] transition-colors ${
-                    role === option
+                    role === option.value
                       ? 'border-green-500 bg-green-500/10 text-heading'
                       : 'border-neutral-300 bg-white text-body-text'
                   }`}
@@ -214,8 +220,8 @@ function SignUpPage() {
                   <input
                     type="radio"
                     name="role"
-                    value={option}
-                    checked={role === option}
+                    value={option.value}
+                    checked={role === option.value}
                     onChange={(e) => {
                       setRole(e.target.value)
 
@@ -225,7 +231,7 @@ function SignUpPage() {
                     }}
                     className="sr-only"
                   />
-                  {t(option === 'User' ? 'signup.userRole' : 'signup.adminRole')}
+                  {option.label}
                 </label>
               ))}
             </div>
