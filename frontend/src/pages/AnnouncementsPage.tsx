@@ -1,5 +1,5 @@
-import { useEffect, useState, type FormEvent } from 'react'
-import { Pencil, Plus, Trash2, X } from 'lucide-react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { ImagePlus, Pencil, Plus, Trash2, X } from 'lucide-react'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import { useAnnouncements } from '../hooks/useAnnouncements.ts'
 import type {
@@ -43,6 +43,8 @@ function AnnouncementsPage() {
 	const [cover, setCover] = useState<File | null>(null)
 	const [gallery, setGallery] = useState<File[]>([])
 	const [images, setImages] = useState<AnnouncementImageResponse[]>([])
+	const coverInputRef = useRef<HTMLInputElement>(null)
+	const galleryInputRef = useRef<HTMLInputElement>(null)
 
 	useEffect(() => {
 		void fetchAnnouncements('es')
@@ -167,14 +169,45 @@ function AnnouncementsPage() {
 							Fecha y hora del evento
 							<input type="datetime-local" value={form.eventDate} onChange={(e) => setForm({ ...form, eventDate: e.target.value })} className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading" />
 						</label>
-						<label className="font-body text-sm font-semibold text-heading">
-							Imagen de portada
-							<input type="file" accept="image/png,image/jpg,image/jpeg,image/svg+xml" onChange={(e) => setCover(e.target.files?.[0] ?? null)} className="mt-xs block w-full text-sm font-normal" />
-						</label>
-						<label className="font-body text-sm font-semibold text-heading">
-							Imágenes de galería (máximo 4)
-							<input type="file" multiple accept="image/png,image/jpg,image/jpeg,image/svg+xml" onChange={(e) => setGallery(Array.from(e.target.files ?? []).slice(0, 4))} className="mt-xs block w-full text-sm font-normal" />
-						</label>
+						<div className="font-body text-sm font-semibold text-heading">
+							<span className="block">Imagen de portada</span>
+							<input
+								ref={coverInputRef}
+								type="file"
+								accept="image/png,image/jpg,image/jpeg,image/svg+xml"
+								onChange={(e) => setCover(e.target.files?.[0] ?? null)}
+								className="hidden"
+							/>
+							<button
+								type="button"
+								onClick={() => coverInputRef.current?.click()}
+								className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-sm font-semibold text-heading"
+							>
+								<ImagePlus size={17} aria-hidden="true" />
+								Elegir portada
+							</button>
+							{cover && <p className="mt-xs text-xs font-normal text-neutral-500">{cover.name}</p>}
+						</div>
+						<div className="font-body text-sm font-semibold text-heading">
+							<span className="block">Imágenes de galería (máximo 4)</span>
+							<input
+								ref={galleryInputRef}
+								type="file"
+								multiple
+								accept="image/png,image/jpg,image/jpeg,image/svg+xml"
+								onChange={(e) => setGallery(Array.from(e.target.files ?? []).slice(0, 4))}
+								className="hidden"
+							/>
+							<button
+								type="button"
+								onClick={() => galleryInputRef.current?.click()}
+								className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-sm font-semibold text-heading"
+							>
+								<ImagePlus size={17} aria-hidden="true" />
+								Elegir imágenes
+							</button>
+							{gallery.length > 0 && <p className="mt-xs text-xs font-normal text-neutral-500">{gallery.length} archivo(s) seleccionado(s)</p>}
+						</div>
 					</div>
 
 					{images.length > 0 && (
@@ -200,6 +233,12 @@ function AnnouncementsPage() {
 			)}
 
 			<section className="mt-xl grid gap-md">
+				{loading && !formOpen && (
+					<div className="flex items-center gap-sm border-t border-neutral-200 py-xl text-sm text-neutral-500" role="status">
+						<span className="size-4 animate-spin rounded-full border-2 border-neutral-300 border-t-heading" aria-hidden="true" />
+						Cargando noticias...
+					</div>
+				)}
 				{announcements.map((announcement) => (
 					<article key={announcement.id} className="border-t border-neutral-200 py-lg">
 						<div className="flex flex-wrap items-start justify-between gap-md">

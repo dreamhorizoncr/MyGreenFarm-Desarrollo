@@ -22,8 +22,8 @@ export interface Announcement {
     title: string
     content: string
     type: AnnouncementType
-    eventDate?: string
-    location?: string
+    eventDate?: string | null
+    location?: string | null
 }
 
 export interface AnnouncementImageResponse {

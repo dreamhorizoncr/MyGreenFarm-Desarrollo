@@ -5,7 +5,11 @@ import Container from "../components/home/Container";
 import { useTranslation } from "react-i18next";
 
 import { useAnnouncements } from "../hooks/useAnnouncements";
-import type { Announcement, AnnouncementType } from "../types/announcement.ts";
+import type {
+  Announcement,
+  AnnouncementImageResponse,
+  AnnouncementType,
+} from "../types/announcement.ts";
 
 import news1 from "../assets/imgs/news1.png";
 import news2 from "../assets/imgs/news2.png";
@@ -37,20 +41,70 @@ const STATIC_ANNOUNCEMENTS: Announcement[] = [
   { id: "static-4", title: "Evento 1", content: LOREM, type: "NOTICE", eventDate: "2026-10-30T12:00:00", location: null },
 ];
 
-function formatDate(iso: string | null, lang: string): string {
+function formatDate(iso: string | null | undefined, lang: string): string {
   if (!iso) return "";
   return new Date(iso).toLocaleDateString(lang, { day: "numeric", month: "long" });
 }
 
 function NewsPage() {
   const { t, i18n } = useTranslation();
-  const {announcements, loading, error, fetchAnnouncements} = useAnnouncements();
+  const {
+    announcements,
+    loading,
+    error,
+    fetchAnnouncements,
+    getImages,
+  } = useAnnouncements();
   const [activeCategory, setActiveCategory] = useState<NewsCategory>("All");
+  const [announcementImages, setAnnouncementImages] = useState<
+    Record<string, AnnouncementImageResponse[]>
+  >({});
+  const [imagesLoading, setImagesLoading] = useState(false);
 
   useEffect(() => {
-    fetchAnnouncements(i18n.language);
+    void fetchAnnouncements(i18n.language);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [i18n.language])
+  }, [i18n.language]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchAnnouncementImages = async () => {
+      if (announcements.length === 0) {
+        setAnnouncementImages({});
+        return;
+      }
+
+      setImagesLoading(true);
+      try {
+        const entries = await Promise.all(
+          announcements.map(async (announcement) => [
+            announcement.id,
+            await getImages(announcement.id),
+          ] as const),
+        );
+
+        if (!cancelled) {
+          setAnnouncementImages(Object.fromEntries(entries));
+        }
+      } finally {
+        if (!cancelled) setImagesLoading(false);
+      }
+    };
+
+    void fetchAnnouncementImages();
+
+    return () => {
+      cancelled = true;
+    };
+    // getImages is stable for the lifetime of this hook instance.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [announcements]);
+
+  const getCoverImage = (announcement: Announcement, index: number) => {
+    const cover = announcementImages[announcement.id]?.find((image) => image.isCover);
+    return cover?.fileUrl ?? CARD_IMAGES[index % CARD_IMAGES.length];
+  };
 
   const realCards = announcements.filter(
     (a) => activeCategory === "All" || activeCategory === a.type
@@ -137,11 +191,11 @@ function NewsPage() {
       {/* Sección de Noticias */}
       <main>
         <Container className="py-[70px] md:py-[80px]">
-        {loading && <p className="m-0 p-xl text-center font-body text-base text-neutral-500">{t("common.loading")}</p>}
+        {(loading || imagesLoading) && <p className="m-0 p-xl text-center font-body text-base text-neutral-500">{t("common.loading")}</p>}
 
         {error && <p className="m-0 p-xl text-center font-body text-base text-danger">{error}</p>}
 
-        {!loading && !error && (
+        {!loading && !imagesLoading && !error && (
           <div className="flex flex-col gap-[18px]">
             {rows.map((row, rowIndex) => (
               <div key={`row-${rowIndex}`} className="grid grid-cols-1 gap-[18px] md:grid-cols-12">
@@ -152,12 +206,12 @@ function NewsPage() {
                   return isBig ? (
                     <article
                       key={a.id}
-                      className="overflow-hidden rounded-[16px] border border-neutral-200 bg-white md:col-span-8 md:grid md:h-[340px] md:grid-cols-12"
+                      className="overflow-hidden rounded-[22px] border border-neutral-200 bg-white md:col-span-8 md:grid md:h-[340px] md:grid-cols-12"
                     >
                       {/* Imagen */}
                       <div className="relative h-[240px] md:col-span-6 md:h-full">
                         <img
-                          src={CARD_IMAGES[globalIndex % CARD_IMAGES.length]}
+                          src={getCoverImage(a, globalIndex)}
                           alt={a.title}
                           className="h-full w-full object-cover"
                         />
@@ -196,7 +250,7 @@ function NewsPage() {
                     >
                       <div className="relative h-[200px] md:h-[125px] md:shrink-0">
                         <img
-                          src={CARD_IMAGES[globalIndex % CARD_IMAGES.length]}
+                          src={getCoverImage(a, globalIndex)}
                           alt={a.title}
                           className="h-full w-full object-cover"
                         />
