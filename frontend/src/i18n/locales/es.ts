@@ -225,6 +225,7 @@ export default {
     sidebar: {
       dashboard: 'Dashboard',
       docentes: 'Docentes',
+      noticias: 'Noticias',
       cv: 'CV',
       expedientes: 'Expedientes',
       miPerfil: 'Mi perfil',

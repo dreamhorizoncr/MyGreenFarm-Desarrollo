@@ -6,6 +6,7 @@ import {
   FileText,
   FolderOpen,
   GraduationCap,
+  Newspaper,
   LayoutDashboard,
   LogOut,
   User,
@@ -16,6 +17,7 @@ import { useLogin } from '../hooks/useLogin.ts'
 type SidebarItemId =
   | "dashboard"
   | "docentes"
+  | "noticias"
   | "cv"
   | "expedientes"
   | "miPerfil";
@@ -36,6 +38,7 @@ function AdminSidebar() {
   const items: SidebarItem[] = [
     { id: 'dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
     { id: 'docentes', icon: GraduationCap, path: '/admin/users' },
+    { id: 'noticias', icon: Newspaper, path: '/admin/announcements' },
     { id: 'cv', icon: FileText },
     { id: 'expedientes', icon: FolderOpen },
     { id: 'miPerfil', icon: User, path: '/profile' },

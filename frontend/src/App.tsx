@@ -14,6 +14,7 @@ import ProtectedRoute from './routes/ProtectedRoute.tsx'
 import AdminRoute from './routes/AdminRoute.tsx'
 import TeacherRoute from './routes/TeacherRoute.tsx'
 import NewsPage from './pages/NewsPage.tsx'
+import AnnouncementsPage from './pages/AnnouncementsPage.tsx'
 import Footer from './layout/Footer.tsx'
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
           <Route element={<AdminRoute />}>
             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
+            <Route path="/admin/announcements" element={<AnnouncementsPage />} />
           </Route>
         </Route>
         <Route path="/" element={<HomePage />} />
