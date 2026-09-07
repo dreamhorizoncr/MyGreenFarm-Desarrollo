@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="#{email.reset.pagetitle}">Restablecer contraseña</title>
+    <title th:text="#{email.appointment.pending.pagetitle}">Solicitud de Cita Pendiente</title>
 </head>
 <body style="margin:0; padding:0; background-color:#E8EFE6; font-family: Georgia, 'Times New Roman', serif;">
 
@@ -38,7 +38,7 @@
                         </td>
                     </tr>
 
-                    <!-- Capa 3: tira más clara, simulando terreno -->
+                    <!-- Capa 3: tira terreno -->
                     <tr>
                         <td style="background-color:#CFE8D6; height:14px; line-height:14px; font-size:1px;">&nbsp;</td>
                     </tr>
@@ -46,30 +46,26 @@
                     <!-- Cuerpo -->
                     <tr>
                         <td style="padding: 32px 40px 8px;">
-                            <h2 th:text="#{email.reset.title}" style="color:#1E4A32; font-size:19px; margin:0 0 16px; font-weight:normal;">
-                                Solicitud de cambio de contraseña
+                            <h2 th:text="#{email.appointment.pending.title}" style="color:#1E4A32; font-size:19px; margin:0 0 16px; font-weight:normal;">
+                                Solicitud de cita recibida
                             </h2>
-                            <p th:text="#{email.reset.body1}" style="color:#3F4A3B; font-size:15.5px; line-height:1.75; margin:0 0 24px;">
-                                Recibimos una solicitud para restablecer la contraseña de tu cuenta. Si fuiste tú, puedes hacerlo con el siguiente enlace:
+                            <p style="color:#3F4A3B; font-size:15.5px; line-height:1.75; margin:0 0 16px;">
+                                <span th:text="#{email.appointment.pending.greeting}">Hemos registrado una solicitud de cita para el ingreso de</span> 
+                                <strong th:text="${childName}" style="color:#015C39;"></strong>.
+                            </p>
+                            
+                            <div style="background-color:#E8EFE6; border-left:4px solid #019F62; padding:14px 18px; margin:0 0 24px; border-radius:0 4px 4px 0;">
+                                <p style="margin:0; color:#3F4A3B; font-size:14.5px;">
+                                    <strong th:text="#{email.appointment.date.label}">Fecha solicitada:</strong> 
+                                    <span th:text="${appointmentDate}"></span>
+                                </p>
+                            </div>
+
+                            <p th:text="#{email.appointment.pending.body}" style="color:#7C8977; font-size:13.5px; line-height:1.6; margin:0 0 24px;">
+                                Tu cita se encuentra en estado pendiente. La administración la revisará y te notificaremos en cuanto sea confirmada.
                             </p>
 
-                            <table cellpadding="0" cellspacing="0" style="margin: 0 0 26px;">
-                                <tr>
-                                    <td style="background-color:#019F62; border-radius:24px;">
-                                        <a th:href="${resetLink}" th:text="#{email.reset.button}"
-                                        style="display:inline-block; padding:14px 32px; color:#FFFFFF;
-                                                text-decoration:none; font-size:15px; letter-spacing:0.5px;">
-                                            Restablecer contraseña
-                                        </a>
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <p th:text="#{email.reset.body2}" style="color:#7C8977; font-size:13px; line-height:1.6; margin:0 0 24px;">
-                                El enlace expira en 15 minutos. Si no fuiste tú quien lo solicitó, ignora este correo — tu contraseña no cambiará.
-                            </p>
-
-                            <!-- Divisor tipo "surco de tierra" -->
+                            <!-- Divisor surco -->
                             <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td style="border-top:2px dashed #B9D4BC; font-size:1px; line-height:1px;">&nbsp;</td>
@@ -89,7 +85,7 @@
                         </td>
                     </tr>
 
-                    <!-- Franja inferior verde -->
+                    <!-- Franja inferior -->
                     <tr>
                         <td style="background-color:#019F62; padding: 14px; text-align:center;">
                             <p th:text="#{email.footer.slogan}" style="margin:0; color:#DFF3E6; font-size:11px; letter-spacing:1px;">
@@ -105,6 +101,5 @@
             </td>
         </tr>
     </table>
-
 </body>
 </html>

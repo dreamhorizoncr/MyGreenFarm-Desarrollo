@@ -1,4 +1,4 @@
-package taller.multimedia.backend.repository;
+package taller.multimedia.backend.repository.announcement;
 
 import java.time.LocalDateTime;
 import java.util.List;
