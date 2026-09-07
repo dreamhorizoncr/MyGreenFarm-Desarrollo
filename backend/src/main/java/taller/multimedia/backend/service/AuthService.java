@@ -86,17 +86,24 @@ public class AuthService {
         return jwtUtils.getCleanJwtCookie();
     }
 
-    // Resolve role from string, default to USER
+    // Resolve role from string, default to TEACHER if not provided or invalid
     private Role resolveRole(String strRole) {
-        if (strRole == null) {
-            return Role.USER;
-        }
-        try {
-            return Role.valueOf(strRole.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return Role.USER;
-        }
+    if (strRole == null) {
+        return Role.TEACHER;
     }
+
+    try {
+        Role role = Role.valueOf(strRole.toUpperCase());
+
+        if (role == Role.OWNER) {
+            throw new RuntimeException("The OWNER role cannot be assigned");
+        }
+
+        return role;
+    } catch (IllegalArgumentException e) {
+        return Role.TEACHER;
+    }
+}
 
     public void forgotPassword(String email) {
         User user = userRepository.findByEmail(email)

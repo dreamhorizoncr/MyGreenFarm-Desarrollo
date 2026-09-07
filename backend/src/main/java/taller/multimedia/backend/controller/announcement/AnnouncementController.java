@@ -25,7 +25,7 @@ public class AnnouncementController {
     private final AnnouncementService announcementService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<AnnouncementResponse> create(@RequestBody @Valid AnnouncementRequest dto) {
 
         AnnouncementResponse created = announcementService.create(dto);
@@ -40,7 +40,7 @@ public class AnnouncementController {
     }
 
     @PutMapping(value = "/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<AnnouncementResponse> update( @PathVariable UUID id, @RequestBody @Valid AnnouncementRequest dto) 
     {
         AnnouncementResponse updated = announcementService.update(id, dto);
@@ -48,7 +48,7 @@ public class AnnouncementController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         announcementService.delete(id);
         return ResponseEntity.noContent().build(); // Retorna un código 204 No Content indicando éxito

@@ -24,8 +24,8 @@ public class UserService {
         User currentUser = userRepository.findByEmail(currentEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (currentUser.getRole() != Role.ADMIN) {
-            throw new RuntimeException("Only admins can list users");
+        if (!canManageUsers(currentUser.getRole())) {
+            throw new RuntimeException("Only owners and admins can list users");
         }
 
         return userRepository.findAll().stream()
@@ -40,10 +40,10 @@ public class UserService {
         User targetUser = userRepository.findById(targetId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
+        boolean canViewAllUsers = canManageUsers(currentUser.getRole());
         boolean isSelf = currentUser.getId().equals(targetUser.getId());
 
-        if (!isAdmin && !isSelf) {
+        if (!canViewAllUsers && !isSelf) {
             throw new RuntimeException("You do not have permission to view this user");
         }
 
@@ -54,16 +54,14 @@ public class UserService {
         User currentUser = userRepository.findByEmail(currentEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        boolean isAdmin = currentUser.getRole() == Role.ADMIN;
-
-        if (!isAdmin) {
-            throw new RuntimeException("Only admins can edit users");
-        }
-
         User targetUser = userRepository.findById(targetId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         boolean isSelf = currentUser.getId().equals(targetUser.getId());
+
+        if (!canEditUser(currentUser.getRole(), targetUser.getRole(), isSelf)) {
+            throw new RuntimeException("You do not have permission to edit this user");
+        }
 
         targetUser.setFirstName(request.getFirstName());
         targetUser.setLastName(request.getLastName());
@@ -87,15 +85,17 @@ public class UserService {
         User currentUser = userRepository.findByEmail(currentEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (currentUser.getRole() != Role.ADMIN) {
-            throw new RuntimeException("Only admins can delete users");
-        }
-
         User targetUser = userRepository.findById(targetId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (currentUser.getId().equals(targetUser.getId())) {
+        boolean isSelf = currentUser.getId().equals(targetUser.getId());
+
+        if (isSelf) {
             throw new RuntimeException("You cannot delete your own account");
+        }
+
+        if (!canDeleteUser(currentUser.getRole(), targetUser.getRole())) {
+            throw new RuntimeException("You do not have permission to delete this user");
         }
 
         userRepository.delete(targetUser);
@@ -108,5 +108,33 @@ public class UserService {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getRole().name());
+    }
+
+    private boolean canManageUsers(Role role) {
+        return role == Role.OWNER || role == Role.ADMIN;
+    }
+
+    private boolean canDeleteUser(Role currentRole, Role targetRole) {
+        if (currentRole == Role.OWNER) {
+            return targetRole == Role.ADMIN || targetRole == Role.TEACHER;
+        }
+
+        if (currentRole == Role.ADMIN) {
+            return targetRole == Role.TEACHER;
+        }
+
+        return false;
+    }
+
+    private boolean canEditUser(Role currentRole, Role targetRole, boolean isSelf) {
+        if (currentRole == Role.OWNER) {
+            return true;
+        }
+
+        if (currentRole == Role.ADMIN) {
+            return isSelf || targetRole == Role.TEACHER;
+        }
+
+        return false;
     }
 }

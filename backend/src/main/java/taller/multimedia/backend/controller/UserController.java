@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import jakarta.validation.Valid;
 import taller.multimedia.backend.dto.MessageResponse;
@@ -31,6 +32,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAllUsers() {
         try {
@@ -53,6 +55,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize ("hasAnyRole('OWNER', 'ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable UUID id,
             @Valid @RequestBody UpdateUserRequest request) {
@@ -65,6 +68,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
         try {

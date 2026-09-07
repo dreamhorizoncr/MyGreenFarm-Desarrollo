@@ -21,7 +21,7 @@ public class AnnouncementImageController {
     private final AnnouncementImageService imageService;
 
     @PostMapping(value = "/{announcementId}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<List<AnnouncementImageResponse>> uploadImages(
             @PathVariable UUID announcementId,
             @RequestParam("files") List<MultipartFile> files,
@@ -38,7 +38,7 @@ public class AnnouncementImageController {
     }
 
     @DeleteMapping("/images/{imageId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<Void> deleteImage(@PathVariable UUID imageId) {
         imageService.deleteImage(imageId);
         return ResponseEntity.noContent().build();
