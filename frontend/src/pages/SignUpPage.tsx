@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import PasswordInput from "../components/ui/PasswordInput.tsx";
 import TextField from "../components/ui/TextField.tsx";
 import AuthButton from "../components/ui/AuthButton.tsx";
@@ -194,38 +195,47 @@ function SignUpPage() {
             </TextField>
           </div>
 
-          {/* Rol */}
-          <div className="mx-auto mt-[26px] w-[55%] md:mt-[32px]">
-            <label
-              htmlFor="signup-role"
-              className="mb-[4px] block text-left font-body text-[14px] text-body-text md:text-[16px]"
-            >
-              {t("signup.role")}
-            </label>
+          {/*Rol*/}
+          <fieldset className="mt-[32px] text-left">
+            <legend className="mb-[4px] font-body text-[16px] text-body-text">
+              {t('signup.role')}
+            </legend>
 
-            <select
-              id="signup-role"
-              value={role}
-              onChange={(e) => {
-                setRole(e.target.value);
+            <div className="flex flex-wrap gap-sm">
+              {(['User', 'Admin'] as const).map((option) => (
+                <label
+                  key={option}
+                  className={`flex cursor-pointer items-center gap-xs rounded-lg border px-lg py-sm font-body text-[15px] transition-colors ${
+                    role === option
+                      ? 'border-green-500 bg-green-500/10 text-heading'
+                      : 'border-neutral-300 bg-white text-body-text'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="role"
+                    value={option}
+                    checked={role === option}
+                    onChange={(e) => {
+                      setRole(e.target.value)
 
-                if (roleValidationError) {
-                  setRoleValidationError(null);
-                }
-              }}
-              className="h-[36px] w-full border-b border-neutral-300 bg-transparent px-0 font-body text-[14px] text-body-text outline-none transition focus:border-green-500 md:h-[38px] md:text-[15px]"
-            >
-              <option value="">{t("signup.selectRole")}</option>
-              <option value="User">{t("signup.userRole")}</option>
-              <option value="Admin">{t("signup.adminRole")}</option>
-            </select>
+                      if (roleValidationError) {
+                        setRoleValidationError(null)
+                      }
+                    }}
+                    className="sr-only"
+                  />
+                  {t(option === 'User' ? 'signup.userRole' : 'signup.adminRole')}
+                </label>
+              ))}
+            </div>
 
             {roleValidationError && (
-              <p className="mt-2 text-left font-body text-sm text-danger">
+              <p className="mt-2 font-body text-sm text-danger">
                 {roleValidationError}
               </p>
             )}
-          </div>
+          </fieldset>
 
           {/* Error backend */}
           {error && (
@@ -238,19 +248,11 @@ function SignUpPage() {
           <div className="mx-auto mt-[30px] w-[209px] md:mt-[38px] md:w-[70%]">
             <AuthButton loading={loading}>
               {loading ? t("signup.loading") : t("signup.buttonLabel")}
+              {!loading && <ArrowRight size={18} aria-hidden="true" />}
             </AuthButton>
           </div>
 
-          {/* Regresar al Login */}
-          <p className="mt-[22px] text-center font-body text-[12px] text-body-text md:mt-[28px] md:text-[14px]">
-            {t("signup.hasAccount")}{" "}
-            <Link
-              to="/login"
-              className="font-link text-heading transition-opacity hover:opacity-70"
-            >
-              {t("signup.goToLogin")}
-            </Link>
-          </p>
+          {/*Regresar al Login*/}
         </form>
       )}
     </AuthLayout>

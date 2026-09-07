@@ -57,7 +57,7 @@ function AdminUsersPage() {
         </p>
 
         <div className="mb-[var(--spacing-lg)] mt-[var(--spacing-xl)] flex flex-wrap items-center justify-between gap-md">
-          <div className="flex h-[44px] min-w-[240px] max-w-[420px] flex-1 items-center gap-sm rounded-full bg-white px-md">
+          <div className="flex h-[44px] min-w-[240px] max-w-[420px] flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
             <Search size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
             <input
               type="search"
