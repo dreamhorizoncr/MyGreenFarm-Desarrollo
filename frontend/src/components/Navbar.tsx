@@ -28,7 +28,6 @@ function Navbar() {
   const isAuthenticated = Boolean(userStorage.getUser())
   const isProtectedPage =
     pathname === '/profile' ||
-    pathname === '/teacher' ||
     pathname.startsWith('/admin')
 
   const navLinks = [
