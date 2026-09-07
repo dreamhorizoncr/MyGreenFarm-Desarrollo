@@ -71,7 +71,7 @@ public class AuthController {
     }
 
     // Endpoint for user registration (signup) - only ADMIN can register new users
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         try {

@@ -1,18 +1,20 @@
 import axios from 'axios'
 import i18n from '../i18n/index.ts'
 
-export function getErrorMessage(err: unknown): string {
-  return err instanceof Error ? err.message : i18n.t('common.error')
-}
+export function getErrorMessage(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    const message = error.response?.data?.message
 
-export function getApiErrorMessage(err: unknown): string {
-  if (axios.isAxiosError(err)) {
-    const data = err.response?.data as
-      | { message?: string }
-      | string
-      | undefined
-    if (typeof data === 'string' && data) return data
-    if (data && typeof data === 'object' && data.message) return data.message
+    if (typeof message === 'string') {
+      return message
+    }
+
+    if (typeof error.response?.data === 'string') {
+      return error.response.data
+    }
   }
-  return getErrorMessage(err)
+
+  return error instanceof Error
+    ? error.message
+    : i18n.t('common.error')
 }
