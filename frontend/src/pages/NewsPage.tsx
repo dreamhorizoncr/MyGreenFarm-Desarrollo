@@ -5,14 +5,8 @@ import Container from "../components/home/Container";
 import { useTranslation } from "react-i18next";
 
 import { useAnnouncements } from "../hooks/useAnnouncements";
+import { useAnnouncementImages } from "../hooks/useAnnouncementImages";
 import type { Announcement, AnnouncementType } from "../types/announcement.ts";
-
-import news1 from "../assets/imgs/news1.png";
-import news2 from "../assets/imgs/news2.png";
-import news3 from "../assets/imgs/news3.png";
-import news4 from "../assets/imgs/news4.png";
-
-// import Footer from '../layout/Footer'
 
 type NewsCategory = "All" | "NEWS" | "EVENT" | "NOTICE";
 
@@ -23,47 +17,43 @@ const TYPE_LABEL_KEY: Record<AnnouncementType, "newspage.category2" | "newspage.
   GENERAL: "newspage.category5",
 };
 
-const CARD_IMAGES = [news1, news2, news3, news4];
-
-const MIN_CARDS = 4;
-
-const LOREM =
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
-
-const STATIC_ANNOUNCEMENTS: Announcement[] = [
-  { id: "static-1", title: "Evento 1", content: LOREM, type: "GENERAL", eventDate: "2026-10-18T12:00:00", location: null },
-  { id: "static-2", title: "Evento 2", content: LOREM, type: "EVENT", eventDate: "2026-01-08T12:00:00", location: null },
-  { id: "static-3", title: "Evento Académico", content: LOREM, type: "NEWS", eventDate: "2026-01-06T12:00:00", location: null },
-  { id: "static-4", title: "Evento 1", content: LOREM, type: "NOTICE", eventDate: "2026-10-30T12:00:00", location: null },
-];
-
-function formatDate(iso: string | null, lang: string): string {
+function formatDate(iso: string | null | undefined, lang: string): string {
   if (!iso) return "";
   return new Date(iso).toLocaleDateString(lang, { day: "numeric", month: "long" });
 }
 
 function NewsPage() {
   const { t, i18n } = useTranslation();
-  const {announcements, loading, error, fetchAnnouncements} = useAnnouncements();
+  const {
+    announcements,
+    loading,
+    error,
+    fetchAnnouncements,
+  } = useAnnouncements();
+  const {
+    loading: imagesLoading,
+    error: imagesError,
+    fetchImages,
+    getCoverImage,
+  } = useAnnouncementImages();
   const [activeCategory, setActiveCategory] = useState<NewsCategory>("All");
 
   useEffect(() => {
-    fetchAnnouncements(i18n.language);
+    void fetchAnnouncements(i18n.language);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [i18n.language])
+  }, [i18n.language]);
+
+  useEffect(() => {
+    void fetchImages(announcements.map((announcement) => announcement.id));
+    // fetchImages is stable for the lifetime of this hook instance.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [announcements]);
 
   const realCards = announcements.filter(
     (a) => activeCategory === "All" || activeCategory === a.type
   );
 
-  const staticCards = STATIC_ANNOUNCEMENTS.filter(
-    (a) => activeCategory === "All" || activeCategory === a.type
-  );
-
-  const cards: Announcement[] = [
-    ...realCards,
-    ...staticCards.slice(0, Math.max(0, MIN_CARDS - realCards.length)),
-  ];
+  const cards: Announcement[] = realCards;
 
   const rows: Announcement[][] = [];
   for (let i = 0; i < cards.length; i += 2) {
@@ -137,30 +127,33 @@ function NewsPage() {
       {/* Sección de Noticias */}
       <main>
         <Container className="py-[70px] md:py-[80px]">
-        {loading && <p className="m-0 p-xl text-center font-body text-base text-neutral-500">{t("common.loading")}</p>}
+        {(loading || imagesLoading) && <p className="m-0 p-xl text-center font-body text-base text-neutral-500">{t("common.loading")}</p>}
 
-        {error && <p className="m-0 p-xl text-center font-body text-base text-danger">{error}</p>}
+        {(error || imagesError) && <p className="m-0 p-xl text-center font-body text-base text-danger">{error || imagesError}</p>}
 
-        {!loading && !error && (
+        {!loading && !imagesLoading && !error && !imagesError && (
           <div className="flex flex-col gap-[18px]">
             {rows.map((row, rowIndex) => (
               <div key={`row-${rowIndex}`} className="grid grid-cols-1 gap-[18px] md:grid-cols-12">
                 {row.map((a, colIndex) => {
-                  const globalIndex = rowIndex * 2 + colIndex;
                   const isBig = row.length === 1 || (rowIndex % 2 === 0 ? colIndex === 0 : colIndex === 1);
 
                   return isBig ? (
                     <article
                       key={a.id}
-                      className="overflow-hidden rounded-[16px] border border-neutral-200 bg-white md:col-span-8 md:grid md:h-[340px] md:grid-cols-12"
+                      className="overflow-hidden rounded-[22px] border border-neutral-200 bg-white md:col-span-8 md:grid md:h-[340px] md:grid-cols-12"
                     >
                       {/* Imagen */}
                       <div className="relative h-[240px] md:col-span-6 md:h-full">
-                        <img
-                          src={CARD_IMAGES[globalIndex % CARD_IMAGES.length]}
-                          alt={a.title}
-                          className="h-full w-full object-cover"
-                        />
+                        {getCoverImage(a.id) ? (
+                          <img
+                            src={getCoverImage(a.id)}
+                            alt={a.title}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="h-full w-full bg-neutral-100" aria-label="Sin imagen de portada" />
+                        )}
 
                         <span className="absolute left-[14px] top-[14px] rounded-full bg-orange-500 px-[12px] py-[5px] font-body text-[11px] text-white">
                           {t(TYPE_LABEL_KEY[a.type])}
@@ -195,11 +188,15 @@ function NewsPage() {
                       className="overflow-hidden rounded-[16px] border border-neutral-200 bg-white md:col-span-4 md:flex md:h-[340px] md:flex-col"
                     >
                       <div className="relative h-[200px] md:h-[125px] md:shrink-0">
-                        <img
-                          src={CARD_IMAGES[globalIndex % CARD_IMAGES.length]}
-                          alt={a.title}
-                          className="h-full w-full object-cover"
-                        />
+                        {getCoverImage(a.id) ? (
+                          <img
+                            src={getCoverImage(a.id)}
+                            alt={a.title}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="h-full w-full bg-neutral-100" aria-label="Sin imagen de portada" />
+                        )}
 
                         <span className="absolute left-[14px] top-[14px] rounded-full bg-orange-500 px-[12px] py-[5px] font-body text-[11px] text-white">
                           {t(TYPE_LABEL_KEY[a.type])}

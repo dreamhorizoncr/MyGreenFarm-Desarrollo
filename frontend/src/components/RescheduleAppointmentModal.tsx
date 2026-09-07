@@ -5,7 +5,7 @@ import Button from './ui/Button.tsx'
 import WizardSteps from './ui/WizardSteps.tsx'
 import useDismiss from '../hooks/useDismiss.ts'
 import { appointmentService } from '../services/appointment.ts'
-import { getApiErrorMessage, getErrorMessage } from '../utils/error.ts'
+import { getErrorMessage } from '../utils/error.ts'
 import type { Appointment } from '../types/appointment.ts'
 
 interface RescheduleAppointmentModalProps {
@@ -57,7 +57,7 @@ function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Resched
       setSlots(data)
     } catch (err) {
       setSlots([])
-      setSlotsError(getApiErrorMessage(err))
+      setSlotsError(getErrorMessage(err))
     } finally {
       setSlotsLoading(false)
     }

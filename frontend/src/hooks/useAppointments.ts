@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { appointmentService } from '../services/appointment.ts'
-import { getApiErrorMessage } from '../utils/error.ts'
+import { getErrorMessage } from '../utils/error.ts'
 import i18n from '../i18n/index.ts'
 import type { Appointment, AppointmentStatus } from '../types/appointment.ts'
 
@@ -26,7 +26,7 @@ export function useAppointments() {
       const data = await appointmentService.getAppointments()
       setAppointments([...data].sort(byDateAsc))
     } catch (err) {
-      setError(getApiErrorMessage(err))
+      setError(getErrorMessage(err))
     } finally {
       setLoading(false)
     }
@@ -41,7 +41,7 @@ export function useAppointments() {
         const data = await appointmentService.getAppointments()
         setAppointments([...data].sort(byDateAsc))
       } catch (err) {
-        const message = getApiErrorMessage(err)
+        const message = getErrorMessage(err)
         setActionError(message)
         throw new Error(message, { cause: err })
       } finally {

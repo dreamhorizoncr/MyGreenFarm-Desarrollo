@@ -238,6 +238,7 @@ export default {
     sidebar: {
       dashboard: 'Dashboard',
       docentes: 'Docentes',
+      noticias: 'Noticias',
       citas: 'Citas',
       cv: 'CV',
       expedientes: 'Expedientes',
