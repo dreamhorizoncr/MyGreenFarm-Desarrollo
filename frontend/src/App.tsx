@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
-import TeacherDashboardPage from './pages/TeacherDashboardPage.tsx'
 import HomePage from './pages/HomePage.tsx'
 import BookingPage from './pages/BookingPage.tsx'
 import LoginPage from './pages/LoginPage.tsx'
@@ -12,7 +11,6 @@ import AdminDashboardPage from './pages/AdminDashboardPage.tsx'
 import ProfilePage from './pages/ProfilePage.tsx'
 import ProtectedRoute from './routes/ProtectedRoute.tsx'
 import AdminRoute from './routes/AdminRoute.tsx'
-import TeacherRoute from './routes/TeacherRoute.tsx'
 import NewsPage from './pages/NewsPage.tsx'
 import Footer from './layout/Footer.tsx'
 
@@ -24,11 +22,8 @@ function App() {
           <Routes>
         <Route element={<ProtectedRoute />}>
           <Route path="/profile" element={<ProfilePage />} />
-          <Route element={<TeacherRoute />}>
-            <Route path="/teacher" element={<TeacherDashboardPage />} />
-          </Route>
+          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
           <Route element={<AdminRoute />}>
-            <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
           </Route>
         </Route>

@@ -36,8 +36,8 @@ function LoginPage() {
     setEmailValidationError(emailErrorMessage);
     setPasswordValidationError(passwordErrorMessage);
     if (emailErrorMessage || passwordErrorMessage) return;
-    submitLogin({ email, password }, (user) =>
-      navigate(user.role === 'ADMIN' ? '/admin/dashboard' : '/teacher'),
+    submitLogin({ email, password }, () =>
+      navigate('/admin/dashboard'),
     )
   }
 

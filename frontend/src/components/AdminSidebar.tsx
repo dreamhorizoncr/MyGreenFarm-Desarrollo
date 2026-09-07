@@ -12,6 +12,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { useLogin } from '../hooks/useLogin.ts'
+import { userStorage } from '../utils/userStorage.ts'
 
 type SidebarItemId =
   | "dashboard"
@@ -33,13 +34,18 @@ function AdminSidebar() {
   const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
 
-  const items: SidebarItem[] = [
-    { id: 'dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
-    { id: 'docentes', icon: GraduationCap, path: '/admin/users' },
-    { id: 'cv', icon: FileText },
-    { id: 'expedientes', icon: FolderOpen },
-    { id: 'miPerfil', icon: User, path: '/profile' },
-  ]
+  const items: SidebarItem[] = userStorage.getUser()?.role === 'ADMIN'
+    ? [
+        { id: 'dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
+        { id: 'docentes', icon: GraduationCap, path: '/admin/users' },
+        { id: 'cv', icon: FileText },
+        { id: 'expedientes', icon: FolderOpen },
+        { id: 'miPerfil', icon: User, path: '/profile' },
+      ]
+    : [
+        { id: 'dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
+        { id: 'miPerfil', icon: User, path: '/profile' },
+      ]
 
   const activeItem = items.find((item) => item.path === pathname) ?? items[0]
   const ActiveIcon = activeItem.icon
@@ -53,7 +59,7 @@ function AdminSidebar() {
     'flex shrink-0 items-center gap-sm rounded-full px-md py-sm text-left font-body text-[15px] font-semibold text-body-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:w-full'
 
   return (
-    <aside className="w-full shrink-0 bg-bg-page p-md md:flex md:w-[260px] md:flex-col md:py-lg">
+    <aside className="w-full shrink-0 bg-bg-page p-md md:sticky md:top-0 md:flex md:h-svh md:w-[260px] md:flex-col md:self-start md:overflow-y-auto md:py-lg">
       {/*Menu Exclusivo de Admin*/}
       <div className="md:hidden">
         <button

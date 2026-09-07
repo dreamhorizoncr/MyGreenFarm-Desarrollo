@@ -1,23 +1,10 @@
 import { useCallback, useState } from 'react'
-import axios from 'axios'
 import { appointmentService } from '../services/appointment.ts'
-import { getErrorMessage } from '../utils/error.ts'
+import { getApiErrorMessage } from '../utils/error.ts'
 import type {
   AppointmentRequest,
   AvailableWeek,
 } from '../types/appointment.ts'
-
-function extractBackendMessage(err: unknown): string {
-  if (axios.isAxiosError(err)) {
-    const data = err.response?.data as
-      | { message?: string }
-      | string
-      | undefined
-    if (typeof data === 'string' && data) return data
-    if (data && typeof data === 'object' && data.message) return data.message
-  }
-  return getErrorMessage(err)
-}
 
 export function useBooking() {
   const [availability, setAvailability] = useState<AvailableWeek>({})
@@ -36,7 +23,7 @@ export function useBooking() {
       setAvailability(data)
     } catch (err) {
       setAvailability({})
-      setSlotsError(extractBackendMessage(err))
+      setSlotsError(getApiErrorMessage(err))
     } finally {
       setSlotsLoading(false)
     }
@@ -49,7 +36,7 @@ export function useBooking() {
       await appointmentService.createAppointment(request)
       setSuccess(true)
     } catch (err) {
-      setSubmitError(extractBackendMessage(err))
+      setSubmitError(getApiErrorMessage(err))
     } finally {
       setSubmitting(false)
     }
