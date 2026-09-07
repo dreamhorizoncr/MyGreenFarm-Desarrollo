@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent, type InputHTMLAttributes } from 'react'
+import { useCallback, useEffect, useState, type FormEvent, type InputHTMLAttributes } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ArrowLeft } from 'lucide-react'
 import PhoneInput from 'react-phone-number-input'
@@ -19,7 +19,7 @@ function BookingPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="h-[38px] w-full border-b border-neutral-300 bg-transparent px-0 font-body text-[15px] text-body-text outline-none transition focus:border-green-500"
+      className="h-[38px] w-full border-b border-neutral-300 bg-transparent pl-2 font-body text-[15px] text-body-text outline-none transition focus:border-green-500"
     />
   )
 }
@@ -54,6 +54,8 @@ function getNextMonday(): Date {
 
 type Slot = { start: string }
 
+const ID_TYPES = ['Costarricense', 'Extranjero']
+
 function parseSlots(slots: string[]): Slot[] {
   return slots.map((slot) => ({ start: slot.slice(0, 5) }))
 }
@@ -74,8 +76,10 @@ function BookingPage() {
   } = useBooking()
 
   const [fullName, setFullName] = useState('')
+  const [idType, setIdType] = useState('Costarricense')
   const [idNumber, setIdNumber] = useState('')
   const [email, setEmail] = useState('')
+  const [phoneCountry, setPhoneCountry] = useState<string | undefined>(undefined)
   const [phone, setPhone] = useState('')
   const [occupation, setOccupation] = useState('')
   const [childName, setChildName] = useState('')
@@ -110,13 +114,26 @@ function BookingPage() {
     setPhoneError(validatePhoneNumber(next, t) !== null)
   }
 
+  const handleCountryChange = (country?: string) => {
+    setPhoneCountry(country)
+    if (!country) {
+      setPhoneError(true)
+    } else {
+      setPhoneError(phone ? validatePhoneNumber(phone, t) !== null : false)
+    }
+  }
+
+  const handlePhoneBlur = () => {
+    if (!phoneCountry || !phone.trim()) setPhoneError(true)
+  }
+
   const selectDay = (date: string) => {
     setDay(date)
     const firstSlot = availability[date]?.[0]
     setTime(firstSlot ? firstSlot.slice(0, 5) : null)
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     const fullNameErrorMessage = validateRequired(
@@ -126,12 +143,13 @@ function BookingPage() {
     )
     const idNumberErrorMessage =
       validateRequired(idNumber, t('booking.idNumber'), t) ??
-      validateIdNumber(idNumber, t)
+      validateIdNumber(idNumber, idType, t)
     const emailErrorMessage =
       validateRequired(email, t('booking.email'), t) ?? validateEmail(email, t)
-    const phoneErrorMessage =
-      validateRequired(phone, t('booking.phone'), t) ??
-      validatePhoneNumber(phone, t)
+    const phoneErrorMessage = phoneCountry
+      ? validateRequired(phone, t('booking.phone'), t) ??
+        validatePhoneNumber(phone, t)
+      : t('validation.countryRequired')
     const occupationErrorMessage = validateRequired(
       occupation,
       t('booking.occupation'),
@@ -165,7 +183,8 @@ function BookingPage() {
 
     if (!effectiveDay || !effectiveTime) return
 
-    void submit({
+    const ok = await submit({
+      idType,
       parentIdentification: idNumber,
       parentName: fullName,
       parentEmail: email,
@@ -176,12 +195,35 @@ function BookingPage() {
       parentNotes: reason,
       language: (i18n.language ?? 'es').split('-')[0],
     })
+    if (ok) resetForm()
   }
+
+  const resetForm = useCallback(() => {
+    setFullName('')
+    setIdType('Costarricense')
+    setIdNumber('')
+    setEmail('')
+    setPhoneCountry(undefined)
+    setPhone('')
+    setOccupation('')
+    setChildName('')
+    setReason('')
+    setDay(null)
+    setTime(null)
+    setFullNameError(false)
+    setIdNumberError(false)
+    setEmailError(false)
+    setPhoneError(false)
+    setOccupationError(false)
+    setChildNameError(false)
+    setReasonError(false)
+  }, [])
 
   const isComplete =
     fullName.trim() !== '' &&
     idNumber.trim() !== '' &&
     email.trim() !== '' &&
+    phoneCountry !== undefined &&
     phone.trim() !== '' &&
     occupation.trim() !== '' &&
     childName.trim() !== '' &&
@@ -201,14 +243,16 @@ function BookingPage() {
     : null
   const idNumberErrorMessage = idNumberError
     ? validateRequired(idNumber, t('booking.idNumber'), t) ??
-      validateIdNumber(idNumber, t)
+      validateIdNumber(idNumber, idType, t)
     : null
   const emailErrorMessage = emailError
     ? validateRequired(email, t('booking.email'), t) ?? validateEmail(email, t)
     : null
   const phoneErrorMessage = phoneError
-    ? validateRequired(phone, t('booking.phone'), t) ??
-      validatePhoneNumber(phone, t)
+    ? phoneCountry
+      ? validateRequired(phone, t('booking.phone'), t) ??
+        validatePhoneNumber(phone, t)
+      : t('validation.countryRequired')
     : null
   const occupationErrorMessage = occupationError
     ? validateRequired(occupation, t('booking.occupation'), t)
@@ -290,6 +334,29 @@ function BookingPage() {
                 }}
                 error={fullNameErrorMessage}
               />
+              <div className="flex flex-col gap-sm">
+                <label className="mb-[4px] block text-left font-body text-[16px] text-body-text">
+                  {t('booking.idType')}
+                </label>
+                <div className="flex flex-wrap gap-sm">
+                  {ID_TYPES.map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      aria-pressed={idType === option}
+                      onClick={() => {
+                        setIdType(option)
+                        setIdNumberError(
+                          idNumber ? validateIdNumber(idNumber, option, t) !== null : false,
+                        )
+                      }}
+                      className={selectableClassName(idType === option)}
+                    >
+                      {t(`booking.idTypeOptions.${option.toLowerCase()}` as 'booking.idTypeOptions.costarricense')}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <TextField
                 id="booking-id"
                 label={t('booking.idNumber')}
@@ -297,7 +364,7 @@ function BookingPage() {
                 onChange={(e) => {
                   const next = e.target.value
                   setIdNumber(next)
-                  setIdNumberError(validateIdNumber(next, t) !== null)
+                  setIdNumberError(validateIdNumber(next, idType, t) !== null)
                 }}
                 error={idNumberErrorMessage}
               />
@@ -321,9 +388,10 @@ function BookingPage() {
                 <PhoneInput
                   id="booking-phone"
                   className="h-[38px]"
-                  defaultCountry="CR"
                   value={phone}
                   onChange={handlePhoneChange}
+                  onCountryChange={handleCountryChange}
+                  onBlur={handlePhoneBlur}
                   inputComponent={BookingPhoneInput}
                 />
               </TextField>

@@ -97,6 +97,11 @@ export default {
     title: 'Book an appointment',
     fullName: 'Full name',
     idNumber: 'Identification number',
+    idType: 'Identification type',
+    idTypeOptions: {
+      costarricense: 'Costa Rican',
+      extranjero: 'Foreign',
+    },
     email: 'Email',
     phone: 'Phone number',
     occupation: 'Occupation',
@@ -183,7 +188,9 @@ export default {
     passwordMinLength: 'Password must be at least 8 characters',
     passwordPattern: 'Password must be at least 8 characters with uppercase, lowercase, number and symbol',
     fieldRequired: '{{field}} is required',
-    idNumberInvalid: 'Identification number must contain only numbers',
+    idNumberCostarricenseInvalid: 'Costa Rican ID must contain 9 or 10 digits',
+    idNumberForeignInvalid: 'Foreign ID must be 6 to 20 characters (letters, numbers or dashes)',
+    countryRequired: 'Select the country (flag) of the phone number',
     phoneInvalid: 'Enter a valid phone number',
   },
   profile: {

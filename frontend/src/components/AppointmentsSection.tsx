@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CalendarClock, Pencil, Search } from 'lucide-react'
+import { formatPhoneNumberIntl } from 'react-phone-number-input'
 import ChangeAppointmentStatusModal from './ChangeAppointmentStatusModal.tsx'
 import RescheduleAppointmentModal from './RescheduleAppointmentModal.tsx'
 import { useAppointments } from '../hooks/useAppointments.ts'
@@ -66,11 +67,20 @@ function AppointmentsSection() {
     return new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(iso))
   }
 
+  const formatPhone = (phone: string) => {
+    if (!phone) return phone
+    try {
+      return formatPhoneNumberIntl(phone)
+    } catch {
+      return phone
+    }
+  }
+
   const infoRows = (appointment: Appointment) => [
     { label: t('booking.fullName'), value: appointment.parentName },
     { label: t('booking.idNumber'), value: appointment.parentIdentification },
     { label: t('booking.email'), value: appointment.parentEmail },
-    { label: t('booking.phone'), value: appointment.parentPhone },
+    { label: t('booking.phone'), value: formatPhone(appointment.parentPhone) },
     { label: t('booking.occupation'), value: appointment.parentOccupation },
     { label: t('booking.reason'), value: appointment.parentNotes },
   ]

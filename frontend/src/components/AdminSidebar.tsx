@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
+  CalendarDays,
   ChevronDown,
   FileText,
   FolderOpen,
@@ -16,6 +17,7 @@ import { userStorage } from '../utils/userStorage.ts'
 
 type SidebarItemId =
   | "dashboard"
+  | "citas"
   | "docentes"
   | "cv"
   | "expedientes"
@@ -37,6 +39,7 @@ function AdminSidebar() {
   const items: SidebarItem[] = userStorage.getUser()?.role === 'ADMIN'
     ? [
         { id: 'dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
+        { id: 'citas', icon: CalendarDays, path: '/admin/citas' },
         { id: 'docentes', icon: GraduationCap, path: '/admin/users' },
         { id: 'cv', icon: FileText },
         { id: 'expedientes', icon: FolderOpen },
@@ -44,6 +47,7 @@ function AdminSidebar() {
       ]
     : [
         { id: 'dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
+        { id: 'citas', icon: CalendarDays, path: '/admin/citas' },
         { id: 'miPerfil', icon: User, path: '/profile' },
       ]
 

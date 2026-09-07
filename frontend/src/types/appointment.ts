@@ -1,6 +1,7 @@
 export type AppointmentStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED'
 
 export interface AppointmentRequest {
+  idType: string
   parentIdentification: string
   parentName: string
   parentEmail: string

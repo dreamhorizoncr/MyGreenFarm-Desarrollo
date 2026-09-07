@@ -96,6 +96,11 @@ export default {
     title: 'Réserver un rendez-vous',
     fullName: 'Nom complet',
     idNumber: "Numéro d'identification",
+    idType: "Type d'identification",
+    idTypeOptions: {
+      costarricense: 'Costaricienne',
+      extranjero: 'Étranger',
+    },
     email: 'E-mail',
     phone: 'Numéro de téléphone',
     occupation: 'Profession',
@@ -182,7 +187,9 @@ export default {
     passwordMinLength: 'Le mot de passe doit contenir au moins 8 caractères',
     passwordPattern: 'Le mot de passe doit contenir au moins 8 caractères, avec majuscule, minuscule, chiffre et symbole',
     fieldRequired: '{{field}} est obligatoire',
-    idNumberInvalid: 'Le numéro d\u2019identification doit contenir uniquement des chiffres',
+    idNumberCostarricenseInvalid: 'La cédula costaricienne doit contenir 9 ou 10 chiffres',
+    idNumberForeignInvalid: "L'identification étrangère doit contenir entre 6 et 20 caractères (lettres, chiffres ou tirets)",
+    countryRequired: 'Sélectionnez le pays (drapeau) du numéro de téléphone',
     phoneInvalid: 'Saisissez un numéro de téléphone valide',
   },
   profile: {

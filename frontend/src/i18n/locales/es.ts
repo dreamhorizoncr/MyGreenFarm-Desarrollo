@@ -98,6 +98,11 @@ export default {
     title: 'Reservar cita',
     fullName: 'Nombre completo',
     idNumber: 'Número de identificación',
+    idType: 'Tipo de identificación',
+    idTypeOptions: {
+      costarricense: 'Costarricense',
+      extranjero: 'Extranjero',
+    },
     email: 'Correo electrónico',
     phone: 'Número telefónico',
     occupation: 'Ocupación',
@@ -185,7 +190,9 @@ export default {
     passwordMinLength: 'La contraseña debe tener al menos 8 caracteres',
     passwordPattern: 'La contraseña debe tener al menos 8 caracteres, con mayúscula, minúscula, número y símbolo',
     fieldRequired: 'El {{field}} es obligatorio',
-    idNumberInvalid: 'El número de identificación debe contener solo números',
+    idNumberCostarricenseInvalid: 'La cédula costarricense debe contener 9 o 10 dígitos',
+    idNumberForeignInvalid: 'La identificación extranjera debe tener entre 6 y 20 caracteres (letras, números o guiones)',
+    countryRequired: 'Selecciona el país (bandera) del número telefónico',
     phoneInvalid: 'Ingresa un número telefónico válido',
   },
   profile: {

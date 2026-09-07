@@ -35,8 +35,10 @@ export function useBooking() {
     try {
       await appointmentService.createAppointment(request)
       setSuccess(true)
+      return true
     } catch (err) {
       setSubmitError(getApiErrorMessage(err))
+      return false
     } finally {
       setSubmitting(false)
     }

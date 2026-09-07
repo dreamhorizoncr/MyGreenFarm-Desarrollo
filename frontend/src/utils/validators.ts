@@ -1,9 +1,19 @@
 import type { TFunction } from 'i18next'
 import { isValidPhoneNumber } from 'react-phone-number-input'
 
-export function validateIdNumber(value: string, t: TFunction): string | null {
-  if (!value.trim()) return null
-  if (!/^\d+$/.test(value.trim())) return t('validation.idNumberInvalid')
+export function validateIdNumber(
+  value: string,
+  idType: string,
+  t: TFunction,
+): string | null {
+  const trimmed = value.trim()
+  if (!trimmed) return null
+
+  if (idType === 'Costarricense') {
+    if (!/^\d{9,10}$/.test(trimmed)) return t('validation.idNumberCostarricenseInvalid')
+  } else if (!/^[A-Za-z0-9-]{6,20}$/.test(trimmed)) {
+    return t('validation.idNumberForeignInvalid')
+  }
   return null
 }
 
