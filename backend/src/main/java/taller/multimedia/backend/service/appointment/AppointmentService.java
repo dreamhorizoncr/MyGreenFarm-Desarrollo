@@ -41,6 +41,8 @@ public class AppointmentService {
         LocalDateTime requestedStart = dto.getAppointmentDate();
         LocalDateTime requestedEnd = requestedStart.plusMinutes(60); // Duración de la cita
 
+        // validateParentIdentification(dto.getParentIdentification());
+
         List<Appointment> conflictingAppointments = appointmentRepository.findByAppointmentDateBetween(
                 requestedStart.minusMinutes(29), // Margen para evitar solapamientos
                 requestedEnd);
@@ -77,6 +79,33 @@ public class AppointmentService {
         emailService.sendAdminNewAppointmentAlert(savedAppointment);
 
         return savedAppointment;
+    }
+
+    private void validateParentIdentification(String typeIdCard, String parentIdentification) {
+        if (parentIdentification == null || parentIdentification.trim().isEmpty()) {
+            throw new IllegalArgumentException("La identificación no puede estar vacía.");
+        }
+
+        if ("Costarricense".equalsIgnoreCase(typeIdCard)) {
+            // Expresión regular para cédula costarricense
+            if (!parentIdentification.matches("^[1-9]\\d{8,9}$")) {
+                throw new IllegalArgumentException("El formato de cédula de Costa Rica no es válido.");
+            }
+        } else {
+            // Formato internacional general
+            if (!parentIdentification.matches("^[A-Za-z0-9-]{6,20}$")) {
+                throw new IllegalArgumentException("El formato de identificación internacional no es válido.");
+            }
+        }
+    }
+
+    public List<Appointment> getAllAppointments() {
+        return appointmentRepository.findAll();
+    }
+
+    public Appointment getAppointmentById(UUID id) {
+        return appointmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cita no encontrada con el ID: " + id));
     }
 
     @Transactional
