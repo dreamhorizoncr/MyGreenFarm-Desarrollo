@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class AppointmentRequest {
+    private String idType;
     private String parentIdentification;
     private String parentName;
     private String parentEmail;
