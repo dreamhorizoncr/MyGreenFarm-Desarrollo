@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import taller.multimedia.backend.dto.announcement.AnnouncementRequest;
 import taller.multimedia.backend.dto.announcement.AnnouncementResponse;
 import taller.multimedia.backend.model.announcement.Announcement;
-import taller.multimedia.backend.repository.AnnouncementRepository;
+import taller.multimedia.backend.repository.announcement.AnnouncementRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -97,7 +97,7 @@ public class AnnouncementService {
 
     @Transactional(readOnly = true)
     public List<AnnouncementResponse> getAllActive(String lang) {
-        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(28);
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
         
         return announcementRepository.findByCreatedAtAfter(thirtyDaysAgo).stream()
                 .map(announcement -> mapToResponse(announcement, lang))

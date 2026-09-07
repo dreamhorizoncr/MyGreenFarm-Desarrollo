@@ -8,8 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 import taller.multimedia.backend.dto.announcement.AnnouncementImageResponse;
 import taller.multimedia.backend.model.announcement.Announcement;
 import taller.multimedia.backend.model.announcement.AnnouncementImage;
-import taller.multimedia.backend.repository.AnnouncementRepository;
-import taller.multimedia.backend.repository.AnnouncementImageRepository;
+import taller.multimedia.backend.repository.announcement.AnnouncementImageRepository;
+import taller.multimedia.backend.repository.announcement.AnnouncementRepository;
 import taller.multimedia.backend.service.StorageService;
 
 import java.util.List;

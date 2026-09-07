@@ -4,14 +4,12 @@ import FooterColumn from '../components/footer/FooterColumn.tsx'
 import FooterSocialLinks from '../components/footer/FooterSocialLinks.tsx'
 import { footerColumns, legalLinks } from '../components/footer/footerData.ts'
 import nubesUp from '../assets/imgs/nubesUp.svg'
+import logo from '../assets/imgs/Logo.svg'
 
 function Brand() {
   return (
     <div className="flex items-center gap-3">
-      <span
-        className="inline-flex size-9 items-center justify-center rounded-full bg-green-500"
-        aria-hidden="true"
-      />
+      <img src={logo} alt="My Green Farm" className="h-12 w-auto max-w-[48px] object-contain" />
       <span className="font-heading text-h6 text-white">My Green Farm</span>
     </div>
   )

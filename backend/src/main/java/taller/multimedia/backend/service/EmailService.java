@@ -2,9 +2,16 @@ package taller.multimedia.backend.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import taller.multimedia.backend.model.appointment.Appointment;
+import taller.multimedia.backend.model.appointment.AppointmentStatus;
+
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -19,9 +26,10 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
+    private final MessageSource messageSource;
 
     @Value("${mail.from}")
-    private String fromAddress; 
+    private String fromAddress;
 
     @Value("${mail.support}")
     private String supportEmail;
@@ -29,9 +37,13 @@ public class EmailService {
     @Value("${frontend.url}")
     private String frontendUrl;
 
-    public EmailService(JavaMailSender mailSender, TemplateEngine templateEngine) {
+    @Value("${daycare.mail.admin}")
+    private String correoAdmin;
+
+    public EmailService(JavaMailSender mailSender, TemplateEngine templateEngine, MessageSource messageSource) {
         this.mailSender = mailSender;
         this.templateEngine = templateEngine;
+        this.messageSource = messageSource;
     }
 
     @Async
@@ -45,24 +57,106 @@ public class EmailService {
 
         String html = templateEngine.process("email/reset-password", context);
 
-        enviarCorreo(toEmail, "Cambio de contraseña", html);
+        sendEmail(toEmail, "Cambio de contraseña", html);
     }
 
-    private void enviarCorreo(String toEmail, String asunto, String html) {
+    private void sendEmail(String toEmail, String subject, String html) {
         try {
             MimeMessage mensaje = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mensaje, true, "UTF-8");
 
             helper.setFrom(fromAddress);
             helper.setTo(toEmail);
-            helper.setSubject(asunto);
+            helper.setSubject(subject);
             helper.setText(html, true); // true = es HTML
 
             mailSender.send(mensaje);
-            log.info("Correo '{}' enviado a: {}", asunto, toEmail);
+            log.info("Correo '{}' enviado a: {}", subject, toEmail);
         } catch (MessagingException e) {
             log.error("Error enviando correo a {}: {}", toEmail, e.getMessage(), e);
             throw new RuntimeException("No se pudo enviar el correo", e);
+        }
+    }
+
+    @Async
+    public void sendAppointmentPendingEmail(Appointment appointment, Locale locale) {
+        Context context = new Context(locale);
+        context.setVariable("supportEmail", supportEmail);
+        context.setVariable("childName", appointment.getChildName());
+
+        String fecha = appointment.getAppointmentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+        context.setVariable("appointmentDate", fecha);
+
+        String html = templateEngine.process("email/appointment-pending", context);
+        String subject = messageSource.getMessage("email.appointment.pending.subject", null, locale);
+
+        sendEmail(appointment.getParentEmail(), subject, html);
+    }
+
+    @Async
+    public void sendAppointmentStatusUpdateEmail(Appointment appointment, Locale locale) {
+        Context context = new Context(locale);
+        context.setVariable("supportEmail", supportEmail);
+        context.setVariable("childName", appointment.getChildName());
+        context.setVariable("status", appointment.getStatus().name());
+
+        String template = (appointment.getStatus() == AppointmentStatus.CONFIRMED)
+                ? "email/appointment-confirmed"
+                : "email/appointment-cancelled";
+
+        String subjectKey = (appointment.getStatus() == AppointmentStatus.CONFIRMED)
+                ? "email.appointment.confirmed.subject"
+                : "email.appointment.cancelled.subject";
+
+        String html = templateEngine.process(template, context);
+        String subject = messageSource.getMessage(subjectKey, null, locale);
+
+        sendEmail(appointment.getParentEmail(), subject, html);
+    }
+
+    @Async
+    public void sendAdminNewAppointmentAlert(Appointment appointment) {
+        String subject = "Nueva solicitud de cita pendiente";
+        String body = String.format("El padre/madre %s solicitó una cita para el niño(a) %s.",
+                appointment.getParentName(), appointment.getChildName());
+        sendEmail(correoAdmin, subject, "<p>" + body + "</p>");
+    }
+
+    @Async
+    public void sendAdminConfirmedAppointmentAlert(Appointment appointment) {
+        String subject = "Cita confirmada";
+        String body = String.format("El padre/madre %s que solicitó una cita para el niño(a) %s ha sido CONFIRMADA.",
+                appointment.getParentName(), appointment.getChildName());
+        sendEmail(correoAdmin, subject, "<p>" + body + "</p>");
+    }
+
+    @Async
+    public void sendAdminCancelledAppointmentAlert(Appointment appointment) {
+        String subject = "Cita cancelada";
+        String body = String.format("El padre/madre %s que solicitó una cita para el niño(a) %s ha sido CANCELADA.",
+                appointment.getParentName(), appointment.getChildName());
+        sendEmail(correoAdmin, subject, "<p>" + body + "</p>");
+    }
+
+    @Async
+    public void sendRescheduleEmail(Appointment appointment, Locale locale) {
+        try {
+            Context context = new Context(locale);
+            context.setVariable("supportEmail", supportEmail);
+            context.setVariable("childName", appointment.getChildName());
+            
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            context.setVariable("appointmentDate", appointment.getAppointmentDate().format(formatter));
+
+            String html = templateEngine.process("email/appointment-reschedule", context);
+
+            String subject = messageSource.getMessage("email.appointment.reschedule.subject", null, locale);
+
+            sendEmail(appointment.getParentEmail(), subject, html);
+
+        } catch (Exception e) {
+            log.error("Error al preparar el correo de reprogramación para {}: {}", appointment.getParentEmail(), e.getMessage(), e);
+            throw new RuntimeException("Error al enviar el correo de reprogramación", e);
         }
     }
 }

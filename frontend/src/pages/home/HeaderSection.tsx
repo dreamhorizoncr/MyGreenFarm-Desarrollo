@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import headerImage from '../../assets/imgs/ImgHeaderTemporal.svg'
 import nubesUp from '../../assets/imgs/nubesUp.svg'
 import Container from '../../components/home/Container.tsx'
 import PillButton from '../../components/ui/PillButton.tsx'
@@ -37,7 +38,7 @@ function HeaderSection() {
             </div>
 
             <img
-              src="/src/assets/hero.png"
+              src={headerImage}
               alt={t('home.header.heroAlt')}
               className="w-full rounded-2xl object-cover"
             />

@@ -6,12 +6,14 @@ function AdminDashboardPage() {
 
   return (
     <AdminLayout>
-      <h1 className="m-0 font-heading text-[34px] font-bold leading-[1.15] text-heading">
-        {t('admin.dashboard.title')}
-      </h1>
-      <p className="mt-2 font-body text-base text-neutral-500">
-        {t('admin.dashboard.subtitle')}
-      </p>
+      <div className="mt-[var(--spacing-lg)]">
+        <h1 className="m-0 font-heading text-[34px] font-bold leading-[1.15] text-heading">
+          {t('admin.dashboard.title')}
+        </h1>
+        <p className="mt-2 font-body text-base text-neutral-500">
+          {t('admin.dashboard.subtitle')}
+        </p>
+      </div>
     </AdminLayout>
   )
 }
