@@ -119,6 +119,11 @@ export default {
     modalTitle: 'Solicitud Enviada',
     modalDescription: 'Nos pondremos en contacto contigo para confirmar la cita.',
     close: 'Cerrar',
+    loadingSlots: 'Cargando horarios...',
+    noSlots: 'No hay horarios disponibles para esta fecha.',
+    submitting: 'Enviando...',
+    submitError: 'No se pudo enviar la solicitud. Inténtalo de nuevo.',
+    retry: 'Reintentar',
   },
   login: {
     overtitle: 'Bienvenido',

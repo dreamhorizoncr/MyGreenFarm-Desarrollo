@@ -117,6 +117,11 @@ export default {
     modalTitle: 'Demande envoyée',
     modalDescription: 'Nous vous contacterons pour confirmer le rendez-vous.',
     close: 'Fermer',
+    loadingSlots: 'Chargement des horaires...',
+    noSlots: 'Aucun créneau disponible pour cette date.',
+    submitting: 'Envoi...',
+    submitError: "La demande n'a pas pu être envoyée. Veuillez réessayer.",
+    retry: 'Réessayer',
   },
   login: {
     overtitle: 'Bienvenue',

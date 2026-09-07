@@ -118,6 +118,11 @@ export default {
     modalTitle: 'Request Sent',
     modalDescription: 'We will contact you to confirm the appointment.',
     close: 'Close',
+    loadingSlots: 'Loading available times...',
+    noSlots: 'No available times for this date.',
+    submitting: 'Sending...',
+    submitError: 'The request could not be sent. Please try again.',
+    retry: 'Retry',
   },
   login: {
     overtitle: 'Welcome',
