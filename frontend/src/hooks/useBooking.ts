@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { appointmentService } from '../services/appointment.ts'
-import { getApiErrorMessage } from '../utils/error.ts'
+import { getErrorMessage } from '../utils/error.ts'
 import type {
   AppointmentRequest,
   AvailableWeek,
@@ -23,7 +23,7 @@ export function useBooking() {
       setAvailability(data)
     } catch (err) {
       setAvailability({})
-      setSlotsError(getApiErrorMessage(err))
+      setSlotsError(getErrorMessage(err))
     } finally {
       setSlotsLoading(false)
     }
@@ -37,7 +37,7 @@ export function useBooking() {
       setSuccess(true)
       return true
     } catch (err) {
-      setSubmitError(getApiErrorMessage(err))
+      setSubmitError(getErrorMessage(err))
       return false
     } finally {
       setSubmitting(false)
