@@ -11,10 +11,10 @@ function AdminLayout({ children }: AdminLayoutProps) {
     <div className="flex min-h-svh flex-col">
       <Navbar />
 
-      <div className="flex flex-1 flex-col items-stretch md:flex-row">
+      <div className="mx-auto flex w-full max-w-[var(--container-max-width)] flex-1 flex-col items-stretch md:flex-row">
         <AdminSidebar />
 
-        <main className="min-w-0 flex-1 bg-bg-page px-[var(--spacing-md)] pb-[var(--scale-1200)] pt-[var(--scale-600)] md:px-[var(--scale-1100)] md:pb-[var(--scale-1500)] md:pt-[var(--scale-1000)]">
+        <main className="min-w-0 flex-1 bg-bg-page px-[var(--scale-1100)] pb-[var(--scale-1200)] pt-[var(--scale-600)] text-left md:pb-[var(--scale-1500)] md:pt-[var(--scale-1000)]">
           {children}
         </main>
       </div>

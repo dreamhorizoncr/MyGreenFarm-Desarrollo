@@ -115,7 +115,9 @@ public class SecurityConfig {
                 "/forgot-password",
                 "/reset-password",
                 "/api/announcements",
-                "/api/appointments/**"
+                "/api/appointments/**",
+                "/api/translations",
+                "/api/translations/batch"
             ).permitAll()
             .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/announcements").permitAll()
             .anyRequest().authenticated()

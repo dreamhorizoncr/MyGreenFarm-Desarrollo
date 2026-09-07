@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Menu, X } from 'lucide-react'
+import { Lock, Menu, X } from 'lucide-react'
 import LanguageSwitcher from './LanguageSwitcher.tsx'
 import ProfileButton from './ProfileButton.tsx'
 import { userStorage } from '../utils/userStorage.ts'
+import logo from '../assets/imgs/Logo.svg'
 
 function Brand() {
   const isAdminSection = useLocation().pathname.startsWith('/admin')
@@ -14,7 +15,7 @@ function Brand() {
       to={isAdminSection ? '/admin/dashboard' : '/'}
       className="flex items-center gap-3 no-underline"
     >
-      <span className="inline-flex size-9 items-center justify-center rounded-full bg-green-500" aria-hidden="true" />
+      <img src={logo} alt="My Green Farm" className="h-12 w-auto max-w-[48px] object-contain" />
       <span className="font-heading text-h6 text-heading">My Green Farm</span>
     </Link>
   )
@@ -22,8 +23,13 @@ function Brand() {
 
 function Navbar() {
   const { t } = useTranslation()
+  const { pathname } = useLocation()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const isAuthenticated = Boolean(userStorage.getUser())
+  const isProtectedPage =
+    pathname === '/profile' ||
+    pathname === '/teacher' ||
+    pathname.startsWith('/admin')
 
   const navLinks = [
     { to: '/', label: t('navbar.home') },
@@ -36,41 +42,58 @@ function Navbar() {
   return (
     <header className="relative z-40 h-16 border-b border-neutral-200 bg-bg-page">
       {/* Desktop nav */}
-      <nav className="hidden h-full w-full items-center pl-4 pr-11 md:flex">
-        <Brand />
+      <nav className="hidden h-full w-full md:flex">
+        <div className="mx-auto flex h-full w-full max-w-[var(--container-max-width)] items-center px-[var(--scale-1100)]">
+          <Brand />
 
-        <div className="ml-auto flex items-center gap-7 font-link">
-          {navLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className="text-body transition-opacity hover:opacity-70"
-            >
-              {link.label}
-            </Link>
-          ))}
+          <div className="ml-auto flex items-center gap-7 font-link">
+            {navLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                className={`relative font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:bg-green-500 after:transition-all after:content-[''] ${
+                  pathname === link.to ? 'after:w-full' : 'after:w-0'
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
 
-          <LanguageSwitcher />
+            <LanguageSwitcher />
 
-          {isAuthenticated && <ProfileButton />}
+            {(!isAuthenticated || !isProtectedPage) && (
+              <Link
+                to="/login"
+                aria-label={t('navbar.adminLogin')}
+                title={t('navbar.adminLogin')}
+                className="text-green-500 transition-opacity hover:opacity-70"
+              >
+                <Lock size={18} aria-hidden="true" />
+              </Link>
+            )}
+
+            {isAuthenticated && isProtectedPage && <ProfileButton />}
+          </div>
         </div>
       </nav>
 
       {/* Mobile nav */}
-      <nav className="flex h-full w-full items-center justify-between px-6 md:hidden">
-        <Brand />
+      <nav className="flex h-full w-full md:hidden">
+        <div className="mx-auto flex h-full w-full max-w-[var(--container-max-width)] items-center justify-between px-[var(--scale-1100)]">
+          <Brand />
 
-        <div className="flex items-center gap-2">
-          <LanguageSwitcher />
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
 
-          <button
-            type="button"
-            onClick={() => setDrawerOpen(true)}
-            className="text-heading"
-            aria-label="Open menu"
-          >
-            <Menu size={28} />
-          </button>
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(true)}
+              className="text-heading"
+              aria-label="Open menu"
+            >
+              <Menu size={28} />
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -106,15 +129,28 @@ function Navbar() {
             <Link
               key={link.to}
               to={link.to}
-              className="text-body transition-opacity hover:opacity-70"
+              className={`relative font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:bg-green-500 after:transition-all after:content-[''] ${
+                pathname === link.to ? 'after:w-full' : 'after:w-0'
+              }`}
               onClick={() => setDrawerOpen(false)}
             >
               {link.label}
             </Link>
           ))}
+{(!isAuthenticated || !isProtectedPage) && (
+            <Link
+              to="/login"
+              aria-label={t('navbar.adminLogin')}
+              title={t('navbar.adminLogin')}
+              onClick={() => setDrawerOpen(false)}
+              className="text-green-500 transition-opacity hover:opacity-70"
+            >
+              <Lock size={18} aria-hidden="true" />
+            </Link>
+          )}
         </nav>
 
-        {isAuthenticated && (
+        {isAuthenticated && isProtectedPage && (
           <div className="px-6 pt-8">
             <ProfileButton />
           </div>

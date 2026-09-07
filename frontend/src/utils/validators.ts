@@ -1,4 +1,17 @@
 import type { TFunction } from 'i18next'
+import { isValidPhoneNumber } from 'react-phone-number-input'
+
+export function validateIdNumber(value: string, t: TFunction): string | null {
+  if (!value.trim()) return null
+  if (!/^\d+$/.test(value.trim())) return t('validation.idNumberInvalid')
+  return null
+}
+
+export function validatePhoneNumber(value: string, t: TFunction): string | null {
+  if (!value.trim()) return null
+  if (!isValidPhoneNumber(value)) return t('validation.phoneInvalid')
+  return null
+}
 
 export function validateEmail(value: string, t: TFunction): string | null {
   if (!value) return t('validation.emailRequired')
