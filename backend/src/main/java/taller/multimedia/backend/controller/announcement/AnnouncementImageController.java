@@ -32,6 +32,7 @@ public class AnnouncementImageController {
     }
 
     @GetMapping("/{announcementId}/images")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<List<AnnouncementImageResponse>> getImages(@PathVariable UUID announcementId) {
         List<AnnouncementImageResponse> images = imageService.getImagesByAnnouncement(announcementId);
         return ResponseEntity.ok(images);
