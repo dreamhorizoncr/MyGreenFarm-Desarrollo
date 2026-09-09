@@ -120,7 +120,6 @@ public class SecurityConfig {
                 "/api/translations/batch"
             ).permitAll()
             .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/announcements").permitAll()
-              .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/announcements/*/images").permitAll()
             .anyRequest().authenticated()
         )
         .csrf(csrf -> csrf.disable())
