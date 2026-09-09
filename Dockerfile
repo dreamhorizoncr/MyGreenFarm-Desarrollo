@@ -11,34 +11,33 @@ COPY frontend/ ./
 RUN npm run build
 
 # ==========================================
-# ETAPA 2: Compilar el Backend (Spring Boot)
+# ETAPA 2: Compilar el Backend (Spring Boot con Java 22)
 # ==========================================
-FROM eclipse-temurin:21-jdk-alpine AS backend-build
+FROM eclipse-temurin:22-jdk-alpine AS backend-build
 WORKDIR /app
 
-COPY backend/mvnw ./
-COPY backend/.mvn .mvn
-COPY backend/pom.xml ./
+# Copiamos todo el contenido de la carpeta backend para evitar problemas de rutas relativas
+COPY backend/ ./
 
+# Damos permisos al mvnw y descargamos dependencias
 RUN chmod +x mvnw
 RUN ./mvnw dependency:go-offline
 
-COPY backend/src ./src
-
-# Copia la build de Vite a src/main/resources/static
-# para que Spring sirva la SPA cuando el usuario accede a la raíz
+# Copiamos la build de Vite directamente al directorio estático de Spring Boot
 COPY --from=frontend-build /app/frontend/dist/ ./src/main/resources/static/
 
+# Compilamos el proyecto
 RUN ./mvnw clean package -DskipTests
 
 # ==========================================
-# ETAPA 3: Imagen de Ejecución
+# ETAPA 3: Imagen de Ejecución (Java 22 JRE)
 # ==========================================
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:22-jre-alpine
 WORKDIR /app
 
 ENV PORT=8080
 
+# Copiamos el JAR resultante tomando como referencia absoluta la carpeta backend/target
 COPY --from=backend-build /app/target/*.jar app.jar
 
 EXPOSE 8080

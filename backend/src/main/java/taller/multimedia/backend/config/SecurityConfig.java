@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 
 
@@ -72,6 +73,22 @@ public class SecurityConfig {
   }
 
   @Bean
+  public WebSecurityCustomizer webSecurityCustomizer() {
+    return web -> web.ignoring().requestMatchers(
+        "/",
+        "/index.html",
+        "/favicon.ico",
+        "/assets/**",
+        "/**/*.js",
+        "/**/*.css",
+        "/**/*.svg",
+        "/**/*.png",
+        "/**/*.jpg",
+        "/**/*.jpeg",
+        "/**/*.webp");
+  }
+
+  @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowedOrigins(List.of(frontendOrigin));
@@ -120,6 +137,7 @@ public class SecurityConfig {
                 "/api/translations/batch"
             ).permitAll()
             .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/announcements").permitAll()
+              .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/announcements/*/images").permitAll()
             .anyRequest().authenticated()
         )
         .csrf(csrf -> csrf.disable())
