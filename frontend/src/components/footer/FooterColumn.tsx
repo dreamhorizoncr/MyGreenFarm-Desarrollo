@@ -7,8 +7,8 @@ function FooterColumn({ titleKey, links }: FooterColumnData) {
 
   return (
     <div className="flex flex-col items-center gap-md md:items-end">
-      <div className="flex flex-col items-start gap-md">
-        <h2 className="m-0 font-heading text-h6 font-bold text-left text-white">
+      <div className="flex flex-col items-center gap-md md:items-start">
+        <h2 className="m-0 font-heading text-h6 font-bold text-center text-white md:text-left">
           {t(titleKey)}
         </h2>
 
@@ -21,7 +21,7 @@ function FooterColumn({ titleKey, links }: FooterColumnData) {
                 <li key={link.label}>
                   <Link
                     to={link.to}
-                    className="font-body text-body-sm text-white transition-colors hover:text-[var(--orange-300)]"
+                    className="font-body text-body-sm text-white"
                   >
                     {label}
                   </Link>
@@ -30,11 +30,13 @@ function FooterColumn({ titleKey, links }: FooterColumnData) {
             }
 
             if (link.href) {
+              const isExternal = link.href.startsWith('http')
               return (
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="font-body text-body-sm text-white transition-colors hover:text-[var(--orange-300)]"
+                    className="font-body text-body-sm text-white"
+                    {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                   >
                     {label}
                   </a>

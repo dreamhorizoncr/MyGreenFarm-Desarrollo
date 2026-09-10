@@ -87,7 +87,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: EditUserMod
           </h2>
         </div>
 
-        <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px]">
+        <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px] text-left">
           <div className="flex flex-col">
             <label htmlFor="admin-edit-firstname" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
               {t('admin.firstName')}
@@ -150,7 +150,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: EditUserMod
           </div>
 
           <div className="flex gap-md mt-sm">
-            <Button variant="secondary" onClick={onClose} className="h-[47px] flex-1 rounded-none font-body text-[17px] uppercase tracking-wide">
+            <Button variant="secondary" onClick={onClose} className="h-[47px] flex-1 rounded-full font-body text-[17px] uppercase tracking-wide">
               {t('admin.cancel')}
             </Button>
             <Button
@@ -158,7 +158,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: EditUserMod
               onClick={handleSave}
               loading={saving}
               disabled={!firstName.trim() || !lastName.trim()}
-              className="h-[47px] flex-1 rounded-none bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
+              className="h-[47px] flex-1 rounded-full bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
             >
               {saving ? t('common.loading') : t('admin.save')}
             </Button>

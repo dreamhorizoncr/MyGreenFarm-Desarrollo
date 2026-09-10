@@ -115,10 +115,10 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Chang
         <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px]">
           {step === 0 && (
             <>
-              <p className="mt-2xs text-left font-body text-[13px] text-neutral-500">
-                {t('booking.childName')}: <span className="font-semibold text-body-text">{appointment.childName}</span>
+              <p className="rounded-2xl border border-neutral-200 bg-[var(--grey-100)] px-md py-sm text-left font-body text-base leading-relaxed text-body-text">
+                {t('booking.childName')}: <span className="font-bold">{appointment.childName}</span>
                 {' · '}
-                {t('teacherAppointments.date')}: <span className="font-semibold text-body-text">{formatDate(appointment.appointmentDate)}</span>
+                {t('teacherAppointments.date')}: <span className="font-bold">{formatDate(appointment.appointmentDate)}</span>
               </p>
 
               <div className="flex flex-col gap-sm">
@@ -184,7 +184,7 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Chang
 
           {step === 1 && (
             <>
-              <p className="mt-2xs text-left font-body text-[13px] text-neutral-500">
+              <p className="rounded-2xl border border-neutral-200 bg-[var(--grey-100)] px-md py-sm text-left font-body text-base leading-relaxed text-body-text">
                 {t('teacherAppointments.confirmStatusQuestion', { child: appointment.childName, status: selectedStatusLabel })}
               </p>
 

@@ -126,7 +126,7 @@ function AnnouncementsPage() {
 				<button
 					type="button"
 					onClick={openCreate}
-					className="inline-flex h-11 items-center gap-xs rounded-full bg-heading px-lg font-body text-sm font-semibold text-white"
+					className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-sm font-semibold text-white"
 				>
 					<Plus size={18} aria-hidden="true" />
 					Añadir noticia

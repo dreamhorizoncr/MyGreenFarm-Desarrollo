@@ -60,7 +60,7 @@ function AppointmentsSection() {
       ? 'bg-green-100 text-green-700'
       : status === 'CANCELLED'
         ? 'bg-red-100 text-red-700'
-        : 'bg-amber-100 text-amber-700'
+        : 'bg-[var(--info-100)] text-[var(--info-700)]'
 
   const formatDate = (iso: string) => {
     const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
