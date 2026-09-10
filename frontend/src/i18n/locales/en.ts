@@ -92,6 +92,8 @@ export default {
       category3: 'Events',
       category4: 'Notices',
       category5: 'General',
+      readMore: 'Read more',
+      gallery: "Image Gallery",
     },
   booking: {
     title: 'Book an appointment',

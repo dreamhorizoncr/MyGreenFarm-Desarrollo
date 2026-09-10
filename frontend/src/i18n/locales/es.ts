@@ -93,6 +93,8 @@ export default {
       category3: 'Eventos',
       category4: 'Avisos',
       category5: 'General',
+      readMore: 'Leer más',
+      gallery: "Galería de Imágenes",
     },
   booking: {
     title: 'Reservar cita',
