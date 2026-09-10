@@ -41,7 +41,7 @@ function Navbar() {
   return (
     <header className="relative z-40 h-16 border-b border-neutral-200 bg-bg-page">
       {/* Desktop nav */}
-      <nav className="hidden h-full w-full md:flex">
+      <nav className="hidden h-full w-full lg:flex">
         <div className="mx-auto flex h-full w-full max-w-[var(--container-max-width)] items-center px-[var(--scale-1100)]">
           <Brand />
 
@@ -65,7 +65,7 @@ function Navbar() {
                 to="/login"
                 aria-label={t('navbar.adminLogin')}
                 title={t('navbar.adminLogin')}
-                className="text-green-500 transition-opacity hover:opacity-70"
+className="w-fit self-center text-green-500 transition-opacity hover:opacity-70"
               >
                 <Lock size={18} aria-hidden="true" />
               </Link>
@@ -77,8 +77,8 @@ function Navbar() {
       </nav>
 
       {/* Mobile nav */}
-      <nav className="flex h-full w-full md:hidden">
-        <div className="mx-auto flex h-full w-full max-w-[var(--container-max-width)] items-center justify-between px-[var(--scale-1100)]">
+      <nav className="flex h-full w-full lg:hidden">
+        <div className="mx-auto flex h-full w-full max-w-[var(--container-max-width)] items-center justify-between px-lg">
           <Brand />
 
           <div className="flex items-center gap-2">
@@ -123,12 +123,12 @@ function Navbar() {
           </button>
         </div>
 
-        <nav className="flex flex-col gap-6 px-6 pt-6 font-link">
+        <nav className="flex flex-col items-center gap-6 px-6 pt-6 font-link">
           {navLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className={`relative font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:bg-green-500 after:transition-all after:content-[''] ${
+              className={`relative w-fit font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:bg-green-500 after:transition-all after:content-[''] ${
                 pathname === link.to ? 'after:w-full' : 'after:w-0'
               }`}
               onClick={() => setDrawerOpen(false)}
