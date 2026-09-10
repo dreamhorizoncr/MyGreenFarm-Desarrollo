@@ -38,6 +38,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/news" element={<NewsPage />} />
+        {/* <Route path="/news/:id" element={<NewsDetailPage />} /> */}
         {/* Redirigir cualquier ruta no definida a la página de inicio */}
         <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

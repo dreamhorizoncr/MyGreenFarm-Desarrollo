@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Container from "../components/home/Container";
 import { useTranslation } from "react-i18next";
+import NewsDetailModal from "../components/NewsDetailModal.tsx";
 
 import { useAnnouncements } from "../hooks/useAnnouncements";
 import { useAnnouncementImages } from "../hooks/useAnnouncementImages";
@@ -37,6 +38,7 @@ function NewsPage() {
     getCoverImage,
   } = useAnnouncementImages();
   const [activeCategory, setActiveCategory] = useState<NewsCategory>("All");
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState<Announcement | null>(null);
 
   useEffect(() => {
     void fetchAnnouncements(i18n.language);
@@ -170,15 +172,16 @@ function NewsPage() {
                           {a.title}
                         </h2>
 
-                        <p className="mt-[14px] font-body text-[13px] leading-[1.6] text-body-text">
+                        <p className="mt-[14px] line-clamp-3 font-body text-[13px] leading-[1.6] text-body-text">
                           {a.content}
                         </p>
 
                         <button
                           type="button"
-                          className="mt-[26px] w-fit rounded-full border border-pink-400 px-[16px] py-[7px] font-body text-[11px] uppercase text-pink-500"
+                          onClick={() => setSelectedAnnouncement(a)}
+                          className="mt-[26px] w-fit rounded-full border border-pink-400 px-[16px] py-[7px] font-body text-[11px] uppercase text-pink-500 transition hover:bg-pink-400 hover:text-white"
                         >
-                          Leer más
+                            {t("newspage.readMore")}
                         </button>
                       </div>
                     </article>
@@ -212,15 +215,16 @@ function NewsPage() {
                           {a.title}
                         </h2>
 
-                        <p className="mt-[2px] font-body text-[12px] leading-[1.55] text-body-text">
+                        <p className="mt-[2px] line-clamp-1 font-body text-[12px] leading-[1.55] text-body-text">
                           {a.content}
                         </p>
 
                         <button
                           type="button"
-                          className="mt-auto w-fit rounded-full border border-pink-400 px-[16px] py-[7px] font-body text-[11px] uppercase text-pink-500"
+                          onClick={() => setSelectedAnnouncement(a)}
+                          className="mt-auto w-fit rounded-full border border-pink-400 px-[16px] py-[7px] font-body text-[11px] uppercase text-pink-500 transition hover:bg-pink-400 hover:text-white"
                         >
-                          Leer más
+                            {t("newspage.readMore")}
                         </button>
                       </div>
                     </article>
@@ -232,6 +236,13 @@ function NewsPage() {
         )}
         </Container>
       </main>
+      {/* Modal con el detalle completo de la noticia */}
+      {selectedAnnouncement && (
+        <NewsDetailModal
+          announcement={selectedAnnouncement}
+          onClose={()=> setSelectedAnnouncement(null)}
+        />
+      )}
     </div>
   );
 }
