@@ -92,6 +92,8 @@ export default {
       category3: 'Événements',
       category4: 'Avis',
       category5: 'Général',
+      readMore: 'Lire la suite',
+      gallery: "Galerie d'images",
     },
   booking: {
     title: 'Réserver un rendez-vous',
