@@ -25,7 +25,7 @@ function Footer() {
         src={nubesUp}
         alt=""
         aria-hidden="true"
-        className="-mt-500 block w-full bg-bg-page"
+        className="relative z-10 -mt-500 block h-auto w-full bg-bg-page"
       />
       <div className="mx-auto flex w-full max-w-[var(--container-max-width)] flex-col gap-1500 px-1100 py-1500 text-center md:text-left">
         <div className="grid w-full gap-xl md:grid-cols-[1.5fr_1fr] md:items-start">
@@ -63,13 +63,25 @@ function Footer() {
                   <Link
                     key={link.label}
                     to={link.to}
-                    className="text-white transition-colors hover:text-[var(--orange-300)]"
+                    className="text-white"
                   >
                     {t(link.label)}
                   </Link>
                 ),
             )}
           </nav>
+
+          <p className="m-0 font-body text-body-sm text-white">
+            {t('footer.developedBy')}{' '}
+            <a
+              href="https://linktr.ee/dreamhorizoncr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="no-underline"
+            >
+              Dream Horizon
+            </a>
+          </p>
         </div>
       </div>
     </footer>

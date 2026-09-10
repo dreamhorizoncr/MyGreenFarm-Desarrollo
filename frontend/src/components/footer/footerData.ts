@@ -4,11 +4,11 @@ export const footerColumns = [
     links: [
       {
         label: 'footer.contactEmail',
-        href: 'mailto:mygreenfarmcr@gmail.com',
+        href: 'https://mail.google.com/mail/?view=cm&fs=1&to=mygreenfarmcr@gmail.com',
       },
       {
         label: 'footer.contactPhone',
-        href: 'tel:+50600000000',
+        href: 'tel:+506 8327 8347',
       },
       { label: 'footer.contactAddress' },
     ],

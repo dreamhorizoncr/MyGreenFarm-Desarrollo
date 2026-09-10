@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { MoreVertical, Pencil, Plus, Search, Trash2 } from 'lucide-react'
+import { Plus, Search } from 'lucide-react'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import EditUserModal from '../components/EditUserModal.tsx'
 import DeleteUserModal from '../components/DeleteUserModal.tsx'
+import TeacherCard from '../components/TeacherCard.tsx'
 import { useAdmin } from '../hooks/useAdmin.ts'
 import useDismiss from '../hooks/useDismiss.ts'
 import { userStorage } from '../utils/userStorage.ts'
@@ -18,6 +19,7 @@ function AdminUsersPage() {
   const [userToEdit, setUserToEdit] = useState<UserInfo | null>(null)
   const [userToDelete, setUserToDelete] = useState<UserInfo | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
+  const [roleFilter, setRoleFilter] = useState<string>('ALL')
   const [openMenuId, setOpenMenuId] = useState<string | null>(null)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -34,16 +36,37 @@ function AdminUsersPage() {
 
   const filteredUsers = useMemo(() => {
     const term = searchTerm.trim().toLowerCase()
-    if (!term) return users
-    return users.filter((user) =>
-      [user.firstName, user.lastName, user.email, user.role].some((field) =>
+    return users.filter((user) => {
+      if (roleFilter !== 'ALL' && user.role !== roleFilter) return false
+      if (!term) return true
+      return [user.firstName, user.lastName, user.email, user.role].some((field) =>
         field.toLowerCase().includes(term),
-      ),
-    )
-  }, [users, searchTerm])
+      )
+    })
+  }, [users, searchTerm, roleFilter])
+
+  const roleOptions = useMemo(() => ['ALL', ...Array.from(new Set(users.map((user) => user.role)))], [users])
+
+  const roleFilterClassName = (active: boolean) =>
+    `rounded-full px-md py-sm font-body text-sm font-semibold transition-colors ${
+      active ? 'bg-green-500 text-white' : 'bg-[var(--grey-100)] text-body-text hover:bg-[var(--grey-200)]'
+    }`
 
   const handleSave = async (id: string, data: UpdateUserData) => {
     await updateUser(id, data)
+  }
+
+  const handleToggleMenu = (id: string) => () =>
+    setOpenMenuId((prev) => (prev === id ? null : id))
+
+  const handleEdit = (user: UserInfo) => () => {
+    setUserToEdit(user)
+    setOpenMenuId(null)
+  }
+
+  const handleDelete = (user: UserInfo) => () => {
+    setUserToDelete(user)
+    setOpenMenuId(null)
   }
 
   return (
@@ -71,11 +94,25 @@ function AdminUsersPage() {
 
           <Link
             to="/signup"
-            className="inline-flex h-[44px] items-center gap-xs whitespace-nowrap rounded-full bg-green-500 px-[var(--scale-600)] font-body text-[15px] font-semibold text-white no-underline focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+            className="inline-flex h-[44px] items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-[var(--scale-600)] font-body text-[15px] font-semibold text-white no-underline focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
           >
             <Plus size={18} aria-hidden="true" />
             <span>{t('admin.addDocente')}</span>
           </Link>
+        </div>
+
+        <div className="-mt-sm mb-lg flex flex-wrap gap-sm">
+          {roleOptions.map((role) => (
+            <button
+              key={role}
+              type="button"
+              aria-pressed={roleFilter === role}
+              onClick={() => setRoleFilter(role)}
+              className={roleFilterClassName(roleFilter === role)}
+            >
+              {role === 'ALL' ? t('admin.allRoles') : role}
+            </button>
+          ))}
         </div>
 
         {loading && <p className="m-0 p-xl text-center font-body text-base text-neutral-500">{t('common.loading')}</p>}
@@ -85,112 +122,26 @@ function AdminUsersPage() {
         {!loading && !error && (
           filteredUsers.length === 0 ? (
             <p className="m-0 p-xl text-center font-body text-base text-neutral-500">
-              {searchTerm.trim() ? t('admin.noResults') : t('common.noUsers')}
+              {searchTerm.trim() || roleFilter !== 'ALL' ? t('admin.noResults') : t('common.noUsers')}
             </p>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full border-separate font-body [border-spacing:0_var(--spacing-xs)]">
-                <thead>
-                  <tr>
-                    <th className="whitespace-nowrap px-md py-2xs text-left text-sm font-semibold uppercase tracking-[0.4px] text-neutral-default">
-                      {t('admin.firstName')}
-                    </th>
-                    <th className="whitespace-nowrap px-md py-2xs text-left text-sm font-semibold uppercase tracking-[0.4px] text-neutral-default">
-                      {t('admin.lastName')}
-                    </th>
-                    <th className="whitespace-nowrap px-md py-2xs text-left text-sm font-semibold uppercase tracking-[0.4px] text-neutral-default">
-                      {t('admin.email')}
-                    </th>
-                    <th className="whitespace-nowrap px-md py-2xs text-left text-sm font-semibold uppercase tracking-[0.4px] text-neutral-default">
-                      {t('admin.role')}
-                    </th>
-                    <th className="whitespace-nowrap px-md py-2xs text-center text-sm font-semibold uppercase tracking-[0.4px] text-neutral-default">
-                      {t('admin.actions')}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredUsers.map((user) => (
-                    <tr key={user.id}>
-                      <td className="rounded-l-xl bg-white p-md align-middle text-left text-[15px] text-body-text">
-                        {user.firstName}
-                      </td>
-                      <td className="bg-white p-md align-middle text-left text-[15px] text-body-text">
-                        {user.lastName}
-                      </td>
-                      <td className="bg-white p-md align-middle text-left text-[15px] text-body-text">
-                        {user.email}
-                      </td>
-                      <td className="bg-white p-md align-middle text-left text-[15px] text-body-text">
-                        {user.role}
-                      </td>
-                      <td className="rounded-r-xl bg-white p-md text-center align-middle text-[15px] text-body-text">
-                        <div className="inline-flex items-center justify-center gap-2xs">
-                          <div
-                            className="relative inline-flex"
-                            ref={(element) => {
-                              if (openMenuId === user.id) {
-                                menuRef.current = element
-                              }
-                            }}
-                          >
-                            <button
-                              type="button"
-                              className="inline-flex size-[34px] items-center justify-center rounded-full bg-transparent text-link focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-                              onClick={() =>
-                                setOpenMenuId((prev) => (prev === user.id ? null : user.id))
-                              }
-                              aria-expanded={openMenuId === user.id}
-                              aria-haspopup="menu"
-                              aria-label={t('admin.actions')}
-                            >
-                              <MoreVertical size={16} />
-                            </button>
-
-                            {openMenuId === user.id && (
-                              <div
-                                className="absolute right-0 top-[calc(100%+var(--spacing-2xs))] z-30 min-w-[180px] rounded-xl border border-neutral-200 bg-white p-2xs shadow animate-[admin-row-menu-in_0.12s_ease-out]"
-                                role="menu"
-                              >
-                                <button
-                                  type="button"
-                                  className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-sm text-body-text focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-[-2px]"
-                                  role="menuitem"
-                                  onClick={() => {
-                                    setUserToEdit(user)
-                                    setOpenMenuId(null)
-                                  }}
-                                >
-                                  <Pencil size={14} />
-                                  <span>{t('admin.edit')}</span>
-                                </button>
-                                <button
-                                  type="button"
-                                  className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-sm text-danger focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-[-2px] disabled:cursor-not-allowed disabled:opacity-50"
-                                  role="menuitem"
-                                  onClick={() => {
-                                    setUserToDelete(user)
-                                    setOpenMenuId(null)
-                                  }}
-                                  disabled={user.id === currentUser?.id}
-                                  title={
-                                    user.id === currentUser?.id
-                                      ? t('admin.selfDeleteNotAllowed')
-                                      : undefined
-                                  }
-                                >
-                                  <Trash2 size={14} />
-                                  <span>{t('admin.delete')}</span>
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
+              {filteredUsers.map((user) => (
+                <TeacherCard
+                  key={user.id}
+                  user={user}
+                  isMenuOpen={openMenuId === user.id}
+                  isSelf={user.id === currentUser?.id}
+                  menuRef={(element) => {
+                    if (openMenuId === user.id) {
+                      menuRef.current = element
+                    }
+                  }}
+                  onToggleMenu={handleToggleMenu(user.id)}
+                  onEdit={handleEdit(user)}
+                  onDelete={handleDelete(user)}
+                />
+              ))}
             </div>
           )
         )}

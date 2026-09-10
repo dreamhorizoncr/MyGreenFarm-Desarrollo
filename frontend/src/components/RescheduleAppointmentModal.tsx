@@ -135,7 +135,7 @@ function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Resched
         <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px]">
           {step === 0 && (
             <>
-              <p className="mt-2xs text-left font-body text-[13px] text-neutral-500">
+              <p className="rounded-2xl border border-neutral-200 bg-[var(--grey-100)] px-md py-sm text-left font-body text-base leading-relaxed text-body-text">
                 {t('teacherAppointments.rescheduleDescription', { child: appointment.childName, date: dateLabel })}
               </p>
 
@@ -213,7 +213,7 @@ function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Resched
 
           {step === 1 && (
             <>
-              <p className="mt-2xs text-left font-body text-[13px] text-neutral-500">
+              <p className="rounded-2xl border border-neutral-200 bg-[var(--grey-100)] px-md py-sm text-left font-body text-base leading-relaxed text-body-text">
                 {t('teacherAppointments.confirmRescheduleQuestion', { child: appointment.childName, dateTime: newDateTimeLabel })}
               </p>
 

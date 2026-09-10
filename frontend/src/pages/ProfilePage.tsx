@@ -48,7 +48,7 @@ function ProfilePage() {
             {initials}
           </span>
 
-          <div className="mt-8 grid grid-cols-2 gap-x-8 gap-y-5">
+          <div className="mt-8 grid grid-cols-1 gap-y-5 md:grid-cols-2 md:gap-x-8">
             <div>
               <label
                 htmlFor="profile-firstname"
@@ -91,11 +91,11 @@ function ProfilePage() {
           </div>
         </div>
 
-        <div className="mt-6 flex justify-end">
+        <div className="mt-6 flex justify-center md:justify-end">
           <button
             type="button"
             onClick={handleLogout}
-            className="h-11 w-[120px] rounded-full bg-danger font-body text-[15px] font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+            className="h-11 w-full rounded-full bg-danger font-body text-[15px] font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:w-[120px]"
           >
             {t('profile.logout')}
           </button>
