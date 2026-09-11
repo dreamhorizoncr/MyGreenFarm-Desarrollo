@@ -85,22 +85,6 @@ public class SecurityConfig {
     return source;
   }
 
-  @Bean
-  public WebSecurityCustomizer webSecurityCustomizer() {
-    return web -> web.ignoring().requestMatchers(
-        "/",
-        "/index.html",
-        "/favicon.ico",
-        "/assets/**",
-        "/**/*.js",
-        "/**/*.css",
-        "/**/*.svg",
-        "/**/*.png",
-        "/**/*.jpg",
-        "/**/*.jpeg",
-        "/**/*.webp");
-  }
-
   // Este método es porque por la dependencia de Spring Security me muestra un
   // login obligatorio
   // Entonces esto lo quita
