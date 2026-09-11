@@ -19,7 +19,7 @@ export default {
   navbar: {
     home: 'Accueil',
     news: 'Actualités',
-    multimedia: 'Multimédia',
+    multimedia: 'Galerie',
     forum: 'Forum',
     services: 'Services',
     adminLogin: 'Connexion administrateurs',
@@ -50,6 +50,15 @@ export default {
       description:
         'Description de la section multimédia. Vous y trouverez les albums photos de nos activités.',
       viewMore: 'Voir plus',
+      albumTitle: 'Albums',
+      albumCount: '20 photos',
+      cardText:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    },
+    galeria: {
+      title: 'Galerie de Moments',
+      description:
+        'Explorez les albums photos de nos activités et de nos moments spéciaux.',
       albumTitle: 'Albums',
       albumCount: '20 photos',
       cardText:

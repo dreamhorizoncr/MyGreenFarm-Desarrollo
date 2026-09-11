@@ -14,6 +14,7 @@ import ProtectedRoute from './routes/ProtectedRoute.tsx'
 import AdminRoute from './routes/AdminRoute.tsx'
 import NewsPage from './pages/NewsPage.tsx'
 import AnnouncementsPage from './pages/AnnouncementsPage.tsx'
+import GalleryPage from './pages/GalleryPage.tsx'
 import Footer from './layout/Footer.tsx'
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/news" element={<NewsPage />} />
+        <Route path="/multimedia" element={<GalleryPage />} />
         {/* <Route path="/news/:id" element={<NewsDetailPage />} /> */}
         {/* Redirigir cualquier ruta no definida a la página de inicio */}
         <Route path="*" element={<Navigate to="/" replace />} />
