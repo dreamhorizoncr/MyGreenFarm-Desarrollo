@@ -98,4 +98,10 @@ public class AppointmentController {
         Appointment updatedAppointment = appointmentService.rescheduleAppointment(id, newDate, lang);
         return ResponseEntity.ok(updatedAppointment);
     }
+
+    @GetMapping("/test-reminders")
+    public ResponseEntity<String> testReminders() {
+        appointmentService.send24HourReminders();
+        return ResponseEntity.ok("Tarea de recordatorios ejecutada manualmente.");
+    }
 }

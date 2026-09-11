@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.util.Value;
@@ -73,13 +74,27 @@ public class AppointmentService {
         appointment.setStatus(AppointmentStatus.PENDING);
         Appointment savedAppointment = appointmentRepository.save(appointment);
 
-        googleCalendarService.addAppointmentToCalendar(savedAppointment);
+        appointmentRepository.flush();
+
+        try {
+            // Intentamos sincronizar con Google Calendar
+            googleCalendarService.addAppointmentToCalendar(savedAppointment);
+        } catch (Exception e) {
+            // Si Google falla, lanzamos una excepción para que el @Transactional haga rollback
+            // y no se guarde la cita a medias si la sincronización es estricta para ti.
+            throw new RuntimeException("Error al sincronizar la cita con Google Calendar: " + e.getMessage(), e);
+        }
 
         Locale locale = (dto.getLanguage() != null) ? Locale.forLanguageTag(dto.getLanguage()) : new Locale("es");
 
-        emailService.sendAppointmentPendingEmail(savedAppointment, locale);
-
-        emailService.sendAdminNewAppointmentAlert(savedAppointment);
+        // Los correos van al final. Si el correo falla por red SMTP, 
+        // al menos la cita y Google Calendar ya quedaron firmes en la BD.
+        try {
+            emailService.sendAppointmentPendingEmail(savedAppointment, locale);
+            emailService.sendAdminNewAppointmentAlert(savedAppointment);
+        } catch (Exception e) {
+            System.err.println("Advertencia: La cita se creó pero hubo un error al enviar los correos: " + e.getMessage());
+        }
 
         return savedAppointment;
     }
@@ -207,5 +222,30 @@ public class AppointmentService {
         emailService.sendRescheduleEmail(savedAppointment, locale);
 
         return savedAppointment;
+    }
+
+    // Se ejecuta cada hora para revisar citas a 24 horas de distancia
+    @Scheduled(cron = "0 0 * * * *") 
+    @Transactional
+    public void send24HourReminders() {
+        LocalDateTime now = LocalDateTime.now();
+        
+        LocalDateTime targetStart = now.plusHours(24);
+        LocalDateTime targetEnd = now.plusHours(25);
+
+        List<Appointment> upcomingAppointments = appointmentRepository.findByAppointmentDateBetweenAndStatus(
+                targetStart, targetEnd, AppointmentStatus.CONFIRMED);
+
+        for (Appointment appointment : upcomingAppointments) {
+            try {
+                Locale locale = new Locale("es"); 
+                
+                emailService.sendAppointmentReminderEmail(appointment, locale);
+                
+                System.out.println("Correo de recordatorio enviado para la cita ID: " + appointment.getId());
+            } catch (Exception e) {
+                System.err.println("Error al enviar recordatorio para la cita " + appointment.getId() + ": " + e.getMessage());
+            }
+        }
     }
 }
