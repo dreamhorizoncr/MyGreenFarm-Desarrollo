@@ -51,14 +51,24 @@ public class Appointment {
     @Column(nullable = false)
     private AppointmentStatus status;
 
-    @Column(name = "parent_notes", length = 2000)
+    @Column(name = "parent_notes", nullable = false, length = 4000)
     private String parentNotes;
 
-    @Column(name = "teacher_conclusion", length = 2000)
+    @Column(name = "teacher_conclusion", length = 4000)
     private String teacherConclusion;
 
     @Column(name = "google_event_id")
     private String googleEventId;
+
+    @Column(name = "language")
+    private String language;
+
+    @Column(name = "reminder_sent", nullable = false)
+    private boolean reminderSent = false;
+
+    public boolean isReminderSent() { return reminderSent; }
+    
+    public void setReminderSent(boolean reminderSent) { this.reminderSent = reminderSent; }
 
     public String getGoogleEventId() { return googleEventId; }
     

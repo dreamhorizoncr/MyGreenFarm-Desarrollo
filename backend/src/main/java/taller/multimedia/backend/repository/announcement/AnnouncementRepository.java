@@ -12,4 +12,5 @@ import taller.multimedia.backend.model.announcement.Announcement;
 @Repository
 public interface AnnouncementRepository extends JpaRepository<Announcement, UUID>{
     List<Announcement> findByCreatedAtAfter(LocalDateTime date);
+
 }
