@@ -122,6 +122,7 @@ public class SecurityConfig {
             ).permitAll()
             .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/announcements").permitAll()
             .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/announcements/*/images").permitAll()
+            .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/gallery/**").permitAll()
             .anyRequest().authenticated()
         )
         .csrf(csrf -> csrf.disable())
