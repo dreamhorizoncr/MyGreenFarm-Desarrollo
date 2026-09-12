@@ -39,14 +39,14 @@ public class GalleryService {
 
     @Transactional(readOnly = true)
     public List<GalleryResponse> getAll() {
-        return galleryRepository.findAll().stream()
+        return galleryRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public List<GalleryResponse> getByCategory(UUID categoryId) {
-        return galleryRepository.findByCategoryGalleryId(categoryId).stream()
+        return galleryRepository.findByCategoryGalleryIdOrderByCreatedAtDesc(categoryId).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -79,10 +79,10 @@ public class GalleryService {
         Gallery gallery = galleryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Galería no encontrada con ID: " + id));
 
-        // 1. Borrar primero los archivos físicos del bucket usando el servicio de imágenes
+        // Borrar primero los archivos físicos del bucket usando el servicio de imágenes
         galleryImageService.deleteAllImagesByGallery(id);
 
-        // 2. Borrar la galería (y por cascada se limpian los registros de la BD)
+        // Borrar la galería (y por cascada se limpian los registros de la BD)
         galleryRepository.delete(gallery);
     }
 
