@@ -180,11 +180,20 @@ public class EmailService {
 
             helper.setFrom(fromAddress);
             helper.setTo(appointment.getParentEmail());
-            helper.setSubject(locale.getLanguage().equals("en")
-                    ? "Reminder: Your appointment at My Green Farm tomorrow"
-                    : "Recordatorio: Tu cita en My Green Farm es mañana");
+            String subject;
+            String lang = locale.getLanguage();
 
-            helper.setText(htmlContent, true); 
+            if ("en".equals(lang)) {
+                subject = "Reminder: Your appointment at My Green Farm tomorrow";
+            } else if ("fr".equals(lang)) {
+                subject = "Rappel : Votre rendez-vous à My Green Farm est demain";
+            } else {
+                subject = "Recordatorio: Tu cita en My Green Farm es mañana";
+            }
+
+            helper.setSubject(subject);
+
+            helper.setText(htmlContent, true);
 
             mailSender.send(message);
             System.out.println("Correo de recordatorio enviado exitosamente a: " + appointment.getParentEmail());

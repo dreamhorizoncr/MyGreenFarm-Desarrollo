@@ -193,7 +193,7 @@ public class GoogleCalendarService {
                             "\nNotas: " + appointment.getParentNotes());
 
             LocalDateTime startDateTime = appointment.getAppointmentDate();
-            LocalDateTime endDateTime = startDateTime.plusMinutes(30);
+            LocalDateTime endDateTime = startDateTime.plusMinutes(59);
 
             String startIso = startDateTime.atZone(ZoneId.systemDefault()).toInstant().toString();
             String endIso = endDateTime.atZone(ZoneId.systemDefault()).toInstant().toString();
@@ -275,7 +275,7 @@ public class GoogleCalendarService {
             }
             
             // 3. Calcular fechas en formato ISO con la zona horaria correcta
-            LocalDateTime newEndDateTime = newStartDateTime.plusMinutes(30);
+            LocalDateTime newEndDateTime = newStartDateTime.plusMinutes(59);
             String startIso = newStartDateTime.atZone(ZoneId.systemDefault()).toInstant().toString();
             String endIso = newEndDateTime.atZone(ZoneId.systemDefault()).toInstant().toString();
 
