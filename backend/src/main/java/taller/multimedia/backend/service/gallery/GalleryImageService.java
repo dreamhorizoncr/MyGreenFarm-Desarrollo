@@ -74,7 +74,7 @@ public class GalleryImageService {
 
     @Transactional(readOnly = true)
     public List<GalleryImageResponse> getImagesByGallery(UUID galleryId) {
-        return imageRepository.findByGalleryId(galleryId).stream()
+        return imageRepository.findByGalleryIdOrderByCreatedAtDesc(galleryId).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }

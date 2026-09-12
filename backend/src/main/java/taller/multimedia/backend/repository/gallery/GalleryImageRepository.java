@@ -11,4 +11,6 @@ import java.util.List;
 @Repository 
 public interface GalleryImageRepository extends JpaRepository<GalleryImages, UUID> {
     List<GalleryImages> findByGalleryId(UUID gallery);
+
+    List<GalleryImages> findByGalleryIdOrderByCreatedAtDesc(UUID galleryId);
 }
