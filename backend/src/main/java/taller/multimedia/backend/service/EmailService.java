@@ -144,7 +144,7 @@ public class EmailService {
             Context context = new Context(locale);
             context.setVariable("supportEmail", supportEmail);
             context.setVariable("childName", appointment.getChildName());
-            
+
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
             context.setVariable("appointmentDate", appointment.getAppointmentDate().format(formatter));
 
@@ -155,8 +155,52 @@ public class EmailService {
             sendEmail(appointment.getParentEmail(), subject, html);
 
         } catch (Exception e) {
-            log.error("Error al preparar el correo de reprogramación para {}: {}", appointment.getParentEmail(), e.getMessage(), e);
+            log.error("Error al preparar el correo de reprogramación para {}: {}", appointment.getParentEmail(),
+                    e.getMessage(), e);
             throw new RuntimeException("Error al enviar el correo de reprogramación", e);
+        }
+    }
+
+    public void sendAppointmentReminderEmail(Appointment appointment, Locale locale) {
+        try {
+            Context context = new Context(locale);
+            context.setVariable("parentName", appointment.getParentName());
+            context.setVariable("childName", appointment.getChildName());
+
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            context.setVariable("appointmentDate", appointment.getAppointmentDate().format(dateFormatter));
+
+            context.setVariable("parentNotes",
+                    appointment.getParentNotes() != null ? appointment.getParentNotes() : "Ninguna");
+
+            String htmlContent = templateEngine.process("email/appointment-reminder", context);
+
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(fromAddress);
+            helper.setTo(appointment.getParentEmail());
+            String subject;
+            String lang = locale.getLanguage();
+
+            if ("en".equals(lang)) {
+                subject = "Reminder: Your appointment at My Green Farm tomorrow";
+            } else if ("fr".equals(lang)) {
+                subject = "Rappel : Votre rendez-vous à My Green Farm est demain";
+            } else {
+                subject = "Recordatorio: Tu cita en My Green Farm es mañana";
+            }
+
+            helper.setSubject(subject);
+
+            helper.setText(htmlContent, true);
+
+            mailSender.send(message);
+            System.out.println("Correo de recordatorio enviado exitosamente a: " + appointment.getParentEmail());
+
+        } catch (Exception e) {
+            System.err.println("Error al enviar el correo de recordatorio: " + e.getMessage());
+            throw new RuntimeException("No se pudo enviar el correo de recordatorio", e);
         }
     }
 }

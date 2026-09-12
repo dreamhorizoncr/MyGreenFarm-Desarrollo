@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import taller.multimedia.backend.dto.appointment.AppointmentRequest;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
@@ -39,7 +40,7 @@ public class AppointmentController {
     }
 
     @PostMapping
-    public ResponseEntity<Appointment> createAppointment(@RequestBody AppointmentRequest requestDTO) {
+    public ResponseEntity<Appointment> createAppointment(@Valid @RequestBody AppointmentRequest requestDTO) {
         Appointment newAppointment = appointmentService.createAppointment(requestDTO);
         return ResponseEntity.ok(newAppointment);
     }
@@ -97,5 +98,11 @@ public class AppointmentController {
         
         Appointment updatedAppointment = appointmentService.rescheduleAppointment(id, newDate, lang);
         return ResponseEntity.ok(updatedAppointment);
+    }
+
+    @GetMapping("/test-reminders")
+    public ResponseEntity<String> testReminders() {
+        appointmentService.send24HourReminders();
+        return ResponseEntity.ok("Tarea de recordatorios ejecutada manualmente.");
     }
 }
