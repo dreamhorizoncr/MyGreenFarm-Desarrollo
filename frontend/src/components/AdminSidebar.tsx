@@ -7,6 +7,7 @@ import {
   FileText,
   FolderOpen,
   GraduationCap,
+  Images,
   Newspaper,
   LayoutDashboard,
   LogOut,
@@ -21,6 +22,7 @@ type SidebarItemId =
   | "citas"
   | "docentes"
   | "noticias"
+  | "galeria"
   | "cv"
   | "expedientes"
   | "miPerfil";
@@ -43,6 +45,7 @@ function AdminSidebar() {
         { id: 'dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
         { id: 'citas', icon: CalendarDays, path: '/admin/citas' },
         { id: 'noticias', icon: Newspaper, path: '/admin/announcements' },
+        { id: 'galeria', icon: Images, path: '/admin/gallery' },
         { id: 'docentes', icon: GraduationCap, path: '/admin/users' },
         { id: 'cv', icon: FileText },
         { id: 'expedientes', icon: FolderOpen },

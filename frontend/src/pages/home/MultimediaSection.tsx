@@ -1,12 +1,16 @@
+import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import ninos2 from '../../assets/imgs/niños2.svg'
 import nubeWhiteDown from '../../assets/imgs/nubeWhiteDown.svg'
 import Container from '../../components/home/Container.tsx'
 import MultimediaCard from '../../components/home/MultimediaCard.tsx'
+import { useGallery } from '../../hooks/useGallery.ts'
 
 function MultimediaSection() {
   const { t } = useTranslation()
-  const albumCount = 3
+  const navigate = useNavigate()
+  const { allGalleries, loading, error } = useGallery()
+  const featuredGalleries = allGalleries.slice(0, 3)
 
   return (
     <section id="multimedia" className="relative flex min-h-[100svh] w-full flex-col bg-pink-400">
@@ -25,26 +29,40 @@ function MultimediaSection() {
               {t('home.multimedia.description')}
             </p>
 
-            <a
-              href="#"
+            <Link
+              to="/multimedia"
               className="whitespace-nowrap font-link text-body-sm uppercase tracking-wide text-white hover:opacity-80"
             >
               {t('home.multimedia.viewMore')}
-            </a>
+            </Link>
           </div>
         </Container>
 
-        <Container className="grid grid-cols-1 gap-xl pb-1500 pt-1000 md:grid-cols-3">
-          {Array.from({ length: albumCount }, (_, i) => (
-            <MultimediaCard
-              key={i}
-              imageSrc={ninos2}
-              alt={t('home.multimedia.albumTitle')}
-              badge={t('home.multimedia.albumCount')}
-              title={t('home.multimedia.albumTitle')}
-              description={t('home.multimedia.cardText')}
-            />
-          ))}
+        <Container className="grid auto-rows-fr grid-cols-1 gap-xl pb-1500 pt-1000 md:grid-cols-3">
+          {loading && (
+            <p className="col-span-full m-0 p-xl text-center font-body text-base text-white">
+              {t('common.loading')}
+            </p>
+          )}
+
+          {!loading && !error && featuredGalleries.length === 0 && (
+            <p className="col-span-full m-0 p-xl text-center font-body text-base text-white">
+              {t('home.galeria.noGalleries')}
+            </p>
+          )}
+
+          {!loading &&
+            featuredGalleries.map((gallery) => (
+              <MultimediaCard
+                key={gallery.id}
+                imageSrc={gallery.galleryImages[0]?.fileUrl ?? ninos2}
+                alt={gallery.title}
+                badge={t('home.galeria.photoCount', { count: gallery.galleryImages.length })}
+                title={gallery.title}
+                description={gallery.description}
+                onClick={() => navigate(`/albumes/${gallery.id}`)}
+              />
+            ))}
         </Container>
       </div>
     </section>
