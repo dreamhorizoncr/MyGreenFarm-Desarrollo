@@ -15,6 +15,8 @@ import AdminRoute from './routes/AdminRoute.tsx'
 import NewsPage from './pages/NewsPage.tsx'
 import AnnouncementsPage from './pages/AnnouncementsPage.tsx'
 import GalleryPage from './pages/GalleryPage.tsx'
+import AlbumDetailPage from './pages/AlbumDetailPage.tsx'
+import AdminGalleryPage from './pages/AdminGalleryPage.tsx'
 import Footer from './layout/Footer.tsx'
 
 function App() {
@@ -30,6 +32,7 @@ function App() {
           <Route element={<AdminRoute />}>
             <Route path="/admin/users" element={<AdminUsersPage />} />
             <Route path="/admin/announcements" element={<AnnouncementsPage />} />
+            <Route path="/admin/gallery" element={<AdminGalleryPage />} />
           </Route>
         </Route>
         <Route path="/" element={<HomePage />} />
@@ -40,6 +43,7 @@ function App() {
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/news" element={<NewsPage />} />
         <Route path="/multimedia" element={<GalleryPage />} />
+        <Route path="/albumes/:id" element={<AlbumDetailPage />} />
         {/* <Route path="/news/:id" element={<NewsDetailPage />} /> */}
         {/* Redirigir cualquier ruta no definida a la página de inicio */}
         <Route path="*" element={<Navigate to="/" replace />} />
