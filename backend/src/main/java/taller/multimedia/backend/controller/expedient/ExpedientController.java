@@ -62,11 +62,18 @@ public class ExpedientController {
     }
 
     // Modifica o añade la foto del niño
-    @PostMapping("/{id}/updated")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ExpedientResponse> uploadOrUpdatePhoto(
-            @PathVariable UUID id, 
-            @RequestParam("file") MultipartFile file) {
-        ExpedientResponse updated = expedientService.uploadOrUpdatePhoto(id, file);
-        return ResponseEntity.ok(updated);
+            @PathVariable UUID id,
+            @RequestParam("data") String requestJson,
+            @RequestParam(value = "file", required = false) MultipartFile file) {
+        
+        try {
+            ExpedientRequest request = objectMapper.readValue(requestJson, ExpedientRequest.class);
+            ExpedientResponse updated = expedientService.uploadOrUpdatePhoto(id, request, file);
+            return ResponseEntity.ok(updated);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al actualizar el expediente: " + e.getMessage());
+        }
     }
 }

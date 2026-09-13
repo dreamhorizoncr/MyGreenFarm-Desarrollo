@@ -3,11 +3,10 @@ package taller.multimedia.backend.controller.evaluation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.evaluation.EvaluationRequest;
-import taller.multimedia.backend.dto.expedient.ExpedientResponse;
+import taller.multimedia.backend.dto.evaluation.EvaluationResponse;
 import taller.multimedia.backend.model.evaluation.Evaluation;
 import taller.multimedia.backend.service.evaluation.EvaluationService;
 
-import org.springframework.ai.evaluation.EvaluationResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

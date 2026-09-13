@@ -2,11 +2,11 @@ package taller.multimedia.backend.service.evaluation;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.ai.evaluation.EvaluationResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import taller.multimedia.backend.dto.evaluation.EvaluationRequest;
+import taller.multimedia.backend.dto.evaluation.EvaluationResponse;
 import taller.multimedia.backend.model.evaluation.Evaluation;
 import taller.multimedia.backend.model.expedient.Expedient;
 import taller.multimedia.backend.repository.evaluation.EvaluationRepository;
@@ -84,15 +84,20 @@ public class EvaluationService {
     }
 
     private EvaluationResponse mapToResponse(Evaluation evaluation) {
-        return EvaluationResponse.builder()
-                .id(evaluation.getId())
-                .evaluationDate(evaluation.getEvaluationDate())
-                .expedientId(evaluation.getExpedientId() != null ? evaluation.getExpedientId().getId() : null)
-                .communicationProgress(evaluation.getCommunicationProgress())
-                .languageProgress(evaluation.getLanguageProgress())
-                .readingProgress(evaluation.getReadingProgress())
-                .motorProgress(evaluation.getMotorProgress())
-                .teacherObservation(evaluation.getTeacherObservation())
-                .build();
+        UUID expId = null;
+        if (evaluation.getExpedientId() != null) {
+            expId = evaluation.getExpedientId().getId();
+        }
+
+        return new EvaluationResponse(
+                evaluation.getId(),
+                evaluation.getEvaluationDate(),
+                expId,
+                evaluation.getCommunicationProgress(),
+                evaluation.getLanguageProgress(),
+                evaluation.getReadingProgress(),
+                evaluation.getMotorProgress(),
+                evaluation.getTeacherObservation()
+        );
     }
 }

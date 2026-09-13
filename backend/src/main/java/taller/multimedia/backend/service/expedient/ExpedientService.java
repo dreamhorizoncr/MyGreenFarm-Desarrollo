@@ -77,24 +77,6 @@ public class ExpedientService {
     }
 
     @Transactional
-    public ExpedientResponse updateExpedient(UUID id, ExpedientRequest request) {
-        Expedient existingExpedient = findEntityById(id);
-
-        if (!existingExpedient.getChildName().equals(request.getChildName()) &&
-                expedientRepository.existsByChildName(request.getChildName())) {
-            throw new RuntimeException("Ya existe otro expediente registrado con el nombre: " + request.getChildName());
-        }
-
-        existingExpedient.setChildName(request.getChildName());
-        existingExpedient.setAdmisionDate(request.getAdmisionDate());
-        existingExpedient.setEducationalLevel(request.getEducationalLevel());
-        existingExpedient.setGeneralObservations(request.getGeneralObservations());
-
-        Expedient saved = expedientRepository.save(existingExpedient);
-        return mapToResponse(saved); // Retorna el DTO con la foto firmada actualizada
-    }
-
-    @Transactional
     public void deleteExpedient(UUID id) {
         Expedient expedient = findEntityById(id);
 
@@ -115,27 +97,39 @@ public class ExpedientService {
     // Photo section
 
     @Transactional
-    public ExpedientResponse uploadOrUpdatePhoto(UUID expedientId, MultipartFile file) {
-        Expedient expedient = findEntityById(expedientId);
+    public ExpedientResponse uploadOrUpdatePhoto(UUID expedientId, ExpedientRequest request, MultipartFile file) {
+        Expedient existing = findEntityById(expedientId);
 
-        String contentType = file.getContentType();
-        if (contentType == null || !isValidImageFormat(contentType)) {
-            throw new IllegalArgumentException("Formato no permitido. Solo se aceptan PNG, JPG, JPEG, SVG.");
+        if (!existing.getChildName().equals(request.getChildName()) &&
+                expedientRepository.existsByChildName(request.getChildName())) {
+            throw new RuntimeException("Ya existe otro expediente registrado con el nombre: " + request.getChildName());
         }
 
-        // Si ya tenía una foto anterior, la eliminamos de Supabase para no acumular basura
-        if (expedient.getPhotoUrl() != null && !expedient.getPhotoUrl().isEmpty()) {
-            String oldPath = extractPathFromUrl(expedient.getPhotoUrl(), expedientsBucket);
-            if (oldPath != null) {
-                storageService.deleteFile(expedientsBucket, oldPath);
+        existing.setChildName(request.getChildName());
+        existing.setAdmisionDate(request.getAdmisionDate());
+        existing.setEducationalLevel(request.getEducationalLevel());
+        existing.setGeneralObservations(request.getGeneralObservations());
+
+        // Si mandaron un nuevo archivo, reemplazamos el anterior
+        if (file != null && !file.isEmpty()) {
+            String contentType = file.getContentType();
+            if (contentType == null || !isValidImageFormat(contentType)) {
+                throw new IllegalArgumentException("Formato no permitido. Solo se aceptan PNG, JPG, JPEG, SVG.");
             }
+
+            // Borrar foto anterior si existía
+            if (existing.getPhotoUrl() != null && !existing.getPhotoUrl().isEmpty()) {
+                String oldPath = extractPathFromUrl(existing.getPhotoUrl(), expedientsBucket);
+                if (oldPath != null) {
+                    storageService.deleteFile(expedientsBucket, oldPath);
+                }
+            }
+
+            String fileUrl = storageService.uploadFile(file, expedientsBucket, "child_photos");
+            existing.setPhotoUrl(fileUrl);
         }
 
-        // Subimos la nueva foto a una carpeta dentro del bucket
-        String fileUrl = storageService.uploadFile(file, expedientsBucket, "child_photos");
-        expedient.setPhotoUrl(fileUrl);
-
-        Expedient saved = expedientRepository.save(expedient);
+        Expedient saved = expedientRepository.save(existing);
         return mapToResponse(saved);
     }
 
