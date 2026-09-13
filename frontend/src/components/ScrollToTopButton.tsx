@@ -11,6 +11,8 @@ function ScrollToTopButton() {
 	const [visible, setVisible] = useState(false)
 
 	useEffect(() => {
+		window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+
 		if (!PUBLIC_PAGES.includes(pathname) && !pathname.startsWith('/albumes/')) return
 		const onScroll = () => setVisible(window.scrollY > 400)
 		onScroll()
