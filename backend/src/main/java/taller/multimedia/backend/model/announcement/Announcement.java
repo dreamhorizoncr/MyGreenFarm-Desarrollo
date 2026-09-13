@@ -30,10 +30,10 @@ public class Announcement {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true, length = 70)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 4000)
     private String content;
 
     @Enumerated(EnumType.STRING)
