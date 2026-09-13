@@ -29,19 +29,19 @@ public class Appointment {
     @Column(name = "parent_identification", nullable = false)
     private String parentIdentification;
 
-    @Column(name = "parent_name", nullable = false)
+    @Column(name = "parent_name", nullable = false, length = 150)
     private String parentName;
 
-    @Column(name = "parent_email", nullable = false)
+    @Column(name = "parent_email", nullable = false, length = 255)
     private String parentEmail;
 
-    @Column(name = "parent_phone", nullable = false)
+    @Column(name = "parent_phone", nullable = false, length = 35)
     private String parentPhone;
 
-    @Column(name = "parent_occupation", nullable = false)
+    @Column(name = "parent_occupation", nullable = false, length = 150)
     private String parentOccupation;
 
-    @Column(name = "child_name", nullable = false)
+    @Column(name = "child_name", nullable = false, length = 150)
     private String childName;
 
     @Column(name = "appointment_date", nullable = false)
@@ -51,7 +51,7 @@ public class Appointment {
     @Column(nullable = false)
     private AppointmentStatus status;
 
-    @Column(name = "parent_notes", nullable = false, length = 4000)
+    @Column(name = "parent_notes", nullable = false, length = 2000)
     private String parentNotes;
 
     @Column(name = "teacher_conclusion", length = 4000)

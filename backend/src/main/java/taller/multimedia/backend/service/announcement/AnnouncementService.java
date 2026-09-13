@@ -25,6 +25,10 @@ public class AnnouncementService {
     @Transactional
     public AnnouncementResponse create(AnnouncementRequest dto) {
 
+        if (announcementRepository.existsByTitle(dto.getTitle())) {
+        throw new IllegalArgumentException("Ya existe un anuncio con el título: " + dto.getTitle());
+        }
+
         Announcement announcement = new Announcement();
         announcement.setTitle(dto.getTitle());
         announcement.setContent(dto.getContent());
@@ -70,6 +74,10 @@ public class AnnouncementService {
         // 1. Busca si el anuncio existe; si no, lanza un error
         Announcement announcement = announcementRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Anuncio no encontrado con ID: " + id));
+
+        if (announcementRepository.existsByTitle(dto.getTitle())) {
+        throw new IllegalArgumentException("Ya existe un anuncio con el título: " + dto.getTitle());
+        }
 
         // 2. Actualiza los campos con los nuevos datos
         announcement.setTitle(dto.getTitle());
