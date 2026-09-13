@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { X } from 'lucide-react'
+import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import useDismiss from '../hooks/useDismiss.ts'
 import { validateEmail, validateRequired } from '../utils/validators.ts'
@@ -78,7 +78,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: EditUserMod
           onClick={onClose}
           aria-label={t('admin.cancel')}
         >
-          <X size={20} />
+          <XIcon size={20} />
         </button>
 
         <div className="relative mb-lg text-center">

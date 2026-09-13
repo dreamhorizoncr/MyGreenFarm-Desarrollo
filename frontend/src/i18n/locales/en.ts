@@ -207,6 +207,7 @@ export default {
     error: 'An error has occurred',
     loading: 'Loading...',
     noUsers: 'No registered users',
+    scrollToTop: 'Back to top',
   },
   validation: {
     emailRequired: 'Email is required',
@@ -300,6 +301,11 @@ export default {
       deleteAlbumTitle: 'Delete album',
       deleteConfirmFieldLabel: 'Type «{{title}}» to confirm',
       deleteConfirmPlaceholder: 'Album title',
+      deleteYearTitle: 'Delete year',
+      confirmDeleteYear: 'Are you sure you want to delete the year {{year}}? All of its albums and photos will be deleted. This action cannot be undone.',
+      deleteYear: 'Delete year',
+      deleteYearConfirmFieldLabel: 'Type «{{year}}» to confirm',
+      deleteYearConfirmPlaceholder: 'Year',
     },
   },
   teacherAppointments: {

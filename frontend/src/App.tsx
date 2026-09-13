@@ -18,13 +18,16 @@ import GalleryPage from './pages/GalleryPage.tsx'
 import AlbumDetailPage from './pages/AlbumDetailPage.tsx'
 import AdminGalleryPage from './pages/AdminGalleryPage.tsx'
 import Footer from './layout/Footer.tsx'
+import ScrollToTopButton from './components/ScrollToTopButton.tsx'
+import { ProfileAvatarProvider } from './contexts/ProfileAvatarContext.tsx'
 
 function App() {
   return (
     <BrowserRouter>
       <div className="flex min-h-svh flex-col">
         <div className="flex-1">
-          <Routes>
+          <ProfileAvatarProvider>
+            <Routes>
         <Route element={<ProtectedRoute />}>
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
@@ -47,9 +50,11 @@ function App() {
         {/* <Route path="/news/:id" element={<NewsDetailPage />} /> */}
         {/* Redirigir cualquier ruta no definida a la página de inicio */}
         <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+            </Routes>
+          </ProfileAvatarProvider>
         </div>
         <Footer />
+        <ScrollToTopButton />
       </div>
     </BrowserRouter>
   )

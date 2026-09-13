@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Heart } from 'lucide-react'
+import { HeartIcon } from '@animateicons/react/lucide'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import PhotoLightbox from '../components/PhotoLightbox.tsx'
@@ -22,7 +22,7 @@ function LikeBadge({ image, albumTitle }: LikeBadgeProps) {
       className="absolute bottom-[10px] right-[10px] flex items-center gap-[6px] rounded-full bg-white px-[10px] py-[5px] shadow-md"
       aria-label={`${t('home.galeria.likes', { count })} · ${albumTitle}`}
     >
-      <Heart size={14} className="text-red-500" fill="currentColor" aria-hidden="true" />
+      <HeartIcon size={14} className="text-red-500 [&_svg]:fill-current" aria-hidden="true" />
       <span className="font-body text-[12px] font-bold text-neutral-800">{count}</span>
     </span>
   )

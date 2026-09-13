@@ -1,6 +1,13 @@
+import { Blobatar } from '@blobatar/react'
+import { useGaze } from '@blobatar/react/gaze'
+import { scared, unsure } from 'blobatar/expression'
+import 'blobatar/gaze.css'
+import 'blobatar/motion.css'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useLogin } from '../hooks/useLogin.ts'
+import { useProfileAvatar } from '../contexts/ProfileAvatarContext.tsx'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import { userStorage } from '../utils/userStorage.ts'
 
@@ -9,8 +16,10 @@ function ProfilePage() {
   const navigate = useNavigate()
   const { logout } = useLogin()
   const user = userStorage.getUser()
-
-  const initials = user ? (user.firstName[0] + user.lastName[0]).toUpperCase() : ''
+  const { ref: blobatarRef } = useGaze({ lookAt: 'pointer', travel: 3 })
+  const { sidebarHovered } = useProfileAvatar()
+  const [logoutHovered, setLogoutHovered] = useState(false)
+  const expression = logoutHovered ? scared : sidebarHovered ? unsure : undefined
 
   const roleLabel = (role: string) => {
     switch (role) {
@@ -41,12 +50,17 @@ function ProfilePage() {
       </p>
 
       <div className="mt-8 w-full">
-          <span
-            className="inline-flex size-16 select-none items-center justify-center rounded-full bg-green-500 font-heading text-lg leading-none text-white"
-            aria-hidden="true"
-          >
-            {initials}
-          </span>
+          {user && (
+            <Blobatar
+              name={user.email}
+              size={140}
+              animate="always"
+              expression={expression}
+              ref={blobatarRef}
+              title={`${user.firstName} ${user.lastName}`}
+              className="rounded-full"
+            />
+          )}
 
           <div className="mt-8 grid grid-cols-1 gap-y-5 md:grid-cols-2 md:gap-x-8">
             <div>
@@ -95,6 +109,10 @@ function ProfilePage() {
           <button
             type="button"
             onClick={handleLogout}
+            onMouseEnter={() => setLogoutHovered(true)}
+            onMouseLeave={() => setLogoutHovered(false)}
+            onFocus={() => setLogoutHovered(true)}
+            onBlur={() => setLogoutHovered(false)}
             className="h-11 w-full rounded-full bg-danger font-body text-[15px] font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:w-[120px]"
           >
             {t('profile.logout')}

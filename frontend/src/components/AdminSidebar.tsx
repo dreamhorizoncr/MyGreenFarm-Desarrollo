@@ -1,20 +1,20 @@
-import { useState } from 'react'
+import { useState, type ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
-  CalendarDays,
-  ChevronDown,
-  FileText,
-  FolderOpen,
-  GraduationCap,
-  Images,
-  Newspaper,
-  LayoutDashboard,
-  LogOut,
-  User,
-  type LucideIcon,
-} from 'lucide-react'
+  CalendarDaysIcon,
+  ChevronDownIcon,
+  FileTextIcon,
+  FolderOpenIcon,
+  ImageIcon,
+  LayoutDashboardIcon,
+  LogOutIcon,
+  MegaphoneIcon,
+  UserIcon,
+  UsersIcon,
+} from '@animateicons/react/lucide'
 import { useLogin } from '../hooks/useLogin.ts'
+import { useProfileAvatar } from '../contexts/ProfileAvatarContext.tsx'
 import { userStorage } from '../utils/userStorage.ts'
 
 type SidebarItemId =
@@ -29,7 +29,7 @@ type SidebarItemId =
 
 interface SidebarItem {
   id: SidebarItemId;
-  icon: LucideIcon;
+  icon: ComponentType<{ size?: number; className?: string }>;
   path?: string;
 }
 
@@ -39,22 +39,23 @@ function AdminSidebar() {
   const { logout } = useLogin()
   const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
+  const { setSidebarHovered } = useProfileAvatar()
 
   const items: SidebarItem[] = userStorage.getUser()?.role === 'ADMIN'
     ? [
-        { id: 'dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
-        { id: 'citas', icon: CalendarDays, path: '/admin/citas' },
-        { id: 'noticias', icon: Newspaper, path: '/admin/announcements' },
-        { id: 'galeria', icon: Images, path: '/admin/gallery' },
-        { id: 'docentes', icon: GraduationCap, path: '/admin/users' },
-        { id: 'cv', icon: FileText },
-        { id: 'expedientes', icon: FolderOpen },
-        { id: 'miPerfil', icon: User, path: '/profile' },
+        { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
+        { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
+        { id: 'noticias', icon: MegaphoneIcon, path: '/admin/announcements' },
+        { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
+        { id: 'docentes', icon: UsersIcon, path: '/admin/users' },
+        { id: 'cv', icon: FileTextIcon },
+        { id: 'expedientes', icon: FolderOpenIcon },
+        { id: 'miPerfil', icon: UserIcon, path: '/profile' },
       ]
     : [
-        { id: 'dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
-        { id: 'citas', icon: CalendarDays, path: '/admin/citas' },
-        { id: 'miPerfil', icon: User, path: '/profile' },
+        { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
+        { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
+        { id: 'miPerfil', icon: UserIcon, path: '/profile' },
       ]
 
   const activeItem = items.find((item) => item.path === pathname) ?? items[0]
@@ -69,7 +70,17 @@ function AdminSidebar() {
     'flex shrink-0 items-center gap-sm rounded-full px-md py-sm text-left font-body text-[15px] font-semibold text-body-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:w-full'
 
   return (
-    <aside className="w-full shrink-0 bg-bg-page p-md md:sticky md:top-0 md:flex md:h-svh md:w-[260px] md:flex-col md:self-start md:overflow-y-auto md:py-lg">
+    <aside
+      onMouseEnter={() => setSidebarHovered(true)}
+      onMouseLeave={() => setSidebarHovered(false)}
+      onFocus={() => setSidebarHovered(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setSidebarHovered(false)
+        }
+      }}
+      className="w-full shrink-0 bg-bg-page p-md md:sticky md:top-0 md:flex md:h-svh md:w-[260px] md:flex-col md:self-start md:overflow-y-auto md:py-lg"
+    >
       {/*Menu Exclusivo de Admin*/}
       <div className="md:hidden">
         <button
@@ -86,7 +97,7 @@ function AdminSidebar() {
             {t(`admin.sidebar.${activeItem.id}`)}
           </span>
 
-          <ChevronDown
+          <ChevronDownIcon
             size={18}
             className={`transition-transform duration-200 ${
               open ? "rotate-180" : ""
@@ -143,7 +154,7 @@ function AdminSidebar() {
                 className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-danger"
                 aria-hidden="true"
               >
-                <LogOut size={18} />
+                <LogOutIcon size={18} />
               </span>
 
               <span>{t("profile.logout")}</span>

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CalendarClock, Pencil, Search } from 'lucide-react'
+import { CalendarClockIcon, PencilIcon, SearchIcon } from '@animateicons/react/lucide'
 import { formatPhoneNumberIntl } from 'react-phone-number-input'
 import ChangeAppointmentStatusModal from './ChangeAppointmentStatusModal.tsx'
 import RescheduleAppointmentModal from './RescheduleAppointmentModal.tsx'
@@ -104,7 +104,7 @@ function AppointmentsSection() {
 
       <div className="mb-[var(--spacing-lg)] mt-[var(--spacing-xl)] flex flex-wrap items-center justify-between gap-md">
         <div className="flex h-[44px] min-w-[240px] max-w-[420px] flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
-          <Search size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
+          <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
           <input
             type="search"
             className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-[15px] text-body-text outline-none placeholder:text-neutral-400"
@@ -168,7 +168,7 @@ function AppointmentsSection() {
                       aria-label={t('teacherAppointments.rescheduleTitle')}
                       title={t('teacherAppointments.rescheduleTitle')}
                     >
-                      <CalendarClock size={18} />
+                      <CalendarClockIcon size={18} />
                     </button>
 
                     <button
@@ -179,7 +179,7 @@ function AppointmentsSection() {
                       aria-label={t('teacherAppointments.changeStatus')}
                       title={t('teacherAppointments.changeStatus')}
                     >
-                      <Pencil size={18} />
+                      <PencilIcon size={18} />
                     </button>
                   </div>
                 </header>

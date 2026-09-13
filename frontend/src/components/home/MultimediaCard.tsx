@@ -36,11 +36,11 @@ function MultimediaCard({ imageSrc, alt, badge, title, description, onClick }: M
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col px-lg pb-lg text-left">
-        <h3 className="m-0 font-heading text-h5 font-bold text-heading">
+      <div className="flex flex-col px-lg pb-lg text-left">
+        <h3 className="m-0 line-clamp-2 min-h-[2.8em] font-heading text-h4 font-bold text-heading">
           {title}
         </h3>
-        <p className="mt-sm font-body text-body-sm font-normal leading-[1.5] text-body-text-dark">
+        <p className="-mt-sm line-clamp-5 min-h-[7.5em] font-body text-body-sm font-normal leading-[1.5] text-body-text-dark">
           {description}
         </p>
       </div>
