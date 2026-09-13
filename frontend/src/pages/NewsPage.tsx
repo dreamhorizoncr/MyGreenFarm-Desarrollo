@@ -51,11 +51,9 @@ function NewsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [announcements]);
 
-  const realCards = announcements.filter(
+  const cards: Announcement[] = announcements.filter(
     (a) => activeCategory === "All" || activeCategory === a.type
   );
-
-  const cards: Announcement[] = realCards;
 
   const rows: Announcement[][] = [];
   for (let i = 0; i < cards.length; i += 2) {

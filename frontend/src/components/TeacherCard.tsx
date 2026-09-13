@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { MoreVertical, Pencil, Trash2 } from 'lucide-react'
+import { EllipsisVerticalIcon, PencilIcon, Trash2Icon } from '@animateicons/react/lucide'
 import type { UserInfo } from '../types/auth.ts'
 
 interface TeacherCardProps {
@@ -36,7 +36,7 @@ function TeacherCard({ user, isMenuOpen, isSelf, menuRef, onToggleMenu, onEdit, 
             aria-haspopup="menu"
             aria-label={t('admin.actions')}
           >
-            <MoreVertical size={16} />
+            <EllipsisVerticalIcon size={16} />
           </button>
 
           {isMenuOpen && (
@@ -50,7 +50,7 @@ function TeacherCard({ user, isMenuOpen, isSelf, menuRef, onToggleMenu, onEdit, 
                 role="menuitem"
                 onClick={onEdit}
               >
-                <Pencil size={14} />
+                <PencilIcon size={14} />
                 <span>{t('admin.edit')}</span>
               </button>
               <button
@@ -61,7 +61,7 @@ function TeacherCard({ user, isMenuOpen, isSelf, menuRef, onToggleMenu, onEdit, 
                 disabled={isSelf}
                 title={isSelf ? t('admin.selfDeleteNotAllowed') : undefined}
               >
-                <Trash2 size={14} />
+                <Trash2Icon size={14} />
                 <span>{t('admin.delete')}</span>
               </button>
             </div>

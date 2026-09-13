@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent } from 'react'
-import { Eye, EyeOff } from 'lucide-react'
+import { EyeIcon, EyeOffIcon } from '@animateicons/react/lucide'
 
 interface PasswordInputProps {
   id: string
@@ -36,7 +36,7 @@ function PasswordInput({
         aria-label={visible ? hideAriaLabel : showAriaLabel}
         className="absolute right-1 top-1/2 flex -translate-y-1/2 items-center justify-center p-1 text-grey-500 transition-colors focus-visible:outline-2 focus-visible:outline-link"
       >
-        {visible ? <EyeOff size={18} /> : <Eye size={18} />}
+        {visible ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
       </button>
     </div>
   )

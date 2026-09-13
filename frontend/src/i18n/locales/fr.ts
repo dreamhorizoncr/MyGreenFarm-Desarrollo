@@ -188,6 +188,7 @@ export default {
     loading: 'Envoi...',
     success: "L'e-mail de récupération a été envoyé avec succès. Veuillez vérifier votre boîte de réception.",
     backToLogin: 'Retour à la connexion',
+    backToProfile: 'Retour à mon profil',
   },
   resetPassword: {
     overtitle: 'Bienvenue',
@@ -201,11 +202,13 @@ export default {
     requestNewLink: 'Demander un nouveau lien',
     passwordMismatch: 'Les mots de passe ne correspondent pas',
     backToLogin: 'Se connecter',
+    backToProfile: 'Retour à mon profil',
   },
   common: {
     error: 'Une erreur est survenue',
     loading: 'Chargement...',
     noUsers: 'Aucun utilisateur enregistré',
+    scrollToTop: 'Haut de page',
   },
   validation: {
     emailRequired: "L'e-mail est obligatoire",
@@ -232,6 +235,7 @@ export default {
       moderator: 'Modérateur',
     },
     logout: 'Déconnexion',
+    resetPassword: 'Réinitialiser le mot de passe',
   },
   admin: {
     docentesTitle: 'Gestion des enseignants',
@@ -299,6 +303,11 @@ export default {
       deleteAlbumTitle: 'Supprimer l’album',
       deleteConfirmFieldLabel: 'Écrivez «{{title}}» pour confirmer',
       deleteConfirmPlaceholder: 'Titre de l’album',
+      deleteYearTitle: 'Supprimer l’année',
+      confirmDeleteYear: 'Voulez-vous vraiment supprimer l’année {{year}} ? Tous ses albums et photos seront supprimés. Cette action est irréversible.',
+      deleteYear: 'Supprimer l’année',
+      deleteYearConfirmFieldLabel: 'Écrivez «{{year}}» pour confirmer',
+      deleteYearConfirmPlaceholder: 'Année',
     },
   },
   teacherAppointments: {
@@ -314,6 +323,7 @@ export default {
     date: 'Date et heure',
     state: 'Statut',
     conclusion: 'Conclusion',
+    viewDetails: 'Voir les détails',
     changeStatus: 'Changer le statut',
     rescheduleTitle: 'Reprogrammer le rendez-vous',
     rescheduleDescription:

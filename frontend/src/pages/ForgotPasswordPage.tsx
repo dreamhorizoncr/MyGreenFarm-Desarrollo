@@ -1,7 +1,7 @@
 // Esto de aquí es para la pantalla de recuperar contraseña.
 import { useEffect, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import TextField from "../components/ui/TextField.tsx";
 import AuthButton from "../components/ui/AuthButton.tsx";
 import AuthLayout from "../layout/AuthLayout.tsx";
@@ -11,6 +11,8 @@ import i18n from "../i18n/index.ts";
 
 function ForgotPasswordPage() {
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const returnToProfile = searchParams.get("from") === "profile";
   const [email, setEmail] = useState("");
   const [emailValidationError, setEmailValidationError] = useState<
     string | null
@@ -92,13 +94,15 @@ function ForgotPasswordPage() {
           </AuthButton>
         </div>
 
-        {/* Volver al Login */}
+        {/* Volver al origen */}
         <p className="mt-[20px] text-center md:mt-[35px]">
           <Link
-            to="/login"
+            to={returnToProfile ? "/profile" : "/login"}
             className="font-link text-[12px] text-heading transition-opacity hover:opacity-70 md:text-[14px]"
           >
-            {t("forgotPassword.backToLogin")}
+            {returnToProfile
+              ? t("forgotPassword.backToProfile")
+              : t("forgotPassword.backToLogin")}
           </Link>
         </p>
       </form>

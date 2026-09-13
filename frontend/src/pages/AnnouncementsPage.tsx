@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { ImagePlus, Pencil, Plus, Trash2, X } from 'lucide-react'
+import { FileImageIcon, PencilIcon, PlusIcon, Trash2Icon, XIcon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import { useAnnouncements } from '../hooks/useAnnouncements.ts'
 import type {
@@ -128,7 +128,7 @@ function AnnouncementsPage() {
 					onClick={openCreate}
 					className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-sm font-semibold text-white"
 				>
-					<Plus size={18} aria-hidden="true" />
+					<PlusIcon size={18} aria-hidden="true" />
 					Añadir noticia
 				</button>
 			</div>
@@ -142,7 +142,7 @@ function AnnouncementsPage() {
 							{editing ? 'Editar noticia' : 'Nueva noticia'}
 						</h2>
 						<button type="button" onClick={closeForm} aria-label="Cerrar formulario" className="text-neutral-500">
-							<X size={20} />
+							<XIcon size={20} />
 						</button>
 					</div>
 
@@ -183,7 +183,7 @@ function AnnouncementsPage() {
 								onClick={() => coverInputRef.current?.click()}
 								className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-sm font-semibold text-heading"
 							>
-								<ImagePlus size={17} aria-hidden="true" />
+								<FileImageIcon size={17} aria-hidden="true" />
 								Elegir portada
 							</button>
 							{cover && <p className="mt-xs text-xs font-normal text-neutral-500">{cover.name}</p>}
@@ -203,7 +203,7 @@ function AnnouncementsPage() {
 								onClick={() => galleryInputRef.current?.click()}
 								className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-sm font-semibold text-heading"
 							>
-								<ImagePlus size={17} aria-hidden="true" />
+								<FileImageIcon size={17} aria-hidden="true" />
 								Elegir imágenes
 							</button>
 							{gallery.length > 0 && <p className="mt-xs text-xs font-normal text-neutral-500">{gallery.length} archivo(s) seleccionado(s)</p>}
@@ -218,7 +218,7 @@ function AnnouncementsPage() {
 									<div key={image.id} className="flex items-center gap-sm rounded-xl border border-neutral-200 bg-white p-xs">
 										<img src={image.fileUrl} alt="" className="size-16 rounded-lg object-cover" />
 										<span className="text-xs text-neutral-500">{image.isCover ? 'Portada' : 'Galería'}</span>
-										<button type="button" onClick={() => void handleDeleteImage(image)} aria-label="Eliminar imagen" className="text-danger"><Trash2 size={16} /></button>
+										<button type="button" onClick={() => void handleDeleteImage(image)} aria-label="Eliminar imagen" className="text-danger"><Trash2Icon size={16} /></button>
 									</div>
 								))}
 							</div>
@@ -249,8 +249,8 @@ function AnnouncementsPage() {
 								{(announcement.location || announcement.eventDate) && <p className="mt-sm text-xs text-neutral-500">{announcement.location}{announcement.location && announcement.eventDate ? ' · ' : ''}{announcement.eventDate ? new Date(announcement.eventDate).toLocaleString() : ''}</p>}
 							</div>
 							<div className="flex shrink-0 gap-sm">
-								<button type="button" onClick={() => void openEdit(announcement)} aria-label="Editar noticia" className="rounded-full border border-neutral-300 p-sm text-heading"><Pencil size={17} /></button>
-								<button type="button" onClick={() => void handleDelete(announcement)} aria-label="Eliminar noticia" className="rounded-full border border-red-200 p-sm text-danger"><Trash2 size={17} /></button>
+								<button type="button" onClick={() => void openEdit(announcement)} aria-label="Editar noticia" className="flex size-[52px] shrink-0 items-center justify-center rounded-full border border-neutral-300 p-0 text-heading"><PencilIcon size={17} /></button>
+								<button type="button" onClick={() => void handleDelete(announcement)} aria-label="Eliminar noticia" className="flex size-[52px] shrink-0 items-center justify-center rounded-full border border-red-200 p-0 text-danger"><Trash2Icon size={17} /></button>
 							</div>
 						</div>
 					</article>

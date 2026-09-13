@@ -1,4 +1,4 @@
-import { CirclePlus } from 'lucide-react'
+import { CirclePlusIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import pollitos from '../../assets/imgs/pollitos.svg'
 import nubesPink from '../../assets/imgs/nubesPink.svg'
@@ -29,9 +29,8 @@ function JoinSection() {
             />
 
             <div className="relative flex flex-col items-center gap-700 px-md py-1000 text-center md:px-1400 md:py-1500">
-              <CirclePlus
+              <CirclePlusIcon
                 size={56}
-                strokeWidth={1.5}
                 className="text-white"
                 aria-hidden="true"
               />

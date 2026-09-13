@@ -1,4 +1,4 @@
-import { Star } from 'lucide-react'
+import { StarIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import nino from '../../assets/imgs/niño.svg'
 import Container from '../../components/home/Container.tsx'
@@ -33,8 +33,9 @@ function PhilosophySection() {
               <ul className="m-0 flex list-none flex-col gap-sm p-0">
                 {items.map((item, i) => (
                   <li key={i} className="flex items-start gap-sm">
-                    <Star
-                      className="mt-1 size-4 shrink-0 fill-orange-500 text-orange-500"
+                    <StarIcon
+                      size={16}
+                      className="mt-1 shrink-0 text-orange-500 [&_svg]:fill-current"
                       aria-hidden="true"
                     />
                     <span className="font-body text-body-sm font-normal text-body-text">
