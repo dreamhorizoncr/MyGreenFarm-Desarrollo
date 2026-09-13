@@ -189,6 +189,7 @@ export default {
     loading: 'Sending...',
     success: 'The recovery email was sent successfully. Please check your inbox.',
     backToLogin: 'Back to sign in',
+    backToProfile: 'Back to My profile',
   },
   resetPassword: {
     overtitle: 'Welcome',
@@ -202,11 +203,13 @@ export default {
     requestNewLink: 'Request a new link',
     passwordMismatch: 'Passwords do not match',
     backToLogin: 'Sign in',
+    backToProfile: 'Back to My profile',
   },
   common: {
     error: 'An error has occurred',
     loading: 'Loading...',
     noUsers: 'No registered users',
+    scrollToTop: 'Back to top',
   },
   validation: {
     emailRequired: 'Email is required',
@@ -233,6 +236,7 @@ export default {
       moderator: 'Moderator',
     },
     logout: 'Sign out',
+    resetPassword: 'Reset password',
   },
   admin: {
     docentesTitle: 'Teacher Management',
@@ -300,6 +304,11 @@ export default {
       deleteAlbumTitle: 'Delete album',
       deleteConfirmFieldLabel: 'Type «{{title}}» to confirm',
       deleteConfirmPlaceholder: 'Album title',
+      deleteYearTitle: 'Delete year',
+      confirmDeleteYear: 'Are you sure you want to delete the year {{year}}? All of its albums and photos will be deleted. This action cannot be undone.',
+      deleteYear: 'Delete year',
+      deleteYearConfirmFieldLabel: 'Type «{{year}}» to confirm',
+      deleteYearConfirmPlaceholder: 'Year',
     },
   },
   teacherAppointments: {
@@ -315,6 +324,7 @@ export default {
     date: 'Date and time',
     state: 'Status',
     conclusion: 'Conclusion',
+    viewDetails: 'View details',
     changeStatus: 'Change status',
     rescheduleTitle: 'Reschedule appointment',
     rescheduleDescription:

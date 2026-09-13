@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { Plus, Search } from 'lucide-react'
+import { PlusIcon, UserSearchIcon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import EditUserModal from '../components/EditUserModal.tsx'
 import DeleteUserModal from '../components/DeleteUserModal.tsx'
@@ -81,7 +81,7 @@ function AdminUsersPage() {
 
         <div className="mb-[var(--spacing-lg)] mt-[var(--spacing-xl)] flex flex-wrap items-center justify-between gap-md">
           <div className="flex h-[44px] min-w-[240px] max-w-[420px] flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
-            <Search size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
+            <UserSearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
             <input
               type="search"
               className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-[15px] text-body-text outline-none placeholder:text-neutral-400"
@@ -96,7 +96,7 @@ function AdminUsersPage() {
             to="/signup"
             className="inline-flex h-[44px] items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-[var(--scale-600)] font-body text-[15px] font-semibold text-white no-underline focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
           >
-            <Plus size={18} aria-hidden="true" />
+            <PlusIcon size={18} aria-hidden="true" />
             <span>{t('admin.addDocente')}</span>
           </Link>
         </div>

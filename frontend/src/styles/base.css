@@ -97,6 +97,7 @@
   a {
     font-family: var(--font-link);
     font-weight: 300;
+    cursor: pointer;
   }
 
   /* ---------------------------------------------------------------------------
@@ -129,6 +130,10 @@
   textarea {
     border: none;
     background: none;
+  }
+
+  button:not(:disabled) {
+    cursor: pointer;
   }
 
   :where(button:disabled, input:disabled, select:disabled, textarea:disabled) {

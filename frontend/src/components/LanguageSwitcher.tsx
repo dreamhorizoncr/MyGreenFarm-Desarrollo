@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Check, ChevronDown, Globe } from 'lucide-react'
+import { CheckIcon, ChevronDownIcon, GlobeIcon } from '@animateicons/react/lucide'
 import useDismiss from '../hooks/useDismiss.ts'
 import { SUPPORTED_LANGUAGES } from '../i18n/index.ts'
 
@@ -31,11 +31,11 @@ function LanguageSwitcher() {
         aria-haspopup="menu"
         aria-expanded={open}
       >
-        <Globe size={18} />
+        <GlobeIcon size={18} />
         <span className="hidden font-semibold md:block">
           {currentLanguageLabel}
         </span>
-        <ChevronDown
+        <ChevronDownIcon
           size={16}
           className={`hidden text-neutral-500 transition-transform duration-200 md:block ${
             open ? 'rotate-180' : ''
@@ -59,7 +59,7 @@ function LanguageSwitcher() {
                 onClick={() => selectLanguage(language.code)}
               >
                 <span>{language.label}</span>
-                {language.code === currentLanguage && <Check size={16} />}
+                {language.code === currentLanguage && <CheckIcon size={16} />}
               </button>
             </li>
           ))}
