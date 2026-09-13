@@ -14,7 +14,6 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import taller.multimedia.backend.model.appointment.AppointmentStatus;
 
 @Entity
 @Table (name = "service_plan")
@@ -44,10 +43,10 @@ public class ServicePlan {
     @Column(nullable = false)
     private BigDecimal price;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 200)
     private String schedule;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 800)
     private String includes;
 
     @Column(nullable = false)

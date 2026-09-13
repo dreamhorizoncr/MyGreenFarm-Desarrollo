@@ -11,7 +11,7 @@ import taller.multimedia.backend.model.announcement.AnnouncementType;
 @Data
 public class AnnouncementRequest {
     @NotBlank(message = "El título es obligatorio") 
-    @Size(min = 3, max = 150, message = "El título debe tener entre 3 y 150 caracteres")
+    @Size(min = 3, max = 70, message = "El título debe tener entre 3 y 70 caracteres")
     private String title;
 
     @NotBlank(message = "El contenido es obligatorio")
@@ -22,6 +22,7 @@ public class AnnouncementRequest {
     private AnnouncementType type;
 
     private LocalDateTime eventDate;
+    @Size(min = 5, max = 255, message = "La locación no puede superar los 255 caracteres")
     private String location;
 
     public String getLocation() {
