@@ -189,6 +189,7 @@ export default {
     loading: 'Sending...',
     success: 'The recovery email was sent successfully. Please check your inbox.',
     backToLogin: 'Back to sign in',
+    backToProfile: 'Back to My profile',
   },
   resetPassword: {
     overtitle: 'Welcome',
@@ -202,6 +203,7 @@ export default {
     requestNewLink: 'Request a new link',
     passwordMismatch: 'Passwords do not match',
     backToLogin: 'Sign in',
+    backToProfile: 'Back to My profile',
   },
   common: {
     error: 'An error has occurred',
@@ -234,6 +236,7 @@ export default {
       moderator: 'Moderator',
     },
     logout: 'Sign out',
+    resetPassword: 'Reset password',
   },
   admin: {
     docentesTitle: 'Teacher Management',
@@ -321,6 +324,7 @@ export default {
     date: 'Date and time',
     state: 'Status',
     conclusion: 'Conclusion',
+    viewDetails: 'View details',
     changeStatus: 'Change status',
     rescheduleTitle: 'Reschedule appointment',
     rescheduleDescription:

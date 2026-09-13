@@ -188,6 +188,7 @@ export default {
     loading: 'Envoi...',
     success: "L'e-mail de récupération a été envoyé avec succès. Veuillez vérifier votre boîte de réception.",
     backToLogin: 'Retour à la connexion',
+    backToProfile: 'Retour à mon profil',
   },
   resetPassword: {
     overtitle: 'Bienvenue',
@@ -201,6 +202,7 @@ export default {
     requestNewLink: 'Demander un nouveau lien',
     passwordMismatch: 'Les mots de passe ne correspondent pas',
     backToLogin: 'Se connecter',
+    backToProfile: 'Retour à mon profil',
   },
   common: {
     error: 'Une erreur est survenue',
@@ -233,6 +235,7 @@ export default {
       moderator: 'Modérateur',
     },
     logout: 'Déconnexion',
+    resetPassword: 'Réinitialiser le mot de passe',
   },
   admin: {
     docentesTitle: 'Gestion des enseignants',
@@ -320,6 +323,7 @@ export default {
     date: 'Date et heure',
     state: 'Statut',
     conclusion: 'Conclusion',
+    viewDetails: 'Voir les détails',
     changeStatus: 'Changer le statut',
     rescheduleTitle: 'Reprogrammer le rendez-vous',
     rescheduleDescription:

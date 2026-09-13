@@ -5,7 +5,7 @@ import 'blobatar/gaze.css'
 import 'blobatar/motion.css'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useLogin } from '../hooks/useLogin.ts'
 import { useProfileAvatar } from '../contexts/ProfileAvatarContext.tsx'
 import AdminLayout from '../layout/AdminLayout.tsx'
@@ -105,7 +105,14 @@ function ProfilePage() {
           </div>
         </div>
 
-        <div className="mt-6 flex justify-center md:justify-end">
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <Link
+            to="/forgot-password?from=profile"
+            className="flex h-11 w-full items-center justify-center rounded-full border border-heading px-5 font-body text-[15px] font-semibold text-heading transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 sm:w-auto"
+          >
+            {t('profile.resetPassword')}
+          </Link>
+
           <button
             type="button"
             onClick={handleLogout}
@@ -113,7 +120,7 @@ function ProfilePage() {
             onMouseLeave={() => setLogoutHovered(false)}
             onFocus={() => setLogoutHovered(true)}
             onBlur={() => setLogoutHovered(false)}
-            className="h-11 w-full rounded-full bg-danger font-body text-[15px] font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:w-[120px]"
+            className="h-11 w-full rounded-full bg-danger px-5 font-body text-[15px] font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 sm:w-auto"
           >
             {t('profile.logout')}
           </button>

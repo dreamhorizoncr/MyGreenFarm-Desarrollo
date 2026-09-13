@@ -153,6 +153,7 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Chang
                     id="change-status-conclusion"
                     rows={4}
                     value={conclusion}
+                    maxLength={4000}
                     onChange={(e) => {
                       setConclusion(e.target.value)
                       if (conclusionError) setConclusionError(null)

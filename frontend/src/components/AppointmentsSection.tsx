@@ -1,16 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CalendarClockIcon, PencilIcon, SearchIcon } from '@animateicons/react/lucide'
-import { formatPhoneNumberIntl } from 'react-phone-number-input'
 import ChangeAppointmentStatusModal from './ChangeAppointmentStatusModal.tsx'
 import RescheduleAppointmentModal from './RescheduleAppointmentModal.tsx'
+import AppointmentDetailsModal from './AppointmentDetailsModal.tsx'
 import { useAppointments } from '../hooks/useAppointments.ts'
 import type { Appointment, AppointmentStatus } from '../types/appointment.ts'
 
 type StatusFilter = 'ALL' | AppointmentStatus
 
 const STATUS_FILTERS: StatusFilter[] = ['ALL', 'PENDING', 'CONFIRMED', 'CANCELLED']
-
 function AppointmentsSection() {
   const { t, i18n } = useTranslation()
   const {
@@ -28,6 +27,7 @@ function AppointmentsSection() {
   const [searchTerm, setSearchTerm] = useState('')
   const [appointmentToEdit, setAppointmentToEdit] = useState<Appointment | null>(null)
   const [appointmentToReschedule, setAppointmentToReschedule] = useState<Appointment | null>(null)
+  const [appointmentToView, setAppointmentToView] = useState<Appointment | null>(null)
 
   useEffect(() => {
     fetchAppointments()
@@ -66,24 +66,6 @@ function AppointmentsSection() {
     const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
     return new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(iso))
   }
-
-  const formatPhone = (phone: string) => {
-    if (!phone) return phone
-    try {
-      return formatPhoneNumberIntl(phone)
-    } catch {
-      return phone
-    }
-  }
-
-  const infoRows = (appointment: Appointment) => [
-    { label: t('booking.fullName'), value: appointment.parentName },
-    { label: t('booking.idNumber'), value: appointment.parentIdentification },
-    { label: t('booking.email'), value: appointment.parentEmail },
-    { label: t('booking.phone'), value: formatPhone(appointment.parentPhone) },
-    { label: t('booking.occupation'), value: appointment.parentOccupation },
-    { label: t('booking.reason'), value: appointment.parentNotes },
-  ]
 
   const handleChangeStatus = async (id: string, status: AppointmentStatus, conclusion?: string) => {
     await changeStatus(id, status, conclusion)
@@ -150,7 +132,17 @@ function AppointmentsSection() {
             {filteredAppointments.map((appointment) => (
               <article
                 key={appointment.id}
-                className={`flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition-opacity ${
+                role="button"
+                tabIndex={0}
+                aria-label={t('teacherAppointments.viewDetails')}
+                onClick={() => setAppointmentToView(appointment)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault()
+                    setAppointmentToView(appointment)
+                  }
+                }}
+                className={`flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition-opacity focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
                   actionId === appointment.id ? 'opacity-60' : ''
                 }`}
               >
@@ -162,8 +154,11 @@ function AppointmentsSection() {
                   <div className="flex items-center gap-2xs">
                     <button
                       type="button"
-                      className="inline-flex size-[38px] items-center justify-center rounded-full text-link transition-colors hover:bg-[var(--grey-100)] focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      onClick={() => setAppointmentToReschedule(appointment)}
+                      className="inline-flex size-[38px] items-center justify-center rounded-full text-link focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        setAppointmentToReschedule(appointment)
+                      }}
                       disabled={actionId === appointment.id || appointment.status === 'CANCELLED'}
                       aria-label={t('teacherAppointments.rescheduleTitle')}
                       title={t('teacherAppointments.rescheduleTitle')}
@@ -173,8 +168,11 @@ function AppointmentsSection() {
 
                     <button
                       type="button"
-                      className="inline-flex size-[38px] items-center justify-center rounded-full text-link transition-colors hover:bg-[var(--grey-100)] focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      onClick={() => setAppointmentToEdit(appointment)}
+                      className="inline-flex size-[38px] items-center justify-center rounded-full text-link focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        setAppointmentToEdit(appointment)
+                      }}
                       disabled={actionId === appointment.id}
                       aria-label={t('teacherAppointments.changeStatus')}
                       title={t('teacherAppointments.changeStatus')}
@@ -191,26 +189,9 @@ function AppointmentsSection() {
                   {formatDate(appointment.appointmentDate)}
                 </p>
 
-                <dl className="mt-md grid grid-cols-1 gap-x-lg gap-y-sm sm:grid-cols-2">
-                  {infoRows(appointment).map(({ label, value }) => (
-                    <div key={label}>
-                      <dt className="font-body text-xs font-semibold uppercase tracking-[0.4px] text-neutral-default">
-                        {label}
-                      </dt>
-                      <dd className="m-0 mt-2xs break-words font-body text-[15px] text-body-text">
-                        {value || '—'}
-                      </dd>
-                    </div>
-                  ))}
-                  <div>
-                    <dt className="font-body text-xs font-semibold uppercase tracking-[0.4px] text-neutral-default">
-                      {t('teacherAppointments.conclusion')}
-                    </dt>
-                    <dd className="m-0 mt-2xs break-words font-body text-[15px] text-body-text">
-                      {appointment.teacherConclusion ?? '—'}
-                    </dd>
-                  </div>
-                </dl>
+                <p className="m-0 mt-md font-body text-sm font-semibold text-link">
+                  {t('teacherAppointments.viewDetails')}
+                </p>
               </article>
             ))}
           </div>
@@ -230,6 +211,13 @@ function AppointmentsSection() {
           appointment={appointmentToReschedule}
           onConfirm={handleReschedule}
           onClose={() => setAppointmentToReschedule(null)}
+        />
+      )}
+
+      {appointmentToView && (
+        <AppointmentDetailsModal
+          appointment={appointmentToView}
+          onClose={() => setAppointmentToView(null)}
         />
       )}
     </div>

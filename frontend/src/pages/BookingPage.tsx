@@ -427,6 +427,7 @@ function BookingPage() {
                 <textarea
                   id="booking-reason"
                   value={reason}
+                  maxLength={4000}
                   onChange={(e) => {
                     setReason(e.target.value)
                     if (reasonError) {
