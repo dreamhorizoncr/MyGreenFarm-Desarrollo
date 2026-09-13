@@ -61,6 +61,12 @@ public class ExpedientController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteExpedient(@PathVariable UUID id) {
+        expedientService.deleteExpedient(id);
+        return ResponseEntity.noContent().build();
+    }
+
     // Modifica o añade la foto del niño
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ExpedientResponse> uploadOrUpdatePhoto(
