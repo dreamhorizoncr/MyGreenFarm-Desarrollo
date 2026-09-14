@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import MultimediaCard from '../components/home/MultimediaCard.tsx'
 import { useGallery } from '../hooks/useGallery.ts'
-import ninos2 from '../assets/imgs/niños2.svg'
+import ninos2 from '../assets/imgs/ninos2.svg'
 
 function GalleryPage() {
   const { t } = useTranslation()
@@ -31,6 +31,10 @@ function GalleryPage() {
 
   const visibleGalleries = activeCategory ? getGalleriesByCategory(activeCategory) : allGalleries
 
+  const selectCategory = (categoryId: string | null) => {
+    setActiveCategory(categoryId)
+  }
+
   return (
     <div id="gallery-page" className="min-h-screen bg-bg-page">
       <Navbar />
@@ -51,7 +55,7 @@ function GalleryPage() {
             <div className={`flex items-center gap-[10px] ${fits ? 'w-full justify-center' : ''}`}>
               <button
                 type="button"
-                onClick={() => setActiveCategory(null)}
+                onClick={() => selectCategory(null)}
                 className={`shrink-0 rounded-full px-[18px] py-[8px] font-body text-[12px] text-white transition md:text-[14px] ${
                   activeCategory === null ? 'bg-orange-500' : 'bg-green-500'
                 }`}
@@ -63,7 +67,7 @@ function GalleryPage() {
                 <button
                   key={category.id}
                   type="button"
-                  onClick={() => setActiveCategory(category.id)}
+                  onClick={() => selectCategory(category.id)}
                   className={`shrink-0 rounded-full px-[18px] py-[8px] font-body text-[12px] text-white transition md:text-[14px] ${
                     activeCategory === category.id ? 'bg-orange-500' : 'bg-green-500'
                   }`}

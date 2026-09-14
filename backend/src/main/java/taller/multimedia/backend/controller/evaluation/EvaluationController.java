@@ -9,6 +9,7 @@ import taller.multimedia.backend.service.evaluation.EvaluationService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,36 +23,42 @@ public class EvaluationController {
     private final EvaluationService evaluationService;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
     public ResponseEntity<Evaluation> createEvaluation(@Valid @RequestBody EvaluationRequest request) {
         Evaluation newEvaluation = evaluationService.createEvaluation(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(newEvaluation);
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
     public ResponseEntity<List<EvaluationResponse>> getAllEvaluations() {
         List<EvaluationResponse> evaluations = evaluationService.getAllEvaluations();
         return ResponseEntity.ok(evaluations);
     }
 
     @GetMapping("/expedient/{expedientId}")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
     public ResponseEntity<List<Evaluation>> getEvaluationsByExpedient(@PathVariable UUID expedientId) {
         List<Evaluation> evaluations = evaluationService.getEvaluationsByExpedient(expedientId);
         return ResponseEntity.ok(evaluations);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
     public ResponseEntity<Evaluation> getEvaluationById(@PathVariable UUID id) {
         Evaluation evaluation = evaluationService.getEvaluationById(id);
         return ResponseEntity.ok(evaluation);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
     public ResponseEntity<Evaluation> updateEvaluation(@PathVariable UUID id, @Valid @RequestBody EvaluationRequest request) {
         Evaluation updatedEvaluation = evaluationService.updateEvaluation(id, request);
         return ResponseEntity.ok(updatedEvaluation);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
     public ResponseEntity<Void> deleteEvaluation(@PathVariable UUID id) {
         evaluationService.deleteEvaluation(id);
         return ResponseEntity.noContent().build();

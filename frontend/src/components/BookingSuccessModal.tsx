@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { X } from 'lucide-react'
+import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import useDismiss from '../hooks/useDismiss.ts'
 
@@ -41,7 +41,7 @@ function BookingSuccessModal({ onClose }: BookingSuccessModalProps) {
           onClick={onClose}
           aria-label={t('admin.cancel')}
         >
-          <X size={20} />
+          <XIcon size={20} />
         </button>
 
         <div className="flex flex-col items-center gap-md px-[28px] pb-[32px] pt-[30px]">

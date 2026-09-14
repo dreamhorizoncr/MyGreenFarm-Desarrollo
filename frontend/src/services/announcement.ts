@@ -1,4 +1,5 @@
 import { apiClient } from './api.ts'
+import { sanitizeFileName } from '../utils/sanitizeFileName.ts'
 import type {
     Announcement,
     AnnouncementImageResponse,
@@ -13,8 +14,8 @@ export interface TranslationItem {
 
 export const announcementService = {
     async getAnnouncements(lang: string): Promise<Announcement[]> {
-        const response = await apiClient.get<Announcement[]>('/announcements', {params: {lang}})
-        return response.data
+        const response = await apiClient.get<{ content:Announcement[] }>('/announcements', {params: {lang}})
+        return response.data.content
     },
 
     async create(data: AnnouncementRequest): Promise<Announcement> {
@@ -44,7 +45,9 @@ export const announcementService = {
         isCover: boolean,
     ): Promise<AnnouncementImageResponse[]> {
         const formData = new FormData()
-        files.forEach((file) => formData.append('files', file))
+        files
+            .map((file) => new File([file], sanitizeFileName(file.name), { type: file.type }))
+            .forEach((file) => formData.append('files', file))
 
         const response = await apiClient.post<AnnouncementImageResponse[]>(
             `/announcements/${announcementId}/images`,

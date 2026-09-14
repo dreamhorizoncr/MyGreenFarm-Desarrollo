@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Lock, Menu, X } from 'lucide-react'
+import { LockIcon, MenuIcon, XIcon } from '@animateicons/react/lucide'
 import LanguageSwitcher from './LanguageSwitcher.tsx'
 import ProfileButton from './ProfileButton.tsx'
 import { userStorage } from '../utils/userStorage.ts'
@@ -36,6 +36,7 @@ function Navbar() {
     { to: '/multimedia', label: t('navbar.multimedia') },
     { to: '/forum', label: t('navbar.forum') },
     { to: '/services', label: t('navbar.services') },
+    { to: '/vacantes', label: t('navbar.vacancies') },
   ]
 
   return (
@@ -67,7 +68,7 @@ function Navbar() {
                 title={t('navbar.adminLogin')}
 className="w-fit self-center text-green-500 transition-opacity hover:opacity-70"
               >
-                <Lock size={18} aria-hidden="true" />
+                <LockIcon size={18} aria-hidden="true" />
               </Link>
             )}
 
@@ -90,7 +91,7 @@ className="w-fit self-center text-green-500 transition-opacity hover:opacity-70"
               className="text-heading"
               aria-label="Open menu"
             >
-              <Menu size={28} />
+              <MenuIcon size={28} />
             </button>
           </div>
         </div>
@@ -119,7 +120,7 @@ className="w-fit self-center text-green-500 transition-opacity hover:opacity-70"
             className="text-heading"
             aria-label="Close menu"
           >
-            <X size={28} />
+            <XIcon size={28} />
           </button>
         </div>
 
@@ -144,7 +145,7 @@ className="w-fit self-center text-green-500 transition-opacity hover:opacity-70"
               onClick={() => setDrawerOpen(false)}
               className="text-green-500 transition-opacity hover:opacity-70"
             >
-              <Lock size={18} aria-hidden="true" />
+              <LockIcon size={18} aria-hidden="true" />
             </Link>
           )}
         </nav>

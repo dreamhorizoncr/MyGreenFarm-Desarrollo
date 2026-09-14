@@ -133,7 +133,7 @@ function ResetPasswordPage() {
             </div>
           )}
 
-          {/*Volver al Login*/}
+          {/*Volver al inicio de sesión*/}
           <p className="mt-[35px] text-center">
             <Link
               to="/login"

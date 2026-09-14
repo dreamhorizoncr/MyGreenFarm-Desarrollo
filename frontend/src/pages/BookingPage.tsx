@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent, type InputHTMLAttributes } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeftIcon } from '@animateicons/react/lucide'
 import PhoneInput from 'react-phone-number-input'
 import { useNavigate } from 'react-router-dom'
 import 'react-phone-number-input/style.css'
@@ -314,7 +314,7 @@ function BookingPage() {
                 className="inline-flex size-11 shrink-0 items-center justify-center rounded-full text-heading transition-colors hover:bg-[var(--grey-100)] focus-visible:outline-2 focus-visible:outline-green-500 focus-visible:outline-offset-2"
                 aria-label={t('booking.back')}
               >
-                <ArrowLeft size={30} strokeWidth={3} aria-hidden="true" />
+                <ArrowLeftIcon size={30} aria-hidden="true" />
               </button>
               <h2 className="m-0 text-left font-heading text-[28px] leading-none text-heading md:text-[42px]">
                 {t('booking.title')}
@@ -427,6 +427,7 @@ function BookingPage() {
                 <textarea
                   id="booking-reason"
                   value={reason}
+                  maxLength={4000}
                   onChange={(e) => {
                     setReason(e.target.value)
                     if (reasonError) {

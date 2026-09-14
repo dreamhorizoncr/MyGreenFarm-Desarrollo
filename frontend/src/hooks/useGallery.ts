@@ -8,6 +8,7 @@ export function useGallery() {
 	const [galleriesByCategory, setGalleriesByCategory] = useState<
 		Record<string, Gallery[]>
 	>({})
+	const [allGalleries, setAllGalleries] = useState<Gallery[]>([])
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
 
@@ -20,15 +21,19 @@ export function useGallery() {
 				b.title.localeCompare(a.title, undefined, { numeric: true }),
 			)
 
-			const entries = await Promise.all(
-				sortedCategories.map(async (category) => {
-					const galleries = await galleryService.getByCategory(category.id)
-					return [category.id, galleries] as const
-				}),
-			)
+			const [entries, galleries] = await Promise.all([
+				Promise.all(
+					sortedCategories.map(async (category) => {
+						const galleryList = await galleryService.getByCategory(category.id)
+						return [category.id, galleryList] as const
+					}),
+				),
+				galleryService.getGalleries(),
+			])
 
 			setCategories(sortedCategories)
 			setGalleriesByCategory(Object.fromEntries(entries))
+			setAllGalleries(galleries)
 		} catch (err) {
 			setError(getErrorMessage(err))
 		} finally {
@@ -41,7 +46,6 @@ export function useGallery() {
 		void fetchGallery()
 	}, [])
 
-	const allGalleries = Object.values(galleriesByCategory).flat()
 	const getGalleriesByCategory = (categoryId: string) =>
 		galleriesByCategory[categoryId] ?? []
 

@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { X } from 'lucide-react'
+import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import useDismiss from '../hooks/useDismiss.ts'
 import { getErrorMessage } from '../utils/error.ts'
@@ -65,7 +65,7 @@ function DeleteAlbumModal({ gallery, onConfirm, onClose }: DeleteAlbumModalProps
           onClick={onClose}
           aria-label={t('admin.cancel')}
         >
-          <X size={20} />
+          <XIcon size={20} />
         </button>
 
         <div className="relative mb-lg text-center">

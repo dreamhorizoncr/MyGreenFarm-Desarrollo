@@ -1,7 +1,38 @@
+@import "sileo/styles.css";
+
 /* =============================================================================
    BASE — Overrides de preflight + estilos base custom
    Import order: tailwindcss → tokens → base → main
    ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   NOTIFICATIONS (Sileo)
+   --------------------------------------------------------------------------- */
+html:root {
+  --sileo-state-success: var(--success-default);
+  --sileo-state-loading: var(--neutral-default);
+  --sileo-state-error: var(--danger-default);
+  --sileo-state-warning: var(--warning-default);
+  --sileo-state-info: var(--info-default);
+  --sileo-state-action: var(--link-default);
+}
+
+html [data-sileo-badge][data-state],
+html [data-sileo-title][data-state] {
+  --sileo-tone: var(--white);
+  --sileo-tone-bg: color-mix(in oklch, var(--white) 25%, transparent);
+}
+
+html [data-sileo-description] {
+  color: color-mix(in oklch, var(--white) 85%, transparent);
+  text-align: right;
+}
+
+html [data-sileo-button][data-state] {
+  --sileo-btn-color: var(--white);
+  --sileo-btn-bg: color-mix(in oklch, var(--white) 20%, transparent);
+  --sileo-btn-bg-hover: color-mix(in oklch, var(--white) 30%, transparent);
+}
 
 /* ---------------------------------------------------------------------------
    HTML — tipografía raíz, fondo y color
@@ -97,6 +128,7 @@
   a {
     font-family: var(--font-link);
     font-weight: 300;
+    cursor: pointer;
   }
 
   /* ---------------------------------------------------------------------------
@@ -129,6 +161,10 @@
   textarea {
     border: none;
     background: none;
+  }
+
+  button:not(:disabled) {
+    cursor: pointer;
   }
 
   :where(button:disabled, input:disabled, select:disabled, textarea:disabled) {

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { CalendarDays, MapPin, X} from 'lucide-react';
+import { CalendarDaysIcon, MapPinIcon, XIcon } from '@animateicons/react/lucide';
 import { useTranslation } from 'react-i18next';
 import { useAnnouncementImages } from '../hooks/useAnnouncementImages.ts';
 
@@ -111,7 +111,7 @@ function NewsDetailModal({
                 aria-label="Cerrar noticia"
                 className="absolute right-[18px] top-[18px] z-20 flex size-[42px] items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
                 >
-                <X size={20} />
+                <XIcon size={20} />
             </button>
 
         {/*Contenido Interno*/}
@@ -133,7 +133,7 @@ function NewsDetailModal({
 
                 {announcement.eventDate && (
                     <div className="flex items-center gap-[6px]">
-                        <CalendarDays size={16} />
+                        <CalendarDaysIcon size={16} />
 
                     <span>
                         {formatDate(
@@ -146,7 +146,7 @@ function NewsDetailModal({
 
                 {announcement.location && (
                     <div className="flex items-center gap-[6px]">
-                    <MapPin size={16} />
+                    <MapPinIcon size={16} />
                     <span>{announcement.location}</span>
                     </div>
                 )}

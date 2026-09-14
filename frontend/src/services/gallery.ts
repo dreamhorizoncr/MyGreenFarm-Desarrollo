@@ -1,4 +1,5 @@
 import { apiClient } from './api.ts'
+import { sanitizeFileName } from '../utils/sanitizeFileName.ts'
 import type {
 	Gallery,
 	GalleryCategory,
@@ -14,15 +15,15 @@ export const galleryService = {
 	},
 
 	async getGalleries(): Promise<Gallery[]> {
-		const response = await apiClient.get<Gallery[]>('/gallery')
-		return response.data
+		const response = await apiClient.get<{ content: Gallery[] }>('/gallery')
+		return response.data.content
 	},
 
 	async getByCategory(categoryId: string): Promise<Gallery[]> {
-		const response = await apiClient.get<Gallery[]>('/gallery', {
+		const response = await apiClient.get<{ content: Gallery[] }>('/gallery', {
 			params: { categoryId },
 		})
-		return response.data
+		return response.data.content
 	},
 
 	async createCategory(data: GalleryCategoryRequest): Promise<GalleryCategory> {
@@ -59,7 +60,9 @@ export const galleryService = {
 		title: string,
 	): Promise<GalleryImage[]> {
 		const formData = new FormData()
-		files.forEach((file) => formData.append('files', file))
+		files
+			.map((file) => new File([file], sanitizeFileName(file.name), { type: file.type }))
+			.forEach((file) => formData.append('files', file))
 
 		const response = await apiClient.post<GalleryImage[]>(
 			`/gallery/${galleryId}/images`,

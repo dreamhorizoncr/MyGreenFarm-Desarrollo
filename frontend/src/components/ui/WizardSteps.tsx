@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import { Check } from 'lucide-react'
+import { CheckIcon } from '@animateicons/react/lucide'
 
 interface WizardStepsProps {
   steps: string[]
@@ -30,7 +30,7 @@ function WizardSteps({ steps, current }: WizardStepsProps) {
                 className={`flex size-8 items-center justify-center rounded-full font-body text-sm font-semibold ${stepClassName}`}
                 aria-current={active ? 'step' : undefined}
               >
-                {completed ? <Check size={16} /> : index + 1}
+                {completed ? <CheckIcon size={16} /> : index + 1}
               </span>
               <span className={`font-body text-xs leading-tight ${active ? 'font-semibold text-body-text' : 'text-neutral-500'}`}>
                 {label}

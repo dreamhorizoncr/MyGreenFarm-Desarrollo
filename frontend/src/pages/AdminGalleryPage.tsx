@@ -1,23 +1,24 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import {
-	Check,
-	ChevronDown,
-	ChevronLeft,
-	ChevronRight,
-	ImagePlus,
-	MoreVertical,
-	Pencil,
-	Plus,
-	Trash2,
-	X,
-} from 'lucide-react'
+	CheckIcon,
+	ChevronDownIcon,
+	ChevronLeftIcon,
+	ChevronRightIcon,
+	EllipsisVerticalIcon,
+	FileImageIcon,
+	PencilIcon,
+	PlusIcon,
+	Trash2Icon,
+	XIcon,
+} from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import useEmblaCarousel from 'embla-carousel-react'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import DeleteAlbumModal from '../components/DeleteAlbumModal.tsx'
+import DeleteYearModal from '../components/DeleteYearModal.tsx'
 import { useGalleryAdmin } from '../hooks/useGalleryAdmin.ts'
 import type { Gallery, GalleryCategory, GalleryImage, GalleryRequest } from '../types/gallery.ts'
-import ninos2 from '../assets/imgs/niños2.svg'
+import ninos2 from '../assets/imgs/ninos2.svg'
 
 const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']
 
@@ -57,7 +58,7 @@ function AlbumMenu({ onEdit, onDelete }: AlbumMenuProps) {
 				aria-expanded={open}
 				className="flex size-[34px] items-center justify-center rounded-full bg-white text-heading shadow transition hover:bg-neutral-50"
 			>
-				<MoreVertical size={18} />
+				<EllipsisVerticalIcon size={18} />
 			</button>
 
 			{open && (
@@ -72,7 +73,7 @@ function AlbumMenu({ onEdit, onDelete }: AlbumMenuProps) {
 							}}
 							className="flex w-full items-center gap-sm px-md py-sm text-sm text-heading transition hover:bg-neutral-50"
 						>
-							<Pencil size={15} />
+							<PencilIcon size={15} />
 							{t('admin.edit')}
 						</button>
 						<button
@@ -83,7 +84,7 @@ function AlbumMenu({ onEdit, onDelete }: AlbumMenuProps) {
 							}}
 							className="flex w-full items-center gap-sm px-md py-sm text-sm text-danger transition hover:bg-red-50"
 						>
-							<Trash2 size={15} />
+							<Trash2Icon size={15} />
 							{t('admin.delete')}
 						</button>
 					</div>
@@ -98,9 +99,16 @@ interface YearDropdownProps {
 	value: string
 	onChange: (categoryId: string) => void
 	onCreateYear: (title: string) => Promise<void>
+	onDeleteYear: (category: GalleryCategory) => void
 }
 
-function YearDropdown({ categories, value, onChange, onCreateYear }: YearDropdownProps) {
+function YearDropdown({
+	categories,
+	value,
+	onChange,
+	onCreateYear,
+	onDeleteYear,
+}: YearDropdownProps) {
 	const { t } = useTranslation()
 	const [open, setOpen] = useState(false)
 	const [adding, setAdding] = useState(false)
@@ -139,7 +147,7 @@ function YearDropdown({ categories, value, onChange, onCreateYear }: YearDropdow
 				<span className={selected ? 'text-heading' : 'text-neutral-500'}>
 					{selected ? selected.title : t('admin.gallery.selectYear')}
 				</span>
-				<ChevronDown
+				<ChevronDownIcon
 					size={18}
 					aria-hidden="true"
 					className={open ? 'rotate-180 transition-transform' : 'transition-transform'}
@@ -158,22 +166,34 @@ function YearDropdown({ categories, value, onChange, onCreateYear }: YearDropdow
 					/>
 					<div className="absolute left-0 right-0 top-[calc(100%+6px)] z-20 overflow-hidden rounded-xl border border-neutral-200 bg-white py-sm shadow-lg">
 						{categories.map((category) => (
-							<button
+							<div
 								key={category.id}
-								type="button"
-								onClick={() => {
-									onChange(category.id)
-									setOpen(false)
-								}}
-								className={`flex w-full items-center justify-between px-md py-sm text-sm transition hover:bg-neutral-50 ${
-									category.id === value
-										? 'font-semibold text-heading'
-										: 'text-neutral-600'
-								}`}
+								className="flex w-full items-center justify-between pr-sm text-sm transition hover:bg-neutral-50"
 							>
-								{category.title}
-								{category.id === value && <Check size={16} aria-hidden="true" />}
-							</button>
+								<button
+									type="button"
+									onClick={() => {
+										onChange(category.id)
+										setOpen(false)
+									}}
+									className={`flex w-full flex-1 items-center justify-between px-md py-sm ${
+										category.id === value
+											? 'font-semibold text-heading'
+											: 'text-neutral-600'
+									}`}
+								>
+									{category.title}
+									{category.id === value && <CheckIcon size={16} aria-hidden="true" />}
+								</button>
+								<button
+									type="button"
+									onClick={() => onDeleteYear(category)}
+									aria-label={`${t('admin.gallery.deleteYear')}: ${category.title}`}
+									className="flex size-8 shrink-0 items-center justify-center rounded-full text-neutral-400 transition hover:bg-red-50 hover:text-red-600"
+								>
+									<Trash2Icon size={15} />
+								</button>
+							</div>
 						))}
 
 						<div className="mx-lg my-sm border-t border-neutral-200" />
@@ -205,7 +225,7 @@ function YearDropdown({ categories, value, onChange, onCreateYear }: YearDropdow
 									aria-label={t('admin.save')}
 									className="flex size-9 shrink-0 items-center justify-center rounded-full bg-green-600 text-white disabled:opacity-50"
 								>
-									<Check size={16} />
+									<CheckIcon size={16} />
 								</button>
 								<button
 									type="button"
@@ -216,7 +236,7 @@ function YearDropdown({ categories, value, onChange, onCreateYear }: YearDropdow
 									aria-label={t('admin.cancel')}
 									className="flex size-9 shrink-0 items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-100"
 								>
-									<X size={16} />
+									<XIcon size={16} />
 								</button>
 							</div>
 						) : (
@@ -225,7 +245,7 @@ function YearDropdown({ categories, value, onChange, onCreateYear }: YearDropdow
 								onClick={() => setAdding(true)}
 								className="flex w-full items-center gap-sm px-md py-sm text-sm font-semibold text-heading transition hover:bg-neutral-50"
 							>
-								<Plus size={16} aria-hidden="true" />
+								<PlusIcon size={16} aria-hidden="true" />
 								{t('admin.gallery.addNewYear')}
 							</button>
 						)}
@@ -262,11 +282,11 @@ function AdminAlbumCard({ gallery, onEdit, onDelete }: AdminAlbumCardProps) {
 				<AlbumMenu onEdit={onEdit} onDelete={onDelete} />
 			</div>
 
-			<div className="h-[128px] overflow-hidden px-lg pb-lg">
-				<h3 className="m-0 line-clamp-2 font-heading text-h5 font-bold text-heading">
+			<div className="overflow-hidden px-lg pb-lg text-left">
+				<h3 className="m-0 line-clamp-2 min-h-[2.8em] font-heading text-h5 font-bold text-heading">
 					{gallery.title}
 				</h3>
-				<p className="mt-sm line-clamp-2 font-body text-body-sm font-normal leading-[1.5] text-body-text-dark">
+				<p className="-mt-sm line-clamp-5 min-h-[7.5em] font-body text-body-sm font-normal leading-[1.5] text-body-text-dark">
 					{gallery.description}
 				</p>
 			</div>
@@ -322,7 +342,7 @@ function AdminAlbumCarousel({
 							aria-label={t('admin.gallery.prevAlbums')}
 							className="flex size-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-heading shadow-sm transition hover:bg-neutral-50 disabled:opacity-40"
 						>
-							<ChevronLeft size={18} />
+							<ChevronLeftIcon size={18} />
 						</button>
 						<button
 							type="button"
@@ -331,7 +351,7 @@ function AdminAlbumCarousel({
 							aria-label={t('admin.gallery.nextAlbums')}
 							className="flex size-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-heading shadow-sm transition hover:bg-neutral-50 disabled:opacity-40"
 						>
-							<ChevronRight size={18} />
+							<ChevronRightIcon size={18} />
 						</button>
 					</div>
 				)}
@@ -371,6 +391,7 @@ function AdminGalleryPage() {
 		error,
 		fetchAll,
 		createCategory,
+		deleteCategory,
 		createGallery,
 		updateGallery,
 		deleteGallery,
@@ -381,6 +402,7 @@ function AdminGalleryPage() {
 	const [formOpen, setFormOpen] = useState(false)
 	const [editing, setEditing] = useState<Gallery | null>(null)
 	const [deleteTarget, setDeleteTarget] = useState<Gallery | null>(null)
+	const [deleteYearTarget, setDeleteYearTarget] = useState<GalleryCategory | null>(null)
 	const [form, setForm] = useState<GalleryRequest>(emptyForm)
 	const [formError, setFormError] = useState<string | null>(null)
 	const [files, setFiles] = useState<SelectedImage[]>([])
@@ -525,6 +547,13 @@ function AdminGalleryPage() {
 		if (editing?.id === gallery.id) closeForm()
 	}
 
+	const handleDeleteYear = async (category: GalleryCategory) => {
+		await deleteCategory(category.id)
+		setForm((prev) =>
+			prev.categoryId === category.id ? { ...prev, categoryId: '' } : prev
+		)
+	}
+
 	const handleDeleteImage = async (imageId: string) => {
 		if (!editing) return
 		await deleteImage(editing.id, imageId)
@@ -547,7 +576,7 @@ function AdminGalleryPage() {
 					onClick={openCreate}
 					className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-sm font-semibold text-white"
 				>
-					<Plus size={18} aria-hidden="true" />
+					<PlusIcon size={18} aria-hidden="true" />
 					{t('admin.gallery.addAlbum')}
 				</button>
 			</div>
@@ -567,7 +596,7 @@ function AdminGalleryPage() {
 							aria-label={t('admin.gallery.close')}
 							className="text-neutral-500"
 						>
-							<X size={20} />
+							<XIcon size={20} />
 						</button>
 					</div>
 
@@ -593,8 +622,9 @@ function AdminGalleryPage() {
 									setForm((prev) => ({ ...prev, categoryId }))
 									setFormError(null)
 								}}
-								onCreateYear={handleCreateYear}
-							/>
+onCreateYear={handleCreateYear}
+							onDeleteYear={(category) => setDeleteYearTarget(category)}
+						/>
 							{formError && (
 								<p className="mt-xs text-xs font-normal text-red-700">{formError}</p>
 							)}
@@ -628,7 +658,7 @@ function AdminGalleryPage() {
 								onClick={() => imagesInputRef.current?.click()}
 								className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-sm font-semibold text-heading"
 							>
-								<ImagePlus size={17} aria-hidden="true" />
+								<FileImageIcon size={17} aria-hidden="true" />
 								{t('admin.gallery.chooseImages')}
 							</button>
 
@@ -659,7 +689,7 @@ function AdminGalleryPage() {
 													aria-label={`${t('admin.delete')}: ${selected.file.name}`}
 													className="absolute -right-sm -top-sm flex size-[26px] items-center justify-center rounded-full bg-red-600 text-white shadow transition hover:bg-red-700"
 												>
-													<X size={14} />
+													<XIcon size={14} />
 												</button>
 											</div>
 										))}
@@ -694,7 +724,7 @@ function AdminGalleryPage() {
 											aria-label={t('admin.delete')}
 											className="text-danger"
 										>
-											<Trash2 size={16} />
+											<Trash2Icon size={16} />
 										</button>
 									</div>
 								))}
@@ -768,6 +798,14 @@ function AdminGalleryPage() {
 					gallery={deleteTarget}
 					onConfirm={() => handleDeleteGallery(deleteTarget)}
 					onClose={() => setDeleteTarget(null)}
+				/>
+			)}
+
+			{deleteYearTarget && (
+				<DeleteYearModal
+					category={deleteYearTarget}
+					onConfirm={() => handleDeleteYear(deleteYearTarget)}
+					onClose={() => setDeleteYearTarget(null)}
 				/>
 			)}
 		</AdminLayout>

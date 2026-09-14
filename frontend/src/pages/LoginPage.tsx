@@ -1,14 +1,17 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRightIcon } from "@animateicons/react/lucide";
 import Button from "../components/ui/Button.tsx";
 import PasswordInput from "../components/ui/PasswordInput.tsx";
 import TextField from "../components/ui/TextField.tsx";
 import AuthLayout from "../layout/AuthLayout.tsx";
 import { useLogin } from "../hooks/useLogin.ts";
 import { validateEmail, validatePassword } from "../utils/validators.ts";
+import { notify } from "../utils/notifications.ts";
 import i18n from "../i18n/index.ts";
+
+const FAILED_ATTEMPTS_BEFORE_SUGGESTION = 2;
 
 function LoginPage() {
   const { t } = useTranslation();
@@ -16,6 +19,7 @@ function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [failedAttempts, setFailedAttempts] = useState(0);
   const [emailValidationError, setEmailValidationError] = useState<
     string | null
   >(null);
@@ -36,8 +40,36 @@ function LoginPage() {
     setEmailValidationError(emailErrorMessage);
     setPasswordValidationError(passwordErrorMessage);
     if (emailErrorMessage || passwordErrorMessage) return;
-    submitLogin({ email, password }, () =>
-      navigate('/admin/dashboard'),
+    submitLogin(
+      { email, password },
+      (user) => {
+        notify.success({
+          title: t("login.successToastTitle"),
+          description: t("login.successToastDescription", { name: user.firstName }),
+        });
+        navigate('/admin/dashboard');
+      },
+      () => {
+        notify.error({
+          title: t("login.errorToastTitle"),
+          description: t("login.errorToastDescription"),
+        });
+
+        const attempts = failedAttempts + 1;
+        setFailedAttempts(attempts);
+        if (attempts >= FAILED_ATTEMPTS_BEFORE_SUGGESTION) {
+          notify.action(
+            {
+              title: t("login.forgotPasswordSuggestionTitle"),
+              description: t("login.forgotPasswordSuggestionDescription"),
+            },
+            {
+              title: t("login.forgotPassword"),
+              onClick: () => navigate('/forgot-password'),
+            },
+          );
+        }
+      },
     )
   }
 
@@ -119,7 +151,7 @@ function LoginPage() {
             className="h-[47px] w-full rounded-full bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
           >
             {loading ? t("login.loading") : t("login.buttonLabel")}
-            {!loading && <ArrowRight size={18} aria-hidden="true" />}
+            {!loading && <ArrowRightIcon size={18} aria-hidden="true" />}
           </Button>
         </div>
 

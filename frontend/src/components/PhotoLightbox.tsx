@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { X } from 'lucide-react'
+import { XIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import type { GalleryImage } from '../types/gallery.ts'
 
@@ -62,7 +62,7 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: PhotoLightboxProp
         aria-label={t('home.galeria.closePhoto')}
         className="absolute right-md top-md flex size-[42px] items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
       >
-        <X size={20} />
+        <XIcon size={20} />
       </button>
 
       <figure
