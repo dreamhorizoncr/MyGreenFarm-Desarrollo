@@ -45,7 +45,7 @@ function AdminUsersPage() {
     })
   }, [users, searchTerm, roleFilter])
 
-  const roleOptions = useMemo(() => ['ALL', ...Array.from(new Set(users.map((user) => user.role)))], [users])
+  const roleOptions = useMemo(() => ['ALL', ...Array.from(new Set(['OWNER', ...users.map((user) => user.role)]))], [users])
 
   const roleFilterClassName = (active: boolean) =>
     `rounded-full px-md py-sm font-body text-sm font-semibold transition-colors ${

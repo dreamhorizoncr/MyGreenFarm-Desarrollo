@@ -13,11 +13,16 @@ import AdminCitasPage from './pages/AdminCitasPage.tsx'
 import ProfilePage from './pages/ProfilePage.tsx'
 import ProtectedRoute from './routes/ProtectedRoute.tsx'
 import AdminRoute from './routes/AdminRoute.tsx'
+import OwnerRoute from './routes/OwnerRoute.tsx'
 import NewsPage from './pages/NewsPage.tsx'
 import AnnouncementsPage from './pages/AnnouncementsPage.tsx'
 import GalleryPage from './pages/GalleryPage.tsx'
 import AlbumDetailPage from './pages/AlbumDetailPage.tsx'
 import AdminGalleryPage from './pages/AdminGalleryPage.tsx'
+import ServicesPage from './pages/ServicesPage.tsx'
+import AdminServicePlansPage from './pages/AdminServicePlansPage.tsx'
+import PaymentSuccessPage from './pages/PaymentSuccessPage.tsx'
+import PaymentFailedPage from './pages/PaymentFailedPage.tsx'
 import AdminCurriculumsPage from './pages/AdminCurriculumsPage.tsx'
 import VacanciesPage from './pages/VacanciesPage.tsx'
 import Footer from './layout/Footer.tsx'
@@ -49,6 +54,12 @@ function App() {
             <Route path="/admin/gallery" element={<AdminGalleryPage />} />
             <Route path="/admin/curriculums" element={<AdminCurriculumsPage />} />
           </Route>
+          <Route element={<OwnerRoute />}>
+            <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />
+          </Route>
+          <Route element={<OwnerRoute />}>
+            <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />
+          </Route>
         </Route>
         <Route path="/" element={<HomePage />} />
         <Route path="/booking" element={<BookingPage />} />
@@ -59,6 +70,9 @@ function App() {
         <Route path="/news" element={<NewsPage />} />
         <Route path="/multimedia" element={<GalleryPage />} />
         <Route path="/albumes/:id" element={<AlbumDetailPage />} />
+        <Route path="/services" element={<ServicesPage />} />
+        <Route path="/pago-exitoso" element={<PaymentSuccessPage />} />
+        <Route path="/pago-cancelado" element={<PaymentFailedPage />} />
         <Route path="/vacantes" element={<VacanciesPage />} />
         {/* <Route path="/news/:id" element={<NewsDetailPage />} /> */}
         {/* Redirigir cualquier ruta no definida a la página de inicio */}
