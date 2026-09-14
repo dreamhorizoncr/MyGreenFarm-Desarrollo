@@ -51,7 +51,8 @@ function PlanCard({ plan, onSubscribe }: { plan: ServicePlan; onSubscribe: (plan
           </div>
         )}
         <span className="absolute bottom-sm left-sm rounded-full bg-[var(--orange-500)] px-md py-xs font-body text-body-sm font-bold text-white shadow">
-          {getPlanTypeLabel(plan.type, t)}
+          {/* No tiene que ser ANY, cambiarlo luego */}
+          {getPlanTypeLabel(plan.type, t as any)}
         </span>
       </div>
 
