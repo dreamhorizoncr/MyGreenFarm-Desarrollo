@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   CalendarDaysIcon,
   ChevronDownIcon,
+  CreditCardIcon,
   FileTextIcon,
   FolderOpenIcon,
   ImageIcon,
@@ -25,7 +26,8 @@ type SidebarItemId =
   | "galeria"
   | "cv"
   | "expedientes"
-  | "miPerfil";
+  | "miPerfil"
+  | "servicios";
 
 interface SidebarItem {
   id: SidebarItemId;
@@ -41,22 +43,34 @@ function AdminSidebar() {
   const [open, setOpen] = useState(false)
   const { setSidebarHovered } = useProfileAvatar()
 
-  const items: SidebarItem[] = userStorage.getUser()?.role === 'ADMIN'
+  const items: SidebarItem[] = userStorage.getUser()?.role === 'OWNER'
     ? [
         { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
         { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
         { id: 'noticias', icon: MegaphoneIcon, path: '/admin/announcements' },
         { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
         { id: 'docentes', icon: UsersIcon, path: '/admin/users' },
+        { id: 'servicios', icon: CreditCardIcon, path: '/admin/service-plans' },
         { id: 'cv', icon: FileTextIcon },
         { id: 'expedientes', icon: FolderOpenIcon },
         { id: 'miPerfil', icon: UserIcon, path: '/profile' },
       ]
-    : [
-        { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
-        { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
-        { id: 'miPerfil', icon: UserIcon, path: '/profile' },
-      ]
+    : userStorage.getUser()?.role === 'ADMIN'
+      ? [
+          { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
+          { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
+          { id: 'noticias', icon: MegaphoneIcon, path: '/admin/announcements' },
+          { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
+          { id: 'docentes', icon: UsersIcon, path: '/admin/users' },
+          { id: 'cv', icon: FileTextIcon },
+          { id: 'expedientes', icon: FolderOpenIcon },
+          { id: 'miPerfil', icon: UserIcon, path: '/profile' },
+        ]
+      : [
+          { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
+          { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
+          { id: 'miPerfil', icon: UserIcon, path: '/profile' },
+        ]
 
   const activeItem = items.find((item) => item.path === pathname) ?? items[0]
   const ActiveIcon = activeItem.icon
