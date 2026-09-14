@@ -20,6 +20,8 @@ import AlbumDetailPage from './pages/AlbumDetailPage.tsx'
 import AdminGalleryPage from './pages/AdminGalleryPage.tsx'
 import ServicesPage from './pages/ServicesPage.tsx'
 import AdminServicePlansPage from './pages/AdminServicePlansPage.tsx'
+import PaymentSuccessPage from './pages/PaymentSuccessPage.tsx'
+import PaymentFailedPage from './pages/PaymentFailedPage.tsx'
 import Footer from './layout/Footer.tsx'
 import ScrollToTopButton from './components/ScrollToTopButton.tsx'
 import { ProfileAvatarProvider } from './contexts/ProfileAvatarContext.tsx'
@@ -54,6 +56,8 @@ function App() {
         <Route path="/multimedia" element={<GalleryPage />} />
         <Route path="/albumes/:id" element={<AlbumDetailPage />} />
         <Route path="/services" element={<ServicesPage />} />
+        <Route path="/pago-exitoso" element={<PaymentSuccessPage />} />
+        <Route path="/pago-cancelado" element={<PaymentFailedPage />} />
         {/* <Route path="/news/:id" element={<NewsDetailPage />} /> */}
         {/* Redirigir cualquier ruta no definida a la página de inicio */}
         <Route path="*" element={<Navigate to="/" replace />} />

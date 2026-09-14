@@ -387,4 +387,14 @@ export default {
     includes: "What's included",
     empty: 'No services available at the moment.',
   },
+  paymentSuccess: {
+    title: 'Payment successful!',
+    description: 'Your subscription was processed successfully.',
+    backToServices: 'Back to services',
+  },
+  paymentFailed: {
+    title: 'Payment not completed',
+    description: 'The payment could not be processed. You can try again.',
+    retry: 'Retry',
+  },
 }

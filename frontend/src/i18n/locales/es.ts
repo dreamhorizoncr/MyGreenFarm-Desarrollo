@@ -390,4 +390,14 @@ export default {
     includes: 'Qué incluye',
     empty: 'No hay servicios disponibles actualmente.',
   },
+  paymentSuccess: {
+    title: '¡Pago exitoso!',
+    description: 'Tu suscripción fue procesada correctamente.',
+    backToServices: 'Volver a servicios',
+  },
+  paymentFailed: {
+    title: 'Pago no completado',
+    description: 'El pago no pudo ser procesado. Podés intentarlo de nuevo.',
+    retry: 'Reintentar',
+  },
 }

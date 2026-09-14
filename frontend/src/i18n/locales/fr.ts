@@ -386,4 +386,14 @@ export default {
     includes: 'Ce qui est inclus',
     empty: 'Aucun service disponible pour le moment.',
   },
+  paymentSuccess: {
+    title: 'Paiement réussi !',
+    description: 'Votre abonnement a été traité avec succès.',
+    backToServices: 'Retour aux services',
+  },
+  paymentFailed: {
+    title: 'Paiement non complété',
+    description: 'Le paiement n\'a pas pu être traité. Vous pouvez réessayer.',
+    retry: 'Réessayer',
+  },
 }
