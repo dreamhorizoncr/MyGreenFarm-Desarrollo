@@ -1,6 +1,10 @@
 package taller.multimedia.backend.service.gallery;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import taller.multimedia.backend.dto.gallery.GalleryImageResponse;
@@ -38,17 +42,15 @@ public class GalleryService {
     }
 
     @Transactional(readOnly = true)
-    public List<GalleryResponse> getAll() {
-        return galleryRepository.findAllByOrderByCreatedAtDesc().stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public Page<GalleryResponse> getAll(Pageable pageable) {
+        return galleryRepository.findAllByOrderByCreatedAtDesc(pageable)
+                .map(this::mapToResponse);
     }
 
     @Transactional(readOnly = true)
-    public List<GalleryResponse> getByCategory(UUID categoryId) {
-        return galleryRepository.findByCategoryGalleryIdOrderByCreatedAtDesc(categoryId).stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public Page<GalleryResponse> getByCategory(UUID categoryId, Pageable pageable) {
+        return galleryRepository.findByCategoryGalleryIdOrderByCreatedAtDesc(categoryId, pageable)
+                .map(this::mapToResponse);
     }
 
     @Transactional(readOnly = true)
@@ -92,7 +94,8 @@ public class GalleryService {
         response.setTitle(gallery.getTitle());
         response.setDescription(gallery.getDescription());
         response.setGalleryImages(
-                galleryImageService.getImagesByGallery(gallery.getId()).toArray(new GalleryImageResponse[0]));
+                galleryImageService.getImagesByGallery(gallery.getId(), PageRequest.of(0, 10)).getContent().toArray(new GalleryImageResponse[0]));
         return response;
     }
+
 }
