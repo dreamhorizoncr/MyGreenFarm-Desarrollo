@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import ninos2 from '../../assets/imgs/niños2.svg'
+import ninos2 from '../../assets/imgs/ninos2.svg'
 import nubeWhiteDown from '../../assets/imgs/nubeWhiteDown.svg'
 import Container from '../../components/home/Container.tsx'
 import MultimediaCard from '../../components/home/MultimediaCard.tsx'

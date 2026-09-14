@@ -48,7 +48,7 @@ function AdminSidebar() {
         { id: 'noticias', icon: MegaphoneIcon, path: '/admin/announcements' },
         { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
         { id: 'docentes', icon: UsersIcon, path: '/admin/users' },
-        { id: 'cv', icon: FileTextIcon },
+        { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
         { id: 'expedientes', icon: FolderOpenIcon },
         { id: 'miPerfil', icon: UserIcon, path: '/profile' },
       ]
