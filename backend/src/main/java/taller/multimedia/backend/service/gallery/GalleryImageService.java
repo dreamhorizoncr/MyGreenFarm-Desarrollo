@@ -2,6 +2,8 @@ package taller.multimedia.backend.service.gallery;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -73,10 +75,9 @@ public class GalleryImageService {
     }
 
     @Transactional(readOnly = true)
-    public List<GalleryImageResponse> getImagesByGallery(UUID galleryId) {
-        return imageRepository.findByGalleryIdOrderByCreatedAtDesc(galleryId).stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public Page<GalleryImageResponse> getImagesByGallery(UUID galleryId, Pageable pageable) {
+        return imageRepository.findByGalleryIdOrderByCreatedAtDesc(galleryId, pageable)
+                .map(this::mapToResponse);
     }
 
     @Transactional
