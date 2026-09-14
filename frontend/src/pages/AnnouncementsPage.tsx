@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { ImagePlus, Pencil, Plus, Trash2, X } from "lucide-react";
+import { FileImageIcon, PencilIcon, PlusIcon, Trash2Icon, XIcon } from '@animateicons/react/lucide'
 import AdminLayout from "../layout/AdminLayout.tsx";
 import { useAnnouncements } from "../hooks/useAnnouncements.ts";
 import type {
@@ -168,7 +168,7 @@ function AnnouncementsPage() {
 				onClick={openCreate}
 				className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-sm font-semibold text-white"
 			>
-				<Plus size={18} aria-hidden="true" />
+				<PlusIcon size={18} aria-hidden="true" />
 				{t('adminNews.addNews')}
 			</button>
 		</div>
@@ -201,7 +201,7 @@ function AnnouncementsPage() {
 						aria-label="Cerrar formulario"
 						className="text-neutral-500"
 					>
-						<X size={20} />
+						<XIcon size={20} />
 					</button>
 				</div>
 
@@ -326,7 +326,7 @@ function AnnouncementsPage() {
 							}
 							className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-sm font-semibold text-heading"
 						>
-							<ImagePlus size={17} aria-hidden="true" />
+							<FileImageIcon size={17} aria-hidden="true" />
 							{t('adminNews.chooseCover')}
 						</button>
 
@@ -366,7 +366,7 @@ function AnnouncementsPage() {
 							}
 							className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-sm font-semibold text-heading"
 						>
-							<ImagePlus size={17} aria-hidden="true" />
+							<FileImageIcon size={17} aria-hidden="true" />
 							{t('adminNews.newschooseimages')}
 						</button>
 
@@ -414,7 +414,7 @@ function AnnouncementsPage() {
 										)}
 										className="text-danger"
 									>
-										<Trash2 size={16} />
+										<Trash2Icon size={16} />
 									</button>
 								</div>
 							))}
@@ -586,7 +586,7 @@ function AnnouncementsPage() {
 								)}
 								className="rounded-full border border-neutral-300 p-sm text-heading"
 							>
-								<Pencil size={17} />
+								<PencilIcon size={17} />
 							</button>
 
 							<button
@@ -599,7 +599,7 @@ function AnnouncementsPage() {
 								)}
 								className="rounded-full border border-red-200 p-sm text-danger"
 							>
-								<Trash2 size={17} />
+								<Trash2Icon size={17} />
 							</button>
 
 						</div>

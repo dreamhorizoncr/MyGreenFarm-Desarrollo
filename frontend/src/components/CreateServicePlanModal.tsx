@@ -20,8 +20,8 @@ interface CreateServicePlanModalProps {
   stripePlans: StripeRawPlan[]
   existingPlans: ServicePlan[]
   planToEdit?: ServicePlan | null
-  onSave: (data: { schedule: string; includes: string; stripePriceId: string }, file: File) => Promise<void>
-  onUpdate?: (id: string, data: { schedule: string; includes: string; stripePriceId: string }, file?: File) => Promise<void>
+  onSave: (data: { schedule: string; includes: string; stripePriceId: string }, file: File) => Promise<unknown>
+  onUpdate?: (id: string, data: { schedule: string; includes: string; stripePriceId: string }, file?: File) => Promise<unknown>
   onClose: () => void
 }
 

@@ -131,7 +131,7 @@ function AdminServicePlansPage() {
 
                   <div className="flex items-center gap-sm">
                     <span className="rounded-full bg-green-100 px-md py-xs font-body text-xs font-semibold text-green-700">
-                      {getPlanTypeLabel(plan.type, t)}
+                      {getPlanTypeLabel(plan.type, (key) => t(key))}
                     </span>
                     <span className="font-heading text-h5 font-bold text-heading">
                       {plan.price}
