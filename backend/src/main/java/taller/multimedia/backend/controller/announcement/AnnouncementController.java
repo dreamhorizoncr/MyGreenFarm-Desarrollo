@@ -1,11 +1,17 @@
 package taller.multimedia.backend.controller.announcement;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import taller.multimedia.backend.dto.announcement.AnnouncementRequest;
@@ -15,6 +21,7 @@ import taller.multimedia.backend.service.announcement.AnnouncementService;
 import java.util.List;
 import java.util.UUID;
 
+@Validated 
 @RestController
 @RequestMapping("/api/announcements")
 @RequiredArgsConstructor
@@ -31,9 +38,12 @@ public class AnnouncementController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AnnouncementResponse>> getAll(
-            @RequestParam(name = "lang", defaultValue = "es") String lang) {
-        List<AnnouncementResponse> announcements = announcementService.getAll(lang);
+    public ResponseEntity<Page<AnnouncementResponse>> getAll(
+            @RequestParam(name = "lang", defaultValue = "es") String lang, 
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(10) int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AnnouncementResponse> announcements = announcementService.getAll(lang,pageable);
         return ResponseEntity.ok(announcements);
     }
 

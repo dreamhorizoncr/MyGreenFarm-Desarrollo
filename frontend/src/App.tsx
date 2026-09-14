@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Toaster } from 'sileo'
 
 import HomePage from './pages/HomePage.tsx'
 import BookingPage from './pages/BookingPage.tsx'
@@ -22,13 +23,23 @@ import ServicesPage from './pages/ServicesPage.tsx'
 import AdminServicePlansPage from './pages/AdminServicePlansPage.tsx'
 import PaymentSuccessPage from './pages/PaymentSuccessPage.tsx'
 import PaymentFailedPage from './pages/PaymentFailedPage.tsx'
+import AdminCurriculumsPage from './pages/AdminCurriculumsPage.tsx'
+import VacanciesPage from './pages/VacanciesPage.tsx'
 import Footer from './layout/Footer.tsx'
 import ScrollToTopButton from './components/ScrollToTopButton.tsx'
 import { ProfileAvatarProvider } from './contexts/ProfileAvatarContext.tsx'
+import { useSessionExpiredNotice } from './hooks/useSessionExpiredNotice.ts'
+
+function SessionWatcher() {
+  useSessionExpiredNotice()
+  return null
+}
 
 function App() {
   return (
     <BrowserRouter>
+      <Toaster position="top-right" />
+      <SessionWatcher />
       <div className="flex min-h-svh flex-col">
         <div className="flex-1">
           <ProfileAvatarProvider>
@@ -41,6 +52,10 @@ function App() {
             <Route path="/admin/users" element={<AdminUsersPage />} />
             <Route path="/admin/announcements" element={<AnnouncementsPage />} />
             <Route path="/admin/gallery" element={<AdminGalleryPage />} />
+            <Route path="/admin/curriculums" element={<AdminCurriculumsPage />} />
+          </Route>
+          <Route element={<OwnerRoute />}>
+            <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />
           </Route>
           <Route element={<OwnerRoute />}>
             <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />
@@ -58,6 +73,7 @@ function App() {
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/pago-exitoso" element={<PaymentSuccessPage />} />
         <Route path="/pago-cancelado" element={<PaymentFailedPage />} />
+        <Route path="/vacantes" element={<VacanciesPage />} />
         {/* <Route path="/news/:id" element={<NewsDetailPage />} /> */}
         {/* Redirigir cualquier ruta no definida a la página de inicio */}
         <Route path="*" element={<Navigate to="/" replace />} />

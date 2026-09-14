@@ -2,6 +2,8 @@ package taller.multimedia.backend.service.announcement;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,10 +44,9 @@ public class AnnouncementService {
 
     // Este método recibe la inicial del idioma, ejemplo "en" y devuelve todos los anuncios en ese idioma
     @Transactional(readOnly = true)
-    public List<AnnouncementResponse> getAll(String lang) {
-        return announcementRepository.findAll().stream()
-                .map(announcement -> mapToResponse(announcement, lang))
-                .collect(Collectors.toList());
+    public Page<AnnouncementResponse> getAll(String lang, Pageable pageable) {
+        return announcementRepository.findAll(pageable)
+                .map(announcement -> mapToResponse(announcement, lang));
     }
 
     // Método auxiliar para transformar la entidad al DTO de respuesta y aplicar traducción si es necesario
@@ -104,11 +105,10 @@ public class AnnouncementService {
     }
 
     @Transactional(readOnly = true)
-    public List<AnnouncementResponse> getAllActive(String lang) {
+    public Page<AnnouncementResponse> getAllActive(String lang, Pageable pageable) {
         LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
         
-        return announcementRepository.findByCreatedAtAfter(thirtyDaysAgo).stream()
-                .map(announcement -> mapToResponse(announcement, lang))
-                .collect(Collectors.toList());
+        return announcementRepository.findByCreatedAtAfter(thirtyDaysAgo, pageable)
+                .map(announcement -> mapToResponse(announcement, lang));
     }
 }

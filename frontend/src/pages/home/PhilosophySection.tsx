@@ -1,6 +1,6 @@
 import { StarIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
-import nino from '../../assets/imgs/niño.svg'
+import nino from '../../assets/imgs/nino.svg'
 import Container from '../../components/home/Container.tsx'
 import PillButton from '../../components/ui/PillButton.tsx'
 

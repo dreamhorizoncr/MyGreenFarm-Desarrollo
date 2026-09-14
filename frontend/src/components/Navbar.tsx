@@ -36,6 +36,7 @@ function Navbar() {
     { to: '/multimedia', label: t('navbar.multimedia') },
     { to: '/forum', label: t('navbar.forum') },
     { to: '/services', label: t('navbar.services') },
+    { to: '/vacantes', label: t('navbar.vacancies') },
   ]
 
   return (

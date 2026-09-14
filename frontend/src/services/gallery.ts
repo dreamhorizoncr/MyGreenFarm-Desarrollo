@@ -15,15 +15,15 @@ export const galleryService = {
 	},
 
 	async getGalleries(): Promise<Gallery[]> {
-		const response = await apiClient.get<Gallery[]>('/gallery')
-		return response.data
+		const response = await apiClient.get<{ content: Gallery[] }>('/gallery')
+		return response.data.content
 	},
 
 	async getByCategory(categoryId: string): Promise<Gallery[]> {
-		const response = await apiClient.get<Gallery[]>('/gallery', {
+		const response = await apiClient.get<{ content: Gallery[] }>('/gallery', {
 			params: { categoryId },
 		})
-		return response.data
+		return response.data.content
 	},
 
 	async createCategory(data: GalleryCategoryRequest): Promise<GalleryCategory> {

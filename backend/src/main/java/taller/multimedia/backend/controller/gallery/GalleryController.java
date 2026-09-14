@@ -1,10 +1,17 @@
 package taller.multimedia.backend.controller.gallery;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import taller.multimedia.backend.dto.gallery.GalleryRequest;
 import taller.multimedia.backend.dto.gallery.GalleryResponse;
@@ -13,6 +20,7 @@ import taller.multimedia.backend.service.gallery.GalleryService;
 import java.util.List;
 import java.util.UUID;
 
+@Validated
 @RestController
 @RequestMapping("/api/gallery")
 @RequiredArgsConstructor
@@ -28,11 +36,15 @@ public class GalleryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<GalleryResponse>> getAll(
-            @RequestParam(name = "categoryId", required = false) UUID categoryId) {
-        List<GalleryResponse> galleries = categoryId != null
-                ? galleryService.getByCategory(categoryId)
-                : galleryService.getAll();
+    public ResponseEntity<Page<GalleryResponse>> getAll(
+            @RequestParam(name = "categoryId", required = false) UUID categoryId,
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(10) int size) {
+            
+            Pageable pageable = PageRequest.of(page, size);
+                Page<GalleryResponse> galleries = categoryId != null
+                ? galleryService.getByCategory(categoryId, pageable)
+                : galleryService.getAll(pageable);
         return ResponseEntity.ok(galleries);
     }
 
