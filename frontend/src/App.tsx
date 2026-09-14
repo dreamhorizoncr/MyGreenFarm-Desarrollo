@@ -18,6 +18,8 @@ import AnnouncementsPage from './pages/AnnouncementsPage.tsx'
 import GalleryPage from './pages/GalleryPage.tsx'
 import AlbumDetailPage from './pages/AlbumDetailPage.tsx'
 import AdminGalleryPage from './pages/AdminGalleryPage.tsx'
+import AdminCurriculumsPage from './pages/AdminCurriculumsPage.tsx'
+import VacanciesPage from './pages/VacanciesPage.tsx'
 import Footer from './layout/Footer.tsx'
 import ScrollToTopButton from './components/ScrollToTopButton.tsx'
 import { ProfileAvatarProvider } from './contexts/ProfileAvatarContext.tsx'
@@ -45,6 +47,7 @@ function App() {
             <Route path="/admin/users" element={<AdminUsersPage />} />
             <Route path="/admin/announcements" element={<AnnouncementsPage />} />
             <Route path="/admin/gallery" element={<AdminGalleryPage />} />
+            <Route path="/admin/curriculums" element={<AdminCurriculumsPage />} />
           </Route>
         </Route>
         <Route path="/" element={<HomePage />} />
@@ -56,6 +59,7 @@ function App() {
         <Route path="/news" element={<NewsPage />} />
         <Route path="/multimedia" element={<GalleryPage />} />
         <Route path="/albumes/:id" element={<AlbumDetailPage />} />
+        <Route path="/vacantes" element={<VacanciesPage />} />
         {/* <Route path="/news/:id" element={<NewsDetailPage />} /> */}
         {/* Redirigir cualquier ruta no definida a la página de inicio */}
         <Route path="*" element={<Navigate to="/" replace />} />
