@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import MultimediaCard from '../components/home/MultimediaCard.tsx'
 import { useGallery } from '../hooks/useGallery.ts'
-import ninos2 from '../assets/imgs/niños2.svg'
+import ninos2 from '../assets/imgs/ninos2.svg'
 
 function GalleryPage() {
   const { t } = useTranslation()
