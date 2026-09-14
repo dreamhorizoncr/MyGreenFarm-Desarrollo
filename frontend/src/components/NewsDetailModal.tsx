@@ -96,12 +96,12 @@ function NewsDetailModal({
     return (
         //Fondo oscuro que cubre toda la pantalla y que al hacer click, cierra el modal.
         <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-[16px] md:p-[30px]"
+        className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-[16px] md:p-[30px]"
         onClick={onClose}
         >
         {/*Contenedor Principal*/}
         <article
-            className="relative max-h-[92vh] w-full max-w-[1100px] overflow-y-auto rounded-[24px] bg-bg-page"
+            className="relative my-auto w-full max-w-[1100px] rounded-[24px] bg-bg-page"
             onClick={(event) => event.stopPropagation()}
         >
             {/* Cerrar */}
@@ -109,7 +109,7 @@ function NewsDetailModal({
                 type="button"
                 onClick={onClose}
                 aria-label="Cerrar noticia"
-                className="sticky left-full top-[18px] z-20 mr-[18px] flex size-[42px] items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
+                className="absolute right-[18px] top-[18px] z-20 flex size-[42px] items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
                 >
                 <X size={20} />
             </button>
@@ -180,7 +180,7 @@ function NewsDetailModal({
                 )}
 
             {/* Contenido */}
-            <section className="mx-auto mt-[40px] max-w-[820px]">
+            <section className="mx-auto mt-[50px] max-w-[950px] text-left">
                 <p className="whitespace-pre-line font-body text-[15px] leading-[1.85] text-body-text md:text-[16px]">
                     {announcement.content}
                     </p>
@@ -188,7 +188,7 @@ function NewsDetailModal({
 
             {/* Galería de imágenes */}
                 {!loading && galleryImages.length > 0 && (
-                    <section className="mt-[45px]">
+                    <section className="mt-[60px]">
 
                 <h3 className="mb-[18px] font-heading text-[26px] font-bold text-heading">
                     {t("newspage.gallery")}
