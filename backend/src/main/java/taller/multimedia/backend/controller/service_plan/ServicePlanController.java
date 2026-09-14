@@ -2,6 +2,7 @@ package taller.multimedia.backend.controller.service_plan;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,8 +26,6 @@ public class ServicePlanController {
 
     private final ServicePlanService servicePlanService;
 
-    private final ServicePlanImageService servicePlanImageService;
-
     // 1. Obtiene los planes desde Stripe y los enriquece con la imagen del bucket y
     // horarios de Supabase
     @GetMapping("/stripe-plans")
@@ -42,6 +41,7 @@ public class ServicePlanController {
     // 2. Obtiene solo la lista cruda de productos y precios directamente desde
     // Stripe (ideal para llenar el dropdown)
     @GetMapping("/stripe-raw")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<?> getStripePlans() {
         try {
             List<Map<String, Object>> stripePlans = servicePlanService.getPlansFromStripe();
@@ -52,6 +52,7 @@ public class ServicePlanController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<List<ServicePlan>> getAllPlans(@RequestParam(required = false) Boolean activeOnly) {
         List<ServicePlan> plans = (activeOnly != null && activeOnly)
                 ? servicePlanService.getActivePlans()
@@ -60,6 +61,7 @@ public class ServicePlanController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<ServicePlan> getPlanById(@PathVariable UUID id) {
         return ResponseEntity.ok(servicePlanService.getPlanById(id));
     }
@@ -74,6 +76,7 @@ public class ServicePlanController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<ServicePlan> updatePlan(
             @PathVariable UUID id,
             @ModelAttribute ServicePlanRequest dto,
@@ -84,6 +87,7 @@ public class ServicePlanController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<?> deletePlan(@PathVariable UUID id) {
         servicePlanService.deletePlan(id);
         return ResponseEntity.ok(Map.of("message", "Configuración de plan eliminada exitosamente"));
