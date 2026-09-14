@@ -18,7 +18,7 @@ import DeleteAlbumModal from '../components/DeleteAlbumModal.tsx'
 import DeleteYearModal from '../components/DeleteYearModal.tsx'
 import { useGalleryAdmin } from '../hooks/useGalleryAdmin.ts'
 import type { Gallery, GalleryCategory, GalleryImage, GalleryRequest } from '../types/gallery.ts'
-import ninos2 from '../assets/imgs/niños2.svg'
+import ninos2 from '../assets/imgs/ninos2.svg'
 
 const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']
 
