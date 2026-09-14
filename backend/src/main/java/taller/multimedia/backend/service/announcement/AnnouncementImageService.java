@@ -29,7 +29,8 @@ public class AnnouncementImageService {
     private String announcementsBucket;
 
     @Transactional
-    public List<AnnouncementImageResponse> uploadImages(UUID announcementId, List<MultipartFile> files, boolean isCover) {
+    public List<AnnouncementImageResponse> uploadImages(UUID announcementId, List<MultipartFile> files,
+            boolean isCover) {
         Announcement announcement = announcementRepository.findById(announcementId)
                 .orElseThrow(() -> new RuntimeException("Anuncio no encontrado con ID: " + announcementId));
 
@@ -46,14 +47,18 @@ public class AnnouncementImageService {
 
         // Validar si con las nuevas imágenes se excede el límite de 4
         if (!isCover && (currentGalleryCount + files.size() > 4)) {
-            throw new IllegalStateException("Límite excedido. Solo se permiten un máximo de 4 imágenes en la galería. Actualmente hay " + currentGalleryCount);
+            throw new IllegalStateException(
+                    "Límite excedido. Solo se permiten un máximo de 4 imágenes en la galería. Actualmente hay "
+                            + currentGalleryCount);
         }
 
         if (isCover) {
-            Optional<AnnouncementImage> existingCover = imageRepository.findByAnnouncementIdAndIsCoverTrue(announcementId);
+            Optional<AnnouncementImage> existingCover = imageRepository
+                    .findByAnnouncementIdAndIsCoverTrue(announcementId);
             if (existingCover.isPresent()) {
                 String oldPath = extractPathFromUrl(existingCover.get().getFileUrl(), announcementsBucket);
-                if (oldPath != null) storageService.deleteFile(announcementsBucket, oldPath);
+                if (oldPath != null)
+                    storageService.deleteFile(announcementsBucket, oldPath);
                 imageRepository.delete(existingCover.get());
             }
         }
@@ -64,7 +69,8 @@ public class AnnouncementImageService {
         for (MultipartFile file : files) {
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
-                throw new IllegalArgumentException("Formato no permitido en uno de los archivos. Solo PNG, JPG, JPEG, SVG.");
+                throw new IllegalArgumentException(
+                        "Formato no permitido en uno de los archivos. Solo PNG, JPG, JPEG, SVG.");
             }
 
             String fileUrl = storageService.uploadFile(file, announcementsBucket, folder);
@@ -112,6 +118,7 @@ public class AnnouncementImageService {
         // 3. Eliminar el registro de la base de datos
         imageRepository.delete(image);
     }
+
     @Transactional
     public void deleteAllImagesByAnnouncement(UUID announcementId) {
         List<AnnouncementImage> images = imageRepository.findByAnnouncementId(announcementId);
@@ -131,7 +138,8 @@ public class AnnouncementImageService {
     // Método auxiliar para limpiar la URL y obtener la ruta interna del bucket
     private String extractPathFromUrl(String fileUrl, String bucketName) {
         try {
-            // Busca la posición donde aparece el nombre del bucket en la URL y toma todo lo que sigue
+            // Busca la posición donde aparece el nombre del bucket en la URL y toma todo lo
+            // que sigue
             String marker = "/" + bucketName + "/";
             int index = fileUrl.indexOf(marker);
             if (index != -1) {
