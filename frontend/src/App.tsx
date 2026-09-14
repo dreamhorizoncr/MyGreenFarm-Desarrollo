@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Toaster } from 'sileo'
 
 import HomePage from './pages/HomePage.tsx'
 import BookingPage from './pages/BookingPage.tsx'
@@ -22,10 +23,18 @@ import VacanciesPage from './pages/VacanciesPage.tsx'
 import Footer from './layout/Footer.tsx'
 import ScrollToTopButton from './components/ScrollToTopButton.tsx'
 import { ProfileAvatarProvider } from './contexts/ProfileAvatarContext.tsx'
+import { useSessionExpiredNotice } from './hooks/useSessionExpiredNotice.ts'
+
+function SessionWatcher() {
+  useSessionExpiredNotice()
+  return null
+}
 
 function App() {
   return (
     <BrowserRouter>
+      <Toaster position="top-right" />
+      <SessionWatcher />
       <div className="flex min-h-svh flex-col">
         <div className="flex-1">
           <ProfileAvatarProvider>
