@@ -44,14 +44,12 @@ public class StorageService {
 
             s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
 
-            // SEGURIDAD / BUCKET PRIVADO: 
-            // Como el bucket es privado, NO guardamos una URL pública estática. 
-            // En su lugar, guardamos la ruta completa del objeto (el key) o una estructura 
-            // que el método extractPathFromUrl pueda leer fácilmente después.
-            // Almacenar el formato: "https://.../bucketName/folder/file.jpg" o simplemente el key.
-            // Mantendremos la estructura devolviendo la ruta simulada de S3 que tu extractPathFromUrl espera:
+            // BUCKET PÚBLICO: Se usa "/object/public/" para que las imágenes puedan
+            // cargarse directamente en el navegador ( tags <img>) sin necesidad de headers
+            // de autenticación. El bucket en Supabase debe estar configurado como público.
+            // NOTA: Si se requiriera privacidad, usar getSignedUrl() para generar URLs temporales.
             String baseUrl = endpoint.replace("/storage/v1/s3", "/storage/v1");
-            return baseUrl + "/object/private/" + bucketName + "/" + fileName;
+            return baseUrl + "/object/public/" + bucketName + "/" + fileName;
 
         } catch (IOException e) {
             throw new RuntimeException("Fallo al subir el archivo al Storage", e);

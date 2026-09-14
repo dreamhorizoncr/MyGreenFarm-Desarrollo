@@ -32,6 +32,19 @@ export const servicePlanService = {
     return response.data
   },
 
+  async updatePlan(id: string, data: ServicePlanRequest, file?: File): Promise<ServicePlan> {
+    const formData = new FormData()
+    formData.append('schedule', data.schedule)
+    formData.append('includes', data.includes)
+    formData.append('stripePriceId', data.stripePriceId)
+    if (file) formData.append('file', file)
+
+    const response = await apiClient.put<ServicePlan>(`/service-plans/${id}`, formData, {
+      headers: { 'Content-Type': undefined },
+    })
+    return response.data
+  },
+
   async deletePlan(id: string): Promise<void> {
     await apiClient.delete(`/service-plans/${id}`)
   },

@@ -315,6 +315,7 @@ export default {
       subtitle: 'Gérez les plans de service liés à Stripe.',
       addPlan: 'Ajouter un plan',
       newPlan: 'Nouveau plan de service',
+      editPlan: 'Modifier le plan',
       selectPlan: 'Sélectionner un plan Stripe',
       scheduleLabel: 'Horaire',
       schedulePlaceholder: 'Ex : Lundi à vendredi, 8h00 - 15h00',

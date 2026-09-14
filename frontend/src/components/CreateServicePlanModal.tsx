@@ -19,18 +19,22 @@ function releasePreview(image: SelectedImage | null) {
 interface CreateServicePlanModalProps {
   stripePlans: StripeRawPlan[]
   existingPlans: ServicePlan[]
+  planToEdit?: ServicePlan | null
   onSave: (data: { schedule: string; includes: string; stripePriceId: string }, file: File) => Promise<void>
+  onUpdate?: (id: string, data: { schedule: string; includes: string; stripePriceId: string }, file?: File) => Promise<void>
   onClose: () => void
 }
 
-function CreateServicePlanModal({ stripePlans, existingPlans, onSave, onClose }: CreateServicePlanModalProps) {
+function CreateServicePlanModal({ stripePlans, existingPlans, planToEdit, onSave, onUpdate, onClose }: CreateServicePlanModalProps) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const [stripePriceId, setStripePriceId] = useState('')
-  const [schedule, setSchedule] = useState('')
-  const [includes, setIncludes] = useState('')
+  const isEditing = !!planToEdit
+
+  const [stripePriceId, setStripePriceId] = useState(planToEdit?.stripePriceId ?? '')
+  const [schedule, setSchedule] = useState(planToEdit?.schedule ?? '')
+  const [includes, setIncludes] = useState(planToEdit?.includes ?? '')
   const [selectedImage, setSelectedImage] = useState<SelectedImage | null>(null)
   const [saving, setSaving] = useState(false)
 
@@ -47,9 +51,9 @@ function CreateServicePlanModal({ stripePlans, existingPlans, onSave, onClose }:
     }
   }, [selectedImage])
 
-  const availablePlans = stripePlans.filter(
-    sp => !existingPlans.some(p => p.stripePriceId === sp.priceId),
-  )
+  const availablePlans = isEditing
+    ? stripePlans
+    : stripePlans.filter(sp => !existingPlans.some(p => p.stripePriceId === sp.priceId))
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -92,7 +96,7 @@ function CreateServicePlanModal({ stripePlans, existingPlans, onSave, onClose }:
       setIncludesError(null)
     }
 
-    if (!selectedImage) {
+    if (!isEditing && !selectedImage) {
       setImageError(t('validation.fieldRequired', { field: t('admin.servicios.chooseImage') }))
       hasError = true
     } else {
@@ -103,10 +107,12 @@ function CreateServicePlanModal({ stripePlans, existingPlans, onSave, onClose }:
 
     setSaving(true)
     try {
-      await onSave(
-        { schedule: schedule.trim(), includes: includes.trim(), stripePriceId },
-        selectedImage!.file,
-      )
+      const data = { schedule: schedule.trim(), includes: includes.trim(), stripePriceId }
+      if (isEditing && onUpdate) {
+        await onUpdate(planToEdit.id, data, selectedImage?.file)
+      } else {
+        await onSave(data, selectedImage!.file)
+      }
       onClose()
     } catch {
     } finally {
@@ -125,10 +131,12 @@ function CreateServicePlanModal({ stripePlans, existingPlans, onSave, onClose }:
       onClick={handleOverlayClick}
     >
       <div
-        className="relative w-[min(620px,92vw)] max-h-[90vh] overflow-y-auto rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
+        className={`relative w-[min(620px,92vw)] max-h-[90vh] overflow-y-auto scrollbar-none rounded-2xl bg-bg-card animate-[modal-in_0.2s_ease-out] ${
+          isEditing ? 'p-[20px_18px_22px]' : 'p-[28px_22px_30px]'
+        }`}
         role="dialog"
         aria-modal="true"
-        aria-label={t('admin.servicios.newPlan')}
+        aria-label={isEditing ? t('admin.servicios.editPlan') : t('admin.servicios.newPlan')}
       >
         <button
           type="button"
@@ -139,13 +147,18 @@ function CreateServicePlanModal({ stripePlans, existingPlans, onSave, onClose }:
           <XIcon size={20} />
         </button>
 
-        <div className="relative mb-lg text-center">
-          <h2 className="m-0 font-heading text-[42px] font-bold leading-none text-heading">
-            {t('admin.servicios.newPlan')}
+        <div className={`${isEditing ? 'mb-md' : 'mb-lg'} relative text-center`}>
+          <h2 className={`m-0 font-heading font-bold leading-none text-heading ${isEditing ? 'text-[32px]' : 'text-[42px]'}`}>
+            {isEditing ? t('admin.servicios.editPlan') : t('admin.servicios.newPlan')}
           </h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px] text-left">
+        <form
+          onSubmit={handleSubmit}
+          className={`flex flex-col text-left ${
+            isEditing ? 'gap-sm px-[18px] pb-[18px] pt-[18px]' : 'gap-md px-[28px] pb-[32px] pt-[30px]'
+          }`}
+        >
           <div className="flex flex-col">
             <label htmlFor="create-plan-stripe" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
               {t('admin.servicios.selectPlan')}
@@ -157,7 +170,8 @@ function CreateServicePlanModal({ stripePlans, existingPlans, onSave, onClose }:
                 setStripePriceId(e.target.value)
                 if (stripeError) setStripeError(null)
               }}
-              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500"
+              disabled={isEditing}
+              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500 disabled:opacity-50"
             >
               <option value="">{t('admin.servicios.selectPlan')}</option>
               {availablePlans.map(plan => (
@@ -166,7 +180,7 @@ function CreateServicePlanModal({ stripePlans, existingPlans, onSave, onClose }:
                 </option>
               ))}
             </select>
-            {availablePlans.length === 0 && (
+            {availablePlans.length === 0 && !isEditing && (
               <p className="mt-2xs text-left font-body text-[13px] text-neutral-500">
                 {t('admin.servicios.noStripePlans')}
               </p>
@@ -257,6 +271,18 @@ function CreateServicePlanModal({ stripePlans, existingPlans, onSave, onClose }:
                 </button>
               </div>
             )}
+            {!selectedImage && isEditing && planToEdit?.imageUrl && (
+              <div className="relative mt-2 inline-block w-[120px]">
+                <img
+                  src={planToEdit.imageUrl}
+                  alt={t('admin.servicios.currentImage')}
+                  className="h-[80px] w-[120px] rounded-lg object-cover"
+                />
+                <span className="absolute bottom-1 left-1 rounded bg-black/50 px-1 py-0.5 font-body text-[10px] text-white">
+                  {t('admin.servicios.currentImage')}
+                </span>
+              </div>
+            )}
             {imageError && (
               <p className="mt-2xs text-left font-body text-sm text-danger">{imageError}</p>
             )}
@@ -277,7 +303,7 @@ function CreateServicePlanModal({ stripePlans, existingPlans, onSave, onClose }:
               loading={saving}
               className="h-[47px] flex-1 rounded-full bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
             >
-              {saving ? t('common.loading') : t('admin.servicios.create')}
+              {saving ? t('common.loading') : isEditing ? t('admin.save') : t('admin.servicios.create')}
             </Button>
           </div>
         </form>

@@ -316,6 +316,7 @@ export default {
       subtitle: 'Manage service plans linked to Stripe.',
       addPlan: 'Add plan',
       newPlan: 'New service plan',
+      editPlan: 'Edit plan',
       selectPlan: 'Select a Stripe plan',
       scheduleLabel: 'Schedule',
       schedulePlaceholder: 'E.g: Monday to Friday, 8:00am - 3:00pm',

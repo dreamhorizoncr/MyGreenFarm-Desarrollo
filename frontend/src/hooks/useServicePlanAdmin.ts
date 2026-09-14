@@ -37,6 +37,17 @@ export function useServicePlanAdmin() {
     }
   }, [])
 
+  const updatePlan = useCallback(async (id: string, data: { schedule: string; includes: string; stripePriceId: string }, file?: File) => {
+    try {
+      const updated = await servicePlanService.updatePlan(id, data, file)
+      setPlans(prev => prev.map(p => p.id === id ? updated : p))
+      return updated
+    } catch (err) {
+      setError(getErrorMessage(err))
+      throw err
+    }
+  }, [])
+
   const deletePlan = useCallback(async (id: string) => {
     try {
       await servicePlanService.deletePlan(id)
@@ -47,5 +58,5 @@ export function useServicePlanAdmin() {
     }
   }, [])
 
-  return { plans, stripePlans, loading, error, fetchAll, createPlan, deletePlan }
+  return { plans, stripePlans, loading, error, fetchAll, createPlan, updatePlan, deletePlan }
 }

@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { PlusIcon, Trash2Icon } from '@animateicons/react/lucide'
+import { PlusIcon, Trash2Icon, PencilIcon, XIcon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import Button from '../components/ui/Button.tsx'
 import CreateServicePlanModal from '../components/CreateServicePlanModal.tsx'
 import { useServicePlanAdmin } from '../hooks/useServicePlanAdmin.ts'
+import type { ServicePlan } from '../types/servicePlan.ts'
 
 const PLAN_TYPE_LABELS: Record<string, string> = {
   ONE_TIME: 'services.oneTime',
@@ -35,8 +36,9 @@ function getPlanTypeLabel(type: string, t: (key: string) => string): string {
 
 function AdminServicePlansPage() {
   const { t } = useTranslation()
-  const { plans, stripePlans, loading, error, fetchAll, createPlan, deletePlan } = useServicePlanAdmin()
+  const { plans, stripePlans, loading, error, fetchAll, createPlan, updatePlan, deletePlan } = useServicePlanAdmin()
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [editingPlan, setEditingPlan] = useState<ServicePlan | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
   const [confirmText, setConfirmText] = useState('')
@@ -72,14 +74,14 @@ function AdminServicePlansPage() {
         </div>
 
         <div className="flex justify-end">
-          <Button
-            variant="primary"
+          <button
+            type="button"
             onClick={() => setShowCreateModal(true)}
-            className="w-auto gap-sm rounded-full px-lg py-sm font-body text-sm"
+            className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-sm font-semibold text-white"
           >
-            <PlusIcon size={16} />
+            <PlusIcon size={18} aria-hidden="true" />
             {t('admin.servicios.addPlan')}
-          </Button>
+          </button>
         </div>
 
         {loading && (
@@ -150,7 +152,15 @@ function AdminServicePlansPage() {
                     </p>
                   )}
 
-                  <div className="flex justify-end pt-sm">
+                  <div className="flex justify-end gap-sm pt-sm">
+                    <button
+                      type="button"
+                      onClick={() => setEditingPlan(plan)}
+                      className="flex items-center gap-xs rounded-full px-md py-xs font-body text-xs text-heading transition-colors hover:bg-neutral-50"
+                    >
+                      <PencilIcon size={14} />
+                      {t('admin.edit')}
+                    </button>
                     <button
                       type="button"
                       onClick={() => setConfirmDeleteId(plan.id)}
@@ -168,12 +178,17 @@ function AdminServicePlansPage() {
         )}
       </div>
 
-      {showCreateModal && (
+      {(showCreateModal || editingPlan) && (
         <CreateServicePlanModal
           stripePlans={stripePlans}
           existingPlans={plans}
+          planToEdit={editingPlan}
           onSave={createPlan}
-          onClose={() => setShowCreateModal(false)}
+          onUpdate={updatePlan}
+          onClose={() => {
+            setShowCreateModal(false)
+            setEditingPlan(null)
+          }}
         />
       )}
 
@@ -188,36 +203,50 @@ function AdminServicePlansPage() {
           }}
         >
           <div
-            className="relative w-[min(480px,92vw)] rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
+            className="relative max-h-[90vh] w-[min(620px,92vw)] overflow-y-auto scrollbar-none rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
             role="dialog"
             aria-modal="true"
             aria-label={t('admin.servicios.deleteTitle')}
           >
-            <div className="mb-lg text-center">
+            <button
+              type="button"
+              className="absolute right-3 top-[26px] z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity duration-150 hover:opacity-65 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+              onClick={() => {
+                setConfirmDeleteId(null)
+                setConfirmText('')
+              }}
+              aria-label={t('admin.cancel')}
+            >
+              <XIcon size={20} />
+            </button>
+
+            <div className="relative mb-lg text-center">
               <h2 className="m-0 font-heading text-[36px] font-bold leading-none text-heading">
                 {t('admin.servicios.deleteTitle')}
               </h2>
             </div>
 
-            <p className="mb-lg text-center font-body text-base text-body-text-dark">
-              {t('admin.servicios.deleteConfirm', { name: planToDelete.name })}
-            </p>
+            <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px]">
+              <p className="mt-2xs text-left font-body text-[16px] text-neutral-500">
+                {t('admin.servicios.deleteConfirm', { name: planToDelete.name })}
+              </p>
 
-            <div className="flex flex-col items-center gap-sm">
-              <label className="font-body text-sm text-body-text-dark">
-                {t('admin.servicios.deleteConfirmField', { name: planToDelete.name })}
-              </label>
-              <input
-                type="text"
-                value={confirmText}
-                onChange={(e) => setConfirmText(e.target.value)}
-                placeholder={t('admin.servicios.deletePlaceholder')}
-                className="h-[38px] w-full max-w-[280px] rounded-xl border border-neutral-300 bg-transparent px-md font-body text-[15px] text-body-text outline-none transition-colors focus:border-danger"
-                autoFocus
-              />
-            </div>
+              <div className="flex flex-col">
+                <label htmlFor="admin-delete-plan-confirm" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+                  {t('admin.servicios.deleteConfirmField', { name: planToDelete.name })}
+                </label>
+                <input
+                  id="admin-delete-plan-confirm"
+                  type="text"
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value)}
+                  placeholder={t('admin.servicios.deletePlaceholder')}
+                  className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400"
+                  autoFocus
+                />
+              </div>
 
-            <div className="flex gap-md mt-lg">
+            <div className="mt-sm flex gap-md">
               <Button
                 variant="secondary"
                 onClick={() => {
@@ -237,6 +266,7 @@ function AdminServicePlansPage() {
               >
                 {deletingId === confirmDeleteId ? t('common.loading') : t('admin.delete')}
               </Button>
+            </div>
             </div>
           </div>
         </div>
