@@ -10,7 +10,11 @@ export function useLogin() {
   const [error, setError] = useState<string | null>(null)
   const [user, setUser] = useState<UserInfo | null>(null)
 
-  const submitLogin = async (payload: LoginData, onSuccess?: (user: UserInfo) => void) => {
+  const submitLogin = async (
+    payload: LoginData,
+    onSuccess?: (user: UserInfo) => void,
+    onError?: (message: string) => void,
+  ) => {
     setLoading(true)
     setError(null)
     try {
@@ -20,7 +24,9 @@ export function useLogin() {
       setUser(data.user)
       onSuccess?.(data.user)
     } catch (err) {
-      setError(getErrorMessage(err))
+      const message = getErrorMessage(err)
+      setError(message)
+      onError?.(message)
     } finally {
       setLoading(false)
     }

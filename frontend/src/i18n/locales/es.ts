@@ -165,6 +165,16 @@ export default {
     forgotPassword: '¿Olvidaste tu contraseña?',
     email: 'Correo electrónico',
     password: 'Contraseña',
+    successToastTitle: '¡Bienvenido de nuevo!',
+    successToastDescription: 'Sesión iniciada como {{name}}.',
+    errorToastTitle: 'No pudimos iniciar tu sesión',
+    errorToastDescription: 'Verifica tu correo y contraseña e intenta de nuevo.',
+    forgotPasswordSuggestionTitle: '¿Sigues sin poder ingresar?',
+    forgotPasswordSuggestionDescription: 'Puedes recuperar tu contraseña en cualquier momento.',
+    requireLoginTitle: 'Inicia sesión para continuar',
+    requireLoginDescription: 'Necesitas una cuenta activa para ver esta página.',
+    sessionExpiredTitle: 'Tu sesión expiró',
+    sessionExpiredDescription: 'Por seguridad, inicia sesión de nuevo.',
   },
   
   signup: {
