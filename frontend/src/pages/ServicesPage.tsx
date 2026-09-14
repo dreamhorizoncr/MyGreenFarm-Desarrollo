@@ -33,7 +33,7 @@ function getPlanTypeLabel(type: string, t: (key: string) => string): string {
   return type
 }
 
-function PlanCard({ plan, onSubscribe }: { plan: ServicePlan; onSubscribe: (plan: ServicePlan) => void }) {
+function PlanCard({ plan, onSubscribe, isLoading }: { plan: ServicePlan; onSubscribe: (plan: ServicePlan) => void; isLoading?: boolean }) {
   const { t } = useTranslation()
 
   return (
@@ -51,7 +51,7 @@ function PlanCard({ plan, onSubscribe }: { plan: ServicePlan; onSubscribe: (plan
           </div>
         )}
         <span className="absolute bottom-sm left-sm rounded-full bg-[var(--orange-500)] px-md py-xs font-body text-body-sm font-bold text-white shadow">
-          {getPlanTypeLabel(plan.type, t)}
+          {getPlanTypeLabel(plan.type, (key) => t(key))}
         </span>
       </div>
 
@@ -86,9 +86,10 @@ function PlanCard({ plan, onSubscribe }: { plan: ServicePlan; onSubscribe: (plan
           <button
             type="button"
             onClick={() => onSubscribe(plan)}
-            className="w-full rounded-full bg-green-500 py-md font-body text-sm font-semibold text-white transition hover:bg-green-600"
+            disabled={isLoading}
+            className="w-full rounded-full bg-green-500 py-md font-body text-sm font-semibold text-white transition hover:bg-green-600 disabled:opacity-60"
           >
-            {t('services.subscribe')}
+            {isLoading ? t('common.loading') : t('services.subscribe')}
           </button>
         </div>
       </div>
@@ -155,6 +156,7 @@ function ServicesPage() {
               key={plan.id}
               plan={plan}
               onSubscribe={handleSubscribe}
+              isLoading={checkoutLoading === plan.id}
             />
           ))}
         </Container>
