@@ -10,6 +10,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,6 +29,7 @@ public class ExpedientController {
     private final ObjectMapper objectMapper;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
     public ResponseEntity<ExpedientResponse> createExpedient(
             @RequestParam("data") String requestJson,
             @RequestParam(value = "file", required = false) MultipartFile file) {
@@ -44,24 +46,28 @@ public class ExpedientController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
     public ResponseEntity<List<ExpedientResponse>> getAllExpedients() {
         List<ExpedientResponse> expedients = expedientService.getAllExpedients();
         return ResponseEntity.ok(expedients);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
     public ResponseEntity<ExpedientResponse> getExpedientById(@PathVariable UUID id) {
         ExpedientResponse expedient = expedientService.getExpedientById(id);
         return ResponseEntity.ok(expedient);
     }
 
     @DeleteMapping("/{id}/photo")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
     public ResponseEntity<Void> deletePhoto(@PathVariable UUID id) {
         expedientService.deletePhoto(id);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
     public ResponseEntity<Void> deleteExpedient(@PathVariable UUID id) {
         expedientService.deleteExpedient(id);
         return ResponseEntity.noContent().build();
@@ -69,6 +75,7 @@ public class ExpedientController {
 
     // Modifica o añade la foto del niño
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
     public ResponseEntity<ExpedientResponse> uploadOrUpdatePhoto(
             @PathVariable UUID id,
             @RequestParam("data") String requestJson,

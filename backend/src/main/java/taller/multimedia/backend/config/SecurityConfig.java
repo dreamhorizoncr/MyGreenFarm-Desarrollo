@@ -1,15 +1,14 @@
 package taller.multimedia.backend.config;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
-
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -118,13 +117,18 @@ public class SecurityConfig {
                 "/api/announcements",
                 "/api/appointments/**",
                 "/api/translations",
-                "/api/translations/batch"
-            ).permitAll()
-            .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/announcements").permitAll()
-            .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/announcements/*/images").permitAll()
-            .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/gallery/**").permitAll()
-            .anyRequest().authenticated()
-        )
+                "/api/translations/batch",
+                "/api/stripe-plans",
+                "/api/create-checkout-session",
+                "/api/webhooks/**")
+            .permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/announcements").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/announcements/*/images").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/gallery/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/service-plans/stripe-plans").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/service-plans/create-checkout-session").permitAll()
+            .requestMatchers("/api/service-plans/webhooks/**").permitAll()
+            .anyRequest().authenticated())
         .csrf(csrf -> csrf.disable())
         .formLogin(form -> form.disable())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

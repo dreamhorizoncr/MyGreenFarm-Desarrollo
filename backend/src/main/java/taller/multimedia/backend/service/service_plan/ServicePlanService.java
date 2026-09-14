@@ -111,7 +111,6 @@ public class ServicePlanService {
         return plansList;
     }
 
-    // 5. FUSIÓN FINAL (Opcional pero recomendado para el Frontend):
     // Une lo que viene de Stripe con la imagen y los horarios que guardaste en
     // Supabase
     public List<Map<String, Object>> getFullEnrichedPlans() throws StripeException {
