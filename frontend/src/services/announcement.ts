@@ -14,8 +14,8 @@ export interface TranslationItem {
 
 export const announcementService = {
     async getAnnouncements(lang: string): Promise<Announcement[]> {
-        const response = await apiClient.get<Announcement[]>('/announcements', {params: {lang}})
-        return response.data
+        const response = await apiClient.get<{ content:Announcement[] }>('/announcements', {params: {lang}})
+        return response.data.content
     },
 
     async create(data: AnnouncementRequest): Promise<Announcement> {
