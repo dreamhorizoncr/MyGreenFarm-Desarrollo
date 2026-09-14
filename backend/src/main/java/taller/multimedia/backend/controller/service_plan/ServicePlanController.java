@@ -51,8 +51,9 @@ public class ServicePlanController {
         }
     }
 
+    // El catálogo de servicios es público: cualquier visitante debe poder
+    // ver los planes disponibles sin necesidad de iniciar sesión
     @GetMapping
-    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<List<ServicePlan>> getAllPlans(@RequestParam(required = false) Boolean activeOnly) {
         List<ServicePlan> plans = (activeOnly != null && activeOnly)
                 ? servicePlanService.getActivePlans()
