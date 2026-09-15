@@ -1,5 +1,5 @@
 import { apiClient } from './api.ts'
-import type { ServicePlan, ServicePlanRequest, StripeRawPlan } from '../types/servicePlan.ts'
+import type { ServicePlan, ServicePlanRequest, OnvoRawPlan } from '../types/servicePlan.ts'
 
 export const servicePlanService = {
   async getActivePlans(): Promise<ServicePlan[]> {
@@ -14,16 +14,14 @@ export const servicePlanService = {
     return response.data
   },
 
-  async getStripeRawPlans(): Promise<StripeRawPlan[]> {
-    const response = await apiClient.get<StripeRawPlan[]>('/service-plans/stripe-raw')
+  async getOnvoRawPlans(): Promise<OnvoRawPlan[]> {
+    const response = await apiClient.get<OnvoRawPlan[]>('/service-plans/onvo-raw')
     return response.data
   },
 
   async createPlan(data: ServicePlanRequest, file: File): Promise<ServicePlan> {
     const formData = new FormData()
-    formData.append('schedule', data.schedule)
-    formData.append('includes', data.includes)
-    formData.append('stripePriceId', data.stripePriceId)
+    formData.append('data', JSON.stringify({ schedule: data.schedule, includes: data.includes, gatewayPriceId: data.gatewayPriceId }))
     formData.append('file', file)
 
     const response = await apiClient.post<ServicePlan>('/service-plans', formData, {
@@ -36,7 +34,7 @@ export const servicePlanService = {
     const formData = new FormData()
     formData.append('schedule', data.schedule)
     formData.append('includes', data.includes)
-    formData.append('stripePriceId', data.stripePriceId)
+    formData.append('gatewayPriceId', data.gatewayPriceId)
     if (file) formData.append('file', file)
 
     const response = await apiClient.put<ServicePlan>(`/service-plans/${id}`, formData, {
@@ -49,10 +47,8 @@ export const servicePlanService = {
     await apiClient.delete(`/service-plans/${id}`)
   },
 
-  async createCheckoutSession(stripePlanId: string): Promise<string> {
-    const response = await apiClient.post<{ url: string }>('/payments/create-checkout-session', {
-      stripePlanId,
-    })
+  async checkoutPlan(planId: string): Promise<string> {
+    const response = await apiClient.post<{ url: string }>(`/service-plans/${planId}/checkout`)
     return response.data.url
   },
 }

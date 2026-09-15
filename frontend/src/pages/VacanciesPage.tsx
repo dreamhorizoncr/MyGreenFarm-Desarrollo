@@ -33,7 +33,7 @@ function VacanciesPage() {
     <div id="vacancies-page" className="min-h-screen bg-bg-page">
       <Navbar />
 
-      <section className="flex min-h-90 items-center bg-green-500 px-7.5 py-15 text-center text-white md:min-h-105">
+      <section className="flex min-h-[280px] items-center bg-green-500 px-7.5 py-10 text-center text-white md:min-h-[320px]">
         <div className="mx-auto w-full max-w-175">
           <h1 className="m-0 font-heading text-[34px] font-bold leading-tight text-white md:text-[46px]">
             {t('vacancies.title')}
@@ -45,7 +45,7 @@ function VacanciesPage() {
       </section>
 
       <main>
-        <Container className="py-12.5 md:py-15">
+        <Container className="py-10 md:py-12">
           {loading && <p className="m-0 p-xl text-center font-body text-base text-neutral-500">{t('common.loading')}</p>}
           {error && <p className="m-0 p-xl text-center font-body text-base text-danger">{error}</p>}
 

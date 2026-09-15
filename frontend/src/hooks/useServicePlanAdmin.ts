@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { getErrorMessage } from '../utils/error.ts'
-import type { ServicePlan, StripeRawPlan } from '../types/servicePlan.ts'
+import type { ServicePlan, OnvoRawPlan } from '../types/servicePlan.ts'
 
 export function useServicePlanAdmin() {
   const [plans, setPlans] = useState<ServicePlan[]>([])
-  const [stripePlans, setStripePlans] = useState<StripeRawPlan[]>([])
+  const [onvoPlans, setOnvoPlans] = useState<OnvoRawPlan[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -15,10 +15,10 @@ export function useServicePlanAdmin() {
     try {
       const [dbPlans, rawPlans] = await Promise.all([
         servicePlanService.getAllPlans(),
-        servicePlanService.getStripeRawPlans(),
+        servicePlanService.getOnvoRawPlans(),
       ])
       setPlans(dbPlans)
-      setStripePlans(rawPlans)
+      setOnvoPlans(rawPlans)
     } catch (err) {
       setError(getErrorMessage(err))
     } finally {
@@ -26,7 +26,7 @@ export function useServicePlanAdmin() {
     }
   }, [])
 
-  const createPlan = useCallback(async (data: { schedule: string; includes: string; stripePriceId: string }, file: File) => {
+  const createPlan = useCallback(async (data: { schedule: string; includes: string; gatewayPriceId: string }, file: File) => {
     try {
       const created = await servicePlanService.createPlan(data, file)
       setPlans(prev => [...prev, created])
@@ -37,7 +37,7 @@ export function useServicePlanAdmin() {
     }
   }, [])
 
-  const updatePlan = useCallback(async (id: string, data: { schedule: string; includes: string; stripePriceId: string }, file?: File) => {
+  const updatePlan = useCallback(async (id: string, data: { schedule: string; includes: string; gatewayPriceId: string }, file?: File) => {
     try {
       const updated = await servicePlanService.updatePlan(id, data, file)
       setPlans(prev => prev.map(p => p.id === id ? updated : p))
@@ -58,5 +58,5 @@ export function useServicePlanAdmin() {
     }
   }, [])
 
-  return { plans, stripePlans, loading, error, fetchAll, createPlan, updatePlan, deletePlan }
+  return { plans, onvoPlans, loading, error, fetchAll, createPlan, updatePlan, deletePlan }
 }

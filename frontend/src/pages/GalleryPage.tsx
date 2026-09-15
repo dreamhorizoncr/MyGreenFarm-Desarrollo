@@ -40,7 +40,7 @@ function GalleryPage() {
       <Navbar />
 
       {/* Header de Galería */}
-      <section className="flex min-h-[360px] items-center bg-white px-[30px] py-[60px] text-center md:min-h-[420px]">
+      <section className="flex min-h-[280px] items-center bg-white px-[30px] py-[40px] text-center md:min-h-[320px]">
         <div className="mx-auto w-full max-w-[700px]">
           <h1 className="m-0 font-heading text-[34px] font-bold leading-tight text-green-500 md:text-[46px]">
             {t('home.galeria.title')}
@@ -81,9 +81,9 @@ function GalleryPage() {
       </section>
 
       {/* Sección de Álbumes */}
-      <section className="relative flex w-full flex-col bg-green-500">
-        <div className="flex w-full flex-col">
-          <Container className="flex flex-col items-start gap-700 pt-1500 text-left">
+      <section className="relative w-full bg-green-500 py-[36px] md:py-[48px]">
+        <div className="flex w-full flex-col gap-[24px]">
+          <Container className="flex flex-col items-start gap-[16px] text-left">
             <h2 className="m-0 font-heading text-h2 font-bold text-white">
               {t('home.galeria.albumTitle')}
             </h2>
@@ -95,7 +95,7 @@ function GalleryPage() {
             </p>
           </Container>
 
-          <Container className="grid auto-rows-fr grid-cols-1 gap-xl pb-1500 pt-1000 md:grid-cols-3">
+          <Container className="grid grid-cols-1 gap-[24px] md:grid-cols-3">
             {loading && (
               <p className="col-span-full m-0 p-xl text-center font-body text-base text-white">
                 {t('common.loading')}
@@ -131,8 +131,12 @@ function GalleryPage() {
         </div>
       </section>
 
-      {/* Sección blanca separadora */}
-      <section aria-hidden="true" className="min-h-[360px] w-full bg-white md:min-h-[420px]" />
+      {/* Separación visual antes del footer */}
+      <section
+        aria-hidden="true"
+        className="h-[280px] w-full bg-white md:h-[320px]"
+      />
+
     </div>
   )
 }

@@ -43,10 +43,10 @@ function Navbar() {
     <header className="relative z-40 h-16 border-b border-neutral-200 bg-bg-page">
       {/* Desktop nav */}
       <nav className="hidden h-full w-full lg:flex">
-        <div className="mx-auto flex h-full w-full max-w-[var(--container-max-width)] items-center px-[var(--scale-1100)]">
+        <div className="flex h-full w-full items-center px-md pr-[var(--scale-1100)]">
           <Brand />
 
-          <div className="ml-auto flex items-center gap-7 font-link">
+          <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-7 font-link">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
@@ -58,15 +58,26 @@ function Navbar() {
                 {link.label}
               </Link>
             ))}
+          </div>
 
+          <div className="ml-auto flex items-center gap-7">
             <LanguageSwitcher />
 
-            {(!isAuthenticated || !isProtectedPage) && (
+            {isAuthenticated && !isProtectedPage && (
+              <Link
+                to="/admin/dashboard"
+                className="font-body text-sm font-normal text-body-text-dark transition-colors hover:text-heading"
+              >
+                {t('navbar.dashboard')}
+              </Link>
+            )}
+
+            {!isAuthenticated && (
               <Link
                 to="/login"
                 aria-label={t('navbar.adminLogin')}
                 title={t('navbar.adminLogin')}
-className="w-fit self-center text-green-500 transition-opacity hover:opacity-70"
+                className="w-fit self-center text-green-500 transition-opacity hover:opacity-70"
               >
                 <LockIcon size={18} aria-hidden="true" />
               </Link>
@@ -79,7 +90,7 @@ className="w-fit self-center text-green-500 transition-opacity hover:opacity-70"
 
       {/* Mobile nav */}
       <nav className="flex h-full w-full lg:hidden">
-        <div className="mx-auto flex h-full w-full max-w-[var(--container-max-width)] items-center justify-between px-lg">
+        <div className={`flex h-full w-full items-center justify-between ${isProtectedPage ? 'px-md pr-lg' : 'mx-auto max-w-[var(--container-max-width)] px-lg'}`}>
           <Brand />
 
           <div className="flex items-center gap-2">
@@ -137,7 +148,16 @@ className="w-fit self-center text-green-500 transition-opacity hover:opacity-70"
               {link.label}
             </Link>
           ))}
-{(!isAuthenticated || !isProtectedPage) && (
+          {isAuthenticated && !isProtectedPage && (
+            <Link
+              to="/admin/dashboard"
+              onClick={() => setDrawerOpen(false)}
+              className="font-body text-sm font-normal text-body-text-dark transition-colors hover:text-heading"
+            >
+              {t('navbar.dashboard')}
+            </Link>
+          )}
+          {!isAuthenticated && (
             <Link
               to="/login"
               aria-label={t('navbar.adminLogin')}
