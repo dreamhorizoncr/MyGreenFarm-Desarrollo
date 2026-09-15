@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { FileImageIcon, XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import useDismiss from '../hooks/useDismiss.ts'
-import type { StripeRawPlan, ServicePlan } from '../types/servicePlan.ts'
+import type { OnvoRawPlan, ServicePlan } from '../types/servicePlan.ts'
 
 const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']
 
@@ -17,22 +17,22 @@ function releasePreview(image: SelectedImage | null) {
 }
 
 interface CreateServicePlanModalProps {
-  stripePlans: StripeRawPlan[]
+  onvoPlans: OnvoRawPlan[]
   existingPlans: ServicePlan[]
   planToEdit?: ServicePlan | null
-  onSave: (data: { schedule: string; includes: string; stripePriceId: string }, file: File) => Promise<unknown>
-  onUpdate?: (id: string, data: { schedule: string; includes: string; stripePriceId: string }, file?: File) => Promise<unknown>
+  onSave: (data: { schedule: string; includes: string; gatewayPriceId: string }, file: File) => Promise<unknown>
+  onUpdate?: (id: string, data: { schedule: string; includes: string; gatewayPriceId: string }, file?: File) => Promise<unknown>
   onClose: () => void
 }
 
-function CreateServicePlanModal({ stripePlans, existingPlans, planToEdit, onSave, onUpdate, onClose }: CreateServicePlanModalProps) {
+function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, onUpdate, onClose }: CreateServicePlanModalProps) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const isEditing = !!planToEdit
 
-  const [stripePriceId, setStripePriceId] = useState(planToEdit?.stripePriceId ?? '')
+  const [gatewayPriceId, setGatewayPriceId] = useState(planToEdit?.gatewayPriceId ?? '')
   const [schedule, setSchedule] = useState(planToEdit?.schedule ?? '')
   const [includes, setIncludes] = useState(planToEdit?.includes ?? '')
   const [selectedImage, setSelectedImage] = useState<SelectedImage | null>(null)
@@ -40,7 +40,7 @@ function CreateServicePlanModal({ stripePlans, existingPlans, planToEdit, onSave
 
   const [scheduleError, setScheduleError] = useState<string | null>(null)
   const [includesError, setIncludesError] = useState<string | null>(null)
-  const [stripeError, setStripeError] = useState<string | null>(null)
+  const [onvoError, setOnvoError] = useState<string | null>(null)
   const [imageError, setImageError] = useState<string | null>(null)
 
   useDismiss({ ref: overlayRef, isOpen: true, onClose, includeClickOutside: false })
@@ -52,8 +52,8 @@ function CreateServicePlanModal({ stripePlans, existingPlans, planToEdit, onSave
   }, [selectedImage])
 
   const availablePlans = isEditing
-    ? stripePlans
-    : stripePlans.filter(sp => !existingPlans.some(p => p.stripePriceId === sp.priceId))
+    ? onvoPlans
+    : onvoPlans.filter(sp => !existingPlans.some(p => p.gatewayPriceId === sp.gatewayPriceId))
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -75,11 +75,11 @@ function CreateServicePlanModal({ stripePlans, existingPlans, planToEdit, onSave
 
     let hasError = false
 
-    if (!stripePriceId) {
-      setStripeError(t('validation.fieldRequired', { field: t('admin.servicios.selectPlan') }))
+    if (!gatewayPriceId) {
+      setOnvoError(t('validation.fieldRequired', { field: t('admin.servicios.selectPlan') }))
       hasError = true
     } else {
-      setStripeError(null)
+      setOnvoError(null)
     }
 
     if (!schedule.trim()) {
@@ -107,7 +107,7 @@ function CreateServicePlanModal({ stripePlans, existingPlans, planToEdit, onSave
 
     setSaving(true)
     try {
-      const data = { schedule: schedule.trim(), includes: includes.trim(), stripePriceId }
+      const data = { schedule: schedule.trim(), includes: includes.trim(), gatewayPriceId }
       if (isEditing && onUpdate) {
         await onUpdate(planToEdit.id, data, selectedImage?.file)
       } else {
@@ -160,33 +160,33 @@ function CreateServicePlanModal({ stripePlans, existingPlans, planToEdit, onSave
           }`}
         >
           <div className="flex flex-col">
-            <label htmlFor="create-plan-stripe" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+            <label htmlFor="create-plan-onvo" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
               {t('admin.servicios.selectPlan')}
             </label>
             <select
-              id="create-plan-stripe"
-              value={stripePriceId}
+              id="create-plan-onvo"
+              value={gatewayPriceId}
               onChange={(e) => {
-                setStripePriceId(e.target.value)
-                if (stripeError) setStripeError(null)
+                setGatewayPriceId(e.target.value)
+                if (onvoError) setOnvoError(null)
               }}
               disabled={isEditing}
               className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500 disabled:opacity-50"
             >
               <option value="">{t('admin.servicios.selectPlan')}</option>
               {availablePlans.map(plan => (
-                <option key={plan.priceId} value={plan.priceId}>
-                  {plan.name} — {plan.price} {plan.currency?.toUpperCase()}
+                <option key={plan.gatewayPriceId} value={plan.gatewayPriceId}>
+                  {plan.name} — {plan.price}
                 </option>
               ))}
             </select>
             {availablePlans.length === 0 && !isEditing && (
               <p className="mt-2xs text-left font-body text-[13px] text-neutral-500">
-                {t('admin.servicios.noStripePlans')}
+                {t('admin.servicios.noOnvoPlans')}
               </p>
             )}
-            {stripeError && (
-              <p className="mt-2xs text-left font-body text-sm text-danger">{stripeError}</p>
+            {onvoError && (
+              <p className="mt-2xs text-left font-body text-sm text-danger">{onvoError}</p>
             )}
           </div>
 

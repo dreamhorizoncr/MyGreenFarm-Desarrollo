@@ -63,7 +63,8 @@ function parseSlots(slots: string[]): Slot[] {
 const STEPS = [
   { key: 'schedule', label: 'booking.wizard.schedule' },
   { key: 'child', label: 'booking.wizard.child' },
-  { key: 'applicant', label: 'booking.wizard.applicant' },
+  { key: 'identity', label: 'booking.wizard.identity' },
+  { key: 'contact', label: 'booking.wizard.contact' },
   { key: 'confirm', label: 'booking.wizard.confirm' },
 ]
 
@@ -156,23 +157,26 @@ function BookingPage() {
     if (currentStep === 3) {
       const fullNameValid = validateRequired(fullName, t('booking.fullName'), t) === null
       const idNumberValid = validateRequired(idNumber, t('booking.idNumber'), t) === null && validateIdNumber(idNumber, idType, t) === null
+      if (!fullNameValid) setFullNameError(true)
+      if (!idNumberValid) setIdNumberError(true)
+      return fullNameValid && idNumberValid
+    }
+    if (currentStep === 4) {
       const emailValid = validateRequired(email, t('booking.email'), t) === null && validateEmail(email, t) === null
       const phoneValid = phoneCountry
         ? validateRequired(phone, t('booking.phone'), t) === null && validatePhoneNumber(phone, t) === null
         : false
       const occupationValid = validateRequired(occupation, t('booking.occupation'), t) === null
-      if (!fullNameValid) setFullNameError(true)
-      if (!idNumberValid) setIdNumberError(true)
       if (!emailValid) setEmailError(true)
       if (!phoneValid) setPhoneError(true)
       if (!occupationValid) setOccupationError(true)
-      return fullNameValid && idNumberValid && emailValid && phoneValid && occupationValid
+      return emailValid && phoneValid && occupationValid
     }
     return true
   }
 
   const handleNext = () => {
-    if (validateStep(step) && step < 4) {
+    if (validateStep(step) && step < 5) {
       setStep(step + 1)
     }
   }
@@ -267,14 +271,14 @@ function BookingPage() {
 
   const renderSlots = (slots: Slot[]) =>
     slots.length > 0 ? (
-      <div className="grid grid-cols-3 gap-sm md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-sm sm:grid-cols-3 md:grid-cols-5">
         {slots.map((slot) => (
           <button
             key={slot.start}
             type="button"
             aria-pressed={effectiveTime === slot.start}
             onClick={() => setTime(slot.start)}
-            className={selectableClassName(effectiveTime === slot.start)}
+            className={`${selectableClassName(effectiveTime === slot.start)} w-full`}
           >
             {slot.start}
           </button>
@@ -326,14 +330,14 @@ function BookingPage() {
 
       {!slotsLoading && !slotsError && availableDates.length > 0 && (
         <>
-          <div className="flex flex-wrap gap-sm">
+          <div className="grid grid-cols-2 gap-sm sm:grid-cols-3 md:grid-cols-5">
             {availableDates.map((date) => (
               <button
                 key={date}
                 type="button"
                 aria-pressed={effectiveDay === date}
                 onClick={() => selectDay(date)}
-                className={selectableClassName(effectiveDay === date)}
+                className={`${selectableClassName(effectiveDay === date)} w-full`}
               >
                 {dayLabel(date)}
               </button>
@@ -393,106 +397,100 @@ function BookingPage() {
     </div>
   )
 
-  const renderStepApplicant = () => (
+  const renderStepIdentity = () => (
     <div className="flex flex-col gap-[18px]">
       <h3 className="m-0 text-left font-heading text-h4 font-bold text-heading">
-        {t('booking.wizard.applicantTitle')}
+        {t('booking.wizard.identityTitle')}
       </h3>
-      <div className="grid grid-cols-2 gap-x-[18px] gap-y-[14px]">
-        <div className="col-span-2">
-          <TextField
-            id="booking-name"
-            label={t('booking.fullName')}
-            value={fullName}
-            onChange={(e) => {
-              setFullName(e.target.value)
-              if (fullNameError) setFullNameError(false)
-            }}
-            error={fullNameErrorMessage}
-          />
-        </div>
-        <div className="col-span-1">
-          <div className="flex flex-col gap-sm">
-            <label className="mb-[4px] block text-left font-body text-[16px] text-body-text">
-              {t('booking.idType')}
-            </label>
-            <div className="flex flex-wrap gap-sm">
-              {ID_TYPES.map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  aria-pressed={idType === option}
-                  onClick={() => {
-                    setIdType(option)
-                    setIdNumberError(
-                      idNumber ? validateIdNumber(idNumber, option, t) !== null : false,
-                    )
-                  }}
-                  className={selectableClassName(idType === option)}
-                >
-                  {t(`booking.idTypeOptions.${option.toLowerCase()}` as 'booking.idTypeOptions.costarricense')}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="col-span-1">
-          <TextField
-            id="booking-id"
-            label={t('booking.idNumber')}
-            value={idNumber}
-            onChange={(e) => {
-              const next = e.target.value
-              setIdNumber(next)
-              setIdNumberError(validateIdNumber(next, idType, t) !== null)
-            }}
-            error={idNumberErrorMessage}
-          />
-        </div>
-        <div className="col-span-1">
-          <TextField
-            id="booking-email"
-            type="email"
-            label={t('booking.email')}
-            value={email}
-            onChange={(e) => {
-              const next = e.target.value
-              setEmail(next)
-              setEmailError(next ? validateEmail(next, t) !== null : false)
-            }}
-            error={emailErrorMessage}
-          />
-        </div>
-        <div className="col-span-1">
-          <TextField
-            id="booking-phone"
-            label={t('booking.phone')}
-            error={phoneErrorMessage}
-          >
-            <PhoneInput
-              id="booking-phone"
-              className="h-[38px]"
-              value={phone}
-              onChange={handlePhoneChange}
-              onCountryChange={handleCountryChange}
-              onBlur={handlePhoneBlur}
-              inputComponent={BookingPhoneInput}
-            />
-          </TextField>
-        </div>
-        <div className="col-span-2">
-          <TextField
-            id="booking-occupation"
-            label={t('booking.occupation')}
-            value={occupation}
-            onChange={(e) => {
-              setOccupation(e.target.value)
-              if (occupationError) setOccupationError(false)
-            }}
-            error={occupationErrorMessage}
-          />
+      <TextField
+        id="booking-name"
+        label={t('booking.fullName')}
+        value={fullName}
+        onChange={(e) => {
+          setFullName(e.target.value)
+          if (fullNameError) setFullNameError(false)
+        }}
+        error={fullNameErrorMessage}
+      />
+      <div className="flex flex-col gap-sm">
+        <label className="mb-[4px] block text-left font-body text-[16px] text-body-text">
+          {t('booking.idType')}
+        </label>
+        <div className="flex flex-wrap gap-sm">
+          {ID_TYPES.map((option) => (
+            <button
+              key={option}
+              type="button"
+              aria-pressed={idType === option}
+              onClick={() => {
+                setIdType(option)
+                setIdNumberError(
+                  idNumber ? validateIdNumber(idNumber, option, t) !== null : false,
+                )
+              }}
+              className={selectableClassName(idType === option)}
+            >
+              {t(`booking.idTypeOptions.${option.toLowerCase()}` as 'booking.idTypeOptions.costarricense')}
+            </button>
+          ))}
         </div>
       </div>
+      <TextField
+        id="booking-id"
+        label={t('booking.idNumber')}
+        value={idNumber}
+        onChange={(e) => {
+          const next = e.target.value
+          setIdNumber(next)
+          setIdNumberError(validateIdNumber(next, idType, t) !== null)
+        }}
+        error={idNumberErrorMessage}
+      />
+    </div>
+  )
+
+  const renderStepContact = () => (
+    <div className="flex flex-col gap-[18px]">
+      <h3 className="m-0 text-left font-heading text-h4 font-bold text-heading">
+        {t('booking.wizard.contactTitle')}
+      </h3>
+      <TextField
+        id="booking-email"
+        type="email"
+        label={t('booking.email')}
+        value={email}
+        onChange={(e) => {
+          const next = e.target.value
+          setEmail(next)
+          setEmailError(next ? validateEmail(next, t) !== null : false)
+        }}
+        error={emailErrorMessage}
+      />
+      <TextField
+        id="booking-phone"
+        label={t('booking.phone')}
+        error={phoneErrorMessage}
+      >
+        <PhoneInput
+          id="booking-phone"
+          className="h-[38px]"
+          value={phone}
+          onChange={handlePhoneChange}
+          onCountryChange={handleCountryChange}
+          onBlur={handlePhoneBlur}
+          inputComponent={BookingPhoneInput}
+        />
+      </TextField>
+      <TextField
+        id="booking-occupation"
+        label={t('booking.occupation')}
+        value={occupation}
+        onChange={(e) => {
+          setOccupation(e.target.value)
+          if (occupationError) setOccupationError(false)
+        }}
+        error={occupationErrorMessage}
+      />
     </div>
   )
 
@@ -502,7 +500,7 @@ function BookingPage() {
         {t('booking.wizard.confirmTitle')}
       </h3>
 
-      <div className="flex flex-col gap-md rounded-xl bg-[var(--grey-100)] p-md">
+      <div className="flex flex-col gap-md">
         <div className="flex flex-col gap-xs">
           <span className="font-body text-xs text-body-text">{t('booking.wizard.schedule')}</span>
           <span className="font-body text-sm font-semibold text-heading">
@@ -556,8 +554,9 @@ function BookingPage() {
   const stepContents: Record<number, () => React.ReactNode> = {
     1: renderStepSchedule,
     2: renderStepChild,
-    3: renderStepApplicant,
-    4: renderStepConfirm,
+    3: renderStepIdentity,
+    4: renderStepContact,
+    5: renderStepConfirm,
   }
 
   return (
@@ -565,10 +564,10 @@ function BookingPage() {
       <Navbar />
 
       <main className="flex items-center justify-center px-[30px] py-[30px] md:px-6 md:py-10">
-        <section className="relative flex w-full max-w-[333px] flex-col overflow-hidden rounded-[13px] bg-bg-card shadow md:h-[630px] md:max-w-[1000px] md:flex-row md:rounded-2xl">
+        <section className="relative flex w-full max-w-[333px] flex-col overflow-hidden rounded-[13px] bg-bg-card shadow md:max-w-[900px] md:rounded-2xl">
 
-          {/* Panel izquierdo: Wizard */}
-          <div className="flex w-full flex-col px-[30px] pb-[28px] pt-[40px] md:w-[55%] md:px-[50px] md:py-[40px]">
+          {/* Wizard */}
+          <div className="flex w-full flex-col px-[30px] pb-[28px] pt-[40px] md:px-[50px] md:py-[40px]">
             {/* Header */}
             <div className="mb-lg flex items-center gap-sm">
               <button
@@ -585,13 +584,13 @@ function BookingPage() {
             </div>
 
             {/* Progress indicator */}
-            <div className="mb-lg flex items-center gap-sm">
+            <div className="mb-lg flex w-full items-center gap-sm">
               {STEPS.map((s, i) => {
                 const stepNum = i + 1
                 const isActive = step === stepNum
                 const isCompleted = step > stepNum
                 return (
-                  <div key={s.key} className="flex items-center gap-sm">
+                  <div key={s.key} className="flex min-w-0 flex-1 items-center gap-sm">
                     <div
                       className={`flex size-8 shrink-0 items-center justify-center rounded-full font-body text-sm font-semibold transition-colors ${
                         isCompleted
@@ -605,7 +604,7 @@ function BookingPage() {
                     </div>
                     {i < STEPS.length - 1 && (
                       <div
-                        className={`h-0.5 w-6 transition-colors ${
+                        className={`h-0.5 min-w-2 flex-1 transition-colors ${
                           step > stepNum ? 'bg-green-500' : 'bg-[var(--grey-100)]'
                         }`}
                       />
@@ -635,7 +634,7 @@ function BookingPage() {
                 <div />
               )}
 
-              {step < 4 ? (
+              {step < 5 ? (
                 <button
                   type="button"
                   onClick={handleNext}
@@ -654,23 +653,6 @@ function BookingPage() {
                   <CheckIcon size={16} />
                 </button>
               )}
-            </div>
-          </div>
-
-          {/* Panel derecho: Ilustración / Branding */}
-          <div className="hidden bg-gradient-to-br from-green-500 to-green-600 md:flex md:w-[45%] md:flex-col md:items-center md:justify-center md:p-xl">
-            <div className="flex flex-col items-center gap-lg text-center">
-              <div className="flex size-16 items-center justify-center rounded-full bg-white/20">
-                <CheckIcon size={32} className="text-white" />
-              </div>
-              <div className="flex flex-col gap-sm">
-                <h3 className="m-0 font-heading text-[24px] font-bold text-white">
-                  {t('booking.wizard.heroTitle')}
-                </h3>
-                <p className="m-0 max-w-[280px] font-body text-sm text-white/80">
-                  {t('booking.wizard.heroDescription')}
-                </p>
-              </div>
             </div>
           </div>
 

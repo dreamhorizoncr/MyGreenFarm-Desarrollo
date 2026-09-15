@@ -5,33 +5,7 @@ import Container from '../components/home/Container.tsx'
 import { useServicePlans } from '../hooks/useServicePlans.ts'
 import { servicePlanService } from '../services/servicePlan.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
-
-const PLAN_TYPE_LABELS: Record<string, string> = {
-  ONE_TIME: 'services.oneTime',
-  MONTHLY: 'services.monthly',
-  ANNUALLY: 'services.annual',
-}
-
-const INTERVAL_UNITS: Record<string, string> = {
-  MONTHS: 'services.months',
-  YEARS: 'services.years',
-  WEEKS: 'services.weeks',
-  DAYS: 'services.days',
-}
-
-function getPlanTypeLabel(type: string, t: (key: string) => string): string {
-  const exact = PLAN_TYPE_LABELS[type]
-  if (exact) return t(exact)
-
-  const match = type.match(/^(\d+)_(.+)$/)
-  if (match) {
-    const count = match[1]
-    const unitKey = INTERVAL_UNITS[match[2]]
-    if (unitKey) return `${count} ${t(unitKey)}`
-  }
-
-  return type
-}
+import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 
 function PlanCard({ plan, onSubscribe, isLoading }: { plan: ServicePlan; onSubscribe: (plan: ServicePlan) => void; isLoading?: boolean }) {
   const { t } = useTranslation()
@@ -65,7 +39,7 @@ function PlanCard({ plan, onSubscribe, isLoading }: { plan: ServicePlan; onSubsc
           {plan.description}
         </p>
 
-        <div className="flex items-baseline gap-sm">
+        <div className="flex items-baseline justify-center gap-sm text-center">
           <span className="font-heading text-h3 font-bold text-green-500">
             {plan.price}
           </span>
@@ -110,7 +84,7 @@ function ServicesPage() {
   const handleSubscribe = async (plan: ServicePlan) => {
     setCheckoutLoading(plan.id)
     try {
-      const url = await servicePlanService.createCheckoutSession(plan.stripePriceId)
+      const url = await servicePlanService.checkoutPlan(plan.id)
       window.location.href = url
     } catch {
       setCheckoutLoading(null)
