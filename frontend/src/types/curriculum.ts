@@ -11,6 +11,13 @@ export interface ApplicationInput {
   applicantEmail: string
   applicantPhone: string
   file: File
+  certificates: File[]
+}
+
+export interface CertificateFile {
+  id: string
+  fileName: string
+  fileUrl: string
 }
 
 export interface Curriculum {
@@ -21,6 +28,7 @@ export interface Curriculum {
   applicantPhone: string
   fileName: string
   fileUrl: string
+  certificates: CertificateFile[]
   submittedAt: string
   status: CurriculumStatus
 }
