@@ -124,12 +124,8 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/api/announcements").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/announcements/*/images").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/gallery/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/api/service-plans/stripe-plans").permitAll()
-            // Libera el GET del catálogo de servicios: el usuario final debe poder
-            // ver los planes disponibles sin necesidad de iniciar sesión
             .requestMatchers(HttpMethod.GET, "/api/service-plans").permitAll()
-            // Corrige la ruta del checkout de Stripe: el controller real es
-            // PaymentController (/api/payments), no /api/service-plans
+            .requestMatchers(HttpMethod.POST, "/api/service-plans/onvo").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/payments/create-checkout-session").permitAll()
             .requestMatchers("/api/service-plans/webhooks/**").permitAll()
             .anyRequest().authenticated())

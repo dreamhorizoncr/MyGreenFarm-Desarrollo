@@ -15,6 +15,8 @@ import taller.multimedia.backend.model.announcement.Announcement;
 public interface AnnouncementRepository extends JpaRepository<Announcement, UUID>{
     Page<Announcement> findByCreatedAtAfter(LocalDateTime date, Pageable pageable);
 
+    List<Announcement> findByCreatedAtBefore(LocalDateTime dateTime);
+
     boolean existsByTitle(String title);
 
 }
