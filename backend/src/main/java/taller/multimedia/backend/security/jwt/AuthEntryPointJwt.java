@@ -1,13 +1,17 @@
 package taller.multimedia.backend.security.jwt;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import tools.jackson.databind.ObjectMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -19,9 +23,21 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
   // Handle authentication errors
   @Override
-  public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
-      throws IOException, ServletException {
-    logger.error("Unauthorized error: {}", authException.getMessage()); // Log the unauthorized error
-    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized"); // Send a 401 Unauthorized response to the client
+  public void commence(HttpServletRequest request, HttpServletResponse response,
+      AuthenticationException authException) throws IOException, ServletException {
+
+    logger.error("Unauthorized error: {} (Path: {})", authException.getMessage(), request.getRequestURI());
+
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+    Map<String, Object> body = new HashMap<>();
+    body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
+    body.put("error", "Unauthorized");
+    body.put("message", authException.getMessage());
+    body.put("path", request.getRequestURI());
+
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.writeValue(response.getOutputStream(), body);
   }
 }
