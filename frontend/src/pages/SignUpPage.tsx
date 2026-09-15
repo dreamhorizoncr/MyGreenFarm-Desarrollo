@@ -12,6 +12,7 @@ import {
   validatePassword,
   validateRequired,
 } from "../utils/validators.ts";
+import { notify } from "../utils/notifications.ts";
 import i18n from "../i18n/index.ts";
 
 function SignUpPage() {
@@ -89,7 +90,21 @@ function SignUpPage() {
     )
       return;
 
-    submitRegister({ firstName, lastName, email, password, role });
+    submitRegister(
+      { firstName, lastName, email, password, role },
+      () => {
+        notify.success({
+          title: t("signup.successToastTitle"),
+          description: t("signup.success"),
+        });
+      },
+      () => {
+        notify.error({
+          title: t("signup.errorToastTitle"),
+          description: t("signup.errorToastDescription"),
+        });
+      },
+    );
   };
 
   const roleOptions = [
