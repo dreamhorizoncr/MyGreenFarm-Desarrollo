@@ -131,7 +131,8 @@ function AdminServicePlansPage() {
 
                   <div className="flex items-center gap-sm">
                     <span className="rounded-full bg-green-100 px-md py-xs font-body text-xs font-semibold text-green-700">
-                      {getPlanTypeLabel(plan.type, t)}
+                      {/* No tiene que ser ANY, cambiarlo luego */}
+                      {getPlanTypeLabel(plan.type, t as any)} 
                     </span>
                     <span className="font-heading text-h5 font-bold text-heading">
                       {plan.price}
@@ -183,8 +184,12 @@ function AdminServicePlansPage() {
           stripePlans={stripePlans}
           existingPlans={plans}
           planToEdit={editingPlan}
-          onSave={createPlan}
-          onUpdate={updatePlan}
+          onSave={async (data, file) => { //Esto se cambió por mientrs
+            await createPlan(data, file)
+          }}
+          onUpdate={async (id, data, file) => {
+            await updatePlan(id, data, file)
+          }}
           onClose={() => {
             setShowCreateModal(false)
             setEditingPlan(null)

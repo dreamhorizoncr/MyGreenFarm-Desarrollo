@@ -229,6 +229,9 @@ export default {
     loading: 'Registrando...',
     success: '¡Cuenta creada! Ahora podés iniciar sesión.',
     goToLogin: 'Iniciar sesión',
+    successToastTitle: 'Cuenta creada',
+    errorToastTitle: 'No pudimos crear tu cuenta',
+    errorToastDescription: 'Revisa los datos e intenta de nuevo.',
   },
   forgotPassword: {
     overtitle: 'Bienvenido',
