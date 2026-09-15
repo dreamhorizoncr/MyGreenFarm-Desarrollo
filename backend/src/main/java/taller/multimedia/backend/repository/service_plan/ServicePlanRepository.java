@@ -13,7 +13,7 @@ import taller.multimedia.backend.model.service_plans.ServicePlan;
 public interface ServicePlanRepository extends JpaRepository<ServicePlan, UUID> {
     List<ServicePlan> findByIsActiveTrue();
 
-    boolean existsByStripePriceId(String stripePriceId);
+    boolean existsByGatewayPriceId(String gatewayPriceId);
 
-    Optional<ServicePlan> findByStripePriceId(String stripePriceId);
+    Optional<ServicePlan> findByGatewayPriceId(String gatewayPriceId);
 }

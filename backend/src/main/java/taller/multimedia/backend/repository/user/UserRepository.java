@@ -1,12 +1,13 @@
-package taller.multimedia.backend.repository;
+package taller.multimedia.backend.repository.user;
 
 import org.springframework.stereotype.Repository;
+
+import taller.multimedia.backend.model.user.User;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 import java.util.UUID;
-
-import taller.multimedia.backend.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {

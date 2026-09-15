@@ -1,4 +1,4 @@
-package taller.multimedia.backend.model;
+package taller.multimedia.backend.model.user;
 
 //Enumeration for user roles
 public enum Role {

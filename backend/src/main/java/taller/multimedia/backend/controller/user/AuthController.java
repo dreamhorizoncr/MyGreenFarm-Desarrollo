@@ -1,4 +1,4 @@
-package taller.multimedia.backend.controller;
+package taller.multimedia.backend.controller.user;
 
 import jakarta.validation.Valid;
 
@@ -20,7 +20,7 @@ import taller.multimedia.backend.dto.UserInfoResponse;
 import taller.multimedia.backend.dto.SigninResponse;
 import taller.multimedia.backend.security.jwt.JwtUtils;
 import taller.multimedia.backend.security.services.UserDetailsImpl;
-import taller.multimedia.backend.service.AuthService;
+import taller.multimedia.backend.service.user.AuthService;
 
 //Controller class for handling authentication-related endpoints
 

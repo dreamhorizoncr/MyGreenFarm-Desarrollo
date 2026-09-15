@@ -5,8 +5,6 @@ import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,8 +29,8 @@ public class ServicePlan {
     @Column(nullable = false)
     private String description;
 
-    @Column(name="stripe_price_id", nullable = false)
-    private String stripePriceId;
+    @Column(name = "gateway_price_id", nullable = false)
+    private String gatewayPriceId;
 
     @Column(nullable = false)
     private String type;
@@ -51,4 +49,7 @@ public class ServicePlan {
 
     @Column(nullable = false)
     private boolean isActive;
+
+    @Column(nullable = false)
+    private String paymentUrl;
 }

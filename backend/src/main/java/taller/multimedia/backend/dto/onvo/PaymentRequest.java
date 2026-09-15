@@ -1,4 +1,4 @@
-package taller.multimedia.backend.dto.stripe;
+package taller.multimedia.backend.dto.onvo;
 
 import lombok.Data;
 

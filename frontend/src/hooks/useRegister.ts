@@ -11,7 +11,11 @@ export function useRegister() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
-  const submitRegister = async (payload: RegisterData) => {
+  const submitRegister = async (
+    payload: RegisterData,
+    onSuccess?: () => void,
+    onError?: (message: string) => void,
+  ) => {
     setLoading(true)
     setError(null)
     setSuccess(false)
@@ -19,8 +23,11 @@ export function useRegister() {
     try {
       await authService.register(payload)
       setSuccess(true)
+      onSuccess?.()
     } catch (err) {
-      setError(getErrorMessage(err))
+      const message = getErrorMessage(err)
+      setError(message)
+      onError?.(message)
     } finally {
       setLoading(false)
     }

@@ -1,7 +1,6 @@
 package taller.multimedia.backend.service.appointment;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -53,7 +52,7 @@ public class AppointmentService {
                 requestedEnd);
 
         boolean isSlotTaken = conflictingAppointments.stream()
-            .anyMatch(a -> a.getStatus() != AppointmentStatus.CANCELLED);
+                .anyMatch(a -> a.getStatus() != AppointmentStatus.CANCELLED);
 
         if (isSlotTaken) {
             throw new RuntimeException(
@@ -81,20 +80,22 @@ public class AppointmentService {
             // Intentamos sincronizar con Google Calendar
             googleCalendarService.addAppointmentToCalendar(savedAppointment);
         } catch (Exception e) {
-            // Si Google falla, lanzamos una excepción para que el @Transactional haga rollback
+            // Si Google falla, lanzamos una excepción para que el @Transactional haga
+            // rollback
             // y no se guarde la cita a medias si la sincronización es estricta para ti.
             throw new RuntimeException("Error al sincronizar la cita con Google Calendar: " + e.getMessage(), e);
         }
 
         Locale locale = (dto.getLanguage() != null) ? Locale.forLanguageTag(dto.getLanguage()) : new Locale("es");
 
-        // Los correos van al final. Si el correo falla por red SMTP, 
+        // Los correos van al final. Si el correo falla por red SMTP,
         // al menos la cita y Google Calendar ya quedaron firmes en la BD.
         try {
             emailService.sendAppointmentPendingEmail(savedAppointment, locale);
             emailService.sendAdminNewAppointmentAlert(savedAppointment);
         } catch (Exception e) {
-            System.err.println("Advertencia: La cita se creó pero hubo un error al enviar los correos: " + e.getMessage());
+            System.err.println(
+                    "Advertencia: La cita se creó pero hubo un error al enviar los correos: " + e.getMessage());
         }
 
         return savedAppointment;
@@ -177,8 +178,8 @@ public class AppointmentService {
         Appointment updated = appointmentRepository.save(appointment);
 
         if (previous != newStatus) {
-            String langCode = appointment.getLanguage() != null ? appointment.getLanguage() 
-                            : (lang != null ? lang : "es");
+            String langCode = appointment.getLanguage() != null ? appointment.getLanguage()
+                    : (lang != null ? lang : "es");
             Locale locale = Locale.forLanguageTag(langCode);
             emailService.sendAppointmentStatusUpdateEmail(updated, locale);
         }
@@ -221,8 +222,8 @@ public class AppointmentService {
 
         googleCalendarService.rescheduleAppointmentInCalendar(savedAppointment, newStart);
 
-        String langCode = appointment.getLanguage() != null ? appointment.getLanguage() 
-                        : (lang != null ? lang : "es");
+        String langCode = appointment.getLanguage() != null ? appointment.getLanguage()
+                : (lang != null ? lang : "es");
         Locale locale = Locale.forLanguageTag(langCode);
         emailService.sendRescheduleEmail(savedAppointment, locale);
 
@@ -230,7 +231,7 @@ public class AppointmentService {
     }
 
     // Se ejecuta cada hora para revisar citas a 24 horas de distancia
-    @Scheduled(cron = "0 0 * * * *") 
+    @Scheduled(cron = "0 0 * * * *")
     @Transactional
     public void send24HourReminders() {
         LocalDateTime now = LocalDateTime.now();
@@ -245,15 +246,16 @@ public class AppointmentService {
             try {
                 String langCode = appointment.getLanguage() != null ? appointment.getLanguage() : "es";
                 Locale locale = Locale.forLanguageTag(langCode);
-                
+
                 emailService.sendAppointmentReminderEmail(appointment, locale);
 
                 appointment.setReminderSent(true);
                 appointmentRepository.save(appointment);
-                
+
                 System.out.println("Correo de recordatorio enviado para la cita ID: " + appointment.getId());
             } catch (Exception e) {
-                System.err.println("Error al enviar recordatorio para la cita " + appointment.getId() + ": " + e.getMessage());
+                System.err.println(
+                        "Error al enviar recordatorio para la cita " + appointment.getId() + ": " + e.getMessage());
             }
         }
     }
