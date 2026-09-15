@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,5 +113,29 @@ public class AnnouncementService {
 
         return announcementRepository.findByCreatedAtAfter(thirtyDaysAgo, pageable)
                 .map(announcement -> mapToResponse(announcement, lang));
+    }
+
+    @Scheduled(cron = "0 0 3 * * ?")
+    @Transactional
+    public void cleanupExpiredAnnouncements() {
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+        
+        // 1. Buscar todos los anuncios creados hace más de 30 días
+        List<Announcement> expiredAnnouncements = announcementRepository.findByCreatedAtBefore(thirtyDaysAgo);
+
+        if (expiredAnnouncements.isEmpty()) {
+            return; // Nada que limpiar
+        }
+
+        // 2. Eliminar uno por uno utilizando tu lógica existente de borrado total
+        for (Announcement announcement : expiredAnnouncements) {
+            try {
+                delete(announcement.getId()); // Esto borra buckets, imágenes, traducciones y el anuncio
+            } catch (Exception e) {
+                // Manejar o registrar el error si un archivo específico falla, 
+                // para evitar que detenga el ciclo completo de limpieza.
+                System.err.println("Error al eliminar anuncio expirado ID " + announcement.getId() + ": " + e.getMessage());
+            }
+        }
     }
 }
