@@ -1,4 +1,4 @@
-package taller.multimedia.backend.controller;
+package taller.multimedia.backend.controller.user;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +19,7 @@ import jakarta.validation.Valid;
 import taller.multimedia.backend.dto.MessageResponse;
 import taller.multimedia.backend.dto.UpdateUserRequest;
 import taller.multimedia.backend.dto.UserInfoResponse;
-import taller.multimedia.backend.service.UserService;
+import taller.multimedia.backend.service.user.UserService;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
