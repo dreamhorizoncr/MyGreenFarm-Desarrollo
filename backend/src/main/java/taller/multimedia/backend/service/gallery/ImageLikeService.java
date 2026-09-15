@@ -11,7 +11,6 @@ import taller.multimedia.backend.repository.gallery.ImageLikeRepository;
 import taller.multimedia.backend.repository.gallery.GalleryImageRepository;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 
 import lombok.RequiredArgsConstructor;
 

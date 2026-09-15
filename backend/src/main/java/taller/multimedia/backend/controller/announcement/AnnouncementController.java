@@ -18,7 +18,6 @@ import taller.multimedia.backend.dto.announcement.AnnouncementRequest;
 import taller.multimedia.backend.dto.announcement.AnnouncementResponse;
 import taller.multimedia.backend.service.announcement.AnnouncementService;
 
-import java.util.List;
 import java.util.UUID;
 
 @Validated 

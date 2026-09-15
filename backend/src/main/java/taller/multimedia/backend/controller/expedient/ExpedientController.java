@@ -1,10 +1,8 @@
 package taller.multimedia.backend.controller.expedient;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.expedient.ExpedientRequest;
 import taller.multimedia.backend.dto.expedient.ExpedientResponse;
-import taller.multimedia.backend.model.expedient.Expedient;
 import taller.multimedia.backend.service.expedient.ExpedientService;
 import tools.jackson.databind.ObjectMapper;
 
