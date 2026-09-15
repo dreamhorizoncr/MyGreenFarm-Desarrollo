@@ -121,7 +121,7 @@ function ServicesPage() {
     <div className="min-h-screen bg-bg-page">
       <Navbar />
 
-      <section className="flex min-h-[360px] items-center bg-white px-[30px] py-[60px] text-center md:min-h-[420px]">
+      <section className="flex min-h-[220px] items-center bg-white px-[30px] py-[32px] text-center md:min-h-[250px]">
         <div className="mx-auto w-full max-w-[700px]">
           <h1 className="m-0 font-heading text-[34px] font-bold leading-tight text-green-500 md:text-[46px]">
             {t('services.title')}
@@ -132,8 +132,8 @@ function ServicesPage() {
         </div>
       </section>
 
-      <section className="relative w-full bg-bg-page">
-        <Container className="grid auto-rows-fr grid-cols-1 gap-xl pb-1500 pt-1000 md:grid-cols-3">
+      <section className="relative w-full bg-bg-page py-[36px] md:py-[48px]">
+        <Container className="grid grid-cols-1 gap-[24px] md:grid-cols-3">
           {loading && (
             <p className="col-span-full p-xl text-center font-body text-base text-neutral-500">
               {t('common.loading')}
@@ -163,8 +163,6 @@ function ServicesPage() {
         </Container>
       </section>
 
-      {/* Spacer blanco */}
-      <section aria-hidden="true" className="min-h-[200px] w-full bg-white" />
     </div>
   )
 }

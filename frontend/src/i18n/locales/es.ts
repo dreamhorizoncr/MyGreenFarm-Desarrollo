@@ -26,6 +26,7 @@ export default {
     services: 'Servicios',
     vacancies: 'Vacantes',
     adminLogin: 'Ingreso de Administradores',
+    dashboard: 'Dashboard',
   },
   home: {
     header: {
@@ -193,6 +194,20 @@ export default {
     submitting: 'Enviando...',
     submitError: 'No se pudo enviar la solicitud. Inténtalo de nuevo.',
     retry: 'Reintentar',
+    wizard: {
+      schedule: 'Horario',
+      child: 'Niño',
+      applicant: 'Solicitante',
+      confirm: 'Confirmar',
+      childTitle: 'Datos del niño',
+      applicantTitle: 'Datos del solicitante',
+      confirmTitle: 'Confirmar cita',
+      heroTitle: '¡Casi listo!',
+      heroDescription: 'Revisa los datos de tu cita antes de confirmar.',
+      back: 'Anterior',
+      next: 'Siguiente',
+      confirmButton: 'Confirmar cita',
+    },
   },
   login: {
     overtitle: 'Bienvenido',
@@ -315,7 +330,7 @@ export default {
       subtitle: 'Resumen general del centro educativo.',
     },
     sidebar: {
-      dashboard: 'Dashboard',
+    dashboard: 'Dashboard',
       docentes: 'Docentes',
       noticias: 'Noticias',
       galeria: 'Galería',

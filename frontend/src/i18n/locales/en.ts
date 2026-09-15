@@ -25,6 +25,7 @@ export default {
     services: 'Services',
     vacancies: 'Vacancies',
     adminLogin: 'Admin login',
+    dashboard: 'Dashboard',
   },
   home: {
     header: {
@@ -192,6 +193,20 @@ export default {
     submitting: 'Sending...',
     submitError: 'The request could not be sent. Please try again.',
     retry: 'Retry',
+    wizard: {
+      schedule: 'Schedule',
+      child: 'Child',
+      applicant: 'Applicant',
+      confirm: 'Confirm',
+      childTitle: "Child's information",
+      applicantTitle: "Applicant's information",
+      confirmTitle: 'Confirm appointment',
+      heroTitle: 'Almost done!',
+      heroDescription: 'Review your appointment details before confirming.',
+      back: 'Back',
+      next: 'Next',
+      confirmButton: 'Confirm appointment',
+    },
   },
   login: {
     overtitle: 'Welcome',
@@ -313,7 +328,7 @@ export default {
       subtitle: 'General overview of the educational center.',
     },
     sidebar: {
-      dashboard: 'Dashboard',
+    dashboard: 'Dashboard',
       docentes: 'Teachers',
       galeria: 'Gallery',
       citas: 'Appointments',

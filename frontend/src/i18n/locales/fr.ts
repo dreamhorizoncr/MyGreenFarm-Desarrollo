@@ -24,6 +24,7 @@ export default {
     services: 'Services',
     vacancies: 'Postes vacants',
     adminLogin: 'Connexion administrateurs',
+    dashboard: 'Tableau de bord',
   },
   home: {
     header: {
@@ -191,6 +192,20 @@ export default {
     submitting: 'Envoi...',
     submitError: "La demande n'a pas pu être envoyée. Veuillez réessayer.",
     retry: 'Réessayer',
+    wizard: {
+      schedule: 'Horaire',
+      child: 'Enfant',
+      applicant: 'Demandeur',
+      confirm: 'Confirmer',
+      childTitle: "Informations de l'enfant",
+      applicantTitle: 'Informations du demandeur',
+      confirmTitle: 'Confirmer le rendez-vous',
+      heroTitle: 'Presque terminé !',
+      heroDescription: 'Vérifiez les détails de votre rendez-vous avant de confirmer.',
+      back: 'Précédent',
+      next: 'Suivant',
+      confirmButton: 'Confirmer le rendez-vous',
+    },
   },
   login: {
     overtitle: 'Bienvenue',
@@ -312,7 +327,7 @@ export default {
       subtitle: "Aperçu général du centre éducatif.",
     },
     sidebar: {
-      dashboard: 'Tableau de bord',
+    dashboard: 'Tableau de bord',
       docentes: 'Enseignants',
       galeria: 'Galerie',
       citas: 'Rendez-vous',
