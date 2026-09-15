@@ -3,9 +3,9 @@ import { SEED_CURRICULUMS } from '../data/curriculums.seed.ts'
 import { createMockStore } from '../utils/mockStore.ts'
 import { fileToDataUrl } from '../utils/file.ts'
 
-// Mock: no existe endpoint real todavía. Cuando lo haya, el envío del PDF se
-// hace con FormData, igual que `uploadImages` en services/announcement.ts,
-// y ya no hace falta `fileToDataUrl` ni `createMockStore`/`SEED_CURRICULUMS`:
+// No existe endpoint real todavía. Cuando lo haya, el envío del PDF se
+// hace con FormData, igual que uploadImages en services/announcement.ts,
+// y ya no hace falta fileToDataUrl ni createMockStore/SEED_CURRICULUMS:
 //
 // import { apiClient } from './api.ts'
 //
@@ -36,7 +36,7 @@ import { fileToDataUrl } from '../utils/file.ts'
 // async deleteCurriculum(id: string): Promise<void> {
 //   await apiClient.delete(`/applications/${id}`)
 // }
-const store = createMockStore<Curriculum>('mgf_mock_applications_v3', SEED_CURRICULUMS)
+const store = createMockStore<Curriculum>('mgf_mock_applications_v4', SEED_CURRICULUMS)
 
 let mockCurriculums: Curriculum[] = store.load()
 
@@ -50,6 +50,7 @@ export const curriculumService = {
 
   async submitApplication(data: ApplicationInput): Promise<Curriculum> {
     const fileUrl = await fileToDataUrl(data.file)
+    const certificateUrls = await Promise.all(data.certificates.map((certificate) => fileToDataUrl(certificate)))
     await delay(600)
 
     const curriculum: Curriculum = {
@@ -60,6 +61,11 @@ export const curriculumService = {
       applicantPhone: data.applicantPhone,
       fileName: data.file.name,
       fileUrl,
+      certificates: data.certificates.map((certificate, index) => ({
+        id: crypto.randomUUID(),
+        fileName: certificate.name,
+        fileUrl: certificateUrls[index],
+      })),
       submittedAt: new Date().toISOString(),
       status: 'PENDING',
     }

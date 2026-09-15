@@ -38,7 +38,7 @@ function SessionWatcher() {
 function App() {
   return (
     <BrowserRouter>
-      <Toaster position="top-right" />
+      <Toaster position="top-right" offset={{ top: 76 }} />
       <SessionWatcher />
       <div className="flex min-h-svh flex-col">
         <div className="flex-1">
@@ -53,9 +53,6 @@ function App() {
             <Route path="/admin/announcements" element={<AnnouncementsPage />} />
             <Route path="/admin/gallery" element={<AdminGalleryPage />} />
             <Route path="/admin/curriculums" element={<AdminCurriculumsPage />} />
-          </Route>
-          <Route element={<OwnerRoute />}>
-            <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />
           </Route>
           <Route element={<OwnerRoute />}>
             <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />

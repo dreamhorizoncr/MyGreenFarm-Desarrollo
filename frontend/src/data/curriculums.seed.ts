@@ -1,5 +1,9 @@
-import type { Curriculum } from '../types/curriculum.ts'
+import type { CertificateFile, Curriculum } from '../types/curriculum.ts'
 import { SAMPLE_PDF_1, SAMPLE_PDF_2 } from './samplePdfs.ts'
+
+function certificate(id: string, fileName: string, fileUrl: string): CertificateFile {
+  return { id, fileName, fileUrl }
+}
 
 export const SEED_CURRICULUMS: Curriculum[] = [
   {
@@ -10,6 +14,11 @@ export const SEED_CURRICULUMS: Curriculum[] = [
     applicantPhone: '+506 8888 1111',
     fileName: 'CV-Maria-Rodriguez.pdf',
     fileUrl: SAMPLE_PDF_1,
+    certificates: [
+      certificate('cert-1-1', 'Título Bachillerato en Educación Inicial.pdf', SAMPLE_PDF_1),
+      certificate('cert-1-2', 'Certificado TEFL.pdf', SAMPLE_PDF_2),
+      certificate('cert-1-3', 'Constancia de Primeros Auxilios.pdf', SAMPLE_PDF_1),
+    ],
     submittedAt: '2026-09-01T14:30:00.000Z',
     status: 'PENDING',
   },
@@ -21,6 +30,13 @@ export const SEED_CURRICULUMS: Curriculum[] = [
     applicantPhone: '+506 8888 2222',
     fileName: 'CV-Carlos-Jimenez.pdf',
     fileUrl: SAMPLE_PDF_2,
+    certificates: [
+      certificate('cert-2-1', 'Título Técnico en Docencia.pdf', SAMPLE_PDF_2),
+      certificate('cert-2-2', 'Certificado de Inglés B2.pdf', SAMPLE_PDF_1),
+      certificate('cert-2-3', 'Diploma en Educación Especial.pdf', SAMPLE_PDF_2),
+      certificate('cert-2-4', 'Constancia CPR.pdf', SAMPLE_PDF_1),
+      certificate('cert-2-5', 'Certificado de Manipulación de Alimentos.pdf', SAMPLE_PDF_2),
+    ],
     submittedAt: '2026-09-05T10:15:00.000Z',
     status: 'APPROVED',
   },
@@ -32,6 +48,7 @@ export const SEED_CURRICULUMS: Curriculum[] = [
     applicantPhone: '+506 8888 3333',
     fileName: 'CV-Ana-Solano.pdf',
     fileUrl: SAMPLE_PDF_2,
+    certificates: [],
     submittedAt: '2026-09-03T09:00:00.000Z',
     status: 'REJECTED',
   },
@@ -43,6 +60,7 @@ export const SEED_CURRICULUMS: Curriculum[] = [
     applicantPhone: '+506 8888 4444',
     fileName: 'CV-Luis-Vargas.pdf',
     fileUrl: SAMPLE_PDF_1,
+    certificates: [],
     submittedAt: '2026-09-07T16:45:00.000Z',
     status: 'PENDING',
   },
@@ -54,6 +72,10 @@ export const SEED_CURRICULUMS: Curriculum[] = [
     applicantPhone: '+506 8888 5555',
     fileName: 'CV-Paola-Mendez.pdf',
     fileUrl: SAMPLE_PDF_2,
+    certificates: [
+      certificate('cert-5-1', 'Título Bachillerato en Psicología.pdf', SAMPLE_PDF_1),
+      certificate('cert-5-2', 'Certificado en Estimulación Temprana.pdf', SAMPLE_PDF_2),
+    ],
     submittedAt: '2026-09-08T11:20:00.000Z',
     status: 'PENDING',
   },
@@ -65,6 +87,7 @@ export const SEED_CURRICULUMS: Curriculum[] = [
     applicantPhone: '+506 8888 6666',
     fileName: 'CV-Esteban-Leiton.pdf',
     fileUrl: SAMPLE_PDF_1,
+    certificates: [],
     submittedAt: '2026-08-15T08:30:00.000Z',
     status: 'APPROVED',
   },
@@ -76,6 +99,7 @@ export const SEED_CURRICULUMS: Curriculum[] = [
     applicantPhone: '+506 8888 7777',
     fileName: 'CV-Sofia-Chacon.pdf',
     fileUrl: SAMPLE_PDF_2,
+    certificates: [],
     submittedAt: '2026-09-09T13:00:00.000Z',
     status: 'PENDING',
   },
@@ -87,6 +111,12 @@ export const SEED_CURRICULUMS: Curriculum[] = [
     applicantPhone: '+506 8888 8888',
     fileName: 'CV-Diego-Fernandez.pdf',
     fileUrl: SAMPLE_PDF_1,
+    certificates: [
+      certificate('cert-8-1', 'Certificado de Manejo de Grupos.pdf', SAMPLE_PDF_1),
+      certificate('cert-8-2', 'Título Bachillerato en Educación Física.pdf', SAMPLE_PDF_2),
+      certificate('cert-8-3', 'Constancia CPR.pdf', SAMPLE_PDF_1),
+      certificate('cert-8-4', 'Certificado de Salvavidas.pdf', SAMPLE_PDF_2),
+    ],
     submittedAt: '2026-09-10T09:45:00.000Z',
     status: 'PENDING',
   },
@@ -98,6 +128,7 @@ export const SEED_CURRICULUMS: Curriculum[] = [
     applicantPhone: '+506 8888 9999',
     fileName: 'CV-Valeria-Rojas.pdf',
     fileUrl: SAMPLE_PDF_2,
+    certificates: [],
     submittedAt: '2026-09-11T15:10:00.000Z',
     status: 'REJECTED',
   },

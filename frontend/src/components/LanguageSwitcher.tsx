@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CheckIcon, ChevronDownIcon, GlobeIcon } from '@animateicons/react/lucide'
 import useDismiss from '../hooks/useDismiss.ts'
+import { notify } from '../utils/notifications.ts'
 import { SUPPORTED_LANGUAGES } from '../i18n/index.ts'
 
 function LanguageSwitcher() {
@@ -17,8 +18,18 @@ function LanguageSwitcher() {
       ?.label ?? currentLanguage
 
   const selectLanguage = (code: string) => {
-    i18n.changeLanguage(code)
     setOpen(false)
+    if (code === currentLanguage) return
+
+    const languageLabel = SUPPORTED_LANGUAGES.find((language) => language.code === code)?.label ?? code
+    const translate = i18n.getFixedT(code)
+
+    i18n.changeLanguage(code).then(() => {
+      notify.info({
+        title: translate('languageSwitcher.changedTitle'),
+        description: translate('languageSwitcher.changedDescription', { language: languageLabel }),
+      })
+    })
   }
 
   return (
