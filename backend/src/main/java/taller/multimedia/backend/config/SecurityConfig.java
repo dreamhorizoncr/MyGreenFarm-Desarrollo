@@ -127,6 +127,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/api/service-plans").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/service-plans/onvo").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/payments/create-checkout-session").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/service-plans/*/checkout").permitAll()
             .requestMatchers("/api/service-plans/webhooks/**").permitAll()
             .anyRequest().authenticated())
         .csrf(csrf -> csrf.disable())
