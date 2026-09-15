@@ -90,7 +90,7 @@ function NewsPage() {
       <Navbar />
 
       {/* Hero de Noticias */}
-      <section className="flex min-h-[360px] items-center bg-green-500 px-[30px] py-[60px] text-center text-white md:min-h-[420px]">
+      <section className="flex min-h-[280px] items-center bg-green-500 px-[30px] py-[40px] text-center text-white md:min-h-[320px]">
         <div className="mx-auto w-full max-w-[700px]">
           <h1 className="m-0 font-heading text-[34px] font-bold leading-tight text-white md:text-[46px]">
             {t("newspage.title")}
@@ -147,7 +147,7 @@ function NewsPage() {
 
       {/* Sección de Noticias */}
       <main>
-        <Container className="py-[70px] md:py-[80px]">
+        <Container className="py-[45px] md:py-[55px]">
           {(loading || imagesLoading) && (
             <p className="m-0 p-xl text-center font-body text-base text-neutral-500">
               {t("common.loading")}
