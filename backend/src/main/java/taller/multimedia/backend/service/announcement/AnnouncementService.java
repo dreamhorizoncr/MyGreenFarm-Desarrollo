@@ -14,6 +14,7 @@ import taller.multimedia.backend.model.announcement.Announcement;
 import taller.multimedia.backend.repository.announcement.AnnouncementRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service

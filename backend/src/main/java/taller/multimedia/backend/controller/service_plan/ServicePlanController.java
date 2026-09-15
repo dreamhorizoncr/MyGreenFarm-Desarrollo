@@ -5,10 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import jakarta.validation.Valid;
 import taller.multimedia.backend.dto.service_plan.ServicePlanRequest;
 import taller.multimedia.backend.model.service_plans.ServicePlan;
 import taller.multimedia.backend.service.service_plan.ServicePlanService;
