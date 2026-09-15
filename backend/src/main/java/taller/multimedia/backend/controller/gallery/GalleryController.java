@@ -17,7 +17,6 @@ import taller.multimedia.backend.dto.gallery.GalleryRequest;
 import taller.multimedia.backend.dto.gallery.GalleryResponse;
 import taller.multimedia.backend.service.gallery.GalleryService;
 
-import java.util.List;
 import java.util.UUID;
 
 @Validated

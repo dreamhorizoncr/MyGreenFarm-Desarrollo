@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.model.service_plans.ServicePlan;
 import taller.multimedia.backend.repository.service_plan.ServicePlanRepository;
 
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

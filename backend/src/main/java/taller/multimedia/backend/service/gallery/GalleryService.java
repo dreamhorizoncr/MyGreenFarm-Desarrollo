@@ -15,9 +15,7 @@ import taller.multimedia.backend.model.gallery.Gallery;
 import taller.multimedia.backend.repository.gallery.CategoryGalleryRepository;
 import taller.multimedia.backend.repository.gallery.GalleryRepository;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

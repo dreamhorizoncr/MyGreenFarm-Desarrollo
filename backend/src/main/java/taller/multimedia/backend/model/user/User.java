@@ -1,4 +1,4 @@
-package taller.multimedia.backend.model;
+package taller.multimedia.backend.model.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

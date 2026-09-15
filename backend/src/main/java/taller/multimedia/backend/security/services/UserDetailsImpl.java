@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import taller.multimedia.backend.model.User;
+import taller.multimedia.backend.model.user.User;
 
 
 public class UserDetailsImpl implements UserDetails {
