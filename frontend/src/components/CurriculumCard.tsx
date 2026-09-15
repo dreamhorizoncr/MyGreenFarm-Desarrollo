@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { ChevronDownIcon, Trash2Icon } from '@animateicons/react/lucide'
+import CertificatesCarousel from './CertificatesCarousel.tsx'
 import type { Curriculum } from '../types/curriculum.ts'
 
 interface CurriculumCardProps {
@@ -91,6 +92,8 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
               className="h-full w-full"
             />
           </div>
+
+          <CertificatesCarousel certificates={application.certificates} />
 
           <div className="mt-md flex flex-wrap justify-end gap-md">
             <button

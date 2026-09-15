@@ -5,6 +5,8 @@ import { getErrorMessage } from '../utils/error.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
+const MAX_CERTIFICATES = 5
+const CERTIFICATE_TYPES = ['application/pdf', 'image/png', 'image/jpeg']
 
 export function useVacancyApplicationForm(vacancyId: string, onSubmit: (data: ApplicationInput) => Promise<void>) {
   const { t } = useTranslation()
@@ -13,11 +15,13 @@ export function useVacancyApplicationForm(vacancyId: string, onSubmit: (data: Ap
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [file, setFile] = useState<File | null>(null)
+  const [certificates, setCertificates] = useState<File[]>([])
 
   const [nameError, setNameError] = useState<string | null>(null)
   const [emailError, setEmailError] = useState<string | null>(null)
   const [phoneError, setPhoneError] = useState<string | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
+  const [certificatesError, setCertificatesError] = useState<string | null>(null)
 
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -59,6 +63,34 @@ export function useVacancyApplicationForm(vacancyId: string, onSubmit: (data: Ap
     setFile(selected)
   }
 
+  const handleCertificatesChange = (selected: FileList | null) => {
+    if (!selected || selected.length === 0) return
+
+    const files = Array.from(selected)
+
+    if (files.length > MAX_CERTIFICATES) {
+      setCertificatesError(t('vacancies.tooManyCertificates', { max: MAX_CERTIFICATES }))
+      return
+    }
+
+    if (files.some((f) => !CERTIFICATE_TYPES.includes(f.type))) {
+      setCertificatesError(t('vacancies.invalidCertificateType'))
+      return
+    }
+
+    if (files.some((f) => f.size > MAX_FILE_SIZE_BYTES)) {
+      setCertificatesError(t('vacancies.certificateTooLarge'))
+      return
+    }
+
+    setCertificatesError(null)
+    setCertificates(files)
+  }
+
+  const handleRemoveCertificate = (index: number) => {
+    setCertificates((prev) => prev.filter((_, i) => i !== index))
+  }
+
   const handleSubmit = async (): Promise<boolean> => {
     const nameErrorMessage = validateRequired(name, t('vacancies.applicantName'), t)
     const emailErrorMessage = validateRequired(email, t('vacancies.applicantEmail'), t) ?? validateEmail(email, t)
@@ -81,6 +113,7 @@ export function useVacancyApplicationForm(vacancyId: string, onSubmit: (data: Ap
         applicantEmail: email.trim(),
         applicantPhone: phone.trim(),
         file,
+        certificates,
       })
       return true
     } catch (err) {
@@ -96,16 +129,20 @@ export function useVacancyApplicationForm(vacancyId: string, onSubmit: (data: Ap
     email,
     phone,
     file,
+    certificates,
     nameError,
     emailError,
     phoneError,
     fileError,
+    certificatesError,
     submitting,
     submitError,
     handleNameChange,
     handleEmailChange,
     handlePhoneChange,
     handleFileChange,
+    handleCertificatesChange,
+    handleRemoveCertificate,
     handleSubmit,
   }
 }

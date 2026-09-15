@@ -2,9 +2,9 @@ import type { Vacancy, VacancyInput } from '../types/vacancy.ts'
 import { SEED_VACANCIES } from '../data/vacancies.seed.ts'
 import { createMockStore } from '../utils/mockStore.ts'
 
-// Mock: no existe endpoint real todavía. Cuando lo haya, este archivo se ve
+// No existe endpoint real todavía. Cuando lo haya, este archivo se ve
 // igual que services/announcement.ts o services/appointment.ts (usando
-// `apiClient` de './api.ts'), sin `createMockStore` ni `SEED_VACANCIES`:
+// apiClient de ./api.ts), sin createMockStore ni SEED_VACANCIES:
 //
 // import { apiClient } from './api.ts'
 //
