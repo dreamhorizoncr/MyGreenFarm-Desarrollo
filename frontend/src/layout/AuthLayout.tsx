@@ -1,13 +1,14 @@
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { XIcon } from "@animateicons/react/lucide";
-import illustration from "../assets/imgs/IlustrationAuth.png";
+import illustration from "../assets/imgs/portadaTemporal.jpeg";
 import Navbar from "../components/Navbar.tsx";
 
 interface AuthLayoutProps {
   overtitle: string;
   rightPanelClassName?: string;
   contentClassName?: string;
+  containerClassName?: string;
   closeTo?: string;
   children: ReactNode;
 }
@@ -16,6 +17,7 @@ function AuthLayout({
   overtitle,
   rightPanelClassName = "px-[15px] pb-[28px] pt-[65px] md:px-[70px] md:py-[55px]",
   contentClassName = "max-w-[430px]",
+  containerClassName = "md:max-w-[900px]",
   closeTo = "/",
   children,
 }: AuthLayoutProps) {
@@ -27,7 +29,7 @@ function AuthLayout({
       <main className="flex items-center justify-center px-[30px] py-[30px] md:px-6 md:py-16">
       
       {/* Contenedor Principal */}
-      <section className="relative flex w-full max-w-[333px] flex-col overflow-hidden rounded-[13px] bg-bg-card shadow md:h-[500px] md:max-w-[900px] md:flex-row md:rounded-2xl">
+      <section className={`relative flex w-full max-w-[333px] flex-col overflow-hidden rounded-[13px] bg-bg-card shadow md:h-[500px] md:flex-row md:rounded-2xl ${containerClassName}`}>
 
         {/* Panel de Ilustración */}
         <div className="relative h-[205px] w-full shrink-0 overflow-hidden md:h-full md:w-1/2">
