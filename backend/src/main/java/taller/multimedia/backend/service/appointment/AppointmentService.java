@@ -1,7 +1,6 @@
 package taller.multimedia.backend.service.appointment;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -12,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.google.api.client.util.Value;
+import org.springframework.beans.factory.annotation.Value;
 
 import jakarta.transaction.Transactional;
 import taller.multimedia.backend.dto.appointment.AppointmentRequest;
@@ -24,7 +23,7 @@ import taller.multimedia.backend.service.EmailService;
 @Service
 public class AppointmentService {
 
-    private final GoogleCalendarService googleCalendarService;
+    private final CalendarSyncAsyncService calendarSyncAsyncService;
 
     @Autowired
     private AppointmentRepository appointmentRepository;
@@ -35,8 +34,8 @@ public class AppointmentService {
     @Value("${daycare.mail.admin}") // Correo de la administración para avisarle de nuevas solicitudes
     private String correoAdmin;
 
-    AppointmentService(GoogleCalendarService googleCalendarService) {
-        this.googleCalendarService = googleCalendarService;
+    AppointmentService(CalendarSyncAsyncService calendarSyncAsyncService) {
+        this.calendarSyncAsyncService = calendarSyncAsyncService;
     }
 
     @Transactional
@@ -53,7 +52,7 @@ public class AppointmentService {
                 requestedEnd);
 
         boolean isSlotTaken = conflictingAppointments.stream()
-            .anyMatch(a -> a.getStatus() != AppointmentStatus.CANCELLED);
+                .anyMatch(a -> a.getStatus() != AppointmentStatus.CANCELLED);
 
         if (isSlotTaken) {
             throw new RuntimeException(
@@ -74,29 +73,16 @@ public class AppointmentService {
         // Nace obligatoriamente en PENDING
         appointment.setStatus(AppointmentStatus.PENDING);
         Appointment savedAppointment = appointmentRepository.save(appointment);
-
         appointmentRepository.flush();
 
-        try {
-            // Intentamos sincronizar con Google Calendar
-            googleCalendarService.addAppointmentToCalendar(savedAppointment);
-        } catch (Exception e) {
-            // Si Google falla, lanzamos una excepción para que el @Transactional haga rollback
-            // y no se guarde la cita a medias si la sincronización es estricta para ti.
-            throw new RuntimeException("Error al sincronizar la cita con Google Calendar: " + e.getMessage(), e);
-        }
+        calendarSyncAsyncService.addAppointmentAsync(savedAppointment.getId());
 
-        Locale locale = (dto.getLanguage() != null) ? Locale.forLanguageTag(dto.getLanguage()) : new Locale("es");
+        Locale locale = dto.getLanguage() != null
+                ? Locale.forLanguageTag(dto.getLanguage())
+                : Locale.forLanguageTag("es");
 
-        // Los correos van al final. Si el correo falla por red SMTP, 
-        // al menos la cita y Google Calendar ya quedaron firmes en la BD.
-        try {
-            emailService.sendAppointmentPendingEmail(savedAppointment, locale);
-            emailService.sendAdminNewAppointmentAlert(savedAppointment);
-        } catch (Exception e) {
-            System.err.println("Advertencia: La cita se creó pero hubo un error al enviar los correos: " + e.getMessage());
-        }
-
+        emailService.sendAppointmentPendingEmail(savedAppointment, locale);
+        emailService.sendAdminNewAppointmentAlert(savedAppointment);
         return savedAppointment;
     }
 
@@ -154,64 +140,84 @@ public class AppointmentService {
     }
 
     @Transactional
-    public Appointment updateAppointmentStatus(UUID id, AppointmentStatus newStatus, String teacherConclusion,
+    public Appointment updateAppointmentStatus(
+            UUID id,
+            AppointmentStatus newStatus,
+            String teacherConclusion,
             String lang) {
+
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + id));
 
-        AppointmentStatus previous = appointment.getStatus();
+        AppointmentStatus previousStatus = appointment.getStatus();
         appointment.setStatus(newStatus);
 
         if (teacherConclusion != null && !teacherConclusion.isBlank()) {
             appointment.setTeacherConclusion(teacherConclusion);
         }
 
-        if (newStatus == AppointmentStatus.CONFIRMED) {
-            googleCalendarService.updateAppointmentInCalendar(appointment, "Cita Confirmada: ");
-            emailService.sendAdminConfirmedAppointmentAlert(appointment);
-        } else if (newStatus == AppointmentStatus.CANCELLED) {
-            googleCalendarService.removeAppointmentFromCalendar(appointment);
-            emailService.sendAdminCancelledAppointmentAlert(appointment);
+        Appointment updatedAppointment = appointmentRepository.save(appointment);
+
+        if (newStatus == AppointmentStatus.CONFIRMED
+                || newStatus == AppointmentStatus.CANCELLED) {
+
+            calendarSyncAsyncService.updateAppointmentStatusAsync(
+                    updatedAppointment.getId(),
+                    newStatus);
         }
 
-        Appointment updated = appointmentRepository.save(appointment);
+        if (previousStatus != newStatus) {
+            String languageCode = appointment.getLanguage() != null
+                    ? appointment.getLanguage()
+                    : (lang != null ? lang : "es");
 
-        if (previous != newStatus) {
-            String langCode = appointment.getLanguage() != null ? appointment.getLanguage() 
-                            : (lang != null ? lang : "es");
-            Locale locale = Locale.forLanguageTag(langCode);
-            emailService.sendAppointmentStatusUpdateEmail(updated, locale);
+            Locale locale = Locale.forLanguageTag(languageCode);
+
+            emailService.sendAppointmentStatusUpdateEmail(
+                    updatedAppointment,
+                    locale);
+
+            if (newStatus == AppointmentStatus.CONFIRMED) {
+                emailService.sendAdminConfirmedAppointmentAlert(updatedAppointment);
+            } else if (newStatus == AppointmentStatus.CANCELLED) {
+                emailService.sendAdminCancelledAppointmentAlert(updatedAppointment);
+            }
         }
 
-        return updated;
+        return updatedAppointment;
     }
 
     @Transactional
-    public Appointment rescheduleAppointment(UUID id, LocalDateTime newAppointmentDate, String lang) {
+    public Appointment rescheduleAppointment(
+            UUID id,
+            LocalDateTime newAppointmentDate,
+            String lang) {
+
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
 
         if (appointment.getStatus() == AppointmentStatus.CANCELLED) {
-            throw new RuntimeException("No se puede reprogramar una cita que se encuentra cancelada.");
+            throw new RuntimeException(
+                    "No se puede reprogramar una cita cancelada.");
         }
 
-        LocalDateTime newStart = newAppointmentDate;
-        LocalDateTime newEnd = newStart.plusMinutes(59);
+        LocalDateTime newEnd = newAppointmentDate.plusMinutes(59);
 
         List<Appointment> conflictingAppointments = appointmentRepository.findByAppointmentDateBetween(
-                newStart.minusMinutes(29),
+                newAppointmentDate.minusMinutes(29),
                 newEnd);
 
         boolean isSlotTaken = conflictingAppointments.stream()
-                .anyMatch(a -> !a.getId().equals(id) &&
-                        (a.getStatus() == AppointmentStatus.PENDING ||
-                                a.getStatus() == AppointmentStatus.CONFIRMED));
+                .anyMatch(other -> !other.getId().equals(id)
+                        && (other.getStatus() == AppointmentStatus.PENDING
+                                || other.getStatus() == AppointmentStatus.CONFIRMED));
 
         if (isSlotTaken) {
-            throw new RuntimeException("El nuevo horario seleccionado ya está ocupado por otra cita.");
+            throw new RuntimeException(
+                    "El nuevo horario seleccionado ya está ocupado.");
         }
 
-        appointment.setAppointmentDate(newStart);
+        appointment.setAppointmentDate(newAppointmentDate);
 
         if (appointment.getStatus() == AppointmentStatus.PENDING) {
             appointment.setStatus(AppointmentStatus.CONFIRMED);
@@ -219,18 +225,23 @@ public class AppointmentService {
 
         Appointment savedAppointment = appointmentRepository.save(appointment);
 
-        googleCalendarService.rescheduleAppointmentInCalendar(savedAppointment, newStart);
+        calendarSyncAsyncService.rescheduleAppointmentAsync(
+                savedAppointment.getId(),
+                newAppointmentDate);
 
-        String langCode = appointment.getLanguage() != null ? appointment.getLanguage() 
-                        : (lang != null ? lang : "es");
-        Locale locale = Locale.forLanguageTag(langCode);
+        String languageCode = appointment.getLanguage() != null
+                ? appointment.getLanguage()
+                : (lang != null ? lang : "es");
+
+        Locale locale = Locale.forLanguageTag(languageCode);
+
         emailService.sendRescheduleEmail(savedAppointment, locale);
 
         return savedAppointment;
     }
 
     // Se ejecuta cada hora para revisar citas a 24 horas de distancia
-    @Scheduled(cron = "0 0 * * * *") 
+    @Scheduled(cron = "0 0 * * * *")
     @Transactional
     public void send24HourReminders() {
         LocalDateTime now = LocalDateTime.now();
@@ -245,15 +256,16 @@ public class AppointmentService {
             try {
                 String langCode = appointment.getLanguage() != null ? appointment.getLanguage() : "es";
                 Locale locale = Locale.forLanguageTag(langCode);
-                
+
                 emailService.sendAppointmentReminderEmail(appointment, locale);
 
                 appointment.setReminderSent(true);
                 appointmentRepository.save(appointment);
-                
+
                 System.out.println("Correo de recordatorio enviado para la cita ID: " + appointment.getId());
             } catch (Exception e) {
-                System.err.println("Error al enviar recordatorio para la cita " + appointment.getId() + ": " + e.getMessage());
+                System.err.println(
+                        "Error al enviar recordatorio para la cita " + appointment.getId() + ": " + e.getMessage());
             }
         }
     }
