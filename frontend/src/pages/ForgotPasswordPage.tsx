@@ -1,18 +1,16 @@
 // Esto de aquí es para la pantalla de recuperar contraseña.
 import { useEffect, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useSearchParams } from "react-router-dom";
 import TextField from "../components/ui/TextField.tsx";
 import AuthButton from "../components/ui/AuthButton.tsx";
 import AuthLayout from "../layout/AuthLayout.tsx";
 import { useForgotPassword } from "../hooks/useForgotPassword.ts";
 import { validateEmail } from "../utils/validators.ts";
+import { notify } from "../utils/notifications.ts";
 import i18n from "../i18n/index.ts";
 
 function ForgotPasswordPage() {
   const { t } = useTranslation();
-  const [searchParams] = useSearchParams();
-  const returnToProfile = searchParams.get("from") === "profile";
   const [email, setEmail] = useState("");
   const [emailValidationError, setEmailValidationError] = useState<
     string | null
@@ -35,21 +33,36 @@ function ForgotPasswordPage() {
 
     if (emailErrorMessage) return;
 
-    await submitForgotPassword({ email });
+    await submitForgotPassword(
+      { email },
+      () => {
+        notify.success({
+          title: t("forgotPassword.successToastTitle"),
+          description: t("forgotPassword.success"),
+        });
+      },
+      () => {
+        notify.error({
+          title: t("forgotPassword.errorToastTitle"),
+          description: t("forgotPassword.errorToastDescription"),
+        });
+      },
+    );
   };
 
   return (
     <AuthLayout
       overtitle={t("forgotPassword.overtitle")}
+      closeTo="/login"
       contentClassName="max-w-[303px] md:max-w-[430px]"
     >
       {/* Título */}
-      <h2 className="mb-[28px] text-center font-heading text-[28px] leading-none text-heading md:mb-[45px] md:text-[42px]">
+      <h2 className="mb-[28px] text-left font-heading text-[28px] leading-none text-heading md:mb-[45px] md:text-[42px]">
         {t("forgotPassword.title")}
       </h2>
 
       {/* Descripción */}
-      <p className="mb-[36px] text-center font-body text-[13px] leading-[1.5] text-body-text md:mb-[50px] md:text-[15px] md:leading-[1.7]">
+      <p className="mb-[36px] text-left font-body text-[13px] leading-[1.5] text-body-text md:mb-[50px] md:text-[15px] md:leading-[1.7]">
         {t("forgotPassword.description")}
       </p>
 
@@ -94,17 +107,6 @@ function ForgotPasswordPage() {
           </AuthButton>
         </div>
 
-        {/* Volver al origen */}
-        <p className="mt-[20px] text-center md:mt-[35px]">
-          <Link
-            to={returnToProfile ? "/profile" : "/login"}
-            className="font-link text-[12px] text-heading transition-opacity hover:opacity-70 md:text-[14px]"
-          >
-            {returnToProfile
-              ? t("forgotPassword.backToProfile")
-              : t("forgotPassword.backToLogin")}
-          </Link>
-        </p>
       </form>
     </AuthLayout>
   );

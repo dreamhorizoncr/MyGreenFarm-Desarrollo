@@ -1,4 +1,4 @@
-package taller.multimedia.backend.service;
+package taller.multimedia.backend.service.user;
 
 
 import java.time.LocalDateTime;
@@ -15,11 +15,12 @@ import org.springframework.stereotype.Service;
 import taller.multimedia.backend.dto.LoginRequest;
 import taller.multimedia.backend.dto.SignupRequest;
 import taller.multimedia.backend.dto.UserInfoResponse;
-import taller.multimedia.backend.model.Role;
-import taller.multimedia.backend.model.User;
-import taller.multimedia.backend.repository.UserRepository;
+import taller.multimedia.backend.model.user.Role;
+import taller.multimedia.backend.model.user.User;
+import taller.multimedia.backend.repository.user.UserRepository;
 import taller.multimedia.backend.security.jwt.JwtUtils;
 import taller.multimedia.backend.security.services.UserDetailsImpl;
+import taller.multimedia.backend.service.EmailService;
 
 @Service
 public class AuthService {

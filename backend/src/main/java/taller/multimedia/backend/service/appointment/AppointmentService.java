@@ -257,13 +257,17 @@ public class AppointmentService {
                 String langCode = appointment.getLanguage() != null ? appointment.getLanguage() : "es";
                 Locale locale = Locale.forLanguageTag(langCode);
 
+
                 emailService.sendAppointmentReminderEmail(appointment, locale);
 
                 appointment.setReminderSent(true);
                 appointmentRepository.save(appointment);
 
+
                 System.out.println("Correo de recordatorio enviado para la cita ID: " + appointment.getId());
             } catch (Exception e) {
+                System.err.println(
+                        "Error al enviar recordatorio para la cita " + appointment.getId() + ": " + e.getMessage());
                 System.err.println(
                         "Error al enviar recordatorio para la cita " + appointment.getId() + ": " + e.getMessage());
             }

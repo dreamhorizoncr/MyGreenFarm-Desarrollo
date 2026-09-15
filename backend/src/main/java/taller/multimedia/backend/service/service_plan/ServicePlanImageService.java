@@ -2,17 +2,18 @@ package taller.multimedia.backend.service.service_plan;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import taller.multimedia.backend.dto.service_plan.ServicePlanRequest;
 import taller.multimedia.backend.model.service_plans.ServicePlan;
 import taller.multimedia.backend.repository.service_plan.ServicePlanRepository;
 import taller.multimedia.backend.service.StorageService;
 
-import com.stripe.model.Price;
-import com.stripe.model.Product;
-
+import java.math.BigDecimal;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -21,16 +22,19 @@ public class ServicePlanImageService {
 
     private final ServicePlanRepository servicePlanRepository;
     private final StorageService storageService;
+    private final RestTemplate restTemplate;
 
-    @Value("${supabase.s3.buckets.service-plans}") // Asegúrate de tener esta propiedad en tu application.properties
+    @Value("${supabase.s3.buckets.service-plans}")
     private String servicePlansBucket;
+
+    @Value("${onvo.api.key}")
+    private String onvoApiKey;
+
+    @Value("${onvo.api.url}")
+    private String onvoApiUrl;
 
     @Transactional
     public ServicePlan createPlanWithImage(ServicePlanRequest dto, MultipartFile file) {
-        if (servicePlanRepository.existsByStripePriceId(dto.getStripePriceId())) {
-            throw new IllegalArgumentException("Ya existe un plan de servicio registrado con este precio de Stripe.");
-        }
-        
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("Debe seleccionar una imagen obligatoriamente.");
         }
@@ -43,60 +47,16 @@ public class ServicePlanImageService {
         String imageUrl = storageService.uploadFile(file, servicePlansBucket, "service_images");
 
         ServicePlan plan = new ServicePlan();
-        plan.setStripePriceId(dto.getStripePriceId());
+        plan.setGatewayPriceId(dto.getGatewayPriceId());
+        plan.setName(dto.getName());
+        plan.setDescription(dto.getDescription()); 
+        plan.setPrice(dto.getPrice());
+        plan.setType(dto.getType());
+        plan.setPaymentUrl(dto.getPaymentUrl());
         plan.setImageUrl(imageUrl);
         plan.setSchedule(dto.getSchedule());
         plan.setIncludes(dto.getIncludes());
         plan.setActive(true);
-
-        try {
-            // Consultar la información directamente a Stripe usando el ID del precio
-            Price stripePrice = Price.retrieve(dto.getStripePriceId());
-
-            if (stripePrice.getUnitAmount() != null) {
-                plan.setPrice(java.math.BigDecimal.valueOf(stripePrice.getUnitAmount())
-                        .divide(java.math.BigDecimal.valueOf(100)));
-            }
-
-            if (stripePrice.getProduct() != null) {
-                com.stripe.model.Product stripeProduct = com.stripe.model.Product.retrieve(stripePrice.getProduct());
-                plan.setName(stripeProduct.getName());
-                plan.setDescription(stripeProduct.getDescription());
-            }
-
-            if (stripePrice.getRecurring() != null) {
-                String interval = stripePrice.getRecurring().getInterval(); // "month", "year", "week", "day"
-                Long intervalCount = stripePrice.getRecurring().getIntervalCount(); // 1, 3, 6, etc.
-
-                if (intervalCount != null && intervalCount > 1) {
-                    // Ejemplo: "6_MONTHS" o "3_MONTHS"
-                    plan.setType(intervalCount + "_" + interval.toUpperCase() + "S");
-                } else if (interval != null) {
-                    // Mapeo limpio para los casos de 1 (month -> MONTHLY, year -> YEARLY, etc.)
-                    switch (interval.toLowerCase()) {
-                        case "month":
-                            plan.setType("MONTHLY");
-                            break;
-                        case "year":
-                            plan.setType("ANNUALLY"); // o YEARLY
-                            break;
-                        case "week":
-                            plan.setType("WEEKLY");
-                            break;
-                        case "day":
-                            plan.setType("DAILY");
-                            break;
-                        default:
-                            plan.setType(interval.toUpperCase());
-                    }
-                }
-            } else {
-                plan.setType("ONE_TIME");
-            }
-
-        } catch (com.stripe.exception.StripeException e) {
-            throw new IllegalArgumentException("No se pudo obtener la información de Stripe: " + e.getMessage());
-        }
 
         return servicePlanRepository.save(plan);
     }
@@ -106,7 +66,7 @@ public class ServicePlanImageService {
         ServicePlan existing = servicePlanRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Configuración de plan no encontrada con ID: " + id));
 
-        existing.setStripePriceId(dto.getStripePriceId());
+        existing.setGatewayPriceId(dto.getGatewayPriceId());
         existing.setSchedule(dto.getSchedule());
         existing.setIncludes(dto.getIncludes());
 

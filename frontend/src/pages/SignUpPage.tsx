@@ -12,6 +12,7 @@ import {
   validatePassword,
   validateRequired,
 } from "../utils/validators.ts";
+import { notify } from "../utils/notifications.ts";
 import i18n from "../i18n/index.ts";
 
 function SignUpPage() {
@@ -89,7 +90,21 @@ function SignUpPage() {
     )
       return;
 
-    submitRegister({ firstName, lastName, email, password, role });
+    submitRegister(
+      { firstName, lastName, email, password, role },
+      () => {
+        notify.success({
+          title: t("signup.successToastTitle"),
+          description: t("signup.success"),
+        });
+      },
+      () => {
+        notify.error({
+          title: t("signup.errorToastTitle"),
+          description: t("signup.errorToastDescription"),
+        });
+      },
+    );
   };
 
   const roleOptions = [
@@ -100,11 +115,12 @@ function SignUpPage() {
   return (
     <AuthLayout
       overtitle={t("signup.overtitle")}
+      closeTo="/login"
       rightPanelClassName="px-[15px] pb-[28px] pt-[65px] md:px-[55px] md:py-[45px]"
       contentClassName="max-w-[303px] md:max-w-[490px]"
     >
       {/* Título */}
-      <h2 className="mb-[32px] text-center font-heading text-[28px] leading-none text-heading md:mb-[45px] md:text-[42px]">
+      <h2 className="mb-[32px] text-left font-heading text-[28px] leading-none text-heading md:mb-[45px] md:text-[42px]">
         {t("signup.title")}
       </h2>
 

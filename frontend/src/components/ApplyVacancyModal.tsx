@@ -18,6 +18,7 @@ function ApplyVacancyModal({ vacancy, onSubmit, onClose }: ApplyVacancyModalProp
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const certificatesInputRef = useRef<HTMLInputElement>(null)
 
   const form = useVacancyApplicationForm(vacancy.id, onSubmit)
 
@@ -102,10 +103,14 @@ function ApplyVacancyModal({ vacancy, onSubmit, onClose }: ApplyVacancyModalProp
               id="apply-file-input"
             />
 
+            <p className="mb-2xs font-body text-[15px] font-semibold text-body-text">
+              {t('vacancies.resumeLabel')}
+            </p>
+
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex h-11 items-center gap-sm whitespace-nowrap rounded-full border border-neutral-200 bg-white px-md font-body text-[15px] font-semibold text-body-text hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+              className="flex h-11 w-fit items-center gap-sm whitespace-nowrap rounded-full border border-neutral-200 bg-white px-md font-body text-[15px] font-semibold text-body-text hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
             >
               <CloudUploadIcon size={18} aria-hidden="true" />
               <span>{t('vacancies.chooseFile')}</span>
@@ -116,6 +121,65 @@ function ApplyVacancyModal({ vacancy, onSubmit, onClose }: ApplyVacancyModalProp
             </p>
 
             {form.fileError && <p className="mt-2xs text-left font-body text-sm text-danger">{form.fileError}</p>}
+          </div>
+
+          <div className="flex flex-col">
+            <input
+              ref={certificatesInputRef}
+              type="file"
+              accept="application/pdf,image/png,image/jpeg"
+              multiple
+              onChange={(e) => form.handleCertificatesChange(e.target.files)}
+              className="hidden"
+              id="apply-certificates-input"
+            />
+
+            <p className="mb-2xs font-body text-[15px] font-semibold text-body-text">
+              {t('vacancies.certificates')}
+            </p>
+            <p className="mb-xs font-body text-[13px] text-neutral-500">
+              {t('vacancies.certificatesHint')}
+            </p>
+
+            <button
+              type="button"
+              onClick={() => certificatesInputRef.current?.click()}
+              className="flex h-11 w-fit items-center gap-sm whitespace-nowrap rounded-full border border-neutral-200 bg-white px-md font-body text-[15px] font-semibold text-body-text hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+            >
+              <CloudUploadIcon size={18} aria-hidden="true" />
+              <span>{t('vacancies.chooseCertificates')}</span>
+            </button>
+
+            {form.certificates.length === 0 ? (
+              <p className="mt-2xs font-body text-[13px] text-neutral-500">
+                {t('vacancies.noCertificatesChosen')}
+              </p>
+            ) : (
+              <ul className="mt-xs flex flex-col gap-2xs">
+                {form.certificates.map((certificateFile, index) => (
+                  <li
+                    key={`${certificateFile.name}-${index}`}
+                    className="flex items-center justify-between gap-sm rounded-lg border border-neutral-200 bg-white px-sm py-2xs"
+                  >
+                    <span className="min-w-0 truncate font-body text-[13px] text-body-text">
+                      {certificateFile.name}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => form.handleRemoveCertificate(index)}
+                      aria-label={t('vacancies.removeCertificate')}
+                      className="inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-transparent text-neutral-400 transition-colors hover:bg-(--grey-100) hover:text-danger focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+                    >
+                      <XIcon size={14} aria-hidden="true" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {form.certificatesError && (
+              <p className="mt-2xs text-left font-body text-sm text-danger">{form.certificatesError}</p>
+            )}
           </div>
 
           {form.submitError && <p className="text-left font-body text-sm text-danger">{form.submitError}</p>}

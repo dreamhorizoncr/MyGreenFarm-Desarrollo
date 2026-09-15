@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -125,13 +124,10 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/api/announcements").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/announcements/*/images").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/gallery/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/api/service-plans/stripe-plans").permitAll()
-            // Libera el GET del catálogo de servicios: el usuario final debe poder
-            // ver los planes disponibles sin necesidad de iniciar sesión
             .requestMatchers(HttpMethod.GET, "/api/service-plans").permitAll()
-            // Corrige la ruta del checkout de Stripe: el controller real es
-            // PaymentController (/api/payments), no /api/service-plans
+            .requestMatchers(HttpMethod.POST, "/api/service-plans/onvo").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/payments/create-checkout-session").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/service-plans/*/checkout").permitAll()
             .requestMatchers("/api/service-plans/webhooks/**").permitAll()
             .anyRequest().authenticated())
         .csrf(csrf -> csrf.disable())

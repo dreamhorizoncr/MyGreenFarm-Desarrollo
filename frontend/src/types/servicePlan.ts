@@ -2,7 +2,7 @@ export interface ServicePlan {
   id: string
   name: string
   description: string
-  stripePriceId: string
+  gatewayPriceId: string
   type: string
   imageUrl: string
   price: number
@@ -11,18 +11,17 @@ export interface ServicePlan {
   isActive: boolean
 }
 
-export interface StripeRawPlan {
-  id: string
-  priceId: string
+export interface OnvoRawPlan {
+  gatewayPriceId: string
   name: string
   description: string
   price: number
   currency: string
-  interval: string
+  type: string
 }
 
 export interface ServicePlanRequest {
   schedule: string
   includes: string
-  stripePriceId: string
+  gatewayPriceId: string
 }

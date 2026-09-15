@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +16,6 @@ import taller.multimedia.backend.repository.announcement.AnnouncementRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +28,7 @@ public class AnnouncementService {
     public AnnouncementResponse create(AnnouncementRequest dto) {
 
         if (announcementRepository.existsByTitle(dto.getTitle())) {
-        throw new IllegalArgumentException("Ya existe un anuncio con el título: " + dto.getTitle());
+            throw new IllegalArgumentException("Ya existe un anuncio con el título: " + dto.getTitle());
         }
 
         Announcement announcement = new Announcement();
@@ -42,14 +42,16 @@ public class AnnouncementService {
         return mapToResponse(saved, "es"); // Por defecto se guarda/crea en español
     }
 
-    // Este método recibe la inicial del idioma, ejemplo "en" y devuelve todos los anuncios en ese idioma
+    // Este método recibe la inicial del idioma, ejemplo "en" y devuelve todos los
+    // anuncios en ese idioma
     @Transactional(readOnly = true)
     public Page<AnnouncementResponse> getAll(String lang, Pageable pageable) {
         return announcementRepository.findAll(pageable)
                 .map(announcement -> mapToResponse(announcement, lang));
     }
 
-    // Método auxiliar para transformar la entidad al DTO de respuesta y aplicar traducción si es necesario
+    // Método auxiliar para transformar la entidad al DTO de respuesta y aplicar
+    // traducción si es necesario
     private AnnouncementResponse mapToResponse(Announcement announcement, String lang) {
         AnnouncementResponse response = new AnnouncementResponse();
         response.setId(announcement.getId());
@@ -57,8 +59,9 @@ public class AnnouncementService {
         response.setEventDate(announcement.getEventDate());
         response.setLocation(announcement.getLocation());
 
-        // Aquí es donde se inyecta la lógica: si 'lang' es 'en' o 'fr', 
-        // busca el texto traducido en la tabla de traducciones, si es 'es', usa el original
+        // Aquí es donde se inyecta la lógica: si 'lang' es 'en' o 'fr',
+        // busca el texto traducido en la tabla de traducciones, si es 'es', usa el
+        // original
         if ("en".equals(lang) || "fr".equals(lang)) {
             response.setTitle(announcement.getTitle()); // Placeholder temporal
             response.setContent(announcement.getContent()); // Placeholder temporal
@@ -77,7 +80,7 @@ public class AnnouncementService {
                 .orElseThrow(() -> new RuntimeException("Anuncio no encontrado con ID: " + id));
 
         if (announcementRepository.existsByTitle(dto.getTitle())) {
-        throw new IllegalArgumentException("Ya existe un anuncio con el título: " + dto.getTitle());
+            throw new IllegalArgumentException("Ya existe un anuncio con el título: " + dto.getTitle());
         }
 
         // 2. Actualiza los campos con los nuevos datos
@@ -97,7 +100,8 @@ public class AnnouncementService {
         Announcement announcement = announcementRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Anuncio no encontrado con ID: " + id));
 
-        // 1. Borrar primero los archivos físicos del bucket usando el servicio de imágenes
+        // 1. Borrar primero los archivos físicos del bucket usando el servicio de
+        // imágenes
         announcementImageService.deleteAllImagesByAnnouncement(id);
 
         // 2. Borrar el anuncio (y por cascada se limpian los registros de la BD)
@@ -107,8 +111,32 @@ public class AnnouncementService {
     @Transactional(readOnly = true)
     public Page<AnnouncementResponse> getAllActive(String lang, Pageable pageable) {
         LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
-        
+
         return announcementRepository.findByCreatedAtAfter(thirtyDaysAgo, pageable)
                 .map(announcement -> mapToResponse(announcement, lang));
+    }
+
+    @Scheduled(cron = "0 0 3 * * ?")
+    @Transactional
+    public void cleanupExpiredAnnouncements() {
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+        
+        // 1. Buscar todos los anuncios creados hace más de 30 días
+        List<Announcement> expiredAnnouncements = announcementRepository.findByCreatedAtBefore(thirtyDaysAgo);
+
+        if (expiredAnnouncements.isEmpty()) {
+            return; // Nada que limpiar
+        }
+
+        // 2. Eliminar uno por uno utilizando tu lógica existente de borrado total
+        for (Announcement announcement : expiredAnnouncements) {
+            try {
+                delete(announcement.getId()); // Esto borra buckets, imágenes, traducciones y el anuncio
+            } catch (Exception e) {
+                // Manejar o registrar el error si un archivo específico falla, 
+                // para evitar que detenga el ciclo completo de limpieza.
+                System.err.println("Error al eliminar anuncio expirado ID " + announcement.getId() + ": " + e.getMessage());
+            }
+        }
     }
 }

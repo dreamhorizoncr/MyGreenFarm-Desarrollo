@@ -6,8 +6,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException; 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import taller.multimedia.backend.model.User;
-import taller.multimedia.backend.repository.UserRepository;
+import taller.multimedia.backend.model.user.User;
+import taller.multimedia.backend.repository.user.UserRepository;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {

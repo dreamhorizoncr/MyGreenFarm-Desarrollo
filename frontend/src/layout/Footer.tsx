@@ -27,7 +27,7 @@ function Footer() {
         aria-hidden="true"
         className="relative z-10 -mt-500 block h-auto w-full bg-bg-page"
       />
-      <div className="mx-auto flex w-full max-w-[var(--container-max-width)] flex-col gap-1500 px-1100 py-1500 text-center md:text-left">
+      <div className="flex w-full flex-col gap-1500 px-[var(--scale-1100)] py-1500 text-center md:px-[var(--scale-1600)] md:text-left">
         <div className="grid w-full gap-xl md:grid-cols-[1.5fr_1fr] md:items-start">
           <div className="flex flex-col items-center gap-md md:items-start">
             <Brand />

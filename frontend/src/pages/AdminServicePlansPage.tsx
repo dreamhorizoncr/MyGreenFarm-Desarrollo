@@ -6,37 +6,11 @@ import Button from '../components/ui/Button.tsx'
 import CreateServicePlanModal from '../components/CreateServicePlanModal.tsx'
 import { useServicePlanAdmin } from '../hooks/useServicePlanAdmin.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
-
-const PLAN_TYPE_LABELS: Record<string, string> = {
-  ONE_TIME: 'services.oneTime',
-  MONTHLY: 'services.monthly',
-  ANNUALLY: 'services.annual',
-}
-
-const INTERVAL_UNITS: Record<string, string> = {
-  MONTHS: 'services.months',
-  YEARS: 'services.years',
-  WEEKS: 'services.weeks',
-  DAYS: 'services.days',
-}
-
-function getPlanTypeLabel(type: string, t: (key: string) => string): string {
-  const exact = PLAN_TYPE_LABELS[type]
-  if (exact) return t(exact)
-
-  const match = type.match(/^(\d+)_(.+)$/)
-  if (match) {
-    const count = match[1]
-    const unitKey = INTERVAL_UNITS[match[2]]
-    if (unitKey) return `${count} ${t(unitKey)}`
-  }
-
-  return type
-}
+import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 
 function AdminServicePlansPage() {
   const { t } = useTranslation()
-  const { plans, stripePlans, loading, error, fetchAll, createPlan, updatePlan, deletePlan } = useServicePlanAdmin()
+  const { plans, onvoPlans, loading, error, fetchAll, createPlan, updatePlan, deletePlan } = useServicePlanAdmin()
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [editingPlan, setEditingPlan] = useState<ServicePlan | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -181,7 +155,7 @@ function AdminServicePlansPage() {
 
       {(showCreateModal || editingPlan) && (
         <CreateServicePlanModal
-          stripePlans={stripePlans}
+          onvoPlans={onvoPlans}
           existingPlans={plans}
           planToEdit={editingPlan}
           onSave={async (data, file) => { //Esto se cambió por mientrs
