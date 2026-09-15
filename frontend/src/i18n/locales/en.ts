@@ -227,6 +227,9 @@ export default {
     loading: 'Signing up...',
     success: 'Account created! You can now sign in.',
     goToLogin: 'Sign in',
+    successToastTitle: 'Account created',
+    errorToastTitle: "We couldn't create your account",
+    errorToastDescription: 'Check your details and try again.',
   },
   forgotPassword: {
     overtitle: 'Welcome',
