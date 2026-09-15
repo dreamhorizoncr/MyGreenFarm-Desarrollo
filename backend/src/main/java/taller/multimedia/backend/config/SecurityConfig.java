@@ -51,12 +51,12 @@ public class SecurityConfig {
   }
 
   // Create the authentication provider
-  @Bean
-  public DaoAuthenticationProvider authenticationProvider() {
-    DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
-    authProvider.setPasswordEncoder(passwordEncoder());
-    return authProvider;
-  }
+  // @Bean
+  // public DaoAuthenticationProvider authenticationProvider() {
+  //   DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
+  //   authProvider.setPasswordEncoder(passwordEncoder());
+  //   return authProvider;
+  // }
 
   // Create the authentication manager
   @Bean

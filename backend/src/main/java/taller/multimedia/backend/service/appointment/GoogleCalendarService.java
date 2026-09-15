@@ -70,6 +70,7 @@ public class GoogleCalendarService {
                 .build();
     }
 
+    
     public List<String> getAvailableSlots(LocalDate date) throws Exception {
         Calendar service = getCalendarService();
 
