@@ -240,6 +240,9 @@ export default {
     success: "L'e-mail de récupération a été envoyé avec succès. Veuillez vérifier votre boîte de réception.",
     backToLogin: 'Retour à la connexion',
     backToProfile: 'Retour à mon profil',
+    successToastTitle: 'E-mail envoyé',
+    errorToastTitle: "Impossible d'envoyer l'e-mail",
+    errorToastDescription: "Vérifiez l'adresse e-mail et réessayez.",
   },
   resetPassword: {
     overtitle: 'Bienvenue',

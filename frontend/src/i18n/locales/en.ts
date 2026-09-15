@@ -241,6 +241,9 @@ export default {
     success: 'The recovery email was sent successfully. Please check your inbox.',
     backToLogin: 'Back to sign in',
     backToProfile: 'Back to My profile',
+    successToastTitle: 'Email sent',
+    errorToastTitle: "We couldn't send the email",
+    errorToastDescription: 'Check the email address and try again.',
   },
   resetPassword: {
     overtitle: 'Welcome',
