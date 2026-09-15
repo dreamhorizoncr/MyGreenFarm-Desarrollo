@@ -243,6 +243,9 @@ export default {
     success: 'El correo de recuperación fue enviado correctamente. Por favor revisa tu bandeja de entrada.',
     backToLogin: 'Regresar al inicio de sesión',
     backToProfile: 'Regresar a Mi perfil',
+    successToastTitle: 'Correo enviado',
+    errorToastTitle: 'No pudimos enviar el correo',
+    errorToastDescription: 'Verifica el correo ingresado e intenta de nuevo.',
   },
   resetPassword: {
     overtitle: 'Bienvenido',

@@ -7,6 +7,7 @@ import AuthButton from "../components/ui/AuthButton.tsx";
 import AuthLayout from "../layout/AuthLayout.tsx";
 import { useForgotPassword } from "../hooks/useForgotPassword.ts";
 import { validateEmail } from "../utils/validators.ts";
+import { notify } from "../utils/notifications.ts";
 import i18n from "../i18n/index.ts";
 
 function ForgotPasswordPage() {
@@ -35,7 +36,21 @@ function ForgotPasswordPage() {
 
     if (emailErrorMessage) return;
 
-    await submitForgotPassword({ email });
+    await submitForgotPassword(
+      { email },
+      () => {
+        notify.success({
+          title: t("forgotPassword.successToastTitle"),
+          description: t("forgotPassword.success"),
+        });
+      },
+      () => {
+        notify.error({
+          title: t("forgotPassword.errorToastTitle"),
+          description: t("forgotPassword.errorToastDescription"),
+        });
+      },
+    );
   };
 
   return (
