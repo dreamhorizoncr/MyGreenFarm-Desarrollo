@@ -49,7 +49,7 @@ export const curriculumService = {
   },
 
   async submitApplication(data: ApplicationInput): Promise<Curriculum> {
-    const fileUrl = await fileToDataUrl(data.file)
+    const fileUrl = data.file ? await fileToDataUrl(data.file) : null
     const certificateUrls = await Promise.all(data.certificates.map((certificate) => fileToDataUrl(certificate)))
     await delay(600)
 
@@ -59,7 +59,7 @@ export const curriculumService = {
       applicantName: data.applicantName,
       applicantEmail: data.applicantEmail,
       applicantPhone: data.applicantPhone,
-      fileName: data.file.name,
+      fileName: data.file?.name ?? null,
       fileUrl,
       certificates: data.certificates.map((certificate, index) => ({
         id: crypto.randomUUID(),

@@ -8,6 +8,7 @@ export const SEED_VACANCIES: Vacancy[] = [
     isOpen: true,
     createdAt: '2026-08-20T09:00:00.000Z',
     filledByApplicationId: null,
+    requiredFields: ['applicantPhone', 'file', 'certificates'],
   },
   {
     id: 'vac-2',
@@ -16,6 +17,7 @@ export const SEED_VACANCIES: Vacancy[] = [
     isOpen: true,
     createdAt: '2026-08-25T09:00:00.000Z',
     filledByApplicationId: null,
+    requiredFields: ['applicantPhone', 'file'],
   },
   {
     id: 'vac-3',
@@ -24,6 +26,7 @@ export const SEED_VACANCIES: Vacancy[] = [
     isOpen: false,
     createdAt: '2026-07-10T09:00:00.000Z',
     filledByApplicationId: 'cv-6',
+    requiredFields: ['applicantPhone', 'file', 'certificates'],
   },
   {
     id: 'vac-4',
@@ -32,6 +35,7 @@ export const SEED_VACANCIES: Vacancy[] = [
     isOpen: true,
     createdAt: '2026-09-02T09:00:00.000Z',
     filledByApplicationId: null,
+    requiredFields: ['file', 'certificates'],
   },
   {
     id: 'vac-5',
@@ -40,6 +44,7 @@ export const SEED_VACANCIES: Vacancy[] = [
     isOpen: true,
     createdAt: '2026-09-06T09:00:00.000Z',
     filledByApplicationId: null,
+    requiredFields: ['applicantPhone', 'file', 'certificates'],
   },
   {
     id: 'vac-6',
@@ -48,5 +53,6 @@ export const SEED_VACANCIES: Vacancy[] = [
     isOpen: false,
     createdAt: '2026-06-18T09:00:00.000Z',
     filledByApplicationId: null,
+    requiredFields: ['applicantPhone'],
   },
 ]

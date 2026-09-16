@@ -31,7 +31,7 @@ import { createMockStore } from '../utils/mockStore.ts'
 // async deleteVacancy(id: string): Promise<void> {
 //   await apiClient.delete(`/vacancies/${id}`)
 // }
-const store = createMockStore<Vacancy>('mgf_mock_vacancies_v3', SEED_VACANCIES)
+const store = createMockStore<Vacancy>('mgf_mock_vacancies_v4', SEED_VACANCIES)
 
 let mockVacancies: Vacancy[] = store.load()
 
@@ -52,6 +52,7 @@ export const vacancyService = {
       isOpen: true,
       createdAt: new Date().toISOString(),
       filledByApplicationId: null,
+      requiredFields: data.requiredFields,
     }
     mockVacancies.unshift(vacancy)
     store.save(mockVacancies)

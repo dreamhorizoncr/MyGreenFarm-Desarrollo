@@ -6,12 +6,14 @@ import TextField from './ui/TextField.tsx'
 import useDismiss from '../hooks/useDismiss.ts'
 import { validateRequired } from '../utils/validators.ts'
 import { getErrorMessage } from '../utils/error.ts'
-import type { VacancyInput } from '../types/vacancy.ts'
+import type { OptionalApplicationField, VacancyInput } from '../types/vacancy.ts'
 
 interface CreateVacancyModalProps {
   onCreate: (data: VacancyInput) => Promise<void>
   onClose: () => void
 }
+
+const ALL_OPTIONAL_FIELDS: OptionalApplicationField[] = ['applicantPhone', 'file', 'certificates']
 
 function CreateVacancyModal({ onCreate, onClose }: CreateVacancyModalProps) {
   const { t } = useTranslation()
@@ -19,10 +21,17 @@ function CreateVacancyModal({ onCreate, onClose }: CreateVacancyModalProps) {
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+  const [requiredFields, setRequiredFields] = useState<OptionalApplicationField[]>(ALL_OPTIONAL_FIELDS)
   const [titleError, setTitleError] = useState<string | null>(null)
   const [descriptionError, setDescriptionError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+
+  const toggleField = (field: OptionalApplicationField) => {
+    setRequiredFields((prev) =>
+      prev.includes(field) ? prev.filter((current) => current !== field) : prev.concat(field),
+    )
+  }
 
   useDismiss({
     ref: overlayRef,
@@ -43,7 +52,7 @@ function CreateVacancyModal({ onCreate, onClose }: CreateVacancyModalProps) {
     setSaving(true)
     setSaveError(null)
     try {
-      await onCreate({ title: title.trim(), description: description.trim() })
+      await onCreate({ title: title.trim(), description: description.trim(), requiredFields })
       onClose()
     } catch (err) {
       setSaveError(getErrorMessage(err))
@@ -113,6 +122,47 @@ function CreateVacancyModal({ onCreate, onClose }: CreateVacancyModalProps) {
               <p className="mt-2xs text-left font-body text-sm text-danger">{descriptionError}</p>
             )}
           </div>
+
+          <fieldset>
+            <legend className="mb-2xs font-body text-base font-normal leading-[1.6] text-body-text">
+              {t('vacancies.formFieldsSectionTitle')}
+            </legend>
+            <p className="mb-sm font-body text-[13px] text-neutral-500">
+              {t('vacancies.formFieldsSectionHint')}
+            </p>
+
+            <div className="flex flex-col gap-xs">
+              <label className="flex cursor-pointer items-center gap-sm rounded-lg border border-neutral-200 px-md py-sm font-body text-[15px] text-body-text">
+                <input
+                  type="checkbox"
+                  checked={requiredFields.includes('applicantPhone')}
+                  onChange={() => toggleField('applicantPhone')}
+                  className="size-4 accent-green-500"
+                />
+                {t('vacancies.applicantPhone')}
+              </label>
+
+              <label className="flex cursor-pointer items-center gap-sm rounded-lg border border-neutral-200 px-md py-sm font-body text-[15px] text-body-text">
+                <input
+                  type="checkbox"
+                  checked={requiredFields.includes('file')}
+                  onChange={() => toggleField('file')}
+                  className="size-4 accent-green-500"
+                />
+                {t('vacancies.resumeLabel')}
+              </label>
+
+              <label className="flex cursor-pointer items-center gap-sm rounded-lg border border-neutral-200 px-md py-sm font-body text-[15px] text-body-text">
+                <input
+                  type="checkbox"
+                  checked={requiredFields.includes('certificates')}
+                  onChange={() => toggleField('certificates')}
+                  className="size-4 accent-green-500"
+                />
+                {t('vacancies.certificates')}
+              </label>
+            </div>
+          </fieldset>
 
           {saveError && <p className="text-left font-body text-sm text-danger">{saveError}</p>}
 
