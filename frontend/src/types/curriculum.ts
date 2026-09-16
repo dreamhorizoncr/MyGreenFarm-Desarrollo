@@ -9,8 +9,8 @@ export interface ApplicationInput {
   vacancyId: string
   applicantName: string
   applicantEmail: string
-  applicantPhone: string
-  file: File
+  applicantPhone: string | null
+  file: File | null
   certificates: File[]
 }
 
@@ -25,9 +25,9 @@ export interface Curriculum {
   vacancyId: string
   applicantName: string
   applicantEmail: string
-  applicantPhone: string
-  fileName: string
-  fileUrl: string
+  applicantPhone: string | null
+  fileName: string | null
+  fileUrl: string | null
   certificates: CertificateFile[]
   submittedAt: string
   status: CurriculumStatus
