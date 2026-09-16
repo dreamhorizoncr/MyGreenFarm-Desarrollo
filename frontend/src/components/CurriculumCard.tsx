@@ -81,17 +81,21 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
 
       {isExpanded && (
         <div className="mt-md border-t border-neutral-200 pt-md">
-          <p className="m-0 mb-sm font-body text-sm text-neutral-500">
-            {application.applicantPhone}
-          </p>
+          {application.applicantPhone && (
+            <p className="m-0 mb-sm font-body text-sm text-neutral-500">
+              {application.applicantPhone}
+            </p>
+          )}
 
-          <div className="h-105 w-full overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50">
-            <iframe
-              src={application.fileUrl}
-              title={`${t('admin.curriculums.view')} - ${application.applicantName}`}
-              className="h-full w-full"
-            />
-          </div>
+          {application.fileUrl && (
+            <div className="h-105 w-full overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50">
+              <iframe
+                src={application.fileUrl}
+                title={`${t('admin.curriculums.view')} - ${application.applicantName}`}
+                className="h-full w-full"
+              />
+            </div>
+          )}
 
           <CertificatesCarousel certificates={application.certificates} />
 
