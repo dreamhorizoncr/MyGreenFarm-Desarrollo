@@ -280,6 +280,8 @@ export default {
   },
   common: {
     error: 'An error has occurred',
+    timeout: 'The connection is taking too long. Please try again.',
+    calendarAvailabilityError: 'Could not load availability. Please try again.',
     loading: 'Loading...',
     noUsers: 'No registered users',
     scrollToTop: 'Back to top',

@@ -279,6 +279,8 @@ export default {
   },
   common: {
     error: 'Une erreur est survenue',
+    timeout: 'La connexion prend trop de temps. Veuillez réessayer.',
+    calendarAvailabilityError: "Impossible de charger les disponibilités. Veuillez réessayer.",
     loading: 'Chargement...',
     noUsers: 'Aucun utilisateur enregistré',
     scrollToTop: 'Haut de page',

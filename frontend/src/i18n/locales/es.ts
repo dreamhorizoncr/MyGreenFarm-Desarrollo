@@ -282,6 +282,8 @@ export default {
   },
   common: {
     error: 'Ha ocurrido un error',
+    timeout: 'La conexión está tardando demasiado. Inténtalo de nuevo.',
+    calendarAvailabilityError: 'No se pudo cargar la disponibilidad. Inténtalo de nuevo.',
     loading: 'Cargando...',
     noUsers: 'No hay usuarios registrados',
     scrollToTop: 'Volver arriba',
