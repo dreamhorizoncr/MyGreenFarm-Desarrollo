@@ -17,6 +17,7 @@ import taller.multimedia.backend.dto.gallery.GalleryRequest;
 import taller.multimedia.backend.dto.gallery.GalleryResponse;
 import taller.multimedia.backend.service.gallery.GalleryService;
 
+import java.util.List;
 import java.util.UUID;
 
 @Validated
@@ -50,6 +51,11 @@ public class GalleryController {
     @GetMapping("/{id}")
     public ResponseEntity<GalleryResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(galleryService.getById(id));
+    }
+
+    @GetMapping("/featured")
+    public ResponseEntity<List<GalleryResponse>> getFeaturedGalleries() {
+        return ResponseEntity.ok(galleryService.getFeaturedGalleries());
     }
 
     @PutMapping("/{id}")

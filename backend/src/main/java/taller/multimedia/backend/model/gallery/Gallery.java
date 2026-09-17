@@ -51,4 +51,7 @@ public class Gallery {
     @OneToMany(mappedBy = "gallery", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @BatchSize(size = 20)
     private List<GalleryImages> galleryImages = new ArrayList<>();
+
+    @Column(nullable = false)
+    private Boolean featured = false;
 }
