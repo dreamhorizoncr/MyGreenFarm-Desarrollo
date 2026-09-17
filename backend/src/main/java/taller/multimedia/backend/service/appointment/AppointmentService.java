@@ -93,18 +93,7 @@ public class AppointmentService {
         return savedAppointment;
     }
 
-    // private String resolverLangCode(String languageFromDto) {
-    //     if (languageFromDto == null || languageFromDto.isBlank()) {
-    //         return "es";
-    //     }
-
-    //     String normalizado = languageFromDto.toLowerCase().trim();
-    //     if (normalizado.startsWith("fr") && IDIOMAS_VALIDOS.contains("fr")) return "fr";
-    //     if (normalizado.startsWith("en") && IDIOMAS_VALIDOS.contains("en")) return "en";
-    //     if (normalizado.startsWith("es") && IDIOMAS_VALIDOS.contains("es")) return "es";
-    //     return "es";
-    // }
-
+  //se cambió esto 
     private String resolverLangCode(String languageFromDto) {
     if (languageFromDto == null || languageFromDto.isBlank()) {
         log.warn("El idioma recibido es nulo o vacío. Usando por defecto: 'es'");
