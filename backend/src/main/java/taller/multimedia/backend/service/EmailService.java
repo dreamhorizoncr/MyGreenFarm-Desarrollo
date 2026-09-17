@@ -1,10 +1,9 @@
 package taller.multimedia.backend.service;
 
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
 
+import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -12,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
@@ -24,12 +21,9 @@ public class EmailService {
 
     private static final Logger log = LoggerFactory.getLogger(EmailService.class);
 
-    private final JavaMailSender mailSender;
     private final TemplateEngine templateEngine;
     private final MessageSource messageSource;
-
-    @Value("${mail.from}")
-    private String fromAddress;
+    private final BrevoEmailService brevoEmailService;
 
     @Value("${mail.support}")
     private String supportEmail;
@@ -40,10 +34,11 @@ public class EmailService {
     @Value("${daycare.mail.admin}")
     private String correoAdmin;
 
-    public EmailService(JavaMailSender mailSender, TemplateEngine templateEngine, MessageSource messageSource) {
-        this.mailSender = mailSender;
+    public EmailService(TemplateEngine templateEngine, MessageSource messageSource,
+            BrevoEmailService brevoEmailService) {
         this.templateEngine = templateEngine;
         this.messageSource = messageSource;
+        this.brevoEmailService = brevoEmailService;
     }
 
     @Async
@@ -62,17 +57,11 @@ public class EmailService {
 
     private void sendEmail(String toEmail, String subject, String html) {
         try {
-            MimeMessage mensaje = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(mensaje, true, "UTF-8");
-
-            helper.setFrom(fromAddress);
-            helper.setTo(toEmail);
-            helper.setSubject(subject);
-            helper.setText(html, true); // true = es HTML
-
-            mailSender.send(mensaje);
+            long start = System.currentTimeMillis();
+            brevoEmailService.sendEmail(toEmail, toEmail, subject, html);
             log.info("Correo '{}' enviado a: {}", subject, toEmail);
-        } catch (MessagingException e) {
+            log.info("Enviar correo tardó: {} ms", System.currentTimeMillis() - start);
+        } catch (IOException e) {
             log.error("Error enviando correo a {}: {}", toEmail, e.getMessage(), e);
             throw new RuntimeException("No se pudo enviar el correo", e);
         }
@@ -175,11 +164,6 @@ public class EmailService {
 
             String htmlContent = templateEngine.process("email/appointment-reminder", context);
 
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-            helper.setFrom(fromAddress);
-            helper.setTo(appointment.getParentEmail());
             String subject;
             String lang = locale.getLanguage();
 
@@ -191,11 +175,7 @@ public class EmailService {
                 subject = "Recordatorio: Tu cita en My Green Farm es mañana";
             }
 
-            helper.setSubject(subject);
-
-            helper.setText(htmlContent, true);
-
-            mailSender.send(message);
+            sendEmail(appointment.getParentEmail(), subject, htmlContent);
             System.out.println("Correo de recordatorio enviado exitosamente a: " + appointment.getParentEmail());
 
         } catch (Exception e) {

@@ -8,6 +8,7 @@ import com.google.api.services.calendar.model.*;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
 
+import lombok.extern.slf4j.Slf4j;
 import taller.multimedia.backend.model.appointment.Appointment;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j 
 @Service
 public class GoogleCalendarService {
 
@@ -50,7 +52,9 @@ public class GoogleCalendarService {
             credentialsStream = new ByteArrayInputStream(credentialsJson.getBytes(StandardCharsets.UTF_8));
         } else if (credentialsResource != null && credentialsResource.exists()) {
             // Carga desde el archivo local (para desarrollo)
+            long start = System.currentTimeMillis();
             credentialsStream = credentialsResource.getInputStream();
+            log.info("Cargar calendario tardó: {} ms", System.currentTimeMillis() - start);
         } else {
             throw new FileNotFoundException("No se encontraron credenciales de Google Calendar ni en variable de entorno ni en archivo local.");
         }

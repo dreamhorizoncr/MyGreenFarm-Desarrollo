@@ -3,13 +3,18 @@ import { useTranslation } from 'react-i18next'
 import { validateEmail, validateRequired } from '../utils/validators.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
+import type { Vacancy } from '../types/vacancy.ts'
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
 const MAX_CERTIFICATES = 5
 const CERTIFICATE_TYPES = ['application/pdf', 'image/png', 'image/jpeg']
 
-export function useVacancyApplicationForm(vacancyId: string, onSubmit: (data: ApplicationInput) => Promise<void>) {
+export function useVacancyApplicationForm(vacancy: Vacancy, onSubmit: (data: ApplicationInput) => Promise<void>) {
   const { t } = useTranslation()
+
+  const showPhone = vacancy.requiredFields.includes('applicantPhone')
+  const showFile = vacancy.requiredFields.includes('file')
+  const showCertificates = vacancy.requiredFields.includes('certificates')
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -94,26 +99,28 @@ export function useVacancyApplicationForm(vacancyId: string, onSubmit: (data: Ap
   const handleSubmit = async (): Promise<boolean> => {
     const nameErrorMessage = validateRequired(name, t('vacancies.applicantName'), t)
     const emailErrorMessage = validateRequired(email, t('vacancies.applicantEmail'), t) ?? validateEmail(email, t)
-    const phoneErrorMessage = validateRequired(phone, t('vacancies.applicantPhone'), t)
-    const fileErrorMessage = file ? null : t('vacancies.fileRequired')
+    const phoneErrorMessage = showPhone ? validateRequired(phone, t('vacancies.applicantPhone'), t) : null
+    const fileErrorMessage = showFile && !file ? t('vacancies.fileRequired') : null
+    const certificatesErrorMessage = showCertificates && certificates.length === 0 ? t('vacancies.certificatesRequired') : null
 
     setNameError(nameErrorMessage)
     setEmailError(emailErrorMessage)
     setPhoneError(phoneErrorMessage)
     setFileError(fileErrorMessage)
+    setCertificatesError(certificatesErrorMessage)
 
-    if (nameErrorMessage || emailErrorMessage || phoneErrorMessage || fileErrorMessage || !file) return false
+    if (nameErrorMessage || emailErrorMessage || phoneErrorMessage || fileErrorMessage || certificatesErrorMessage) return false
 
     setSubmitting(true)
     setSubmitError(null)
     try {
       await onSubmit({
-        vacancyId,
+        vacancyId: vacancy.id,
         applicantName: name.trim(),
         applicantEmail: email.trim(),
-        applicantPhone: phone.trim(),
-        file,
-        certificates,
+        applicantPhone: showPhone ? phone.trim() : null,
+        file: showFile ? file : null,
+        certificates: showCertificates ? certificates : [],
       })
       return true
     } catch (err) {
@@ -137,6 +144,9 @@ export function useVacancyApplicationForm(vacancyId: string, onSubmit: (data: Ap
     certificatesError,
     submitting,
     submitError,
+    showPhone,
+    showFile,
+    showCertificates,
     handleNameChange,
     handleEmailChange,
     handlePhoneChange,

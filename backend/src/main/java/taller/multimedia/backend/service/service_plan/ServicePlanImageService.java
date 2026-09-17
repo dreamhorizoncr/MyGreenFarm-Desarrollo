@@ -1,6 +1,7 @@
 package taller.multimedia.backend.service.service_plan;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ServicePlanImageService {
 
     private final ServicePlanRepository servicePlanRepository;
@@ -44,7 +46,9 @@ public class ServicePlanImageService {
             throw new IllegalArgumentException("Formato no permitido. Solo se permiten PNG, JPG, JPEG, SVG.");
         }
 
+        long uploadStart = System.currentTimeMillis();
         String imageUrl = storageService.uploadFile(file, servicePlansBucket, "service_images");
+        log.info("Subir imagen de plan de servicio tardó: {} ms", System.currentTimeMillis() - uploadStart);
 
         ServicePlan plan = new ServicePlan();
         plan.setGatewayPriceId(dto.getGatewayPriceId());
@@ -82,7 +86,9 @@ public class ServicePlanImageService {
                 String oldPath = extractPathFromUrl(existing.getImageUrl(), servicePlansBucket);
                 if (oldPath != null) {
                     try {
+                        long deleteStart = System.currentTimeMillis();
                         storageService.deleteFile(servicePlansBucket, oldPath);
+                        log.info("Eliminar imagen anterior del plan tardó: {} ms", System.currentTimeMillis() - deleteStart);
                     } catch (Exception e) {
                         System.err.println("No se pudo borrar la imagen anterior del bucket: " + e.getMessage());
                     }
@@ -90,7 +96,9 @@ public class ServicePlanImageService {
             }
 
             // Subir la nueva imagen
+            long uploadStart = System.currentTimeMillis();
             String newImageUrl = storageService.uploadFile(file, servicePlansBucket, "service_images");
+            log.info("Subir nueva imagen de plan de servicio tardó: {} ms", System.currentTimeMillis() - uploadStart);
             existing.setImageUrl(newImageUrl);
         }
 
@@ -107,7 +115,9 @@ public class ServicePlanImageService {
             String filePath = extractPathFromUrl(plan.getImageUrl(), servicePlansBucket);
             if (filePath != null && !filePath.isEmpty()) {
                 try {
+                    long deleteStart = System.currentTimeMillis();
                     storageService.deleteFile(servicePlansBucket, filePath);
+                    log.info("Eliminar imagen de plan de servicio tardó: {} ms", System.currentTimeMillis() - deleteStart);
                 } catch (Exception e) {
                     System.err.println("No se pudo borrar el archivo físico del bucket: " + e.getMessage());
                 }
