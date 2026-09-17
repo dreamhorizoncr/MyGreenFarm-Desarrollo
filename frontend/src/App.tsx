@@ -29,6 +29,7 @@ import Footer from './layout/Footer.tsx'
 import ScrollToTopButton from './components/ScrollToTopButton.tsx'
 import { ProfileAvatarProvider } from './contexts/ProfileAvatarContext.tsx'
 import { useSessionExpiredNotice } from './hooks/useSessionExpiredNotice.ts'
+import { ErrorBoundary } from './components/ErrorBoundary.tsx'
 
 function SessionWatcher() {
   useSessionExpiredNotice()
@@ -37,6 +38,7 @@ function SessionWatcher() {
 
 function App() {
   return (
+  <ErrorBoundary>
     <BrowserRouter>
       <Toaster position="top-right" offset={{ top: 76 }} />
       <SessionWatcher />
@@ -81,6 +83,7 @@ function App() {
         <ScrollToTopButton />
       </div>
     </BrowserRouter>
+  </ErrorBoundary>
   )
 }
 
