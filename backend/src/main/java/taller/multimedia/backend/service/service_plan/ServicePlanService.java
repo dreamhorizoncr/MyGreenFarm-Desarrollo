@@ -1,6 +1,7 @@
 package taller.multimedia.backend.service.service_plan;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ServicePlanService {
 
     private final ServicePlanRepository servicePlanRepository;
@@ -104,8 +106,10 @@ public class ServicePlanService {
         try {
             // 1. Obtener productos y mapearlos por ID
             Map<String, Map<String, Object>> prodMap = new HashMap<>();
+            long productsRequestStart = System.currentTimeMillis();
             ResponseEntity<Map> prodRes = restTemplate.exchange(onvoApiUrl + "/products", HttpMethod.GET, entity,
                     Map.class);
+            log.info("Consultar productos de Onvo tardó: {} ms", System.currentTimeMillis() - productsRequestStart);
             if (prodRes.getBody() != null && prodRes.getBody().get("data") != null) {
                 for (Map<String, Object> p : (List<Map<String, Object>>) prodRes.getBody().get("data")) {
                     prodMap.put((String) p.get("id"), p);
@@ -113,8 +117,10 @@ public class ServicePlanService {
             }
 
             // 2. Obtener precios y unificarlos
+                long pricesRequestStart = System.currentTimeMillis();
             ResponseEntity<Map> priceRes = restTemplate.exchange(onvoApiUrl + "/prices", HttpMethod.GET, entity,
                     Map.class);
+                log.info("Consultar precios de Onvo tardó: {} ms", System.currentTimeMillis() - pricesRequestStart);
             if (priceRes.getBody() != null && priceRes.getBody().get("data") != null) {
                 for (Map<String, Object> item : (List<Map<String, Object>>) priceRes.getBody().get("data")) {
                     Map<String, Object> info = new HashMap<>();
@@ -221,7 +227,9 @@ public class ServicePlanService {
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
         try {
+            long checkoutRequestStart = System.currentTimeMillis();
             ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+            log.info("Generar checkout de Onvo tardó: {} ms", System.currentTimeMillis() - checkoutRequestStart);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 Map<String, Object> body = response.getBody();

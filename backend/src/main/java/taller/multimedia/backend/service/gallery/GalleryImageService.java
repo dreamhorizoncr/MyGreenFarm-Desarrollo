@@ -1,6 +1,7 @@
 package taller.multimedia.backend.service.gallery;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GalleryImageService {
 
     private final GalleryImageRepository imageRepository;
@@ -53,7 +55,9 @@ public class GalleryImageService {
                 throw new IllegalArgumentException("Formato no permitido en uno de los archivos. Solo PNG, JPG, JPEG, SVG.");
             }
 
+            long uploadStart = System.currentTimeMillis();
             String fileUrl = storageService.uploadFile(file, galleryBucket, FOLDER);
+            log.info("Subir imagen de galería tardó: {} ms", System.currentTimeMillis() - uploadStart);
 
             GalleryImages image = new GalleryImages();
             image.setGallery(gallery);
@@ -88,7 +92,9 @@ public class GalleryImageService {
         String filePath = extractPathFromUrl(image.getFileUrl(), galleryBucket);
 
         if (filePath != null && !filePath.isEmpty()) {
+            long deleteStart = System.currentTimeMillis();
             storageService.deleteFile(galleryBucket, filePath);
+            log.info("Eliminar imagen de galería tardó: {} ms", System.currentTimeMillis() - deleteStart);
         }
 
         imageRepository.delete(image);
@@ -102,7 +108,9 @@ public class GalleryImageService {
             String filePath = extractPathFromUrl(image.getFileUrl(), galleryBucket);
             if (filePath != null && !filePath.isEmpty()) {
                 try {
+                    long deleteStart = System.currentTimeMillis();
                     storageService.deleteFile(galleryBucket, filePath);
+                    log.info("Eliminar imagen de galería tardó: {} ms", System.currentTimeMillis() - deleteStart);
                 } catch (Exception e) {
                     System.err.println("No se pudo borrar el archivo físico del bucket: " + e.getMessage());
                 }
