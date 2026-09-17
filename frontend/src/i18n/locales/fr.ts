@@ -84,7 +84,7 @@ export default {
     },
     join: {
       title1: 'Rejoignez',
-      title2: 'notre ferme',
+      title2: 'notre révolution éducative',
       description:
         'Recevez dans votre boîte mail les dernières actualités, activités et moments spéciaux de nos petits chez Green Farm.',
       emailPlaceholder: 'Votre adresse e-mail',
@@ -201,7 +201,7 @@ export default {
       contact: 'Contact',
       confirm: 'Confirmer',
       childTitle: "Informations de l'enfant",
-      identityTitle: "Informations d'identité",
+      identityTitle: "Informations sur le légal tuteur",
       contactTitle: 'Informations de contact',
       confirmTitle: 'Confirmer le rendez-vous',
       heroTitle: 'Presque terminé !',
@@ -511,7 +511,7 @@ export default {
   services: {
     title: 'Nos Services',
     description: 'Découvrez nos conçus pour le soin et l\'apprentissage de votre enfant.',
-    subscribe: 'S\'abonner',
+    subscribe: 'Acquérir',
     monthly: 'Mensuel',
     annual: 'Annuel',
     oneTime: 'Ponctuel',

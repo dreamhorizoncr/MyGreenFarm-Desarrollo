@@ -278,7 +278,7 @@ function BookingPage() {
             type="button"
             aria-pressed={effectiveTime === slot.start}
             onClick={() => setTime(slot.start)}
-            className={`${selectableClassName(effectiveTime === slot.start)} w-full`}
+            className={`${selectableClassName(effectiveTime === slot.start)} inline-flex h-11 w-full items-center justify-center whitespace-nowrap`}
           >
             {slot.start}
           </button>
@@ -337,7 +337,7 @@ function BookingPage() {
                 type="button"
                 aria-pressed={effectiveDay === date}
                 onClick={() => selectDay(date)}
-                className={`${selectableClassName(effectiveDay === date)} w-full`}
+                className={`${selectableClassName(effectiveDay === date)} inline-flex h-11 w-full items-center justify-center whitespace-nowrap text-xs sm:text-sm`}
               >
                 {dayLabel(date)}
               </button>
@@ -590,7 +590,10 @@ function BookingPage() {
                 const isActive = step === stepNum
                 const isCompleted = step > stepNum
                 return (
-                  <div key={s.key} className="flex min-w-0 flex-1 items-center gap-sm">
+                  <div
+                    key={s.key}
+                    className={`flex min-w-0 items-center gap-sm ${i < STEPS.length - 1 ? 'flex-1' : 'shrink-0'}`}
+                  >
                     <div
                       className={`flex size-8 shrink-0 items-center justify-center rounded-full font-body text-sm font-semibold transition-colors ${
                         isCompleted
