@@ -17,4 +17,8 @@ public interface GalleryRepository extends JpaRepository<Gallery, UUID> {
     Page<Gallery> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     Page<Gallery> findByCategoryGalleryIdOrderByCreatedAtDesc(UUID categoryId, Pageable pageable);
+
+    List<Gallery> findByFeaturedTrue();
+
+    long countByFeaturedTrue();
 }
