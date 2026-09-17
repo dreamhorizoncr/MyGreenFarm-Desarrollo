@@ -1,6 +1,7 @@
 package taller.multimedia.backend.service.appointment;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
@@ -10,6 +11,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 
 import lombok.extern.slf4j.Slf4j;
 import taller.multimedia.backend.model.appointment.Appointment;
+import taller.multimedia.backend.service.CalendarServiceException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -31,7 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j 
+import javax.naming.ServiceUnavailableException;
+
+@Slf4j
 @Service
 public class GoogleCalendarService {
 
@@ -43,10 +47,10 @@ public class GoogleCalendarService {
 
     private Calendar getCalendarService() throws IOException, GeneralSecurityException {
         InputStream credentialsStream;
-    
+
         // 1. Verificar si existe la variable de entorno en Render
         String credentialsJson = System.getenv("GOOGLE_CREDENTIALS_JSON");
-        
+
         if (credentialsJson != null && !credentialsJson.trim().isEmpty()) {
             // Carga desde la variable de entorno (para producción en Render)
             credentialsStream = new ByteArrayInputStream(credentialsJson.getBytes(StandardCharsets.UTF_8));
@@ -56,50 +60,63 @@ public class GoogleCalendarService {
             credentialsStream = credentialsResource.getInputStream();
             log.info("Cargar calendario tardó: {} ms", System.currentTimeMillis() - start);
         } else {
-            throw new FileNotFoundException("No se encontraron credenciales de Google Calendar ni en variable de entorno ni en archivo local.");
+            throw new FileNotFoundException(
+                    "No se encontraron credenciales de Google Calendar ni en variable de entorno ni en archivo local.");
         }
-        
+
         // Carga las credenciales desde el archivo JSON de la cuenta de servicio
         GoogleCredentials credentials = GoogleCredentials
                 .fromStream(credentialsStream)
                 .createScoped(List.of("https://www.googleapis.com/auth/calendar"));
 
+        HttpRequestInitializer requestInitializer = request -> {
+            new HttpCredentialsAdapter(credentials).initialize(request);
+            request.setConnectTimeout(5_000);
+            request.setReadTimeout(15_000);
+            request.setWriteTimeout(15_000);
+        };
+
         return new Calendar.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
                 GsonFactory.getDefaultInstance(),
-                new HttpCredentialsAdapter(credentials))
+                requestInitializer)
                 .setApplicationName("My Green Farm")
                 .setRootUrl("https://www.googleapis.com/")
                 .setServicePath("calendar/v3/")
                 .build();
     }
 
-    
-    public List<String> getAvailableSlots(LocalDate date) throws Exception {
-        Calendar service = getCalendarService();
+    public List<String> getAvailableSlots(LocalDate date) {
+        try {
+            Calendar service = getCalendarService();
 
-        // Definir el rango del día a consultar
-        String timeMin = date.atTime(7, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toString();
-        String timeMax = date.atTime(17, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toString();
+            String timeMin = date.atTime(7, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toString();
+            String timeMax = date.atTime(17, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toString();
 
-        FreeBusyRequest requestBody = new FreeBusyRequest();
-        requestBody.setTimeMin(new com.google.api.client.util.DateTime(timeMin));
-        requestBody.setTimeMax(new com.google.api.client.util.DateTime(timeMax));
+            FreeBusyRequest requestBody = new FreeBusyRequest();
+            requestBody.setTimeMin(new com.google.api.client.util.DateTime(timeMin));
+            requestBody.setTimeMax(new com.google.api.client.util.DateTime(timeMax));
 
-        FreeBusyRequestItem item = new FreeBusyRequestItem();
-        item.setId(calendarId);
-        requestBody.setItems(List.of(item));
+            FreeBusyRequestItem item = new FreeBusyRequestItem();
+            item.setId(calendarId);
+            requestBody.setItems(List.of(item));
 
-        FreeBusyResponse response = service.freebusy().query(requestBody).execute();
+            FreeBusyResponse response = service.freebusy().query(requestBody).execute();
 
-        if (response.getCalendars() == null || response.getCalendars().get(calendarId) == null) {
-            throw new RuntimeException("No se pudo acceder al calendario con ID: " + calendarId);
+            if (response.getCalendars() == null || response.getCalendars().get(calendarId) == null) {
+                log.error("No se pudo acceder al calendario con ID: {}", calendarId);
+                throw new CalendarServiceException("No se pudo cargar la disponibilidad en este momento");
+            }
+
+            List<TimePeriod> busyPeriods = response.getCalendars().get(calendarId).getBusy();
+            return calculateFreeSlots(date, busyPeriods);
+
+        } catch (CalendarServiceException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error al consultar disponibilidad para la fecha {}", date, e);
+            throw new CalendarServiceException("No se pudo cargar la disponibilidad en este momento");
         }
-
-        List<TimePeriod> busyPeriods = response.getCalendars().get(calendarId).getBusy();
-
-        // Lógica para calcular los espacios libres de 1 hora entre las 7:00 y las 17:00
-        return calculateFreeSlots(date, busyPeriods);
     }
 
     private List<String> calculateFreeSlots(LocalDate date, List<TimePeriod> busyPeriods) {
@@ -144,46 +161,49 @@ public class GoogleCalendarService {
         return freeSlots;
     }
 
-    public Map<String, List<String>> getAvailableSlotsForWeek(LocalDate referenceDate) throws Exception {
-        Calendar service = getCalendarService();
+    public Map<String, List<String>> getAvailableSlotsForWeek(LocalDate referenceDate) {
+        try {
+            Calendar service = getCalendarService();
 
-        // Encontrar el Lunes de esa semana y el Viernes
-        LocalDate monday = referenceDate
-                .with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
-        LocalDate friday = referenceDate
-                .with(java.time.temporal.TemporalAdjusters.nextOrSame(java.time.DayOfWeek.FRIDAY));
+            LocalDate monday = referenceDate
+                    .with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+            LocalDate friday = referenceDate
+                    .with(java.time.temporal.TemporalAdjusters.nextOrSame(java.time.DayOfWeek.FRIDAY));
 
-        // Rango de toda la semana laboral (Lunes 07:00 a Viernes 17:00)
-        String timeMin = monday.atTime(7, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toString();
-        String timeMax = friday.atTime(17, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toString();
+            String timeMin = monday.atTime(7, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toString();
+            String timeMax = friday.atTime(17, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toString();
 
-        FreeBusyRequest requestBody = new FreeBusyRequest();
-        requestBody.setTimeMin(new com.google.api.client.util.DateTime(timeMin));
-        requestBody.setTimeMax(new com.google.api.client.util.DateTime(timeMax));
+            FreeBusyRequest requestBody = new FreeBusyRequest();
+            requestBody.setTimeMin(new com.google.api.client.util.DateTime(timeMin));
+            requestBody.setTimeMax(new com.google.api.client.util.DateTime(timeMax));
 
-        FreeBusyRequestItem item = new FreeBusyRequestItem();
-        item.setId(calendarId);
-        requestBody.setItems(List.of(item));
+            FreeBusyRequestItem item = new FreeBusyRequestItem();
+            item.setId(calendarId);
+            requestBody.setItems(List.of(item));
 
-        FreeBusyResponse response = service.freebusy().query(requestBody).execute();
+            FreeBusyResponse response = service.freebusy().query(requestBody).execute();
 
-        if (response.getCalendars() == null || response.getCalendars().get(calendarId) == null) {
-            throw new RuntimeException("No se pudo acceder al calendario con ID: " + calendarId);
+            if (response.getCalendars() == null || response.getCalendars().get(calendarId) == null) {
+                log.error("No se pudo acceder al calendario con ID: {}", calendarId);
+                throw new CalendarServiceException("No se pudo cargar la disponibilidad en este momento");
+            }
+
+            List<TimePeriod> busyPeriods = response.getCalendars().get(calendarId).getBusy();
+
+            Map<String, List<String>> weeklySlots = new java.util.LinkedHashMap<>();
+            LocalDate current = monday;
+            while (!current.isAfter(friday)) {
+                weeklySlots.put(current.toString(), calculateFreeSlots(current, busyPeriods));
+                current = current.plusDays(1);
+            }
+            return weeklySlots;
+
+        } catch (CalendarServiceException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error al consultar disponibilidad semanal para {}", referenceDate, e);
+            throw new CalendarServiceException("No se pudo cargar la disponibilidad en este momento");
         }
-
-        List<TimePeriod> busyPeriods = response.getCalendars().get(calendarId).getBusy();
-
-        // Construir el mapa de respuesta por día (Lunes a Viernes)
-        Map<String, List<String>> weeklySlots = new java.util.LinkedHashMap<>();
-        LocalDate current = monday;
-
-        while (!current.isAfter(friday)) {
-            List<String> dailySlots = calculateFreeSlots(current, busyPeriods);
-            weeklySlots.put(current.toString(), dailySlots);
-            current = current.plusDays(1);
-        }
-
-        return weeklySlots;
     }
 
     public void addAppointmentToCalendar(Appointment appointment) {
@@ -209,7 +229,7 @@ public class GoogleCalendarService {
             // Ejecutamos la inserción y guardamos el evento devuelto por Google
             Event createdEvent = service.events().insert(calendarId, event).execute();
 
-            // Guardamos el ID único de Google en la cita 
+            // Guardamos el ID único de Google en la cita
             appointment.setGoogleEventId(createdEvent.getId());
 
         } catch (Exception e) {
@@ -262,23 +282,24 @@ public class GoogleCalendarService {
         try {
             // 1. Verificar si la cita tiene un ID de Google válido
             if (appointment.getGoogleEventId() == null || appointment.getGoogleEventId().trim().isEmpty()) {
-                System.out.println("Advertencia: La cita ID " + appointment.getId() + " no tiene un googleEventId asociado. Se intentará crear como nuevo evento.");
-                addAppointmentToCalendar(appointment);
+                log.warn("La cita ID {} no tiene un googleEventId asociado. Se intentará crear como nuevo evento.",
+                        appointment.getId());
                 return;
             }
 
             Calendar service = getCalendarService();
-            
+
             // 2. Intentar obtener el evento existente
             Event event;
             try {
                 event = service.events().get(calendarId, appointment.getGoogleEventId()).execute();
             } catch (Exception e) {
-                System.out.println("El evento con ID de Google '" + appointment.getGoogleEventId() + "' no fue encontrado. Se creará uno nuevo.");
+                System.out.println("El evento con ID de Google '" + appointment.getGoogleEventId()
+                        + "' no fue encontrado. Se creará uno nuevo.");
                 addAppointmentToCalendar(appointment);
                 return;
             }
-            
+
             // 3. Calcular fechas en formato ISO con la zona horaria correcta
             LocalDateTime newEndDateTime = newStartDateTime.plusMinutes(59);
             String startIso = newStartDateTime.atZone(ZoneId.systemDefault()).toInstant().toString();
@@ -286,18 +307,20 @@ public class GoogleCalendarService {
 
             event.setStart(new EventDateTime().setDateTime(new DateTime(startIso)));
             event.setEnd(new EventDateTime().setDateTime(new DateTime(endIso)));
-            
+
             // 4. Actualizar descripción
-            event.setDescription("Cita Reprogramada\nPadre/Madre: " + appointment.getParentName() + 
-                                    "\nTel: " + appointment.getParentPhone() + 
-                                    "\nEmail: " + appointment.getParentEmail());
+            event.setDescription("Cita Reprogramada\nPadre/Madre: " + appointment.getParentName() +
+                    "\nTel: " + appointment.getParentPhone() +
+                    "\nEmail: " + appointment.getParentEmail());
 
             // 5. Ejecutar la actualización en Google Calendar
             service.events().update(calendarId, appointment.getGoogleEventId(), event).execute();
-            System.out.println("Evento de Google Calendar actualizado exitosamente para la cita ID: " + appointment.getId());
-            
+            System.out.println(
+                    "Evento de Google Calendar actualizado exitosamente para la cita ID: " + appointment.getId());
+
         } catch (Exception e) {
-            System.err.println("Error crítico al sincronizar la reprogramación en Google Calendar: " + e.getMessage());
+            log.error("Error crítico al sincronizar la reprogramación en Google Calendar para la cita ID {}",
+                    appointment.getId(), e);
             throw new RuntimeException("Error al actualizar la cita en Google Calendar", e);
         }
     }

@@ -3,6 +3,7 @@ package taller.multimedia.backend.service.appointment;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,6 +25,8 @@ import taller.multimedia.backend.service.EmailService;
 @Slf4j 
 @Service
 public class AppointmentService {
+
+    private static final Set<String> IDIOMAS_VALIDOS = Set.of("es", "en", "fr");
 
     private final CalendarSyncAsyncService calendarSyncAsyncService;
 
@@ -68,7 +71,8 @@ public class AppointmentService {
         appointment.setParentPhone(formattedPhone);
         appointment.setParentOccupation(dto.getParentOccupation());
         appointment.setChildName(dto.getChildName());
-        appointment.setLanguage(dto.getLanguage());
+        String langCode = resolverLangCode(dto.getLanguage());
+        appointment.setLanguage(langCode);
         appointment.setAppointmentDate(dto.getAppointmentDate());
         appointment.setParentNotes(dto.getParentNotes());
 
@@ -81,13 +85,24 @@ public class AppointmentService {
 
         calendarSyncAsyncService.addAppointmentAsync(savedAppointment.getId());
 
-        Locale locale = dto.getLanguage() != null
-                ? Locale.forLanguageTag(dto.getLanguage())
-                : Locale.forLanguageTag("es");
+        log.info("Idioma recibido del DTO: '{}', langCode resuelto: '{}'", dto.getLanguage(), langCode);
+        Locale locale = Locale.forLanguageTag(langCode);
 
         emailService.sendAppointmentPendingEmail(savedAppointment, locale);
         emailService.sendAdminNewAppointmentAlert(savedAppointment);
         return savedAppointment;
+    }
+
+    private String resolverLangCode(String languageFromDto) {
+        if (languageFromDto == null || languageFromDto.isBlank()) {
+            return "es";
+        }
+
+        String normalizado = languageFromDto.toLowerCase().trim();
+        if (normalizado.startsWith("fr") && IDIOMAS_VALIDOS.contains("fr")) return "fr";
+        if (normalizado.startsWith("en") && IDIOMAS_VALIDOS.contains("en")) return "en";
+        if (normalizado.startsWith("es") && IDIOMAS_VALIDOS.contains("es")) return "es";
+        return "es";
     }
 
     private void validateParentIdentification(String idType, String parentIdentification) {
