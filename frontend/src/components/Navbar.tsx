@@ -43,7 +43,7 @@ function Navbar() {
     <header className="relative z-40 h-16 border-b border-neutral-200 bg-bg-page">
       {/* Desktop nav */}
       <nav className="hidden h-full w-full lg:flex">
-        <div className="flex h-full w-full items-center px-md pr-[var(--scale-1100)]">
+        <div className="flex h-full w-full items-center px-[var(--scale-1100)]">
           <Brand />
 
           <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-7 font-link">
