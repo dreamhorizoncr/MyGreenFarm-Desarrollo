@@ -85,11 +85,11 @@ export default {
     },
     join: {
       title1: 'Join our',
-      title2: 'farm',
+      title2: 'educational revolution',
       description:
         'Get the latest news, activities and special moments of our little ones at Green Farm delivered to your inbox.',
       emailPlaceholder: 'Your email address',
-      subscribe: 'Subscribe',
+    subscribe: 'Acquire',
     },
   },
   footer: {
@@ -202,7 +202,7 @@ export default {
       contact: 'Contact',
       confirm: 'Confirm',
       childTitle: "Child's information",
-      identityTitle: 'Identity information',
+      identityTitle: 'Legal guardian information',
       contactTitle: 'Contact information',
       confirmTitle: 'Confirm appointment',
       heroTitle: 'Almost done!',

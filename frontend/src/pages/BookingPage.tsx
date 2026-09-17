@@ -590,7 +590,10 @@ function BookingPage() {
                 const isActive = step === stepNum
                 const isCompleted = step > stepNum
                 return (
-                  <div key={s.key} className="flex min-w-0 flex-1 items-center gap-sm">
+                  <div
+                    key={s.key}
+                    className={`flex min-w-0 items-center gap-sm ${i < STEPS.length - 1 ? 'flex-1' : 'shrink-0'}`}
+                  >
                     <div
                       className={`flex size-8 shrink-0 items-center justify-center rounded-full font-body text-sm font-semibold transition-colors ${
                         isCompleted
