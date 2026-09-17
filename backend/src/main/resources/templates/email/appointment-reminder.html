@@ -32,8 +32,8 @@
                             <p style="margin:0; color:#DFF3E6; font-size:12px; letter-spacing:3px; text-transform:uppercase;">
                                 My Green Farm
                             </p>
-                            <h1 th:text="#{email.header.daycare}" style="margin:6px 0 0; color:#FFFFFF; font-size:24px; font-weight:normal;">
-                                Guardería
+                            <h1 th:text="#{email.header.educationalcenter}" style="margin:6px 0 0; color:#FFFFFF; font-size:24px; font-weight:normal;">
+                                Centro Educativo
                             </h1>
                         </td>
                     </tr>
@@ -53,7 +53,7 @@
                             <!-- Saludo e introducción -->
                             <p style="color:#3F4A3B; font-size:15.5px; line-height:1.75; margin:0 0 16px;">
                                 <span th:text="#{email.appointment.reminder.body1}">Hola</span> <strong th:text="${parentName}" style="color:#015C39;"></strong>,
-                                <span th:text="#{email.appointment.reminder.body2}">te recordamos que mañana tienes una cita agendada en nuestra guardería para</span> 
+                                <span th:text="#{email.appointment.reminder.body2}">te recordamos que mañana tienes una cita agendada en nuestra Centro Educativo para</span> 
                                 <strong th:text="${childName}" style="color:#015C39;"></strong>.
                             </p>
 
@@ -109,7 +109,7 @@
 
                 <!-- Sello inferior -->
                 <p style="color:#8A9686; font-size:11px; margin-top:18px; font-family:Georgia, serif;">
-                    My Green Farm — <span th:text="#{email.header.daycare}">Guardería</span>
+                    My Green Farm — <span th:text="#{email.header.educationalcenter}">Centro Educativo</span>
                 </p>
             </td>
         </tr>
