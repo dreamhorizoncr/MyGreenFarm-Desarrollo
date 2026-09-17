@@ -14,12 +14,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import taller.multimedia.backend.dto.appointment.AppointmentRequest;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
 import taller.multimedia.backend.repository.appointment.AppointmentRepository;
 import taller.multimedia.backend.service.EmailService;
 
+@Slf4j 
 @Service
 public class AppointmentService {
 
@@ -72,7 +74,9 @@ public class AppointmentService {
 
         // Nace obligatoriamente en PENDING
         appointment.setStatus(AppointmentStatus.PENDING);
+        long start = System.currentTimeMillis();
         Appointment savedAppointment = appointmentRepository.save(appointment);
+        log.info("Guardar cita tardó: {} ms", System.currentTimeMillis() - start);
         appointmentRepository.flush();
 
         calendarSyncAsyncService.addAppointmentAsync(savedAppointment.getId());

@@ -57,8 +57,10 @@ public class EmailService {
 
     private void sendEmail(String toEmail, String subject, String html) {
         try {
+            long start = System.currentTimeMillis();
             brevoEmailService.sendEmail(toEmail, toEmail, subject, html);
             log.info("Correo '{}' enviado a: {}", subject, toEmail);
+            log.info("Enviar correo tardó: {} ms", System.currentTimeMillis() - start);
         } catch (IOException e) {
             log.error("Error enviando correo a {}: {}", toEmail, e.getMessage(), e);
             throw new RuntimeException("No se pudo enviar el correo", e);
