@@ -93,17 +93,22 @@ public class AppointmentService {
         return savedAppointment;
     }
 
+  //se cambió esto 
     private String resolverLangCode(String languageFromDto) {
-        if (languageFromDto == null || languageFromDto.isBlank()) {
-            return "es";
-        }
-
-        String normalizado = languageFromDto.toLowerCase().trim();
-        if (normalizado.startsWith("fr") && IDIOMAS_VALIDOS.contains("fr")) return "fr";
-        if (normalizado.startsWith("en") && IDIOMAS_VALIDOS.contains("en")) return "en";
-        if (normalizado.startsWith("es") && IDIOMAS_VALIDOS.contains("es")) return "es";
+    if (languageFromDto == null || languageFromDto.isBlank()) {
+        log.warn("El idioma recibido es nulo o vacío. Usando por defecto: 'es'");
         return "es";
     }
+
+    String normalizado = languageFromDto.toLowerCase().trim();
+    
+    if (normalizado.contains("fr")) return "fr";
+    if (normalizado.contains("en")) return "en";
+    if (normalizado.contains("es")) return "es";
+
+    log.warn("Idioma no reconocido '{}'. Usando por defecto: 'es'", languageFromDto);
+    return "es";
+}
 
     private void validateParentIdentification(String idType, String parentIdentification) {
         if (parentIdentification == null || parentIdentification.trim().isEmpty()) {
