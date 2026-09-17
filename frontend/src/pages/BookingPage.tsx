@@ -278,7 +278,7 @@ function BookingPage() {
             type="button"
             aria-pressed={effectiveTime === slot.start}
             onClick={() => setTime(slot.start)}
-            className={`${selectableClassName(effectiveTime === slot.start)} w-full`}
+            className={`${selectableClassName(effectiveTime === slot.start)} inline-flex h-11 w-full items-center justify-center whitespace-nowrap`}
           >
             {slot.start}
           </button>
@@ -337,7 +337,7 @@ function BookingPage() {
                 type="button"
                 aria-pressed={effectiveDay === date}
                 onClick={() => selectDay(date)}
-                className={`${selectableClassName(effectiveDay === date)} w-full`}
+                className={`${selectableClassName(effectiveDay === date)} inline-flex h-11 w-full items-center justify-center whitespace-nowrap text-xs sm:text-sm`}
               >
                 {dayLabel(date)}
               </button>
