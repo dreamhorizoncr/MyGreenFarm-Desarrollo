@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useEffect, useState } from 'react'
@@ -9,7 +10,7 @@ import { galleryService } from '../../services/gallery.ts'
 import type { Gallery } from '../../types/gallery.ts'
 
 function MultimediaSection() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const [featuredGalleries, setFeaturedGalleries] = useState<Gallery[]>([])
   const [loading, setLoading] = useState(true)
