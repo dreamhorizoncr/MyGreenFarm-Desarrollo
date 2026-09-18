@@ -5,8 +5,16 @@ import Container from '../components/home/Container.tsx'
 import ApplyVacancyModal from '../components/ApplyVacancyModal.tsx'
 import { useVacancies } from '../hooks/useVacancies.ts'
 import { useCurriculums } from '../hooks/useCurriculums.ts'
-import type { Vacancy } from '../types/vacancy.ts'
+import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
+
+interface ApplyTarget {
+  title: string
+  vacancyId: string | null
+  requiredFields: OptionalApplicationField[]
+}
+
+const SPONTANEOUS_REQUIRED_FIELDS: OptionalApplicationField[] = ['file']
 
 function VacanciesPage() {
   const { t } = useTranslation()
@@ -14,7 +22,7 @@ function VacanciesPage() {
   const { vacancies, loading, error, fetchVacancies } = useVacancies()
   const { submitApplication } = useCurriculums()
 
-  const [vacancyToApply, setVacancyToApply] = useState<Vacancy | null>(null)
+  const [applyTarget, setApplyTarget] = useState<ApplyTarget | null>(null)
   const [applicationSent, setApplicationSent] = useState(false)
 
   useEffect(() => {
@@ -27,6 +35,14 @@ function VacanciesPage() {
   const handleApplySubmit = async (data: ApplicationInput) => {
     await submitApplication(data)
     setApplicationSent(true)
+  }
+
+  const openSpontaneousApply = () => {
+    setApplyTarget({
+      title: t('vacancies.spontaneousApplyTitle'),
+      vacancyId: null,
+      requiredFields: SPONTANEOUS_REQUIRED_FIELDS,
+    })
   }
 
   return (
@@ -51,9 +67,28 @@ function VacanciesPage() {
 
           {!loading && !error && (
             openVacancies.length === 0 ? (
-              <p className="m-0 p-xl text-center font-body text-base text-neutral-500">
-                {t('vacancies.noVacancies')}
-              </p>
+              <div className="mx-auto max-w-140 rounded-2xl border border-neutral-200 bg-white p-xl text-center">
+                <p className="m-0 font-body text-base text-neutral-500">
+                  {t('vacancies.noVacancies')}
+                </p>
+
+                <h2 className="mt-lg font-heading text-xl font-bold leading-snug text-heading">
+                  {t('vacancies.spontaneousTitle')}
+                </h2>
+                <p className="mt-sm font-body text-[15px] text-body-text">
+                  {t('vacancies.spontaneousDescription')}
+                </p>
+
+                <div className="mt-lg flex justify-center">
+                  <button
+                    type="button"
+                    onClick={openSpontaneousApply}
+                    className="inline-flex h-11 items-center whitespace-nowrap rounded-full bg-green-500 px-lg font-body text-sm font-semibold text-white hover:opacity-90"
+                  >
+                    {t('vacancies.spontaneousCta')}
+                  </button>
+                </div>
+              </div>
             ) : (
               <div className="grid grid-cols-1 gap-md md:grid-cols-2">
                 {openVacancies.map((vacancy) => (
@@ -69,7 +104,7 @@ function VacanciesPage() {
                     <div className="mt-md flex justify-end">
                       <button
                         type="button"
-                        onClick={() => setVacancyToApply(vacancy)}
+                        onClick={() => setApplyTarget({ title: vacancy.title, vacancyId: vacancy.id, requiredFields: vacancy.requiredFields })}
                         className="inline-flex h-11 items-center whitespace-nowrap rounded-full bg-green-500 px-lg font-body text-sm font-semibold text-white hover:opacity-90"
                       >
                         {t('vacancies.apply')}
@@ -83,11 +118,13 @@ function VacanciesPage() {
         </Container>
       </main>
 
-      {vacancyToApply && (
+      {applyTarget && (
         <ApplyVacancyModal
-          vacancy={vacancyToApply}
+          title={applyTarget.title}
+          vacancyId={applyTarget.vacancyId}
+          requiredFields={applyTarget.requiredFields}
           onSubmit={handleApplySubmit}
-          onClose={() => setVacancyToApply(null)}
+          onClose={() => setApplyTarget(null)}
         />
       )}
 
