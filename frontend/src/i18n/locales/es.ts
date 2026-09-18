@@ -410,6 +410,9 @@ export default {
       deleteYear: 'Eliminar año',
       deleteYearConfirmFieldLabel: 'Escribí «{{year}}» para confirmar',
       deleteYearConfirmPlaceholder: 'Año',
+      featured: 'Destacado',
+      toggleFeatured: 'Marcar como destacado',
+      maxFeaturedReached: 'Máximo 3 álbumes destacados. Desmarcá uno primero.',
     },
     servicios: {
       title: 'Planes de Servicio',

@@ -1,16 +1,35 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { useEffect, useState } from 'react'
 import ninos2 from '../../assets/imgs/ninos2.svg'
 import nubeWhiteDown from '../../assets/imgs/nubeWhiteDown.svg'
 import Container from '../../components/home/Container.tsx'
 import MultimediaCard from '../../components/home/MultimediaCard.tsx'
-import { useGallery } from '../../hooks/useGallery.ts'
+import { galleryService } from '../../services/gallery.ts'
+import type { Gallery } from '../../types/gallery.ts'
 
 function MultimediaSection() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { allGalleries, loading, error } = useGallery()
-  const featuredGalleries = allGalleries.slice(0, 3)
+  const [featuredGalleries, setFeaturedGalleries] = useState<Gallery[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const data = await galleryService.getFeatured()
+        setFeaturedGalleries(data)
+      } catch {
+        setError(t('common.error'))
+      } finally {
+        setLoading(false)
+      }
+    }
+    void fetchFeatured()
+  }, [t])
 
   return (
     <section id="multimedia" className="relative flex min-h-[100svh] w-full flex-col bg-pink-400">
