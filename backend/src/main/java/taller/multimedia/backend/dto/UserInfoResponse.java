@@ -1,11 +1,11 @@
 package taller.multimedia.backend.dto;
 
-import lombok.Data;
+import lombok.Getter;
 
 import java.util.UUID;
 
 // DTO class for user information response payload
-@Data
+@Getter 
 public class UserInfoResponse {
     private UUID id;
     private String email;
