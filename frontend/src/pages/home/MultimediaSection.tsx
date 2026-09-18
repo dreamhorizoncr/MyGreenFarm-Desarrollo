@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import ninos2 from '../../assets/imgs/ninos2.svg'
@@ -7,10 +8,15 @@ import MultimediaCard from '../../components/home/MultimediaCard.tsx'
 import { useGallery } from '../../hooks/useGallery.ts'
 
 function MultimediaSection() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
-  const { allGalleries, loading, error } = useGallery()
+  const { allGalleries, loading, error, fetchGallery } = useGallery()
   const featuredGalleries = allGalleries.slice(0, 3)
+
+  useEffect(() => {
+    void fetchGallery(i18n.language)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i18n.language])
 
   return (
     <section id="multimedia" className="relative flex min-h-[100svh] w-full flex-col bg-pink-400">

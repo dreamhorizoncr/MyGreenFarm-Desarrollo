@@ -2,6 +2,8 @@ import type { ApplicationInput, Curriculum, CurriculumStatus } from '../types/cu
 import { SEED_CURRICULUMS } from '../data/curriculums.seed.ts'
 import { createMockStore } from '../utils/mockStore.ts'
 import { fileToDataUrl } from '../utils/file.ts'
+import { apiClient } from './api.ts'
+import type { TranslationItem } from './announcement.ts'
 
 // No existe endpoint real todavía. Cuando lo haya, el envío del PDF se
 // hace con FormData, igual que uploadImages en services/announcement.ts,
@@ -90,4 +92,12 @@ export const curriculumService = {
     mockCurriculums = mockCurriculums.filter((c) => c.id !== id)
     store.save(mockCurriculums)
   },
+  async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {
+          const response = await apiClient.post<Record<string, string>>('/translations/batch', {
+              entityType,
+              targetLanguage,
+              items,
+          })
+          return response.data
+      },
 }
