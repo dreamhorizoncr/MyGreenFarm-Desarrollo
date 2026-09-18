@@ -30,7 +30,7 @@ function BookingSuccessModal({ onClose }: BookingSuccessModalProps) {
       onClick={handleOverlayClick}
     >
       <div
-        className="relative w-[min(620px,92vw)] max-h-[90vh] overflow-y-auto rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
+        className="relative w-[min(620px,calc(100vw-48px))] max-h-[90vh] overflow-y-auto rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
         role="dialog"
         aria-modal="true"
         aria-label={t('booking.modalTitle')}

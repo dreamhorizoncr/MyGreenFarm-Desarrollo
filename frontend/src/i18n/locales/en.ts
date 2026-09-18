@@ -407,6 +407,9 @@ export default {
       deleteYear: 'Delete year',
       deleteYearConfirmFieldLabel: 'Type «{{year}}» to confirm',
       deleteYearConfirmPlaceholder: 'Year',
+      featured: 'Featured',
+      toggleFeatured: 'Mark as featured',
+      maxFeaturedReached: 'Maximum 3 featured albums. Unmark one first.',
     },
     servicios: {
       title: 'Service Plans',

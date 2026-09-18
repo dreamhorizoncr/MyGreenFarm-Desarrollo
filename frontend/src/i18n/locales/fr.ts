@@ -406,6 +406,9 @@ export default {
       deleteYear: 'Supprimer l’année',
       deleteYearConfirmFieldLabel: 'Écrivez «{{year}}» pour confirmer',
       deleteYearConfirmPlaceholder: 'Année',
+      featured: 'En vedette',
+      toggleFeatured: 'Marquer comme en vedette',
+      maxFeaturedReached: 'Maximum 3 albums en vedette. Décochez-en un d\'abord.',
     },
     servicios: {
       title: 'Plans de service',

@@ -11,6 +11,7 @@ export interface Gallery {
 	title: string
 	description: string
 	galleryImages: GalleryImage[]
+	featured: boolean
 }
 
 export interface GalleryCategory {
@@ -22,6 +23,7 @@ export interface GalleryRequest {
 	categoryId: string
 	title: string
 	description: string
+	featured: boolean
 }
 
 export interface GalleryCategoryRequest {
