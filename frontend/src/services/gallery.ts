@@ -7,6 +7,7 @@ import type {
 	GalleryImage,
 	GalleryRequest,
 } from '../types/gallery.ts'
+import type { TranslationItem } from './announcement.ts'
 
 export const galleryService = {
 	async getCategories(): Promise<GalleryCategory[]> {
@@ -79,4 +80,12 @@ export const galleryService = {
 	async deleteImage(imageId: string): Promise<void> {
 		await apiClient.delete(`/gallery/images/${imageId}`)
 	},
+	async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {
+			const response = await apiClient.post<Record<string, string>>('/translations/batch', {
+				entityType,
+				targetLanguage,
+				items,
+			})
+			return response.data
+		},
 }

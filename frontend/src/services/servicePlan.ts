@@ -1,5 +1,6 @@
 import { apiClient } from './api.ts'
 import type { ServicePlan, ServicePlanRequest, OnvoRawPlan } from '../types/servicePlan.ts'
+import type { TranslationItem } from './announcement.ts'
 
 export const servicePlanService = {
   async getActivePlans(): Promise<ServicePlan[]> {
@@ -51,4 +52,12 @@ export const servicePlanService = {
     const response = await apiClient.post<{ url: string }>(`/service-plans/${planId}/checkout`)
     return response.data.url
   },
+  async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {
+          const response = await apiClient.post<Record<string, string>>('/translations/batch', {
+              entityType,
+              targetLanguage,
+              items,
+          })
+          return response.data
+      },
 }

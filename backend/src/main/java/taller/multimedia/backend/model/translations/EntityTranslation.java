@@ -31,6 +31,7 @@ public class EntityTranslation {
     @Column(name = "field_name", nullable = false)
     private String fieldName;
 
-    @Column(name = "translated_text", nullable = false)
+   // Clave: sin límite estricto de longitud para el texto traducido
+    @Column(name = "translated_text", nullable = false, columnDefinition = "TEXT")
     private String translatedText;
 }
