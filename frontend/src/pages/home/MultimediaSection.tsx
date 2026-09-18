@@ -11,7 +11,7 @@ function MultimediaSection() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { allGalleries, loading, error, fetchGallery } = useGallery()
-  const featuredGalleries = allGalleries.slice(0, 3)
+  const featuredGalleries = allGalleries.filter((gallery) => gallery.featured)
 
   useEffect(() => {
     void fetchGallery(i18n.language)
