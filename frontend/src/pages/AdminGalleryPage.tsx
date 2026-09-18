@@ -288,7 +288,7 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured }: AdminAl
 							: 'bg-white/80 text-neutral-400 hover:bg-white hover:text-yellow-500'
 					}`}
 				>
-					<StarIcon size={18} fill={gallery.featured ? 'currentColor' : 'none'} />
+					<StarIcon size={18} />
 				</button>
 			</div>
 
@@ -686,7 +686,7 @@ onCreateYear={handleCreateYear}
 								onChange={(e) => setForm({ ...form, featured: e.target.checked })}
 								className="size-4 accent-yellow-500"
 							/>
-							<StarIcon size={16} className={form.featured ? 'text-yellow-500' : 'text-neutral-400'} fill={form.featured ? 'currentColor' : 'none'} />
+							<StarIcon size={16} className={form.featured ? 'text-yellow-500' : 'text-neutral-400'} />
 							{t('admin.gallery.featured')}
 						</label>
 
