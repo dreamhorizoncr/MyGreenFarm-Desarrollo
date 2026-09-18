@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import taller.multimedia.backend.model.appointment.ReferralSource;
 
 @Data
 public class AppointmentRequest {
@@ -46,5 +47,11 @@ public class AppointmentRequest {
     @NotBlank(message = "El motivo o datos extras son obligatorios")
     private String parentNotes;
 
+    @NotNull(message = "El campo referralSource es obligatorio")
+    private ReferralSource referralSource;
+
+    @Size(max = 255, message = "La razón debe tener como máximo 255 caracteres")
+    private String referralOtherDetail;
+    
     private String language;
 }
