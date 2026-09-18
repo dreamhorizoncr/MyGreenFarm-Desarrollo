@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { HeartIcon } from '@animateicons/react/lucide'
@@ -29,10 +29,15 @@ function LikeBadge({ image, albumTitle }: LikeBadgeProps) {
 }
 
 function AlbumDetailPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { id } = useParams<{ id: string }>()
-  const { categories, galleriesByCategory, loading, error } = useGallery()
+  const { categories, galleriesByCategory, loading, error, fetchGallery } = useGallery()
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+
+  useEffect(() => {
+    void fetchGallery(i18n.language)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i18n.language])
 
   const albumEntry = id
     ? Object.entries(galleriesByCategory).find(([, galleries]) =>
