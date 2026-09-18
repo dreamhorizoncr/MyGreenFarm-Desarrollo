@@ -1,6 +1,8 @@
 package taller.multimedia.backend.service.appointment;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -22,7 +24,7 @@ import taller.multimedia.backend.model.appointment.AppointmentStatus;
 import taller.multimedia.backend.repository.appointment.AppointmentRepository;
 import taller.multimedia.backend.service.EmailService;
 
-@Slf4j 
+@Slf4j
 @Service
 public class AppointmentService {
 
@@ -36,6 +38,9 @@ public class AppointmentService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private ScheduleConfigService scheduleConfigService;
+
     @Value("${daycare.mail.admin}") // Correo de la administración para avisarle de nuevas solicitudes
     private String correoAdmin;
 
@@ -46,6 +51,28 @@ public class AppointmentService {
     @Transactional
     public Appointment createAppointment(AppointmentRequest dto) {
         LocalDateTime requestedStart = dto.getAppointmentDate();
+        LocalDate requestedDate = requestedStart.toLocalDate();
+
+        LocalTime requestedTime = requestedStart.toLocalTime();
+
+        LocalDate today = LocalDate.now();
+
+        if (!requestedDate.isAfter(today)) {
+            throw new RuntimeException(
+                    "No se pueden agendar citas para el mismo día o fechas pasadas. Debes agendar al menos con un día de anticipación.");
+        }
+
+        if (requestedDate.getDayOfWeek().getValue() >= 6) {
+            throw new RuntimeException("La guardería no labora los fines de semana.");
+        }
+
+        List<LocalTime> availableSlots = scheduleConfigService.getAvailableSlotsForDate(requestedStart.toLocalDate());
+
+        if (!availableSlots.contains(requestedTime)) {
+            throw new RuntimeException(
+                    "Lo sentimos, el horario seleccionado no está habilitado por la administración.");
+        }
+
         LocalDateTime requestedEnd = requestedStart.plusMinutes(59); // Duración de la cita
 
         validateParentIdentification(dto.getIdType(), dto.getParentIdentification());
@@ -70,6 +97,7 @@ public class AppointmentService {
         appointment.setParentEmail(dto.getParentEmail());
         appointment.setParentPhone(formattedPhone);
         appointment.setParentOccupation(dto.getParentOccupation());
+        appointment.setReferralSource(dto.getReferralSource());
         appointment.setChildName(dto.getChildName());
         String langCode = resolverLangCode(dto.getLanguage());
         appointment.setLanguage(langCode);
@@ -93,22 +121,25 @@ public class AppointmentService {
         return savedAppointment;
     }
 
-  //se cambió esto 
+    // se cambió esto
     private String resolverLangCode(String languageFromDto) {
-    if (languageFromDto == null || languageFromDto.isBlank()) {
-        log.warn("El idioma recibido es nulo o vacío. Usando por defecto: 'es'");
+        if (languageFromDto == null || languageFromDto.isBlank()) {
+            log.warn("El idioma recibido es nulo o vacío. Usando por defecto: 'es'");
+            return "es";
+        }
+
+        String normalizado = languageFromDto.toLowerCase().trim();
+
+        if (normalizado.contains("fr"))
+            return "fr";
+        if (normalizado.contains("en"))
+            return "en";
+        if (normalizado.contains("es"))
+            return "es";
+
+        log.warn("Idioma no reconocido '{}'. Usando por defecto: 'es'", languageFromDto);
         return "es";
     }
-
-    String normalizado = languageFromDto.toLowerCase().trim();
-    
-    if (normalizado.contains("fr")) return "fr";
-    if (normalizado.contains("en")) return "en";
-    if (normalizado.contains("es")) return "es";
-
-    log.warn("Idioma no reconocido '{}'. Usando por defecto: 'es'", languageFromDto);
-    return "es";
-}
 
     private void validateParentIdentification(String idType, String parentIdentification) {
         if (parentIdentification == null || parentIdentification.trim().isEmpty()) {
@@ -217,12 +248,32 @@ public class AppointmentService {
             LocalDateTime newAppointmentDate,
             String lang) {
 
+        LocalDate requestedDate = newAppointmentDate.toLocalDate();
+        LocalDate today = LocalDate.now();
+
+        if (!requestedDate.isAfter(today)) {
+            throw new RuntimeException("No se puede reprogramar una cita para el mismo día o fechas pasadas.");
+        }
+
+        if (requestedDate.getDayOfWeek().getValue() >= 6) {
+            throw new RuntimeException("La guardería no labora los fines de semana.");
+        }
+
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
 
         if (appointment.getStatus() == AppointmentStatus.CANCELLED) {
             throw new RuntimeException(
                     "No se puede reprogramar una cita cancelada.");
+        }
+
+        List<LocalTime> availableSlots = scheduleConfigService
+                .getAvailableSlotsForDate(newAppointmentDate.toLocalDate());
+        LocalTime newTime = newAppointmentDate.toLocalTime();
+
+        if (!availableSlots.contains(newTime)) {
+            throw new RuntimeException(
+                    "Lo sentimos, el nuevo horario seleccionado no está habilitado por la administración.");
         }
 
         LocalDateTime newEnd = newAppointmentDate.plusMinutes(59);
@@ -281,12 +332,10 @@ public class AppointmentService {
                 String langCode = appointment.getLanguage() != null ? appointment.getLanguage() : "es";
                 Locale locale = Locale.forLanguageTag(langCode);
 
-
                 emailService.sendAppointmentReminderEmail(appointment, locale);
 
                 appointment.setReminderSent(true);
                 appointmentRepository.save(appointment);
-
 
                 System.out.println("Correo de recordatorio enviado para la cita ID: " + appointment.getId());
             } catch (Exception e) {
