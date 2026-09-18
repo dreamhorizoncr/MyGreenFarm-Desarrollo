@@ -1,8 +1,8 @@
 package taller.multimedia.backend.dto;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter 
 public class SigninResponse {
     private String token;
     private UserInfoResponse user;
