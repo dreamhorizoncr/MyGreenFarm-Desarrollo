@@ -42,7 +42,7 @@ function AdminCurriculumsPage() {
 
   const handleApprove = async (application: Curriculum) => {
     await setCurriculumStatus(application.id, 'APPROVED')
-    await setVacancyFilledBy(application.vacancyId, application.id)
+    if (application.vacancyId) await setVacancyFilledBy(application.vacancyId, application.id)
   }
 
   const handleReject = async (application: Curriculum) => {

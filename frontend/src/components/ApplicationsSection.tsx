@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { ChevronDownIcon, SearchIcon } from '@animateicons/react/lucide'
 import CurriculumCard from './CurriculumCard.tsx'
 import DeleteCurriculumModal from './DeleteCurriculumModal.tsx'
-import { ALL_VACANCIES, useApplicationFilters } from '../hooks/useApplicationFilters.ts'
+import { ALL_VACANCIES, SPONTANEOUS_APPLICATIONS, useApplicationFilters } from '../hooks/useApplicationFilters.ts'
 import type { Curriculum } from '../types/curriculum.ts'
 import type { Vacancy } from '../types/vacancy.ts'
 
@@ -50,6 +50,7 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
             className="h-11 appearance-none rounded-full border border-neutral-200 bg-white py-sm pl-md pr-xl font-body text-sm text-body-text outline-none focus:border-green-500"
           >
             <option value={ALL_VACANCIES}>{t('admin.curriculums.allVacancies')}</option>
+            <option value={SPONTANEOUS_APPLICATIONS}>{t('admin.curriculums.spontaneousApplications')}</option>
             {vacancies.map((v) => (
               <option key={v.id} value={v.id}>{v.title}</option>
             ))}
@@ -76,7 +77,11 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
               <CurriculumCard
                 key={application.id}
                 application={application}
-                vacancyTitle={vacancyTitleById.get(application.vacancyId) ?? '—'}
+                vacancyTitle={
+                  application.vacancyId === null
+                    ? t('admin.curriculums.spontaneousApplications')
+                    : (vacancyTitleById.get(application.vacancyId) ?? '—')
+                }
                 isExpanded={expandedId === application.id}
                 onToggleExpand={handleToggleExpand(application.id)}
                 onApprove={() => onApprove(application)}

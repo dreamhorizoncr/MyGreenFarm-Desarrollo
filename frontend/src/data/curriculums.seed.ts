@@ -132,4 +132,16 @@ export const SEED_CURRICULUMS: Curriculum[] = [
     submittedAt: '2026-09-11T15:10:00.000Z',
     status: 'REJECTED',
   },
+  {
+    id: 'cv-10',
+    vacancyId: null,
+    applicantName: 'Andrea Castillo',
+    applicantEmail: 'andrea.castillo@example.com',
+    applicantPhone: null,
+    fileName: 'CV-Andrea-Castillo.pdf',
+    fileUrl: SAMPLE_PDF_1,
+    certificates: [],
+    submittedAt: '2026-09-12T10:00:00.000Z',
+    status: 'PENDING',
+  },
 ]
