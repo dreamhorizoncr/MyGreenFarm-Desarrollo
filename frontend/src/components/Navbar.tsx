@@ -51,8 +51,8 @@ function Navbar() {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`relative font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:bg-green-500 after:transition-all after:content-[''] ${
-                  pathname === link.to ? 'after:w-full' : 'after:w-0'
+                className={`relative font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-full after:origin-center after:bg-green-500 after:transition-transform after:duration-300 after:content-[''] ${
+                  pathname === link.to ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100'
                 }`}
               >
                 {link.label}
@@ -140,8 +140,8 @@ function Navbar() {
             <Link
               key={link.to}
               to={link.to}
-              className={`relative w-fit font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:bg-green-500 after:transition-all after:content-[''] ${
-                pathname === link.to ? 'after:w-full' : 'after:w-0'
+              className={`relative w-fit font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-full after:origin-center after:bg-green-500 after:transition-transform after:duration-300 after:content-[''] ${
+                pathname === link.to ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100'
               }`}
               onClick={() => setDrawerOpen(false)}
             >
