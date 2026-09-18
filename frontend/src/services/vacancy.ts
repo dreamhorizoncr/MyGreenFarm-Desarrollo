@@ -33,7 +33,7 @@ import type { TranslationItem } from './announcement.ts'
 // async deleteVacancy(id: string): Promise<void> {
 //   await apiClient.delete(`/vacancies/${id}`)
 // }
-const store = createMockStore<Vacancy>('mgf_mock_vacancies_v4', SEED_VACANCIES)
+const store = createMockStore<Vacancy>('mgf_mock_vacancies_v5', SEED_VACANCIES)
 
 let mockVacancies: Vacancy[] = store.load()
 

@@ -3,18 +3,23 @@ import { useTranslation } from 'react-i18next'
 import { validateEmail, validateRequired } from '../utils/validators.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
-import type { Vacancy } from '../types/vacancy.ts'
+import type { OptionalApplicationField } from '../types/vacancy.ts'
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
 const MAX_CERTIFICATES = 5
 const CERTIFICATE_TYPES = ['application/pdf', 'image/png', 'image/jpeg']
 
-export function useVacancyApplicationForm(vacancy: Vacancy, onSubmit: (data: ApplicationInput) => Promise<void>) {
+interface ApplicationFormTarget {
+  vacancyId: string | null
+  requiredFields: OptionalApplicationField[]
+}
+
+export function useVacancyApplicationForm(target: ApplicationFormTarget, onSubmit: (data: ApplicationInput) => Promise<void>) {
   const { t } = useTranslation()
 
-  const showPhone = vacancy.requiredFields.includes('applicantPhone')
-  const showFile = vacancy.requiredFields.includes('file')
-  const showCertificates = vacancy.requiredFields.includes('certificates')
+  const showPhone = target.requiredFields.includes('applicantPhone')
+  const showFile = target.requiredFields.includes('file')
+  const showCertificates = target.requiredFields.includes('certificates')
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -115,7 +120,7 @@ export function useVacancyApplicationForm(vacancy: Vacancy, onSubmit: (data: App
     setSubmitError(null)
     try {
       await onSubmit({
-        vacancyId: vacancy.id,
+        vacancyId: target.vacancyId,
         applicantName: name.trim(),
         applicantEmail: email.trim(),
         applicantPhone: showPhone ? phone.trim() : null,

@@ -6,7 +6,7 @@ export type CurriculumStatus = 'PENDING' | 'APPROVED' | 'REJECTED'
 // file). No hay que tocar estos tipos cuando exista el endpoint real; ver
 // services/curriculum.ts para lo que sí cambia.
 export interface ApplicationInput {
-  vacancyId: string
+  vacancyId: string | null
   applicantName: string
   applicantEmail: string
   applicantPhone: string | null
@@ -22,7 +22,7 @@ export interface CertificateFile {
 
 export interface Curriculum {
   id: string
-  vacancyId: string
+  vacancyId: string | null
   applicantName: string
   applicantEmail: string
   applicantPhone: string | null
