@@ -10,4 +10,5 @@ public class GalleryResponse {
     private String title;
     private String description;
     private GalleryImageResponse[] galleryImages;
+    private Boolean featured = false;
 }
