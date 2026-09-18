@@ -51,6 +51,13 @@ public class Appointment {
     @Column(nullable = false)
     private AppointmentStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "referral_source")
+    private ReferralSource referralSource;
+
+    @Column(name = "referral_other_detail", length = 255)
+    private String referralOtherDetail;
+
     @Column(name = "parent_notes", nullable = false, length = 2000)
     private String parentNotes;
 
