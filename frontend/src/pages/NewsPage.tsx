@@ -36,7 +36,7 @@ function formatDate(iso: string | null | undefined, lang: string): string {
 
 function NewsPage() {
   const { t, i18n } = useTranslation();
-  const { announcements, loading, error, fetchAnnouncements } =
+  const { announcements,totalPages, loading, error, fetchAnnouncements } =
     useAnnouncements();
   const {
     loading: imagesLoading,
@@ -48,12 +48,11 @@ function NewsPage() {
   const [selectedAnnouncement, setSelectedAnnouncement] =
     useState<Announcement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const NEWS_PER_PAGE = 10;
 
   useEffect(() => {
-    void fetchAnnouncements(i18n.language);
+    void fetchAnnouncements(i18n.language, currentPage -1, 10);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [i18n.language]);
+  }, [i18n.language,currentPage]);
 
   useEffect(() => {
     void fetchImages(announcements.map((announcement) => announcement.id));
@@ -61,22 +60,10 @@ function NewsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [announcements]);
 
-  //Filtra las noticias según la categoría seleccionada
-  const realCards = announcements.filter(
-    (a) => activeCategory === "All" || activeCategory === a.type,
-  );
-
-  //Calcula cuántas páginas se necesitan. Cada página puede mostrar un máximo de 10 noticias
-  const totalPages = Math.ceil(realCards.length / NEWS_PER_PAGE);
-
-  //Calcula desde cuál noticia debe comenzar la página actual
-  const startIndex = (currentPage - 1) * NEWS_PER_PAGE;
-
-  //Calcula hasta cuál noticia debe mostrar la página actual
-  const endIndex = startIndex + NEWS_PER_PAGE;
-
-  //Obtiene únicamente las noticias que corresponden a la página actual
-  const cards: Announcement[] = realCards.slice(startIndex, endIndex);
+  // Filtra las noticias de la página actual según la categoría seleccionada
+const cards = announcements.filter(
+  (a) => activeCategory === "All" || activeCategory === a.type,
+);
 
   //Se guardan las noticias en filas para mostrarlas de dos en dos
   const rows: Announcement[][] = [];

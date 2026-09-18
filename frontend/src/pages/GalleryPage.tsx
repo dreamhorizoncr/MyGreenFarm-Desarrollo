@@ -9,10 +9,15 @@ import { useGallery } from '../hooks/useGallery.ts'
 import ninos2 from '../assets/imgs/ninos2.svg'
 
 function GalleryPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
-  const { categories, allGalleries, getGalleriesByCategory, loading, error } = useGallery()
+  const { categories, allGalleries, getGalleriesByCategory, loading, error, fetchGallery } = useGallery()
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
+
+  useEffect(() => {
+    void fetchGallery(i18n.language)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i18n.language])
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start' })
   const [fits, setFits] = useState(true)

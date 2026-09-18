@@ -1,6 +1,8 @@
 import type { Vacancy, VacancyInput } from '../types/vacancy.ts'
 import { SEED_VACANCIES } from '../data/vacancies.seed.ts'
 import { createMockStore } from '../utils/mockStore.ts'
+import { apiClient } from './api.ts'
+import type { TranslationItem } from './announcement.ts'
 
 // No existe endpoint real todavía. Cuando lo haya, este archivo se ve
 // igual que services/announcement.ts o services/appointment.ts (usando
@@ -85,4 +87,12 @@ export const vacancyService = {
     mockVacancies = mockVacancies.filter((v) => v.id !== id)
     store.save(mockVacancies)
   },
+  async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {
+          const response = await apiClient.post<Record<string, string>>('/translations/batch', {
+              entityType,
+              targetLanguage,
+              items,
+          })
+          return response.data
+      },
 }

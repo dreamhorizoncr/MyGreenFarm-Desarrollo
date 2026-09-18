@@ -73,13 +73,14 @@ function PlanCard({ plan, onSubscribe, isLoading }: { plan: ServicePlan; onSubsc
 }
 
 function ServicesPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { plans, loading, error, fetchPlans } = useServicePlans()
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
 
   useEffect(() => {
-    void fetchPlans()
-  }, [fetchPlans])
+    void fetchPlans(i18n.language)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i18n.language])
 
   const handleSubscribe = async (plan: ServicePlan) => {
     setCheckoutLoading(plan.id)

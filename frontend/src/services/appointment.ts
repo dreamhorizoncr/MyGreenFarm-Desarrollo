@@ -5,6 +5,7 @@ import type {
   AppointmentStatus,
   AvailableWeek,
 } from '../types/appointment.ts'
+import type { TranslationItem } from './announcement.ts'
 
 export const appointmentService = {
   async getAvailableWeek(date: string): Promise<AvailableWeek> {
@@ -53,4 +54,12 @@ export const appointmentService = {
     )
     return response.data
   },
+  async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {
+          const response = await apiClient.post<Record<string, string>>('/translations/batch', {
+              entityType,
+              targetLanguage,
+              items,
+          })
+          return response.data
+      },
 }
