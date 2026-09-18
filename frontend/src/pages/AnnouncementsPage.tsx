@@ -574,7 +574,7 @@ function AnnouncementsPage() {
 
 
 						{/* Editar y eliminar */}
-						<div className="flex justify-end gap-sm">
+						<div className="flex items-center justify-end gap-2">
 
 							<button
 								type="button"
@@ -584,7 +584,7 @@ function AnnouncementsPage() {
 								aria-label={t(
 									'adminNews.editButton'
 								)}
-								className="rounded-full border border-neutral-300 p-sm text-heading"
+								className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
 							>
 								<PencilIcon size={17} />
 							</button>
@@ -597,7 +597,7 @@ function AnnouncementsPage() {
 								aria-label={t(
 									'adminNews.deleteButton'
 								)}
-								className="rounded-full border border-red-200 p-sm text-danger"
+								className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50"
 							>
 								<Trash2Icon size={17} />
 							</button>
