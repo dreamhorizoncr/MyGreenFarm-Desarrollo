@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Container from "../components/home/Container";
 import { useTranslation } from "react-i18next";
 import NewsDetailModal from "../components/NewsDetailModal.tsx";
+import BlobButton from "../components/ui/BlobButton.tsx";
 
 import { useAnnouncements } from "../hooks/useAnnouncements";
 import { useAnnouncementImages } from "../hooks/useAnnouncementImages";
@@ -203,13 +204,12 @@ const cards = announcements.filter(
                               {a.content}
                             </p>
 
-                            <button
-                              type="button"
+                            <BlobButton
                               onClick={() => setSelectedAnnouncement(a)}
-                              className="mt-[26px] w-fit rounded-full border border-pink-400 px-[16px] py-[7px] font-body text-[11px] uppercase text-pink-500 transition hover:bg-pink-400 hover:text-white"
+                              className="mt-[26px] w-fit px-[16px] py-[7px] font-body text-[11px] uppercase"
                             >
                               {t("newspage.readMore")}
-                            </button>
+                            </BlobButton>
                           </div>
                         </article>
                       ) : (
@@ -255,13 +255,12 @@ const cards = announcements.filter(
                               {a.content}
                             </p>
 
-                            <button
-                              type="button"
+                            <BlobButton
                               onClick={() => setSelectedAnnouncement(a)}
-                              className="mt-auto w-fit rounded-full border border-pink-400 px-[16px] py-[7px] font-body text-[11px] uppercase text-pink-500 transition hover:bg-pink-400 hover:text-white"
+                              className="mt-auto w-fit px-[16px] py-[7px] font-body text-[11px] uppercase"
                             >
                               {t("newspage.readMore")}
-                            </button>
+                            </BlobButton>
                           </div>
                         </article>
                       );
