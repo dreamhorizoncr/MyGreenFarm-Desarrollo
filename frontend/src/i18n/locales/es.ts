@@ -122,6 +122,7 @@ export default {
       category4: 'Avisos',
       category5: 'General',
       readMore: 'Leer más',
+      aiSummary: 'Resumen',
       gallery: "Galería de Imágenes",
       noImage: 'Sin imagen disponible',
     },

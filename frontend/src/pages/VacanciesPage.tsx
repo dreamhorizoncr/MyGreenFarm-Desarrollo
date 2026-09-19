@@ -92,7 +92,7 @@ function VacanciesPage() {
             ) : (
               <div className="grid grid-cols-1 gap-md md:grid-cols-2">
                 {openVacancies.map((vacancy) => (
-                  <article key={vacancy.id} className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg">
+                  <article key={vacancy.id} className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow transition hover:-translate-y-1 hover:shadow-lg">
                     <h2 className="m-0 font-heading text-xl font-bold leading-snug text-heading">
                       {vacancy.title}
                     </h2>

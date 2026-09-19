@@ -49,6 +49,12 @@ public class Announcement {
     @Column(name = "location", length = 255)
     private String location;
 
+    @Column(name = "resumen_ia", columnDefinition = "TEXT")
+    private String resumenIA;
+
+    @Column(name = "resumen_contenido_hash", length = 64)
+    private String resumenContenidoHash;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
