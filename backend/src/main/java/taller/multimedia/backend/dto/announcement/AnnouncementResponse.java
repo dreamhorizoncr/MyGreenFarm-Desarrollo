@@ -14,6 +14,7 @@ public class AnnouncementResponse {
         private AnnouncementType type;
         private LocalDateTime eventDate;
         private String location;
+        private String resumenIA;
 
         public void setTitle(String title) {
             this.title = title;

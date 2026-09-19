@@ -165,7 +165,7 @@ const cards = announcements.filter(
                         // Tarjeta grande
                         <article
                           key={a.id}
-                          className="overflow-hidden rounded-[22px] border border-neutral-200 bg-white md:col-span-8 md:grid md:h-[340px] md:grid-cols-12"
+                          className="overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-8 md:grid md:h-[340px] md:grid-cols-12"
                         >
                           {/* Imagen */}
                           <div className="relative h-[240px] md:col-span-6 md:h-full">
@@ -216,7 +216,7 @@ const cards = announcements.filter(
                         // Tarjeta pequeña
                         <article
                           key={a.id}
-                          className="overflow-hidden rounded-[16px] border border-neutral-200 bg-white md:col-span-4 md:flex md:h-[340px] md:flex-col"
+                          className="overflow-hidden rounded-[16px] border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-4 md:flex md:h-[340px] md:flex-col"
                         >
                           {/* Imagen */}
                           <div className="relative h-[200px] md:h-[125px] md:shrink-0">

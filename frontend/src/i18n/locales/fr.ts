@@ -120,6 +120,7 @@ export default {
       category4: 'Avis',
       category5: 'Général',
       readMore: 'Lire la suite',
+      aiSummary: 'Résumé',
       gallery: "Galerie d'images",
       noImage: 'Aucune image disponible',
     },

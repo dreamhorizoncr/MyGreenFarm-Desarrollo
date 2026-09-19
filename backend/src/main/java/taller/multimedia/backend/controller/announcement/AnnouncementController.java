@@ -17,22 +17,25 @@ import org.springframework.web.bind.annotation.*;
 import taller.multimedia.backend.dto.announcement.AnnouncementRequest;
 import taller.multimedia.backend.dto.announcement.AnnouncementResponse;
 import taller.multimedia.backend.service.announcement.AnnouncementService;
+import taller.multimedia.backend.service.announcement.AnnouncementSummaryAsyncService;
 
 import java.util.UUID;
 
-@Validated 
+@Validated
 @RestController
 @RequestMapping("/api/announcements")
 @RequiredArgsConstructor
 public class AnnouncementController {
 
     private final AnnouncementService announcementService;
+    private final AnnouncementSummaryAsyncService announcementSummaryAsyncService;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<AnnouncementResponse> create(@RequestBody @Valid AnnouncementRequest dto) {
 
         AnnouncementResponse created = announcementService.create(dto);
+        announcementSummaryAsyncService.generateSummaryAsync(created.getId(), false);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -51,6 +54,7 @@ public class AnnouncementController {
     public ResponseEntity<AnnouncementResponse> update( @PathVariable UUID id, @RequestBody @Valid AnnouncementRequest dto) 
     {
         AnnouncementResponse updated = announcementService.update(id, dto);
+        announcementSummaryAsyncService.generateSummaryAsync(updated.getId(), false);
         return ResponseEntity.ok(updated);
     }
 
@@ -59,5 +63,12 @@ public class AnnouncementController {
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         announcementService.delete(id);
         return ResponseEntity.noContent().build(); // Retorna un código 204 No Content indicando éxito
+    }
+
+    @PostMapping("/{id}/resumen/regenerar")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    public ResponseEntity<Void> regenerarResumen(@PathVariable UUID id) {
+        announcementSummaryAsyncService.generateSummaryAsync(id, true);
+        return ResponseEntity.accepted().build();
     }
 }
