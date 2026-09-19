@@ -79,7 +79,7 @@ public class AnnouncementService {
         Announcement announcement = announcementRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Anuncio no encontrado con ID: " + id));
 
-        if (announcementRepository.existsByTitle(dto.getTitle())) {
+        if (announcementRepository.existsByTitleAndIdNot(dto.getTitle(), id)) {
             throw new IllegalArgumentException("Ya existe un anuncio con el título: " + dto.getTitle());
         }
 
