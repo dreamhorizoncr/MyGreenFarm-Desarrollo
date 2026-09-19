@@ -19,4 +19,6 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, UUID
 
     boolean existsByTitle(String title);
 
+    boolean existsByTitleAndIdNot(String title, UUID id);
+
 }
