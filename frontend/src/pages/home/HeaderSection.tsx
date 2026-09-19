@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import headerImage from '../../assets/imgs/ImgHeaderTemporal.svg'
 import nubesUp from '../../assets/imgs/nubesUp.svg'
 import Container from '../../components/home/Container.tsx'
-import PillButton from '../../components/ui/PillButton.tsx'
+import BlobButton from '../../components/ui/BlobButton.tsx'
 
 function HeaderSection() {
   const { t } = useTranslation()
@@ -29,12 +29,13 @@ function HeaderSection() {
                 {t('home.header.description')}
               </p>
 
-              <PillButton
-                className="w-fit bg-accent font-heading text-h6 text-white"
+              <BlobButton
+                variant="filled"
+                className="w-fit px-lg py-xs font-heading text-h6"
                 onClick={() => navigate('/booking')}
               >
                 {t('home.header.cta')}
-              </PillButton>
+              </BlobButton>
             </div>
 
             <img
