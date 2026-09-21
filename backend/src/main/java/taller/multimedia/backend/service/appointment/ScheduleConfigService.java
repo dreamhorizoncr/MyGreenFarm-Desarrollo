@@ -16,10 +16,10 @@ import taller.multimedia.backend.model.appointment.WeeklySchedule;
 import taller.multimedia.backend.repository.appointment.ScheduleExceptionRepository;
 import taller.multimedia.backend.repository.appointment.WeeklyScheduleRepository;
 
-@Service 
+@Service
 public class ScheduleConfigService {
 
-    @Autowired 
+    @Autowired
     private WeeklyScheduleRepository weeklyRepo;
 
     @Autowired
@@ -28,9 +28,9 @@ public class ScheduleConfigService {
     // Obtener los horarios disponibles en bloques de 60 minutos para una fecha dada
     public List<LocalTime> getAvailableSlotsForDate(LocalDate date) {
         DayOfWeek dayOfWeek = date.getDayOfWeek();
-        
+
         Optional<ScheduleException> exceptionOpt = exceptionRepo.findByExceptionDate(date);
-        
+
         LocalTime startTime;
         LocalTime endTime;
 
@@ -54,7 +54,7 @@ public class ScheduleConfigService {
 
         List<LocalTime> slots = new ArrayList<>();
         LocalTime current = startTime;
-        
+
         while (current.plusMinutes(59).isBefore(endTime) || current.plusMinutes(59).equals(endTime)) {
             slots.add(current);
             current = current.plusHours(1);
@@ -64,28 +64,30 @@ public class ScheduleConfigService {
     }
 
     public Map<String, List<LocalTime>> getAvailableSlotsForWeek(LocalDate startDate) {
-        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+
+        LocalDate effectiveStart = startDate.isBefore(tomorrow) ? tomorrow : startDate;
+
         Map<String, List<LocalTime>> weekSlots = new java.util.LinkedHashMap<>();
 
         for (int i = 0; i < 7; i++) {
-            LocalDate currentDay = startDate.plusDays(i);
+            LocalDate currentDay = effectiveStart.plusDays(i);
 
-            // Si es hoy, pasado o fin de semana, devolvemos lista vacía
-            if (!currentDay.isAfter(today) || currentDay.getDayOfWeek().getValue() >= 6) {
+            if (currentDay.getDayOfWeek().getValue() >= 6) {
                 weekSlots.put(currentDay.toString(), List.of());
             } else {
                 List<LocalTime> slotsForDay = getAvailableSlotsForDate(currentDay);
                 weekSlots.put(currentDay.toString(), slotsForDay);
             }
         }
-        
+
         return weekSlots;
     }
 
-    //Con este método se crea un día con hora, si ya tenia, se edita
+    // Con este método se crea un día con hora, si ya tenia, se edita
     public WeeklySchedule saveWeeklySchedule(WeeklySchedule schedule) {
         Optional<WeeklySchedule> existingOpt = weeklyRepo.findByDayOfWeek(schedule.getDayOfWeek());
-        
+
         if (existingOpt.isPresent()) {
             // Si ya existe, actualizamos sus campos en lugar de insertar uno nuevo
             WeeklySchedule existing = existingOpt.get();
@@ -102,7 +104,7 @@ public class ScheduleConfigService {
     public ScheduleException saveException(ScheduleException exception) {
         return exceptionRepo.save(exception);
     }
-    
+
     public void deleteException(Long id) {
         exceptionRepo.deleteById(id);
     }

@@ -33,9 +33,6 @@ import taller.multimedia.backend.service.appointment.ScheduleConfigService;
 public class AppointmentController {
 
     @Autowired
-    private GoogleCalendarService googleCalendarService;
-
-    @Autowired
     private ScheduleConfigService scheduleConfigService;
 
     private final AppointmentService appointmentService;
@@ -60,12 +57,6 @@ public class AppointmentController {
     public ResponseEntity<Appointment> getAppointmentById(@PathVariable UUID id) {
         Appointment appointment = appointmentService.getAppointmentById(id);
         return ResponseEntity.ok(appointment);
-    }
-
-    @GetMapping("/future")
-    public ResponseEntity<List<Appointment>> getFutureAppointments() {
-        List<Appointment> appointments = appointmentService.getFutureAppointments();
-        return ResponseEntity.ok(appointments);
     }
 
     @PatchMapping("/{id}/status")

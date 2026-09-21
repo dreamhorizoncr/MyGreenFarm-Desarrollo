@@ -1,11 +1,8 @@
 package taller.multimedia.backend.service.onvo;
 
 import lombok.RequiredArgsConstructor;
-import taller.multimedia.backend.model.service_plans.ServicePlan;
-import taller.multimedia.backend.repository.service_plan.ServicePlanRepository;
 
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;

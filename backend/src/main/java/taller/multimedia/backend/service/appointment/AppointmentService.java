@@ -194,12 +194,6 @@ public class AppointmentService {
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada con el ID: " + id));
     }
 
-    @Transactional(readOnly = true)
-    public List<Appointment> getFutureAppointments() {
-        LocalDate tomorrow = LocalDate.now().plusDays(1);
-        return appointmentRepository.findByAppointmentDateAfter(tomorrow);
-    }
-
     @Transactional
     public Appointment updateAppointmentStatus(
             UUID id,
