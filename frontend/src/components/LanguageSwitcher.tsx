@@ -21,13 +21,11 @@ function LanguageSwitcher() {
     setOpen(false)
     if (code === currentLanguage) return
 
-    const languageLabel = SUPPORTED_LANGUAGES.find((language) => language.code === code)?.label ?? code
     const translate = i18n.getFixedT(code)
 
     i18n.changeLanguage(code).then(() => {
       notify.info({
-        title: translate('languageSwitcher.changedTitle'),
-        // description: translate('languageSwitcher.changedDescription', { language: languageLabel }),
+        title: translate('languageSwitcher.changedTitle')
       })
     })
   }
