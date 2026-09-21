@@ -27,7 +27,8 @@ type SidebarItemId =
   | "cv"
   | "expedientes"
   | "miPerfil"
-  | "servicios";
+  | "servicios"
+  | "disponibilidad";
 
 interface SidebarItem {
   id: SidebarItemId;
@@ -51,6 +52,7 @@ function AdminSidebar() {
         { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
         { id: 'docentes', icon: UsersIcon, path: '/admin/users' },
         { id: 'servicios', icon: CreditCardIcon, path: '/admin/service-plans' },
+        { id: 'disponibilidad', icon: CalendarDaysIcon, path: '/admin/disponibilidad' },
         { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
         { id: 'expedientes', icon: FolderOpenIcon },
         { id: 'miPerfil', icon: UserIcon, path: '/profile' },

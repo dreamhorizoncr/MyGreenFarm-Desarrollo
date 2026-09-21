@@ -174,6 +174,19 @@ export default {
     occupation: 'Profession',
     childName: "Nom de l'enfant",
     reason: 'Motif',
+    referral: {
+      title: 'Comment avez-vous entendu parler de nous ?',
+      placeholder: 'Sélectionnez une option',
+      required: 'Sélectionnez comment vous avez entendu parler de nous',
+      otherDetail: 'Dites-nous où',
+      options: {
+        FRIEND: 'Un ami ou un membre de la famille',
+        SOCIAL_MEDIA: 'Réseaux sociaux',
+        GOOGLE_SEARCH: 'Recherche Google',
+        FLYER_OR_AD: 'Affiche ou publicité',
+        OTHER: 'Autre',
+      },
+    },
     scheduleTitle: 'Horaires de rendez-vous',
     scheduleDescription: 'Sélectionnez le créneau de rendez-vous suivant à réserver',
     days: {
@@ -348,6 +361,7 @@ export default {
       expedientes: 'Dossiers',
       miPerfil: 'Mon profil',
       servicios: 'Services',
+      disponibilidad: 'Mes disponibilités',
     },
     curriculums: {
       title: 'Offres et candidatures',

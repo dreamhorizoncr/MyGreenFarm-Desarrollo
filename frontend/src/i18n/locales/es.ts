@@ -176,6 +176,19 @@ export default {
     occupation: 'Ocupación',
     childName: 'Nombre del niño',
     reason: 'Motivo',
+    referral: {
+      title: '¿Dónde nos conoció?',
+      placeholder: 'Selecciona una opción',
+      required: 'Selecciona cómo nos conociste',
+      otherDetail: 'Cuéntanos dónde',
+      options: {
+        FRIEND: 'De un amigo o familiar',
+        SOCIAL_MEDIA: 'Redes sociales',
+        GOOGLE_SEARCH: 'Búsqueda en Google',
+        FLYER_OR_AD: 'Afiche o publicidad',
+        OTHER: 'Otro',
+      },
+    },
     scheduleTitle: 'Horarios de cita',
     scheduleDescription: 'Seleccione el siguiente horario de cita a reservar',
     days: {
@@ -352,6 +365,7 @@ export default {
       expedientes: 'Expedientes',
       miPerfil: 'Mi perfil',
       servicios: 'Servicios',
+      disponibilidad: 'Mi disponibilidad',
     },
     curriculums: {
       title: 'Vacantes y Postulaciones',
