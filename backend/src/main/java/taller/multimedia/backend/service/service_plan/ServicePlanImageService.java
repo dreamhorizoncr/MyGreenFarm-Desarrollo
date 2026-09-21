@@ -3,18 +3,14 @@ package taller.multimedia.backend.service.service_plan;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import taller.multimedia.backend.dto.service_plan.ServicePlanRequest;
 import taller.multimedia.backend.model.service_plans.ServicePlan;
 import taller.multimedia.backend.repository.service_plan.ServicePlanRepository;
 import taller.multimedia.backend.service.StorageService;
 
-import java.math.BigDecimal;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -24,7 +20,6 @@ public class ServicePlanImageService {
 
     private final ServicePlanRepository servicePlanRepository;
     private final StorageService storageService;
-    private final RestTemplate restTemplate;
 
     @Value("${supabase.s3.buckets.service-plans}")
     private String servicePlansBucket;

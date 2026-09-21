@@ -30,7 +30,11 @@ function FooterColumn({ titleKey, links }: FooterColumnData) {
             }
 
             if (link.href) {
-              const isExternal = link.href.startsWith('http')
+              const isExternal =
+                link.href.startsWith('http') ||
+                link.href.startsWith('mailto:') ||
+                link.href.startsWith('tel:')
+
               return (
                 <li key={link.label}>
                   <a
