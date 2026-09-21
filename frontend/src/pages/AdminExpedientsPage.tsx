@@ -14,7 +14,10 @@ import { useExpedients } from "../hooks/useExpedients";
 
 import type { Expedient } from "../types/expedient";
 
+import { useTranslation } from "react-i18next";
+
 function AdminExpedientsPage() {
+
   const { expedients, loading, error, fetchExpedients } = useExpedients();
 
   // Guarda lo que escribe el usuario en el buscador
@@ -27,6 +30,8 @@ function AdminExpedientsPage() {
   const [editingExpedient, setEditingExpedient] = useState<Expedient | null>(
     null,
   );
+
+  const { t } = useTranslation();
 
   // Obtiene los expedientes cuando carga la página
   useEffect(() => {
@@ -65,12 +70,11 @@ function AdminExpedientsPage() {
           {/* Título y descripción */}
           <div>
             <h1 className="font-heading text-3xl font-bold text-heading">
-              Expedientes Académicos
+              {t('admin.expedients.title')}
             </h1>
 
             <p className="mt-2 font-body text-body-text">
-              Visualiza los expedientes académicos de los niños y niñas
-              matriculados en la institución.
+              {t('admin.expedients.description')}
             </p>
           </div>
 
