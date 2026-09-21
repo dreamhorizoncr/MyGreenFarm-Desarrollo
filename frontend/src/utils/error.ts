@@ -29,6 +29,9 @@ export function getErrorMessage(error: unknown): string {
       if (message === 'No se pudo cargar la disponibilidad en este momento') {
         return i18n.t('common.calendarAvailabilityError')
       }
+      if (message === 'Ya existen 3 galerías destacadas. Debes desmarcar una antes de destacar otra.') {
+        return i18n.t('admin.gallery.maxFeaturedReached')
+      }
       return message
     }
 
@@ -37,6 +40,13 @@ export function getErrorMessage(error: unknown): string {
         return i18n.t('common.calendarAvailabilityError')
       }
       return data
+    }
+
+    const requestUrl = error.config?.url ?? ''
+    const isGalleryUpdate = error.config?.method?.toLowerCase() === 'put' && requestUrl.includes('/gallery/')
+
+    if (error.response?.status === 409 && isGalleryUpdate) {
+      return i18n.t('admin.gallery.maxFeaturedReached')
     }
   }
 
