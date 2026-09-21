@@ -50,12 +50,11 @@ function isBookableWeekday(date: string): boolean {
   return day >= 1 && day <= 5
 }
 
-function getNextMonday(): Date {
+function getTomorrow(): Date {
   const today = new Date()
-  const daysUntilMonday = ((8 - today.getDay()) % 7) || 7
-  const nextMonday = new Date(today)
-  nextMonday.setDate(today.getDate() + daysUntilMonday)
-  return nextMonday
+  const tomorrow = new Date(today)
+  tomorrow.setDate(today.getDate() + 1)
+  return tomorrow
 }
 
 type Slot = { start: string }
@@ -117,7 +116,7 @@ function BookingPage() {
   const [referralOtherDetailError, setReferralOtherDetailError] = useState(false)
 
   useEffect(() => {
-    fetchWeek(toISODate(getNextMonday()))
+    fetchWeek(toISODate(getTomorrow()))
   }, [fetchWeek])
 
   const availableDates = Object.keys(availability).filter(isBookableWeekday)
@@ -345,7 +344,7 @@ function BookingPage() {
           </p>
           <button
             type="button"
-            onClick={() => fetchWeek(toISODate(getNextMonday()))}
+            onClick={() => fetchWeek(toISODate(getTomorrow()))}
             className="w-fit rounded-full bg-green-500 px-lg py-sm font-body text-sm font-semibold text-white transition-colors hover:bg-green-600"
           >
             {t('booking.retry')}
