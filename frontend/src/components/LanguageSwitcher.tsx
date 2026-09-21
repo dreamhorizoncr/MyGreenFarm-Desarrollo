@@ -27,7 +27,7 @@ function LanguageSwitcher() {
     i18n.changeLanguage(code).then(() => {
       notify.info({
         title: translate('languageSwitcher.changedTitle'),
-        description: translate('languageSwitcher.changedDescription', { language: languageLabel }),
+        // description: translate('languageSwitcher.changedDescription', { language: languageLabel }),
       })
     })
   }
