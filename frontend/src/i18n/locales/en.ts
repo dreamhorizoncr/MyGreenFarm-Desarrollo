@@ -175,6 +175,19 @@ export default {
     occupation: 'Occupation',
     childName: "Child's name",
     reason: 'Reason',
+    referral: {
+      title: 'How did you hear about us?',
+      placeholder: 'Select an option',
+      required: 'Select how you heard about us',
+      otherDetail: 'Tell us where',
+      options: {
+        FRIEND: 'A friend or family member',
+        SOCIAL_MEDIA: 'Social media',
+        GOOGLE_SEARCH: 'Google search',
+        FLYER_OR_AD: 'Flyer or advertisement',
+        OTHER: 'Other',
+      },
+    },
     scheduleTitle: 'Appointment times',
     scheduleDescription: 'Select the following appointment slot to book',
     days: {
@@ -349,6 +362,7 @@ export default {
       expedientes: 'Records',
       miPerfil: 'My profile',
       servicios: 'Services',
+      disponibilidad: 'My availability',
     },
     curriculums: {
       title: 'Vacancies and Applications',

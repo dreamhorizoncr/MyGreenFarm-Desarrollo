@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import taller.multimedia.backend.dto.appointment.AvailableDayResponse;
 import taller.multimedia.backend.model.appointment.ScheduleException;
 import taller.multimedia.backend.model.appointment.WeeklySchedule;
 import taller.multimedia.backend.repository.appointment.ScheduleExceptionRepository;
@@ -63,22 +64,29 @@ public class ScheduleConfigService {
         return slots;
     }
 
-    public Map<String, List<LocalTime>> getAvailableSlotsForWeek(LocalDate startDate) {
-        LocalDate tomorrow = LocalDate.now().plusDays(1);
+ // Incluye el nombre del evento especial para que la reserva pueda informarlo al cliente.
+public Map<String, AvailableDayResponse> getAvailableSlotsForWeek(LocalDate startDate) {
+    //  la semana nunca empieza antes de mañana
+    LocalDate tomorrow = LocalDate.now().plusDays(1);
+    LocalDate effectiveStart = startDate.isBefore(tomorrow) ? tomorrow : startDate;
 
-        LocalDate effectiveStart = startDate.isBefore(tomorrow) ? tomorrow : startDate;
+    //el tipo de retorno con AvailableDayResponse
+    Map<String, AvailableDayResponse> weekSlots = new java.util.LinkedHashMap<>();
 
-        Map<String, List<LocalTime>> weekSlots = new java.util.LinkedHashMap<>();
+    for (int i = 0; i < 7; i++) {
+        LocalDate currentDay = effectiveStart.plusDays(i);   // <- usa effectiveStart
+        Optional<ScheduleException> exceptionOpt = exceptionRepo.findByExceptionDate(currentDay);
+        boolean specialDay = exceptionOpt.isPresent();
+        String eventName = specialDay ? exceptionOpt.get().getReason() : null;
+        List<LocalTime> slots;
 
-        for (int i = 0; i < 7; i++) {
-            LocalDate currentDay = effectiveStart.plusDays(i);
-
-            if (currentDay.getDayOfWeek().getValue() >= 6) {
-                weekSlots.put(currentDay.toString(), List.of());
-            } else {
-                List<LocalTime> slotsForDay = getAvailableSlotsForDate(currentDay);
-                weekSlots.put(currentDay.toString(), slotsForDay);
+        // Fin de semana (hoy y días pasados ya no pueden aparecer gracias a effectiveStart)
+        if (currentDay.getDayOfWeek().getValue() >= 6) {
+            slots = List.of();
+        } else {
+                slots = getAvailableSlotsForDate(currentDay);
             }
+            weekSlots.put(currentDay.toString(), new AvailableDayResponse(slots, specialDay, eventName));
         }
 
         return weekSlots;

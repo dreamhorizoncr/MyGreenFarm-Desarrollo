@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import taller.multimedia.backend.dto.appointment.AppointmentRequest;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
+import taller.multimedia.backend.model.appointment.ReferralSource;
 import taller.multimedia.backend.repository.appointment.AppointmentRepository;
 import taller.multimedia.backend.service.EmailService;
 
@@ -98,6 +99,12 @@ public class AppointmentService {
         appointment.setParentPhone(formattedPhone);
         appointment.setParentOccupation(dto.getParentOccupation());
         appointment.setReferralSource(dto.getReferralSource());
+        if (dto.getReferralSource() == ReferralSource.OTHER) {
+            if (dto.getReferralOtherDetail() == null || dto.getReferralOtherDetail().isBlank()) {
+                throw new IllegalArgumentException("Debes indicar cómo nos conociste.");
+            }
+            appointment.setReferralOtherDetail(dto.getReferralOtherDetail().trim());
+        }
         appointment.setChildName(dto.getChildName());
         String langCode = resolverLangCode(dto.getLanguage());
         appointment.setLanguage(langCode);

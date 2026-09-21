@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import taller.multimedia.backend.dto.appointment.AppointmentRequest;
+import taller.multimedia.backend.dto.appointment.AvailableDayResponse;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
 import taller.multimedia.backend.service.appointment.AppointmentService;
@@ -86,7 +87,7 @@ public class AppointmentController {
         try {
             LocalDate date = LocalDate.parse(dateStr);
             // El controller solo llama al servicio y devuelve la respuesta
-            Map<String, List<LocalTime>> weekSlots = scheduleConfigService.getAvailableSlotsForWeek(date);
+            Map<String, AvailableDayResponse> weekSlots = scheduleConfigService.getAvailableSlotsForWeek(date);
             return ResponseEntity.ok(weekSlots);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al consultar la semana: " + e.getMessage());
