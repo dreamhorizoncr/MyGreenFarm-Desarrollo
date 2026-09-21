@@ -299,6 +299,8 @@ export default {
     loading: 'Loading...',
     noUsers: 'No registered users',
     scrollToTop: 'Back to top',
+    sessionExpired: 'Your session has expired. Please log in again.',
+    unauthorized: 'Unauthorized'
   },
   validation: {
     emailRequired: 'Email is required',
@@ -356,6 +358,7 @@ export default {
     sidebar: {
     dashboard: 'Dashboard',
       docentes: 'Teachers',
+      noticias: 'News',
       galeria: 'Gallery',
       citas: 'Appointments',
       cv: 'CV',
