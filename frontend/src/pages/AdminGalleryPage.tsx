@@ -401,7 +401,8 @@ const emptyForm: GalleryRequest = {
 }
 
 function AdminGalleryPage() {
-	const { t } = useTranslation()
+	const { t, i18n } = useTranslation()
+	const language = (i18n.resolvedLanguage ?? i18n.language ?? 'es').split('-')[0]
 	const {
 		categories,
 		galleriesByCategory,
@@ -441,9 +442,9 @@ function AdminGalleryPage() {
 	}, [])
 
 	useEffect(() => {
-		void fetchAll()
+		void fetchAll(language)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
+	}, [language])
 
 	const openCreate = () => {
 		setEditing(null)
@@ -542,7 +543,7 @@ function AdminGalleryPage() {
 				await uploadImages(saved.id, files.map(({ file }) => file), data.title)
 
 			closeForm()
-			void fetchAll()
+			void fetchAll(language)
 		} catch {
 			// El hook mantiene el mensaje visible en la pantalla.
 		} finally {

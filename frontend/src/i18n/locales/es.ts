@@ -301,6 +301,8 @@ export default {
     loading: 'Cargando...',
     noUsers: 'No hay usuarios registrados',
     scrollToTop: 'Volver arriba',
+    sessionExpired: 'Tu sesión ha expirado. Inicia sesión nuevamente.',
+    unauthorized: 'No autorizado'
   },
   validation: {
     emailRequired: 'El correo electrónico es obligatorio',

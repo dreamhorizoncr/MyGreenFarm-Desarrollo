@@ -20,26 +20,29 @@ import org.springframework.stereotype.Component;
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
   private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
+  private final ObjectMapper mapper = new ObjectMapper();
 
-  // Handle authentication errors
   @Override
   public void commence(HttpServletRequest request, HttpServletResponse response,
       AuthenticationException authException) throws IOException, ServletException {
 
     logger.error("Unauthorized error: {} (Path: {})", authException.getMessage(), request.getRequestURI());
 
-    response.sendRedirect("/");
+    boolean expired = "SESSION_EXPIRED".equals(request.getAttribute("auth_error"));
 
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.setCharacterEncoding("UTF-8");
     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
     Map<String, Object> body = new HashMap<>();
     body.put("status", HttpServletResponse.SC_UNAUTHORIZED);
     body.put("error", "Unauthorized");
-    body.put("message", authException.getMessage());
+    body.put("code", expired ? "SESSION_EXPIRED" : "UNAUTHORIZED");
+    body.put("message", expired
+        ? "Tu sesión ha expirado. Inicia sesión nuevamente."
+        : "No autorizado");
     body.put("path", request.getRequestURI());
 
-    ObjectMapper mapper = new ObjectMapper();
     mapper.writeValue(response.getOutputStream(), body);
   }
 }
