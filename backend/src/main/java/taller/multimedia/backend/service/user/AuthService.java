@@ -123,7 +123,7 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("Token inválido"));
 
         if (user.getTokenExpirationDate().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("El token ha expirado");
+            throw new RuntimeException("La sesión ha expirado");
         }
 
         user.setPassword(encoder.encode(newPassword));

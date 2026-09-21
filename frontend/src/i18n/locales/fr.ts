@@ -284,6 +284,8 @@ export default {
     loading: 'Chargement...',
     noUsers: 'Aucun utilisateur enregistré',
     scrollToTop: 'Haut de page',
+    sessionExpired: 'Votre session a expiré. Veuillez vous reconnecter.',
+    unauthorized: 'Non autorisé'
   },
   validation: {
     emailRequired: "L'e-mail est obligatoire",
@@ -341,6 +343,7 @@ export default {
     sidebar: {
     dashboard: 'Tableau de bord',
       docentes: 'Enseignants',
+      noticias: 'Actualités',
       galeria: 'Galerie',
       citas: 'Rendez-vous',
       cv: 'CV',
