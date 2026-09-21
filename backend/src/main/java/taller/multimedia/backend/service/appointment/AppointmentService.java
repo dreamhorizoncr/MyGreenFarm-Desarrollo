@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import taller.multimedia.backend.dto.appointment.AppointmentRequest;
 import taller.multimedia.backend.model.appointment.Appointment;
@@ -192,6 +192,12 @@ public class AppointmentService {
     public Appointment getAppointmentById(UUID id) {
         return appointmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada con el ID: " + id));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Appointment> getFutureAppointments() {
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        return appointmentRepository.findByAppointmentDateAfter(tomorrow);
     }
 
     @Transactional

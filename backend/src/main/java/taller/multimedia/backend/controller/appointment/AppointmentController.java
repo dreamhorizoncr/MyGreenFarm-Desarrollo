@@ -62,6 +62,12 @@ public class AppointmentController {
         return ResponseEntity.ok(appointment);
     }
 
+    @GetMapping("/future")
+    public ResponseEntity<List<Appointment>> getFutureAppointments() {
+        List<Appointment> appointments = appointmentService.getFutureAppointments();
+        return ResponseEntity.ok(appointments);
+    }
+
     @PatchMapping("/{id}/status")
     public ResponseEntity<Appointment> updateStatus(
             @PathVariable UUID id,
