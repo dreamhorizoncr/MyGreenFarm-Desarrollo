@@ -122,6 +122,7 @@ export default {
       category4: 'Avisos',
       category5: 'General',
       readMore: 'Leer más',
+      aiSummary: 'Resumen',
       gallery: "Galería de Imágenes",
       noImage: 'Sin imagen disponible',
     },
@@ -175,6 +176,19 @@ export default {
     occupation: 'Ocupación',
     childName: 'Nombre del niño',
     reason: 'Motivo',
+    referral: {
+      title: '¿Dónde nos conoció?',
+      placeholder: 'Selecciona una opción',
+      required: 'Selecciona cómo nos conociste',
+      otherDetail: 'Cuéntanos dónde',
+      options: {
+        FRIEND: 'De un amigo o familiar',
+        SOCIAL_MEDIA: 'Redes sociales',
+        GOOGLE_SEARCH: 'Búsqueda en Google',
+        FLYER_OR_AD: 'Afiche o publicidad',
+        OTHER: 'Otro',
+      },
+    },
     scheduleTitle: 'Horarios de cita',
     scheduleDescription: 'Seleccione el siguiente horario de cita a reservar',
     days: {
@@ -287,6 +301,8 @@ export default {
     loading: 'Cargando...',
     noUsers: 'No hay usuarios registrados',
     scrollToTop: 'Volver arriba',
+    sessionExpired: 'Tu sesión ha expirado. Inicia sesión nuevamente.',
+    unauthorized: 'No autorizado'
   },
   validation: {
     emailRequired: 'El correo electrónico es obligatorio',
@@ -351,6 +367,7 @@ export default {
       expedientes: 'Expedientes',
       miPerfil: 'Mi perfil',
       servicios: 'Servicios',
+      disponibilidad: 'Mi disponibilidad',
     },
     curriculums: {
       title: 'Vacantes y Postulaciones',

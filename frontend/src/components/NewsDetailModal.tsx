@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { CalendarDaysIcon, MapPinIcon, XIcon } from '@animateicons/react/lucide';
+import { CalendarDaysIcon, MapPinIcon, SparklesIcon, XIcon } from '@animateicons/react/lucide';
 import { useTranslation } from 'react-i18next';
 import { useAnnouncementImages } from '../hooks/useAnnouncementImages.ts';
 
@@ -96,12 +96,12 @@ function NewsDetailModal({
     return (
         //Fondo oscuro que cubre toda la pantalla y que al hacer click, cierra el modal.
         <div
-        className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-[16px] md:p-[30px]"
+        className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-[16px] md:p-[30px]"
         onClick={onClose}
         >
         {/*Contenedor Principal*/}
         <article
-            className="relative my-auto w-full max-w-[1100px] rounded-[24px] bg-bg-page"
+            className="relative mx-auto w-full max-w-[1100px] rounded-[24px] bg-bg-page"
             onClick={(event) => event.stopPropagation()}
         >
             {/* Cerrar */}
@@ -115,7 +115,7 @@ function NewsDetailModal({
             </button>
 
         {/*Contenido Interno*/}
-        <div className="px-[22px] pb-[45px] pt-[5px] md:px-[55px] md:pb-[60px]">
+        <div className="px-[22px] pb-[45px] pt-[40px] md:px-[55px] md:pb-[60px] md:pt-[55px]">
 
           {/* Encabezado */}
             <header className="mx-auto max-w-[850px] text-center">
@@ -179,8 +179,23 @@ function NewsDetailModal({
                     </div>
                 )}
 
+            {/* Resumen generado por IA */}
+                {announcement.resumenIA && (
+                    <section className="mx-auto mt-[40px] max-w-[950px] rounded-[20px] bg-gradient-to-br from-green-50 to-white p-[22px] text-left shadow-sm ring-1 ring-green-100 md:p-[28px]">
+                        <div className="mb-[12px] inline-flex items-center gap-[6px] rounded-full bg-green-500 px-[12px] py-[6px]">
+                            <SparklesIcon size={14} className="text-white" aria-hidden="true" />
+                            <span className="font-heading text-[11px] font-bold uppercase tracking-wide text-white">
+                                {t("newspage.aiSummary")}
+                            </span>
+                        </div>
+                        <p className="font-body text-[16px] leading-[1.7] text-heading md:text-[17px]">
+                            {announcement.resumenIA}
+                        </p>
+                    </section>
+                )}
+
             {/* Contenido */}
-            <section className="mx-auto mt-[50px] max-w-[950px] text-left">
+            <section className={`mx-auto max-w-[950px] text-left ${announcement.resumenIA ? 'mt-[30px]' : 'mt-[50px]'}`}>
                 <p className="whitespace-pre-line font-body text-[15px] leading-[1.85] text-body-text md:text-[16px]">
                     {announcement.content}
                     </p>

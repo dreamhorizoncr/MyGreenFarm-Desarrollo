@@ -120,6 +120,7 @@ export default {
       category4: 'Avis',
       category5: 'Général',
       readMore: 'Lire la suite',
+      aiSummary: 'Résumé',
       gallery: "Galerie d'images",
       noImage: 'Aucune image disponible',
     },
@@ -173,6 +174,19 @@ export default {
     occupation: 'Profession',
     childName: "Nom de l'enfant",
     reason: 'Motif',
+    referral: {
+      title: 'Comment avez-vous entendu parler de nous ?',
+      placeholder: 'Sélectionnez une option',
+      required: 'Sélectionnez comment vous avez entendu parler de nous',
+      otherDetail: 'Dites-nous où',
+      options: {
+        FRIEND: 'Un ami ou un membre de la famille',
+        SOCIAL_MEDIA: 'Réseaux sociaux',
+        GOOGLE_SEARCH: 'Recherche Google',
+        FLYER_OR_AD: 'Affiche ou publicité',
+        OTHER: 'Autre',
+      },
+    },
     scheduleTitle: 'Horaires de rendez-vous',
     scheduleDescription: 'Sélectionnez le créneau de rendez-vous suivant à réserver',
     days: {
@@ -284,6 +298,8 @@ export default {
     loading: 'Chargement...',
     noUsers: 'Aucun utilisateur enregistré',
     scrollToTop: 'Haut de page',
+    sessionExpired: 'Votre session a expiré. Veuillez vous reconnecter.',
+    unauthorized: 'Non autorisé'
   },
   validation: {
     emailRequired: "L'e-mail est obligatoire",
@@ -341,12 +357,14 @@ export default {
     sidebar: {
     dashboard: 'Tableau de bord',
       docentes: 'Enseignants',
+      noticias: 'Actualités',
       galeria: 'Galerie',
       citas: 'Rendez-vous',
       cv: 'CV',
       expedientes: 'Dossiers',
       miPerfil: 'Mon profil',
       servicios: 'Services',
+      disponibilidad: 'Mes disponibilités',
     },
     curriculums: {
       title: 'Offres et candidatures',

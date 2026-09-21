@@ -58,6 +58,7 @@ public class AnnouncementService {
         response.setType(announcement.getType());
         response.setEventDate(announcement.getEventDate());
         response.setLocation(announcement.getLocation());
+        response.setResumenIA(announcement.getResumenIA());
 
         // Aquí es donde se inyecta la lógica: si 'lang' es 'en' o 'fr',
         // busca el texto traducido en la tabla de traducciones, si es 'es', usa el
@@ -79,7 +80,7 @@ public class AnnouncementService {
         Announcement announcement = announcementRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Anuncio no encontrado con ID: " + id));
 
-        if (announcementRepository.existsByTitle(dto.getTitle())) {
+        if (announcementRepository.existsByTitleAndIdNot(dto.getTitle(), id)) {
             throw new IllegalArgumentException("Ya existe un anuncio con el título: " + dto.getTitle());
         }
 

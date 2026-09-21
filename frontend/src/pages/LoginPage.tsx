@@ -1,6 +1,6 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Button from "../components/ui/Button.tsx";
 import PasswordInput from "../components/ui/PasswordInput.tsx";
 import TextField from "../components/ui/TextField.tsx";
@@ -16,6 +16,8 @@ function LoginPage() {
   const { t } = useTranslation();
   const { submitLogin, loading, error } = useLogin();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const sessionExpired = searchParams.get("expired") === "true";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [failedAttempts, setFailedAttempts] = useState(0);
@@ -81,6 +83,15 @@ function LoginPage() {
       <h2 className="mb-[35px] text-left font-heading text-[28px] leading-none text-heading md:mb-[55px] md:text-[42px]">
         {t("login.title")}
       </h2>
+
+      {sessionExpired && (
+        <p
+          role="alert"
+          className="mb-4 text-center font-body text-sm text-danger"
+        >
+          {t("common.sessionExpired")}
+        </p>
+      )}
 
       {/* Formulario */}
       <form onSubmit={handleLogin} noValidate>

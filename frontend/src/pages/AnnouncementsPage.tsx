@@ -184,9 +184,14 @@ function AnnouncementsPage() {
 
 		{/* Formulario */}
 		{formOpen && (
+			<div
+				className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-[16px] md:p-[30px]"
+				onClick={closeForm}
+			>
 			<form
 				onSubmit={handleSubmit}
-				className="mt-xl rounded-[20px] border border-neutral-200 bg-white p-lg shadow-sm md:p-xl"
+				onClick={(event: React.MouseEvent) => event.stopPropagation()}
+				className="mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
 			>
 				<div className="flex items-center justify-between gap-md">
 					<h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -256,7 +261,7 @@ function AnnouncementsPage() {
 						<textarea
 							required
 							minLength={20}
-							maxLength={1500}
+							maxLength={4000}
 							rows={6}
 							value={form.content}
 							onChange={(e) =>
@@ -446,6 +451,7 @@ function AnnouncementsPage() {
 					</button>
 				</div>
 			</form>
+			</div>
 		)}
 
 

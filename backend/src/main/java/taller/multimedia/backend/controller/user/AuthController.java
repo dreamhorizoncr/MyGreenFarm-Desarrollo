@@ -17,7 +17,6 @@ import taller.multimedia.backend.dto.LoginRequest;
 import taller.multimedia.backend.dto.MessageResponse;
 import taller.multimedia.backend.dto.ResetPasswordRequest;
 import taller.multimedia.backend.dto.SignupRequest;
-import taller.multimedia.backend.dto.UserInfoResponse;
 import taller.multimedia.backend.dto.SigninResponse;
 import taller.multimedia.backend.security.jwt.JwtUtils;
 import taller.multimedia.backend.security.services.UserDetailsImpl;

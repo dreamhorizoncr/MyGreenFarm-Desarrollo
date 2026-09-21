@@ -86,7 +86,7 @@ function ServicesPage() {
     setCheckoutLoading(plan.id)
     try {
       const url = await servicePlanService.checkoutPlan(plan.id)
-      window.location.href = url
+      window.open(url, '_blank', 'noopener,noreferrer')
     } catch {
       setCheckoutLoading(null)
     }

@@ -16,11 +16,12 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import taller.multimedia.backend.dto.appointment.AppointmentRequest;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
+import taller.multimedia.backend.model.appointment.ReferralSource;
 import taller.multimedia.backend.repository.appointment.AppointmentRepository;
 import taller.multimedia.backend.service.EmailService;
 
@@ -98,6 +99,12 @@ public class AppointmentService {
         appointment.setParentPhone(formattedPhone);
         appointment.setParentOccupation(dto.getParentOccupation());
         appointment.setReferralSource(dto.getReferralSource());
+        if (dto.getReferralSource() == ReferralSource.OTHER) {
+            if (dto.getReferralOtherDetail() == null || dto.getReferralOtherDetail().isBlank()) {
+                throw new IllegalArgumentException("Debes indicar cómo nos conociste.");
+            }
+            appointment.setReferralOtherDetail(dto.getReferralOtherDetail().trim());
+        }
         appointment.setChildName(dto.getChildName());
         String langCode = resolverLangCode(dto.getLanguage());
         appointment.setLanguage(langCode);
@@ -113,15 +120,15 @@ public class AppointmentService {
 
         calendarSyncAsyncService.addAppointmentAsync(savedAppointment.getId());
 
-        log.info("Idioma recibido del DTO: '{}', langCode resuelto: '{}'", dto.getLanguage(), langCode);
         Locale locale = Locale.forLanguageTag(langCode);
+        log.info("Idioma de la cita: recibido='{}', resuelto='{}', locale='{}'", dto.getLanguage(), langCode,
+            locale);
 
         emailService.sendAppointmentPendingEmail(savedAppointment, locale);
         emailService.sendAdminNewAppointmentAlert(savedAppointment);
         return savedAppointment;
     }
 
-    // se cambió esto
     private String resolverLangCode(String languageFromDto) {
         if (languageFromDto == null || languageFromDto.isBlank()) {
             log.warn("El idioma recibido es nulo o vacío. Usando por defecto: 'es'");

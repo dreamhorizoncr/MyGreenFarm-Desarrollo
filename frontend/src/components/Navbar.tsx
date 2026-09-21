@@ -42,7 +42,7 @@ function Navbar() {
   return (
     <header className="relative z-40 h-16 border-b border-neutral-200 bg-bg-page">
       {/* Desktop nav */}
-      <nav className="hidden h-full w-full lg:flex">
+      <nav className="hidden h-full w-full xl:flex">
         <div className="flex h-full w-full items-center px-[var(--scale-1100)]">
           <Brand />
 
@@ -89,7 +89,7 @@ function Navbar() {
       </nav>
 
       {/* Mobile nav */}
-      <nav className="flex h-full w-full lg:hidden">
+      <nav className="flex h-full w-full xl:hidden">
         <div className={`flex h-full w-full items-center justify-between ${isProtectedPage ? 'px-md pr-lg' : 'mx-auto max-w-[var(--container-max-width)] px-lg'}`}>
           <Brand />
 
