@@ -16,6 +16,7 @@ import AdminRoute from './routes/AdminRoute.tsx'
 import OwnerRoute from './routes/OwnerRoute.tsx'
 import NewsPage from './pages/NewsPage.tsx'
 import AnnouncementsPage from './pages/AnnouncementsPage.tsx'
+import AdminExpedientsPage from './pages/AdminExpedientsPage.tsx'
 import GalleryPage from './pages/GalleryPage.tsx'
 import AlbumDetailPage from './pages/AlbumDetailPage.tsx'
 import AdminGalleryPage from './pages/AdminGalleryPage.tsx'
@@ -49,7 +50,7 @@ function App() {
         <div className="flex-1">
           <ProfileAvatarProvider>
             <Routes>
-        <Route element={<ProtectedRoute />}>
+          <Route element={<ProtectedRoute />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
           <Route path="/admin/citas" element={<AdminCitasPage />} />
@@ -58,7 +59,7 @@ function App() {
             <Route path="/admin/announcements" element={<AnnouncementsPage />} />
             <Route path="/admin/gallery" element={<AdminGalleryPage />} />
             <Route path="/admin/curriculums" element={<AdminCurriculumsPage />} />
-          </Route>
+            <Route path='/admin/expedients' element={<AdminExpedientsPage/>} />
           <Route element={<OwnerRoute />}>
             <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />
             <Route path="/admin/disponibilidad" element={<OwnerAvailabilityPage />} />

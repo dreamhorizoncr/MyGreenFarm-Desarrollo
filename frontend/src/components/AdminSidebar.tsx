@@ -54,7 +54,7 @@ function AdminSidebar() {
         { id: 'servicios', icon: CreditCardIcon, path: '/admin/service-plans' },
         { id: 'disponibilidad', icon: CalendarDaysIcon, path: '/admin/disponibilidad' },
         { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
-        { id: 'expedientes', icon: FolderOpenIcon },
+        { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
         { id: 'miPerfil', icon: UserIcon, path: '/profile' },
       ]
     : userStorage.getUser()?.role === 'ADMIN'
@@ -65,7 +65,7 @@ function AdminSidebar() {
           { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
           { id: 'docentes', icon: UsersIcon, path: '/admin/users' },
           { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
-          { id: 'expedientes', icon: FolderOpenIcon },
+          { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
           { id: 'miPerfil', icon: UserIcon, path: '/profile' },
         ]
       : [
