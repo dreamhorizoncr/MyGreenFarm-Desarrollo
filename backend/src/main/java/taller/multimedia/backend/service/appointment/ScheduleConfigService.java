@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import taller.multimedia.backend.dto.appointment.AvailableDayResponse;
 import taller.multimedia.backend.model.appointment.ScheduleException;
 import taller.multimedia.backend.model.appointment.WeeklySchedule;
 import taller.multimedia.backend.repository.appointment.ScheduleExceptionRepository;
@@ -63,20 +64,25 @@ public class ScheduleConfigService {
         return slots;
     }
 
-    public Map<String, List<LocalTime>> getAvailableSlotsForWeek(LocalDate startDate) {
+    // Incluye el nombre del evento especial para que la reserva pueda informarlo al cliente.
+    public Map<String, AvailableDayResponse> getAvailableSlotsForWeek(LocalDate startDate) {
         LocalDate today = LocalDate.now();
-        Map<String, List<LocalTime>> weekSlots = new java.util.LinkedHashMap<>();
+        Map<String, AvailableDayResponse> weekSlots = new java.util.LinkedHashMap<>();
 
         for (int i = 0; i < 7; i++) {
             LocalDate currentDay = startDate.plusDays(i);
+            Optional<ScheduleException> exceptionOpt = exceptionRepo.findByExceptionDate(currentDay);
+            boolean specialDay = exceptionOpt.isPresent();
+            String eventName = specialDay ? exceptionOpt.get().getReason() : null;
+            List<LocalTime> slots;
 
             // Si es hoy, pasado o fin de semana, devolvemos lista vacía
             if (!currentDay.isAfter(today) || currentDay.getDayOfWeek().getValue() >= 6) {
-                weekSlots.put(currentDay.toString(), List.of());
+                slots = List.of();
             } else {
-                List<LocalTime> slotsForDay = getAvailableSlotsForDate(currentDay);
-                weekSlots.put(currentDay.toString(), slotsForDay);
+                slots = getAvailableSlotsForDate(currentDay);
             }
+            weekSlots.put(currentDay.toString(), new AvailableDayResponse(slots, specialDay, eventName));
         }
         
         return weekSlots;

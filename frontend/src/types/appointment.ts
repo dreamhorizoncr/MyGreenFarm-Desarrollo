@@ -1,4 +1,5 @@
 export type AppointmentStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED'
+export type ReferralSource = 'FRIEND' | 'SOCIAL_MEDIA' | 'GOOGLE_SEARCH' | 'FLYER_OR_AD' | 'OTHER'
 
 export interface AppointmentRequest {
   idType: string
@@ -10,6 +11,8 @@ export interface AppointmentRequest {
   childName: string
   appointmentDate: string
   parentNotes: string
+  referralSource: ReferralSource
+  referralOtherDetail?: string
   language: string
 }
 
@@ -24,8 +27,16 @@ export interface Appointment {
   appointmentDate: string
   status: AppointmentStatus
   parentNotes: string
+  referralSource: ReferralSource
+  referralOtherDetail: string | null
   teacherConclusion: string | null
   googleEventId: string | null
 }
 
-export type AvailableWeek = Record<string, string[]>
+export interface AvailableDay {
+  slots: string[]
+  specialDay: boolean
+  eventName: string | null
+}
+
+export type AvailableWeek = Record<string, AvailableDay>
