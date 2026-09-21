@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import taller.multimedia.backend.dto.AuthResult;
 import taller.multimedia.backend.dto.LoginRequest;
 import taller.multimedia.backend.dto.SignupRequest;
 import taller.multimedia.backend.dto.UserInfoResponse;
@@ -61,7 +62,7 @@ public class AuthService {
     }
 
     // Authenticate user and return user info
-    public UserInfoResponse authenticateUser(LoginRequest request) {
+    public AuthResult authenticateUser(LoginRequest request) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
@@ -69,12 +70,14 @@ public class AuthService {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        return new UserInfoResponse(
+        UserInfoResponse userInfo = new UserInfoResponse(
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getFirstName(),
                 userDetails.getLastName(),
                 userDetails.getRole());
+
+        return new AuthResult(userInfo, userDetails);
     }
 
     // Generate JWT cookie for authenticated user

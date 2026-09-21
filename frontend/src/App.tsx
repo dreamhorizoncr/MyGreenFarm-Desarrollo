@@ -25,11 +25,13 @@ import PaymentSuccessPage from './pages/PaymentSuccessPage.tsx'
 import PaymentFailedPage from './pages/PaymentFailedPage.tsx'
 import AdminCurriculumsPage from './pages/AdminCurriculumsPage.tsx'
 import VacanciesPage from './pages/VacanciesPage.tsx'
+import OwnerAvailabilityPage from './pages/OwnerAvailabilityPage.tsx'
 import Footer from './layout/Footer.tsx'
 import ScrollToTopButton from './components/ScrollToTopButton.tsx'
 import { ProfileAvatarProvider } from './contexts/ProfileAvatarContext.tsx'
 import { useSessionExpiredNotice } from './hooks/useSessionExpiredNotice.ts'
 import { ErrorBoundary } from './components/ErrorBoundary.tsx'
+import BlobGooFilter from './components/ui/BlobGooFilter.tsx'
 
 function SessionWatcher() {
   useSessionExpiredNotice()
@@ -42,6 +44,7 @@ function App() {
     <BrowserRouter>
       <Toaster position="top-right" offset={{ top: 76 }} />
       <SessionWatcher />
+      <BlobGooFilter />
       <div className="flex min-h-svh flex-col">
         <div className="flex-1">
           <ProfileAvatarProvider>
@@ -58,6 +61,7 @@ function App() {
           </Route>
           <Route element={<OwnerRoute />}>
             <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />
+            <Route path="/admin/disponibilidad" element={<OwnerAvailabilityPage />} />
           </Route>
         </Route>
         <Route path="/" element={<HomePage />} />

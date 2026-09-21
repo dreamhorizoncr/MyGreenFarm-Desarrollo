@@ -20,6 +20,11 @@ export const galleryService = {
 		return response.data.content
 	},
 
+	async getFeatured(): Promise<Gallery[]> {
+		const response = await apiClient.get<Gallery[]>('/gallery/featured')
+		return response.data
+	},
+
 	async getByCategory(categoryId: string): Promise<Gallery[]> {
 		const response = await apiClient.get<{ content: Gallery[] }>('/gallery', {
 			params: { categoryId },

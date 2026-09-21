@@ -2,6 +2,7 @@ package taller.multimedia.backend.controller.appointment;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -20,10 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import taller.multimedia.backend.dto.appointment.AppointmentRequest;
+import taller.multimedia.backend.dto.appointment.AvailableDayResponse;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
 import taller.multimedia.backend.service.appointment.AppointmentService;
 import taller.multimedia.backend.service.appointment.GoogleCalendarService;
+import taller.multimedia.backend.service.appointment.ScheduleConfigService;
 
 @RestController
 @RequestMapping("/api/appointments")
@@ -31,8 +34,8 @@ import taller.multimedia.backend.service.appointment.GoogleCalendarService;
 public class AppointmentController {
 
     @Autowired
-    private GoogleCalendarService googleCalendarService;
-    
+    private ScheduleConfigService scheduleConfigService;
+
     private final AppointmentService appointmentService;
 
     public AppointmentController(AppointmentService appointmentService) {
@@ -63,7 +66,7 @@ public class AppointmentController {
             @RequestParam AppointmentStatus status,
             @RequestParam(required = false) String conclusion,
             @RequestParam(required = false, defaultValue = "es") String lang) {
-        
+
         Appointment updated = appointmentService.updateAppointmentStatus(id, status, conclusion, lang);
         return ResponseEntity.ok(updated);
     }
@@ -72,10 +75,10 @@ public class AppointmentController {
     public ResponseEntity<?> getAvailableSlots(@RequestParam("date") String dateStr) {
         try {
             LocalDate date = LocalDate.parse(dateStr);
-            List<String> freeSlots = googleCalendarService.getAvailableSlots(date);
+            List<LocalTime> freeSlots = scheduleConfigService.getAvailableSlotsForDate(date);
             return ResponseEntity.ok(freeSlots);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al consultar el calendario: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error al consultar los horarios: " + e.getMessage());
         }
     }
 
@@ -83,7 +86,8 @@ public class AppointmentController {
     public ResponseEntity<?> getAvailableWeek(@RequestParam("date") String dateStr) {
         try {
             LocalDate date = LocalDate.parse(dateStr);
-            Map<String, List<String>> weekSlots = googleCalendarService.getAvailableSlotsForWeek(date);
+            // El controller solo llama al servicio y devuelve la respuesta
+            Map<String, AvailableDayResponse> weekSlots = scheduleConfigService.getAvailableSlotsForWeek(date);
             return ResponseEntity.ok(weekSlots);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error al consultar la semana: " + e.getMessage());
@@ -95,7 +99,7 @@ public class AppointmentController {
             @PathVariable UUID id,
             @RequestParam LocalDateTime newDate,
             @RequestParam(required = false, defaultValue = "es") String lang) {
-        
+
         Appointment updatedAppointment = appointmentService.rescheduleAppointment(id, newDate, lang);
         return ResponseEntity.ok(updatedAppointment);
     }

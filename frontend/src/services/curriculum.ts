@@ -38,7 +38,7 @@ import type { TranslationItem } from './announcement.ts'
 // async deleteCurriculum(id: string): Promise<void> {
 //   await apiClient.delete(`/applications/${id}`)
 // }
-const store = createMockStore<Curriculum>('mgf_mock_applications_v4', SEED_CURRICULUMS)
+const store = createMockStore<Curriculum>('mgf_mock_applications_v6', SEED_CURRICULUMS)
 
 let mockCurriculums: Curriculum[] = store.load()
 

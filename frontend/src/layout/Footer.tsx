@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import FooterColumn from '../components/footer/FooterColumn.tsx'
 import FooterSocialLinks from '../components/footer/FooterSocialLinks.tsx'
 import { footerColumns, legalLinks } from '../components/footer/footerData.ts'
-import nubesUp from '../assets/imgs/nubesUp.svg'
+import nubeFooter from '../assets/imgs/nubeFooter.svg'
 import logo from '../assets/imgs/Logo.svg'
 
 function Brand() {
@@ -20,14 +20,14 @@ function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="w-full bg-[var(--green-500)] text-white">
+    <footer className="w-full text-white">
       <img
-        src={nubesUp}
+        src={nubeFooter}
         alt=""
         aria-hidden="true"
-        className="relative z-10 -mt-500 block h-auto w-full bg-bg-page"
+        className="relative z-10 block h-auto w-full"
       />
-      <div className="flex w-full flex-col gap-1500 px-[var(--scale-1100)] py-1500 text-center md:px-[var(--scale-1600)] md:text-left">
+      <div className="relative z-20 -mt-[2px] flex w-full flex-col gap-1500 bg-[var(--green-500)] px-[var(--scale-1100)] py-1500 text-center md:px-[var(--scale-1600)] md:text-left">
         <div className="grid w-full gap-xl md:grid-cols-[1.5fr_1fr] md:items-start">
           <div className="flex flex-col items-center gap-md md:items-start">
             <Brand />

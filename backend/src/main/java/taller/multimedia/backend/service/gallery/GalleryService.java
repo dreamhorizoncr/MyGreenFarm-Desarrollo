@@ -15,6 +15,7 @@ import taller.multimedia.backend.model.gallery.Gallery;
 import taller.multimedia.backend.repository.gallery.CategoryGalleryRepository;
 import taller.multimedia.backend.repository.gallery.GalleryRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -66,9 +67,17 @@ public class GalleryService {
         CategoryGallery category = categoryGalleryRepository.findById(dto.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada con ID: " + dto.getCategoryId()));
 
+        if (Boolean.TRUE.equals(dto.getFeatured()) && !Boolean.TRUE.equals(gallery.getFeatured())) {
+            long currentFeaturedCount = galleryRepository.countByFeaturedTrue();
+            if (currentFeaturedCount >= 3) {
+                throw new RuntimeException("Ya existen 3 galerías destacadas. Debes desmarcar una antes de destacar otra.");
+            }
+        }
+
         gallery.setCategoryGallery(category);
         gallery.setTitle(dto.getTitle());
         gallery.setDescription(dto.getDescription());
+        gallery.setFeatured(dto.getFeatured() != null ? dto.getFeatured() : false);
 
         Gallery updated = galleryRepository.save(gallery);
         return mapToResponse(updated);
@@ -86,11 +95,20 @@ public class GalleryService {
         galleryRepository.delete(gallery);
     }
 
+    @Transactional(readOnly = true)
+    public List<GalleryResponse> getFeaturedGalleries() {
+        return galleryRepository.findByFeaturedTrue()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
     private GalleryResponse mapToResponse(Gallery gallery) {
         GalleryResponse response = new GalleryResponse();
         response.setId(gallery.getId());
         response.setTitle(gallery.getTitle());
         response.setDescription(gallery.getDescription());
+        response.setFeatured(gallery.getFeatured());
         response.setGalleryImages(
                 galleryImageService.getImagesByGallery(gallery.getId(), PageRequest.of(0, 10)).getContent().toArray(new GalleryImageResponse[0]));
         return response;

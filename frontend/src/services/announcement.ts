@@ -12,10 +12,20 @@ export interface TranslationItem {
     originalText: string
 }
 
+export interface AnnouncementPage{
+    content: Announcement[]
+    totalPages: number
+    totalElements: number
+    number: number
+    size: number
+    first: boolean
+    last: boolean
+}
+
 export const announcementService = {
-    async getAnnouncements(lang: string): Promise<Announcement[]> {
-        const response = await apiClient.get<{ content:Announcement[] }>('/announcements', {params: {lang}})
-        return response.data.content
+    async getAnnouncements(lang: string, page: number = 0, size: number = 10,): Promise<AnnouncementPage> {
+        const response = await apiClient.get<AnnouncementPage>('/announcements',{params:{lang,page,size}})
+        return response.data
     },
 
     async create(data: AnnouncementRequest): Promise<Announcement> {

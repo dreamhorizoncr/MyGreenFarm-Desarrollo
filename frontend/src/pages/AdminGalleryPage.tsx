@@ -8,6 +8,7 @@ import {
 	FileImageIcon,
 	PencilIcon,
 	PlusIcon,
+	StarIcon,
 	Trash2Icon,
 	XIcon,
 } from '@animateicons/react/lucide'
@@ -260,9 +261,10 @@ interface AdminAlbumCardProps {
 	gallery: Gallery
 	onEdit: () => void
 	onDelete: () => void
+	onToggleFeatured: () => void
 }
 
-function AdminAlbumCard({ gallery, onEdit, onDelete }: AdminAlbumCardProps) {
+function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured }: AdminAlbumCardProps) {
 	const { t } = useTranslation()
 
 	return (
@@ -276,6 +278,18 @@ function AdminAlbumCard({ gallery, onEdit, onDelete }: AdminAlbumCardProps) {
 				<span className="absolute bottom-sm left-sm rounded-full bg-orange-500 px-md py-xs font-body text-body-sm font-bold text-white shadow">
 					{t('home.galeria.photoCount', { count: gallery.galleryImages.length })}
 				</span>
+				<button
+					type="button"
+					onClick={onToggleFeatured}
+					aria-label={t('admin.gallery.toggleFeatured')}
+					className={`absolute left-sm top-sm flex size-[34px] items-center justify-center rounded-full shadow transition ${
+						gallery.featured
+							? 'bg-yellow-400 text-white hover:bg-yellow-500'
+							: 'bg-white/80 text-neutral-400 hover:bg-white hover:text-yellow-500'
+					}`}
+				>
+					<StarIcon size={18} />
+				</button>
 			</div>
 
 			<div className="absolute right-[20px] top-[20px]">
@@ -299,6 +313,7 @@ interface AdminAlbumCarouselProps {
 	galleries: Gallery[]
 	onEdit: (gallery: Gallery) => void
 	onDelete: (gallery: Gallery) => void
+	onToggleFeatured: (gallery: Gallery) => void
 }
 
 function AdminAlbumCarousel({
@@ -306,6 +321,7 @@ function AdminAlbumCarousel({
 	galleries,
 	onEdit,
 	onDelete,
+	onToggleFeatured,
 }: AdminAlbumCarouselProps) {
 	const { t } = useTranslation()
 	const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start' })
@@ -366,6 +382,7 @@ function AdminAlbumCarousel({
 									gallery={gallery}
 									onEdit={() => onEdit(gallery)}
 									onDelete={() => onDelete(gallery)}
+									onToggleFeatured={() => onToggleFeatured(gallery)}
 								/>
 							</div>
 						))}
@@ -380,6 +397,7 @@ const emptyForm: GalleryRequest = {
 	categoryId: '',
 	title: '',
 	description: '',
+	featured: false,
 }
 
 function AdminGalleryPage() {
@@ -447,6 +465,7 @@ function AdminGalleryPage() {
 			categoryId,
 			title: gallery.title,
 			description: gallery.description,
+			featured: gallery.featured,
 		})
 		setFormError(null)
 		resetSelectedFiles()
@@ -511,6 +530,7 @@ function AdminGalleryPage() {
 			categoryId: form.categoryId,
 			title: form.title.trim(),
 			description: form.description.trim(),
+			featured: form.featured,
 		}
 
 		setSubmitting(true)
@@ -559,6 +579,22 @@ function AdminGalleryPage() {
 		if (!editing) return
 		await deleteImage(editing.id, imageId)
 		setImages((prev) => prev.filter((image) => image.id !== imageId))
+	}
+
+	const handleToggleFeatured = async (gallery: Gallery) => {
+		try {
+			await updateGallery(gallery.id, {
+				categoryId: Object.entries(galleriesByCategory).find(([, galleries]) =>
+					galleries.some((g) => g.id === gallery.id),
+				)?.[0] ?? '',
+				title: gallery.title,
+				description: gallery.description,
+				featured: !gallery.featured,
+			})
+			void fetchAll()
+		} catch {
+			// El hook mantiene el mensaje visible en la pantalla.
+		}
 	}
 
 	return (
@@ -642,6 +678,17 @@ onCreateYear={handleCreateYear}
 								onChange={(e) => setForm({ ...form, description: e.target.value })}
 								className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
 							/>
+						</label>
+
+						<label className="flex items-center gap-sm font-body text-sm font-semibold text-heading md:col-span-2">
+							<input
+								type="checkbox"
+								checked={form.featured}
+								onChange={(e) => setForm({ ...form, featured: e.target.checked })}
+								className="size-4 accent-yellow-500"
+							/>
+							<StarIcon size={16} className={form.featured ? 'text-yellow-500' : 'text-neutral-400'} />
+							{t('admin.gallery.featured')}
 						</label>
 
 						<div className="font-body text-sm font-semibold text-heading md:col-span-2">
@@ -789,6 +836,7 @@ onCreateYear={handleCreateYear}
 								galleries={galleries}
 								onEdit={(gallery) => openEdit(gallery)}
 								onDelete={(gallery) => setDeleteTarget(gallery)}
+								onToggleFeatured={handleToggleFeatured}
 							/>
 						)
 					})}

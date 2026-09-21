@@ -5,22 +5,25 @@ import Button from './ui/Button.tsx'
 import TextField from './ui/TextField.tsx'
 import useDismiss from '../hooks/useDismiss.ts'
 import { useVacancyApplicationForm } from '../hooks/useVacancyApplicationForm.ts'
-import type { Vacancy } from '../types/vacancy.ts'
+import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
 
 interface ApplyVacancyModalProps {
-  vacancy: Vacancy
+  title: string
+  vacancyId: string | null
+  requiredFields: OptionalApplicationField[]
   onSubmit: (data: ApplicationInput) => Promise<void>
   onClose: () => void
 }
 
-function ApplyVacancyModal({ vacancy, onSubmit, onClose }: ApplyVacancyModalProps) {
+function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose }: ApplyVacancyModalProps) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const certificatesInputRef = useRef<HTMLInputElement>(null)
 
-  const form = useVacancyApplicationForm(vacancy, onSubmit)
+  const form = useVacancyApplicationForm({ vacancyId, requiredFields }, onSubmit)
+  const heading = vacancyId === null ? title : t('vacancies.applyModalTitle')
 
   useDismiss({
     ref: overlayRef,
@@ -48,7 +51,7 @@ function ApplyVacancyModal({ vacancy, onSubmit, onClose }: ApplyVacancyModalProp
         className="relative w-[min(620px,92vw)] max-h-[90vh] overflow-y-auto rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
         role="dialog"
         aria-modal="true"
-        aria-label={t('vacancies.applyModalTitle')}
+        aria-label={heading}
       >
         <button
           type="button"
@@ -61,9 +64,11 @@ function ApplyVacancyModal({ vacancy, onSubmit, onClose }: ApplyVacancyModalProp
 
         <div className="relative mb-lg text-center">
           <h2 className="m-0 font-heading text-[30px] font-bold leading-tight text-heading">
-            {t('vacancies.applyModalTitle')}
+            {heading}
           </h2>
-          <p className="m-0 mt-2xs font-body text-[15px] text-neutral-500">{vacancy.title}</p>
+          {vacancyId !== null && (
+            <p className="m-0 mt-2xs font-body text-[15px] text-neutral-500">{title}</p>
+          )}
         </div>
 
         <div className="flex flex-col gap-md px-7 pb-8 pt-2.5 text-left">

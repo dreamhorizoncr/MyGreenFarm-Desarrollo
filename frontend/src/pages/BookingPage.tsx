@@ -14,6 +14,7 @@ import {
   validatePhoneNumber,
   validateRequired,
 } from '../utils/validators.ts'
+import type { ReferralSource } from '../types/appointment.ts'
 
 function BookingPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return (
@@ -44,17 +45,22 @@ function toISODate(date: Date): string {
   return `${year}-${month}-${day}`
 }
 
-function getNextMonday(): Date {
+function isBookableWeekday(date: string): boolean {
+  const day = new Date(`${date}T12:00:00`).getDay()
+  return day >= 1 && day <= 5
+}
+
+function getTomorrow(): Date {
   const today = new Date()
-  const daysUntilMonday = ((8 - today.getDay()) % 7) || 7
-  const nextMonday = new Date(today)
-  nextMonday.setDate(today.getDate() + daysUntilMonday)
-  return nextMonday
+  const tomorrow = new Date(today)
+  tomorrow.setDate(today.getDate() + 1)
+  return tomorrow
 }
 
 type Slot = { start: string }
 
 const ID_TYPES = ['Costarricense', 'Extranjero']
+const REFERRAL_SOURCES: ReferralSource[] = ['FRIEND', 'SOCIAL_MEDIA', 'GOOGLE_SEARCH', 'FLYER_OR_AD', 'OTHER']
 
 function parseSlots(slots: string[]): Slot[] {
   return slots.map((slot) => ({ start: slot.slice(0, 5) }))
@@ -94,6 +100,8 @@ function BookingPage() {
   const [occupation, setOccupation] = useState('')
   const [childName, setChildName] = useState('')
   const [reason, setReason] = useState('')
+  const [referralSource, setReferralSource] = useState<ReferralSource | ''>('')
+  const [referralOtherDetail, setReferralOtherDetail] = useState('')
   const [day, setDay] = useState<string | null>(null)
   const [time, setTime] = useState<string | null>(null)
 
@@ -104,17 +112,20 @@ function BookingPage() {
   const [occupationError, setOccupationError] = useState(false)
   const [childNameError, setChildNameError] = useState(false)
   const [reasonError, setReasonError] = useState(false)
+  const [referralSourceError, setReferralSourceError] = useState(false)
+  const [referralOtherDetailError, setReferralOtherDetailError] = useState(false)
 
   useEffect(() => {
-    fetchWeek(toISODate(getNextMonday()))
+    fetchWeek(toISODate(getTomorrow()))
   }, [fetchWeek])
 
-  const availableDates = Object.keys(availability)
-  const effectiveDay = day ?? availableDates[0] ?? null
+  const availableDates = Object.keys(availability).filter(isBookableWeekday)
+  const effectiveDay = day && availableDates.includes(day) ? day : availableDates[0] ?? null
   const effectiveTime =
     time ??
-    (effectiveDay ? availability[effectiveDay]?.[0]?.slice(0, 5) ?? null : null)
-  const selectedDaySlots = effectiveDay ? availability[effectiveDay] : []
+    (effectiveDay ? availability[effectiveDay]?.slots[0]?.slice(0, 5) ?? null : null)
+  const selectedDay = effectiveDay ? availability[effectiveDay] : null
+  const selectedDaySlots = selectedDay?.slots ?? []
   const morningSlots = selectedDaySlots ? parseSlots(selectedDaySlots.filter((slot) => Number(slot.slice(0, 2)) < 12)) : []
   const afternoonSlots = selectedDaySlots ? parseSlots(selectedDaySlots.filter((slot) => Number(slot.slice(0, 2)) >= 12)) : []
 
@@ -139,7 +150,7 @@ function BookingPage() {
 
   const selectDay = (date: string) => {
     setDay(date)
-    const firstSlot = availability[date]?.[0]
+    const firstSlot = availability[date]?.slots[0]
     setTime(firstSlot ? firstSlot.slice(0, 5) : null)
   }
 
@@ -150,9 +161,13 @@ function BookingPage() {
     if (currentStep === 2) {
       const childNameValid = validateRequired(childName, t('booking.childName'), t) === null
       const reasonValid = validateRequired(reason, t('booking.reason'), t) === null
+      const referralSourceValid = referralSource !== ''
+      const referralOtherDetailValid = referralSource !== 'OTHER' || validateRequired(referralOtherDetail, t('booking.referral.otherDetail'), t) === null
       if (!childNameValid) setChildNameError(true)
       if (!reasonValid) setReasonError(true)
-      return childNameValid && reasonValid
+      if (!referralSourceValid) setReferralSourceError(true)
+      if (!referralOtherDetailValid) setReferralOtherDetailError(true)
+      return childNameValid && reasonValid && referralSourceValid && referralOtherDetailValid
     }
     if (currentStep === 3) {
       const fullNameValid = validateRequired(fullName, t('booking.fullName'), t) === null
@@ -200,6 +215,8 @@ function BookingPage() {
       childName,
       appointmentDate: `${effectiveDay}T${effectiveTime}:00`,
       parentNotes: reason,
+      referralSource: referralSource as ReferralSource,
+      referralOtherDetail: referralSource === 'OTHER' ? referralOtherDetail.trim() : undefined,
       language: (i18n.language ?? 'es').split('-')[0],
     })
     if (ok) resetForm()
@@ -216,6 +233,8 @@ function BookingPage() {
     setOccupation('')
     setChildName('')
     setReason('')
+    setReferralSource('')
+    setReferralOtherDetail('')
     setDay(null)
     setTime(null)
     setFullNameError(false)
@@ -225,6 +244,8 @@ function BookingPage() {
     setOccupationError(false)
     setChildNameError(false)
     setReasonError(false)
+    setReferralSourceError(false)
+    setReferralOtherDetailError(false)
   }, [])
 
   const selectableClassName = (active: boolean) =>
@@ -258,6 +279,9 @@ function BookingPage() {
     : null
   const reasonErrorMessage = reasonError
     ? validateRequired(reason, t('booking.reason'), t)
+    : null
+  const referralOtherDetailErrorMessage = referralOtherDetailError
+    ? validateRequired(referralOtherDetail, t('booking.referral.otherDetail'), t)
     : null
 
   const dayLabel = (date: string) => {
@@ -301,6 +325,12 @@ function BookingPage() {
         </p>
       </div>
 
+      {selectedDay?.specialDay && (
+        <p className="m-0 text-left font-body text-body-sm font-semibold text-link">
+          Horario especial{selectedDay.eventName ? `: ${selectedDay.eventName}` : ''}
+        </p>
+      )}
+
       {slotsLoading && (
         <p className="m-0 text-left font-body text-body-sm text-body-text">
           {t('booking.loadingSlots')}
@@ -314,7 +344,7 @@ function BookingPage() {
           </p>
           <button
             type="button"
-            onClick={() => fetchWeek(toISODate(getNextMonday()))}
+            onClick={() => fetchWeek(toISODate(getTomorrow()))}
             className="w-fit rounded-full bg-green-500 px-lg py-sm font-body text-sm font-semibold text-white transition-colors hover:bg-green-600"
           >
             {t('booking.retry')}
@@ -394,6 +424,48 @@ function BookingPage() {
           className="w-full resize-none border-b border-neutral-300 bg-transparent px-0 font-body text-[15px] text-body-text outline-none transition focus:border-green-500"
         />
       </TextField>
+      <div className="flex flex-col gap-sm">
+        <h4 className="m-0 text-left font-body text-base font-bold text-body-text">
+          {t('booking.referral.title')}
+        </h4>
+        <label htmlFor="booking-referral-source" className="sr-only">
+          {t('booking.referral.title')}
+        </label>
+        <select
+          id="booking-referral-source"
+          value={referralSource}
+          onChange={(event) => {
+            const source = event.target.value as ReferralSource | ''
+            setReferralSource(source)
+            setReferralSourceError(false)
+            if (source !== 'OTHER') {
+              setReferralOtherDetail('')
+              setReferralOtherDetailError(false)
+            }
+          }}
+          aria-invalid={referralSourceError}
+          className="h-[38px] w-full border-b border-neutral-300 bg-transparent px-0 font-body text-[15px] text-body-text outline-none transition focus:border-green-500"
+        >
+          <option value="">{t('booking.referral.placeholder')}</option>
+          {REFERRAL_SOURCES.map((source) => (
+            <option key={source} value={source}>{t(`booking.referral.options.${source}`)}</option>
+          ))}
+        </select>
+        {referralSourceError && <p className="m-0 text-left font-body text-sm text-danger" role="alert">{t('booking.referral.required')}</p>}
+      </div>
+      {referralSource === 'OTHER' && (
+        <TextField
+          id="booking-referral-other"
+          label={t('booking.referral.otherDetail')}
+          value={referralOtherDetail}
+          maxLength={255}
+          onChange={(event) => {
+            setReferralOtherDetail(event.target.value)
+            if (referralOtherDetailError) setReferralOtherDetailError(false)
+          }}
+          error={referralOtherDetailErrorMessage}
+        />
+      )}
     </div>
   )
 
@@ -517,6 +589,12 @@ function BookingPage() {
         <div className="flex flex-col gap-xs">
           <span className="font-body text-xs text-body-text">{t('booking.reason')}</span>
           <span className="font-body text-sm text-heading">{reason}</span>
+        </div>
+        <div className="flex flex-col gap-xs">
+          <span className="font-body text-xs text-body-text">{t('booking.referral.title')}</span>
+          <span className="font-body text-sm text-heading">
+            {referralSource && t(`booking.referral.options.${referralSource}`)}{referralSource === 'OTHER' && referralOtherDetail ? `: ${referralOtherDetail}` : ''}
+          </span>
         </div>
 
         <div className="h-px bg-neutral-300" />

@@ -62,7 +62,7 @@ public class JwtUtils {
     String jwt = generateJwtToken(userPrincipal);
     return ResponseCookie.from("jwt", jwt)
         .path("/")
-        .maxAge(24 * 60 * 60)
+        .maxAge(jwtExpirationMs / 1000)
         .httpOnly(true)
         .build();
   }

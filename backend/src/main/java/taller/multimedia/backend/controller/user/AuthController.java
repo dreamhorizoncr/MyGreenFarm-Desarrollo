@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import taller.multimedia.backend.dto.AuthResult;
 import taller.multimedia.backend.dto.ForgotPasswordRequest;
 import taller.multimedia.backend.dto.LoginRequest;
 import taller.multimedia.backend.dto.MessageResponse;
 import taller.multimedia.backend.dto.ResetPasswordRequest;
 import taller.multimedia.backend.dto.SignupRequest;
-import taller.multimedia.backend.dto.UserInfoResponse;
 import taller.multimedia.backend.dto.SigninResponse;
 import taller.multimedia.backend.security.jwt.JwtUtils;
 import taller.multimedia.backend.security.services.UserDetailsImpl;
@@ -36,13 +36,15 @@ public class AuthController {
     private final AuthService authService;
     private final JwtUtils jwtUtils;
 
-    /*  ANTES (solo authService):
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
-    */
+    /*
+     * ANTES (solo authService):
+     * public AuthController(AuthService authService) {
+     * this.authService = authService;
+     * }
+     */
 
-    // NUEVO: se agrega JwtUtils para generar el token y devolverlo también en el body
+    // NUEVO: se agrega JwtUtils para generar el token y devolverlo también en el
+    // body
     public AuthController(AuthService authService, JwtUtils jwtUtils) {
         this.authService = authService;
         this.jwtUtils = jwtUtils;
@@ -51,23 +53,26 @@ public class AuthController {
     // Endpoint for user authentication (login)
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        UserInfoResponse user = authService.authenticateUser(loginRequest);
+        AuthResult result = authService.authenticateUser(loginRequest);
 
         // Get the authenticated user details to generate JWT cookie
-        UserDetailsImpl userDetails = (UserDetailsImpl) org.springframework.security.core.context.SecurityContextHolder
-                .getContext().getAuthentication().getPrincipal();
-        ResponseCookie jwtCookie = authService.generateJwtCookie(userDetails);
+        UserDetailsImpl userDetails = result.getUserDetails();
 
-        // NUEVO: genera el token para devolverlo también en el body, no solo en la cookie
         String token = jwtUtils.generateJwtToken(userDetails);
+        ResponseCookie jwtCookie = ResponseCookie.from("jwt", token)
+                .path("/")
+                .maxAge(24 * 60 * 60)
+                .httpOnly(true)
+                .build();
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                /*  ANTES: devolvía solo el user en el body
-                .body(user);
-                */
+                /*
+                 * ANTES: devolvía solo el user en el body
+                 * .body(user);
+                 */
                 // NUEVO: envuelve token + user en SigninResponse
-                .body(new SigninResponse(token, user));
+                .body(new SigninResponse(token, result.getUserInfo()));
     }
 
     // Endpoint for user registration (signup) - only ADMIN can register new users

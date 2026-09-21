@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Container from "../components/home/Container";
 import { useTranslation } from "react-i18next";
 import NewsDetailModal from "../components/NewsDetailModal.tsx";
+import BlobButton from "../components/ui/BlobButton.tsx";
 
 import { useAnnouncements } from "../hooks/useAnnouncements";
 import { useAnnouncementImages } from "../hooks/useAnnouncementImages";
@@ -36,7 +37,7 @@ function formatDate(iso: string | null | undefined, lang: string): string {
 
 function NewsPage() {
   const { t, i18n } = useTranslation();
-  const { announcements, loading, error, fetchAnnouncements } =
+  const { announcements,totalPages, loading, error, fetchAnnouncements } =
     useAnnouncements();
   const {
     loading: imagesLoading,
@@ -48,12 +49,11 @@ function NewsPage() {
   const [selectedAnnouncement, setSelectedAnnouncement] =
     useState<Announcement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const NEWS_PER_PAGE = 10;
 
   useEffect(() => {
-    void fetchAnnouncements(i18n.language);
+    void fetchAnnouncements(i18n.language, currentPage -1, 10);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [i18n.language]);
+  }, [i18n.language,currentPage]);
 
   useEffect(() => {
     void fetchImages(announcements.map((announcement) => announcement.id));
@@ -61,22 +61,10 @@ function NewsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [announcements]);
 
-  //Filtra las noticias según la categoría seleccionada
-  const realCards = announcements.filter(
-    (a) => activeCategory === "All" || activeCategory === a.type,
-  );
-
-  //Calcula cuántas páginas se necesitan. Cada página puede mostrar un máximo de 10 noticias
-  const totalPages = Math.ceil(realCards.length / NEWS_PER_PAGE);
-
-  //Calcula desde cuál noticia debe comenzar la página actual
-  const startIndex = (currentPage - 1) * NEWS_PER_PAGE;
-
-  //Calcula hasta cuál noticia debe mostrar la página actual
-  const endIndex = startIndex + NEWS_PER_PAGE;
-
-  //Obtiene únicamente las noticias que corresponden a la página actual
-  const cards: Announcement[] = realCards.slice(startIndex, endIndex);
+  // Filtra las noticias de la página actual según la categoría seleccionada
+const cards = announcements.filter(
+  (a) => activeCategory === "All" || activeCategory === a.type,
+);
 
   //Se guardan las noticias en filas para mostrarlas de dos en dos
   const rows: Announcement[][] = [];
@@ -177,7 +165,7 @@ function NewsPage() {
                         // Tarjeta grande
                         <article
                           key={a.id}
-                          className="overflow-hidden rounded-[22px] border border-neutral-200 bg-white md:col-span-8 md:grid md:h-[340px] md:grid-cols-12"
+                          className="overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-8 md:grid md:h-[340px] md:grid-cols-12"
                         >
                           {/* Imagen */}
                           <div className="relative h-[240px] md:col-span-6 md:h-full">
@@ -216,20 +204,19 @@ function NewsPage() {
                               {a.content}
                             </p>
 
-                            <button
-                              type="button"
+                            <BlobButton
                               onClick={() => setSelectedAnnouncement(a)}
-                              className="mt-[26px] w-fit rounded-full border border-pink-400 px-[16px] py-[7px] font-body text-[11px] uppercase text-pink-500 transition hover:bg-pink-400 hover:text-white"
+                              className="mt-[26px] w-fit px-[16px] py-[7px] font-body text-[11px] uppercase"
                             >
                               {t("newspage.readMore")}
-                            </button>
+                            </BlobButton>
                           </div>
                         </article>
                       ) : (
                         // Tarjeta pequeña
                         <article
                           key={a.id}
-                          className="overflow-hidden rounded-[16px] border border-neutral-200 bg-white md:col-span-4 md:flex md:h-[340px] md:flex-col"
+                          className="overflow-hidden rounded-[16px] border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-4 md:flex md:h-[340px] md:flex-col"
                         >
                           {/* Imagen */}
                           <div className="relative h-[200px] md:h-[125px] md:shrink-0">
@@ -268,13 +255,12 @@ function NewsPage() {
                               {a.content}
                             </p>
 
-                            <button
-                              type="button"
+                            <BlobButton
                               onClick={() => setSelectedAnnouncement(a)}
-                              className="mt-auto w-fit rounded-full border border-pink-400 px-[16px] py-[7px] font-body text-[11px] uppercase text-pink-500 transition hover:bg-pink-400 hover:text-white"
+                              className="mt-auto w-fit px-[16px] py-[7px] font-body text-[11px] uppercase"
                             >
                               {t("newspage.readMore")}
-                            </button>
+                            </BlobButton>
                           </div>
                         </article>
                       );

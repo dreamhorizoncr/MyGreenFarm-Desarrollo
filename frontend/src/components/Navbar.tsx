@@ -42,7 +42,7 @@ function Navbar() {
   return (
     <header className="relative z-40 h-16 border-b border-neutral-200 bg-bg-page">
       {/* Desktop nav */}
-      <nav className="hidden h-full w-full lg:flex">
+      <nav className="hidden h-full w-full xl:flex">
         <div className="flex h-full w-full items-center px-[var(--scale-1100)]">
           <Brand />
 
@@ -51,8 +51,8 @@ function Navbar() {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`relative font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:bg-green-500 after:transition-all after:content-[''] ${
-                  pathname === link.to ? 'after:w-full' : 'after:w-0'
+                className={`relative font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-full after:origin-center after:bg-green-500 after:transition-transform after:duration-300 after:content-[''] ${
+                  pathname === link.to ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100'
                 }`}
               >
                 {link.label}
@@ -89,7 +89,7 @@ function Navbar() {
       </nav>
 
       {/* Mobile nav */}
-      <nav className="flex h-full w-full lg:hidden">
+      <nav className="flex h-full w-full xl:hidden">
         <div className={`flex h-full w-full items-center justify-between ${isProtectedPage ? 'px-md pr-lg' : 'mx-auto max-w-[var(--container-max-width)] px-lg'}`}>
           <Brand />
 
@@ -140,8 +140,8 @@ function Navbar() {
             <Link
               key={link.to}
               to={link.to}
-              className={`relative w-fit font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:bg-green-500 after:transition-all after:content-[''] ${
-                pathname === link.to ? 'after:w-full' : 'after:w-0'
+              className={`relative w-fit font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-full after:origin-center after:bg-green-500 after:transition-transform after:duration-300 after:content-[''] ${
+                pathname === link.to ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100'
               }`}
               onClick={() => setDrawerOpen(false)}
             >

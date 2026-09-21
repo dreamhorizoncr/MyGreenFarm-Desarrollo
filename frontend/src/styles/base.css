@@ -35,6 +35,134 @@ html [data-sileo-button][data-state] {
 }
 
 /* ---------------------------------------------------------------------------
+   BLOB BUTTON — efecto gooey al hacer hover (usa el filtro SVG #blob-goo)
+   --------------------------------------------------------------------------- */
+.blob-btn {
+  z-index: 1;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  border: none;
+  border-radius: 999px;
+  background-color: transparent;
+  color: var(--pink-500);
+  cursor: pointer;
+  transition: color 0.5s;
+}
+
+.blob-btn::before {
+  content: "";
+  z-index: 1;
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--pink-400);
+  border-radius: 999px;
+}
+
+.blob-btn::after {
+  content: "";
+  z-index: -2;
+  position: absolute;
+  left: 1.5px;
+  top: 1.5px;
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  transition: all 0.3s 0.2s;
+}
+
+.blob-btn:hover {
+  color: var(--white);
+}
+
+.blob-btn:hover::after {
+  left: 0;
+  top: 0;
+  transition: all 0.3s;
+}
+
+.blob-btn__inner {
+  z-index: -1;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--white);
+}
+
+.blob-btn__blobs {
+  position: relative;
+  display: block;
+  height: 100%;
+  filter: url("#blob-goo");
+}
+
+.blob-btn__blob {
+  position: absolute;
+  top: 1px;
+  width: 25%;
+  height: 100%;
+  background: var(--pink-400);
+  border-radius: 100%;
+  transform: translate3d(0, 150%, 0) scale(1.7);
+  transition: transform 0.45s;
+}
+
+@supports (filter: url("#blob-goo")) {
+  .blob-btn__blob {
+    transform: translate3d(0, 150%, 0) scale(1.4);
+  }
+}
+
+.blob-btn__blob:nth-child(1) {
+  left: 0%;
+  transition-delay: 0s;
+}
+
+.blob-btn__blob:nth-child(2) {
+  left: 30%;
+  transition-delay: 0.08s;
+}
+
+.blob-btn__blob:nth-child(3) {
+  left: 60%;
+  transition-delay: 0.16s;
+}
+
+.blob-btn__blob:nth-child(4) {
+  left: 90%;
+  transition-delay: 0.24s;
+}
+
+.blob-btn:hover .blob-btn__blob {
+  transform: translateZ(0) scale(1.7);
+}
+
+@supports (filter: url("#blob-goo")) {
+  .blob-btn:hover .blob-btn__blob {
+    transform: translateZ(0) scale(1.4);
+  }
+}
+
+.blob-btn--filled {
+  color: var(--white);
+}
+
+.blob-btn--filled:hover {
+  color: var(--white);
+}
+
+.blob-btn--filled .blob-btn__inner {
+  background: var(--pink-400);
+}
+
+.blob-btn--filled .blob-btn__blob {
+  background: var(--pink-300);
+}
+
+/* ---------------------------------------------------------------------------
    HTML — tipografía raíz, fondo y color
    --------------------------------------------------------------------------- */
 @layer base {

@@ -22,4 +22,7 @@ public class GalleryRequest {
     @Size(min = 20, max = 200, message = "El contenido no puede superar los 200 caracteres")
     private String description;
 
+    @NotNull(message = "El estado de destacado es obligatorio")
+    private Boolean featured = false;
+
 }
