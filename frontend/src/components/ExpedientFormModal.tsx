@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { expedientService } from "../services/expedient";
 
@@ -15,28 +16,42 @@ interface ExpedientFormModalProps {
 }
 
 // Niveles educativos disponibles
-const educationalLevels: {
-  value: EducationalLevel;
-  label: string;
-}[] = [
-  { value: "LACTANTES", label: "Lactantes" },
-  { value: "MATERNAL", label: "Maternal" },
-  { value: "INTERACTIVO", label: "Interactivo" },
-  { value: "MATERNO", label: "Materno" },
-  { value: "KINDER", label: "Kinder" },
-  { value: "PRIMER_GRADO", label: "Primer grado" },
-  { value: "SEGUNDO_GRADO", label: "Segundo grado" },
-  { value: "TERCER_GRADO", label: "Tercer grado" },
-  { value: "CUARTO_GRADO", label: "Cuarto grado" },
-  { value: "QUINTO_GRADO", label: "Quinto grado" },
-  { value: "SEXTO_GRADO", label: "Sexto grado" },
+const educationalLevels: EducationalLevel[] = [
+  "LACTANTES",
+  "MATERNAL",
+  "INTERACTIVO",
+  "MATERNO",
+  "KINDER",
+  "PRIMER_GRADO",
+  "SEGUNDO_GRADO",
+  "TERCER_GRADO",
+  "CUARTO_GRADO",
+  "QUINTO_GRADO",
+  "SEXTO_GRADO",
 ];
+
+// Relaciona los niveles del backend con las traducciones
+const educationalLevelKeys = {
+  LACTANTES: "lactantes",
+  MATERNAL: "maternal",
+  INTERACTIVO: "interactivo",
+  MATERNO: "materno",
+  KINDER: "kinder",
+  PRIMER_GRADO: "primerGrado",
+  SEGUNDO_GRADO: "segundoGrado",
+  TERCER_GRADO: "tercerGrado",
+  CUARTO_GRADO: "cuartoGrado",
+  QUINTO_GRADO: "quintoGrado",
+  SEXTO_GRADO: "sextoGrado",
+} as const satisfies Record<EducationalLevel, string>;
 
 function ExpedientFormModal({
   onClose,
   onCreated,
   expedient,
 }: ExpedientFormModalProps) {
+  const { t } = useTranslation();
+
   // Si existe un expediente, el modal está en modo edición
   const isEditing = Boolean(expedient);
 
@@ -60,6 +75,7 @@ function ExpedientFormModal({
 
   // Estado del formulario
   const [saving, setSaving] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
 
   // Guarda o actualiza el expediente
@@ -95,8 +111,8 @@ function ExpedientFormModal({
 
       setError(
         isEditing
-          ? "No se pudo actualizar el expediente."
-          : "No se pudo crear el expediente.",
+          ? t("admin.expedients.updateError")
+          : t("admin.expedients.createError"),
       );
     } finally {
       setSaving(false);
@@ -111,13 +127,15 @@ function ExpedientFormModal({
         <div className="flex items-center justify-between">
           <div>
             <h2 className="font-heading text-2xl font-bold text-heading">
-              {isEditing ? "Editar expediente" : "Agregar expediente"}
+              {isEditing
+                ? t("admin.expedients.editTitle")
+                : t("admin.expedients.addTitle")}
             </h2>
 
             <p className="mt-1 font-body text-sm text-body-text">
               {isEditing
-                ? "Modifica la información académica del niño o niña."
-                : "Ingresa la información académica del niño o niña."}
+                ? t("admin.expedients.editDescription")
+                : t("admin.expedients.addDescription")}
             </p>
           </div>
 
@@ -137,7 +155,7 @@ function ExpedientFormModal({
           {/* Nombre */}
           <div>
             <label className="mb-2 block font-body font-bold text-heading">
-              Nombre del niño o niña
+              {t("admin.expedients.childName")}
             </label>
 
             <input
@@ -145,7 +163,7 @@ function ExpedientFormModal({
               value={childName}
               onChange={(e) => setChildName(e.target.value)}
               required
-              placeholder="Nombre completo"
+              placeholder={t("admin.expedients.childNamePlaceholder")}
               className="w-full rounded-xl border border-gray-300 px-4 py-3 font-body outline-none focus:border-heading"
             />
           </div>
@@ -155,7 +173,7 @@ function ExpedientFormModal({
             {/* Fecha de admisión */}
             <div>
               <label className="mb-2 block font-body font-bold text-heading">
-                Fecha de admisión
+                {t("admin.expedients.admisiondate")}
               </label>
 
               <input
@@ -170,7 +188,7 @@ function ExpedientFormModal({
             {/* Nivel educativo */}
             <div>
               <label className="mb-2 block font-body font-bold text-heading">
-                Nivel educativo
+                {t("admin.expedients.grade")}
               </label>
 
               <select
@@ -182,8 +200,10 @@ function ExpedientFormModal({
                 className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-body outline-none focus:border-heading"
               >
                 {educationalLevels.map((level) => (
-                  <option key={level.value} value={level.value}>
-                    {level.label}
+                  <option key={level} value={level}>
+                    {t(
+                      `admin.expedients.levels.${educationalLevelKeys[level]}`,
+                    )}
                   </option>
                 ))}
               </select>
@@ -193,7 +213,7 @@ function ExpedientFormModal({
           {/* Observaciones */}
           <div>
             <label className="mb-2 block font-body font-bold text-heading">
-              Observaciones generales
+              {t("admin.expedients.notes")}
             </label>
 
             <textarea
@@ -201,7 +221,7 @@ function ExpedientFormModal({
               onChange={(e) => setGeneralObservations(e.target.value)}
               maxLength={600}
               rows={4}
-              placeholder="Escribe las observaciones generales..."
+              placeholder={t("admin.expedients.observationsPlaceholder")}
               className="w-full resize-none rounded-xl border border-gray-300 px-4 py-3 font-body outline-none focus:border-heading"
             />
 
@@ -213,7 +233,7 @@ function ExpedientFormModal({
           {/* Fotografía */}
           <div>
             <label className="mb-2 block font-body font-bold text-heading">
-              Fotografía
+              {t("admin.expedients.photo")}
             </label>
 
             <input
@@ -225,8 +245,8 @@ function ExpedientFormModal({
 
             <p className="mt-1 font-body text-xs text-body-text">
               {isEditing
-                ? "Selecciona una nueva fotografía únicamente si deseas reemplazar la actual."
-                : "La fotografía es opcional."}
+                ? t("admin.expedients.replacePhoto")
+                : t("admin.expedients.optionalPhoto")}
             </p>
           </div>
 
@@ -242,7 +262,7 @@ function ExpedientFormModal({
               disabled={saving}
               className="rounded-full border border-heading px-6 py-3 font-body font-bold text-heading transition hover:bg-gray-50"
             >
-              Cancelar
+              {t("admin.expedients.cancel")}
             </button>
 
             {/* Guardar */}
@@ -252,10 +272,10 @@ function ExpedientFormModal({
               className="rounded-full bg-heading px-7 py-3 font-body font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving
-                ? "Guardando..."
+                ? t("admin.expedients.saving")
                 : isEditing
-                  ? "Guardar cambios"
-                  : "Guardar expediente"}
+                  ? t("admin.expedients.saveChanges")
+                  : t("admin.expedients.save")}
             </button>
           </div>
         </form>

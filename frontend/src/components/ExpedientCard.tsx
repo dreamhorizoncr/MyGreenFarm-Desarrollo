@@ -1,4 +1,5 @@
 import type { EducationalLevel, Expedient } from "../types/expedient.ts";
+import { useTranslation } from "react-i18next";
 
 interface ExpedientCardProps {
   expedient: Expedient;
@@ -28,6 +29,9 @@ function formatDate(date: string) {
 }
 
 function ExpedientCard({ expedient, onEdit, onDelete }: ExpedientCardProps) {
+
+  const { t } = useTranslation();
+
   return (
     <article className="rounded-3xl bg-gray-100 p-6">
       {/* Nombre y acciones */}
@@ -44,7 +48,7 @@ function ExpedientCard({ expedient, onEdit, onDelete }: ExpedientCardProps) {
             onClick={() => onEdit(expedient)}
             className="rounded-full bg-white px-4 py-2 font-body text-sm font-bold text-heading transition hover:scale-105"
           >
-            Editar
+            {t('admin.expedients.editbutton')}
           </button>
 
           <button
@@ -52,7 +56,7 @@ function ExpedientCard({ expedient, onEdit, onDelete }: ExpedientCardProps) {
             onClick={() => onDelete(expedient)}
             className="rounded-full bg-white px-4 py-2 font-body text-sm font-bold text-red-500 transition hover:scale-105"
           >
-            Eliminar
+            {t('admin.expedients.deletebutton')}
           </button>
         </div>
       </div>
@@ -60,12 +64,12 @@ function ExpedientCard({ expedient, onEdit, onDelete }: ExpedientCardProps) {
       {/* Información del expediente */}
       <div className="mt-4 space-y-2 font-body text-body-text">
         <p>
-          <span className="font-bold">Fecha de admisión: </span>
+          <span className="font-bold">{t('admin.expedients.admisiondate')} </span>
           {formatDate(expedient.admisionDate)}
         </p>
 
         <p>
-          <span className="font-bold">Nivel educativo: </span>
+          <span className="font-bold">{t('admin.expedients.grade')} </span>
           {educationalLevelLabels[expedient.educationalLevel]}
         </p>
       </div>
@@ -90,7 +94,7 @@ function ExpedientCard({ expedient, onEdit, onDelete }: ExpedientCardProps) {
         {/* Observaciones */}
         <div className="min-w-0 flex-1 rounded-2xl bg-white p-5">
           <h3 className="font-body text-base font-bold text-heading">
-            Observaciones generales
+            {t('admin.expedients.notes')}
           </h3>
 
           <p className="mt-2 break-words font-body text-sm leading-relaxed text-body-text">
