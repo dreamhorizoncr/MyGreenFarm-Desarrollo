@@ -81,10 +81,11 @@ public class JwtUtils {
     try {
       Jwts.parser().verifyWith(key()).build().parse(authToken);
       return true;
-    } catch (MalformedJwtException e) {
-      logger.error("Invalid Token JWT: {}", e.getMessage());
     } catch (ExpiredJwtException e) {
       logger.error("Expired Token JWT: {}", e.getMessage());
+      throw e; // el AuthTokenFilter la captura y marca SESSION_EXPIRED
+    } catch (MalformedJwtException e) {
+      logger.error("Invalid Token JWT: {}", e.getMessage());
     } catch (UnsupportedJwtException e) {
       logger.error("Token JWT not supported: {}", e.getMessage());
     } catch (IllegalArgumentException e) {
