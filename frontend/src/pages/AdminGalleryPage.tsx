@@ -591,7 +591,7 @@ function AdminGalleryPage() {
 				description: gallery.description,
 				featured: !gallery.featured,
 			})
-			void fetchAll()
+			void fetchAll(language)
 		} catch {
 			// El hook mantiene el mensaje visible en la pantalla.
 		}
