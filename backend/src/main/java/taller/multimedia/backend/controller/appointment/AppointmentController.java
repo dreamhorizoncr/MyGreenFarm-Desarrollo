@@ -34,9 +34,6 @@ import taller.multimedia.backend.service.appointment.ScheduleConfigService;
 public class AppointmentController {
 
     @Autowired
-    private GoogleCalendarService googleCalendarService;
-
-    @Autowired
     private ScheduleConfigService scheduleConfigService;
 
     private final AppointmentService appointmentService;
