@@ -120,15 +120,15 @@ public class AppointmentService {
 
         calendarSyncAsyncService.addAppointmentAsync(savedAppointment.getId());
 
-        log.info("Idioma recibido del DTO: '{}', langCode resuelto: '{}'", dto.getLanguage(), langCode);
         Locale locale = Locale.forLanguageTag(langCode);
+        log.info("Idioma de la cita: recibido='{}', resuelto='{}', locale='{}'", dto.getLanguage(), langCode,
+            locale);
 
         emailService.sendAppointmentPendingEmail(savedAppointment, locale);
         emailService.sendAdminNewAppointmentAlert(savedAppointment);
         return savedAppointment;
     }
 
-    // se cambió esto
     private String resolverLangCode(String languageFromDto) {
         if (languageFromDto == null || languageFromDto.isBlank()) {
             log.warn("El idioma recibido es nulo o vacío. Usando por defecto: 'es'");

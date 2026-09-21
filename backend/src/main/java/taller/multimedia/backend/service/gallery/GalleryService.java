@@ -7,6 +7,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import taller.multimedia.backend.dto.gallery.GalleryImageResponse;
 import taller.multimedia.backend.dto.gallery.GalleryRequest;
 import taller.multimedia.backend.dto.gallery.GalleryResponse;
@@ -70,7 +72,9 @@ public class GalleryService {
         if (Boolean.TRUE.equals(dto.getFeatured()) && !Boolean.TRUE.equals(gallery.getFeatured())) {
             long currentFeaturedCount = galleryRepository.countByFeaturedTrue();
             if (currentFeaturedCount >= 3) {
-                throw new RuntimeException("Ya existen 3 galerías destacadas. Debes desmarcar una antes de destacar otra.");
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        "Ya existen 3 galerías destacadas. Debes desmarcar una antes de destacar otra.");
             }
         }
 
