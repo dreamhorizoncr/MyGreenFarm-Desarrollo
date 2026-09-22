@@ -382,6 +382,10 @@ export default {
     deleteConfirmFieldLabel: 'Pour confirmer, écrivez "{{name}}"',
     deleteConfirmPlaceholder: 'Écrivez "{{name}}"',
     selfDeleteNotAllowed: "Vous ne pouvez pas supprimer votre propre compte",
+    updateDocenteToastTitle: "Enseignant mis à jour",
+    updateDocenteErrorToastTitle: "Impossible de mettre à jour l'enseignant",
+    deleteDocenteToastTitle: "Enseignant supprimé",
+    deleteDocenteErrorToastTitle: "Impossible de supprimer l'enseignant",
     dashboard: {
       title: "Tableau de bord",
       subtitle: "Aperçu général du centre éducatif.",

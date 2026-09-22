@@ -375,6 +375,10 @@ export default {
     deleteConfirmFieldLabel: 'To confirm, type "{{name}}"',
     deleteConfirmPlaceholder: 'Type "{{name}}"',
     selfDeleteNotAllowed: "You cannot delete your own account",
+    updateDocenteToastTitle: "Teacher updated",
+    updateDocenteErrorToastTitle: "Couldn't update the teacher",
+    deleteDocenteToastTitle: "Teacher deleted",
+    deleteDocenteErrorToastTitle: "Couldn't delete the teacher",
     dashboard: {
       title: "Dashboard",
       subtitle: "General overview of the educational center.",

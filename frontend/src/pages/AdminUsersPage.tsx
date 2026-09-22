@@ -8,6 +8,7 @@ import DeleteUserModal from '../components/DeleteUserModal.tsx'
 import TeacherCard from '../components/TeacherCard.tsx'
 import { useAdmin } from '../hooks/useAdmin.ts'
 import useDismiss from '../hooks/useDismiss.ts'
+import { notify } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 
@@ -53,7 +54,13 @@ function AdminUsersPage() {
     }`
 
   const handleSave = async (id: string, data: UpdateUserData) => {
-    await updateUser(id, data)
+    try {
+      await updateUser(id, data)
+      notify.success(t('admin.updateDocenteToastTitle'))
+    } catch (err) {
+      notify.error(t('admin.updateDocenteErrorToastTitle'))
+      throw err
+    }
   }
 
   const handleToggleMenu = (id: string) => () =>
@@ -160,7 +167,13 @@ function AdminUsersPage() {
         <DeleteUserModal
           user={userToDelete}
           onConfirm={async (id) => {
-            await deleteUser(id)
+            try {
+              await deleteUser(id)
+              notify.success(t('admin.deleteDocenteToastTitle'))
+            } catch (err) {
+              notify.error(t('admin.deleteDocenteErrorToastTitle'))
+              throw err
+            }
           }}
           onClose={() => setUserToDelete(null)}
         />

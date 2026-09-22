@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import useDismiss from '../hooks/useDismiss.ts'
+import { getErrorMessage } from '../utils/error.ts'
 import { validateEmail, validateRequired } from '../utils/validators.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 
@@ -23,6 +24,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: EditUserMod
   const [lastName, setLastName] = useState(userToEdit.lastName)
   const [email, setEmail] = useState(userToEdit.email)
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   const [firstNameValidationError, setFirstNameValidationError] = useState<string | null>(null)
   const [lastNameValidationError, setLastNameValidationError] = useState<string | null>(null)
@@ -47,13 +49,19 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: EditUserMod
     if (firstNameErrorMessage || lastNameErrorMessage || emailErrorMessage) return
 
     setSaving(true)
-    await onSave(userToEdit.id, {
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      email: email.trim(),
-    })
-    setSaving(false)
-    onClose()
+    setSaveError(null)
+    try {
+      await onSave(userToEdit.id, {
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        email: email.trim(),
+      })
+      onClose()
+    } catch (err) {
+      setSaveError(getErrorMessage(err))
+    } finally {
+      setSaving(false)
+    }
   }
 
   const handleOverlayClick = (event: React.MouseEvent) => {
@@ -148,6 +156,10 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: EditUserMod
               <p className="mt-2xs text-left font-body text-sm text-danger">{emailValidationError}</p>
             )}
           </div>
+
+          {saveError && (
+            <p className="m-0 text-left font-body text-sm text-danger">{saveError}</p>
+          )}
 
           <div className="flex gap-md mt-sm">
             <Button variant="secondary" onClick={onClose} className="h-[47px] flex-1 rounded-full font-body text-[17px] uppercase tracking-wide">
