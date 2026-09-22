@@ -506,6 +506,15 @@ export default {
       deletePlaceholder: "Nom du plan",
       empty: "Aucun plan de service configuré.",
       noOnvoPlans: "Aucun produit OnvoPay disponible à lier.",
+      createdToastTitle: "Plan créé",
+      createdToastDescription: "Le plan a été publié avec succès.",
+      updatedToastTitle: "Plan mis à jour",
+      updatedToastDescription: "Les modifications ont été enregistrées avec succès.",
+      saveErrorToastTitle: "Impossible d'enregistrer le plan",
+      saveErrorToastDescription: "Réessayez dans quelques secondes.",
+      deletedToastTitle: "Plan supprimé",
+      deletedToastDescription: "Le plan a été supprimé avec succès.",
+      deleteErrorToastTitle: "Impossible de supprimer le plan",
     },
 
     expedients: {
