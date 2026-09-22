@@ -414,6 +414,12 @@ export default {
       deleteConfirmTitle: "Delete application",
       deleteConfirmMessage:
         'Are you sure you want to delete "{{name}}"’s application? This action cannot be undone.',
+      approvedToastTitle: "Applicant hired",
+      approveErrorToastTitle: "Couldn't hire the applicant",
+      rejectedToastTitle: "Application rejected",
+      rejectErrorToastTitle: "Couldn't reject the application",
+      deletedToastTitle: "Application deleted",
+      deleteErrorToastTitle: "Couldn't delete the application",
     },
     gallery: {
       title: "Gallery",
@@ -605,6 +611,18 @@ export default {
     applicationSentMessage:
       "We received your resume. We’ll reach out if your profile matches the vacancy.",
     gotIt: "Got it",
+    applyErrorToastTitle: "Couldn't submit your application",
+    applyErrorToastDescription: "Please try again in a few seconds.",
+    createdToastTitle: "Vacancy published",
+    createdToastDescription: "The vacancy is now visible to applicants.",
+    createErrorToastTitle: "Couldn't publish the vacancy",
+    deletedToastTitle: "Vacancy deleted",
+    deleteErrorToastTitle: "Couldn't delete the vacancy",
+    openedToastTitle: "Vacancy reopened",
+    closedToastTitle: "Vacancy closed",
+    statusErrorToastTitle: "Couldn't update the vacancy",
+    releasedToastTitle: "Vacancy released",
+    releaseErrorToastTitle: "Couldn't release the vacancy",
   },
   teacherAppointments: {
     title: "Appointment Management",

@@ -420,6 +420,12 @@ export default {
       deleteConfirmTitle: "Supprimer la candidature",
       deleteConfirmMessage:
         'Voulez-vous vraiment supprimer la candidature de "{{name}}" ? Cette action est irréversible.',
+      approvedToastTitle: "Candidat embauché",
+      approveErrorToastTitle: "Impossible d'embaucher le candidat",
+      rejectedToastTitle: "Candidature rejetée",
+      rejectErrorToastTitle: "Impossible de rejeter la candidature",
+      deletedToastTitle: "Candidature supprimée",
+      deleteErrorToastTitle: "Impossible de supprimer la candidature",
     },
     gallery: {
       title: "Galerie",
@@ -615,6 +621,18 @@ export default {
     applicationSentMessage:
       "Nous avons bien reçu votre CV. Nous vous contacterons si votre profil correspond à l'offre.",
     gotIt: "Compris",
+    applyErrorToastTitle: "Impossible d'envoyer votre candidature",
+    applyErrorToastDescription: "Réessayez dans quelques secondes.",
+    createdToastTitle: "Offre publiée",
+    createdToastDescription: "L'offre est maintenant visible pour les candidats.",
+    createErrorToastTitle: "Impossible de publier l'offre",
+    deletedToastTitle: "Offre supprimée",
+    deleteErrorToastTitle: "Impossible de supprimer l'offre",
+    openedToastTitle: "Offre rouverte",
+    closedToastTitle: "Offre fermée",
+    statusErrorToastTitle: "Impossible de mettre à jour l'offre",
+    releasedToastTitle: "Offre libérée",
+    releaseErrorToastTitle: "Impossible de libérer l'offre",
   },
   teacherAppointments: {
     title: "Gestion des rendez-vous",

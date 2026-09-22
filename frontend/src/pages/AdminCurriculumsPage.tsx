@@ -5,7 +5,9 @@ import VacancyManagementSection from '../components/VacancyManagementSection.tsx
 import ApplicationsSection from '../components/ApplicationsSection.tsx'
 import { useVacancies } from '../hooks/useVacancies.ts'
 import { useCurriculums } from '../hooks/useCurriculums.ts'
+import { notify } from '../utils/notifications.ts'
 import type { Curriculum } from '../types/curriculum.ts'
+import type { VacancyInput } from '../types/vacancy.ts'
 
 type Tab = 'vacancies' | 'applications'
 
@@ -41,20 +43,76 @@ function AdminCurriculumsPage() {
   const applicantNameById = new Map(curriculums.map((c) => [c.id, c.applicantName]))
 
   const handleApprove = async (application: Curriculum) => {
-    await setCurriculumStatus(application.id, 'APPROVED')
-    if (application.vacancyId) await setVacancyFilledBy(application.vacancyId, application.id)
+    try {
+      await setCurriculumStatus(application.id, 'APPROVED')
+      if (application.vacancyId) await setVacancyFilledBy(application.vacancyId, application.id)
+      notify.success(t('admin.curriculums.approvedToastTitle'))
+    } catch {
+      notify.error(t('admin.curriculums.approveErrorToastTitle'))
+    }
   }
 
   const handleReject = async (application: Curriculum) => {
-    await setCurriculumStatus(application.id, 'REJECTED')
-    const filledVacancy = vacancies.find((v) => v.filledByApplicationId === application.id)
-    if (filledVacancy) await setVacancyFilledBy(filledVacancy.id, null)
+    try {
+      await setCurriculumStatus(application.id, 'REJECTED')
+      const filledVacancy = vacancies.find((v) => v.filledByApplicationId === application.id)
+      if (filledVacancy) await setVacancyFilledBy(filledVacancy.id, null)
+      notify.success(t('admin.curriculums.rejectedToastTitle'))
+    } catch {
+      notify.error(t('admin.curriculums.rejectErrorToastTitle'))
+    }
   }
 
   const handleDeleteApplication = async (id: string) => {
-    await deleteCurriculum(id)
-    const filledVacancy = vacancies.find((v) => v.filledByApplicationId === id)
-    if (filledVacancy) await setVacancyFilledBy(filledVacancy.id, null)
+    try {
+      await deleteCurriculum(id)
+      const filledVacancy = vacancies.find((v) => v.filledByApplicationId === id)
+      if (filledVacancy) await setVacancyFilledBy(filledVacancy.id, null)
+      notify.success(t('admin.curriculums.deletedToastTitle'))
+    } catch (err) {
+      notify.error(t('admin.curriculums.deleteErrorToastTitle'))
+      throw err
+    }
+  }
+
+  const handleCreateVacancy = async (data: VacancyInput) => {
+    try {
+      await createVacancy(data)
+      notify.success({
+        title: t('vacancies.createdToastTitle'),
+        description: t('vacancies.createdToastDescription'),
+      })
+    } catch (err) {
+      notify.error(t('vacancies.createErrorToastTitle'))
+      throw err
+    }
+  }
+
+  const handleSetVacancyOpen = async (id: string, isOpen: boolean) => {
+    try {
+      await setVacancyOpen(id, isOpen)
+      notify.success(isOpen ? t('vacancies.openedToastTitle') : t('vacancies.closedToastTitle'))
+    } catch {
+      notify.error(t('vacancies.statusErrorToastTitle'))
+    }
+  }
+
+  const handleReleaseVacancy = async (id: string) => {
+    try {
+      await setVacancyFilledBy(id, null)
+      notify.success(t('vacancies.releasedToastTitle'))
+    } catch {
+      notify.error(t('vacancies.releaseErrorToastTitle'))
+    }
+  }
+
+  const handleDeleteVacancy = async (id: string) => {
+    try {
+      await deleteVacancy(id)
+      notify.success(t('vacancies.deletedToastTitle'))
+    } catch {
+      notify.error(t('vacancies.deleteErrorToastTitle'))
+    }
   }
 
   const tabClassName = (tab: Tab) =>
@@ -99,10 +157,10 @@ function AdminCurriculumsPage() {
             loading={loadingVacancies}
             error={vacanciesError}
             applicantNameById={applicantNameById}
-            onCreate={createVacancy}
-            onSetOpen={setVacancyOpen}
-            onRelease={(id) => setVacancyFilledBy(id, null)}
-            onDelete={deleteVacancy}
+            onCreate={handleCreateVacancy}
+            onSetOpen={handleSetVacancyOpen}
+            onRelease={handleReleaseVacancy}
+            onDelete={handleDeleteVacancy}
           />
         ) : (
           <ApplicationsSection

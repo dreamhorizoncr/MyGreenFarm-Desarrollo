@@ -421,6 +421,12 @@ export default {
       deleteConfirmTitle: "Eliminar postulación",
       deleteConfirmMessage:
         '¿Seguro que deseas eliminar la postulación de "{{name}}"? Esta acción no se puede deshacer.',
+      approvedToastTitle: "Postulante contratado",
+      approveErrorToastTitle: "No se pudo contratar al postulante",
+      rejectedToastTitle: "Postulación rechazada",
+      rejectErrorToastTitle: "No se pudo rechazar la postulación",
+      deletedToastTitle: "Postulación eliminada",
+      deleteErrorToastTitle: "No se pudo eliminar la postulación",
     },
     gallery: {
       title: "Galería",
@@ -613,6 +619,18 @@ export default {
     applicationSentMessage:
       "Recibimos tu currículum correctamente. Nos pondremos en contacto si tu perfil encaja con la vacante.",
     gotIt: "Entendido",
+    applyErrorToastTitle: "No se pudo enviar tu postulación",
+    applyErrorToastDescription: "Intentá de nuevo en unos segundos.",
+    createdToastTitle: "Vacante publicada",
+    createdToastDescription: "La vacante ya está visible para los postulantes.",
+    createErrorToastTitle: "No se pudo publicar la vacante",
+    deletedToastTitle: "Vacante eliminada",
+    deleteErrorToastTitle: "No se pudo eliminar la vacante",
+    openedToastTitle: "Vacante reabierta",
+    closedToastTitle: "Vacante cerrada",
+    statusErrorToastTitle: "No se pudo actualizar la vacante",
+    releasedToastTitle: "Vacante liberada",
+    releaseErrorToastTitle: "No se pudo liberar la vacante",
   },
   teacherAppointments: {
     title: "Gestión de Citas",
