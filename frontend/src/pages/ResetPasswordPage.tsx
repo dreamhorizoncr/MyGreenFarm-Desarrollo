@@ -7,6 +7,7 @@ import AuthButton from '../components/ui/AuthButton.tsx'
 import AuthLayout from '../layout/AuthLayout.tsx'
 import { useResetPassword } from '../hooks/useResetPassword.ts'
 import { validatePassword } from '../utils/validators.ts'
+import { notify } from '../utils/notifications.ts'
 import i18n from '../i18n/index.ts'
 
 function ResetPasswordPage() {
@@ -47,7 +48,21 @@ function ResetPasswordPage() {
 
     if (passwordErrorMessage || confirmErrorMessage) return;
 
-    await submitResetPassword({ token, newPassword });
+    await submitResetPassword(
+      { token, newPassword },
+      () => {
+        notify.success({
+          title: t('resetPassword.successToastTitle'),
+          description: t('resetPassword.success'),
+        });
+      },
+      () => {
+        notify.error({
+          title: t('resetPassword.errorToastTitle'),
+          description: t('resetPassword.errorToastDescription'),
+        });
+      },
+    );
   };
 
   return (

@@ -11,7 +11,11 @@ export function useResetPassword() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
 
-  const submitResetPassword = async (payload: ResetPasswordRequest) => {
+  const submitResetPassword = async (
+    payload: ResetPasswordRequest,
+    onSuccess?: () => void,
+    onError?: (message: string) => void,
+  ) => {
     setLoading(true)
     setError(null)
     setSuccess(false)
@@ -19,8 +23,11 @@ export function useResetPassword() {
     try {
       await authService.resetPassword(payload)
       setSuccess(true)
+      onSuccess?.()
     } catch (err) {
-      setError(getErrorMessage(err))
+      const message = getErrorMessage(err)
+      setError(message)
+      onError?.(message)
     } finally {
       setLoading(false)
     }
