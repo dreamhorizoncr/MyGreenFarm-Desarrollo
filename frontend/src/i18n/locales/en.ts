@@ -292,6 +292,9 @@ export default {
     loading: "Changing...",
     success:
       "Your password was updated successfully. You can now sign in with your new one.",
+    successToastTitle: "Password updated",
+    errorToastTitle: "We couldn't change your password",
+    errorToastDescription: "The link may have expired. Request a new one and try again.",
     missingToken: "This link is not valid. The recovery token is missing.",
     requestNewLink: "Request a new link",
     passwordMismatch: "Passwords do not match",

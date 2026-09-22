@@ -296,6 +296,9 @@ export default {
     loading: "Cambiando...",
     success:
       "¡Tu contraseña fue actualizada! Ya podés iniciar sesión con la nueva.",
+    successToastTitle: "Contraseña actualizada",
+    errorToastTitle: "No se pudo cambiar la contraseña",
+    errorToastDescription: "El enlace pudo haber expirado. Solicitá uno nuevo e intentá de nuevo.",
     missingToken: "Este enlace no es válido. Falta el token de recuperación.",
     requestNewLink: "Solicitar un nuevo enlace",
     passwordMismatch: "Las contraseñas no coinciden",

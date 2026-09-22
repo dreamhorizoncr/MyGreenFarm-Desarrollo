@@ -296,6 +296,9 @@ export default {
     loading: "Modification...",
     success:
       "Votre mot de passe a été mis à jour avec succès. Vous pouvez maintenant vous connecter avec le nouveau.",
+    successToastTitle: "Mot de passe mis à jour",
+    errorToastTitle: "Impossible de changer le mot de passe",
+    errorToastDescription: "Le lien a peut-être expiré. Demandez-en un nouveau et réessayez.",
     missingToken:
       "Ce lien n'est pas valide. Le jeton de récupération est manquant.",
     requestNewLink: "Demander un nouveau lien",
