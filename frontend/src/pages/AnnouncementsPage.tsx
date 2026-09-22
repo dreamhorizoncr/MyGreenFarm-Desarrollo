@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { FileImageIcon, PencilIcon, PlusIcon, Trash2Icon, XIcon } from '@animateicons/react/lucide'
 import AdminLayout from "../layout/AdminLayout.tsx";
 import { useAnnouncements } from "../hooks/useAnnouncements.ts";
+import { notify } from "../utils/notifications.ts";
 import type {
   Announcement,
   AnnouncementImageResponse,
@@ -114,9 +115,20 @@ function AnnouncementsPage() {
 
       if (cover) await uploadImages(saved.id, [cover], true);
       if (gallery.length) await uploadImages(saved.id, gallery, false);
+
+      notify.success({
+        title: editing ? t('adminNews.updatedToastTitle') : t('adminNews.createdToastTitle'),
+        description: editing
+          ? t('adminNews.updatedToastDescription')
+          : t('adminNews.createdToastDescription'),
+      });
+
       closeForm();
     } catch {
-      // El hook mantiene el mensaje visible en la pantalla.
+      notify.error({
+        title: t('adminNews.saveErrorToastTitle'),
+        description: t('adminNews.saveErrorToastDescription'),
+      });
     }
   };
 
@@ -128,19 +140,33 @@ function AnnouncementsPage() {
   const confirmDelete = async () => {
     if (!announcementToDelete) return;
 
-    await deleteAnnouncement(announcementToDelete.id);
+    try {
+      await deleteAnnouncement(announcementToDelete.id);
 
-    if (editing?.id === announcementToDelete.id) {
-      closeForm();
+      if (editing?.id === announcementToDelete.id) {
+        closeForm();
+      }
+
+      notify.success({
+        title: t('adminNews.deletedToastTitle'),
+        description: t('adminNews.deletedToastDescription'),
+      });
+
+      setDeleteModalOpen(false);
+      setAnnouncementToDelete(null);
+    } catch {
+      notify.error(t('adminNews.deleteErrorToastTitle'));
     }
-
-    setDeleteModalOpen(false);
-    setAnnouncementToDelete(null);
   };
 
   const handleDeleteImage = async (image: AnnouncementImageResponse) => {
-    await deleteImage(image.id);
-    setImages((current) => current.filter((item) => item.id !== image.id));
+    try {
+      await deleteImage(image.id);
+      setImages((current) => current.filter((item) => item.id !== image.id));
+      notify.success(t('adminNews.imageDeletedToastTitle'));
+    } catch {
+      notify.error(t('adminNews.imageDeleteErrorToastTitle'));
+    }
   };
 
   const filteredAnnouncements = announcements.filter(
