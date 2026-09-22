@@ -221,6 +221,7 @@ export default {
     noSlots: "No available times for this date.",
     submitting: "Sending...",
     submitError: "The request could not be sent. Please try again.",
+    submitErrorToastTitle: "Couldn't send your request",
     retry: "Retry",
     wizard: {
       schedule: "Schedule",
@@ -661,6 +662,11 @@ export default {
     rescheduleAction: "Yes, reschedule",
     empty: "No appointments registered",
     noResults: "No appointments found with the current filters",
+    statusUpdatedToastTitle: "Appointment status updated",
+    statusUpdateErrorToastTitle: "Couldn't update the appointment status",
+    rescheduledToastTitle: "Appointment rescheduled",
+    rescheduledToastDescription: "The parent or guardian was notified.",
+    rescheduleErrorToastTitle: "Couldn't reschedule the appointment",
   },
   services: {
     title: "Our Services",

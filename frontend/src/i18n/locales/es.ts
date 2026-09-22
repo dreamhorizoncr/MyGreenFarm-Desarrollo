@@ -222,6 +222,7 @@ export default {
     noSlots: "No hay horarios disponibles para esta fecha.",
     submitting: "Enviando...",
     submitError: "No se pudo enviar la solicitud. Inténtalo de nuevo.",
+    submitErrorToastTitle: "No se pudo enviar tu solicitud",
     retry: "Reintentar",
     wizard: {
       schedule: "Horario",
@@ -671,6 +672,11 @@ export default {
     rescheduleAction: "Sí, reprogramar",
     empty: "No hay citas registradas",
     noResults: "No se encontraron citas con los filtros actuales",
+    statusUpdatedToastTitle: "Estado de la cita actualizado",
+    statusUpdateErrorToastTitle: "No se pudo actualizar el estado de la cita",
+    rescheduledToastTitle: "Cita reprogramada",
+    rescheduledToastDescription: "Se envió la notificación al padre o encargado.",
+    rescheduleErrorToastTitle: "No se pudo reprogramar la cita",
   },
   services: {
     title: "Nuestros Servicios",

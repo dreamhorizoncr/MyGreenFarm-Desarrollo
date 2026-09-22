@@ -221,6 +221,7 @@ export default {
     noSlots: "Aucun créneau disponible pour cette date.",
     submitting: "Envoi...",
     submitError: "La demande n'a pas pu être envoyée. Veuillez réessayer.",
+    submitErrorToastTitle: "Impossible d'envoyer votre demande",
     retry: "Réessayer",
     wizard: {
       schedule: "Horaire",
@@ -673,6 +674,11 @@ export default {
     rescheduleAction: "Oui, reprogrammer",
     empty: "Aucun rendez-vous enregistré",
     noResults: "Aucun rendez-vous trouvé avec les filtres actuels",
+    statusUpdatedToastTitle: "Statut du rendez-vous mis à jour",
+    statusUpdateErrorToastTitle: "Impossible de mettre à jour le statut du rendez-vous",
+    rescheduledToastTitle: "Rendez-vous reprogrammé",
+    rescheduledToastDescription: "Le parent ou le tuteur a été notifié.",
+    rescheduleErrorToastTitle: "Impossible de reprogrammer le rendez-vous",
   },
   services: {
     title: "Nos Services",
