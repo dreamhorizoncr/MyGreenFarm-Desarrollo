@@ -24,7 +24,7 @@ export interface Announcement {
     type: AnnouncementType
     eventDate?: string | null
     location?: string | null
-    resumenIA?: string | null
+    aiSummary?: string | null
 }
 
 export interface AnnouncementImageResponse {

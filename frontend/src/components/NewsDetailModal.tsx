@@ -180,7 +180,7 @@ function NewsDetailModal({
                 )}
 
             {/* Resumen generado por IA */}
-                {announcement.resumenIA && (
+                {announcement.aiSummary && (
                     <section className="mx-auto mt-[40px] max-w-[950px] rounded-[20px] bg-gradient-to-br from-green-50 to-white p-[22px] text-left shadow-sm ring-1 ring-green-100 md:p-[28px]">
                         <div className="mb-[12px] inline-flex items-center gap-[6px] rounded-full bg-green-500 px-[12px] py-[6px]">
                             <SparklesIcon size={14} className="text-white" aria-hidden="true" />
@@ -189,13 +189,13 @@ function NewsDetailModal({
                             </span>
                         </div>
                         <p className="font-body text-[16px] leading-[1.7] text-heading md:text-[17px]">
-                            {announcement.resumenIA}
+                            {announcement.aiSummary}
                         </p>
                     </section>
                 )}
 
             {/* Contenido */}
-            <section className={`mx-auto max-w-[950px] text-left ${announcement.resumenIA ? 'mt-[30px]' : 'mt-[50px]'}`}>
+            <section className={`mx-auto max-w-[950px] text-left ${announcement.aiSummary ? 'mt-[30px]' : 'mt-[50px]'}`}>
                 <p className="whitespace-pre-line font-body text-[15px] leading-[1.85] text-body-text md:text-[16px]">
                     {announcement.content}
                     </p>

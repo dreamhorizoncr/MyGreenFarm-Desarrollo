@@ -38,7 +38,7 @@ public class AnnouncementSummaryAsyncService {
 
             String contenidoHash = sha256(announcement.getContent());
 
-            if (!force && contenidoHash.equals(announcement.getResumenContenidoHash())) {
+            if (!force && contenidoHash.equals(announcement.getAiSummaryContentHash())) {
                 return;
             }
 
@@ -48,8 +48,8 @@ public class AnnouncementSummaryAsyncService {
                 return;
             }
 
-            announcement.setResumenIA(resumen);
-            announcement.setResumenContenidoHash(contenidoHash);
+            announcement.setAiSummary(resumen);
+            announcement.setAiSummaryContentHash(contenidoHash);
             announcementRepository.save(announcement);
 
             log.info("Resumen IA generado para el anuncio {}", announcementId);

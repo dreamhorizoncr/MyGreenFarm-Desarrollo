@@ -58,7 +58,7 @@ public class AnnouncementService {
         response.setType(announcement.getType());
         response.setEventDate(announcement.getEventDate());
         response.setLocation(announcement.getLocation());
-        response.setResumenIA(announcement.getResumenIA());
+        response.setAiSummary(announcement.getAiSummary());
 
         // Aquí es donde se inyecta la lógica: si 'lang' es 'en' o 'fr',
         // busca el texto traducido en la tabla de traducciones, si es 'es', usa el
