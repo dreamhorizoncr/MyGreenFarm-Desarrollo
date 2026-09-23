@@ -16,6 +16,7 @@ import {
 } from '@animateicons/react/lucide'
 import { useLogin } from '../hooks/useLogin.ts'
 import { useProfileAvatar } from '../contexts/ProfileAvatarContext.tsx'
+import { notify } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
 
 type SidebarItemId =
@@ -79,6 +80,7 @@ function AdminSidebar() {
 
   const handleLogout = async () => {
     await logout()
+    notify.success(t('profile.logoutToastTitle'))
     navigate('/login')
   }
 

@@ -584,6 +584,14 @@ export default {
         sextoGrado: "Sixième année",
       },
     },
+    availability: {
+      saveWeeklySuccessToastTitle: "Horaire enregistré",
+      saveWeeklyErrorToastTitle: "Impossible d'enregistrer l'horaire",
+      saveExceptionSuccessToastTitle: "Jour spécial enregistré",
+      saveExceptionErrorToastTitle: "Impossible d'enregistrer le jour spécial",
+      deleteExceptionSuccessToastTitle: "Jour spécial supprimé",
+      deleteExceptionErrorToastTitle: "Impossible de supprimer le jour spécial",
+    },
   },
   vacancies: {
     title: "Postes vacants",
@@ -714,6 +722,8 @@ export default {
     schedule: "Horaire",
     includes: "Ce qui est inclus",
     empty: "Aucun service disponible pour le moment.",
+    checkoutErrorToastTitle: "Impossible de démarrer le paiement",
+    checkoutErrorToastDescription: "Veuillez réessayer dans quelques minutes.",
   },
   paymentSuccess: {
     title: "Paiement réussi !",

@@ -576,6 +576,14 @@ export default {
         sextoGrado: "Sixth Grade",
       },
     },
+    availability: {
+      saveWeeklySuccessToastTitle: "Schedule saved",
+      saveWeeklyErrorToastTitle: "Couldn't save the schedule",
+      saveExceptionSuccessToastTitle: "Special day saved",
+      saveExceptionErrorToastTitle: "Couldn't save the special day",
+      deleteExceptionSuccessToastTitle: "Special day deleted",
+      deleteExceptionErrorToastTitle: "Couldn't delete the special day",
+    },
   },
   vacancies: {
     title: "Vacancies",
@@ -702,6 +710,8 @@ export default {
     schedule: "Schedule",
     includes: "What's included",
     empty: "No services available at the moment.",
+    checkoutErrorToastTitle: "Couldn't start checkout",
+    checkoutErrorToastDescription: "Please try again in a few minutes.",
   },
   paymentSuccess: {
     title: "Payment successful!",
