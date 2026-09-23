@@ -5,6 +5,7 @@ import ChangeAppointmentStatusModal from './ChangeAppointmentStatusModal.tsx'
 import RescheduleAppointmentModal from './RescheduleAppointmentModal.tsx'
 import AppointmentDetailsModal from './AppointmentDetailsModal.tsx'
 import { useAppointments } from '../hooks/useAppointments.ts'
+import { notify } from '../utils/notifications.ts'
 import type { Appointment, AppointmentStatus } from '../types/appointment.ts'
 
 type StatusFilter = 'ALL' | AppointmentStatus
@@ -68,11 +69,26 @@ function AppointmentsSection() {
   }
 
   const handleChangeStatus = async (id: string, status: AppointmentStatus, conclusion?: string) => {
-    await changeStatus(id, status, conclusion)
+    try {
+      await changeStatus(id, status, conclusion)
+      notify.success(t('teacherAppointments.statusUpdatedToastTitle'))
+    } catch (err) {
+      notify.error(t('teacherAppointments.statusUpdateErrorToastTitle'))
+      throw err
+    }
   }
 
   const handleReschedule = async (id: string, newDate: string) => {
-    await rescheduleAppointment(id, newDate)
+    try {
+      await rescheduleAppointment(id, newDate)
+      notify.success({
+        title: t('teacherAppointments.rescheduledToastTitle'),
+        description: t('teacherAppointments.rescheduledToastDescription'),
+      })
+    } catch (err) {
+      notify.error(t('teacherAppointments.rescheduleErrorToastTitle'))
+      throw err
+    }
   }
 
   return (

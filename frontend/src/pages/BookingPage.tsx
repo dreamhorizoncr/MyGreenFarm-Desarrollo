@@ -8,6 +8,7 @@ import BookingSuccessModal from '../components/BookingSuccessModal.tsx'
 import Navbar from '../components/Navbar.tsx'
 import TextField from '../components/ui/TextField.tsx'
 import { useBooking } from '../hooks/useBooking.ts'
+import { notify } from '../utils/notifications.ts'
 import {
   validateEmail,
   validateIdNumber,
@@ -219,7 +220,14 @@ function BookingPage() {
       referralOtherDetail: referralSource === 'OTHER' ? referralOtherDetail.trim() : undefined,
       language: (i18n.language ?? 'es').split('-')[0],
     })
-    if (ok) resetForm()
+    if (ok) {
+      resetForm()
+    } else {
+      notify.error({
+        title: t('booking.submitErrorToastTitle'),
+        description: t('booking.submitError'),
+      })
+    }
   }
 
   const resetForm = useCallback(() => {

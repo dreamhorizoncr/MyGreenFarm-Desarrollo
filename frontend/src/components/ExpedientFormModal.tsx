@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { expedientService } from "../services/expedient";
+import { notify } from "../utils/notifications.ts";
 
 import type {
   EducationalLevel,
@@ -104,16 +105,28 @@ function ExpedientFormModal({
       // Actualiza la lista de expedientes
       await onCreated();
 
+      notify.success(
+        isEditing
+          ? t("admin.expedients.updateSuccessToastTitle")
+          : t("admin.expedients.createSuccessToastTitle"),
+      );
+
       // Cierra el modal
       onClose();
     } catch (error) {
       console.error("Error al guardar el expediente:", error);
 
-      setError(
-        isEditing
-          ? t("admin.expedients.updateError")
-          : t("admin.expedients.createError"),
-      );
+      const errorMessage = isEditing
+        ? t("admin.expedients.updateError")
+        : t("admin.expedients.createError");
+
+      setError(errorMessage);
+      notify.error({
+        title: isEditing
+          ? t("admin.expedients.updateErrorToastTitle")
+          : t("admin.expedients.createErrorToastTitle"),
+        description: errorMessage,
+      });
     } finally {
       setSaving(false);
     }
