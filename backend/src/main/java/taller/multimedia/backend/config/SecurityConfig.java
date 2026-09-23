@@ -124,6 +124,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/api/announcements/*/images").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/gallery/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/service-plans").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/vacancies").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/service-plans/onvo").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/payments/create-checkout-session").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/service-plans/*/checkout").permitAll()
