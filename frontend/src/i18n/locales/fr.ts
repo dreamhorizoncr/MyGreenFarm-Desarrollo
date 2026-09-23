@@ -562,6 +562,13 @@ export default {
       createError: "Le dossier n’a pas pu être créé.",
       updateError: "Le dossier n’a pas pu être mis à jour.",
 
+      createSuccessToastTitle: "Dossier créé",
+      updateSuccessToastTitle: "Dossier mis à jour",
+      createErrorToastTitle: "Impossible de créer le dossier",
+      updateErrorToastTitle: "Impossible de mettre à jour le dossier",
+      deleteSuccessToastTitle: "Dossier supprimé",
+      deleteErrorToastTitle: "Impossible de supprimer le dossier",
+
       levels: {
         lactantes: "Nourrissons",
         maternal: "Maternelle",

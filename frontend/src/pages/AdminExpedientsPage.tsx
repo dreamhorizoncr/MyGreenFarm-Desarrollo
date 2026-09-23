@@ -10,6 +10,8 @@ import ExpedientCard from "../components/ExpedientCard";
 
 import { expedientService } from "../services/expedient";
 
+import { notify } from "../utils/notifications.ts";
+
 import { useExpedients } from "../hooks/useExpedients";
 
 import type { Expedient } from "../types/expedient";
@@ -57,8 +59,12 @@ function AdminExpedientsPage() {
 
       // Actualiza la lista después de eliminar
       await fetchExpedients();
+
+      notify.success(t("admin.expedients.deleteSuccessToastTitle"));
     } catch (error) {
       console.error("Error al eliminar el expediente:", error);
+
+      notify.error(t("admin.expedients.deleteErrorToastTitle"));
     }
   };
 

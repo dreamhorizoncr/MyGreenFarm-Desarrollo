@@ -561,6 +561,13 @@ export default {
       createError: "No se pudo crear el expediente.",
       updateError: "No se pudo actualizar el expediente.",
 
+      createSuccessToastTitle: "Expediente creado",
+      updateSuccessToastTitle: "Expediente actualizado",
+      createErrorToastTitle: "No se pudo crear el expediente",
+      updateErrorToastTitle: "No se pudo actualizar el expediente",
+      deleteSuccessToastTitle: "Expediente eliminado",
+      deleteErrorToastTitle: "No se pudo eliminar el expediente",
+
       levels: {
         lactantes: "Lactantes",
         maternal: "Maternal",

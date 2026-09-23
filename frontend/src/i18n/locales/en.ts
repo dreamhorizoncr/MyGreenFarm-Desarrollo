@@ -554,6 +554,13 @@ export default {
       createError: "The record could not be created.",
       updateError: "The record could not be updated.",
 
+      createSuccessToastTitle: "Record created",
+      updateSuccessToastTitle: "Record updated",
+      createErrorToastTitle: "Couldn't create the record",
+      updateErrorToastTitle: "Couldn't update the record",
+      deleteSuccessToastTitle: "Record deleted",
+      deleteErrorToastTitle: "Couldn't delete the record",
+
       levels: {
         lactantes: "Infants",
         maternal: "Nursery",
