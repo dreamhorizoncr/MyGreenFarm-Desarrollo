@@ -16,6 +16,7 @@ import {
 } from '@animateicons/react/lucide'
 import { useLogin } from '../hooks/useLogin.ts'
 import { useProfileAvatar } from '../contexts/ProfileAvatarContext.tsx'
+import { notify } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
 
 type SidebarItemId =
@@ -54,7 +55,7 @@ function AdminSidebar() {
         { id: 'servicios', icon: CreditCardIcon, path: '/admin/service-plans' },
         { id: 'disponibilidad', icon: CalendarDaysIcon, path: '/admin/disponibilidad' },
         { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
-        { id: 'expedientes', icon: FolderOpenIcon },
+        { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
         { id: 'miPerfil', icon: UserIcon, path: '/profile' },
       ]
     : userStorage.getUser()?.role === 'ADMIN'
@@ -65,7 +66,7 @@ function AdminSidebar() {
           { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
           { id: 'docentes', icon: UsersIcon, path: '/admin/users' },
           { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
-          { id: 'expedientes', icon: FolderOpenIcon },
+          { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
           { id: 'miPerfil', icon: UserIcon, path: '/profile' },
         ]
       : [
@@ -79,6 +80,7 @@ function AdminSidebar() {
 
   const handleLogout = async () => {
     await logout()
+    notify.success(t('profile.logoutToastTitle'))
     navigate('/login')
   }
 

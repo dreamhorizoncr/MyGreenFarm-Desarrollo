@@ -18,6 +18,7 @@ import AdminLayout from '../layout/AdminLayout.tsx'
 import DeleteAlbumModal from '../components/DeleteAlbumModal.tsx'
 import DeleteYearModal from '../components/DeleteYearModal.tsx'
 import { useGalleryAdmin } from '../hooks/useGalleryAdmin.ts'
+import { notify } from '../utils/notifications.ts'
 import type { Gallery, GalleryCategory, GalleryImage, GalleryRequest } from '../types/gallery.ts'
 import ninos2 from '../assets/imgs/ninos2.svg'
 
@@ -542,10 +543,20 @@ function AdminGalleryPage() {
 			if (files.length)
 				await uploadImages(saved.id, files.map(({ file }) => file), data.title)
 
+			notify.success({
+				title: editing ? t('admin.gallery.albumUpdatedTitle') : t('admin.gallery.albumCreatedTitle'),
+				description: editing
+					? t('admin.gallery.albumUpdatedDescription')
+					: t('admin.gallery.albumCreatedDescription'),
+			})
+
 			closeForm()
 			void fetchAll(language)
 		} catch {
-			// El hook mantiene el mensaje visible en la pantalla.
+			notify.error({
+				title: t('admin.gallery.albumSaveErrorTitle'),
+				description: t('admin.gallery.albumSaveErrorDescription'),
+			})
 		} finally {
 			setSubmitting(false)
 		}
@@ -557,28 +568,49 @@ function AdminGalleryPage() {
 			if (created) {
 				setForm((prev) => ({ ...prev, categoryId: created.id }))
 				setFormError(null)
+				notify.success(t('admin.gallery.yearCreatedTitle'))
 			}
 		} catch {
-			// El hook mantiene el mensaje visible en la pantalla.
+			notify.error(t('admin.gallery.yearCreateErrorTitle'))
 		}
 	}
 
 	const handleDeleteGallery = async (gallery: Gallery) => {
-		await deleteGallery(gallery.id)
-		if (editing?.id === gallery.id) closeForm()
+		try {
+			await deleteGallery(gallery.id)
+			if (editing?.id === gallery.id) closeForm()
+			notify.success({
+				title: t('admin.gallery.albumDeletedTitle'),
+				description: t('admin.gallery.albumDeletedDescription'),
+			})
+		} catch (err) {
+			notify.error(t('admin.gallery.albumDeleteErrorTitle'))
+			throw err
+		}
 	}
 
 	const handleDeleteYear = async (category: GalleryCategory) => {
-		await deleteCategory(category.id)
-		setForm((prev) =>
-			prev.categoryId === category.id ? { ...prev, categoryId: '' } : prev
-		)
+		try {
+			await deleteCategory(category.id)
+			setForm((prev) =>
+				prev.categoryId === category.id ? { ...prev, categoryId: '' } : prev
+			)
+			notify.success(t('admin.gallery.yearDeletedTitle'))
+		} catch (err) {
+			notify.error(t('admin.gallery.yearDeleteErrorTitle'))
+			throw err
+		}
 	}
 
 	const handleDeleteImage = async (imageId: string) => {
 		if (!editing) return
-		await deleteImage(editing.id, imageId)
-		setImages((prev) => prev.filter((image) => image.id !== imageId))
+		try {
+			await deleteImage(editing.id, imageId)
+			setImages((prev) => prev.filter((image) => image.id !== imageId))
+			notify.success(t('admin.gallery.imageDeletedTitle'))
+		} catch {
+			notify.error(t('admin.gallery.imageDeleteErrorTitle'))
+		}
 	}
 
 	const handleToggleFeatured = async (gallery: Gallery) => {
@@ -591,9 +623,14 @@ function AdminGalleryPage() {
 				description: gallery.description,
 				featured: !gallery.featured,
 			})
+			notify.success(
+				gallery.featured
+					? t('admin.gallery.featuredRemovedTitle')
+					: t('admin.gallery.featuredAddedTitle'),
+			)
 			void fetchAll(language)
 		} catch {
-			// El hook mantiene el mensaje visible en la pantalla.
+			notify.error(t('admin.gallery.featuredErrorTitle'))
 		}
 	}
 

@@ -5,6 +5,7 @@ import Container from '../components/home/Container.tsx'
 import ApplyVacancyModal from '../components/ApplyVacancyModal.tsx'
 import { useVacancies } from '../hooks/useVacancies.ts'
 import { useCurriculums } from '../hooks/useCurriculums.ts'
+import { notify } from '../utils/notifications.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
 
@@ -33,8 +34,16 @@ function VacanciesPage() {
   const openVacancies = vacancies.filter((v) => v.isOpen)
 
   const handleApplySubmit = async (data: ApplicationInput) => {
-    await submitApplication(data)
-    setApplicationSent(true)
+    try {
+      await submitApplication(data)
+      setApplicationSent(true)
+    } catch (err) {
+      notify.error({
+        title: t('vacancies.applyErrorToastTitle'),
+        description: t('vacancies.applyErrorToastDescription'),
+      })
+      throw err
+    }
   }
 
   const openSpontaneousApply = () => {

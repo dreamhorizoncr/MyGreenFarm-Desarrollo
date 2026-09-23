@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import { useServicePlans } from '../hooks/useServicePlans.ts'
 import { servicePlanService } from '../services/servicePlan.ts'
+import { notify } from '../utils/notifications.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 
@@ -89,6 +90,10 @@ function ServicesPage() {
       window.open(url, '_blank', 'noopener,noreferrer')
     } catch {
       setCheckoutLoading(null)
+      notify.error({
+        title: t('services.checkoutErrorToastTitle'),
+        description: t('services.checkoutErrorToastDescription'),
+      })
     }
   }
 

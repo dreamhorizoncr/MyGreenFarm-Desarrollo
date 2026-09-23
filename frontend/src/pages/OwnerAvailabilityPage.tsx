@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { CopyIcon, PencilIcon, PlusIcon, Trash2Icon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import ScheduleExceptionModal from '../components/ScheduleExceptionModal.tsx'
 import { useAvailability } from '../hooks/useAvailability.ts'
+import { notify } from '../utils/notifications.ts'
 import type { ScheduleException, WeeklySchedule } from '../types/availability.ts'
 import { DEFAULT_END_TIME, DEFAULT_START_TIME, timeValue, toApiTime, WEEK_DAYS } from '../types/availability.ts'
 
@@ -24,6 +26,7 @@ function dateLabel(date: string) {
 }
 
 function OwnerAvailabilityPage() {
+  const { t } = useTranslation()
   const { weekly, exceptions, loading, error, weeklySaving, weeklyError, exceptionError, weeklySuccess, saveWeekly, saveException, deleteException } = useAvailability()
   const [draft, setDraft] = useState<WeeklySchedule[] | null>(null)
   const [exceptionModal, setExceptionModal] = useState<ScheduleException | null | undefined>(undefined)
@@ -49,7 +52,12 @@ function OwnerAvailabilityPage() {
   }
 
   const handleSaveWeekly = async () => {
-    await saveWeekly(visibleDraft.map((day) => ({ ...day, startTime: toApiTime(day.startTime), endTime: toApiTime(day.endTime) })))
+    try {
+      await saveWeekly(visibleDraft.map((day) => ({ ...day, startTime: toApiTime(day.startTime), endTime: toApiTime(day.endTime) })))
+      notify.success(t('admin.availability.saveWeeklySuccessToastTitle'))
+    } catch {
+      notify.error(t('admin.availability.saveWeeklyErrorToastTitle'))
+    }
   }
 
   const futureExceptions = exceptions.filter((item) => item.exceptionDate >= new Date().toISOString().slice(0, 10)).sort((a, b) => a.exceptionDate.localeCompare(b.exceptionDate))
@@ -87,12 +95,32 @@ function OwnerAvailabilityPage() {
             <section className="mt-2xl" aria-labelledby="exceptions-title">
               <div className="flex flex-wrap items-end justify-between gap-md"><div><h2 id="exceptions-title" className="m-0 font-heading text-2xl font-bold text-heading">Días especiales</h2><p className="mt-xs m-0 font-body text-sm text-neutral-500">Estos días reemplazan tu horario semanal.</p></div><button type="button" onClick={() => openException()} className="inline-flex min-h-12 items-center justify-center gap-xs rounded-full bg-heading px-lg font-body font-semibold text-white focus-visible:outline-2 focus-visible:outline-link"><PlusIcon size={18} aria-hidden="true" /> Agregar día especial</button></div>
               {exceptionError && <p className="mt-md text-sm text-danger" role="alert">{exceptionError}</p>}
-              {futureExceptions.length === 0 ? <p className="mt-lg rounded-2xl border border-dashed border-neutral-300 p-xl text-center font-body text-base text-neutral-500">Aún no tienes días especiales</p> : <div className="mt-md grid grid-cols-1 gap-md lg:grid-cols-2">{futureExceptions.map((exception) => <article key={exception.id ?? exception.exceptionDate} className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm"><div className="flex items-start justify-between gap-md"><div><h3 className="m-0 font-heading text-lg font-bold text-heading">{dateLabel(exception.exceptionDate)}</h3><p className="mt-sm m-0 font-body text-base font-semibold text-body-text">{exception.closed ? 'Cerrado todo el día' : `Atiende solo de ${timeValue(exception.startTime)} a ${timeValue(exception.endTime)}`}</p>{exception.reason && <p className="mt-xs m-0 font-body text-sm text-neutral-500">{exception.reason}</p>}</div><div className="flex gap-xs"><button type="button" onClick={() => openException(exception)} aria-label={`Editar ${dateLabel(exception.exceptionDate)}`} title="Editar" className="inline-flex size-11 items-center justify-center rounded-full text-link focus-visible:outline-2 focus-visible:outline-link"><PencilIcon size={18} /></button><button type="button" onClick={() => { if (exception.id && window.confirm('¿Eliminar este día especial?')) void deleteException(exception.id) }} aria-label={`Eliminar ${dateLabel(exception.exceptionDate)}`} title="Eliminar" className="inline-flex size-11 items-center justify-center rounded-full text-danger focus-visible:outline-2 focus-visible:outline-link"><Trash2Icon size={18} /></button></div></div></article>)}</div>}
+              {futureExceptions.length === 0 ? <p className="mt-lg rounded-2xl border border-dashed border-neutral-300 p-xl text-center font-body text-base text-neutral-500">Aún no tienes días especiales</p> : <div className="mt-md grid grid-cols-1 gap-md lg:grid-cols-2">{futureExceptions.map((exception) => <article key={exception.id ?? exception.exceptionDate} className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm"><div className="flex items-start justify-between gap-md"><div><h3 className="m-0 font-heading text-lg font-bold text-heading">{dateLabel(exception.exceptionDate)}</h3><p className="mt-sm m-0 font-body text-base font-semibold text-body-text">{exception.closed ? 'Cerrado todo el día' : `Atiende solo de ${timeValue(exception.startTime)} a ${timeValue(exception.endTime)}`}</p>{exception.reason && <p className="mt-xs m-0 font-body text-sm text-neutral-500">{exception.reason}</p>}</div><div className="flex gap-xs"><button type="button" onClick={() => openException(exception)} aria-label={`Editar ${dateLabel(exception.exceptionDate)}`} title="Editar" className="inline-flex size-11 items-center justify-center rounded-full text-link focus-visible:outline-2 focus-visible:outline-link"><PencilIcon size={18} /></button><button type="button" onClick={() => {
+                    if (!exception.id || !window.confirm('¿Eliminar este día especial?')) return
+                    deleteException(exception.id)
+                      .then(() => notify.success(t('admin.availability.deleteExceptionSuccessToastTitle')))
+                      .catch(() => notify.error(t('admin.availability.deleteExceptionErrorToastTitle')))
+                  }} aria-label={`Eliminar ${dateLabel(exception.exceptionDate)}`} title="Eliminar" className="inline-flex size-11 items-center justify-center rounded-full text-danger focus-visible:outline-2 focus-visible:outline-link"><Trash2Icon size={18} /></button></div></div></article>)}</div>}
             </section>
           </>
         )}
       </div>
-      {exceptionModal !== undefined && <ScheduleExceptionModal exception={exceptionModal} exceptions={exceptions} onSave={async (exception) => { await saveException(exception) }} onClose={() => setExceptionModal(undefined)} />}
+      {exceptionModal !== undefined && (
+        <ScheduleExceptionModal
+          exception={exceptionModal}
+          exceptions={exceptions}
+          onSave={async (exception) => {
+            try {
+              await saveException(exception)
+              notify.success(t('admin.availability.saveExceptionSuccessToastTitle'))
+            } catch (err) {
+              notify.error(t('admin.availability.saveExceptionErrorToastTitle'))
+              throw err
+            }
+          }}
+          onClose={() => setExceptionModal(undefined)}
+        />
+      )}
     </AdminLayout>
   )
 }
