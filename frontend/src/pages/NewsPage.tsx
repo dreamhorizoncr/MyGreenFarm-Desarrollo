@@ -12,7 +12,7 @@ import type { Announcement, AnnouncementType } from "../types/announcement.ts";
 
 import LowCortisol from "../assets/imgs/LowCortisol.png";
 
-type NewsCategory = "All" | "NEWS" | "EVENT" | "NOTICE";
+type NewsCategory = "All" | "NEWS" | "EVENT" | "NOTICE" | "TRANSPORT";
 
 const TYPE_LABEL_KEY: Record<
   AnnouncementType,
@@ -20,11 +20,13 @@ const TYPE_LABEL_KEY: Record<
   | "newspage.category3"
   | "newspage.category4"
   | "newspage.category5"
+  | "newspage.category6"
 > = {
   NEWS: "newspage.category2",
   EVENT: "newspage.category3",
   NOTICE: "newspage.category4",
   GENERAL: "newspage.category5",
+  TRANSPORT: "newspage.category6"
 };
 
 function formatDate(iso: string | null | undefined, lang: string): string {
@@ -129,6 +131,16 @@ const cards = announcements.filter(
             >
               {t("newspage.category4")}
             </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveCategory("TRANSPORT")}
+              className={`rounded-full px-[18px] py-[8px] font-body text-[12px] text-white transition md:text-[14px] ${
+                activeCategory === "TRANSPORT" ? "bg-orange-500" : "bg-orange-400"
+              }`}
+            >
+              {t("newspage.category6")}
+</button>
           </div>
         </div>
       </section>

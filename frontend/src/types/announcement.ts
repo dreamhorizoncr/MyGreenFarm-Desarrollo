@@ -1,4 +1,4 @@
-export type AnnouncementType = 'NEWS' | 'EVENT' | 'NOTICE' | 'GENERAL'
+export type AnnouncementType = 'NEWS' | 'EVENT' | 'NOTICE' | 'GENERAL' | 'TRANSPORT'
 
 // export interface Announcement {
 //     id: string

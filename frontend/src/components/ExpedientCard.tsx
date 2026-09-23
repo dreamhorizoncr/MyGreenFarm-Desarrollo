@@ -1,5 +1,6 @@
 import type { EducationalLevel, Expedient } from "../types/expedient.ts";
 import { useTranslation } from "react-i18next";
+import { Pencil, Trash2 } from "@animateicons/react/lucide";
 
 interface ExpedientCardProps {
   expedient: Expedient;
@@ -46,17 +47,17 @@ function ExpedientCard({ expedient, onEdit, onDelete }: ExpedientCardProps) {
           <button
             type="button"
             onClick={() => onEdit(expedient)}
-            className="rounded-full bg-white px-4 py-2 font-body text-sm font-bold text-heading transition hover:scale-105"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-heading transition hover:scale-105"
           >
-            {t('admin.expedients.editbutton')}
+            <Pencil size={16} />
           </button>
 
           <button
             type="button"
             onClick={() => onDelete(expedient)}
-            className="rounded-full bg-white px-4 py-2 font-body text-sm font-bold text-red-500 transition hover:scale-105"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-red-500 transition hover:scale-105"
           >
-            {t('admin.expedients.deletebutton')}
+            <Trash2 size={16} />
           </button>
         </div>
       </div>
