@@ -358,6 +358,7 @@ export default {
     },
     logout: "Déconnexion",
     resetPassword: "Réinitialiser le mot de passe",
+    logoutToastTitle: "Session fermée",
   },
   admin: {
     docentesTitle: "Gestion des enseignants",

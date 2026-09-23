@@ -357,6 +357,7 @@ export default {
     },
     logout: "Cerrar sesión",
     resetPassword: "Restablecer contraseña",
+    logoutToastTitle: "Sesión cerrada",
   },
   admin: {
     docentesTitle: "Gestión de Docentes",
