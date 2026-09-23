@@ -4,5 +4,6 @@ public enum AnnouncementType {
     NEWS,
     EVENT,
     NOTICE,
-    GENERAL
+    GENERAL,
+    TRANSPORT
 }
