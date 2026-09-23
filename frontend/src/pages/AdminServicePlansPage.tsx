@@ -5,6 +5,7 @@ import AdminLayout from '../layout/AdminLayout.tsx'
 import Button from '../components/ui/Button.tsx'
 import CreateServicePlanModal from '../components/CreateServicePlanModal.tsx'
 import { useServicePlanAdmin } from '../hooks/useServicePlanAdmin.ts'
+import { notify } from '../utils/notifications.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 
@@ -25,6 +26,12 @@ function AdminServicePlansPage() {
     setDeletingId(id)
     try {
       await deletePlan(id)
+      notify.success({
+        title: t('admin.servicios.deletedToastTitle'),
+        description: t('admin.servicios.deletedToastDescription'),
+      })
+    } catch {
+      notify.error(t('admin.servicios.deleteErrorToastTitle'))
     } finally {
       setDeletingId(null)
       setConfirmDeleteId(null)
@@ -158,11 +165,35 @@ function AdminServicePlansPage() {
           onvoPlans={onvoPlans}
           existingPlans={plans}
           planToEdit={editingPlan}
-          onSave={async (data, file) => { //Esto se cambió por mientrs
-            await createPlan(data, file)
+          onSave={async (data, file) => {
+            try {
+              await createPlan(data, file)
+              notify.success({
+                title: t('admin.servicios.createdToastTitle'),
+                description: t('admin.servicios.createdToastDescription'),
+              })
+            } catch (err) {
+              notify.error({
+                title: t('admin.servicios.saveErrorToastTitle'),
+                description: t('admin.servicios.saveErrorToastDescription'),
+              })
+              throw err
+            }
           }}
           onUpdate={async (id, data, file) => {
-            await updatePlan(id, data, file)
+            try {
+              await updatePlan(id, data, file)
+              notify.success({
+                title: t('admin.servicios.updatedToastTitle'),
+                description: t('admin.servicios.updatedToastDescription'),
+              })
+            } catch (err) {
+              notify.error({
+                title: t('admin.servicios.saveErrorToastTitle'),
+                description: t('admin.servicios.saveErrorToastDescription'),
+              })
+              throw err
+            }
           }}
           onClose={() => {
             setShowCreateModal(false)

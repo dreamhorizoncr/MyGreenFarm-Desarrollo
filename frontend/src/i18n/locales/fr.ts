@@ -161,6 +161,17 @@ export default {
     editButton: "Modifier l’actualité",
     deleteButton: "Supprimer l’actualité",
     filterAll: "Toutes",
+    createdToastTitle: "Actualité créée",
+    createdToastDescription: "L'actualité a été publiée avec succès.",
+    updatedToastTitle: "Actualité mise à jour",
+    updatedToastDescription: "Les modifications ont été enregistrées avec succès.",
+    saveErrorToastTitle: "Impossible d'enregistrer l'actualité",
+    saveErrorToastDescription: "Réessayez dans quelques secondes.",
+    deletedToastTitle: "Actualité supprimée",
+    deletedToastDescription: "L'actualité a été supprimée avec succès.",
+    deleteErrorToastTitle: "Impossible de supprimer l'actualité",
+    imageDeletedToastTitle: "Image supprimée",
+    imageDeleteErrorToastTitle: "Impossible de supprimer l'image",
   },
   booking: {
     title: "Réserver un rendez-vous",
@@ -210,6 +221,7 @@ export default {
     noSlots: "Aucun créneau disponible pour cette date.",
     submitting: "Envoi...",
     submitError: "La demande n'a pas pu être envoyée. Veuillez réessayer.",
+    submitErrorToastTitle: "Impossible d'envoyer votre demande",
     retry: "Réessayer",
     wizard: {
       schedule: "Horaire",
@@ -346,6 +358,7 @@ export default {
     },
     logout: "Déconnexion",
     resetPassword: "Réinitialiser le mot de passe",
+    logoutToastTitle: "Session fermée",
   },
   admin: {
     docentesTitle: "Gestion des enseignants",
@@ -370,6 +383,10 @@ export default {
     deleteConfirmFieldLabel: 'Pour confirmer, écrivez "{{name}}"',
     deleteConfirmPlaceholder: 'Écrivez "{{name}}"',
     selfDeleteNotAllowed: "Vous ne pouvez pas supprimer votre propre compte",
+    updateDocenteToastTitle: "Enseignant mis à jour",
+    updateDocenteErrorToastTitle: "Impossible de mettre à jour l'enseignant",
+    deleteDocenteToastTitle: "Enseignant supprimé",
+    deleteDocenteErrorToastTitle: "Impossible de supprimer l'enseignant",
     dashboard: {
       title: "Tableau de bord",
       subtitle: "Aperçu général du centre éducatif.",
@@ -409,6 +426,12 @@ export default {
       deleteConfirmTitle: "Supprimer la candidature",
       deleteConfirmMessage:
         'Voulez-vous vraiment supprimer la candidature de "{{name}}" ? Cette action est irréversible.',
+      approvedToastTitle: "Candidat embauché",
+      approveErrorToastTitle: "Impossible d'embaucher le candidat",
+      rejectedToastTitle: "Candidature rejetée",
+      rejectErrorToastTitle: "Impossible de rejeter la candidature",
+      deletedToastTitle: "Candidature supprimée",
+      deleteErrorToastTitle: "Impossible de supprimer la candidature",
     },
     gallery: {
       title: "Galerie",
@@ -495,6 +518,15 @@ export default {
       deletePlaceholder: "Nom du plan",
       empty: "Aucun plan de service configuré.",
       noOnvoPlans: "Aucun produit OnvoPay disponible à lier.",
+      createdToastTitle: "Plan créé",
+      createdToastDescription: "Le plan a été publié avec succès.",
+      updatedToastTitle: "Plan mis à jour",
+      updatedToastDescription: "Les modifications ont été enregistrées avec succès.",
+      saveErrorToastTitle: "Impossible d'enregistrer le plan",
+      saveErrorToastDescription: "Réessayez dans quelques secondes.",
+      deletedToastTitle: "Plan supprimé",
+      deletedToastDescription: "Le plan a été supprimé avec succès.",
+      deleteErrorToastTitle: "Impossible de supprimer le plan",
     },
 
     expedients: {
@@ -531,6 +563,13 @@ export default {
       createError: "Le dossier n’a pas pu être créé.",
       updateError: "Le dossier n’a pas pu être mis à jour.",
 
+      createSuccessToastTitle: "Dossier créé",
+      updateSuccessToastTitle: "Dossier mis à jour",
+      createErrorToastTitle: "Impossible de créer le dossier",
+      updateErrorToastTitle: "Impossible de mettre à jour le dossier",
+      deleteSuccessToastTitle: "Dossier supprimé",
+      deleteErrorToastTitle: "Impossible de supprimer le dossier",
+
       levels: {
         lactantes: "Nourrissons",
         maternal: "Maternelle",
@@ -544,6 +583,14 @@ export default {
         quintoGrado: "Cinquième année",
         sextoGrado: "Sixième année",
       },
+    },
+    availability: {
+      saveWeeklySuccessToastTitle: "Horaire enregistré",
+      saveWeeklyErrorToastTitle: "Impossible d'enregistrer l'horaire",
+      saveExceptionSuccessToastTitle: "Jour spécial enregistré",
+      saveExceptionErrorToastTitle: "Impossible d'enregistrer le jour spécial",
+      deleteExceptionSuccessToastTitle: "Jour spécial supprimé",
+      deleteExceptionErrorToastTitle: "Impossible de supprimer le jour spécial",
     },
   },
   vacancies: {
@@ -595,6 +642,18 @@ export default {
     applicationSentMessage:
       "Nous avons bien reçu votre CV. Nous vous contacterons si votre profil correspond à l'offre.",
     gotIt: "Compris",
+    applyErrorToastTitle: "Impossible d'envoyer votre candidature",
+    applyErrorToastDescription: "Réessayez dans quelques secondes.",
+    createdToastTitle: "Offre publiée",
+    createdToastDescription: "L'offre est maintenant visible pour les candidats.",
+    createErrorToastTitle: "Impossible de publier l'offre",
+    deletedToastTitle: "Offre supprimée",
+    deleteErrorToastTitle: "Impossible de supprimer l'offre",
+    openedToastTitle: "Offre rouverte",
+    closedToastTitle: "Offre fermée",
+    statusErrorToastTitle: "Impossible de mettre à jour l'offre",
+    releasedToastTitle: "Offre libérée",
+    releaseErrorToastTitle: "Impossible de libérer l'offre",
   },
   teacherAppointments: {
     title: "Gestion des rendez-vous",
@@ -635,6 +694,11 @@ export default {
     rescheduleAction: "Oui, reprogrammer",
     empty: "Aucun rendez-vous enregistré",
     noResults: "Aucun rendez-vous trouvé avec les filtres actuels",
+    statusUpdatedToastTitle: "Statut du rendez-vous mis à jour",
+    statusUpdateErrorToastTitle: "Impossible de mettre à jour le statut du rendez-vous",
+    rescheduledToastTitle: "Rendez-vous reprogrammé",
+    rescheduledToastDescription: "Le parent ou le tuteur a été notifié.",
+    rescheduleErrorToastTitle: "Impossible de reprogrammer le rendez-vous",
   },
   services: {
     title: "Nos Services",
@@ -658,6 +722,8 @@ export default {
     schedule: "Horaire",
     includes: "Ce qui est inclus",
     empty: "Aucun service disponible pour le moment.",
+    checkoutErrorToastTitle: "Impossible de démarrer le paiement",
+    checkoutErrorToastDescription: "Veuillez réessayer dans quelques minutes.",
   },
   paymentSuccess: {
     title: "Paiement réussi !",

@@ -9,6 +9,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useLogin } from '../hooks/useLogin.ts'
 import { useProfileAvatar } from '../contexts/ProfileAvatarContext.tsx'
 import AdminLayout from '../layout/AdminLayout.tsx'
+import { notify } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
 
 function ProfilePage() {
@@ -34,6 +35,7 @@ function ProfilePage() {
 
   const handleLogout = async () => {
     await logout()
+    notify.success(t('profile.logoutToastTitle'))
     navigate('/')
   }
 

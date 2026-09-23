@@ -28,7 +28,9 @@ export function useAdmin() {
       const updated = await adminService.updateUser(id, data)
       setUsers((prev) => prev.map((u) => (u.id === id ? updated : u)))
     } catch (err) {
-      setError(getErrorMessage(err))
+      const message = getErrorMessage(err)
+      setError(message)
+      throw new Error(message, { cause: err })
     } finally {
       setLoading(false)
     }
@@ -41,7 +43,9 @@ export function useAdmin() {
       await adminService.deleteUser(id)
       setUsers((prev) => prev.filter((u) => u.id !== id))
     } catch (err) {
-      setError(getErrorMessage(err))
+      const message = getErrorMessage(err)
+      setError(message)
+      throw new Error(message, { cause: err })
     } finally {
       setLoading(false)
     }
