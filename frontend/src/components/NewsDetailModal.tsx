@@ -16,11 +16,13 @@ const TYPE_LABEL_KEY: Record<AnnouncementType,
     |'newspage.category3'
     |'newspage.category4'
     |'newspage.category5'
+    |'newspage.category6'
     > = {
         NEWS: 'newspage.category2',
         EVENT: 'newspage.category3',
         NOTICE: 'newspage.category4',
         GENERAL: 'newspage.category5',
+        TRANSPORT: 'newspage.category6',
     };
 
 //Método para formatear la fecha de la noticia según el idioma actual
