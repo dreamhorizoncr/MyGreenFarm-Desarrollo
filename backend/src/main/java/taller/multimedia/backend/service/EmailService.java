@@ -28,6 +28,9 @@ public class EmailService {
     @Value("${mail.support}")
     private String supportEmail;
 
+    @Value("${social.link}")
+    private String socialLink;
+
     @Value("${frontend.url}")
     private String frontendUrl;
 
@@ -49,6 +52,7 @@ public class EmailService {
         Context context = new Context();
         context.setVariable("resetLink", resetLink);
         context.setVariable("supportEmail", supportEmail);
+        context.setVariable("socialLink", socialLink);
 
         String html = templateEngine.process("email/reset-password", context);
 
@@ -71,6 +75,7 @@ public class EmailService {
     public void sendAppointmentPendingEmail(Appointment appointment, Locale locale) {
         Context context = new Context(locale);
         context.setVariable("supportEmail", supportEmail);
+        context.setVariable("socialLink", socialLink);
         context.setVariable("childName", appointment.getChildName());
 
         String fecha = appointment.getAppointmentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
@@ -86,6 +91,7 @@ public class EmailService {
     public void sendAppointmentStatusUpdateEmail(Appointment appointment, Locale locale) {
         Context context = new Context(locale);
         context.setVariable("supportEmail", supportEmail);
+        context.setVariable("socialLink", socialLink);
         context.setVariable("childName", appointment.getChildName());
         context.setVariable("status", appointment.getStatus().name());
 
@@ -132,6 +138,7 @@ public class EmailService {
         try {
             Context context = new Context(locale);
             context.setVariable("supportEmail", supportEmail);
+            context.setVariable("socialLink", socialLink);
             context.setVariable("childName", appointment.getChildName());
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -153,6 +160,8 @@ public class EmailService {
     public void sendAppointmentReminderEmail(Appointment appointment, Locale locale) {
         try {
             Context context = new Context(locale);
+            context.setVariable("supportEmail", supportEmail);
+            context.setVariable("socialLink", socialLink);
             context.setVariable("parentName", appointment.getParentName());
             context.setVariable("childName", appointment.getChildName());
 
