@@ -15,7 +15,7 @@ interface ApplicationFormTarget {
 }
 
 export function useVacancyApplicationForm(target: ApplicationFormTarget, onSubmit: (data: ApplicationInput) => Promise<void>) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   const showPhone = target.requiredFields.includes('applicantPhone')
   const showFile = target.requiredFields.includes('file')
@@ -142,6 +142,7 @@ export function useVacancyApplicationForm(target: ApplicationFormTarget, onSubmi
         applicantName: name.trim(),
         applicantEmail: email.trim(),
         applicantPhone: showPhone ? phone.trim() : null,
+        language: (i18n.language ?? 'es').split('-')[0],
         file: showFile ? file : null,
         certificates: showCertificates ? certificates : [],
       })
