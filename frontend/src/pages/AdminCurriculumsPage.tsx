@@ -47,8 +47,9 @@ function AdminCurriculumsPage() {
       await setCurriculumStatus(application.id, 'APPROVED')
       if (application.vacancyId) await setVacancyFilledBy(application.vacancyId, application.id)
       notify.success(t('admin.curriculums.approvedToastTitle'))
-    } catch {
+    } catch (err) {
       notify.error(t('admin.curriculums.approveErrorToastTitle'))
+      throw err
     }
   }
 
@@ -58,8 +59,9 @@ function AdminCurriculumsPage() {
       const filledVacancy = vacancies.find((v) => v.filledByApplicationId === application.id)
       if (filledVacancy) await setVacancyFilledBy(filledVacancy.id, null)
       notify.success(t('admin.curriculums.rejectedToastTitle'))
-    } catch {
+    } catch (err) {
       notify.error(t('admin.curriculums.rejectErrorToastTitle'))
+      throw err
     }
   }
 
