@@ -44,6 +44,24 @@ export default {
         "We believe in an education that grows with nature. At Green Farm we accompany each child from their first months until age 12, in a safe environment accredited by the MEP, where outdoor play and affection are part of daily learning.",
       item: "A test sentence only testing is a test one",
       cta: "Read more",
+      pillar1Title: "MEP Accreditation and Safety",
+      pillar1Tag: "Official accreditation",
+      pillar1Body:
+        "We are backed and accredited by the Costa Rican Ministry of Public Education (MEP). Our facilities follow safety protocols designed to support children from their first months up to age 12.",
+      pillar2Title: "Outdoor Play and Hands-On Learning",
+      pillar2Tag: "Natural learning",
+      pillar2Body:
+        "Learning happens through exploring, planting and caring for the farm animals. We prioritize free outdoor play as the driver of motor, cognitive and emotional development.",
+      pillar3Title: "Warmth and Close Companionship",
+      pillar3Tag: "Close bond",
+      pillar3Body:
+        "Every child is accompanied with warmth and patience. We keep small groups so we can truly get to know and attend to each family's needs.",
+      pillar4Title: "Connection with Nature",
+      pillar4Tag: "Farm life",
+      pillar4Body:
+        "Growing up in contact with the soil, plants and animals sparks curiosity and respect for the environment — values children carry with them well beyond daycare.",
+      modalCta: "See our services",
+      modalClose: "Close",
     },
     testimonials: {
       title: "Testimonials",
@@ -106,11 +124,44 @@ export default {
     youtube: "YouTube",
     legalLabel: "Legal",
     legal: {
-      terms: "Terms and Conditions",
-      privacy: "Privacy Policy",
+      combined: "Terms & Privacy",
     },
     rights: "All rights reserved.",
     developedBy: "Website developed by",
+  },
+  legalModal: {
+    title: "Terms, Conditions and Privacy Policy",
+    tabTerms: "Terms and Conditions",
+    tabPrivacy: "Privacy Policy",
+    close: "Close",
+    termsIntro:
+      "By using My Green Farm's services, families and students accept the following terms. If you have any questions, you can reach us at mygreenfarmcr@gmail.com.",
+    terms1Title: "Use of the Service",
+    terms1Body:
+      "My Green Farm provides educational and childcare services for children in accordance with the guidelines of the Ministry of Public Education (MEP). Registration and use of our platforms is intended for mothers, fathers, legal guardians and authorized staff.",
+    terms2Title: "Enrollment and Schedules",
+    terms2Body:
+      "Enrollment is confirmed once the admission process is completed and the center's policies are accepted. Attendance hours and admission appointments can be scheduled from our website.",
+    terms3Title: "Conduct and Coexistence",
+    terms3Body:
+      "We expect a relationship of mutual respect between families, students and staff. We reserve the right to suspend the service in case of serious violations of our coexistence rules.",
+    terms4Title: "Changes to the Service",
+    terms4Body:
+      "We may update our services, prices or these terms when necessary. Any relevant change will be communicated to families in advance.",
+    privacyIntro:
+      "At My Green Farm we protect the personal information of the families and children we serve. This policy explains what data we collect and how we use it.",
+    privacy1Title: "What Information We Collect",
+    privacy1Body:
+      "We collect the data families provide when registering, scheduling an appointment, applying for a job opening, or contacting us: name, email, phone number, and the information about the child needed for their care.",
+    privacy2Title: "How We Use Your Information",
+    privacy2Body:
+      "We use this information solely to manage enrollment, appointments, communication with families, and the administration of the educational center. We do not sell or share your data with third parties for commercial purposes.",
+    privacy3Title: "Use of Photographs",
+    privacy3Body:
+      "Photos and videos taken during activities may be used in our gallery and social media for educational and outreach purposes. If you'd prefer your child not to appear, you can let the administration know directly.",
+    privacy4Title: "Your Rights",
+    privacy4Body:
+      "You can request access to, correction of, or deletion of the information we hold about your family at any time by writing to mygreenfarmcr@gmail.com.",
   },
   newspage: {
     title: "News",
