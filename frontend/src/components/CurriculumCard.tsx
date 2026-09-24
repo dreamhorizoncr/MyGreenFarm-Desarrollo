@@ -103,7 +103,7 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
             <button
               type="button"
               onClick={onApprove}
-              disabled={application.status === 'APPROVED'}
+              disabled={application.status !== 'PENDING'}
               className="inline-flex h-11 min-w-35 items-center justify-center whitespace-nowrap rounded-full bg-green-500 px-lg font-body text-sm font-semibold uppercase tracking-wide text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {t('admin.curriculums.approve')}
@@ -111,7 +111,7 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
             <button
               type="button"
               onClick={onReject}
-              disabled={application.status === 'REJECTED'}
+              disabled={application.status !== 'PENDING'}
               className="inline-flex h-11 min-w-35 items-center justify-center whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-sm font-semibold uppercase tracking-wide text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {t('admin.curriculums.reject')}

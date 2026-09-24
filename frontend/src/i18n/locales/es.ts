@@ -429,6 +429,12 @@ export default {
       deleteConfirmTitle: "Eliminar postulación",
       deleteConfirmMessage:
         '¿Seguro que deseas eliminar la postulación de "{{name}}"? Esta acción no se puede deshacer.',
+      approveConfirmTitle: "Contratar postulante",
+      approveConfirmMessage:
+        '¿Estás seguro/a de que deseas contratar a "{{name}}"? Se le enviará un correo de confirmación.',
+      rejectConfirmTitle: "Rechazar postulante",
+      rejectConfirmMessage:
+        '¿Estás seguro/a de que deseas rechazar a "{{name}}"? Esta acción no se puede deshacer.',
       approvedToastTitle: "Postulante contratado",
       approveErrorToastTitle: "No se pudo contratar al postulante",
       rejectedToastTitle: "Postulación rechazada",

@@ -428,6 +428,12 @@ export default {
       deleteConfirmTitle: "Supprimer la candidature",
       deleteConfirmMessage:
         'Voulez-vous vraiment supprimer la candidature de "{{name}}" ? Cette action est irréversible.',
+      approveConfirmTitle: "Embaucher le candidat",
+      approveConfirmMessage:
+        'Voulez-vous vraiment embaucher "{{name}}" ? Un e-mail de confirmation lui sera envoyé.',
+      rejectConfirmTitle: "Rejeter le candidat",
+      rejectConfirmMessage:
+        'Voulez-vous vraiment rejeter "{{name}}" ? Cette action est irréversible.',
       approvedToastTitle: "Candidat embauché",
       approveErrorToastTitle: "Impossible d'embaucher le candidat",
       rejectedToastTitle: "Candidature rejetée",
