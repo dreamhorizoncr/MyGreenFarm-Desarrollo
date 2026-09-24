@@ -22,4 +22,6 @@ public class ApplicationRequest {
     private String applicantEmail;
 
     private String applicantPhone;
+
+    private String language;
 }

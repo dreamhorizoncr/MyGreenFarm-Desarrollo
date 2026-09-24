@@ -10,6 +10,7 @@ export interface ApplicationInput {
   applicantName: string
   applicantEmail: string
   applicantPhone: string | null
+  language: string
   file: File | null
   certificates: File[]
 }
