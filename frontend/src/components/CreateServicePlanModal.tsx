@@ -264,7 +264,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
                     releasePreview(selectedImage)
                     setSelectedImage(null)
                   }}
-                  className="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-danger text-white"
+                  className="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-danger text-white transition-colors hover:opacity-90"
                   aria-label={t('admin.cancel')}
                 >
                   <XIcon size={12} />

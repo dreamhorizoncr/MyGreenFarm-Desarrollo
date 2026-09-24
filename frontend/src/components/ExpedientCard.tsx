@@ -34,7 +34,7 @@ function ExpedientCard({ expedient, onEdit, onDelete }: ExpedientCardProps) {
   const { t } = useTranslation();
 
   return (
-    <article className="rounded-3xl bg-gray-100 p-6">
+    <article className="rounded-3xl bg-gray-100 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
       {/* Nombre y acciones */}
       <div className="flex items-start justify-between gap-4">
         {/* Nombre */}

@@ -1,4 +1,4 @@
-import { useState, type ComponentType } from 'react'
+import { useEffect, useState, type ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
@@ -43,6 +43,12 @@ function AdminSidebar() {
   const { logout } = useLogin()
   const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
+
+  const [filled, setFilled] = useState(false)
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setFilled(true))
+    return () => cancelAnimationFrame(frame)
+  }, [])
   const { setSidebarHovered } = useProfileAvatar()
 
   const items: SidebarItem[] = userStorage.getUser()?.role === 'OWNER'
@@ -85,7 +91,10 @@ function AdminSidebar() {
   }
 
   const itemClasses =
-    'flex shrink-0 items-center gap-sm rounded-full px-md py-sm text-left font-body text-[15px] font-semibold text-body-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:w-full'
+    'relative flex shrink-0 items-center gap-sm overflow-hidden rounded-full px-md py-sm text-left font-body text-[15px] font-semibold text-body-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:w-full'
+
+  const activeFillClasses =
+    'absolute inset-0 origin-left bg-heading transition-transform duration-300 ease-out'
 
   return (
     <aside
@@ -136,21 +145,26 @@ function AdminSidebar() {
                   to={path}
                   onClick={() => setOpen(false)}
                   className={`${itemClasses}${
-                    isActive ? " bg-heading text-white" : ""
+                    isActive && filled ? " text-white" : " hover:bg-(--grey-100)"
                   }`}
                   aria-current={isActive ? "page" : undefined}
                 >
                   <span
-                    className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-heading"
+                    aria-hidden="true"
+                    className={`${activeFillClasses} ${isActive && filled ? "scale-x-100" : "scale-x-0"}`}
+                  />
+
+                  <span
+                    className="relative z-10 inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-heading"
                     aria-hidden="true"
                   >
                     <Icon size={18} />
                   </span>
 
-                  <span>{label}</span>
+                  <span className="relative z-10">{label}</span>
                 </Link>
               ) : (
-                <button key={id} type="button" className={itemClasses}>
+                <button key={id} type="button" className={`${itemClasses} hover:bg-(--grey-100)`}>
                   <span
                     className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-heading"
                     aria-hidden="true"
@@ -165,7 +179,7 @@ function AdminSidebar() {
 
             <button
               type="button"
-              className={`${itemClasses} text-danger`}
+              className={`${itemClasses} text-danger hover:bg-danger-100`}
               onClick={handleLogout}
             >
               <span
@@ -187,7 +201,7 @@ function AdminSidebar() {
           const isActive = path === pathname;
           const label = t(`admin.sidebar.${id}`);
           const className = `${itemClasses}${
-            isActive ? " bg-heading text-white" : ""
+            isActive && filled ? " text-white" : " hover:bg-(--grey-100)"
           }`;
 
           return path ? (
@@ -198,13 +212,18 @@ function AdminSidebar() {
               aria-current={isActive ? "page" : undefined}
             >
               <span
-                className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-heading"
+                aria-hidden="true"
+                className={`${activeFillClasses} ${isActive && filled ? "scale-x-100" : "scale-x-0"}`}
+              />
+
+              <span
+                className="relative z-10 inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-heading"
                 aria-hidden="true"
               >
                 <Icon size={18} />
               </span>
 
-              <span>{label}</span>
+              <span className="relative z-10">{label}</span>
             </Link>
           ) : (
             <button key={id} type="button" className={className}>
