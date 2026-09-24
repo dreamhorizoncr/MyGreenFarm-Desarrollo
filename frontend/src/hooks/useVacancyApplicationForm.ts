@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { validateEmail, validateRequired } from '../utils/validators.ts'
+import { validateEmail, validatePhoneNumber, validateRequired } from '../utils/validators.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
@@ -24,6 +24,7 @@ export function useVacancyApplicationForm(target: ApplicationFormTarget, onSubmi
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [phoneCountry, setPhoneCountry] = useState<string | undefined>(undefined)
   const [file, setFile] = useState<File | null>(null)
   const [certificates, setCertificates] = useState<File[]>([])
 
@@ -46,9 +47,23 @@ export function useVacancyApplicationForm(target: ApplicationFormTarget, onSubmi
     if (emailError) setEmailError(null)
   }
 
-  const handlePhoneChange = (value: string) => {
-    setPhone(value)
-    if (phoneError) setPhoneError(null)
+  const handlePhoneChange = (value?: string) => {
+    const next = value ?? ''
+    setPhone(next)
+    setPhoneError(validatePhoneNumber(next, t))
+  }
+
+  const handleCountryChange = (country?: string) => {
+    setPhoneCountry(country)
+    if (!country) {
+      setPhoneError(t('validation.countryRequired'))
+    } else {
+      setPhoneError(phone ? validatePhoneNumber(phone, t) : null)
+    }
+  }
+
+  const handlePhoneBlur = () => {
+    if (phone.trim() && !phoneCountry) setPhoneError(t('validation.countryRequired'))
   }
 
   const handleFileChange = (selected: File | null) => {
@@ -104,7 +119,10 @@ export function useVacancyApplicationForm(target: ApplicationFormTarget, onSubmi
   const handleSubmit = async (): Promise<boolean> => {
     const nameErrorMessage = validateRequired(name, t('vacancies.applicantName'), t)
     const emailErrorMessage = validateRequired(email, t('vacancies.applicantEmail'), t) ?? validateEmail(email, t)
-    const phoneErrorMessage = showPhone ? validateRequired(phone, t('vacancies.applicantPhone'), t) : null
+    const phoneErrorMessage = showPhone
+      ? (validateRequired(phone, t('vacancies.applicantPhone'), t) ??
+          (phoneCountry ? validatePhoneNumber(phone, t) : t('validation.countryRequired')))
+      : null
     const fileErrorMessage = showFile && !file ? t('vacancies.fileRequired') : null
     const certificatesErrorMessage = showCertificates && certificates.length === 0 ? t('vacancies.certificatesRequired') : null
 
@@ -140,6 +158,7 @@ export function useVacancyApplicationForm(target: ApplicationFormTarget, onSubmi
     name,
     email,
     phone,
+    phoneCountry,
     file,
     certificates,
     nameError,
@@ -154,6 +173,8 @@ export function useVacancyApplicationForm(target: ApplicationFormTarget, onSubmi
     showCertificates,
     handleNameChange,
     handleEmailChange,
+    handleCountryChange,
+    handlePhoneBlur,
     handlePhoneChange,
     handleFileChange,
     handleCertificatesChange,

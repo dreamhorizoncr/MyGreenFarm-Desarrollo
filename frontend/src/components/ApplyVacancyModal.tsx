@@ -1,12 +1,23 @@
-import { useRef } from 'react'
+import { useRef, type InputHTMLAttributes } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CloudUploadIcon, XIcon } from '@animateicons/react/lucide'
+import PhoneInput from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
 import Button from './ui/Button.tsx'
 import TextField from './ui/TextField.tsx'
 import useDismiss from '../hooks/useDismiss.ts'
 import { useVacancyApplicationForm } from '../hooks/useVacancyApplicationForm.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
+
+function VacancyPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      {...props}
+      className="h-[38px] w-full border-b border-neutral-300 bg-transparent pl-2 font-body text-[15px] text-body-text outline-none transition focus:border-green-500"
+    />
+  )
+}
 
 interface ApplyVacancyModalProps {
   title: string
@@ -92,12 +103,19 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
           {form.showPhone && (
             <TextField
               id="apply-phone"
-              type="tel"
               label={t('vacancies.applicantPhone')}
-              value={form.phone}
-              onChange={(e) => form.handlePhoneChange(e.target.value)}
               error={form.phoneError}
-            />
+            >
+              <PhoneInput
+                id="apply-phone"
+                className="h-[38px]"
+                value={form.phone}
+                onChange={form.handlePhoneChange}
+                onCountryChange={form.handleCountryChange}
+                onBlur={form.handlePhoneBlur}
+                inputComponent={VacancyPhoneInput}
+              />
+            </TextField>
           )}
 
           {form.showFile && (
