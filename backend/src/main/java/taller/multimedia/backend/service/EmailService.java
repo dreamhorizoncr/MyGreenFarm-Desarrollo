@@ -2,6 +2,7 @@ package taller.multimedia.backend.service;
 
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
+import taller.multimedia.backend.model.curriculum.Curriculum;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
@@ -148,6 +149,31 @@ public class EmailService {
                     e.getMessage(), e);
             throw new RuntimeException("Error al enviar el correo de reprogramación", e);
         }
+    }
+
+    @Async
+    public void sendApplicationReceivedEmail(Curriculum curriculum, String vacancyTitle, Locale locale) {
+        Context context = new Context(locale);
+        context.setVariable("supportEmail", supportEmail);
+        context.setVariable("applicantName", curriculum.getApplicantName());
+        context.setVariable("vacancyTitle", vacancyTitle);
+
+        String html = templateEngine.process("email/application-received", context);
+        String subject = messageSource.getMessage("email.application.received.subject", null, locale);
+
+        sendEmail(curriculum.getApplicantEmail(), subject, html);
+    }
+
+    @Async
+    public void sendApplicationHiredEmail(Curriculum curriculum, String vacancyTitle, Locale locale) {
+        Context context = new Context(locale);
+        context.setVariable("supportEmail", supportEmail);
+        context.setVariable("vacancyTitle", vacancyTitle);
+
+        String html = templateEngine.process("email/application-hired", context);
+        String subject = messageSource.getMessage("email.application.hired.subject", null, locale);
+
+        sendEmail(curriculum.getApplicantEmail(), subject, html);
     }
 
     public void sendAppointmentReminderEmail(Appointment appointment, Locale locale) {

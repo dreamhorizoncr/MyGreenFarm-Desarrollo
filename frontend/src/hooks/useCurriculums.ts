@@ -1,7 +1,12 @@
 import { useState } from 'react'
 import { curriculumService } from '../services/curriculum.ts'
 import { getErrorMessage } from '../utils/error.ts'
+import i18n from '../i18n/index.ts'
 import type { ApplicationInput, Curriculum, CurriculumStatus } from '../types/curriculum.ts'
+
+function currentLang(): string {
+  return (i18n.language ?? 'es').split('-')[0] ?? 'es'
+}
 
 export function useCurriculums() {
   const [curriculums, setCurriculums] = useState<Curriculum[]>([])
@@ -39,7 +44,7 @@ export function useCurriculums() {
     setLoading(true)
     setError(null)
     try {
-      const updated = await curriculumService.setCurriculumStatus(id, status)
+      const updated = await curriculumService.setCurriculumStatus(id, status, currentLang())
       setCurriculums((prev) => prev.map((c) => (c.id === id ? updated : c)))
     } catch (err) {
       setError(getErrorMessage(err))
