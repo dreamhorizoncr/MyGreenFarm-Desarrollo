@@ -53,8 +53,9 @@ public class CurriculumController {
     @PreAuthorize("hasAnyRole('ADMIN', 'OWNER')")
     public ResponseEntity<ApplicationResponse> setStatus(
             @PathVariable UUID id,
-            @RequestParam CurriculumStatus status) {
-        return ResponseEntity.ok(curriculumService.setStatus(id, status));
+            @RequestParam CurriculumStatus status,
+            @RequestParam(required = false, defaultValue = "es") String lang) {
+        return ResponseEntity.ok(curriculumService.setStatus(id, status, lang));
     }
 
     @DeleteMapping("/{id}")

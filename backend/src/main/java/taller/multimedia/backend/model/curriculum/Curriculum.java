@@ -55,6 +55,9 @@ public class Curriculum {
     @Column(name = "submitted_at", nullable = false, updatable = false)
     private LocalDateTime submittedAt = LocalDateTime.now();
 
+    @Column(name = "language")
+    private String language;
+
     @OneToMany(mappedBy = "curriculum", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @BatchSize(size = 20)
     private List<CurriculumCertificate> certificates = new ArrayList<>();

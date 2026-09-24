@@ -7,7 +7,10 @@ import taller.multimedia.backend.dto.curriculum.CertificateFileResponse;
 import taller.multimedia.backend.model.curriculum.Curriculum;
 import taller.multimedia.backend.model.curriculum.CurriculumCertificate;
 import taller.multimedia.backend.model.curriculum.CurriculumStatus;
+import taller.multimedia.backend.model.vacancy.Vacancy;
 import taller.multimedia.backend.repository.curriculum.CurriculumRepository;
+import taller.multimedia.backend.repository.vacancy.VacancyRepository;
+import taller.multimedia.backend.service.EmailService;
 import taller.multimedia.backend.service.StorageService;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -26,7 +30,11 @@ public class CurriculumService {
 
     private final CurriculumRepository curriculumRepository;
 
+    private final VacancyRepository vacancyRepository;
+
     private final StorageService storageService;
+
+    private final EmailService emailService;
 
     @Value("${supabase.s3.buckets.curriculums}")
     private String curriculumsBucket;
@@ -38,6 +46,7 @@ public class CurriculumService {
         curriculum.setApplicantName(request.getApplicantName());
         curriculum.setApplicantEmail(request.getApplicantEmail());
         curriculum.setApplicantPhone(request.getApplicantPhone());
+        curriculum.setLanguage(resolverLangCode(request.getLanguage()));
 
         if (file != null && !file.isEmpty()) {
             if (!isValidCvFormat(file.getContentType())) {
@@ -63,6 +72,10 @@ public class CurriculumService {
         }
 
         Curriculum saved = curriculumRepository.save(curriculum);
+
+        Locale locale = Locale.forLanguageTag(saved.getLanguage());
+        emailService.sendApplicationReceivedEmail(saved, resolveVacancyTitle(saved.getVacancyId()), locale);
+
         return mapToResponse(saved);
     }
 
@@ -74,11 +87,19 @@ public class CurriculumService {
     }
 
     @Transactional
-    public ApplicationResponse setStatus(UUID id, CurriculumStatus status) {
+    public ApplicationResponse setStatus(UUID id, CurriculumStatus status, String lang) {
         Curriculum curriculum = findEntityById(id);
+        CurriculumStatus previousStatus = curriculum.getStatus();
         curriculum.setStatus(status);
 
         Curriculum saved = curriculumRepository.save(curriculum);
+
+        if (previousStatus != status && status == CurriculumStatus.APPROVED) {
+            String languageCode = saved.getLanguage() != null ? saved.getLanguage() : resolverLangCode(lang);
+            Locale locale = Locale.forLanguageTag(languageCode);
+            emailService.sendApplicationHiredEmail(saved, resolveVacancyTitle(saved.getVacancyId()), locale);
+        }
+
         return mapToResponse(saved);
     }
 
@@ -90,6 +111,27 @@ public class CurriculumService {
         curriculum.getCertificates().forEach(certificate -> deleteFileQuietly(certificate.getFileUrl()));
 
         curriculumRepository.delete(curriculum);
+    }
+
+    private String resolverLangCode(String languageFromDto) {
+        if (languageFromDto == null || languageFromDto.isBlank()) {
+            return "es";
+        }
+
+        String normalizado = languageFromDto.toLowerCase().trim();
+
+        if (normalizado.contains("fr")) return "fr";
+        if (normalizado.contains("en")) return "en";
+        if (normalizado.contains("es")) return "es";
+
+        return "es";
+    }
+
+    private String resolveVacancyTitle(UUID vacancyId) {
+        if (vacancyId == null) return "Postulación espontánea";
+        return vacancyRepository.findById(vacancyId)
+                .map(Vacancy::getTitle)
+                .orElse("Postulación espontánea");
     }
 
     private Curriculum findEntityById(UUID id) {
