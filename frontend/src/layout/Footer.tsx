@@ -1,8 +1,9 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
 import FooterColumn from '../components/footer/FooterColumn.tsx'
 import FooterSocialLinks from '../components/footer/FooterSocialLinks.tsx'
-import { footerColumns, legalLinks } from '../components/footer/footerData.ts'
+import TermsModal from '../components/TermsModal.tsx'
+import { footerColumns, legalLink } from '../components/footer/footerData.ts'
 import nubeFooter from '../assets/imgs/nubeFooter.svg'
 import logo from '../assets/imgs/Logo.svg'
 
@@ -18,6 +19,7 @@ function Brand() {
 function Footer() {
   const { t } = useTranslation()
   const year = new Date().getFullYear()
+  const [isLegalModalOpen, setIsLegalModalOpen] = useState(false)
 
   return (
     <footer className="w-full text-white">
@@ -57,18 +59,13 @@ function Footer() {
             className="flex items-center gap-lg font-body text-body-sm"
             aria-label={t('footer.legalLabel')}
           >
-            {legalLinks.map(
-              (link) =>
-                link.to && (
-                  <Link
-                    key={link.label}
-                    to={link.to}
-                    className="text-white"
-                  >
-                    {t(link.label)}
-                  </Link>
-                ),
-            )}
+            <button
+              type="button"
+              onClick={() => setIsLegalModalOpen(true)}
+              className="bg-transparent text-white underline-offset-2 hover:underline"
+            >
+              {t(legalLink.label)}
+            </button>
           </nav>
 
           <p className="m-0 font-body text-body-sm text-white">
@@ -84,6 +81,8 @@ function Footer() {
           </p>
         </div>
       </div>
+
+      {isLegalModalOpen && <TermsModal onClose={() => setIsLegalModalOpen(false)} />}
     </footer>
   )
 }

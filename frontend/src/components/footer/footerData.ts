@@ -15,14 +15,11 @@ export const footerColumns = [
   },
 ] as const
 
-export const legalLinks = [
-  { label: 'footer.legal.terms', to: '/terms' },
-  { label: 'footer.legal.privacy', to: '/privacy' },
-] as const
+export const legalLink = { label: 'footer.legal.combined' } as const
 
 export type FooterLinkKeys =
   | (typeof footerColumns)[number]['links'][number]['label']
-  | (typeof legalLinks)[number]['label']
+  | (typeof legalLink)['label']
 
 export type FooterTitleKeys = (typeof footerColumns)[number]['titleKey']
 

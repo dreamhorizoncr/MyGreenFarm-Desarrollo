@@ -1,12 +1,15 @@
+import { useState } from 'react'
 import { StarIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import nino from '../../assets/imgs/nino.svg'
 import Container from '../../components/home/Container.tsx'
-import PillButton from '../../components/ui/PillButton.tsx'
+import BlobButton from '../../components/ui/BlobButton.tsx'
+import PhilosophyModal from '../../components/PhilosophyModal.tsx'
 
 function PhilosophySection() {
   const { t } = useTranslation()
   const items = Array.from({ length: 4 }, () => t('home.philosophy.item'))
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
     <section id="philosophy" className="relative flex min-h-[100svh] w-full flex-col bg-green-500">
@@ -45,13 +48,18 @@ function PhilosophySection() {
                 ))}
               </ul>
 
-              <PillButton className="w-fit !border border-pink-400 !px-[16px] !py-[7px] font-body !text-[11px] !font-normal uppercase text-pink-500">
+              <BlobButton
+                onClick={() => setIsModalOpen(true)}
+                className="w-fit px-[16px] py-[7px] font-body text-[11px] uppercase"
+              >
                 {t('home.philosophy.cta')}
-              </PillButton>
+              </BlobButton>
             </div>
           </div>
         </Container>
       </div>
+
+      {isModalOpen && <PhilosophyModal onClose={() => setIsModalOpen(false)} />}
     </section>
   )
 }

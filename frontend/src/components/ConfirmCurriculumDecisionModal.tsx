@@ -88,14 +88,14 @@ function ConfirmCurriculumDecisionModal({ application, action, onConfirm, onClos
           )}
 
           <div className="flex gap-md mt-sm">
-            <Button variant="secondary" onClick={onClose} className="h-11.75 flex-1 rounded-none font-body text-[17px] uppercase tracking-wide">
+            <Button variant="secondary" onClick={onClose} className="h-11.75 flex-1 rounded-xl font-body text-[17px] uppercase tracking-wide">
               {t('admin.cancel')}
             </Button>
             <Button
               variant={isApprove ? 'success' : 'danger'}
               onClick={handleConfirm}
               loading={submitting}
-              className="h-11.75 flex-1 rounded-none font-body text-[17px] font-normal uppercase tracking-wide"
+              className={`h-11.75 flex-1 rounded-xl font-body text-[17px] font-normal uppercase tracking-wide text-white ${isApprove ? 'bg-green-500' : ''}`}
             >
               {submitting ? t('common.loading') : confirmLabel}
             </Button>

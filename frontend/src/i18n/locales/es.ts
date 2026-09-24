@@ -44,6 +44,24 @@ export default {
         "Creemos en una educación que crece junto a la naturaleza. En Green Farm acompañamos a cada niño desde sus primeros meses hasta los 12 años, en un ambiente seguro y acreditado por el MEP, donde el juego al aire libre y el cariño son parte del aprendizaje diario.",
       item: "Una oración de prueba solo probando es una de prueba",
       cta: "Leer más",
+      pillar1Title: "Acreditación MEP y Seguridad",
+      pillar1Tag: "Acreditación oficial",
+      pillar1Body:
+        "Contamos con el respaldo y la acreditación del Ministerio de Educación Pública (MEP). Nuestras instalaciones siguen protocolos de seguridad pensados para acompañar a los niños desde sus primeros meses hasta los 12 años.",
+      pillar2Title: "Juego al Aire Libre y Aprendizaje Vivencial",
+      pillar2Tag: "Aprendizaje natural",
+      pillar2Body:
+        "El aprendizaje ocurre explorando, sembrando y compartiendo con los animales de la granja. Priorizamos el juego libre al aire libre como motor del desarrollo motriz, cognitivo y emocional.",
+      pillar3Title: "Cariño y Acompañamiento Cercano",
+      pillar3Tag: "Vínculo cercano",
+      pillar3Body:
+        "Cada niño y niña es acompañado con cariño y paciencia. Mantenemos grupos reducidos para poder conocer y atender de cerca las necesidades de cada familia.",
+      pillar4Title: "Conexión con la Naturaleza",
+      pillar4Tag: "Vida en la granja",
+      pillar4Body:
+        "Crecer en contacto con la tierra, las plantas y los animales despierta la curiosidad y el respeto por el entorno — valores que los niños llevan consigo mucho más allá de la guardería.",
+      modalCta: "Conocer nuestros servicios",
+      modalClose: "Cerrar",
     },
     testimonials: {
       title: "Testimonios",
@@ -106,11 +124,44 @@ export default {
     youtube: "YouTube",
     legalLabel: "Legal",
     legal: {
-      terms: "Términos y condiciones",
-      privacy: "Política de privacidad",
+      combined: "Términos y Privacidad",
     },
     rights: "Todos los derechos reservados.",
     developedBy: "Sitio desarrollado por",
+  },
+  legalModal: {
+    title: "Términos, Condiciones y Política de Privacidad",
+    tabTerms: "Términos y Condiciones",
+    tabPrivacy: "Política de Privacidad",
+    close: "Cerrar",
+    termsIntro:
+      "Al utilizar los servicios de My Green Farm, las familias y estudiantes aceptan los siguientes términos. Si tenés alguna duda, podés escribirnos a mygreenfarmcr@gmail.com.",
+    terms1Title: "Uso del Servicio",
+    terms1Body:
+      "My Green Farm brinda servicios educativos y de cuido para niños y niñas de acuerdo con los lineamientos del Ministerio de Educación Pública (MEP). El registro y uso de nuestras plataformas está destinado a madres, padres, tutores legales y personal autorizado.",
+    terms2Title: "Matrícula y Horarios",
+    terms2Body:
+      "La matrícula se confirma una vez completado el proceso de admisión y aceptadas las políticas del centro. Los horarios de atención y las citas de ingreso pueden agendarse desde nuestro sitio web.",
+    terms3Title: "Comportamiento y Convivencia",
+    terms3Body:
+      "Esperamos una relación de respeto mutuo entre familias, estudiantes y personal. Nos reservamos el derecho de suspender el servicio ante incumplimientos graves a nuestras normas de convivencia.",
+    terms4Title: "Cambios en el Servicio",
+    terms4Body:
+      "Podemos actualizar nuestros servicios, precios o estos términos cuando sea necesario. Cualquier cambio relevante será comunicado a las familias con anticipación.",
+    privacyIntro:
+      "En My Green Farm protegemos la información personal de las familias y los niños que atendemos. Esta política explica qué datos recopilamos y cómo los usamos.",
+    privacy1Title: "Qué Información Recopilamos",
+    privacy1Body:
+      "Recopilamos los datos que las familias nos brindan al registrarse, agendar una cita, postularse a una vacante o contactarnos: nombre, correo, teléfono y la información del niño o niña necesaria para su cuido.",
+    privacy2Title: "Cómo Usamos tu Información",
+    privacy2Body:
+      "Usamos esta información únicamente para gestionar la matrícula, las citas, la comunicación con las familias y la administración del centro educativo. No vendemos ni compartimos tus datos con terceros con fines comerciales.",
+    privacy3Title: "Uso de Fotografías",
+    privacy3Body:
+      "Las fotos y videos tomados durante actividades pueden usarse en nuestra galería y redes sociales con fines educativos y de difusión. Si preferís que tu hijo o hija no aparezca, podés indicarlo directamente con la administración.",
+    privacy4Title: "Tus Derechos",
+    privacy4Body:
+      "Podés solicitar en cualquier momento acceder, corregir o eliminar la información que tenemos sobre tu familia, escribiéndonos a mygreenfarmcr@gmail.com.",
   },
   newspage: {
     title: "Noticias",
