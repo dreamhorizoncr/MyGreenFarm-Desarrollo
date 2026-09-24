@@ -58,7 +58,7 @@ function AdminServicePlansPage() {
           <button
             type="button"
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-sm font-semibold text-white"
+            className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-sm font-semibold text-white transition-colors hover:bg-orange-600"
           >
             <PlusIcon size={18} aria-hidden="true" />
             {t('admin.servicios.addPlan')}
@@ -84,7 +84,7 @@ function AdminServicePlansPage() {
             {plans.map(plan => (
               <div
                 key={plan.id}
-                className="overflow-hidden rounded-2xl border border-neutral-200 bg-white"
+                className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
                   {plan.imageUrl ? (

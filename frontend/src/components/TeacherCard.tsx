@@ -16,7 +16,7 @@ function TeacherCard({ user, isMenuOpen, isSelf, menuRef, onToggleMenu, onEdit, 
   const { t } = useTranslation()
 
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-lg">
+    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
       <header className="flex items-start justify-between gap-sm">
         <div className="min-w-0">
           <h3 className="m-0 font-heading text-lg font-bold leading-snug text-heading">
@@ -30,7 +30,7 @@ function TeacherCard({ user, isMenuOpen, isSelf, menuRef, onToggleMenu, onEdit, 
         <div className="relative inline-flex shrink-0" ref={menuRef}>
           <button
             type="button"
-            className="inline-flex size-[34px] items-center justify-center rounded-full bg-transparent text-link focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+            className="inline-flex size-[34px] items-center justify-center rounded-full bg-transparent text-link transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
             onClick={onToggleMenu}
             aria-expanded={isMenuOpen}
             aria-haspopup="menu"
@@ -46,7 +46,7 @@ function TeacherCard({ user, isMenuOpen, isSelf, menuRef, onToggleMenu, onEdit, 
             >
               <button
                 type="button"
-                className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-sm text-body-text focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-[-2px]"
+                className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-sm text-body-text transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-[-2px]"
                 role="menuitem"
                 onClick={onEdit}
               >
@@ -55,7 +55,7 @@ function TeacherCard({ user, isMenuOpen, isSelf, menuRef, onToggleMenu, onEdit, 
               </button>
               <button
                 type="button"
-                className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-sm text-danger focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-[-2px] disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-sm text-danger transition-colors hover:bg-danger-100 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-[-2px] disabled:cursor-not-allowed disabled:opacity-50"
                 role="menuitem"
                 onClick={onDelete}
                 disabled={isSelf}

@@ -269,7 +269,7 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured }: AdminAl
 	const { t } = useTranslation()
 
 	return (
-		<article className="relative h-full rounded-3xl border border-neutral-100 bg-white">
+		<article className="relative h-full rounded-3xl border border-neutral-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
 			<div className="relative m-sm overflow-hidden rounded-[20px]">
 				<img
 					src={gallery.galleryImages[0]?.fileUrl ?? ninos2}
