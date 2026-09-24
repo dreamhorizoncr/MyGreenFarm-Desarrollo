@@ -84,7 +84,7 @@ public class VacancyService {
                 .id(vacancy.getId())
                 .title(vacancy.getTitle())
                 .description(vacancy.getDescription())
-                .isOpen(vacancy.isOpen())
+                .open(vacancy.isOpen())
                 .createdAt(vacancy.getCreatedAt())
                 .filledByApplicationId(vacancy.getFilledByApplicationId())
                 .requiredFields(fromCsv(vacancy.getRequiredFields()))
