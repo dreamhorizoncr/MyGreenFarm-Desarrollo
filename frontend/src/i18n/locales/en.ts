@@ -422,6 +422,12 @@ export default {
       deleteConfirmTitle: "Delete application",
       deleteConfirmMessage:
         'Are you sure you want to delete "{{name}}"’s application? This action cannot be undone.',
+      approveConfirmTitle: "Hire applicant",
+      approveConfirmMessage:
+        'Are you sure you want to hire "{{name}}"? A confirmation email will be sent to them.',
+      rejectConfirmTitle: "Reject applicant",
+      rejectConfirmMessage:
+        'Are you sure you want to reject "{{name}}"? This action cannot be undone.',
       approvedToastTitle: "Applicant hired",
       approveErrorToastTitle: "Couldn't hire the applicant",
       rejectedToastTitle: "Application rejected",

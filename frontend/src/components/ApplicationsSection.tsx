@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronDownIcon, SearchIcon } from '@animateicons/react/lucide'
 import CurriculumCard from './CurriculumCard.tsx'
+import ConfirmCurriculumDecisionModal from './ConfirmCurriculumDecisionModal.tsx'
 import DeleteCurriculumModal from './DeleteCurriculumModal.tsx'
 import { ALL_VACANCIES, SPONTANEOUS_APPLICATIONS, useApplicationFilters } from '../hooks/useApplicationFilters.ts'
 import type { Curriculum } from '../types/curriculum.ts'
@@ -12,8 +13,8 @@ interface ApplicationsSectionProps {
   vacancies: Vacancy[]
   loading: boolean
   error: string | null
-  onApprove: (application: Curriculum) => void
-  onReject: (application: Curriculum) => void
+  onApprove: (application: Curriculum) => Promise<void>
+  onReject: (application: Curriculum) => Promise<void>
   onDelete: (id: string) => Promise<void>
 }
 
@@ -24,6 +25,9 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
 
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [applicationToDelete, setApplicationToDelete] = useState<Curriculum | null>(null)
+  const [applicationToDecide, setApplicationToDecide] = useState<
+    { application: Curriculum; action: 'approve' | 'reject' } | null
+  >(null)
 
   const handleToggleExpand = (id: string) => () =>
     setExpandedId((prev) => (prev === id ? null : id))
@@ -84,8 +88,8 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
                 }
                 isExpanded={expandedId === application.id}
                 onToggleExpand={handleToggleExpand(application.id)}
-                onApprove={() => onApprove(application)}
-                onReject={() => onReject(application)}
+                onApprove={() => setApplicationToDecide({ application, action: 'approve' })}
+                onReject={() => setApplicationToDecide({ application, action: 'reject' })}
                 onDelete={() => setApplicationToDelete(application)}
               />
             ))}
@@ -98,6 +102,15 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
           application={applicationToDelete}
           onConfirm={onDelete}
           onClose={() => setApplicationToDelete(null)}
+        />
+      )}
+
+      {applicationToDecide && (
+        <ConfirmCurriculumDecisionModal
+          application={applicationToDecide.application}
+          action={applicationToDecide.action}
+          onConfirm={applicationToDecide.action === 'approve' ? onApprove : onReject}
+          onClose={() => setApplicationToDecide(null)}
         />
       )}
     </>
