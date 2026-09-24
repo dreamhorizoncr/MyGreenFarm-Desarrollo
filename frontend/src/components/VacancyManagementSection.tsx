@@ -25,7 +25,7 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
         <button
           type="button"
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-md font-body text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+          className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-md font-body text-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
         >
           <PlusIcon size={18} aria-hidden="true" />
           <span>{t('vacancies.publish')}</span>
@@ -43,7 +43,7 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
         ) : (
           <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
             {vacancies.map((vacancy) => (
-              <article key={vacancy.id} className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg">
+              <article key={vacancy.id} className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
                 <div className="flex items-start justify-between gap-sm">
                   <h3 className="m-0 font-heading text-lg font-bold leading-snug text-heading">
                     {vacancy.title}

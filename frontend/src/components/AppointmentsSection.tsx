@@ -158,7 +158,7 @@ function AppointmentsSection() {
                     setAppointmentToView(appointment)
                   }
                 }}
-                className={`flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition-opacity focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
+                className={`flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
                   actionId === appointment.id ? 'opacity-60' : ''
                 }`}
               >
@@ -170,7 +170,7 @@ function AppointmentsSection() {
                   <div className="flex items-center gap-2xs">
                     <button
                       type="button"
-                      className="inline-flex size-[38px] items-center justify-center rounded-full text-link focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="inline-flex size-[38px] items-center justify-center rounded-full text-link transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       onClick={(event) => {
                         event.stopPropagation()
                         setAppointmentToReschedule(appointment)
@@ -184,7 +184,7 @@ function AppointmentsSection() {
 
                     <button
                       type="button"
-                      className="inline-flex size-[38px] items-center justify-center rounded-full text-link focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="inline-flex size-[38px] items-center justify-center rounded-full text-link transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       onClick={(event) => {
                         event.stopPropagation()
                         setAppointmentToEdit(appointment)

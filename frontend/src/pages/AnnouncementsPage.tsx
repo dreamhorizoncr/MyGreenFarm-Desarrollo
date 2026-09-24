@@ -203,7 +203,7 @@ function AnnouncementsPage() {
         <button
           type="button"
           onClick={openCreate}
-          className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-sm font-semibold text-white"
+          className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-sm font-semibold text-white transition-colors hover:bg-orange-600"
         >
           <PlusIcon size={18} aria-hidden="true" />
           {t("adminNews.addNews")}
@@ -237,7 +237,7 @@ function AnnouncementsPage() {
                 type="button"
                 onClick={closeForm}
                 aria-label="Cerrar formulario"
-                className="text-neutral-500"
+                className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-(--grey-100)"
               >
                 <XIcon size={20} />
               </button>
@@ -349,7 +349,7 @@ function AnnouncementsPage() {
                 <button
                   type="button"
                   onClick={() => coverInputRef.current?.click()}
-                  className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-sm font-semibold text-heading"
+                  className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
                 >
                   <FileImageIcon size={17} aria-hidden="true" />
                   {t("adminNews.chooseCover")}
@@ -380,7 +380,7 @@ function AnnouncementsPage() {
                 <button
                   type="button"
                   onClick={() => galleryInputRef.current?.click()}
-                  className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-sm font-semibold text-heading"
+                  className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
                 >
                   <FileImageIcon size={17} aria-hidden="true" />
                   {t("adminNews.newschooseimages")}
@@ -423,7 +423,7 @@ function AnnouncementsPage() {
                         type="button"
                         onClick={() => void handleDeleteImage(image)}
                         aria-label={t("adminNews.deleteImage")}
-                        className="text-danger"
+                        className="rounded-full p-2xs text-danger transition-colors hover:bg-red-50"
                       >
                         <Trash2Icon size={16} />
                       </button>
@@ -438,7 +438,7 @@ function AnnouncementsPage() {
               <button
                 type="button"
                 onClick={closeForm}
-                className="rounded-full border border-neutral-300 px-lg py-sm font-body text-sm font-semibold text-heading"
+                className="rounded-full border border-neutral-300 px-lg py-sm font-body text-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
               >
                 {t("adminNews.newscancel")}
               </button>
@@ -446,7 +446,7 @@ function AnnouncementsPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="rounded-full bg-heading px-lg py-sm font-body text-sm font-semibold text-white disabled:opacity-60"
+                className="rounded-full bg-heading px-lg py-sm font-body text-sm font-semibold text-white transition-colors hover:bg-green-700 disabled:opacity-60"
               >
                 {loading
                   ? t("adminNews.newssaving")
@@ -467,7 +467,7 @@ function AnnouncementsPage() {
           className={`rounded-full px-md py-sm font-body text-sm transition ${
             activeCategory === "All"
               ? "bg-orange-500 text-white"
-              : "border border-neutral-300 bg-white text-heading"
+              : "border border-neutral-300 bg-white text-heading hover:bg-neutral-50"
           }`}
         >
           {t("adminNews.filterAll")}
@@ -479,7 +479,7 @@ function AnnouncementsPage() {
           className={`rounded-full px-md py-sm font-body text-sm transition ${
             activeCategory === "NEWS"
               ? "bg-orange-500 text-white"
-              : "border border-neutral-300 bg-white text-heading"
+              : "border border-neutral-300 bg-white text-heading hover:bg-neutral-50"
           }`}
         >
           {t("adminNews.typeNews")}
@@ -491,7 +491,7 @@ function AnnouncementsPage() {
           className={`rounded-full px-md py-sm font-body text-sm transition ${
             activeCategory === "EVENT"
               ? "bg-orange-500 text-white"
-              : "border border-neutral-300 bg-white text-heading"
+              : "border border-neutral-300 bg-white text-heading hover:bg-neutral-50"
           }`}
         >
           {t("adminNews.typeEvent")}
@@ -503,7 +503,7 @@ function AnnouncementsPage() {
           className={`rounded-full px-md py-sm font-body text-sm transition ${
             activeCategory === "NOTICE"
               ? "bg-orange-500 text-white"
-              : "border border-neutral-300 bg-white text-heading"
+              : "border border-neutral-300 bg-white text-heading hover:bg-neutral-50"
           }`}
         >
           {t("adminNews.typeNotice")}
@@ -515,7 +515,7 @@ function AnnouncementsPage() {
           className={`rounded-full px-md py-sm font-body text-sm transition ${
             activeCategory === "GENERAL"
               ? "bg-orange-500 text-white"
-              : "border border-neutral-300 bg-white text-heading"
+              : "border border-neutral-300 bg-white text-heading hover:bg-neutral-50"
           }`}
         >
           {t("adminNews.typeGeneral")}
@@ -527,7 +527,7 @@ function AnnouncementsPage() {
           className={`rounded-full px-md py-sm font-body text-sm transition ${
             activeCategory === "TRANSPORT"
               ? "bg-orange-500 text-white"
-              : "border border-neutral-300 bg-white text-heading"
+              : "border border-neutral-300 bg-white text-heading hover:bg-neutral-50"
           }`}
         >
           {t("adminNews.typeTransport")}
@@ -553,7 +553,7 @@ function AnnouncementsPage() {
         {filteredAnnouncements.map((announcement) => (
           <article
             key={announcement.id}
-            className="border-t border-neutral-200 py-lg"
+            className="border-t border-neutral-200 px-md py-lg transition-colors hover:bg-neutral-50"
           >
             <div className="flex flex-col gap-md">
               <div>
@@ -639,7 +639,7 @@ function AnnouncementsPage() {
                   setDeleteModalOpen(false);
                   setAnnouncementToDelete(null);
                 }}
-                className="rounded-full border border-neutral-300 px-[18px] py-[9px] font-body text-sm font-semibold text-heading"
+                className="rounded-full border border-neutral-300 px-[18px] py-[9px] font-body text-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
               >
                 {t("adminNews.deleteModalCancel")}
               </button>
@@ -647,7 +647,7 @@ function AnnouncementsPage() {
               <button
                 type="button"
                 onClick={() => void confirmDelete()}
-                className="rounded-full bg-red-500 px-[18px] py-[9px] font-body text-sm font-semibold text-white"
+                className="rounded-full bg-red-500 px-[18px] py-[9px] font-body text-sm font-semibold text-white transition-colors hover:bg-red-600"
               >
                 {t("adminNews.deleteModalConfirm")}
               </button>
