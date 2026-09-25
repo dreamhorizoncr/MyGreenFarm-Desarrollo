@@ -29,3 +29,9 @@ export interface GalleryRequest {
 export interface GalleryCategoryRequest {
 	title: string
 }
+
+export interface ImageLikeResponse {
+    galleryImagesId: string
+    totalLikes: number
+    liked: boolean
+}

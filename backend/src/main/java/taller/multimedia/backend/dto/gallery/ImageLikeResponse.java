@@ -10,4 +10,5 @@ import lombok.Data;
 public class ImageLikeResponse {
     private UUID galleryImagesId;
     private Integer totalLikes;
+    private boolean liked;
 }

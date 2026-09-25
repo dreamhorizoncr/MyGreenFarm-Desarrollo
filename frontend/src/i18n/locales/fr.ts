@@ -93,6 +93,8 @@ export default {
       prevPhoto: "Photo précédente",
       nextPhoto: "Photo suivante",
       likes: "{{count}} j’aime",
+      like: "liker la photo",
+      unlike: "ne plus liker la photo",
       breadcrumbGallery: "Galerie de Souvenirs",
       breadcrumbAlbums: "Albums",
       emptyPhotos: "Cet album n’a pas encore de photos.",

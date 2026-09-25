@@ -94,6 +94,8 @@ export default {
       prevPhoto: "Foto anterior",
       nextPhoto: "Siguiente foto",
       likes: "{{count}} me gusta",
+      like: "Dar me gusta",
+      unlike: "Quitar me gusta",
       breadcrumbGallery: "Galería de Recuerdos",
       breadcrumbAlbums: "Álbumes",
       emptyPhotos: "Este álbum todavía no tiene fotos.",

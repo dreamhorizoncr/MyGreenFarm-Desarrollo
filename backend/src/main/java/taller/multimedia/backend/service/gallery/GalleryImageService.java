@@ -13,12 +13,15 @@ import taller.multimedia.backend.model.gallery.Gallery;
 import taller.multimedia.backend.model.gallery.GalleryImages;
 import taller.multimedia.backend.repository.gallery.GalleryImageRepository;
 import taller.multimedia.backend.repository.gallery.GalleryRepository;
+import taller.multimedia.backend.repository.gallery.ImageLikeCountProjection;
+import taller.multimedia.backend.repository.gallery.ImageLikeRepository;
 import taller.multimedia.backend.service.StorageService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class GalleryImageService {
 
     private final GalleryImageRepository imageRepository;
     private final GalleryRepository galleryRepository;
+    private final ImageLikeRepository imageLikeRepository;
     private final StorageService storageService;
 
     @Value("${supabase.s3.buckets.gallery}")
@@ -52,7 +56,8 @@ public class GalleryImageService {
         for (MultipartFile file : files) {
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
-                throw new IllegalArgumentException("Formato no permitido en uno de los archivos. Solo PNG, JPG, JPEG, SVG.");
+                throw new IllegalArgumentException(
+                        "Formato no permitido en uno de los archivos. Solo PNG, JPG, JPEG, SVG.");
             }
 
             long uploadStart = System.currentTimeMillis();
@@ -65,7 +70,7 @@ public class GalleryImageService {
             image.setFileUrl(fileUrl);
 
             GalleryImages saved = imageRepository.save(image);
-            responses.add(mapToResponse(saved));
+            responses.add(mapToResponse(saved, 0L));
         }
 
         return responses;
@@ -80,8 +85,18 @@ public class GalleryImageService {
 
     @Transactional(readOnly = true)
     public Page<GalleryImageResponse> getImagesByGallery(UUID galleryId, Pageable pageable) {
-        return imageRepository.findByGalleryIdOrderByCreatedAtDesc(galleryId, pageable)
-                .map(this::mapToResponse);
+        Page<GalleryImages> imagesPage = imageRepository.findByGalleryIdOrderByCreatedAtDesc(galleryId, pageable);
+
+        List<UUID> imageIds = imagesPage.getContent().stream()
+                .map(GalleryImages::getId)
+                .toList();
+
+        Map<UUID, Long> likeCounts = imageLikeRepository.countByGalleryImagesIdIn(imageIds).stream()
+                .collect(Collectors.toMap(
+                        ImageLikeCountProjection::getImageId,
+                        ImageLikeCountProjection::getTotal));
+
+        return imagesPage.map(image -> mapToResponse(image, likeCounts.getOrDefault(image.getId(), 0L)));
     }
 
     @Transactional
@@ -131,12 +146,13 @@ public class GalleryImageService {
         return null;
     }
 
-    private GalleryImageResponse mapToResponse(GalleryImages image) {
+    private GalleryImageResponse mapToResponse(GalleryImages image, long likeCount) {
         return GalleryImageResponse.builder()
                 .id(image.getId())
                 .galleryId(image.getGallery().getId())
                 .title(image.getTitle())
                 .fileUrl(image.getFileUrl())
+                .likeCount((int) likeCount)
                 .build();
     }
 }
