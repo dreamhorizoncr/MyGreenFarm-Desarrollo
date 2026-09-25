@@ -14,6 +14,7 @@ import ProfilePage from './pages/ProfilePage.tsx'
 import ProtectedRoute from './routes/ProtectedRoute.tsx'
 import AdminRoute from './routes/AdminRoute.tsx'
 import OwnerRoute from './routes/OwnerRoute.tsx'
+import ExpedientsRoute from './routes/ExpedientsRoute.tsx'
 import NewsPage from './pages/NewsPage.tsx'
 import AnnouncementsPage from './pages/AnnouncementsPage.tsx'
 import AdminExpedientsPage from './pages/AdminExpedientsPage.tsx'
@@ -53,17 +54,19 @@ function App() {
           <Route element={<ProtectedRoute />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-          <Route path="/admin/citas" element={<AdminCitasPage />} />
           <Route element={<AdminRoute />}>
+            <Route path="/admin/citas" element={<AdminCitasPage />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
             <Route path="/admin/announcements" element={<AnnouncementsPage />} />
             <Route path="/admin/gallery" element={<AdminGalleryPage />} />
             <Route path="/admin/curriculums" element={<AdminCurriculumsPage />} />
-            <Route path='/admin/expedients' element={<AdminExpedientsPage/>} />
           <Route element={<OwnerRoute />}>
             <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />
             <Route path="/admin/disponibilidad" element={<OwnerAvailabilityPage />} />
           </Route>
+        </Route>
+        <Route element={<ExpedientsRoute />}>
+          <Route path="/admin/expedients" element={<AdminExpedientsPage />} />
         </Route>
         <Route path="/" element={<HomePage />} />
         <Route path="/booking" element={<BookingPage />} />

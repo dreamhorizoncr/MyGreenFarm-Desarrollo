@@ -77,7 +77,7 @@ function AdminSidebar() {
         ]
       : [
           { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
-          { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
+          { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
           { id: 'miPerfil', icon: UserIcon, path: '/profile' },
         ]
 
