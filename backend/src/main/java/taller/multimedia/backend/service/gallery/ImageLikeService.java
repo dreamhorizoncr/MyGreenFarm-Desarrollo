@@ -2,6 +2,7 @@ package taller.multimedia.backend.service.gallery;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 
 import taller.multimedia.backend.dto.gallery.ImageLikeResponse;
@@ -11,9 +12,10 @@ import taller.multimedia.backend.repository.gallery.ImageLikeRepository;
 import taller.multimedia.backend.repository.gallery.GalleryImageRepository;
 
 import jakarta.persistence.EntityNotFoundException;
-
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -24,21 +26,36 @@ public class ImageLikeService {
     private final ImageLikeRepository imageLikeRepository;
     private final GalleryImageRepository galleryImageRepository;
 
-    public ImageLikeResponse likeImage(UUID galleryImagesId, String anonId) {
-    if (imageLikeRepository.existsByGalleryImagesIdAndAnonId(galleryImagesId, anonId)) {
-        throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya diste like a esta foto");
+@Transactional
+public ImageLikeResponse toggleLike(UUID imageId, String anonId) {
+    boolean alreadyLiked = imageLikeRepository.existsByGalleryImagesIdAndAnonId(imageId, anonId);
+
+    boolean liked;
+    if (alreadyLiked) {
+        imageLikeRepository.deleteByGalleryImagesIdAndAnonId(imageId, anonId);
+        liked = false;
+    } else {
+        try {
+            GalleryImages image = galleryImageRepository.findById(imageId)
+                    .orElseThrow(() -> new EntityNotFoundException("Imagen no encontrada"));
+
+            ImageLike like = new ImageLike();
+            like.setGalleryImages(image);
+            like.setAnonId(anonId);
+            imageLikeRepository.save(like);
+            liked = true;
+        } catch (DataIntegrityViolationException e) {
+            liked = true; // condición de carrera: ya existía
+        }
     }
-    
-        GalleryImages image = galleryImageRepository.findById(galleryImagesId)
-            .orElseThrow(() -> new EntityNotFoundException("Imagen no encontrada"));
 
-        ImageLike like = new ImageLike();
-        like.setGalleryImages(image);
-        like.setAnonId(anonId);
-        imageLikeRepository.save(like);
+    int total = (int) imageLikeRepository.countByGalleryImagesId(imageId);
+    return new ImageLikeResponse(imageId, total, liked);
+}
 
-
-        long total = imageLikeRepository.countByGalleryImagesId(galleryImagesId);
-        return new ImageLikeResponse(galleryImagesId, (int) total);
-    }
+public List<UUID> findLikedImageIds(String anonId) {
+    return imageLikeRepository.findByAnonId(anonId).stream()
+            .map(like -> like.getGalleryImages().getId())
+            .toList();
+}
 }

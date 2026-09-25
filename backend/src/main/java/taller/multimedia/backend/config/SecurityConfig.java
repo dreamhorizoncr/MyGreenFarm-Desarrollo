@@ -118,7 +118,8 @@ public class SecurityConfig {
                 "/api/translations/batch",
                 "/api/stripe-plans",
                 "/api/create-checkout-session",
-                "/api/webhooks/**")
+                "/api/webhooks/**",
+                "/api/gallery/likes/**")
             .permitAll()
             .requestMatchers(HttpMethod.GET, "/api/announcements").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/announcements/*/images").permitAll()
