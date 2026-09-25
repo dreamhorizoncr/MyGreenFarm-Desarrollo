@@ -6,6 +6,7 @@ import type {
 	GalleryCategoryRequest,
 	GalleryImage,
 	GalleryRequest,
+	ImageLikeResponse
 } from '../types/gallery.ts'
 import type { TranslationItem } from './announcement.ts'
 
@@ -86,11 +87,21 @@ export const galleryService = {
 		await apiClient.delete(`/gallery/images/${imageId}`)
 	},
 	async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {
-			const response = await apiClient.post<Record<string, string>>('/translations/batch', {
-				entityType,
-				targetLanguage: targetLanguage?.split('-')[0] || 'es',
-				items,
-			})
-			return response.data
-		},
+		const response = await apiClient.post<Record<string, string>>('/translations/batch', {
+			entityType,
+			targetLanguage: targetLanguage?.split('-')[0] || 'es',
+			items,
+		})
+		return response.data
+	},
+	async galleryImagesLike(imageId: string): Promise<ImageLikeResponse> {
+    const response = await apiClient.post<ImageLikeResponse>(
+        `/gallery/likes/${imageId}`
+    )
+    return response.data
+},
+async getMyLikes(): Promise<string[]> {
+    const response = await apiClient.get<string[]>('/gallery/likes/mine')
+    return response.data
+}
 }

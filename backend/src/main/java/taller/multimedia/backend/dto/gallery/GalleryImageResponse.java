@@ -13,4 +13,5 @@ public class GalleryImageResponse {
     private UUID galleryId;
     private String title;
     private String fileUrl;
+    private Integer likeCount;
 }
