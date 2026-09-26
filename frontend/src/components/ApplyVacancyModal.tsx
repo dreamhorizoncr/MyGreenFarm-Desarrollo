@@ -27,7 +27,7 @@ interface ApplyVacancyModalProps {
   onClose: () => void
 }
 
-function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose }: ApplyVacancyModalProps) {
+function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose }: Readonly<ApplyVacancyModalProps>) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)

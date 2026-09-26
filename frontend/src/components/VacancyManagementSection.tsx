@@ -15,9 +15,17 @@ interface VacancyManagementSectionProps {
   onDelete: (id: string) => void
 }
 
-function VacancyManagementSection({ vacancies, loading, error, applicantNameById, onCreate, onSetOpen, onRelease, onDelete,}: VacancyManagementSectionProps) {
+function statusDotClass(vacancy: Vacancy) {
+  if (vacancy.filledByApplicationId) return 'bg-info'
+  return vacancy.isOpen ? 'bg-green-500' : 'bg-neutral-300'
+}
+
+function VacancyManagementSection({ vacancies, loading, error, applicantNameById, onCreate, onSetOpen, onRelease, onDelete,}: Readonly<VacancyManagementSectionProps>) {
   const { t } = useTranslation()
   const [showCreateModal, setShowCreateModal] = useState(false)
+
+  const openStateLabel = (isOpen: boolean) =>
+    isOpen ? t('vacancies.statusOpen') : t('vacancies.statusClosed')
 
   return (
     <>
@@ -67,14 +75,12 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
                 <div className="mt-md flex flex-wrap items-center justify-between gap-md">
                   <span className="inline-flex items-center gap-xs font-body text-sm font-semibold text-body-text">
                     <span
-                      className={`inline-block size-2.5 rounded-full ${
-                        vacancy.filledByApplicationId ? 'bg-info' : vacancy.isOpen ? 'bg-green-500' : 'bg-neutral-300'
-                      }`}
+                      className={`inline-block size-2.5 rounded-full ${statusDotClass(vacancy)}`}
                       aria-hidden="true"
                     />
                     {vacancy.filledByApplicationId
                       ? t('vacancies.statusFilled', { name: applicantNameById.get(vacancy.filledByApplicationId) ?? '—' })
-                      : vacancy.isOpen ? t('vacancies.statusOpen') : t('vacancies.statusClosed')}
+                      : openStateLabel(vacancy.isOpen)}
                   </span>
 
                   {vacancy.filledByApplicationId ? (

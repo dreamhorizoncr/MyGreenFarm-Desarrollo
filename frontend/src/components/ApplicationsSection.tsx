@@ -18,7 +18,7 @@ interface ApplicationsSectionProps {
   onDelete: (id: string) => Promise<void>
 }
 
-function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove, onReject, onDelete }: ApplicationsSectionProps) {
+function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove, onReject, onDelete }: Readonly<ApplicationsSectionProps>) {
   const { t } = useTranslation()
   const { searchTerm, setSearchTerm, vacancyFilter, setVacancyFilter, vacancyTitleById, filteredApplications } =
     useApplicationFilters(curriculums, vacancies)

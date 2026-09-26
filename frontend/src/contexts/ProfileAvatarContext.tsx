@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
+import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
 
 interface ProfileAvatarContextValue {
   sidebarHovered: boolean
@@ -9,13 +9,14 @@ const ProfileAvatarContext = createContext<ProfileAvatarContextValue | null>(nul
 
 export function ProfileAvatarProvider({
   children,
-}: {
+}: Readonly<{
   children: ReactNode
-}) {
+}>) {
   const [sidebarHovered, setSidebarHovered] = useState(false)
+  const value = useMemo(() => ({ sidebarHovered, setSidebarHovered }), [sidebarHovered])
 
   return (
-    <ProfileAvatarContext.Provider value={{ sidebarHovered, setSidebarHovered }}>
+    <ProfileAvatarContext.Provider value={value}>
       {children}
     </ProfileAvatarContext.Provider>
   )

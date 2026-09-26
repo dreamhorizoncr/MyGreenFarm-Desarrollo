@@ -6,7 +6,7 @@ interface AuthButtonProps {
   children: ReactNode
 }
 
-function AuthButton({ loading, children }: AuthButtonProps) {
+function AuthButton({ loading, children }: Readonly<AuthButtonProps>) {
   return (
     <Button
       type="submit"

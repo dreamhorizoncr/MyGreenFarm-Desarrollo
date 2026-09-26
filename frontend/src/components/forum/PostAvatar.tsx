@@ -7,7 +7,7 @@ interface PostAvatarProps {
   size?: number
 }
 
-function PostAvatar({ name, src, size = 44 }: PostAvatarProps) {
+function PostAvatar({ name, src, size = 44 }: Readonly<PostAvatarProps>) {
   if (src) {
     return (
       <img

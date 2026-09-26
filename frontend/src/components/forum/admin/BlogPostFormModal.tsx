@@ -5,12 +5,12 @@ import Button from '../../ui/Button.tsx'
 import { userStorage } from '../../../utils/userStorage.ts'
 import type { BlogPost, BlogPostInput } from '../../../types/forum.ts'
 
-const ALLOWED_IMAGE_TYPES = [
+const ALLOWED_IMAGE_TYPES = new Set([
   'image/png',
   'image/jpg',
   'image/jpeg',
   'image/svg+xml',
-]
+])
 
 const MAX_TITLE = 120
 const MAX_TOPIC = 60
@@ -30,7 +30,7 @@ interface BlogPostFormModalProps {
   onSubmit: (input: BlogPostInput) => void
 }
 
-function BlogPostFormModal({ post, onClose, onSubmit }: BlogPostFormModalProps) {
+function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormModalProps>) {
   const { t } = useTranslation()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -87,7 +87,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: BlogPostFormModalProps) 
 
     if (!file) return
 
-    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
       setImageError(t('adminForum.invalidImageType'))
       return
     }

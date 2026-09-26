@@ -21,7 +21,7 @@ function ForumSidebar({
   showBlogSearch = false,
   blogSearch = '',
   onBlogSearchChange,
-}: ForumSidebarProps) {
+}: Readonly<ForumSidebarProps>) {
   const { t } = useTranslation()
 
   return (

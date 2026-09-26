@@ -5,7 +5,7 @@ interface PublishButtonCardProps {
   onPublish: () => void
 }
 
-function PublishButtonCard({ onPublish }: PublishButtonCardProps) {
+function PublishButtonCard({ onPublish }: Readonly<PublishButtonCardProps>) {
   const { t } = useTranslation()
 
   return (

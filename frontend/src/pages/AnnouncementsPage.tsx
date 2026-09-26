@@ -186,6 +186,10 @@ function AnnouncementsPage() {
       activeCategory === "All" || announcement.type === activeCategory,
   );
 
+  const idleSubmitLabel = editing
+    ? t("adminNews.newssavechanges")
+    : t("adminNews.newspublish");
+
   return (
     <AdminLayout>
       {/* Encabezado */}
@@ -448,11 +452,7 @@ function AnnouncementsPage() {
                 disabled={loading}
                 className="rounded-full bg-heading px-lg py-sm font-body text-sm font-semibold text-white transition-colors hover:bg-green-700 disabled:opacity-60"
               >
-                {loading
-                  ? t("adminNews.newssaving")
-                  : editing
-                    ? t("adminNews.newssavechanges")
-                    : t("adminNews.newspublish")}
+                {loading ? t("adminNews.newssaving") : idleSubmitLabel}
               </button>
             </div>
           </form>

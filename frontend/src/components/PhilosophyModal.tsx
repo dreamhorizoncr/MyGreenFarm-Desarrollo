@@ -11,7 +11,7 @@ interface PhilosophyModalProps {
   onClose: () => void
 }
 
-function PhilosophyModal({ onClose }: PhilosophyModalProps) {
+function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const overlayRef = useRef<HTMLDivElement>(null)

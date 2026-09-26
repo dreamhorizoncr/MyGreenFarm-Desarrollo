@@ -18,7 +18,7 @@ function todayIso() {
   return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10)
 }
 
-function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: ScheduleExceptionModalProps) {
+function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Readonly<ScheduleExceptionModalProps>) {
   const overlayRef = useRef<HTMLDivElement>(null)
   const [date, setDate] = useState(exception?.exceptionDate ?? '')
   const [closed, setClosed] = useState(exception?.closed ?? true)
@@ -104,11 +104,11 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Sche
             <legend className="mb-xs font-body text-sm font-semibold text-body-text">¿Cómo será ese día?</legend>
             <label className="flex min-h-12 cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md font-body text-base text-body-text">
               <input type="radio" name="exception-mode" checked={closed} onChange={() => setClosed(true)} className="size-5 accent-green-500" />
-              Cerrado todo el día
+              <span>Cerrado todo el día</span>
             </label>
             <label className="flex min-h-12 cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md font-body text-base text-body-text">
               <input type="radio" name="exception-mode" checked={!closed} onChange={() => setClosed(false)} className="size-5 accent-green-500" />
-              Atiende solo en un horario
+              <span>Atiende solo en un horario</span>
             </label>
           </fieldset>
 

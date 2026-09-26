@@ -8,7 +8,7 @@ interface TermsSectionProps {
   items: TermsSectionItem[]
 }
 
-function TermsSection({ intro, items }: TermsSectionProps) {
+function TermsSection({ intro, items }: Readonly<TermsSectionProps>) {
   return (
     <div className="flex flex-col gap-md">
       <p className="m-0 font-body text-body-sm text-body-text">{intro}</p>

@@ -7,7 +7,7 @@ interface ForumTabsProps {
   onChange: (tab: ForumTab) => void
 }
 
-function ForumTabs({ activeTab, onChange }: ForumTabsProps) {
+function ForumTabs({ activeTab, onChange }: Readonly<ForumTabsProps>) {
   const { t } = useTranslation()
 
   return (

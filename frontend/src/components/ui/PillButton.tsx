@@ -5,7 +5,7 @@ interface PillButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode
 }
 
-function PillButton({ type = 'button', className, children, ...rest }: PillButtonProps) {
+function PillButton({ type = 'button', className, children, ...rest }: Readonly<PillButtonProps>) {
   return (
     <button
       type={type}

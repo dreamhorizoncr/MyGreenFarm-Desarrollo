@@ -12,7 +12,7 @@ import type {
 
 interface ExpedientFormModalProps {
   onClose: () => void;
-  onCreated: () => void;
+  onCreated: () => void | Promise<void>;
   expedient?: Expedient;
 }
 
@@ -50,7 +50,7 @@ function ExpedientFormModal({
   onClose,
   onCreated,
   expedient,
-}: ExpedientFormModalProps) {
+}: Readonly<ExpedientFormModalProps>) {
   const { t } = useTranslation();
 
   // Si existe un expediente, el modal está en modo edición
@@ -131,6 +131,10 @@ function ExpedientFormModal({
       setSaving(false);
     }
   };
+
+  const idleSaveLabel = isEditing
+    ? t("admin.expedients.saveChanges")
+    : t("admin.expedients.save");
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4">
@@ -284,11 +288,7 @@ function ExpedientFormModal({
               disabled={saving}
               className="rounded-full bg-heading px-7 py-3 font-body font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {saving
-                ? t("admin.expedients.saving")
-                : isEditing
-                  ? t("admin.expedients.saveChanges")
-                  : t("admin.expedients.save")}
+              {saving ? t("admin.expedients.saving") : idleSaveLabel}
             </button>
           </div>
         </form>

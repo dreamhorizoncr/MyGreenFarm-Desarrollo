@@ -28,7 +28,7 @@ function todayISO(): string {
     .slice(0, 10)
 }
 
-function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: RescheduleAppointmentModalProps) {
+function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Readonly<RescheduleAppointmentModalProps>) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
 

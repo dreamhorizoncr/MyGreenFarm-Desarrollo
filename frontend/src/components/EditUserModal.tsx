@@ -14,7 +14,7 @@ interface EditUserModalProps {
   onClose: () => void
 }
 
-function EditUserModal({ userToEdit, currentUser, onSave, onClose }: EditUserModalProps) {
+function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<EditUserModalProps>) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
 

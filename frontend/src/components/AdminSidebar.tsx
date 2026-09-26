@@ -53,36 +53,37 @@ function AdminSidebar() {
   }, [])
   const { setSidebarHovered } = useProfileAvatar()
 
-  const items: SidebarItem[] = userStorage.getUser()?.role === 'OWNER'
-    ? [
-        { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
-        { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
-        { id: 'noticias', icon: MegaphoneIcon, path: '/admin/announcements' },
-        { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
-        { id: 'docentes', icon: UsersIcon, path: '/admin/users' },
-        { id: 'servicios', icon: CreditCardIcon, path: '/admin/service-plans' },
-        { id: 'disponibilidad', icon: CalendarDaysIcon, path: '/admin/disponibilidad' },
-        { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
-        { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
-        { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
-        { id: 'miPerfil', icon: UserIcon, path: '/profile' },
-      ]
-    : userStorage.getUser()?.role === 'ADMIN'
-      ? [
-          { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
-          { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
-          { id: 'noticias', icon: MegaphoneIcon, path: '/admin/announcements' },
-          { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
-          { id: 'docentes', icon: UsersIcon, path: '/admin/users' },
-          { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
-          { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
-          { id: 'miPerfil', icon: UserIcon, path: '/profile' },
-        ]
-      : [
-          { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
-          { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
-          { id: 'miPerfil', icon: UserIcon, path: '/profile' },
-        ]
+  const role = userStorage.getUser()?.role
+  const ownerItems: SidebarItem[] = [
+    { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
+    { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
+    { id: 'noticias', icon: MegaphoneIcon, path: '/admin/announcements' },
+    { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
+    { id: 'docentes', icon: UsersIcon, path: '/admin/users' },
+    { id: 'servicios', icon: CreditCardIcon, path: '/admin/service-plans' },
+    { id: 'disponibilidad', icon: CalendarDaysIcon, path: '/admin/disponibilidad' },
+    { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
+    { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
+    { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
+    { id: 'miPerfil', icon: UserIcon, path: '/profile' },
+  ]
+  const adminItems: SidebarItem[] = [
+    { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
+    { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
+    { id: 'noticias', icon: MegaphoneIcon, path: '/admin/announcements' },
+    { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
+    { id: 'docentes', icon: UsersIcon, path: '/admin/users' },
+    { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
+    { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
+    { id: 'miPerfil', icon: UserIcon, path: '/profile' },
+  ]
+  const teacherItems: SidebarItem[] = [
+    { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
+    { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
+    { id: 'miPerfil', icon: UserIcon, path: '/profile' },
+  ]
+  const itemsByRole: Record<string, SidebarItem[]> = { OWNER: ownerItems, ADMIN: adminItems }
+  const items = itemsByRole[role ?? ''] ?? teacherItems
 
   const activeItem = items.find((item) => item.path === pathname) ?? items[0]
   const ActiveIcon = activeItem.icon

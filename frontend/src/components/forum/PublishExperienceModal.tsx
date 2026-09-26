@@ -14,7 +14,7 @@ interface PublishExperienceModalProps {
 function PublishExperienceModal({
   onClose,
   onPublish,
-}: PublishExperienceModalProps) {
+}: Readonly<PublishExperienceModalProps>) {
   const { t } = useTranslation()
   const [name, setName] = useState('')
   const [content, setContent] = useState('')

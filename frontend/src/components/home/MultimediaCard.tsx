@@ -9,7 +9,7 @@ interface MultimediaCardProps {
   onClick?: () => void
 }
 
-function MultimediaCard({ imageSrc, alt, badge, title, description, onClick }: MultimediaCardProps) {
+function MultimediaCard({ imageSrc, alt, badge, title, description, onClick }: Readonly<MultimediaCardProps>) {
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (onClick && (event.key === 'Enter' || event.key === ' ')) {
       event.preventDefault()

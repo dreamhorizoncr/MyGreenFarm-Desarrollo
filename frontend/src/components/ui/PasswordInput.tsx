@@ -17,7 +17,7 @@ function PasswordInput({
   className = '',
   showAriaLabel,
   hideAriaLabel,
-}: PasswordInputProps) {
+}: Readonly<PasswordInputProps>) {
   const [visible, setVisible] = useState(false)
 
   return (

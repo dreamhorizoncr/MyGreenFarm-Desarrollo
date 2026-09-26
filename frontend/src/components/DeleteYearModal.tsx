@@ -12,7 +12,7 @@ interface DeleteYearModalProps {
   onClose: () => void
 }
 
-function DeleteYearModal({ category, onConfirm, onClose }: DeleteYearModalProps) {
+function DeleteYearModal({ category, onConfirm, onClose }: Readonly<DeleteYearModalProps>) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
 

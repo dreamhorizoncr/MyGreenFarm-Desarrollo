@@ -10,7 +10,7 @@ interface PhotoLightboxProps {
   onClose: () => void
 }
 
-function PhotoLightbox({ images, initialIndex, alt, onClose }: PhotoLightboxProps) {
+function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLightboxProps>) {
   const { t } = useTranslation()
   const [index, setIndex] = useState(initialIndex)
   const total = images.length

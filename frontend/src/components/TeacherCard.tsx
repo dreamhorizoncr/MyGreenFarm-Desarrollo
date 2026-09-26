@@ -12,7 +12,7 @@ interface TeacherCardProps {
   onDelete: () => void
 }
 
-function TeacherCard({ user, isMenuOpen, isSelf, menuRef, onToggleMenu, onEdit, onDelete }: TeacherCardProps) {
+function TeacherCard({ user, isMenuOpen, isSelf, menuRef, onToggleMenu, onEdit, onDelete }: Readonly<TeacherCardProps>) {
   const { t } = useTranslation()
 
   return (
