@@ -2,6 +2,7 @@ package taller.multimedia.backend.service.appointment;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import taller.multimedia.backend.dto.appointment.AvailableDayResponse;
+import taller.multimedia.backend.model.appointment.Appointment;
+import taller.multimedia.backend.model.appointment.AppointmentStatus;
 import taller.multimedia.backend.model.appointment.ScheduleException;
 import taller.multimedia.backend.model.appointment.WeeklySchedule;
+import taller.multimedia.backend.repository.appointment.AppointmentRepository;
 import taller.multimedia.backend.repository.appointment.ScheduleExceptionRepository;
 import taller.multimedia.backend.repository.appointment.WeeklyScheduleRepository;
 
@@ -25,6 +29,9 @@ public class ScheduleConfigService {
 
     @Autowired
     private ScheduleExceptionRepository exceptionRepo;
+
+    @Autowired
+    private AppointmentRepository appointmentRepository;
 
     // Obtener los horarios disponibles en bloques de 60 minutos para una fecha dada
     public List<LocalTime> getAvailableSlotsForDate(LocalDate date) {
@@ -60,6 +67,26 @@ public class ScheduleConfigService {
             slots.add(current);
             current = current.plusHours(1);
         }
+
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+        
+        List<Appointment> existingAppointments = appointmentRepository.findByAppointmentDateBetween(startOfDay, endOfDay);
+        
+        // Obtiene los intervalos de las citas activas (PENDING o CONFIRMED)
+        List<LocalDateTime> bookedAppointmentStarts = existingAppointments.stream()
+                .filter(a -> a.getStatus() == AppointmentStatus.PENDING || a.getStatus() == AppointmentStatus.CONFIRMED)
+            .map(Appointment::getAppointmentDate)
+                .toList();
+
+        // Oculta cualquier bloque de una hora que se cruce con una cita activa.
+        slots.removeIf(slot -> {
+            LocalDateTime slotStart = date.atTime(slot);
+            LocalDateTime slotEnd = slotStart.plusHours(1);
+            return bookedAppointmentStarts.stream().anyMatch(appointmentStart ->
+                slotStart.isBefore(appointmentStart.plusHours(1))
+                    && slotEnd.isAfter(appointmentStart));
+        });
 
         return slots;
     }
