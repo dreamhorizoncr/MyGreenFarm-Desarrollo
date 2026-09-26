@@ -23,6 +23,7 @@ import org.apache.commons.text.StringEscapeUtils;
 
 import taller.multimedia.backend.model.translations.EntityTranslation;
 import taller.multimedia.backend.repository.translation.EntityTranslationRepository;
+import taller.multimedia.backend.utils.HashUtils;
 import taller.multimedia.backend.dto.translation.TranslationItem;
 
 @Service
@@ -45,7 +46,10 @@ public class TranslationService {
                 .findByEntityTypeAndEntityIdAndFieldNameAndLanguageCode(entityType, entityId, fieldName,
                         targetLanguage);
 
-        if (existing.isPresent()) {
+        String sourceTextHash = HashUtils.sha256(originalText);
+
+        if (existing.isPresent()
+                && sourceTextHash.equals(existing.get().getSourceTextHash())) {
             return unescapeHtml(existing.get().getTranslatedText());
         }
 
@@ -58,66 +62,77 @@ public class TranslationService {
         translation.setFieldName(fieldName);
         translation.setLanguageCode(targetLanguage);
         translation.setTranslatedText(translatedText);
+        translation.setSourceTextHash(sourceTextHash);
         repository.save(translation);
 
         return translatedText;
     }
 
-   public Map<String, String> getOrTranslateBatch(String entityType, List<TranslationItem> items,
-        String targetLanguage) throws IOException {
-    List<EntityTranslation> existing = repository.findByEntityTypeAndLanguageCode(entityType, targetLanguage);
-    Map<String, String> cache = existing.stream()
-            .collect(Collectors.toMap(
-                    e -> key(e.getEntityId(), e.getFieldName()),
-                    e -> unescapeHtml(e.getTranslatedText()),
-                    (a, b) -> a
-            ));
+    public Map<String, String> getOrTranslateBatch(String entityType, List<TranslationItem> items,
+            String targetLanguage) throws IOException {
+        List<EntityTranslation> existing = repository.findByEntityTypeAndLanguageCode(entityType, targetLanguage);
+        Map<String, EntityTranslation> cache = existing.stream()
+                .collect(Collectors.toMap(
+                        e -> key(e.getEntityId(), e.getFieldName()),
+                        e -> e,
+                        (a, b) -> a));
 
-    Map<String, String> result = new HashMap<>();
-    List<TranslationItem> toTranslate = new ArrayList<>();
+        Map<String, String> result = new HashMap<>();
+        List<TranslationItem> toTranslate = new ArrayList<>();
 
-    for (TranslationItem item : items) {
-        String k = key(item.entityId(), item.fieldName());
-        if (cache.containsKey(k)) {
-            result.put(k, cache.get(k));
-        } else {
-            toTranslate.add(item);
-        }
-    }
-
-    if (!toTranslate.isEmpty()) {
-        List<String> translatedTexts = callTranslateApiBatch(
-                toTranslate.stream().map(TranslationItem::originalText).toList(),
-                targetLanguage);
-
-        for (int i = 0; i < toTranslate.size(); i++) {
-            TranslationItem item = toTranslate.get(i);
-            String translated = translatedTexts.get(i);
+        for (TranslationItem item : items) {
             String k = key(item.entityId(), item.fieldName());
-            result.put(k, translated);
+            String sourceTextHash = HashUtils.sha256(item.originalText());
 
-            // Upsert: busca si ya existe justo antes de guardar (protege contra carreras)
-            EntityTranslation translation = repository
-                    .findByEntityTypeAndEntityIdAndFieldNameAndLanguageCode(
-                            entityType, item.entityId(), item.fieldName(), targetLanguage)
-                    .orElseGet(EntityTranslation::new);
+            EntityTranslation cachedTranslation = cache.get(k);
 
-            translation.setEntityType(entityType);
-            translation.setEntityId(item.entityId());
-            translation.setFieldName(item.fieldName());
-            translation.setLanguageCode(targetLanguage);
-            translation.setTranslatedText(translated);
+            if (cachedTranslation != null
+                    && sourceTextHash.equals(cachedTranslation.getSourceTextHash())) {
 
-            try {
-                repository.save(translation);
-            } catch (DataIntegrityViolationException e) {
-                // Otra petición concurrente ya insertó este registro — está bien, lo ignoramos
+                result.put(
+                        k,
+                        unescapeHtml(cachedTranslation.getTranslatedText()));
+
+            } else {
+                toTranslate.add(item);
             }
         }
-    }
 
-    return result;
-}
+        if (!toTranslate.isEmpty()) {
+            List<String> translatedTexts = callTranslateApiBatch(
+                    toTranslate.stream().map(TranslationItem::originalText).toList(),
+                    targetLanguage);
+
+            for (int i = 0; i < toTranslate.size(); i++) {
+                TranslationItem item = toTranslate.get(i);
+                String translated = translatedTexts.get(i);
+                String k = key(item.entityId(), item.fieldName());
+                result.put(k, translated);
+
+                // Upsert: busca si ya existe justo antes de guardar (protege contra carreras)
+                EntityTranslation translation = repository
+                        .findByEntityTypeAndEntityIdAndFieldNameAndLanguageCode(
+                                entityType, item.entityId(), item.fieldName(), targetLanguage)
+                        .orElseGet(EntityTranslation::new);
+
+                translation.setEntityType(entityType);
+                translation.setEntityId(item.entityId());
+                translation.setFieldName(item.fieldName());
+                translation.setLanguageCode(targetLanguage);
+                translation.setTranslatedText(translated);
+                translation.setSourceTextHash(
+                        HashUtils.sha256(item.originalText()));
+
+                try {
+                    repository.save(translation);
+                } catch (DataIntegrityViolationException e) {
+                    // Otra petición concurrente ya insertó este registro — está bien, lo ignoramos
+                }
+            }
+        }
+
+        return result;
+    }
 
     private String unescapeHtml(String text) {
         return StringEscapeUtils.unescapeHtml4(text);
