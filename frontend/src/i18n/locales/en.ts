@@ -34,14 +34,20 @@ export default {
       badge: "Natural Learning",
       welcome: "Welcome to",
       description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "At My Green Farm, we accompany every stage of childhood with education, love, and meaningful experiences, integrating learning, languages, play, and contact with nature.",
       cta: "Book an appointment",
       heroAlt: "Cover image",
     },
     philosophy: {
       title: "Our Philosophy",
       description:
-        "We believe in an education that grows with nature. At Green Farm we accompany each child from their first months until age 12, in a safe environment accredited by the MEP, where outdoor play and affection are part of daily learning.",
+        "At My Green Farm, we believe that childhood is learned by living it. That is why we offer quality education where every child has the opportunity to explore, discover, create, play, and learn through meaningful experiences...",
+      modalParagraph: {
+        paragraph1: "At My Green Farm, we believe that childhood is learned by living it. That is why we offer quality education where every child has the opportunity to explore, discover, create, play, and learn through meaningful experiences.",
+        paragraph2: "Our proposal combines learning inside and outside the classroom with contact with nature and our educational farm, where children can interact with animals such as our horse, sheep, goats, chickens, and rabbits. These experiences are complemented by daily English, French, Music, Art, Physical Education, Values, and stimulation activities, creating learning opportunities from different areas.",
+        paragraph3: "We work with specially selected materials, sensory experiences, and activities that awaken curiosity, creativity, autonomy, and the desire to learn. Our proposal draws on active methodologies and contributions from currents such as Montessori, Reggio Emilia, Waldorf, and constructivism, adapting them to the needs and characteristics of our children.",
+        paragraph4: "More than teaching content, we seek to offer a childhood full of experiences, accompanied by teachers who respect each child's individual pace and ensure they feel safe, loved, heard, and happy while learning. My Green Farm: education, values, nature, languages, and experiences that leave a mark. 💚",
+      },
       item: "A test sentence only testing is a test one",
       cta: "Read more",
       pillar1Title: "MEP Accreditation and Safety",
@@ -66,12 +72,24 @@ export default {
     testimonials: {
       title: "Testimonials",
       description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "Find here what the families in our community say about the experience of growing, learning, and living childhood at My Green Farm.",
+      card1: {
+        quote: "Taking my son to My Green Farm has been the best decision. Seeing how much he enjoys interacting with the farm animals and learning English so naturally brings us joy every day.",
+        author: "María José Alfaro — Student's Mother"
+      },
+      card2: {
+        quote: "The environment is extremely warm and safe. The teachers have unmatched patience and affection; my daughter goes to class happily and amazes us every day with everything she explores and discovers outdoors.",
+        author: "Carlos Rodríguez — Student's Father"
+      },
+      card3: {
+        quote: "We love their educational approach. They perfectly combine values, contact with nature, and stimulating activities. You can feel the love and dedication in every detail.",
+        author: "Sofía Vargas — Student's Mother"
+      },
     },
     multimedia: {
       title: "Multimedia",
       description:
-        "Description of the multimedia section. Here you will find the photo albums of our activities.",
+        "Moments that tell our story. Discover through our photographs how we experience learning at My Green Farm.",
       viewMore: "See more",
       albumTitle: "Albums",
       albumCount: "20 photos",
