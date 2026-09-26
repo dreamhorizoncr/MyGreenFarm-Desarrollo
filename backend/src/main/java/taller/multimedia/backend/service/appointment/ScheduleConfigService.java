@@ -73,14 +73,20 @@ public class ScheduleConfigService {
         
         List<Appointment> existingAppointments = appointmentRepository.findByAppointmentDateBetween(startOfDay, endOfDay);
         
-        // Obtiene las horas que ya tienen una cita ACTIVA (PENDING o CONFIRMED)
-        List<LocalTime> bookedTimes = existingAppointments.stream()
+        // Obtiene los intervalos de las citas activas (PENDING o CONFIRMED)
+        List<LocalDateTime> bookedAppointmentStarts = existingAppointments.stream()
                 .filter(a -> a.getStatus() == AppointmentStatus.PENDING || a.getStatus() == AppointmentStatus.CONFIRMED)
-                .map(a -> a.getAppointmentDate().toLocalTime())
+            .map(Appointment::getAppointmentDate)
                 .toList();
 
-        // Remueve de la lista de disponibles las horas que ya están ocupadas
-        slots.removeAll(bookedTimes);
+        // Oculta cualquier bloque de una hora que se cruce con una cita activa.
+        slots.removeIf(slot -> {
+            LocalDateTime slotStart = date.atTime(slot);
+            LocalDateTime slotEnd = slotStart.plusHours(1);
+            return bookedAppointmentStarts.stream().anyMatch(appointmentStart ->
+                slotStart.isBefore(appointmentStart.plusHours(1))
+                    && slotEnd.isAfter(appointmentStart));
+        });
 
         return slots;
     }
