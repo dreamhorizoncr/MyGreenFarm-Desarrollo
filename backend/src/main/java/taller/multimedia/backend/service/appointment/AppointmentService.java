@@ -137,8 +137,7 @@ public class AppointmentService {
         List<String> allowedDomains = List.of(
                 "gmail.com",
                 "hotmail.com",
-                "outlook.com",
-                "yahoo.com");
+                "outlook.com");
 
         String domain = email.substring(email.indexOf("@") + 1).toLowerCase().trim();
 

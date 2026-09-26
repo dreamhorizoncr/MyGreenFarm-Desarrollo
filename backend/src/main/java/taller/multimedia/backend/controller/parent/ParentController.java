@@ -3,6 +3,7 @@ package taller.multimedia.backend.controller.parent;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import taller.multimedia.backend.dto.parent.ParentRequest;
 import taller.multimedia.backend.model.parent.Parent;
@@ -22,6 +23,7 @@ public class ParentController {
 
     // Endpoint para que el owner registre un nuevo padre/madre
     @PostMapping
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<?> createParent(@Valid @RequestBody ParentRequest dto) {
         try {
             Parent savedParent = parentService.createParent(dto);
@@ -33,6 +35,7 @@ public class ParentController {
 
     // Endpoint para listar todos los padres en el panel de administración
     @GetMapping
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<List<Parent>> getAllParents() {
         List<Parent> parents = parentService.getAllParents();
         return ResponseEntity.ok(parents);
@@ -40,6 +43,7 @@ public class ParentController {
 
     // Endpoint para buscar un padre/madre
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<?> getParentById(@PathVariable Integer id) {
         try {
             Parent parent = parentService.getParentById(id);
@@ -51,6 +55,7 @@ public class ParentController {
 
     // Endpoint para actualizar un padre/madre
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<?> updateParent(@PathVariable Integer id, @Valid @RequestBody ParentRequest dto) {
         try {
             Parent updated = parentService.updateParent(id, dto);
@@ -62,6 +67,7 @@ public class ParentController {
 
     // Endpoint para eliminar un padre/madre
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<String> deleteParent(@PathVariable Integer id) {
         try {
             parentService.deleteParent(id);

@@ -17,18 +17,19 @@ public class ParentService {
     }
 
     public Parent createParent(ParentRequest dto) {
-        if (parentRepository.findByEmail(dto.getEmail()).isPresent()) {
+        String cleanEmail = sanitizeEmail(dto.getEmail());
+
+        if (parentRepository.findByEmail(cleanEmail).isPresent()) {
             throw new RuntimeException("Ya existe un padre registrado con este correo.");
         }
 
         Parent parent = new Parent();
-        parent.setIdentification(dto.getIdentification());
-        parent.setEmail(dto.getEmail());
-        parent.setPhoneNumber(dto.getPhoneNumber());
-        parent.setAddress(dto.getAddress());
-        parent.setFirstName(dto.getFirstName());
-        parent.setLastName(dto.getLastName());
-        
+        parent.setIdentification(dto.getIdentification().trim());
+        parent.setEmail(cleanEmail);
+        parent.setPhoneNumber(dto.getPhoneNumber().trim());
+        parent.setAddress(dto.getAddress().trim());
+        parent.setFirstName(dto.getFirstName().trim());
+        parent.setLastName(dto.getLastName().trim());
         parent.setLanguage(resolverLangCode(dto.getLanguage()));
 
         return parentRepository.save(parent);
@@ -43,9 +44,57 @@ public class ParentService {
             return "es";
         }
         String normalized = lang.toLowerCase().trim();
-        if (normalized.startsWith("en")) return "en";
-        if (normalized.startsWith("fr")) return "fr";
+        if (normalized.startsWith("en"))
+            return "en";
+        if (normalized.startsWith("fr"))
+            return "fr";
         return "es";
+    }
+
+    private String sanitizeEmail(String email) {
+        if (email == null || email.isBlank()) {
+            throw new RuntimeException("El correo electrónico es obligatorio.");
+        }
+
+        String cleanEmail = email.toLowerCase().trim();
+
+        // Valida estructura básica con arroba y punto
+        if (!cleanEmail.contains("@") || !cleanEmail.contains(".")) {
+            throw new RuntimeException("El formato del correo electrónico no es válido.");
+        }
+
+        // Extrae lo que está después del @ (el dominio)
+        String domain = cleanEmail.substring(cleanEmail.lastIndexOf("@") + 1);
+
+        // Valida que el dominio no esté vacío y tenga al menos un punto (ej: gmail.com)
+        if (domain.isBlank() || !domain.contains(".")) {
+            throw new RuntimeException("El dominio del correo no es válido.");
+        }
+
+        // Lista blanca
+        List<String> allowedDomains = List.of(
+                "gmail.com",
+                "hotmail.com",
+                "outlook.com",
+                "ucr.ac.cr");
+
+        if (!allowedDomains.contains(domain)) {
+            throw new RuntimeException(
+                    "Solo se permiten correos de proveedores comunes (Gmail, Hotmail, Outlook, etc.).");
+        }
+
+        List<String> blockedDomains = List.of(
+                "mailinator.com",
+                "yopmail.com",
+                "tempmail.com",
+                "test.com",
+                "example.com");
+
+        if (blockedDomains.contains(domain)) {
+            throw new RuntimeException("No se permiten correos temporales o de prueba.");
+        }
+
+        return cleanEmail;
     }
 
     public Parent getParentById(Integer id) {
@@ -62,13 +111,15 @@ public class ParentService {
             }
         });
 
+        this.sanitizeEmail(existingParent.getEmail());
+
         existingParent.setIdentification(dto.getIdentification());
         existingParent.setEmail(dto.getEmail());
         existingParent.setPhoneNumber(dto.getPhoneNumber());
         existingParent.setAddress(dto.getAddress());
         existingParent.setFirstName(dto.getFirstName());
         existingParent.setLastName(dto.getLastName());
-        
+
         // Actualizamos y normalizamos el idioma por si cambió
         existingParent.setLanguage(resolverLangCode(dto.getLanguage()));
 

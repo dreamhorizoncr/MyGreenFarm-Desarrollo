@@ -233,7 +233,7 @@ public class EmailService {
                 boolean isSubscriber = newsletterRepository.existsByEmailAndIsActiveTrue(recipient.getEmail());
                 context.setVariable("isSubscriber", isSubscriber);
 
-                String html = templateEngine.process("email/broadcast-newsletter", context);
+                String html = templateEngine.process("email/newsletter_suscriber/broadcast-newsletter", context);
 
                 sendEmail(recipient.getEmail(), subject, html);
 

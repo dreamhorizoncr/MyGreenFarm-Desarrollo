@@ -3,6 +3,7 @@ package taller.multimedia.backend.controller.newsletter_subscriber;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import taller.multimedia.backend.dto.newsletter_subscriber.BroadcastEmail;
@@ -31,23 +32,18 @@ public class NewsletterController {
     // Endpoint para que los usuarios se suscriban desde la nueva sección
     @PostMapping("/subscribe")
     public ResponseEntity<?> subscribe(@Valid @RequestBody SubscriberInfo dto) {
-        if (newsletterRepository.findByEmail(dto.getEmail()).isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Este correo ya está suscrito al boletín.");
+        try {
+            // Delegamos toda la lógica, limpieza y validación al servicio
+            NewsletterSubscriber saved = newsletterService.subscribe(dto.getEmail(), dto.getLanguage());
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-
-        String cleanLang = resolverLangCode(dto.getLanguage());
-
-        NewsletterSubscriber subscriber = new NewsletterSubscriber();
-        subscriber.setEmail(dto.getEmail());
-        subscriber.setLanguage(cleanLang);
-        subscriber.setIsActive(true);
-
-        NewsletterSubscriber saved = newsletterRepository.save(subscriber);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     // Endpoint para no recibir más correos
     @DeleteMapping("/unsubscribe")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<String> unsubscribe(@RequestParam String email) {
         try {
             newsletterService.unsubscribe(email);
@@ -59,6 +55,7 @@ public class NewsletterController {
 
     // Endpoint para disparar el envío masivo
     @PostMapping("/broadcast")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<String> sendBroadcast(@Valid @RequestBody BroadcastEmail dto) {
         try {
             broadcastService.sendBroadcast(dto);
@@ -66,15 +63,5 @@ public class NewsletterController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al enviar correos: " + e.getMessage());
         }
-    }
-
-    private String resolverLangCode(String lang) {
-        if (lang == null || lang.isBlank()) {
-            return "es";
-        }
-        String normalized = lang.toLowerCase().trim();
-        if (normalized.startsWith("en")) return "en";
-        if (normalized.startsWith("fr")) return "fr";
-        return "es";
     }
 }
