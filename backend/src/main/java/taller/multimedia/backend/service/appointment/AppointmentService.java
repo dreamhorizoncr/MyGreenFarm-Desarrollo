@@ -78,6 +78,8 @@ public class AppointmentService {
 
         validateParentIdentification(dto.getIdType(), dto.getParentIdentification());
 
+        validateAllowedEmail(dto.getParentEmail());
+
         String formattedPhone = parseAndValidatePhone(dto.getParentPhone());
 
         List<Appointment> conflictingAppointments = appointmentRepository.findByAppointmentDateBetween(
@@ -121,12 +123,29 @@ public class AppointmentService {
         calendarSyncAsyncService.addAppointmentAsync(savedAppointment.getId());
 
         Locale locale = Locale.forLanguageTag(langCode);
-        log.info("Idioma de la cita: recibido='{}', resuelto='{}', locale='{}'", dto.getLanguage(), langCode,
-            locale);
 
         emailService.sendAppointmentPendingEmail(savedAppointment, locale);
         emailService.sendAdminNewAppointmentAlert(savedAppointment);
         return savedAppointment;
+    }
+
+    private void validateAllowedEmail(String email) {
+        if (email == null || !email.contains("@")) {
+            throw new IllegalArgumentException("El correo electrónico no es válido.");
+        }
+
+        List<String> allowedDomains = List.of(
+                "gmail.com",
+                "hotmail.com",
+                "outlook.com",
+                "yahoo.com");
+
+        String domain = email.substring(email.indexOf("@") + 1).toLowerCase().trim();
+
+        if (!allowedDomains.contains(domain)) {
+            throw new IllegalArgumentException(
+                    "Por favor, utiliza un correo electrónico de un proveedor conocido (Gmail, Hotmail, Outlook, Yahoo).");
+        }
     }
 
     private String resolverLangCode(String languageFromDto) {
