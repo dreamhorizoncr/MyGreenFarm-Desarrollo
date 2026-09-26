@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react'
 import { ArrowLeftIcon, HeartIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Link, Navigate, useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar.tsx'
 import Button from '../components/ui/Button.tsx'
-import AboutWallCard from '../components/forum/AboutWallCard.tsx'
-import FeaturedBannerCard from '../components/forum/FeaturedBannerCard.tsx'
-import PopularTopicsCard from '../components/forum/PopularTopicsCard.tsx'
 import PostAvatar from '../components/forum/PostAvatar.tsx'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 import { notify } from '../utils/notifications.ts'
@@ -18,7 +15,6 @@ const PARAGRAPH_BREAK = /\n{2,}/
 function BlogPostPage() {
   const { t } = useTranslation()
   const { id } = useParams()
-  const navigate = useNavigate()
   const {
     blogPosts,
     getComments,
@@ -31,14 +27,6 @@ function BlogPostPage() {
   const [content, setContent] = useState('')
   const [error, setError] = useState('')
 
-  const post = blogPosts.find((item) => item.id === id)
-  const comments = post ? getComments(post.id) : []
-
-  if (!post) return <Navigate to="/forum" replace />
-
-  const postId = post.id
-  const paragraphs = post.content.split(PARAGRAPH_BREAK).filter(Boolean)
-
   useEffect(() => {
     if (window.location.hash !== '#comments') return
 
@@ -49,6 +37,14 @@ function BlogPostPage() {
       })
     })
   }, [id])
+
+  const post = blogPosts.find((item) => item.id === id)
+  const comments = post ? getComments(post.id) : []
+
+  if (!post) return <Navigate to="/forum" replace />
+
+  const postId = post.id
+  const paragraphs = post.content.split(PARAGRAPH_BREAK).filter(Boolean)
 
   function handleSubmit() {
     const trimmedName = name.trim()
@@ -88,7 +84,7 @@ function BlogPostPage() {
           <span>{t('forum.blog.backToBlog')}</span>
         </Link>
 
-        <div className="mt-md grid grid-cols-1 items-start gap-md lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-xl">
+        <div className="mt-md">
           <article className="flex flex-col gap-md">
             <header className="rounded-2xl border border-neutral-200 bg-white p-lg">
               <div className="flex flex-wrap items-center gap-md">
@@ -129,7 +125,7 @@ function BlogPostPage() {
                 {paragraphs.map((paragraph, index) => (
                   <p
                     key={index}
-                    className="m-0 whitespace-pre-line text-left font-body text-[16px] leading-[1.75] text-body-text [&:not(:first-child)]:mt-md"
+                    className="m-0 whitespace-pre-line break-words text-left font-body text-[16px] leading-[1.75] text-body-text [&:not(:first-child)]:mt-md"
                   >
                     {paragraph}
                   </p>
@@ -229,13 +225,6 @@ function BlogPostPage() {
             </section>
           </article>
 
-          <div className="flex flex-col gap-md">
-            <AboutWallCard
-              onGoToCommunity={() => navigate('/forum?tab=community')}
-            />
-            <PopularTopicsCard />
-            <FeaturedBannerCard />
-          </div>
         </div>
       </main>
     </div>

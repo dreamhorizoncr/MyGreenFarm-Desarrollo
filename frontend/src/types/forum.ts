@@ -25,3 +25,13 @@ export interface BlogComment {
   createdAt: string
   content: string
 }
+
+export interface BlogPostInput {
+  title: string
+  topic: string
+  authorName: string
+  authorRole: string
+  content: string
+  imageUrl?: string
+  imageAlt?: string
+}

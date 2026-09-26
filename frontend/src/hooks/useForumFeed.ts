@@ -4,7 +4,12 @@ import {
   blogPosts as seedBlogPosts,
   communityPosts as seedCommunityPosts,
 } from '../components/forum/forumData.ts'
-import type { BlogComment, BlogPost, CommunityPost } from '../types/forum.ts'
+import type {
+  BlogComment,
+  BlogPost,
+  BlogPostInput,
+  CommunityPost,
+} from '../types/forum.ts'
 
 interface NameContentInput {
   name: string
@@ -15,7 +20,7 @@ function useForumFeed() {
   const [communityPosts, setCommunityPosts] = useState<CommunityPost[]>(
     seedCommunityPosts,
   )
-  const [blogPosts] = useState<BlogPost[]>(seedBlogPosts)
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(seedBlogPosts)
   const [commentsByPost, setCommentsByPost] = useState<
     Record<string, BlogComment[]>
   >(seedComments)
@@ -30,6 +35,49 @@ function useForumFeed() {
     }
 
     setCommunityPosts((previous) => [post, ...previous])
+  }, [])
+
+  const addBlogPost = useCallback((input: BlogPostInput) => {
+    const post: BlogPost = {
+      id: `blog-${Date.now()}`,
+      title: input.title,
+      topic: input.topic,
+      authorName: input.authorName,
+      authorRole: input.authorRole,
+      createdAt: new Date().toISOString(),
+      content: input.content,
+      imageUrl: input.imageUrl,
+      imageAlt: input.imageAlt,
+      likeCount: 0,
+    }
+
+    setBlogPosts((previous) => [post, ...previous])
+  }, [])
+
+  const updateBlogPost = useCallback(
+    (postId: string, input: BlogPostInput) => {
+      setBlogPosts((previous) =>
+        previous.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                title: input.title,
+                topic: input.topic,
+                authorName: input.authorName,
+                authorRole: input.authorRole,
+                content: input.content,
+                imageUrl: input.imageUrl,
+                imageAlt: input.imageAlt,
+              }
+            : post,
+        ),
+      )
+    },
+    [],
+  )
+
+  const removeBlogPost = useCallback((postId: string) => {
+    setBlogPosts((previous) => previous.filter((post) => post.id !== postId))
   }, [])
 
   const getComments = useCallback(
@@ -76,6 +124,9 @@ function useForumFeed() {
     communityPosts,
     addCommunityPost,
     blogPosts,
+    addBlogPost,
+    updateBlogPost,
+    removeBlogPost,
     getComments,
     addComment,
     isLiked,

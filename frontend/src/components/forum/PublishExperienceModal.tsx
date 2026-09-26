@@ -72,7 +72,7 @@ function PublishExperienceModal({
           type="button"
           onClick={onClose}
           aria-label={t('forum.community.cancel')}
-          className="absolute right-[18px] top-[18px] flex size-[42px] items-center justify-center rounded-full bg-white text-heading transition hover:bg-neutral-100"
+          className="absolute right-[18px] top-[18px] flex size-[42px] items-center justify-center rounded-full bg-white text-heading transition"
         >
           <XIcon size={20} />
         </button>

@@ -11,6 +11,7 @@ import {
   LayoutDashboardIcon,
   LogOutIcon,
   MegaphoneIcon,
+  MessageSquarePlusIcon,
   UserIcon,
   UsersIcon,
 } from '@animateicons/react/lucide'
@@ -29,7 +30,8 @@ type SidebarItemId =
   | "expedientes"
   | "miPerfil"
   | "servicios"
-  | "disponibilidad";
+  | "disponibilidad"
+  | "foro";
 
 interface SidebarItem {
   id: SidebarItemId;
@@ -60,6 +62,7 @@ function AdminSidebar() {
         { id: 'docentes', icon: UsersIcon, path: '/admin/users' },
         { id: 'servicios', icon: CreditCardIcon, path: '/admin/service-plans' },
         { id: 'disponibilidad', icon: CalendarDaysIcon, path: '/admin/disponibilidad' },
+        { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
         { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
         { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
         { id: 'miPerfil', icon: UserIcon, path: '/profile' },
