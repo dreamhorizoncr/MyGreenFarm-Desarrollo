@@ -13,7 +13,7 @@ const backgrounds: Record<CardColor, string> = {
   pink: 'bg-[var(--accent-pink)]',
 }
 
-function TestimonialCard({ color = 'orange', quote, author, initials }: TestimonialCardProps) {
+function TestimonialCard({ color = 'orange', quote, author, initials }: Readonly<TestimonialCardProps>) {
   return (
     <figure className={`relative flex min-h-64 flex-col justify-center rounded-3xl ${backgrounds[color]} p-xl text-left`}>
       <blockquote className="flex flex-1 flex-col justify-between">

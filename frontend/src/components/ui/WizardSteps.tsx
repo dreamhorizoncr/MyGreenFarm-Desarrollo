@@ -6,7 +6,7 @@ interface WizardStepsProps {
   current: number
 }
 
-function WizardSteps({ steps, current }: WizardStepsProps) {
+function WizardSteps({ steps, current }: Readonly<WizardStepsProps>) {
   return (
     <ol className="flex items-start">
       {steps.map((label, index) => {

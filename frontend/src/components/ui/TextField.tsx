@@ -6,7 +6,7 @@ interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   children?: ReactNode
 }
 
-function TextField({ label, error, id, children, ...rest }: TextFieldProps) {
+function TextField({ label, error, id, children, ...rest }: Readonly<TextFieldProps>) {
   return (
     <div>
       <label

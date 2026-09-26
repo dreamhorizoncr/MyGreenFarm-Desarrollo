@@ -1,3 +1,4 @@
+import type { KeyboardEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HeartIcon, MessageCircleIcon } from '@animateicons/react/lucide'
 import type { BlogPost } from '../../types/forum.ts'
@@ -13,6 +14,83 @@ interface BlogPostCardProps {
   onOpenComments?: (postId: string) => void
 }
 
+interface LikeControlProps {
+  isInteractive: boolean
+  isLiked: boolean
+  likeCount: number
+  onToggle: () => void
+}
+
+function LikeControl({ isInteractive, isLiked, likeCount, onToggle }: Readonly<LikeControlProps>) {
+  const { t } = useTranslation()
+
+  if (isInteractive) {
+    return (
+      <button
+        type="button"
+        onClick={(event) => {
+          event.stopPropagation()
+          onToggle()
+        }}
+        aria-pressed={isLiked}
+        aria-label={t('forum.likes.label')}
+        className={`flex items-center gap-xs font-body text-body-sm transition ${
+          isLiked ? 'text-danger' : 'text-neutral-500 hover:text-danger'
+        }`}
+      >
+        <HeartIcon size={18} className={isLiked ? 'fill-current' : ''} />
+        <span>{likeCount}</span>
+      </button>
+    )
+  }
+
+  return (
+    <span
+      aria-label={t('forum.likes.label')}
+      className="flex items-center gap-xs font-body text-body-sm text-neutral-500"
+    >
+      <HeartIcon size={18} aria-hidden="true" />
+      <span>{likeCount}</span>
+    </span>
+  )
+}
+
+interface CommentsControlProps {
+  commentCount: number
+  onOpenComments?: () => void
+}
+
+function CommentsControl({ commentCount, onOpenComments }: Readonly<CommentsControlProps>) {
+  const { t } = useTranslation()
+
+  if (onOpenComments) {
+    return (
+      <button
+        type="button"
+        onClick={(event) => {
+          event.stopPropagation()
+          onOpenComments()
+        }}
+        aria-label={t('forum.blog.commentsTitle')}
+        className="flex items-center gap-xs font-body text-body-sm text-neutral-500 hover:text-heading"
+      >
+        <MessageCircleIcon size={18} />
+        <span>{commentCount}</span>
+      </button>
+    )
+  }
+
+  return (
+    <span
+      aria-label={t('forum.blog.commentsTitle')}
+      className="flex items-center gap-xs font-body text-body-sm text-neutral-500"
+    >
+      <MessageCircleIcon size={18} />
+      <span>{commentCount}</span>
+    </span>
+  )
+}
+
 function BlogPostCard({
   post,
   commentCount,
@@ -21,26 +99,27 @@ function BlogPostCard({
   onToggleLike,
   onOpen,
   onOpenComments,
-}: BlogPostCardProps) {
-  const { t } = useTranslation()
+}: Readonly<BlogPostCardProps>) {
   const isInteractive = Boolean(onOpen)
+
+  const interactiveProps = isInteractive
+    ? {
+        role: 'button',
+        tabIndex: 0,
+        onClick: () => onOpen?.(post.id),
+        onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            onOpen?.(post.id)
+          }
+        },
+        'aria-label': post.title,
+      }
+    : {}
 
   return (
     <article
-      role={isInteractive ? 'button' : undefined}
-      tabIndex={isInteractive ? 0 : undefined}
-      onClick={isInteractive ? () => onOpen?.(post.id) : undefined}
-      onKeyDown={
-        isInteractive
-          ? (event) => {
-              if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault()
-                onOpen?.(post.id)
-              }
-            }
-          : undefined
-      }
-      aria-label={isInteractive ? post.title : undefined}
+      {...interactiveProps}
       className={`flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white text-left ${
         isInteractive ? 'cursor-pointer transition hover:opacity-95' : ''
       }`}
@@ -89,54 +168,17 @@ function BlogPostCard({
       </div>
 
       <footer className="flex items-center gap-lg border-t border-neutral-100 px-lg py-md">
-        {isInteractive ? (
-          <button
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation()
-              onToggleLike(post.id)
-            }}
-            aria-pressed={isLiked}
-            aria-label={t('forum.likes.label')}
-            className={`flex items-center gap-xs font-body text-body-sm transition ${
-              isLiked ? 'text-danger' : 'text-neutral-500 hover:text-danger'
-            }`}
-          >
-            <HeartIcon size={18} className={isLiked ? 'fill-current' : ''} />
-            <span>{likeCount}</span>
-          </button>
-        ) : (
-          <span
-            aria-label={t('forum.likes.label')}
-            className="flex items-center gap-xs font-body text-body-sm text-neutral-500"
-          >
-            <HeartIcon size={18} aria-hidden="true" />
-            <span>{likeCount}</span>
-          </span>
-        )}
+        <LikeControl
+          isInteractive={isInteractive}
+          isLiked={isLiked}
+          likeCount={likeCount}
+          onToggle={() => onToggleLike(post.id)}
+        />
 
-        {onOpenComments ? (
-          <button
-            type="button"
-            onClick={(event) => {
-              event.stopPropagation()
-              onOpenComments(post.id)
-            }}
-            aria-label={t('forum.blog.commentsTitle')}
-            className="flex items-center gap-xs font-body text-body-sm text-neutral-500 hover:text-heading"
-          >
-            <MessageCircleIcon size={18} />
-            <span>{commentCount}</span>
-          </button>
-        ) : (
-          <span
-            aria-label={t('forum.blog.commentsTitle')}
-            className="flex items-center gap-xs font-body text-body-sm text-neutral-500"
-          >
-            <MessageCircleIcon size={18} />
-            <span>{commentCount}</span>
-          </span>
-        )}
+        <CommentsControl
+          commentCount={commentCount}
+          onOpenComments={onOpenComments ? () => onOpenComments(post.id) : undefined}
+        />
       </footer>
     </article>
   )

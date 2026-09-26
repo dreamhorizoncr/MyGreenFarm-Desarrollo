@@ -8,7 +8,7 @@ import { notify } from '../utils/notifications.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 
-function PlanCard({ plan, onSubscribe, isLoading }: { plan: ServicePlan; onSubscribe: (plan: ServicePlan) => void; isLoading?: boolean }) {
+function PlanCard({ plan, onSubscribe, isLoading }: Readonly<{ plan: ServicePlan; onSubscribe: (plan: ServicePlan) => void; isLoading?: boolean }>) {
   const { t } = useTranslation()
 
   return (

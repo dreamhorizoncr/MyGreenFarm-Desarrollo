@@ -7,7 +7,7 @@ import type { OptionalApplicationField } from '../types/vacancy.ts'
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
 const MAX_CERTIFICATES = 5
-const CERTIFICATE_TYPES = ['application/pdf', 'image/png', 'image/jpeg']
+const CERTIFICATE_TYPES = new Set(['application/pdf', 'image/png', 'image/jpeg'])
 
 interface ApplicationFormTarget {
   vacancyId: string | null
@@ -47,8 +47,7 @@ export function useVacancyApplicationForm(target: ApplicationFormTarget, onSubmi
     if (emailError) setEmailError(null)
   }
 
-  const handlePhoneChange = (value?: string) => {
-    const next = value ?? ''
+  const handlePhoneChange = (next = '') => {
     setPhone(next)
     setPhoneError(validatePhoneNumber(next, t))
   }
@@ -98,7 +97,7 @@ export function useVacancyApplicationForm(target: ApplicationFormTarget, onSubmi
       return
     }
 
-    if (files.some((f) => !CERTIFICATE_TYPES.includes(f.type))) {
+    if (files.some((f) => !CERTIFICATE_TYPES.has(f.type))) {
       setCertificatesError(t('vacancies.invalidCertificateType'))
       return
     }
@@ -119,10 +118,13 @@ export function useVacancyApplicationForm(target: ApplicationFormTarget, onSubmi
   const handleSubmit = async (): Promise<boolean> => {
     const nameErrorMessage = validateRequired(name, t('vacancies.applicantName'), t)
     const emailErrorMessage = validateRequired(email, t('vacancies.applicantEmail'), t) ?? validateEmail(email, t)
-    const phoneErrorMessage = showPhone
-      ? (validateRequired(phone, t('vacancies.applicantPhone'), t) ??
-          (phoneCountry ? validatePhoneNumber(phone, t) : t('validation.countryRequired')))
-      : null
+    let phoneErrorMessage: string | null = null
+    if (showPhone) {
+      const countryOrPhoneError = phoneCountry
+        ? validatePhoneNumber(phone, t)
+        : t('validation.countryRequired')
+      phoneErrorMessage = validateRequired(phone, t('vacancies.applicantPhone'), t) ?? countryOrPhoneError
+    }
     const fileErrorMessage = showFile && !file ? t('vacancies.fileRequired') : null
     const certificatesErrorMessage = showCertificates && certificates.length === 0 ? t('vacancies.certificatesRequired') : null
 

@@ -45,6 +45,12 @@ function BlogPostPage() {
 
   const postId = post.id
   const paragraphs = post.content.split(PARAGRAPH_BREAK).filter(Boolean)
+  const seenParagraphs = new Map<string, number>()
+  const keyedParagraphs = paragraphs.map((paragraph) => {
+    const occurrence = (seenParagraphs.get(paragraph) ?? 0) + 1
+    seenParagraphs.set(paragraph, occurrence)
+    return { paragraph, key: `${occurrence}-${paragraph}` }
+  })
 
   function handleSubmit() {
     const trimmedName = name.trim()
@@ -122,9 +128,9 @@ function BlogPostPage() {
               )}
 
               <div className="mt-md">
-                {paragraphs.map((paragraph, index) => (
+                {keyedParagraphs.map(({ paragraph, key }) => (
                   <p
-                    key={index}
+                    key={key}
                     className="m-0 whitespace-pre-line break-words text-left font-body text-[16px] leading-[1.75] text-body-text [&:not(:first-child)]:mt-md"
                   >
                     {paragraph}

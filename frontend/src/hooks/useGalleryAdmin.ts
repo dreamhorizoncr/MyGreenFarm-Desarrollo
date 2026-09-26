@@ -69,7 +69,7 @@ export function useGalleryAdmin() {
                         'gallery',
                         lang,
                         Array.from(uniqueGalleries.values())
-                            .map((gallery) => [
+                            .flatMap((gallery) => [
                                 {
                                     entityId: gallery.id,
                                     fieldName: 'title',
@@ -80,8 +80,7 @@ export function useGalleryAdmin() {
                                     fieldName: 'description',
                                     originalText: gallery.description,
                                 },
-                            ])
-                            .flat(),
+                            ]),
                     ),
                     galleryService.translateBatch(
                         'gallery_image',

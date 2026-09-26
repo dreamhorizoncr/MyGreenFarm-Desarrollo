@@ -20,7 +20,7 @@ function AuthLayout({
   containerClassName = "md:max-w-[900px]",
   closeTo = "/",
   children,
-}: AuthLayoutProps) {
+}: Readonly<AuthLayoutProps>) {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-bg-page">

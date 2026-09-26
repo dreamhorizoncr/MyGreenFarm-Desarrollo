@@ -29,7 +29,7 @@ function formatDate(date: string) {
   return `${day}/${month}/${year}`;
 }
 
-function ExpedientCard({ expedient, onEdit, onDelete }: ExpedientCardProps) {
+function ExpedientCard({ expedient, onEdit, onDelete }: Readonly<ExpedientCardProps>) {
 
   const { t } = useTranslation();
 

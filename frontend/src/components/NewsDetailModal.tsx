@@ -42,7 +42,7 @@ function formatDate(
 function NewsDetailModal({
     announcement,
     onClose,
-}: NewsDetailModalProps) {
+}: Readonly<NewsDetailModalProps>) {
     const { t, i18n } = useTranslation();
 
     //Hook que se encarga de obtener y cargar las imágenes de la noticia
@@ -94,6 +94,10 @@ function NewsDetailModal({
     const galleryImages = announcementImages.filter(
         (image) => !image.isCover,
     );
+
+    let galleryGridColumns = "grid-cols-1 sm:grid-cols-2 md:grid-cols-4"
+    if (galleryImages.length === 1) galleryGridColumns = "grid-cols-1"
+    else if (galleryImages.length === 2) galleryGridColumns = "grid-cols-1 sm:grid-cols-2"
 
     return (
         //Fondo oscuro que cubre toda la pantalla y que al hacer click, cierra el modal.
@@ -212,13 +216,7 @@ function NewsDetailModal({
                 </h3>
 
                 <div
-                    className={`grid gap-[12px] ${
-                        galleryImages.length === 1
-                        ? "grid-cols-1"
-                        : galleryImages.length === 2
-                        ? "grid-cols-1 sm:grid-cols-2"
-                        : "grid-cols-1 sm:grid-cols-2 md:grid-cols-4"
-                    }`}
+                    className={`grid gap-[12px] ${galleryGridColumns}`}
                 >
                     {galleryImages.map((image) => (
                     <div

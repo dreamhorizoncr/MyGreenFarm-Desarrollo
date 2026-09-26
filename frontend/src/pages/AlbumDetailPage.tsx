@@ -18,7 +18,7 @@ interface LikeBadgeProps {
   onToggle: () => void
 }
 
-function LikeBadge({ albumTitle, liked, totalLikes, loading, onToggle }: LikeBadgeProps) {
+function LikeBadge({ albumTitle, liked, totalLikes, loading, onToggle }: Readonly<LikeBadgeProps>) {
   const { t } = useTranslation()
 
   return (

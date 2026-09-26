@@ -5,7 +5,7 @@ type ForumFeedValue = ReturnType<typeof useForumFeed>
 
 const ForumFeedContext = createContext<ForumFeedValue | null>(null)
 
-export function ForumFeedProvider({ children }: { children: ReactNode }) {
+export function ForumFeedProvider({ children }: Readonly<{ children: ReactNode }>) {
   const feed = useForumFeed()
 
   return (

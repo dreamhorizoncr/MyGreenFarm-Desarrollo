@@ -7,7 +7,7 @@ interface CertificatesCarouselProps {
   certificates: CertificateFile[]
 }
 
-function CertificatesCarousel({ certificates }: CertificatesCarouselProps) {
+function CertificatesCarousel({ certificates }: Readonly<CertificatesCarouselProps>) {
   const { t } = useTranslation()
   const [index, setIndex] = useState(0)
 

@@ -3,11 +3,11 @@ import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ChevronUpIcon } from '@animateicons/react/lucide'
 
-const PUBLIC_PAGES = ['/', '/news', '/multimedia', '/booking']
+const PUBLIC_PAGES = new Set(['/', '/news', '/multimedia', '/booking'])
 
 function supportsScrollToTop(pathname: string) {
 	return (
-		PUBLIC_PAGES.includes(pathname) ||
+		PUBLIC_PAGES.has(pathname) ||
 		pathname.startsWith('/albumes/') ||
 		pathname.startsWith('/forum')
 	)

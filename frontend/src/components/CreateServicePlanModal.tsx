@@ -25,7 +25,7 @@ interface CreateServicePlanModalProps {
   onClose: () => void
 }
 
-function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, onUpdate, onClose }: CreateServicePlanModalProps) {
+function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, onUpdate, onClose }: Readonly<CreateServicePlanModalProps>) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -123,6 +123,8 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
   const handleOverlayClick = (event: React.MouseEvent) => {
     if (event.target === overlayRef.current) onClose()
   }
+
+  const idleSubmitLabel = isEditing ? t('admin.save') : t('admin.servicios.create')
 
   return (
     <div
@@ -303,7 +305,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
               loading={saving}
               className="h-[47px] flex-1 rounded-full bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
             >
-              {saving ? t('common.loading') : isEditing ? t('admin.save') : t('admin.servicios.create')}
+              {saving ? t('common.loading') : idleSubmitLabel}
             </Button>
           </div>
         </form>

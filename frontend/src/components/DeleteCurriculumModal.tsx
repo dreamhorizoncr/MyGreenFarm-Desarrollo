@@ -12,7 +12,7 @@ interface DeleteCurriculumModalProps {
   onClose: () => void
 }
 
-function DeleteCurriculumModal({ application, onConfirm, onClose }: DeleteCurriculumModalProps) {
+function DeleteCurriculumModal({ application, onConfirm, onClose }: Readonly<DeleteCurriculumModalProps>) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
 

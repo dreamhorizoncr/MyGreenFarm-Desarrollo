@@ -8,7 +8,7 @@ interface BookingSuccessModalProps {
   onClose: () => void
 }
 
-function BookingSuccessModal({ onClose }: BookingSuccessModalProps) {
+function BookingSuccessModal({ onClose }: Readonly<BookingSuccessModalProps>) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
 
