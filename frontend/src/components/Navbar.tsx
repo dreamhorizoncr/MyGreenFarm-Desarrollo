@@ -77,7 +77,7 @@ function Navbar() {
                 to="/login"
                 aria-label={t('navbar.adminLogin')}
                 title={t('navbar.adminLogin')}
-                className="w-fit self-center text-green-500 transition-opacity hover:opacity-70"
+                className="inline-flex size-10 items-center justify-center text-green-500 transition-opacity hover:opacity-70"
               >
                 <LockIcon size={18} aria-hidden="true" />
               </Link>
@@ -163,7 +163,7 @@ function Navbar() {
               aria-label={t('navbar.adminLogin')}
               title={t('navbar.adminLogin')}
               onClick={() => setDrawerOpen(false)}
-              className="text-green-500 transition-opacity hover:opacity-70"
+              className="inline-flex size-10 items-center justify-center text-green-500 transition-opacity hover:opacity-70"
             >
               <LockIcon size={18} aria-hidden="true" />
             </Link>
