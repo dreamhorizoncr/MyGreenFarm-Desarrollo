@@ -180,6 +180,62 @@ export default {
     gallery: "Image Gallery",
     noImage: "No image available",
   },
+  forum: {
+    title: "Forum",
+    subtitle:
+      "A space to share news, answer questions and talk with other families.",
+    sidebarLabel: "Forum information",
+    likes: {
+      label: "Like",
+    },
+    tabs: {
+      label: "Forum sections",
+      community: "Community",
+      blog: "Blog",
+    },
+    community: {
+      label: "Community posts",
+      publish: "Post an experience",
+      empty: "There are no posts yet.",
+      modalTitle: "Post an experience",
+      nameLabel: "Name",
+      nameRequired: "Enter your name to post.",
+      contentLabel: "Your experience",
+      contentRequired: "Write something to post.",
+      cancel: "Cancel",
+      submit: "Send",
+      toastTitle: "Post sent",
+      toastDescription: "Your experience is now on the board.",
+    },
+    blog: {
+      label: "Blog posts",
+      empty: "There are no research posts yet.",
+      searchPlaceholder: "Search the blog...",
+      searchLabel: "Search blog posts",
+      noSearchResults: "No posts matched your search.",
+      backToBlog: "Back to the blog",
+      commentsTitle: "Replies",
+      commentsEmpty: "There are no replies yet.",
+      commentNameLabel: "Name",
+      commentNameRequired: "Enter your name to reply.",
+      commentContentLabel: "Your reply",
+      commentContentRequired: "Write something to reply.",
+      commentSubmit: "Send reply",
+      toastTitle: "Reply sent",
+      toastDescription: "Thanks for adding your reply.",
+    },
+    about: {
+      title: "About the board",
+      description:
+        "We share research and relevant topics for families and the educational community.",
+      communityDescription:
+        "Discover other families' opinions and experiences at My Green Farm.",
+      cta: "Back to the posts",
+    },
+    popular: {
+      title: "Popular topics",
+    },
+  },
   adminNews: {
     title: "News",
     description:

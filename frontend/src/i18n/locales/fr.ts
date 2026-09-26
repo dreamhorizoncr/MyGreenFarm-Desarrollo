@@ -179,6 +179,62 @@ export default {
     gallery: "Galerie d'images",
     noImage: "Aucune image disponible",
   },
+  forum: {
+    title: "Forum",
+    subtitle:
+      "Un espace pour partager des nouvelles, répondre aux questions et échanger avec d'autres familles.",
+    sidebarLabel: "Informations du forum",
+    likes: {
+      label: "J'aime",
+    },
+    tabs: {
+      label: "Sections du forum",
+      community: "Communauté",
+      blog: "Blog",
+    },
+    community: {
+      label: "Publications de la communauté",
+      publish: "Publier une expérience",
+      empty: "Il n'y a pas encore de publications.",
+      modalTitle: "Publier une expérience",
+      nameLabel: "Nom",
+      nameRequired: "Saisissez votre nom pour publier.",
+      contentLabel: "Votre expérience",
+      contentRequired: "Écrivez quelque chose pour publier.",
+      cancel: "Annuler",
+      submit: "Envoyer",
+      toastTitle: "Publication envoyée",
+      toastDescription: "Votre expérience est sur le mur.",
+    },
+    blog: {
+      label: "Publications du blog",
+      empty: "Il n'y a pas encore de recherches.",
+      searchPlaceholder: "Rechercher dans le blog...",
+      searchLabel: "Rechercher parmi les publications du blog",
+      noSearchResults: "Aucune publication ne correspond à cette recherche.",
+      backToBlog: "Retour au blog",
+      commentsTitle: "Réponses",
+      commentsEmpty: "Il n'y a pas encore de réponses.",
+      commentNameLabel: "Nom",
+      commentNameRequired: "Saisissez votre nom pour répondre.",
+      commentContentLabel: "Votre réponse",
+      commentContentRequired: "Écrivez quelque chose pour répondre.",
+      commentSubmit: "Envoyer la réponse",
+      toastTitle: "Réponse envoyée",
+      toastDescription: "Merci d'avoir ajouté votre réponse.",
+    },
+    about: {
+      title: "À propos du mur",
+      description:
+        "Nous partageons des recherches et des sujets pertinents pour les familles et la communauté éducative.",
+      communityDescription:
+        "Découvrez les avis et les expériences d'autres familles à My Green Farm.",
+      cta: "Retour aux publications",
+    },
+    popular: {
+      title: "Sujets populaires",
+    },
+  },
   adminNews: {
     title: "Actualités",
     description:

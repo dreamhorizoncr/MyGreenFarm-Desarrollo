@@ -16,6 +16,9 @@ import AdminRoute from './routes/AdminRoute.tsx'
 import OwnerRoute from './routes/OwnerRoute.tsx'
 import ExpedientsRoute from './routes/ExpedientsRoute.tsx'
 import NewsPage from './pages/NewsPage.tsx'
+import ForumPage from './pages/ForumPage.tsx'
+import BlogPostPage from './pages/BlogPostPage.tsx'
+import ForumFeedRoute from './routes/ForumFeedRoute.tsx'
 import AnnouncementsPage from './pages/AnnouncementsPage.tsx'
 import AdminExpedientsPage from './pages/AdminExpedientsPage.tsx'
 import GalleryPage from './pages/GalleryPage.tsx'
@@ -75,6 +78,10 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/news" element={<NewsPage />} />
+        <Route element={<ForumFeedRoute />}>
+          <Route path="/forum" element={<ForumPage />} />
+          <Route path="/forum/blog/:id" element={<BlogPostPage />} />
+        </Route>
         <Route path="/multimedia" element={<GalleryPage />} />
         <Route path="/albumes/:id" element={<AlbumDetailPage />} />
         <Route path="/services" element={<ServicesPage />} />

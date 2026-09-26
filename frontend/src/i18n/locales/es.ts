@@ -180,6 +180,62 @@ export default {
     gallery: "Galería de Imágenes",
     noImage: "Sin imagen disponible",
   },
+  forum: {
+    title: "Foro",
+    subtitle:
+      "Un espacio para compartir novedades, resolver dudas y conversar con otras familias.",
+    sidebarLabel: "Información del foro",
+    likes: {
+      label: "Me gusta",
+    },
+    tabs: {
+      label: "Secciones del foro",
+      community: "Comunidad",
+      blog: "Blog",
+    },
+    community: {
+      label: "Publicaciones de la comunidad",
+      publish: "Publicar experiencia",
+      empty: "Todavía no hay publicaciones.",
+      modalTitle: "Publicar una experiencia",
+      nameLabel: "Nombre",
+      nameRequired: "Escribí tu nombre para publicar.",
+      contentLabel: "Tu experiencia",
+      contentRequired: "Escribí algo para publicar.",
+      cancel: "Cancelar",
+      submit: "Enviar",
+      toastTitle: "Publicación enviada",
+      toastDescription: "Tu experiencia ya está en el muro.",
+    },
+    blog: {
+      label: "Publicaciones del blog",
+      empty: "Todavía no hay investigaciones.",
+      searchPlaceholder: "Buscar en el blog...",
+      searchLabel: "Buscar entre las publicaciones del blog",
+      noSearchResults: "No se encontraron publicaciones con esa búsqueda.",
+      backToBlog: "Volver al blog",
+      commentsTitle: "Respuestas",
+      commentsEmpty: "Todavía no hay respuestas.",
+      commentNameLabel: "Nombre",
+      commentNameRequired: "Escribí tu nombre para responder.",
+      commentContentLabel: "Tu respuesta",
+      commentContentRequired: "Escribí algo para responder.",
+      commentSubmit: "Enviar respuesta",
+      toastTitle: "Respuesta enviada",
+      toastDescription: "Gracias por sumar tu respuesta.",
+    },
+    about: {
+      title: "Sobre el muro",
+      description:
+        "Compartimos investigaciones y temas relevantes para las familias y la comunidad educativa.",
+      communityDescription:
+        "Conocé la opinión de otras familias y sus experiencias en My Green Farm.",
+      cta: "Volver a las publicaciones",
+    },
+    popular: {
+      title: "Temas populares",
+    },
+  },
   adminNews: {
     title: "Noticias",
     description:

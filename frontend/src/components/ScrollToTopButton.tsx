@@ -5,6 +5,14 @@ import { ChevronUpIcon } from '@animateicons/react/lucide'
 
 const PUBLIC_PAGES = ['/', '/news', '/multimedia', '/booking']
 
+function supportsScrollToTop(pathname: string) {
+	return (
+		PUBLIC_PAGES.includes(pathname) ||
+		pathname.startsWith('/albumes/') ||
+		pathname.startsWith('/forum')
+	)
+}
+
 function ScrollToTopButton() {
 	const { t } = useTranslation()
 	const { pathname } = useLocation()
@@ -13,14 +21,14 @@ function ScrollToTopButton() {
 	useEffect(() => {
 		window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
 
-		if (!PUBLIC_PAGES.includes(pathname) && !pathname.startsWith('/albumes/')) return
+		if (!supportsScrollToTop(pathname)) return
 		const onScroll = () => setVisible(window.scrollY > 400)
 		onScroll()
 		window.addEventListener('scroll', onScroll, { passive: true })
 		return () => window.removeEventListener('scroll', onScroll)
 	}, [pathname])
 
-	if (!PUBLIC_PAGES.includes(pathname) && !pathname.startsWith('/albumes/')) return null
+	if (!supportsScrollToTop(pathname)) return null
 
 	return (
 		<button
