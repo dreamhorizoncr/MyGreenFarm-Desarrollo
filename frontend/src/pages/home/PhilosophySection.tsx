@@ -8,7 +8,13 @@ import PhilosophyModal from '../../components/PhilosophyModal.tsx'
 
 function PhilosophySection() {
   const { t } = useTranslation()
-  const items = Array.from({ length: 4 }, () => t('home.philosophy.item'))
+  const items = [
+    t("home.philosophy.pillar1Title"),
+    t("home.philosophy.pillar2Title"),
+    t("home.philosophy.pillar3Title"),
+    t("home.philosophy.pillar4Title"),
+  ]
+  
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
@@ -29,7 +35,7 @@ function PhilosophySection() {
 
               <div className="h-1 w-12 rounded-full bg-orange-500" aria-hidden="true" />
 
-              <p className="font-body text-body-sm font-normal text-body-text">
+              <p className="line-clamp-4 font-body text-body-sm font-normal text-body-text">
                 {t('home.philosophy.description')}
               </p>
 

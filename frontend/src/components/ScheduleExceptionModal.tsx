@@ -125,7 +125,7 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Sche
           </div>
 
           {formError && <p className="m-0 text-sm text-danger" role="alert">{formError}</p>}
-          <div className="flex flex-col-reverse gap-sm sm:flex-row sm:justify-end">
+          <div className="flex flex-col-reverse gap-xl sm:flex-row sm:justify-between">
             <button type="button" onClick={onClose} className="h-12 rounded-full border border-heading px-xl font-body font-semibold text-heading focus-visible:outline-2 focus-visible:outline-link">Cancelar</button>
             <button type="button" onClick={() => void handleSubmit()} disabled={saving} className="inline-flex h-12 items-center justify-center gap-sm rounded-full bg-green-500 px-xl font-body font-semibold text-white disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-link">
               {saving && <span className="size-4 animate-spin rounded-full border-2 border-white border-r-transparent" aria-hidden="true" />}

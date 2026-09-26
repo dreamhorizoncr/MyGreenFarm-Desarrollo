@@ -22,9 +22,9 @@ function TestimonialsSection() {
             </p>
 
             <div className="grid w-full gap-lg md:grid-cols-3">
-              <TestimonialCard color="orange" />
-              <TestimonialCard color="green" />
-              <TestimonialCard color="pink" />
+              <TestimonialCard color="orange" quote={t('home.testimonials.card1.quote')} author={t('home.testimonials.card1.author')} initials='MJA' />
+              <TestimonialCard color="green"  quote={t('home.testimonials.card2.quote')} author={t('home.testimonials.card2.author')} initials='CR' />
+              <TestimonialCard color="pink"   quote={t('home.testimonials.card3.quote')} author={t('home.testimonials.card3.author')} initials='SV' />
             </div>
           </div>
         </Container>

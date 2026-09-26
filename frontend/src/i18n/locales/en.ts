@@ -34,14 +34,20 @@ export default {
       badge: "Natural Learning",
       welcome: "Welcome to",
       description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "At My Green Farm, we accompany every stage of childhood with education, love, and meaningful experiences, integrating learning, languages, play, and contact with nature.",
       cta: "Book an appointment",
       heroAlt: "Cover image",
     },
     philosophy: {
       title: "Our Philosophy",
       description:
-        "We believe in an education that grows with nature. At Green Farm we accompany each child from their first months until age 12, in a safe environment accredited by the MEP, where outdoor play and affection are part of daily learning.",
+        "At My Green Farm, we believe that childhood is learned by living it. That is why we offer quality education where every child has the opportunity to explore, discover, create, play, and learn through meaningful experiences...",
+      modalParagraph: {
+        paragraph1: "At My Green Farm, we believe that childhood is learned by living it. That is why we offer quality education where every child has the opportunity to explore, discover, create, play, and learn through meaningful experiences.",
+        paragraph2: "Our proposal combines learning inside and outside the classroom with contact with nature and our educational farm, where children can interact with animals such as our horse, sheep, goats, chickens, and rabbits. These experiences are complemented by daily English, French, Music, Art, Physical Education, Values, and stimulation activities, creating learning opportunities from different areas.",
+        paragraph3: "We work with specially selected materials, sensory experiences, and activities that awaken curiosity, creativity, autonomy, and the desire to learn. Our proposal draws on active methodologies and contributions from currents such as Montessori, Reggio Emilia, Waldorf, and constructivism, adapting them to the needs and characteristics of our children.",
+        paragraph4: "More than teaching content, we seek to offer a childhood full of experiences, accompanied by teachers who respect each child's individual pace and ensure they feel safe, loved, heard, and happy while learning. My Green Farm: education, values, nature, languages, and experiences that leave a mark. 💚",
+      },
       item: "A test sentence only testing is a test one",
       cta: "Read more",
       pillar1Title: "MEP Accreditation and Safety",
@@ -66,12 +72,24 @@ export default {
     testimonials: {
       title: "Testimonials",
       description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "Find here what the families in our community say about the experience of growing, learning, and living childhood at My Green Farm.",
+      card1: {
+        quote: "Taking my son to My Green Farm has been the best decision. Seeing how much he enjoys interacting with the farm animals and learning English so naturally brings us joy every day.",
+        author: "María José Alfaro — Student's Mother"
+      },
+      card2: {
+        quote: "The environment is extremely warm and safe. The teachers have unmatched patience and affection; my daughter goes to class happily and amazes us every day with everything she explores and discovers outdoors.",
+        author: "Carlos Rodríguez — Student's Father"
+      },
+      card3: {
+        quote: "We love their educational approach. They perfectly combine values, contact with nature, and stimulating activities. You can feel the love and dedication in every detail.",
+        author: "Sofía Vargas — Student's Mother"
+      },
     },
     multimedia: {
       title: "Multimedia",
       description:
-        "Description of the multimedia section. Here you will find the photo albums of our activities.",
+        "Moments that tell our story. Discover through our photographs how we experience learning at My Green Farm.",
       viewMore: "See more",
       albumTitle: "Albums",
       albumCount: "20 photos",
@@ -180,6 +198,62 @@ export default {
     gallery: "Image Gallery",
     noImage: "No image available",
   },
+  forum: {
+    title: "Forum",
+    subtitle:
+      "A space to share news, answer questions and talk with other families.",
+    sidebarLabel: "Forum information",
+    likes: {
+      label: "Like",
+    },
+    tabs: {
+      label: "Forum sections",
+      community: "Community",
+      blog: "Blog",
+    },
+    community: {
+      label: "Community posts",
+      publish: "Post an experience",
+      empty: "There are no posts yet.",
+      modalTitle: "Post an experience",
+      nameLabel: "Name",
+      nameRequired: "Enter your name to post.",
+      contentLabel: "Your experience",
+      contentRequired: "Write something to post.",
+      cancel: "Cancel",
+      submit: "Send",
+      toastTitle: "Post sent",
+      toastDescription: "Your experience is now on the board.",
+    },
+    blog: {
+      label: "Blog posts",
+      empty: "There are no research posts yet.",
+      searchPlaceholder: "Search the blog...",
+      searchLabel: "Search blog posts",
+      noSearchResults: "No posts matched your search.",
+      backToBlog: "Back to the blog",
+      commentsTitle: "Replies",
+      commentsEmpty: "There are no replies yet.",
+      commentNameLabel: "Name",
+      commentNameRequired: "Enter your name to reply.",
+      commentContentLabel: "Your reply",
+      commentContentRequired: "Write something to reply.",
+      commentSubmit: "Send reply",
+      toastTitle: "Reply sent",
+      toastDescription: "Thanks for adding your reply.",
+    },
+    about: {
+      title: "About the board",
+      description:
+        "We share research and relevant topics for families and the educational community.",
+      communityDescription:
+        "Discover other families' opinions and experiences at My Green Farm.",
+      cta: "Back to the posts",
+    },
+    popular: {
+      title: "Popular topics",
+    },
+  },
   adminNews: {
     title: "News",
     description:
@@ -228,6 +302,56 @@ export default {
     deleteErrorToastTitle: "Couldn't delete the news item",
     imageDeletedToastTitle: "Image deleted",
     imageDeleteErrorToastTitle: "Couldn't delete the image",
+  },
+  adminForum: {
+    title: "Forum blog",
+    description:
+      "Publish research so families can read it in the forum's blog tab.",
+    noPersistenceNotice:
+      "There is no server connection yet: anything you publish here shows up in the forum until you reload the page.",
+    addPost: "Publish research",
+    newPost: "New research",
+    editPost: "Edit research",
+    postTitle: "Title",
+    postTitlePlaceholder: "For example: The garden as a classroom",
+    postTopic: "Topic",
+    postTopicPlaceholder: "For example: School garden",
+    authorName: "Author name",
+    authorRole: "Author role",
+    defaultRole: "Teacher at My Green Farm",
+    postContent: "Content",
+    postContentPlaceholder: "Write the full research.",
+    contentHint:
+      "Leave a blank line between paragraphs so they separate when readers see them.",
+    postImage: "Image",
+    chooseImage: "Choose image",
+    currentImage: "Current image",
+    removeImage: "Remove image",
+    invalidImageType: "That file is not a valid image.",
+    imageAlt: "Image alternative text",
+    imageAltPlaceholder: "Describe the image for people who cannot see it.",
+    imageAltRequired: "If you publish an image, describe it.",
+    publish: "Publish",
+    saveChanges: "Save changes",
+    edit: "Edit",
+    delete: "Delete",
+    cancel: "Cancel",
+    close: "Close",
+    empty: "There are no research posts yet.",
+    deleteTitle: "Delete research",
+    deleteDescription:
+      "The research {{title}} will disappear from the forum blog.",
+    deleteConfirmFieldLabel: 'To confirm, type the title "{{title}}"',
+    confirmChangesTitle: "Confirm changes",
+    confirmChangesDescription: 'Type "{{word}}" to save your changes.',
+    confirmWord: "CONFIRM",
+    confirmChanges: "Confirm changes",
+    createdToastTitle: "Research published",
+    createdToastDescription: "It is now available in the forum blog.",
+    updatedToastTitle: "Research updated",
+    updatedToastDescription: "Your changes were saved successfully.",
+    deletedToastTitle: "Research deleted",
+    deletedToastDescription: "It is no longer in the forum blog.",
   },
   booking: {
     title: "Book an appointment",
@@ -450,6 +574,7 @@ export default {
       miPerfil: "My profile",
       servicios: "Services",
       disponibilidad: "My availability",
+      foro: "Forum",
     },
     curriculums: {
       title: "Vacancies and Applications",

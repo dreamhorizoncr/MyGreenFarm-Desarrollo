@@ -14,7 +14,11 @@ import ProfilePage from './pages/ProfilePage.tsx'
 import ProtectedRoute from './routes/ProtectedRoute.tsx'
 import AdminRoute from './routes/AdminRoute.tsx'
 import OwnerRoute from './routes/OwnerRoute.tsx'
+import ExpedientsRoute from './routes/ExpedientsRoute.tsx'
 import NewsPage from './pages/NewsPage.tsx'
+import ForumPage from './pages/ForumPage.tsx'
+import BlogPostPage from './pages/BlogPostPage.tsx'
+import AdminForumPage from './pages/AdminForumPage.tsx'
 import AnnouncementsPage from './pages/AnnouncementsPage.tsx'
 import AdminExpedientsPage from './pages/AdminExpedientsPage.tsx'
 import GalleryPage from './pages/GalleryPage.tsx'
@@ -30,6 +34,7 @@ import OwnerAvailabilityPage from './pages/OwnerAvailabilityPage.tsx'
 import Footer from './layout/Footer.tsx'
 import ScrollToTopButton from './components/ScrollToTopButton.tsx'
 import { ProfileAvatarProvider } from './contexts/ProfileAvatarContext.tsx'
+import { ForumFeedProvider } from './contexts/ForumFeedContext.tsx'
 import { useSessionExpiredNotice } from './hooks/useSessionExpiredNotice.ts'
 import { ErrorBoundary } from './components/ErrorBoundary.tsx'
 import BlobGooFilter from './components/ui/BlobGooFilter.tsx'
@@ -49,21 +54,25 @@ function App() {
       <div className="flex min-h-svh flex-col">
         <div className="flex-1">
           <ProfileAvatarProvider>
+            <ForumFeedProvider>
             <Routes>
           <Route element={<ProtectedRoute />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-          <Route path="/admin/citas" element={<AdminCitasPage />} />
           <Route element={<AdminRoute />}>
+            <Route path="/admin/citas" element={<AdminCitasPage />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
             <Route path="/admin/announcements" element={<AnnouncementsPage />} />
             <Route path="/admin/gallery" element={<AdminGalleryPage />} />
             <Route path="/admin/curriculums" element={<AdminCurriculumsPage />} />
-            <Route path='/admin/expedients' element={<AdminExpedientsPage/>} />
           <Route element={<OwnerRoute />}>
             <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />
             <Route path="/admin/disponibilidad" element={<OwnerAvailabilityPage />} />
+            <Route path="/admin/forum" element={<AdminForumPage />} />
           </Route>
+        </Route>
+        <Route element={<ExpedientsRoute />}>
+          <Route path="/admin/expedients" element={<AdminExpedientsPage />} />
         </Route>
         <Route path="/" element={<HomePage />} />
         <Route path="/booking" element={<BookingPage />} />
@@ -72,6 +81,8 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/news" element={<NewsPage />} />
+        <Route path="/forum" element={<ForumPage />} />
+        <Route path="/forum/blog/:id" element={<BlogPostPage />} />
         <Route path="/multimedia" element={<GalleryPage />} />
         <Route path="/albumes/:id" element={<AlbumDetailPage />} />
         <Route path="/services" element={<ServicesPage />} />
@@ -82,6 +93,7 @@ function App() {
         {/* Redirigir cualquier ruta no definida a la página de inicio */}
         <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
+            </ForumFeedProvider>
           </ProfileAvatarProvider>
         </div>
         <Footer />

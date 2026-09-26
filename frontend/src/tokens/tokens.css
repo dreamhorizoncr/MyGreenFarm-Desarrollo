@@ -315,4 +315,7 @@
 
   /*SHADOW*/
   --shadow: 0 4px 12px rgba(18, 18, 18, 0.08);
+
+  /* BREAKPOINTS — genera la variante xs: (680px, límite móvil/tablet) */
+  --breakpoint-xs: 42.5rem;
 }
