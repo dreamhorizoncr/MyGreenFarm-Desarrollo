@@ -34,15 +34,24 @@ export default {
       badge: "Aprendizaje Natural",
       welcome: "Bienvenidos a",
       description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "En My Green Farm acompañamos cada etapa de la infancia con educación, amor y experiencias significativas, integrando el aprendizaje, los idiomas, el juego y el contacto con la naturaleza.",
       cta: "Reservar cita",
       heroAlt: "Imagen de portada",
     },
     philosophy: {
       title: "Nuestra Filosofía",
-      description:
-        "Creemos en una educación que crece junto a la naturaleza. En Green Farm acompañamos a cada niño desde sus primeros meses hasta los 12 años, en un ambiente seguro y acreditado por el MEP, donde el juego al aire libre y el cariño son parte del aprendizaje diario.",
-      item: "Una oración de prueba solo probando es una de prueba",
+      item1:"Educación de calidad para explorar, descubrir, crear y jugar a través de experiencias significativas.",
+      item2:"Aprendizaje en la naturaleza y granja educativa con animales, inglés diario, francés y materias especiales.",
+      item3:"Metodologías activas que despiertan la curiosidad.",
+      item4:"Docentes que respetan el ritmo individual para que cada niño se sienta seguro, querido, escuchado y feliz.",
+      description: "En My Green Farm creemos que la infancia se aprende viviéndola. Por eso, ofrecemos una educación de calidad donde cada niño tiene la oportunidad de explorar, descubrir, crear, jugar y aprender a través de experiencias significativas...",
+      modalParagraph:{
+        paragraph1:"En My Green Farm creemos que la infancia se aprende viviéndola. Por eso, ofrecemos una educación de calidad donde cada niño tiene la oportunidad de explorar, descubrir, crear, jugar y aprender a través de experiencias significativas.",
+        paragraph2:"Nuestra propuesta combina el aprendizaje dentro y fuera del aula con el contacto con la naturaleza y nuestra granja educativa, donde los niños pueden interactuar con animales como nuestro caballo, ovejas, cabras, gallinas y conejos. Estas experiencias se complementan con inglés diario, francés, Música, Arte, Educación Física, Valores y actividades de estimulación, creando oportunidades de aprendizaje desde diferentes áreas.",
+        paragraph3:"Trabajamos con materiales especialmente seleccionados, experiencias sensoriales y actividades que despiertan la curiosidad, la creatividad, la autonomía y el deseo de aprender. Nuestra propuesta se nutre de metodologías activas y de aportes de corrientes como Montessori, Reggio Emilia, Waldorf y el constructivismo, adaptándolos a las necesidades y características de nuestros niños.",
+        paragraph4:"Más que enseñar contenidos, buscamos ofrecer una infancia llena de experiencias, acompañada por docentes que respetan el ritmo individual de cada niño y procuran que se sienta seguro, querido, escuchado y feliz mientras aprende. My Green Farm: educación, valores, naturaleza, idiomas y experiencias que dejan huella. 💚",
+      },
+      item: "Educación, valores, naturaleza, idiomas y experiencias que dejan huella.",
       cta: "Leer más",
       pillar1Title: "Acreditación MEP y Seguridad",
       pillar1Tag: "Acreditación oficial",
@@ -66,12 +75,24 @@ export default {
     testimonials: {
       title: "Testimonios",
       description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "Encontrá lo que dicen las familias que forman parte de nuestra comunidad sobre la experiencia de crecer, aprender y vivir la infancia en My Green Farm.",
+      card1: {
+        quote: "Llevar a mi hijo a My Green Farm ha sido la mejor decisión. Ver cómo disfruta interactuando con los animales de la granja y aprende inglés de forma tan natural nos llena de alegría todos los días.",
+        author: "María José Alfaro — Madre de estudiante"
+      },
+      card2: {
+        quote: "El ambiente es sumamente cálido y seguro. Las maestras tienen una paciencia y un cariño inigualables; mi hija va feliz a clases y cada día nos sorprende con todo lo que explora y descubre al aire libre.",
+        author: "Carlos Rodríguez — Padre de estudiante"
+      },
+      card3: {
+        quote: "Nos encanta el enfoque educativo que tienen. Combinan de forma perfecta los valores, el contacto con la naturaleza y las actividades estimulantes. Se nota el amor y la dedicación en cada detalle.",
+        author: "Sofía Vargas — Madre de estudiante"
+      },
     },
     multimedia: {
       title: "Multimedia",
       description:
-        "Descripción del apartado multimedia. Aquí encontrarás los álbumes con las fotos de nuestras actividades.",
+        "Momentos que cuentan nuestra historia. Descubre a través de nuestras fotografías cómo vivimos el aprendizaje en My Green Farm.",
       viewMore: "Ver más",
       albumTitle: "Álbumes",
       albumCount: "20 fotos",
