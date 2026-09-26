@@ -102,7 +102,9 @@ public class SecurityConfig {
                 "/**/*.jpg",
                 "/**/*.jpeg",
                 "/**/*.webp",
-                "/error",
+                "/error")
+            .permitAll()
+            .requestMatchers(
                 "/api/auth/signin",
                 "/api/auth/signout",
                 "/api/auth/forgot-password",
@@ -131,6 +133,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, "/api/payments/create-checkout-session").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/service-plans/*/checkout").permitAll()
             .requestMatchers("/api/service-plans/webhooks/**").permitAll()
+            .requestMatchers(request -> !request.getRequestURI().startsWith("/api")).permitAll()
             .anyRequest().authenticated())
         .csrf(csrf -> csrf.disable())
         .formLogin(form -> form.disable())

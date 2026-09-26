@@ -6,8 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class SpaController {
 
-    @GetMapping({ "/login", "/signup", "/forgot-password", "/reset-password" })
-    public String forwardToFrontend() {
+    @GetMapping(value = "/{path:^(?!api|assets)[^\\.]*$}/**")
+    public String forwardNested() {
+        return "forward:/index.html";
+    }
+
+    @GetMapping(value = "/{path:^(?!api|assets)[^\\.]*$}")
+    public String forwardRoot() {
         return "forward:/index.html";
     }
 }
