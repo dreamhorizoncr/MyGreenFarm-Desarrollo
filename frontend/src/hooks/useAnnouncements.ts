@@ -39,17 +39,24 @@ export function useAnnouncements() {
       // Si el idioma no es español, traduce los anuncios de la página actual
       if (lang !== SOURCE_LANG) {
         const items = data.content.flatMap((a) => [
-          {
-            entityId: a.id,
-            fieldName: "title",
-            originalText: a.title,
-          },
-          {
-            entityId: a.id,
-            fieldName: "content",
-            originalText: a.content,
-          },
-        ]);
+  {
+    entityId: a.id,
+    fieldName: "title",
+    originalText: a.title,
+  },
+  {
+    entityId: a.id,
+    fieldName: "content",
+    originalText: a.content,
+  },
+  ...(a.aiSummary
+    ? [{
+        entityId: a.id,
+        fieldName: "aiSummary",
+        originalText: a.aiSummary,
+      }]
+    : []),
+]);
 
         const translated = await announcementService.translateBatch(
           ENTITY_TYPE,
@@ -58,10 +65,13 @@ export function useAnnouncements() {
         );
 
         result = data.content.map((a) => ({
-          ...a,
-          title: translated[`${a.id}:title`] ?? a.title,
-          content: translated[`${a.id}:content`] ?? a.content,
-        }));
+  ...a,
+  title: translated[`${a.id}:title`] ?? a.title,
+  content: translated[`${a.id}:content`] ?? a.content,
+  aiSummary: a.aiSummary
+    ? translated[`${a.id}:aiSummary`] ?? a.aiSummary
+    : a.aiSummary,
+}));
       }
 
       // Guarda únicamente las noticias de la página actual

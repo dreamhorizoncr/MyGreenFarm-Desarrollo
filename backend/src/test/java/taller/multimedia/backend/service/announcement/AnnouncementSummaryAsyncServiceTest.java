@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import taller.multimedia.backend.model.announcement.Announcement;
 import taller.multimedia.backend.model.announcement.AnnouncementType;
 import taller.multimedia.backend.repository.announcement.AnnouncementRepository;
+import taller.multimedia.backend.utils.HashUtils;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -37,7 +38,7 @@ class AnnouncementSummaryAsyncServiceTest {
         UUID id = UUID.randomUUID();
         Announcement announcement = new Announcement("Título", "Contenido sin cambios", AnnouncementType.NEWS);
         announcement.setId(id);
-        announcement.setAiSummaryContentHash(AnnouncementSummaryAsyncService.sha256("Contenido sin cambios"));
+        announcement.setAiSummaryContentHash(HashUtils.sha256("Contenido sin cambios"));
 
         when(announcementRepository.findById(id)).thenReturn(Optional.of(announcement));
 
@@ -52,7 +53,7 @@ class AnnouncementSummaryAsyncServiceTest {
         UUID id = UUID.randomUUID();
         Announcement announcement = new Announcement("Título", "Contenido nuevo", AnnouncementType.NEWS);
         announcement.setId(id);
-        announcement.setAiSummaryContentHash(AnnouncementSummaryAsyncService.sha256("Contenido viejo"));
+        announcement.setAiSummaryContentHash(HashUtils.sha256("Contenido viejo"));
 
         when(announcementRepository.findById(id)).thenReturn(Optional.of(announcement));
         when(geminiResumenService.generarResumen("Contenido nuevo")).thenReturn("Resumen generado.");
@@ -68,7 +69,7 @@ class AnnouncementSummaryAsyncServiceTest {
         UUID id = UUID.randomUUID();
         Announcement announcement = new Announcement("Título", "Contenido sin cambios", AnnouncementType.NEWS);
         announcement.setId(id);
-        announcement.setAiSummaryContentHash(AnnouncementSummaryAsyncService.sha256("Contenido sin cambios"));
+        announcement.setAiSummaryContentHash(HashUtils.sha256("Contenido sin cambios"));
 
         when(announcementRepository.findById(id)).thenReturn(Optional.of(announcement));
         when(geminiResumenService.generarResumen("Contenido sin cambios")).thenReturn("Resumen regenerado.");
