@@ -1,11 +1,15 @@
 package taller.multimedia.backend.service;
 
+import taller.multimedia.backend.dto.newsletter_subscriber.SubscriberInfo;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
 import taller.multimedia.backend.model.curriculum.Curriculum;
+import taller.multimedia.backend.repository.newsletter_subscriber.NewsletterSubscriberRepository;
+import taller.multimedia.backend.repository.newsletter_subscriber.SubscriberEmailProjection;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -25,6 +29,7 @@ public class EmailService {
     private final TemplateEngine templateEngine;
     private final MessageSource messageSource;
     private final BrevoEmailService brevoEmailService;
+    private final NewsletterSubscriberRepository newsletterRepository;
 
     @Value("${mail.support}")
     private String supportEmail;
@@ -35,11 +40,14 @@ public class EmailService {
     @Value("${daycare.mail.admin}")
     private String correoAdmin;
 
-    public EmailService(TemplateEngine templateEngine, MessageSource messageSource,
-            BrevoEmailService brevoEmailService) {
+    public EmailService(TemplateEngine templateEngine, 
+                        MessageSource messageSource, 
+                        BrevoEmailService brevoEmailService,
+                        NewsletterSubscriberRepository newsletterRepository) {
         this.templateEngine = templateEngine;
         this.messageSource = messageSource;
         this.brevoEmailService = brevoEmailService;
+        this.newsletterRepository = newsletterRepository;
     }
 
     @Async
@@ -207,6 +215,31 @@ public class EmailService {
         } catch (Exception e) {
             System.err.println("Error al enviar el correo de recordatorio: " + e.getMessage());
             throw new RuntimeException("No se pudo enviar el correo de recordatorio", e);
+        }
+    }
+
+    @Async
+    public void sendBroadcastEmail(List<SubscriberEmailProjection> recipients, String subject, String messageContent) {
+        for (SubscriberEmailProjection recipient : recipients) {
+            try {
+                Locale locale = Locale.forLanguageTag(recipient.getLanguage());
+
+                Context context = new Context(locale);
+                context.setVariable("supportEmail", supportEmail);
+                context.setVariable("frontendUrl", frontendUrl);
+                context.setVariable("broadcastMessage", messageContent);
+                context.setVariable("recipientEmail", recipient.getEmail());
+
+                boolean isSubscriber = newsletterRepository.existsByEmailAndIsActiveTrue(recipient.getEmail());
+                context.setVariable("isSubscriber", isSubscriber);
+
+                String html = templateEngine.process("email/newsletter_suscriber/broadcast-newsletter", context);
+
+                sendEmail(recipient.getEmail(), subject, html);
+
+            } catch (Exception e) {
+                log.error("Error al enviar boletín masivo a {}: {}", recipient.getEmail(), e.getMessage());
+            }
         }
     }
 }
