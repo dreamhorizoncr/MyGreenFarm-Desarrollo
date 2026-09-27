@@ -59,7 +59,7 @@ public class EmailService {
         context.setVariable("resetLink", resetLink);
         context.setVariable("supportEmail", supportEmail);
 
-        String html = templateEngine.process("email/reset-password", context);
+        String html = templateEngine.process("email/auth/reset-password", context);
 
         sendEmail(toEmail, "Cambio de contraseña", html);
     }
@@ -85,7 +85,7 @@ public class EmailService {
         String fecha = appointment.getAppointmentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
         context.setVariable("appointmentDate", fecha);
 
-        String html = templateEngine.process("email/appointment-pending", context);
+        String html = templateEngine.process("email/appointments/appointment-pending", context);
         String subject = messageSource.getMessage("email.appointment.pending.subject", null, locale);
 
         sendEmail(appointment.getParentEmail(), subject, html);
@@ -99,8 +99,8 @@ public class EmailService {
         context.setVariable("status", appointment.getStatus().name());
 
         String template = (appointment.getStatus() == AppointmentStatus.CONFIRMED)
-                ? "email/appointment-confirmed"
-                : "email/appointment-cancelled";
+                ? "email/appointments/appointment-confirmed"
+                : "email/appointments/appointment-cancelled";
 
         String subjectKey = (appointment.getStatus() == AppointmentStatus.CONFIRMED)
                 ? "email.appointment.confirmed.subject"
@@ -146,7 +146,7 @@ public class EmailService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
             context.setVariable("appointmentDate", appointment.getAppointmentDate().format(formatter));
 
-            String html = templateEngine.process("email/appointment-reschedule", context);
+            String html = templateEngine.process("email/appointments/appointment-reschedule", context);
 
             String subject = messageSource.getMessage("email.appointment.reschedule.subject", null, locale);
 
@@ -166,7 +166,7 @@ public class EmailService {
         context.setVariable("applicantName", curriculum.getApplicantName());
         context.setVariable("vacancyTitle", vacancyTitle);
 
-        String html = templateEngine.process("email/application-received", context);
+        String html = templateEngine.process("email/applications/application-received", context);
         String subject = messageSource.getMessage("email.application.received.subject", null, locale);
 
         sendEmail(curriculum.getApplicantEmail(), subject, html);
@@ -178,7 +178,7 @@ public class EmailService {
         context.setVariable("supportEmail", supportEmail);
         context.setVariable("vacancyTitle", vacancyTitle);
 
-        String html = templateEngine.process("email/application-hired", context);
+        String html = templateEngine.process("email/applications/application-hired", context);
         String subject = messageSource.getMessage("email.application.hired.subject", null, locale);
 
         sendEmail(curriculum.getApplicantEmail(), subject, html);
@@ -196,7 +196,7 @@ public class EmailService {
             context.setVariable("parentNotes",
                     appointment.getParentNotes() != null ? appointment.getParentNotes() : "Ninguna");
 
-            String htmlContent = templateEngine.process("email/appointment-reminder", context);
+            String htmlContent = templateEngine.process("email/appointments/appointment-reminder", context);
 
             String subject;
             String lang = locale.getLanguage();
