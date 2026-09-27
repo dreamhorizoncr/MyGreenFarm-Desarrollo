@@ -44,21 +44,21 @@ function TermsModal({ onClose }: Readonly<TermsModalProps>) {
     { title: t('legalModal.privacy4Title'), body: t('legalModal.privacy4Body') },
   ]
 
-  const handleOverlayClick = (event: React.MouseEvent) => {
-    if (event.target === overlayRef.current) onClose()
-  }
-
   const tabClassName = (tab: LegalTab) =>
     `inline-flex flex-1 items-center justify-center gap-xs rounded-full px-md py-sm font-body text-sm font-semibold transition-colors ${
       activeTab === tab ? 'bg-green-500 text-white' : 'bg-(--grey-100) text-body-text hover:bg-(--grey-200)'
     }`
 
   return (
-    <div
-      className="fixed inset-0 z-100 grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]"
-      ref={overlayRef}
-      onClick={handleOverlayClick}
-    >
+    <div className="fixed inset-0 z-100 grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]">
+      <button
+        type="button"
+        tabIndex={-1}
+        aria-label={t('legalModal.close')}
+        className="absolute inset-0 size-full cursor-default"
+        onClick={onClose}
+      />
+
       <div
         className="relative w-[min(680px,92vw)] max-h-[90vh] overflow-y-auto scrollbar-none rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
         role="dialog"

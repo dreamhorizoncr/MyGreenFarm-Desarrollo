@@ -11,11 +11,10 @@ function ForumTabs({ activeTab, onChange }: Readonly<ForumTabsProps>) {
   const { t } = useTranslation()
 
   return (
-    <div
-      role="group"
-      aria-label={t('forum.tabs.label')}
-      className="mt-[22px] flex flex-wrap justify-center gap-[10px]"
+    <fieldset
+      className="m-0 mt-[22px] flex flex-wrap justify-center gap-[10px] border-0 p-0"
     >
+      <legend className="sr-only">{t('forum.tabs.label')}</legend>
       {(['blog', 'community'] as const).map((tab) => {
         const isActive = tab === activeTab
 
@@ -33,7 +32,7 @@ function ForumTabs({ activeTab, onChange }: Readonly<ForumTabsProps>) {
           </button>
         )
       })}
-    </div>
+    </fieldset>
   )
 }
 

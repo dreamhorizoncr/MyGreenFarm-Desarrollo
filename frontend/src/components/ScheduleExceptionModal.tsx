@@ -82,8 +82,10 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
   }
 
   return (
-    <div ref={overlayRef} className="fixed inset-0 z-[100] flex items-end justify-center bg-scrim p-0 md:items-center md:p-lg" onClick={(event) => event.target === overlayRef.current && onClose()}>
-      <div className="relative max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-bg-card p-xl md:w-[min(560px,92vw)] md:rounded-2xl" role="dialog" aria-modal="true" aria-labelledby="exception-modal-title">
+    <div className="fixed inset-0 z-[100] flex items-end justify-center bg-scrim p-0 md:items-center md:p-lg">
+      <button type="button" tabIndex={-1} aria-label="Cerrar" className="absolute inset-0 size-full cursor-default" onClick={onClose} />
+
+      <div className="relative max-h-[92vh] w-full overflow-y-auto scrollbar-none rounded-t-3xl bg-bg-card p-xl md:w-[min(560px,92vw)] md:rounded-2xl" role="dialog" aria-modal="true" aria-labelledby="exception-modal-title">
         <button type="button" onClick={onClose} aria-label="Cerrar" className="absolute right-md top-md inline-flex size-11 items-center justify-center rounded-full text-body-text focus-visible:outline-2 focus-visible:outline-link">
           <XIcon size={20} />
         </button>

@@ -41,7 +41,6 @@ function Navbar() {
 
   return (
     <header className="relative z-40 h-16 border-b border-neutral-200 bg-bg-page">
-      {/* Desktop nav */}
       <nav className="hidden h-full w-full xl:flex">
         <div className="flex h-full w-full items-center px-[var(--scale-1100)]">
           <Brand />
@@ -88,7 +87,6 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile nav */}
       <nav className="flex h-full w-full xl:hidden">
         <div className={`flex h-full w-full items-center justify-between ${isProtectedPage ? 'px-md pr-lg' : 'mx-auto max-w-[var(--container-max-width)] px-lg'}`}>
           <Brand />
@@ -108,15 +106,16 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* Drawer overlay */}
       {drawerOpen && (
-        <div
-          className="fixed inset-0 z-50 bg-scrim"
+        <button
+          type="button"
+          tabIndex={-1}
+          aria-label="Close menu"
+          className="fixed inset-0 z-50 cursor-default bg-scrim"
           onClick={() => setDrawerOpen(false)}
         />
       )}
 
-      {/* Drawer */}
       <div
         className={`fixed right-0 top-0 z-[60] h-dvh w-[280px] overflow-y-auto bg-bg-page transition-transform duration-300 ${
           drawerOpen ? 'translate-x-0' : 'translate-x-full'

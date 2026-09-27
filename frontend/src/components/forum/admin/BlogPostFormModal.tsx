@@ -134,13 +134,20 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-[16px] md:p-[30px]"
-      onClick={onClose}
+      className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]"
     >
+      <button
+        type="button"
+        tabIndex={-1}
+        aria-label={t('adminForum.close')}
+        className="absolute inset-0 size-full cursor-default"
+        onClick={onClose}
+      />
+
       <form
         onSubmit={handleSubmit}
         onClick={(event) => event.stopPropagation()}
-        className="mx-auto my-[20px] w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg md:my-[40px] md:p-xl"
+        className="relative mx-auto my-[20px] w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg md:my-[40px] md:p-xl"
       >
         <div className="flex items-center justify-between gap-md">
           <h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -341,7 +348,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
             role="dialog"
             aria-modal="true"
             aria-label={t('adminForum.confirmChangesTitle')}
-            className="relative max-h-[90vh] w-[min(620px,92vw)] overflow-y-auto rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
+            className="relative max-h-[90vh] w-[min(620px,92vw)] overflow-y-auto scrollbar-none rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
           >
             <button
               type="button"

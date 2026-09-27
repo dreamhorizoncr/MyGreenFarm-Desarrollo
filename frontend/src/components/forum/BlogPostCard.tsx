@@ -1,4 +1,3 @@
-import type { KeyboardEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HeartIcon, MessageCircleIcon } from '@animateicons/react/lucide'
 import type { BlogPost } from '../../types/forum.ts'
@@ -102,28 +101,21 @@ function BlogPostCard({
 }: Readonly<BlogPostCardProps>) {
   const isInteractive = Boolean(onOpen)
 
-  const interactiveProps = isInteractive
-    ? {
-        role: 'button',
-        tabIndex: 0,
-        onClick: () => onOpen?.(post.id),
-        onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault()
-            onOpen?.(post.id)
-          }
-        },
-        'aria-label': post.title,
-      }
-    : {}
-
   return (
     <article
-      {...interactiveProps}
-      className={`flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white text-left ${
+      className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white text-left ${
         isInteractive ? 'cursor-pointer transition hover:opacity-95' : ''
       }`}
     >
+      {isInteractive && (
+        <button
+          type="button"
+          onClick={() => onOpen?.(post.id)}
+          aria-label={post.title}
+          className="absolute inset-0 z-0 rounded-2xl"
+        />
+      )}
+
       <div className="h-[160px] shrink-0 bg-neutral-100 xs:h-[220px]">
         {post.imageUrl && (
           <img
@@ -167,7 +159,7 @@ function BlogPostCard({
         </p>
       </div>
 
-      <footer className="flex items-center gap-lg border-t border-neutral-100 px-lg py-md">
+      <footer className="relative z-10 flex items-center gap-lg border-t border-neutral-100 px-lg py-md">
         <LikeControl
           isInteractive={isInteractive}
           isLiked={isLiked}
