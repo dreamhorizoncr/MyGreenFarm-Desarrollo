@@ -76,7 +76,7 @@ function OwnerAvailabilityPage() {
         {!loading && !error && (
           <>
             <section className="mt-xl" aria-labelledby="weekly-title">
-              <div className="flex flex-wrap items-end justify-between gap-md"><div><h2 id="weekly-title" className="m-0 font-heading text-2xl font-bold text-heading">Horario semanal</h2><p className="mt-xs m-0 font-body text-sm text-neutral-500">Elige un solo horario continuo para cada día.</p></div>{weeklySuccess && <p className="m-0 font-body text-sm font-semibold text-success" role="status">Horario guardado correctamente.</p>}</div>
+              <div className="flex flex-wrap items-end justify-between gap-md"><div><h2 id="weekly-title" className="m-0 font-heading text-2xl font-bold text-heading">Horario semanal</h2><p className="mt-xs m-0 font-body text-sm text-neutral-500">Elige un solo horario continuo para cada día.</p></div>{weeklySuccess && <output className="m-0 font-body text-sm font-semibold text-success">Horario guardado correctamente.</output>}</div>
               <div className="mt-md flex flex-col gap-sm">
                 {visibleDraft.map((day) => (
                   <article key={day.dayOfWeek} className="rounded-2xl border border-neutral-200 bg-white p-md md:grid md:grid-cols-[minmax(130px,1fr)_auto_1fr_auto] md:items-center md:gap-md">

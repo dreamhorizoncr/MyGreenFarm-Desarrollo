@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { XIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import type { GalleryImage } from '../types/gallery.ts'
@@ -12,6 +12,7 @@ interface PhotoLightboxProps {
 
 function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLightboxProps>) {
   const { t } = useTranslation()
+  const dialogRef = useRef<HTMLDialogElement>(null)
   const [index, setIndex] = useState(initialIndex)
   const total = images.length
 
@@ -24,10 +25,12 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
   }
 
   useEffect(() => {
+    dialogRef.current?.showModal()
+  }, [])
+
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose()
-      } else if (event.key === 'ArrowLeft') {
+      if (event.key === 'ArrowLeft') {
         goPrev()
       } else if (event.key === 'ArrowRight') {
         goNext()
@@ -43,26 +46,21 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
       document.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = previousOverflow
     }
- 
-  }, [onClose, total])
+
+  }, [total])
 
   const image = images[index]
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-[16px] md:p-[30px]"
-      role="dialog"
-      aria-modal="true"
+    <dialog
+      ref={dialogRef}
+      onClose={onClose}
+      onClick={(event) => {
+        if (event.target === dialogRef.current) onClose()
+      }}
       aria-label={image?.title || alt}
+      className="inset-0 m-0 flex max-h-none max-w-none items-center justify-center bg-transparent p-[16px] backdrop:bg-black/90 md:p-[30px]"
     >
-      <button
-        type="button"
-        tabIndex={-1}
-        aria-label={t('home.galeria.closePhoto')}
-        className="absolute inset-0 size-full cursor-default"
-        onClick={onClose}
-      />
-
       <button
         type="button"
         onClick={onClose}
@@ -134,7 +132,7 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
           </figcaption>
         )}
       </figure>
-    </div>
+    </dialog>
   )
 }
 

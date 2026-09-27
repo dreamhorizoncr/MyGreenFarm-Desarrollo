@@ -534,9 +534,8 @@ function AnnouncementsPage() {
 
       <section className="mt-xl grid gap-md">
         {loading && !formOpen && (
-          <div
+          <output
             className="flex items-center gap-sm border-t border-neutral-200 py-xl text-sm text-neutral-500"
-            role="status"
           >
             <span
               className="size-4 animate-spin rounded-full border-2 border-neutral-300 border-t-heading"
@@ -544,7 +543,7 @@ function AnnouncementsPage() {
             />
 
             {t("adminNews.newsload")}
-          </div>
+          </output>
         )}
 
         {filteredAnnouncements.map((announcement) => (

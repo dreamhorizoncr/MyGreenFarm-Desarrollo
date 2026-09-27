@@ -13,11 +13,13 @@ import {
   validateRequired,
 } from "../utils/validators.ts";
 import { notify } from "../utils/notifications.ts";
+import { userStorage } from "../utils/userStorage.ts";
 import i18n from "../i18n/index.ts";
 
 function SignUpPage() {
   const { t } = useTranslation();
   const { submitRegister, loading, error, success } = useRegister();
+  const isAdminAddingTeacher = !!userStorage.getUser();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -115,7 +117,7 @@ function SignUpPage() {
   return (
     <AuthLayout
       overtitle={t("signup.overtitle")}
-      closeTo="/login"
+      closeTo={isAdminAddingTeacher ? "/admin/users" : "/login"}
         containerClassName="md:max-w-[1250px]"
       rightPanelClassName="px-[15px] pb-[28px] pt-[65px] md:px-[55px] md:py-[45px]"
         contentClassName="max-w-[303px] md:max-w-[560px]"

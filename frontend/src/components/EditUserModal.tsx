@@ -1,8 +1,7 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
-import useDismiss from '../hooks/useDismiss.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import { validateEmail, validateRequired } from '../utils/validators.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
@@ -16,7 +15,7 @@ interface EditUserModalProps {
 
 function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<EditUserModalProps>) {
   const { t } = useTranslation()
-  const overlayRef = useRef<HTMLDivElement>(null)
+  const dialogRef = useRef<HTMLDialogElement>(null)
 
   const isEditingSelf = currentUser.id === userToEdit.id
 
@@ -30,12 +29,9 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
   const [lastNameValidationError, setLastNameValidationError] = useState<string | null>(null)
   const [emailValidationError, setEmailValidationError] = useState<string | null>(null)
 
-  useDismiss({
-    ref: overlayRef,
-    isOpen: true,
-    onClose,
-    includeClickOutside: false,
-  })
+  useEffect(() => {
+    dialogRef.current?.showModal()
+  }, [])
 
   const handleSave = async () => {
     const firstNameErrorMessage = validateRequired(firstName, t('admin.firstName'), t)
@@ -65,23 +61,16 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
   }
 
   return (
-    <div
-      className="fixed inset-0 z-[100] grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]"
+    <dialog
+      ref={dialogRef}
+      onClose={onClose}
+      onClick={(event) => {
+        if (event.target === dialogRef.current) onClose()
+      }}
+      aria-label={t('admin.edit')}
+      className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
-      <button
-        type="button"
-        tabIndex={-1}
-        aria-label={t('admin.cancel')}
-        className="absolute inset-0 size-full cursor-default"
-        onClick={onClose}
-      />
-
-      <div
-        className="relative w-[min(620px,92vw)] max-h-[90vh] overflow-y-auto scrollbar-none rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
-        role="dialog"
-        aria-modal="true"
-        aria-label={t('admin.edit')}
-      >
+      <div className="relative p-[28px_22px_30px]">
         <button
           type="button"
           className="absolute right-3 top-[26px] z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity duration-150 hover:opacity-65 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
@@ -179,7 +168,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
           </div>
         </div>
       </div>
-    </div>
+    </dialog>
   )
 }
 
