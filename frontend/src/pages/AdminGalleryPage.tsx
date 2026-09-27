@@ -22,7 +22,7 @@ import { notify } from '../utils/notifications.ts'
 import type { Gallery, GalleryCategory, GalleryImage, GalleryRequest } from '../types/gallery.ts'
 import ninos2 from '../assets/imgs/ninos2.svg'
 
-const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']
+const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'])
 
 interface SelectedImage {
 	file: File
@@ -38,7 +38,7 @@ interface AlbumMenuProps {
 	onDelete: () => void
 }
 
-function AlbumMenu({ onEdit, onDelete }: AlbumMenuProps) {
+function AlbumMenu({ onEdit, onDelete }: Readonly<AlbumMenuProps>) {
 	const { t } = useTranslation()
 	const [open, setOpen] = useState(false)
 
@@ -110,10 +110,14 @@ function YearDropdown({
 	onChange,
 	onCreateYear,
 	onDeleteYear,
-}: YearDropdownProps) {
+}: Readonly<YearDropdownProps>) {
 	const { t } = useTranslation()
 	const [open, setOpen] = useState(false)
 	const [adding, setAdding] = useState(false)
+	const yearInputRef = useRef<HTMLInputElement>(null)
+	useEffect(() => {
+		if (adding) yearInputRef.current?.focus()
+	}, [adding])
 	const [newYear, setNewYear] = useState('')
 
 	const selected = categories.find((category) => category.id === value)
@@ -203,7 +207,7 @@ function YearDropdown({
 						{adding ? (
 							<div className="flex items-center gap-sm px-md py-sm">
 								<input
-									autoFocus
+									ref={yearInputRef}
 									value={newYear}
 									onChange={(e) => setNewYear(e.target.value)}
 									onKeyDown={(e) => {
@@ -265,7 +269,7 @@ interface AdminAlbumCardProps {
 	onToggleFeatured: () => void
 }
 
-function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured }: AdminAlbumCardProps) {
+function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured }: Readonly<AdminAlbumCardProps>) {
 	const { t } = useTranslation()
 
 	return (
@@ -323,7 +327,7 @@ function AdminAlbumCarousel({
 	onEdit,
 	onDelete,
 	onToggleFeatured,
-}: AdminAlbumCarouselProps) {
+}: Readonly<AdminAlbumCarouselProps>) {
 	const { t } = useTranslation()
 	const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start' })
 	const [prevEnabled, setPrevEnabled] = useState(false)
@@ -496,7 +500,7 @@ function AdminGalleryPage() {
 		const rejected: string[] = []
 
 		Array.from(selected).forEach((file) => {
-			if (ALLOWED_IMAGE_TYPES.includes(file.type)) valid.push(file)
+			if (ALLOWED_IMAGE_TYPES.has(file.type)) valid.push(file)
 			else rejected.push(file.name)
 		})
 
@@ -633,6 +637,8 @@ function AdminGalleryPage() {
 			notify.error(t('admin.gallery.featuredErrorTitle'))
 		}
 	}
+
+	const idleSubmitLabel = editing ? t('admin.save') : t('admin.gallery.publish')
 
 	return (
 		<AdminLayout>
@@ -830,7 +836,7 @@ onCreateYear={handleCreateYear}
 							disabled={submitting}
 							className="rounded-full bg-heading px-lg py-sm font-body text-sm font-semibold text-white disabled:opacity-60"
 						>
-							{submitting ? t('common.loading') : editing ? t('admin.save') : t('admin.gallery.publish')}
+							{submitting ? t('common.loading') : idleSubmitLabel}
 						</button>
 					</div>
 				</form>

@@ -5,7 +5,7 @@ interface CommunityPostCardProps {
   post: CommunityPost
 }
 
-function CommunityPostCard({ post }: CommunityPostCardProps) {
+function CommunityPostCard({ post }: Readonly<CommunityPostCardProps>) {
   return (
     <article className="rounded-2xl border border-neutral-200 bg-white p-lg text-left">
       <header className="flex items-center gap-md">

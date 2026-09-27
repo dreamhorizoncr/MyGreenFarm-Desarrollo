@@ -25,7 +25,7 @@ interface CreateServicePlanModalProps {
   onClose: () => void
 }
 
-function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, onUpdate, onClose }: CreateServicePlanModalProps) {
+function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, onUpdate, onClose }: Readonly<CreateServicePlanModalProps>) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -120,16 +120,20 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
     }
   }
 
-  const handleOverlayClick = (event: React.MouseEvent) => {
-    if (event.target === overlayRef.current) onClose()
-  }
+  const idleSubmitLabel = isEditing ? t('admin.save') : t('admin.servicios.create')
 
   return (
     <div
       className="fixed inset-0 z-[100] grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]"
-      ref={overlayRef}
-      onClick={handleOverlayClick}
     >
+      <button
+        type="button"
+        tabIndex={-1}
+        aria-label={t('admin.cancel')}
+        className="absolute inset-0 size-full cursor-default"
+        onClick={onClose}
+      />
+
       <div
         className={`relative w-[min(620px,92vw)] max-h-[90vh] overflow-y-auto scrollbar-none rounded-2xl bg-bg-card animate-[modal-in_0.2s_ease-out] ${
           isEditing ? 'p-[20px_18px_22px]' : 'p-[28px_22px_30px]'
@@ -303,7 +307,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
               loading={saving}
               className="h-[47px] flex-1 rounded-full bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
             >
-              {saving ? t('common.loading') : isEditing ? t('admin.save') : t('admin.servicios.create')}
+              {saving ? t('common.loading') : idleSubmitLabel}
             </Button>
           </div>
         </form>

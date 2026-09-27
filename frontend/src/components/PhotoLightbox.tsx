@@ -10,7 +10,7 @@ interface PhotoLightboxProps {
   onClose: () => void
 }
 
-function PhotoLightbox({ images, initialIndex, alt, onClose }: PhotoLightboxProps) {
+function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLightboxProps>) {
   const { t } = useTranslation()
   const [index, setIndex] = useState(initialIndex)
   const total = images.length
@@ -51,11 +51,18 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: PhotoLightboxProp
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-[16px] md:p-[30px]"
-      onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-label={image?.title || alt}
     >
+      <button
+        type="button"
+        tabIndex={-1}
+        aria-label={t('home.galeria.closePhoto')}
+        className="absolute inset-0 size-full cursor-default"
+        onClick={onClose}
+      />
+
       <button
         type="button"
         onClick={onClose}
@@ -66,7 +73,7 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: PhotoLightboxProp
       </button>
 
       <figure
-        className="flex max-h-full max-w-full flex-col items-center gap-md"
+        className="relative flex max-h-full max-w-full flex-col items-center gap-md"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="relative">

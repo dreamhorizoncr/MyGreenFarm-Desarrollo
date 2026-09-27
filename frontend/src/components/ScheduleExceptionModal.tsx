@@ -18,7 +18,7 @@ function todayIso() {
   return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10)
 }
 
-function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: ScheduleExceptionModalProps) {
+function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Readonly<ScheduleExceptionModalProps>) {
   const overlayRef = useRef<HTMLDivElement>(null)
   const [date, setDate] = useState(exception?.exceptionDate ?? '')
   const [closed, setClosed] = useState(exception?.closed ?? true)
@@ -82,8 +82,10 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Sche
   }
 
   return (
-    <div ref={overlayRef} className="fixed inset-0 z-[100] flex items-end justify-center bg-scrim p-0 md:items-center md:p-lg" onClick={(event) => event.target === overlayRef.current && onClose()}>
-      <div className="relative max-h-[92vh] w-full overflow-y-auto rounded-t-3xl bg-bg-card p-xl md:w-[min(560px,92vw)] md:rounded-2xl" role="dialog" aria-modal="true" aria-labelledby="exception-modal-title">
+    <div className="fixed inset-0 z-[100] flex items-end justify-center bg-scrim p-0 md:items-center md:p-lg">
+      <button type="button" tabIndex={-1} aria-label="Cerrar" className="absolute inset-0 size-full cursor-default" onClick={onClose} />
+
+      <div className="relative max-h-[92vh] w-full overflow-y-auto scrollbar-none rounded-t-3xl bg-bg-card p-xl md:w-[min(560px,92vw)] md:rounded-2xl" role="dialog" aria-modal="true" aria-labelledby="exception-modal-title">
         <button type="button" onClick={onClose} aria-label="Cerrar" className="absolute right-md top-md inline-flex size-11 items-center justify-center rounded-full text-body-text focus-visible:outline-2 focus-visible:outline-link">
           <XIcon size={20} />
         </button>
@@ -104,11 +106,11 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Sche
             <legend className="mb-xs font-body text-sm font-semibold text-body-text">¿Cómo será ese día?</legend>
             <label className="flex min-h-12 cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md font-body text-base text-body-text">
               <input type="radio" name="exception-mode" checked={closed} onChange={() => setClosed(true)} className="size-5 accent-green-500" />
-              Cerrado todo el día
+              <span>Cerrado todo el día</span>
             </label>
             <label className="flex min-h-12 cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md font-body text-base text-body-text">
               <input type="radio" name="exception-mode" checked={!closed} onChange={() => setClosed(false)} className="size-5 accent-green-500" />
-              Atiende solo en un horario
+              <span>Atiende solo en un horario</span>
             </label>
           </fieldset>
 

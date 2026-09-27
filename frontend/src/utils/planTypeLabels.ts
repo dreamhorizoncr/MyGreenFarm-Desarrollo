@@ -22,7 +22,7 @@ export function getPlanTypeLabel(type: string, t: (key: string) => string): stri
   const exact = PLAN_TYPE_LABELS[type]
   if (exact) return t(exact)
 
-  const match = type.match(/^(\d+)_(.+)$/)
+  const match = /^(\d+)_(.+)$/.exec(type)
   if (match) {
     const count = match[1]
     const unitKey = INTERVAL_UNITS[match[2]]

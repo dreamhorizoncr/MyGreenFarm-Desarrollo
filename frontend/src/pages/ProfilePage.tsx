@@ -20,7 +20,8 @@ function ProfilePage() {
   const { ref: blobatarRef } = useGaze({ lookAt: 'pointer', travel: 3 })
   const { sidebarHovered } = useProfileAvatar()
   const [logoutHovered, setLogoutHovered] = useState(false)
-  const expression = logoutHovered ? scared : sidebarHovered ? unsure : undefined
+  const idleExpression = sidebarHovered ? unsure : undefined
+  const expression = logoutHovered ? scared : idleExpression
 
   const roleLabel = (role: string) => {
     switch (role) {

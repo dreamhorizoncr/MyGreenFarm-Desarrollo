@@ -5,7 +5,7 @@ interface ContainerProps {
   className?: string
 }
 
-function Container({ children, className }: ContainerProps) {
+function Container({ children, className }: Readonly<ContainerProps>) {
   return (
     <div className={`mx-auto w-full max-w-[var(--container-max-width)] px-1100 ${className ?? ''}`}>
       {children}

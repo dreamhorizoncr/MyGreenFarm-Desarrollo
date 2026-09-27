@@ -186,9 +186,12 @@ function AnnouncementsPage() {
       activeCategory === "All" || announcement.type === activeCategory,
   );
 
+  const idleSubmitLabel = editing
+    ? t("adminNews.newssavechanges")
+    : t("adminNews.newspublish");
+
   return (
     <AdminLayout>
-      {/* Encabezado */}
       <div className="flex flex-wrap items-start justify-between gap-md">
         <div>
           <h1 className="m-0 font-heading text-[34px] font-bold leading-[1.15] text-heading">
@@ -210,23 +213,28 @@ function AnnouncementsPage() {
         </button>
       </div>
 
-      {/* Error */}
       {error && (
         <p className="mt-lg rounded-xl bg-red-50 p-md text-sm text-red-700">
           {error}
         </p>
       )}
 
-      {/* Formulario */}
       {formOpen && (
         <div
-          className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-[16px] md:p-[30px]"
-          onClick={closeForm}
+          className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]"
         >
+          <button
+            type="button"
+            tabIndex={-1}
+            aria-label={t("adminNews.newscancel")}
+            className="absolute inset-0 size-full cursor-default"
+            onClick={closeForm}
+          />
+
           <form
             onSubmit={handleSubmit}
             onClick={(event: React.MouseEvent) => event.stopPropagation()}
-            className="mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
+            className="relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
           >
             <div className="flex items-center justify-between gap-md">
               <h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -243,7 +251,6 @@ function AnnouncementsPage() {
               </button>
             </div>
 
-            {/* Campos */}
             <div className="mt-lg grid gap-md md:grid-cols-2">
               <label className="font-body text-sm font-semibold text-heading">
                 {t("adminNews.newsTitle")}
@@ -334,7 +341,6 @@ function AnnouncementsPage() {
                 />
               </label>
 
-              {/* Portada */}
               <div className="font-body text-sm font-semibold text-heading">
                 <span className="block">{t("adminNews.newscover")}</span>
 
@@ -362,7 +368,6 @@ function AnnouncementsPage() {
                 )}
               </div>
 
-              {/* Galería */}
               <div className="font-body text-sm font-semibold text-heading">
                 <span className="block">{t("adminNews.newsgaleryimages")}</span>
 
@@ -394,7 +399,6 @@ function AnnouncementsPage() {
               </div>
             </div>
 
-            {/* Imágenes actuales */}
             {images.length > 0 && (
               <div className="mt-lg">
                 <h3 className="font-body text-sm font-semibold text-heading">
@@ -433,7 +437,6 @@ function AnnouncementsPage() {
               </div>
             )}
 
-            {/* Botones */}
             <div className="mt-lg flex flex-wrap justify-end gap-sm">
               <button
                 type="button"
@@ -448,18 +451,13 @@ function AnnouncementsPage() {
                 disabled={loading}
                 className="rounded-full bg-heading px-lg py-sm font-body text-sm font-semibold text-white transition-colors hover:bg-green-700 disabled:opacity-60"
               >
-                {loading
-                  ? t("adminNews.newssaving")
-                  : editing
-                    ? t("adminNews.newssavechanges")
-                    : t("adminNews.newspublish")}
+                {loading ? t("adminNews.newssaving") : idleSubmitLabel}
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* Filtros */}
       <div className="mt-xl flex flex-wrap gap-sm">
         <button
           type="button"
@@ -534,7 +532,6 @@ function AnnouncementsPage() {
         </button>
       </div>
 
-      {/* Lista de noticias */}
       <section className="mt-xl grid gap-md">
         {loading && !formOpen && (
           <div
@@ -584,7 +581,6 @@ function AnnouncementsPage() {
                 )}
               </div>
 
-              {/* Editar y eliminar */}
               <div className="flex items-center justify-end gap-2">
                 <button
                   type="button"
@@ -608,7 +604,6 @@ function AnnouncementsPage() {
           </article>
         ))}
 
-        {/* Sin noticias */}
         {!loading && announcements.length === 0 && (
           <p className="border-t border-neutral-200 py-xl text-sm text-neutral-500">
             {t("adminNews.noNews")}
@@ -616,7 +611,6 @@ function AnnouncementsPage() {
         )}
       </section>
 
-      {/* Modal eliminar */}
       {deleteModalOpen && announcementToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-[20px]">
           <div className="w-full max-w-[430px] rounded-[20px] bg-white p-[28px] shadow-lg">
@@ -631,7 +625,6 @@ function AnnouncementsPage() {
               </span>
             </p>
 
-            {/* Botones del modal */}
             <div className="mt-[28px] flex justify-end gap-[12px]">
               <button
                 type="button"

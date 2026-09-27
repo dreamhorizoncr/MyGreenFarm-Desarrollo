@@ -75,6 +75,44 @@ const STEPS = [
   { key: 'confirm', label: 'booking.wizard.confirm' },
 ]
 
+function messageWhen(show: boolean, getMessage: () => string | null): string | null {
+  return show ? getMessage() : null
+}
+
+function WizardProgress({ step }: Readonly<{ step: number }>) {
+  return (
+    <div className="mb-lg flex w-full items-center gap-sm">
+      {STEPS.map((s, i) => {
+        const stepNum = i + 1
+        const isActive = step === stepNum
+        const isCompleted = step > stepNum
+        let stepCircleClass = 'bg-[var(--grey-100)] text-body-text'
+        if (isActive) stepCircleClass = 'bg-green-500/20 text-green-600 ring-2 ring-green-500'
+        if (isCompleted) stepCircleClass = 'bg-green-500 text-white'
+        return (
+          <div
+            key={s.key}
+            className={`flex min-w-0 items-center gap-sm ${i < STEPS.length - 1 ? 'flex-1' : 'shrink-0'}`}
+          >
+            <div
+              className={`flex size-8 shrink-0 items-center justify-center rounded-full font-body text-sm font-semibold transition-colors ${stepCircleClass}`}
+            >
+              {isCompleted ? <CheckIcon size={16} /> : stepNum}
+            </div>
+            {i < STEPS.length - 1 && (
+              <div
+                className={`h-0.5 min-w-2 flex-1 transition-colors ${
+                  step > stepNum ? 'bg-green-500' : 'bg-[var(--grey-100)]'
+                }`}
+              />
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function BookingPage() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
@@ -127,11 +165,10 @@ function BookingPage() {
     (effectiveDay ? availability[effectiveDay]?.slots[0]?.slice(0, 5) ?? null : null)
   const selectedDay = effectiveDay ? availability[effectiveDay] : null
   const selectedDaySlots = selectedDay?.slots ?? []
-  const morningSlots = selectedDaySlots ? parseSlots(selectedDaySlots.filter((slot) => Number(slot.slice(0, 2)) < 12)) : []
-  const afternoonSlots = selectedDaySlots ? parseSlots(selectedDaySlots.filter((slot) => Number(slot.slice(0, 2)) >= 12)) : []
+  const morningSlots = parseSlots(selectedDaySlots.filter((slot) => Number(slot.slice(0, 2)) < 12))
+  const afternoonSlots = parseSlots(selectedDaySlots.filter((slot) => Number(slot.slice(0, 2)) >= 12))
 
-  const handlePhoneChange = (value?: string) => {
-    const next = value ?? ''
+  const handlePhoneChange = (next = '') => {
     setPhone(next)
     setPhoneError(validatePhoneNumber(next, t) !== null)
   }
@@ -155,40 +192,53 @@ function BookingPage() {
     setTime(firstSlot ? firstSlot.slice(0, 5) : null)
   }
 
+  const validateScheduleStep = () => effectiveDay !== null && effectiveTime !== null
+
+  const validateChildStep = () => {
+    const childNameValid = validateRequired(childName, t('booking.childName'), t) === null
+    const reasonValid = validateRequired(reason, t('booking.reason'), t) === null
+    const referralSourceValid = referralSource !== ''
+    const referralOtherDetailValid = referralSource !== 'OTHER' || validateRequired(referralOtherDetail, t('booking.referral.otherDetail'), t) === null
+    if (!childNameValid) setChildNameError(true)
+    if (!reasonValid) setReasonError(true)
+    if (!referralSourceValid) setReferralSourceError(true)
+    if (!referralOtherDetailValid) setReferralOtherDetailError(true)
+    return childNameValid && reasonValid && referralSourceValid && referralOtherDetailValid
+  }
+
+  const validateIdentityStep = () => {
+    const fullNameValid = validateRequired(fullName, t('booking.fullName'), t) === null
+    const idNumberValid = validateRequired(idNumber, t('booking.idNumber'), t) === null && validateIdNumber(idNumber, idType, t) === null
+    if (!fullNameValid) setFullNameError(true)
+    if (!idNumberValid) setIdNumberError(true)
+    return fullNameValid && idNumberValid
+  }
+
+  const validateContactStep = () => {
+    const emailValid = validateRequired(email, t('booking.email'), t) === null && validateEmail(email, t) === null
+    const phoneValid = phoneCountry
+      ? validateRequired(phone, t('booking.phone'), t) === null && validatePhoneNumber(phone, t) === null
+      : false
+    const occupationValid = validateRequired(occupation, t('booking.occupation'), t) === null
+    if (!emailValid) setEmailError(true)
+    if (!phoneValid) setPhoneError(true)
+    if (!occupationValid) setOccupationError(true)
+    return emailValid && phoneValid && occupationValid
+  }
+
   const validateStep = (currentStep: number): boolean => {
-    if (currentStep === 1) {
-      return effectiveDay !== null && effectiveTime !== null
+    switch (currentStep) {
+      case 1:
+        return validateScheduleStep()
+      case 2:
+        return validateChildStep()
+      case 3:
+        return validateIdentityStep()
+      case 4:
+        return validateContactStep()
+      default:
+        return true
     }
-    if (currentStep === 2) {
-      const childNameValid = validateRequired(childName, t('booking.childName'), t) === null
-      const reasonValid = validateRequired(reason, t('booking.reason'), t) === null
-      const referralSourceValid = referralSource !== ''
-      const referralOtherDetailValid = referralSource !== 'OTHER' || validateRequired(referralOtherDetail, t('booking.referral.otherDetail'), t) === null
-      if (!childNameValid) setChildNameError(true)
-      if (!reasonValid) setReasonError(true)
-      if (!referralSourceValid) setReferralSourceError(true)
-      if (!referralOtherDetailValid) setReferralOtherDetailError(true)
-      return childNameValid && reasonValid && referralSourceValid && referralOtherDetailValid
-    }
-    if (currentStep === 3) {
-      const fullNameValid = validateRequired(fullName, t('booking.fullName'), t) === null
-      const idNumberValid = validateRequired(idNumber, t('booking.idNumber'), t) === null && validateIdNumber(idNumber, idType, t) === null
-      if (!fullNameValid) setFullNameError(true)
-      if (!idNumberValid) setIdNumberError(true)
-      return fullNameValid && idNumberValid
-    }
-    if (currentStep === 4) {
-      const emailValid = validateRequired(email, t('booking.email'), t) === null && validateEmail(email, t) === null
-      const phoneValid = phoneCountry
-        ? validateRequired(phone, t('booking.phone'), t) === null && validatePhoneNumber(phone, t) === null
-        : false
-      const occupationValid = validateRequired(occupation, t('booking.occupation'), t) === null
-      if (!emailValid) setEmailError(true)
-      if (!phoneValid) setPhoneError(true)
-      if (!occupationValid) setOccupationError(true)
-      return emailValid && phoneValid && occupationValid
-    }
-    return true
   }
 
   const handleNext = () => {
@@ -263,34 +313,24 @@ function BookingPage() {
         : 'bg-[var(--grey-100)] text-body-text hover:bg-[var(--grey-200)]'
     }`
 
-  const fullNameErrorMessage = fullNameError
-    ? validateRequired(fullName, t('booking.fullName'), t)
-    : null
-  const idNumberErrorMessage = idNumberError
-    ? validateRequired(idNumber, t('booking.idNumber'), t) ??
-      validateIdNumber(idNumber, idType, t)
-    : null
-  const emailErrorMessage = emailError
-    ? validateRequired(email, t('booking.email'), t) ?? validateEmail(email, t)
-    : null
-  const phoneErrorMessage = phoneError
-    ? phoneCountry
-      ? validateRequired(phone, t('booking.phone'), t) ??
-        validatePhoneNumber(phone, t)
-      : t('validation.countryRequired')
-    : null
-  const occupationErrorMessage = occupationError
-    ? validateRequired(occupation, t('booking.occupation'), t)
-    : null
-  const childNameErrorMessage = childNameError
-    ? validateRequired(childName, t('booking.childName'), t)
-    : null
-  const reasonErrorMessage = reasonError
-    ? validateRequired(reason, t('booking.reason'), t)
-    : null
-  const referralOtherDetailErrorMessage = referralOtherDetailError
-    ? validateRequired(referralOtherDetail, t('booking.referral.otherDetail'), t)
-    : null
+  const fullNameErrorMessage = messageWhen(fullNameError, () =>
+    validateRequired(fullName, t('booking.fullName'), t))
+  const idNumberErrorMessage = messageWhen(idNumberError, () =>
+    validateRequired(idNumber, t('booking.idNumber'), t) ?? validateIdNumber(idNumber, idType, t))
+  const emailErrorMessage = messageWhen(emailError, () =>
+    validateRequired(email, t('booking.email'), t) ?? validateEmail(email, t))
+  const phoneErrorMessage = messageWhen(phoneError, () =>
+    phoneCountry
+      ? validateRequired(phone, t('booking.phone'), t) ?? validatePhoneNumber(phone, t)
+      : t('validation.countryRequired'))
+  const occupationErrorMessage = messageWhen(occupationError, () =>
+    validateRequired(occupation, t('booking.occupation'), t))
+  const childNameErrorMessage = messageWhen(childNameError, () =>
+    validateRequired(childName, t('booking.childName'), t))
+  const reasonErrorMessage = messageWhen(reasonError, () =>
+    validateRequired(reason, t('booking.reason'), t))
+  const referralOtherDetailErrorMessage = messageWhen(referralOtherDetailError, () =>
+    validateRequired(referralOtherDetail, t('booking.referral.otherDetail'), t))
 
   const dayLabel = (date: string) => {
     const parsed = new Date(`${date}T12:00:00`)
@@ -298,7 +338,8 @@ function BookingPage() {
     if (!weekdayKey) return date
     const dayShort = String(parsed.getDate()).padStart(2, '0')
     const monthShort = String(parsed.getMonth() + 1).padStart(2, '0')
-    return `${t(`booking.days.${weekdayKey}`)} ${dayShort}/${monthShort}`
+    const dayName = t(`booking.days.${weekdayKey}`)
+    return `${dayName} ${dayShort}/${monthShort}`
   }
 
   const renderSlots = (slots: Slot[]) =>
@@ -669,39 +710,7 @@ function BookingPage() {
               </h2>
             </div>
 
-            {/* Progress indicator */}
-            <div className="mb-lg flex w-full items-center gap-sm">
-              {STEPS.map((s, i) => {
-                const stepNum = i + 1
-                const isActive = step === stepNum
-                const isCompleted = step > stepNum
-                return (
-                  <div
-                    key={s.key}
-                    className={`flex min-w-0 items-center gap-sm ${i < STEPS.length - 1 ? 'flex-1' : 'shrink-0'}`}
-                  >
-                    <div
-                      className={`flex size-8 shrink-0 items-center justify-center rounded-full font-body text-sm font-semibold transition-colors ${
-                        isCompleted
-                          ? 'bg-green-500 text-white'
-                          : isActive
-                            ? 'bg-green-500/20 text-green-600 ring-2 ring-green-500'
-                            : 'bg-[var(--grey-100)] text-body-text'
-                      }`}
-                    >
-                      {isCompleted ? <CheckIcon size={16} /> : stepNum}
-                    </div>
-                    {i < STEPS.length - 1 && (
-                      <div
-                        className={`h-0.5 min-w-2 flex-1 transition-colors ${
-                          step > stepNum ? 'bg-green-500' : 'bg-[var(--grey-100)]'
-                        }`}
-                      />
-                    )}
-                  </div>
-                )
-              })}
-            </div>
+            <WizardProgress step={step} />
 
             {/* Step content */}
             <div className="flex-1 overflow-y-auto">
