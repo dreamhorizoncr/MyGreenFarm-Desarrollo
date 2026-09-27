@@ -15,7 +15,7 @@ interface CreateVacancyModalProps {
 
 const ALL_OPTIONAL_FIELDS: OptionalApplicationField[] = ['applicantPhone', 'file', 'certificates']
 
-function CreateVacancyModal({ onCreate, onClose }: CreateVacancyModalProps) {
+function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalProps>) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
 

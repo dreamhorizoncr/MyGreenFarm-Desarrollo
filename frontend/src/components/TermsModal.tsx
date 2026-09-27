@@ -10,7 +10,7 @@ interface TermsModalProps {
   onClose: () => void
 }
 
-function TermsModal({ onClose }: TermsModalProps) {
+function TermsModal({ onClose }: Readonly<TermsModalProps>) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
   const [activeTab, setActiveTab] = useState<LegalTab>('terms')

@@ -12,7 +12,7 @@ interface DeleteAlbumModalProps {
   onClose: () => void
 }
 
-function DeleteAlbumModal({ gallery, onConfirm, onClose }: DeleteAlbumModalProps) {
+function DeleteAlbumModal({ gallery, onConfirm, onClose }: Readonly<DeleteAlbumModalProps>) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
 

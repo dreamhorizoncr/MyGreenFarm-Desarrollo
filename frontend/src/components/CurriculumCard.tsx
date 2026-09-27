@@ -13,7 +13,7 @@ interface CurriculumCardProps {
   onDelete: () => void
 }
 
-function StatusBadge({ status }: { status: Curriculum['status'] }) {
+function StatusBadge({ status }: Readonly<{ status: Curriculum['status'] }>) {
   const { t } = useTranslation()
 
   const config = {
@@ -30,7 +30,7 @@ function StatusBadge({ status }: { status: Curriculum['status'] }) {
   )
 }
 
-function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand, onApprove, onReject, onDelete, }: CurriculumCardProps) {
+function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand, onApprove, onReject, onDelete, }: Readonly<CurriculumCardProps>) {
   const { t } = useTranslation()
 
   return (

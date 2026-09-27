@@ -146,7 +146,7 @@ function AppointmentsSection() {
         ) : (
           <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
             {filteredAppointments.map((appointment) => (
-              <article
+              <div
                 key={appointment.id}
                 role="button"
                 tabIndex={0}
@@ -208,7 +208,7 @@ function AppointmentsSection() {
                 <p className="m-0 mt-md font-body text-sm font-semibold text-link">
                   {t('teacherAppointments.viewDetails')}
                 </p>
-              </article>
+              </div>
             ))}
           </div>
         )

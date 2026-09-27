@@ -12,7 +12,7 @@ interface DeleteUserModalProps {
   onClose: () => void
 }
 
-function DeleteUserModal({ user, onConfirm, onClose }: DeleteUserModalProps) {
+function DeleteUserModal({ user, onConfirm, onClose }: Readonly<DeleteUserModalProps>) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
 

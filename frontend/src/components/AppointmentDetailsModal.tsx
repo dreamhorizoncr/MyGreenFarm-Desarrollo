@@ -19,7 +19,7 @@ function formatPhone(phone: string) {
   }
 }
 
-function AppointmentDetailsModal({ appointment, onClose }: AppointmentDetailsModalProps) {
+function AppointmentDetailsModal({ appointment, onClose }: Readonly<AppointmentDetailsModalProps>) {
   const { t, i18n } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
   const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'

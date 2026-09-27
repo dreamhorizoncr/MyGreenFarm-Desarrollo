@@ -11,7 +11,7 @@ interface PhilosophyModalProps {
   onClose: () => void
 }
 
-function PhilosophyModal({ onClose }: PhilosophyModalProps) {
+function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const overlayRef = useRef<HTMLDivElement>(null)
@@ -104,9 +104,10 @@ function PhilosophyModal({ onClose }: PhilosophyModalProps) {
           </div>
 
           <div className="flex flex-col gap-lg px-2 pb-4 pt-2.5 text-left md:px-5">
-            <p className="m-0 font-body text-body-sm text-body-text">
-              {t('home.philosophy.description')}
-            </p>
+            <p className="m-0 font-body text-body-sm text-body-text">{t('home.philosophy.modalParagraph.paragraph1')}</p>
+            <p className="m-0 font-body text-body-sm text-body-text">{t('home.philosophy.modalParagraph.paragraph2')}</p>
+            <p className="m-0 font-body text-body-sm text-body-text">{t('home.philosophy.modalParagraph.paragraph3')}</p>
+            <p className="m-0 font-body text-body-sm text-body-text">{t('home.philosophy.modalParagraph.paragraph4')}</p>
 
             <div className="grid gap-md md:grid-cols-2">
               {pillars.map((pillar) => (

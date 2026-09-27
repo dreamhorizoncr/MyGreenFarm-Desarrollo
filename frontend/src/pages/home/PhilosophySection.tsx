@@ -8,7 +8,13 @@ import PhilosophyModal from '../../components/PhilosophyModal.tsx'
 
 function PhilosophySection() {
   const { t } = useTranslation()
-  const items = Array.from({ length: 4 }, () => t('home.philosophy.item'))
+  const items = [
+    t("home.philosophy.pillar1Title"),
+    t("home.philosophy.pillar2Title"),
+    t("home.philosophy.pillar3Title"),
+    t("home.philosophy.pillar4Title"),
+  ]
+  
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
@@ -29,13 +35,13 @@ function PhilosophySection() {
 
               <div className="h-1 w-12 rounded-full bg-orange-500" aria-hidden="true" />
 
-              <p className="font-body text-body-sm font-normal text-body-text">
+              <p className="line-clamp-4 font-body text-body-sm font-normal text-body-text">
                 {t('home.philosophy.description')}
               </p>
 
               <ul className="m-0 flex list-none flex-col gap-sm p-0">
-                {items.map((item, i) => (
-                  <li key={i} className="flex items-start gap-sm">
+                {items.map((item) => (
+                  <li key={item} className="flex items-start gap-sm">
                     <StarIcon
                       size={16}
                       className="mt-1 shrink-0 text-orange-500 [&_svg]:fill-current"

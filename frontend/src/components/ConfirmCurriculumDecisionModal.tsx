@@ -13,7 +13,7 @@ interface ConfirmCurriculumDecisionModalProps {
   onClose: () => void
 }
 
-function ConfirmCurriculumDecisionModal({ application, action, onConfirm, onClose }: ConfirmCurriculumDecisionModalProps) {
+function ConfirmCurriculumDecisionModal({ application, action, onConfirm, onClose }: Readonly<ConfirmCurriculumDecisionModalProps>) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
 

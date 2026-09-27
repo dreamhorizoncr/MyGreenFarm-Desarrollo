@@ -6,7 +6,7 @@ interface BlobButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode
 }
 
-function BlobButton({ type = 'button', className, variant = 'outline', children, ...rest }: BlobButtonProps) {
+function BlobButton({ type = 'button', className, variant = 'outline', children, ...rest }: Readonly<BlobButtonProps>) {
   const variantClassName = variant === 'filled' ? 'blob-btn--filled' : ''
 
   return (

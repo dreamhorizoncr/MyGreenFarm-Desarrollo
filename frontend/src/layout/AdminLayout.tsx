@@ -6,7 +6,7 @@ interface AdminLayoutProps {
   children: ReactNode
 }
 
-function AdminLayout({ children }: AdminLayoutProps) {
+function AdminLayout({ children }: Readonly<AdminLayoutProps>) {
   return (
     <div className="flex min-h-svh flex-col">
       <Navbar />

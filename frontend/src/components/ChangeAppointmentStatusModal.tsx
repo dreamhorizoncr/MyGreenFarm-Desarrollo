@@ -23,7 +23,7 @@ function formatDate(iso: string): string {
   }).format(new Date(iso))
 }
 
-function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: ChangeAppointmentStatusModalProps) {
+function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Readonly<ChangeAppointmentStatusModalProps>) {
   const { t } = useTranslation()
   const overlayRef = useRef<HTMLDivElement>(null)
 

@@ -6,5 +6,6 @@ public record TranslationRequest(
     UUID entityId,
     String fieldName,
     String originalText,
-    String targetLanguage
+    String targetLanguage,
+    String sourceTextHash
 ) {}

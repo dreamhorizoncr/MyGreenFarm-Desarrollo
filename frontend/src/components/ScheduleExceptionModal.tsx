@@ -18,7 +18,7 @@ function todayIso() {
   return new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 10)
 }
 
-function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: ScheduleExceptionModalProps) {
+function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Readonly<ScheduleExceptionModalProps>) {
   const overlayRef = useRef<HTMLDivElement>(null)
   const [date, setDate] = useState(exception?.exceptionDate ?? '')
   const [closed, setClosed] = useState(exception?.closed ?? true)
@@ -104,11 +104,11 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Sche
             <legend className="mb-xs font-body text-sm font-semibold text-body-text">¿Cómo será ese día?</legend>
             <label className="flex min-h-12 cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md font-body text-base text-body-text">
               <input type="radio" name="exception-mode" checked={closed} onChange={() => setClosed(true)} className="size-5 accent-green-500" />
-              Cerrado todo el día
+              <span>Cerrado todo el día</span>
             </label>
             <label className="flex min-h-12 cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md font-body text-base text-body-text">
               <input type="radio" name="exception-mode" checked={!closed} onChange={() => setClosed(false)} className="size-5 accent-green-500" />
-              Atiende solo en un horario
+              <span>Atiende solo en un horario</span>
             </label>
           </fieldset>
 
@@ -125,7 +125,7 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Sche
           </div>
 
           {formError && <p className="m-0 text-sm text-danger" role="alert">{formError}</p>}
-          <div className="flex flex-col-reverse gap-sm sm:flex-row sm:justify-end">
+          <div className="flex flex-col-reverse gap-xl sm:flex-row sm:justify-between">
             <button type="button" onClick={onClose} className="h-12 rounded-full border border-heading px-xl font-body font-semibold text-heading focus-visible:outline-2 focus-visible:outline-link">Cancelar</button>
             <button type="button" onClick={() => void handleSubmit()} disabled={saving} className="inline-flex h-12 items-center justify-center gap-sm rounded-full bg-green-500 px-xl font-body font-semibold text-white disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-link">
               {saving && <span className="size-4 animate-spin rounded-full border-2 border-white border-r-transparent" aria-hidden="true" />}
