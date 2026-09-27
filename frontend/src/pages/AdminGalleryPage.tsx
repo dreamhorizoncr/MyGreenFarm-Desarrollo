@@ -849,16 +849,15 @@ onCreateYear={handleCreateYear}
 				</h2>
 
 				{loading && !formOpen && (
-					<div
+					<output
 						className="flex items-center gap-sm border-t border-neutral-200 py-xl text-sm text-neutral-500"
-						role="status"
 					>
 						<span
 							className="size-4 animate-spin rounded-full border-2 border-neutral-300 border-t-heading"
 							aria-hidden="true"
 						/>
 						{t('common.loading')}
-					</div>
+					</output>
 				)}
 
 				{categories.length === 0 && !loading && (

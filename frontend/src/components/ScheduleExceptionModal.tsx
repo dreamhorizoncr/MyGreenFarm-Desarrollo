@@ -1,6 +1,5 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { XIcon } from '@animateicons/react/lucide'
-import useDismiss from '../hooks/useDismiss.ts'
 import type { ScheduleException } from '../types/availability.ts'
 import { DEFAULT_END_TIME, DEFAULT_START_TIME, toApiTime, timeValue } from '../types/availability.ts'
 
@@ -19,7 +18,7 @@ function todayIso() {
 }
 
 function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Readonly<ScheduleExceptionModalProps>) {
-  const overlayRef = useRef<HTMLDivElement>(null)
+  const dialogRef = useRef<HTMLDialogElement>(null)
   const [date, setDate] = useState(exception?.exceptionDate ?? '')
   const [closed, setClosed] = useState(exception?.closed ?? true)
   const [startTime, setStartTime] = useState(timeValue(exception?.startTime ?? DEFAULT_START_TIME))
@@ -28,7 +27,9 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
 
-  useDismiss({ ref: overlayRef, isOpen: true, onClose, includeClickOutside: false })
+  useEffect(() => {
+    dialogRef.current?.showModal()
+  }, [])
 
   const existing = useMemo(
     () => exceptions.find((item) => item.exceptionDate === date && item.id !== exception?.id),
@@ -82,10 +83,16 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
   }
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-end justify-center bg-scrim p-0 md:items-center md:p-lg">
-      <button type="button" tabIndex={-1} aria-label="Cerrar" className="absolute inset-0 size-full cursor-default" onClick={onClose} />
-
-      <div className="relative max-h-[92vh] w-full overflow-y-auto scrollbar-none rounded-t-3xl bg-bg-card p-xl md:w-[min(560px,92vw)] md:rounded-2xl" role="dialog" aria-modal="true" aria-labelledby="exception-modal-title">
+    <dialog
+      ref={dialogRef}
+      onClose={onClose}
+      onClick={(event) => {
+        if (event.target === dialogRef.current) onClose()
+      }}
+      aria-labelledby="exception-modal-title"
+      className="m-0 mt-auto max-h-[92vh] w-full max-w-none scrollbar-none overflow-y-auto rounded-t-3xl bg-bg-card p-xl backdrop:bg-scrim md:m-auto md:w-[min(560px,92vw)] md:rounded-2xl"
+    >
+      <div className="relative p-xl">
         <button type="button" onClick={onClose} aria-label="Cerrar" className="absolute right-md top-md inline-flex size-11 items-center justify-center rounded-full text-body-text focus-visible:outline-2 focus-visible:outline-link">
           <XIcon size={20} />
         </button>
@@ -136,7 +143,7 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
           </div>
         </div>
       </div>
-    </div>
+    </dialog>
   )
 }
 

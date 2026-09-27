@@ -75,10 +75,6 @@ const STEPS = [
   { key: 'confirm', label: 'booking.wizard.confirm' },
 ]
 
-function messageWhen(show: boolean, getMessage: () => string | null): string | null {
-  return show ? getMessage() : null
-}
-
 function WizardProgress({ step }: Readonly<{ step: number }>) {
   return (
     <div className="mb-lg flex w-full items-center gap-sm">
@@ -313,24 +309,47 @@ function BookingPage() {
         : 'bg-[var(--grey-100)] text-body-text hover:bg-[var(--grey-200)]'
     }`
 
-  const fullNameErrorMessage = messageWhen(fullNameError, () =>
-    validateRequired(fullName, t('booking.fullName'), t))
-  const idNumberErrorMessage = messageWhen(idNumberError, () =>
-    validateRequired(idNumber, t('booking.idNumber'), t) ?? validateIdNumber(idNumber, idType, t))
-  const emailErrorMessage = messageWhen(emailError, () =>
-    validateRequired(email, t('booking.email'), t) ?? validateEmail(email, t))
-  const phoneErrorMessage = messageWhen(phoneError, () =>
-    phoneCountry
-      ? validateRequired(phone, t('booking.phone'), t) ?? validatePhoneNumber(phone, t)
-      : t('validation.countryRequired'))
-  const occupationErrorMessage = messageWhen(occupationError, () =>
-    validateRequired(occupation, t('booking.occupation'), t))
-  const childNameErrorMessage = messageWhen(childNameError, () =>
-    validateRequired(childName, t('booking.childName'), t))
-  const reasonErrorMessage = messageWhen(reasonError, () =>
-    validateRequired(reason, t('booking.reason'), t))
-  const referralOtherDetailErrorMessage = messageWhen(referralOtherDetailError, () =>
-    validateRequired(referralOtherDetail, t('booking.referral.otherDetail'), t))
+  function computeStepErrorMessages() {
+    return {
+      fullNameErrorMessage: fullNameError
+        ? validateRequired(fullName, t('booking.fullName'), t)
+        : null,
+      idNumberErrorMessage: idNumberError
+        ? validateRequired(idNumber, t('booking.idNumber'), t) ?? validateIdNumber(idNumber, idType, t)
+        : null,
+      emailErrorMessage: emailError
+        ? validateRequired(email, t('booking.email'), t) ?? validateEmail(email, t)
+        : null,
+      phoneErrorMessage: phoneError
+        ? (phoneCountry
+            ? validateRequired(phone, t('booking.phone'), t) ?? validatePhoneNumber(phone, t)
+            : t('validation.countryRequired'))
+        : null,
+      occupationErrorMessage: occupationError
+        ? validateRequired(occupation, t('booking.occupation'), t)
+        : null,
+      childNameErrorMessage: childNameError
+        ? validateRequired(childName, t('booking.childName'), t)
+        : null,
+      reasonErrorMessage: reasonError
+        ? validateRequired(reason, t('booking.reason'), t)
+        : null,
+      referralOtherDetailErrorMessage: referralOtherDetailError
+        ? validateRequired(referralOtherDetail, t('booking.referral.otherDetail'), t)
+        : null,
+    }
+  }
+
+  const {
+    fullNameErrorMessage,
+    idNumberErrorMessage,
+    emailErrorMessage,
+    phoneErrorMessage,
+    occupationErrorMessage,
+    childNameErrorMessage,
+    reasonErrorMessage,
+    referralOtherDetailErrorMessage,
+  } = computeStepErrorMessages()
 
   const dayLabel = (date: string) => {
     const parsed = new Date(`${date}T12:00:00`)

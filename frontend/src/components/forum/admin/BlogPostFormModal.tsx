@@ -343,13 +343,15 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
       </form>
 
       {pendingChanges && (
-        <div className="fixed inset-0 z-[100] grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]">
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label={t('adminForum.confirmChangesTitle')}
-            className="relative max-h-[90vh] w-[min(620px,92vw)] overflow-y-auto scrollbar-none rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
-          >
+        <dialog
+          ref={(el) => {
+            if (el && !el.open) el.showModal()
+          }}
+          onClose={() => { setPendingChanges(null); setConfirmationText('') }}
+          aria-label={t('adminForum.confirmChangesTitle')}
+          className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+        >
+          <div className="relative p-[28px_22px_30px]">
             <button
               type="button"
               className="absolute right-3 top-[26px] z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity hover:opacity-65"
@@ -392,7 +394,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
               </div>
             </div>
           </div>
-        </div>
+        </dialog>
       )}
     </div>
   )

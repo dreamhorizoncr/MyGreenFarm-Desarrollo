@@ -138,23 +138,18 @@ function VacanciesPage() {
       )}
 
       {applicationSent && (
-        <div
-          className="fixed inset-0 z-100 grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]"
+        <dialog
+          ref={(el) => {
+            if (el && !el.open) el.showModal()
+          }}
+          onClose={() => setApplicationSent(false)}
+          onClick={(event) => {
+            if (event.target === event.currentTarget) setApplicationSent(false)
+          }}
+          aria-label={t('vacancies.applicationSentTitle')}
+          className="m-auto w-[min(420px,92vw)] max-w-none rounded-2xl bg-bg-card text-center backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
         >
-          <button
-            type="button"
-            tabIndex={-1}
-            aria-label={t('vacancies.gotIt')}
-            className="absolute inset-0 size-full cursor-default"
-            onClick={() => setApplicationSent(false)}
-          />
-
-          <div
-            className="relative w-[min(420px,92vw)] rounded-2xl bg-bg-card p-xl text-center animate-[modal-in_0.2s_ease-out]"
-            role="dialog"
-            aria-modal="true"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="p-xl">
             <h2 className="m-0 font-heading text-2xl font-bold text-heading">{t('vacancies.applicationSentTitle')}</h2>
             <p className="mt-sm font-body text-[15px] text-body-text">{t('vacancies.applicationSentMessage')}</p>
             <button
@@ -165,7 +160,7 @@ function VacanciesPage() {
               {t('vacancies.gotIt')}
             </button>
           </div>
-        </div>
+        </dialog>
       )}
     </div>
   )

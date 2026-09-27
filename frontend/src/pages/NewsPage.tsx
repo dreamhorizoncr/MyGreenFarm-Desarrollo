@@ -177,10 +177,10 @@ const cards = announcements.filter(
                         // Tarjeta grande
                         <article
                           key={a.id}
-                          className="overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-8 md:grid md:h-[340px] md:grid-cols-12"
+                          className="relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-8 md:h-[340px]"
                         >
                           {/* Imagen */}
-                          <div className="relative h-[240px] md:col-span-6 md:h-full">
+                          <div className="relative h-[240px] md:absolute md:inset-y-0 md:left-0 md:h-auto md:w-1/2">
                             {getCoverImage(a.id) ? (
                               <img
                                 src={getCoverImage(a.id)}
@@ -203,12 +203,12 @@ const cards = announcements.filter(
                           </div>
 
                           {/* Contenido */}
-                          <div className="flex flex-col items-start p-[22px] text-left md:col-span-6">
+                          <div className="relative flex flex-col items-start p-[22px] pb-[60px] text-left md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2">
                             <span className="font-body text-[11px] text-neutral-500">
                               {formatDate(a.eventDate, i18n.language)}
                             </span>
 
-                            <h2 className="mt-[10px] font-heading text-[28px] font-bold text-heading">
+                            <h2 className="mt-[10px] line-clamp-2 font-heading text-[28px] font-bold text-heading">
                               {a.title}
                             </h2>
 
@@ -216,22 +216,24 @@ const cards = announcements.filter(
                               {a.content}
                             </p>
 
-                            <BlobButton
-                              onClick={() => setSelectedAnnouncement(a)}
-                              className="mt-[26px] w-fit px-[16px] py-[7px] font-body text-[11px] uppercase"
-                            >
-                              {t("newspage.readMore")}
-                            </BlobButton>
+                            <div className="absolute bottom-[22px] left-[22px]">
+                              <BlobButton
+                                onClick={() => setSelectedAnnouncement(a)}
+                                className="w-fit px-[16px] py-[7px] font-body text-[11px] uppercase"
+                              >
+                                {t("newspage.readMore")}
+                              </BlobButton>
+                            </div>
                           </div>
                         </article>
                       ) : (
                         // Tarjeta pequeña
                         <article
                           key={a.id}
-                          className="overflow-hidden rounded-[16px] border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-4 md:flex md:h-[340px] md:flex-col"
+                          className="relative overflow-hidden rounded-[16px] border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-4 md:h-[340px]"
                         >
                           {/* Imagen */}
-                          <div className="relative h-[200px] md:h-[125px] md:shrink-0">
+                          <div className="relative h-[200px] md:absolute md:inset-x-0 md:top-0 md:h-[125px]">
                             {getCoverImage(a.id) ? (
                               <img
                                 src={getCoverImage(a.id)}
@@ -254,12 +256,12 @@ const cards = announcements.filter(
                           </div>
 
                           {/* Contenido */}
-                          <div className="flex flex-1 flex-col items-start p-[20px] text-left">
+                          <div className="relative flex flex-col items-start p-[20px] pb-[56px] text-left md:absolute md:inset-x-0 md:bottom-0 md:top-[125px]">
                             <span className="font-body text-[11px] text-neutral-500">
                               {formatDate(a.eventDate, i18n.language)}
                             </span>
 
-                            <h2 className="mt-[8px] font-heading text-[28px] font-bold text-heading">
+                            <h2 className="mt-[8px] line-clamp-1 font-heading text-[28px] font-bold text-heading">
                               {a.title}
                             </h2>
 
@@ -267,12 +269,14 @@ const cards = announcements.filter(
                               {a.content}
                             </p>
 
-                            <BlobButton
-                              onClick={() => setSelectedAnnouncement(a)}
-                              className="mt-auto w-fit px-[16px] py-[7px] font-body text-[11px] uppercase"
-                            >
-                              {t("newspage.readMore")}
-                            </BlobButton>
+                            <div className="absolute bottom-[20px] left-[20px]">
+                              <BlobButton
+                                onClick={() => setSelectedAnnouncement(a)}
+                                className="w-fit px-[16px] py-[7px] font-body text-[11px] uppercase"
+                              >
+                                {t("newspage.readMore")}
+                              </BlobButton>
+                            </div>
                           </div>
                         </article>
                       );

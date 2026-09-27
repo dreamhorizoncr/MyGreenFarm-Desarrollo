@@ -149,24 +149,18 @@ function AdminForumPage() {
       )}
 
       {postToDelete && (
-        <div
-          className="fixed inset-0 z-[100] grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]"
+        <dialog
+          ref={(el) => {
+            if (el && !el.open) el.showModal()
+          }}
+          onClose={() => { setPostToDelete(null); setDeleteConfirmation('') }}
+          onClick={(event) => {
+            if (event.target === event.currentTarget) { setPostToDelete(null); setDeleteConfirmation('') }
+          }}
+          aria-label={t('adminForum.deleteTitle')}
+          className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
         >
-          <button
-            type="button"
-            tabIndex={-1}
-            aria-label={t('adminForum.close')}
-            className="absolute inset-0 size-full cursor-default"
-            onClick={() => { setPostToDelete(null); setDeleteConfirmation('') }}
-          />
-
-          <div
-            role="dialog"
-            aria-modal="true"
-            onClick={(event) => event.stopPropagation()}
-            aria-label={t('adminForum.deleteTitle')}
-            className="relative max-h-[90vh] w-[min(620px,92vw)] overflow-y-auto scrollbar-none rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
-          >
+          <div className="relative p-[28px_22px_30px]">
             <div className="flex items-center justify-between gap-md">
               <h2 className="m-0 w-full text-center font-heading text-[42px] font-bold leading-none text-heading">
                 {t('adminForum.deleteTitle')}
@@ -217,7 +211,7 @@ function AdminForumPage() {
               </div>
             </div>
           </div>
-        </div>
+        </dialog>
       )}
     </AdminLayout>
   )

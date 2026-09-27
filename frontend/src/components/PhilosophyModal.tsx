@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import { GlobeIcon, HeartIcon, ShieldCheckIcon, SunIcon, XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import PhilosophyPillarItem from './PhilosophyPillarItem.tsx'
-import useDismiss from '../hooks/useDismiss.ts'
 import nino from '../assets/imgs/nino.svg'
 
 interface PhilosophyModalProps {
@@ -14,14 +13,11 @@ interface PhilosophyModalProps {
 function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const overlayRef = useRef<HTMLDivElement>(null)
+  const dialogRef = useRef<HTMLDialogElement>(null)
 
-  useDismiss({
-    ref: overlayRef,
-    isOpen: true,
-    onClose,
-    includeClickOutside: false,
-  })
+  useEffect(() => {
+    dialogRef.current?.showModal()
+  }, [])
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow
@@ -64,23 +60,16 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
   }
 
   return (
-    <div
-      className="fixed inset-0 z-100 grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]"
+    <dialog
+      ref={dialogRef}
+      onClose={onClose}
+      onClick={(event) => {
+        if (event.target === dialogRef.current) onClose()
+      }}
+      aria-label={t('home.philosophy.title')}
+      className="m-auto max-h-[90vh] w-[min(760px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
-      <button
-        type="button"
-        tabIndex={-1}
-        aria-label={t('home.philosophy.modalClose')}
-        className="absolute inset-0 size-full cursor-default"
-        onClick={onClose}
-      />
-
-      <div
-        className="relative w-[min(760px,92vw)] max-h-[90vh] overflow-y-auto scrollbar-none rounded-2xl bg-bg-card animate-[modal-in_0.2s_ease-out]"
-        role="dialog"
-        aria-modal="true"
-        aria-label={t('home.philosophy.title')}
-      >
+      <div className="relative">
         <button
           type="button"
           className="absolute right-3 top-3 z-10 inline-flex size-10 items-center justify-center rounded-full bg-white text-heading shadow-sm transition-opacity duration-150 hover:opacity-70 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
@@ -129,7 +118,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
           </div>
         </div>
       </div>
-    </div>
+    </dialog>
   )
 }
 
