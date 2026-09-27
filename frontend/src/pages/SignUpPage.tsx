@@ -228,7 +228,7 @@ function SignUpPage() {
               {roleOptions.map((option) => (
                 <label
                   key={option.value}
-                  className={`flex cursor-pointer items-center gap-xs rounded-lg border px-lg py-sm font-body text-[15px] transition-colors ${
+                  className={`flex cursor-pointer items-center gap-xs rounded-full border px-lg py-sm font-body text-[15px] transition-colors ${
                     role === option.value
                       ? 'border-green-500 bg-green-500/10 text-heading'
                       : 'border-neutral-300 bg-white text-body-text'

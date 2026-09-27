@@ -19,12 +19,5 @@ public interface NewsletterSubscriberRepository extends JpaRepository<Newsletter
     @Query("SELECT s.email as email, s.language as language FROM NewsletterSubscriber s WHERE s.isActive = true")
     List<SubscriberEmailProjection> findAllActiveSubscribersInfo();
 
-    @Query(value = """
-            SELECT email, language FROM newsletter_subscribers WHERE is_active = true
-            UNION
-            SELECT email, language FROM parents
-            """, nativeQuery = true)
-    List<SubscriberEmailProjection> findAllUniqueSubscribersInfoForBroadcast();
-
     Optional<NewsletterSubscriber> findByEmail(String email);
 }

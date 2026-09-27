@@ -31,6 +31,7 @@ import PaymentFailedPage from './pages/PaymentFailedPage.tsx'
 import AdminCurriculumsPage from './pages/AdminCurriculumsPage.tsx'
 import VacanciesPage from './pages/VacanciesPage.tsx'
 import OwnerAvailabilityPage from './pages/OwnerAvailabilityPage.tsx'
+import OwnerNewsletter from './pages/OwnerNewsletter.tsx'
 import Footer from './layout/Footer.tsx'
 import ScrollToTopButton from './components/ScrollToTopButton.tsx'
 import { ProfileAvatarProvider } from './contexts/ProfileAvatarContext.tsx'
@@ -68,6 +69,7 @@ function App() {
           <Route element={<OwnerRoute />}>
             <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />
             <Route path="/admin/disponibilidad" element={<OwnerAvailabilityPage />} />
+            <Route path="/admin/newsletter" element={<OwnerNewsletter />} />
             <Route path="/admin/forum" element={<AdminForumPage />} />
           </Route>
         </Route>

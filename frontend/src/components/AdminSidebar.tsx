@@ -14,6 +14,7 @@ import {
   MessageSquarePlusIcon,
   UserIcon,
   UsersIcon,
+  MailPlus
 } from '@animateicons/react/lucide'
 import { useLogin } from '../hooks/useLogin.ts'
 import { useProfileAvatar } from '../contexts/ProfileAvatarContext.tsx'
@@ -31,7 +32,8 @@ type SidebarItemId =
   | "miPerfil"
   | "servicios"
   | "disponibilidad"
-  | "foro";
+  | "foro"
+  | "boletín";
 
 interface SidebarItem {
   id: SidebarItemId;
@@ -65,6 +67,7 @@ function AdminSidebar() {
     { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
     { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
     { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
+    { id: 'boletín', icon: MailPlus, path: '/admin/newsletter' },
     { id: 'miPerfil', icon: UserIcon, path: '/profile' },
   ]
   const adminItems: SidebarItem[] = [

@@ -65,6 +65,17 @@ public class ParentController {
         }
     }
 
+    @DeleteMapping("/newsletter-subscription")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<String> unsubscribeFromNewsletter(@RequestParam String email) {
+        try {
+            parentService.unsubscribeFromNewsletter(email);
+            return ResponseEntity.ok("El padre ya no recibirá correos del boletín.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
     // Endpoint para eliminar un padre/madre
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")

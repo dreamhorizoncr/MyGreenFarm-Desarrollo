@@ -101,7 +101,7 @@ function DeleteUserModal({ user, onConfirm, onClose }: Readonly<DeleteUserModalP
           </div>
 
           <div className="flex gap-md mt-sm">
-            <Button variant="secondary" onClick={onClose} className="h-[47px] flex-1 rounded-none font-body text-[17px] uppercase tracking-wide">
+            <Button variant="secondary" onClick={onClose} className="h-[47px] flex-1 rounded-full font-body text-[17px] uppercase tracking-wide">
               {t('admin.cancel')}
             </Button>
             <Button
@@ -109,7 +109,7 @@ function DeleteUserModal({ user, onConfirm, onClose }: Readonly<DeleteUserModalP
               onClick={handleConfirm}
               loading={deleting}
               disabled={!matchesName}
-              className="h-[47px] flex-1 rounded-none font-body text-[17px] font-normal uppercase tracking-wide"
+              className="h-[47px] flex-1 rounded-full font-body text-[17px] font-normal uppercase tracking-wide"
             >
               {deleting ? t('common.loading') : t('admin.delete')}
             </Button>

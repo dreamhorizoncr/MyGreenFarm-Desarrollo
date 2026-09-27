@@ -44,6 +44,21 @@ public class Parent {
     @Column(name = "language", length = 5, nullable = false)
     private String language = "es";
 
+    @Column(name = "is_active", nullable = false, columnDefinition = "boolean default true")
+    private Boolean isActive = true;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    public Boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Boolean active) {
+        isActive = active;
+    }
+
+    public boolean isActiveForNewsletter() {
+        return Boolean.TRUE.equals(isActive);
+    }
 }
