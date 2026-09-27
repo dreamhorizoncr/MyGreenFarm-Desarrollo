@@ -205,13 +205,18 @@ function AdminServicePlansPage() {
       {confirmDeleteId && planToDelete && (
         <div
           className="fixed inset-0 z-[100] grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
+        >
+          <button
+            type="button"
+            tabIndex={-1}
+            aria-label={t('admin.cancel')}
+            className="absolute inset-0 size-full cursor-default"
+            onClick={() => {
               setConfirmDeleteId(null)
               setConfirmText('')
-            }
-          }}
-        >
+            }}
+          />
+
           <div
             className="relative max-h-[90vh] w-[min(620px,92vw)] overflow-y-auto scrollbar-none rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
             role="dialog"

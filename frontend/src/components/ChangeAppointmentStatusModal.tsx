@@ -67,10 +67,6 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
     }
   }
 
-  const handleOverlayClick = (event: React.MouseEvent) => {
-    if (event.target === overlayRef.current) onClose()
-  }
-
   const optionClassName = (active: boolean) =>
     `rounded-full px-md py-sm font-body text-sm font-semibold transition-colors ${
       active
@@ -81,11 +77,17 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
   return (
     <div
       className="fixed inset-0 z-[100] grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]"
-      ref={overlayRef}
-      onClick={handleOverlayClick}
     >
+      <button
+        type="button"
+        tabIndex={-1}
+        aria-label={t('admin.cancel')}
+        className="absolute inset-0 size-full cursor-default"
+        onClick={onClose}
+      />
+
       <div
-        className="relative w-[min(620px,92vw)] max-h-[90vh] overflow-y-auto rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
+        className="relative w-[min(620px,92vw)] max-h-[90vh] overflow-y-auto scrollbar-none rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
         role="dialog"
         aria-modal="true"
         aria-label={t('teacherAppointments.changeStatus')}

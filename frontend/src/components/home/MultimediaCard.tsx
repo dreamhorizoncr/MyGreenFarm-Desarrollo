@@ -1,5 +1,3 @@
-import type { KeyboardEvent } from 'react'
-
 interface MultimediaCardProps {
   imageSrc: string
   alt: string
@@ -10,21 +8,8 @@ interface MultimediaCardProps {
 }
 
 function MultimediaCard({ imageSrc, alt, badge, title, description, onClick }: Readonly<MultimediaCardProps>) {
-  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (onClick && (event.key === 'Enter' || event.key === ' ')) {
-      event.preventDefault()
-      onClick()
-    }
-  }
-
-  return (
-    <article
-      onClick={onClick}
-      role={onClick ? 'button' : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      onKeyDown={onClick ? handleKeyDown : undefined}
-      className={`flex h-full flex-col rounded-3xl bg-white shadow ${onClick ? 'cursor-pointer transition hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-orange-500 focus-visible:outline-offset-2' : ''}`}
-    >
+  const contenido = (
+    <>
       <div className="relative m-sm overflow-hidden rounded-[20px]">
         <img
           src={imageSrc}
@@ -44,6 +29,24 @@ function MultimediaCard({ imageSrc, alt, badge, title, description, onClick }: R
           {description}
         </p>
       </div>
+    </>
+  )
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className="flex h-full w-full flex-col rounded-3xl bg-white text-left shadow cursor-pointer transition hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-orange-500 focus-visible:outline-offset-2"
+      >
+        {contenido}
+      </button>
+    )
+  }
+
+  return (
+    <article className="flex h-full flex-col rounded-3xl bg-white shadow">
+      {contenido}
     </article>
   )
 }

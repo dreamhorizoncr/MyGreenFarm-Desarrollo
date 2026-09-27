@@ -140,10 +140,17 @@ function VacanciesPage() {
       {applicationSent && (
         <div
           className="fixed inset-0 z-100 grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]"
-          onClick={() => setApplicationSent(false)}
         >
+          <button
+            type="button"
+            tabIndex={-1}
+            aria-label={t('vacancies.gotIt')}
+            className="absolute inset-0 size-full cursor-default"
+            onClick={() => setApplicationSent(false)}
+          />
+
           <div
-            className="w-[min(420px,92vw)] rounded-2xl bg-bg-card p-xl text-center animate-[modal-in_0.2s_ease-out]"
+            className="relative w-[min(420px,92vw)] rounded-2xl bg-bg-card p-xl text-center animate-[modal-in_0.2s_ease-out]"
             role="dialog"
             aria-modal="true"
             onClick={(e) => e.stopPropagation()}
