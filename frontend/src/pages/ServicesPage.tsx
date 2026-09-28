@@ -3,13 +3,34 @@ import { useTranslation } from 'react-i18next'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import { useServicePlans } from '../hooks/useServicePlans.ts'
+import { useExchangeRate } from '../hooks/useExchangeRate.ts'
+import { ExchangeRateWidget } from '../components/currency/ExchangeRateWidget.tsx'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { notify } from '../utils/notifications.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
+import type { ExchangeRate } from '../types/exchangeRate.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
+import { convertCurrency, formatCurrency, currencySymbol } from '../utils/currency.ts'
+import type { Currency } from '../types/exchangeRate.ts'
 
-function PlanCard({ plan, onSubscribe, isLoading }: Readonly<{ plan: ServicePlan; onSubscribe: (plan: ServicePlan) => void; isLoading?: boolean }>) {
+function PlanCard({
+  plan,
+  onSubscribe,
+  isLoading,
+  exchangeRate,
+  idioma,
+}: Readonly<{
+  plan: ServicePlan
+  onSubscribe: (plan: ServicePlan) => void
+  isLoading?: boolean
+  exchangeRate: ExchangeRate | null
+  idioma: string
+}>) {
   const { t } = useTranslation()
+  const [currency, setCurrency] = useState<Currency>('USD')
+  const price = exchangeRate
+    ? convertCurrency(plan.price, 'USD', currency, 'sell', exchangeRate)
+    : plan.price
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg">
@@ -40,10 +61,26 @@ function PlanCard({ plan, onSubscribe, isLoading }: Readonly<{ plan: ServicePlan
           {plan.description}
         </p>
 
-        <div className="flex items-baseline justify-center gap-sm text-center">
+        <div className="flex flex-col items-center justify-center gap-sm text-center">
           <span className="font-heading text-h3 font-bold text-green-500">
-            {plan.price}
+            {currencySymbol(currency)}{formatCurrency(price, currency, idioma)}
           </span>
+          <div className="flex flex-wrap justify-center gap-xs" aria-label={t('moneda.convertTo')}>
+            {(['USD', 'CRC', 'EUR'] as Currency[]).map(option => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => setCurrency(option)}
+                aria-pressed={currency === option}
+                disabled={!exchangeRate && option !== 'USD'}
+                className={`rounded-full border px-sm py-2xs font-body text-xs transition disabled:cursor-not-allowed disabled:opacity-40 ${
+                  currency === option ? 'border-green-500 bg-green-500 text-white' : 'border-neutral-200 text-neutral-600 hover:border-green-500'
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
         </div>
 
         {plan.schedule && (
@@ -76,6 +113,7 @@ function PlanCard({ plan, onSubscribe, isLoading }: Readonly<{ plan: ServicePlan
 function ServicesPage() {
   const { t, i18n } = useTranslation()
   const { plans, loading, error, fetchPlans } = useServicePlans()
+  const { data: exchangeRate, loading: exchangeRateLoading, error: exchangeRateError } = useExchangeRate()
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
 
   useEffect(() => {
@@ -113,6 +151,14 @@ function ServicesPage() {
       </section>
 
       <section className="relative w-full bg-bg-page py-[36px] md:py-[48px]">
+        <Container className="mb-[36px] flex justify-start md:mb-[48px]">
+          <ExchangeRateWidget
+              data={exchangeRate}
+              loading={exchangeRateLoading}
+              error={exchangeRateError}
+          />
+        </Container>
+
         <Container className="grid grid-cols-1 gap-[24px] md:grid-cols-3">
           {loading && (
             <p className="col-span-full p-xl text-center font-body text-base text-neutral-500">
@@ -138,6 +184,8 @@ function ServicesPage() {
               plan={plan}
               onSubscribe={handleSubscribe}
               isLoading={checkoutLoading === plan.id}
+              exchangeRate={exchangeRate}
+              idioma={i18n.language}
             />
           ))}
         </Container>
