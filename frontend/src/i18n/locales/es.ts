@@ -921,6 +921,33 @@ export default {
     rescheduledToastDescription: "Se envió la notificación al padre o encargado.",
     rescheduleErrorToastTitle: "No se pudo reprogramar la cita",
   },
+  moneda: {
+    title: "Conversor de moneda",
+    convertTo: "Mostrar precio en",
+    sellRate: "Tipo de cambio de venta",
+    todayRate: "Tasa de referencia",
+    priceDisclaimer: "El precio convertido es aproximado y puede variar según el tipo de cambio aplicado al momento del pago.",
+    description:
+      "Convierte entre colones, dólares y euros con la tasa de hoy de BAC Credomatic.",
+    amount: "Monto",
+    from: "Convertir desde",
+    to: "Convertir a",
+    swap: "Intercambiar monedas",
+    sideLabel: "Quiero",
+    buy: "Comprar",
+    sell: "Vender",
+    youReceive: "Recibirías",
+    sourceAndDate: "Tasa de {{source}} del {{rateDate}}",
+    approx: "≈",
+    loading: "Cargando tipo de cambio...",
+    error: "No se pudo cargar el tipo de cambio.",
+    unavailable: "El tipo de cambio no está disponible en este momento.",
+    currency: {
+      CRC: "Colones",
+      USD: "Dólar",
+      EUR: "Euro",
+    },
+  },
   services: {
     title: "Nuestros Servicios",
     description:

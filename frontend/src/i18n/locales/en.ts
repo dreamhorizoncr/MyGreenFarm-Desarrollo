@@ -908,6 +908,33 @@ export default {
     rescheduledToastDescription: "The parent or guardian was notified.",
     rescheduleErrorToastTitle: "Couldn't reschedule the appointment",
   },
+  moneda: {
+    convertTo: "Show price in",
+    sellRate: "Selling exchange rate",
+    todayRate: "Reference rate",
+    priceDisclaimer: "Converted prices are estimates and may vary based on the exchange rate applied at payment.",
+    title: "Currency converter",
+    description:
+      "Convert between colones, dollars and euros using today's BAC Credomatic rate.",
+    amount: "Amount",
+    from: "Convert from",
+    to: "Convert to",
+    swap: "Swap currencies",
+    sideLabel: "I want to",
+    buy: "Buy",
+    sell: "Sell",
+    youReceive: "You would receive",
+    sourceAndDate: "Rate from {{source}} on {{rateDate}}",
+    approx: "≈",
+    loading: "Loading exchange rate...",
+    error: "The exchange rate could not be loaded.",
+    unavailable: "The exchange rate is not available right now.",
+    currency: {
+      CRC: "Colones",
+      USD: "US Dollar",
+      EUR: "Euro",
+    },
+  },
   services: {
     title: "Our Services",
     description:
