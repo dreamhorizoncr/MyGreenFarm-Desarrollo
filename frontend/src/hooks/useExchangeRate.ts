@@ -15,44 +15,35 @@ export function useExchangeRate(): UseExchangeRateResult {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    let cancelled = false
-
-    exchangeRateService
-      .getCurrent()
-      .then((json) => {
-        if (!cancelled) {
-          setData(json)
-          setError(null)
-        }
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          setError(getErrorMessage(err))
-        }
-      })
-      .finally(() => {
-        if (!cancelled) {
-          setLoading(false)
-        }
-      })
-
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
   const reload = useCallback(async () => {
-    setLoading(true)
-    setError(null)
     try {
       setData(await exchangeRateService.getCurrent())
+      setError(null)
     } catch (err) {
       setError(getErrorMessage(err))
     } finally {
       setLoading(false)
     }
   }, [])
+
+  useEffect(() => {
+    void reload()
+
+    // Mantiene la tasa sincronizada con las actualizaciones periódicas del backend.
+    const interval = window.setInterval(() => {
+      if (document.visibilityState === 'visible') void reload()
+    }, 5 * 60 * 1000)
+
+    const refreshOnFocus = () => {
+      if (document.visibilityState === 'visible') void reload()
+    }
+    document.addEventListener('visibilitychange', refreshOnFocus)
+
+    return () => {
+      window.clearInterval(interval)
+      document.removeEventListener('visibilitychange', refreshOnFocus)
+    }
+  }, [reload])
 
   return { data, loading, error, reload }
 }

@@ -9,9 +9,10 @@ interface ExchangeRateWidgetProps {
   data: ExchangeRate | null
   loading: boolean
   error: string | null
+  onOpen: () => void
 }
 
-export function ExchangeRateWidget({ data, loading, error }: ExchangeRateWidgetProps) {
+export function ExchangeRateWidget({ data, loading, error, onOpen }: ExchangeRateWidgetProps) {
   const { t, i18n } = useTranslation()
   const locale = i18n.language
   const [isOpen, setIsOpen] = useState(false)
@@ -40,7 +41,10 @@ export function ExchangeRateWidget({ data, loading, error }: ExchangeRateWidgetP
     <>
       <button
         type="button"
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          setIsOpen(true)
+          onOpen()
+        }}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
         className="inline-flex items-center gap-sm rounded-full border border-green-500 bg-green-500 px-lg py-sm font-body text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-green-500"

@@ -113,7 +113,7 @@ function PlanCard({
 function ServicesPage() {
   const { t, i18n } = useTranslation()
   const { plans, loading, error, fetchPlans } = useServicePlans()
-  const { data: exchangeRate, loading: exchangeRateLoading, error: exchangeRateError } = useExchangeRate()
+  const { data: exchangeRate, loading: exchangeRateLoading, error: exchangeRateError, reload: reloadExchangeRate } = useExchangeRate()
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
 
   useEffect(() => {
@@ -156,6 +156,7 @@ function ServicesPage() {
               data={exchangeRate}
               loading={exchangeRateLoading}
               error={exchangeRateError}
+              onOpen={() => void reloadExchangeRate()}
           />
         </Container>
 
