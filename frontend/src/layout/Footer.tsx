@@ -62,7 +62,7 @@ function Footer() {
             <button
               type="button"
               onClick={() => setIsLegalModalOpen(true)}
-              className="bg-transparent text-white underline-offset-2 hover:underline"
+              className="bg-transparent text-white underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
             >
               {t(legalLink.label)}
             </button>
@@ -74,7 +74,7 @@ function Footer() {
               href="https://linktr.ee/dreamhorizoncr"
               target="_blank"
               rel="noopener noreferrer"
-              className="no-underline"
+              className="no-underline underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
             >
               Dream Horizon
             </a>

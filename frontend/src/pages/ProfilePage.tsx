@@ -5,10 +5,11 @@ import 'blobatar/gaze.css'
 import 'blobatar/motion.css'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useLogin } from '../hooks/useLogin.ts'
 import { useProfileAvatar } from '../contexts/ProfileAvatarContext.tsx'
 import AdminLayout from '../layout/AdminLayout.tsx'
+import ForgotPasswordModal from '../components/ForgotPasswordModal.tsx'
 import { notify } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
 
@@ -20,6 +21,7 @@ function ProfilePage() {
   const { ref: blobatarRef } = useGaze({ lookAt: 'pointer', travel: 3 })
   const { sidebarHovered } = useProfileAvatar()
   const [logoutHovered, setLogoutHovered] = useState(false)
+  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false)
   const idleExpression = sidebarHovered ? unsure : undefined
   const expression = logoutHovered ? scared : idleExpression
 
@@ -44,6 +46,7 @@ function ProfilePage() {
     'h-10 w-full rounded-lg border border-neutral-200 bg-neutral-50 px-md font-body text-[15px] text-body-text'
 
   return (
+    <>
     <AdminLayout>
       <h1 className="m-0 font-heading text-[30px] font-bold leading-[1.15] text-heading">
         {t('profile.title')}
@@ -109,12 +112,13 @@ function ProfilePage() {
         </div>
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <Link
-            to="/forgot-password?from=profile"
+          <button
+            type="button"
+            onClick={() => setShowResetPasswordModal(true)}
             className="flex h-11 w-full items-center justify-center rounded-full border border-heading px-5 font-body text-[15px] font-semibold text-heading transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 sm:w-auto"
           >
             {t('profile.resetPassword')}
-          </Link>
+          </button>
 
           <button
             type="button"
@@ -129,6 +133,14 @@ function ProfilePage() {
           </button>
         </div>
     </AdminLayout>
+
+    {showResetPasswordModal && (
+      <ForgotPasswordModal
+        email={user?.email ?? ''}
+        onClose={() => setShowResetPasswordModal(false)}
+      />
+    )}
+    </>
   )
 }
 
