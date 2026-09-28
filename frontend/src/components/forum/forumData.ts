@@ -49,6 +49,8 @@ export const blogPosts: BlogPost[] = [
     imageUrl: news3,
     imageAlt: 'Aula de regulación emocional',
     likeCount: 52,
+    reacted: false,
+    commentCount: 2,
   },
   {
     id: 'blog-2',
@@ -65,6 +67,8 @@ export const blogPosts: BlogPost[] = [
     imageUrl: news2,
     imageAlt: 'Actividad del huerto escolar',
     likeCount: 37,
+    reacted: false,
+    commentCount: 2,
   },
   {
     id: 'blog-3',
@@ -79,6 +83,8 @@ export const blogPosts: BlogPost[] = [
       'Cuando llueve, el espacio interior se reparte en tres circuitos cortos con pausas para el agua.\n\n' +
       'La rutina completa está escrita en la pizarra de la sala.',
     likeCount: 41,
+    reacted: false,
+    commentCount: 1,
   },
 ]
 
@@ -86,13 +92,15 @@ export const blogCommentsByPost: Record<string, BlogComment[]> = {
   'blog-1': [
     {
       id: 'comment-1-1',
-      name: 'Carla Méndez',
+      articleId: 'blog-1',
+      alias: 'Carla Méndez',
       createdAt: hoursAgo(6),
       content: 'La pausa de la mañana nos sirvió mucho.',
     },
     {
       id: 'comment-1-2',
-      name: 'Diego Soto',
+      articleId: 'blog-1',
+      alias: 'Diego Soto',
       createdAt: hoursAgo(4),
       content: 'Queda clarísimo, gracias.',
     },
@@ -100,13 +108,15 @@ export const blogCommentsByPost: Record<string, BlogComment[]> = {
   'blog-2': [
     {
       id: 'comment-2-1',
-      name: 'Lucía Ferrari',
+      articleId: 'blog-2',
+      alias: 'Lucía Ferrari',
       createdAt: hoursAgo(28),
       content: 'Mi hijo pregunta todos los días por sus plantines.',
     },
     {
       id: 'comment-2-2',
-      name: 'Ana Lucía Vargas',
+      articleId: 'blog-2',
+      alias: 'Ana Lucía Vargas',
       createdAt: hoursAgo(27),
       content: 'Esa espera es la parte más linda del taller.',
     },
@@ -114,7 +124,8 @@ export const blogCommentsByPost: Record<string, BlogComment[]> = {
   'blog-3': [
     {
       id: 'comment-3-1',
-      name: 'Tomás Aguilar',
+      articleId: 'blog-3',
+      alias: 'Tomás Aguilar',
       createdAt: hoursAgo(70),
       content: 'El registro de sueño lo llenamos todas las noches.',
     },
