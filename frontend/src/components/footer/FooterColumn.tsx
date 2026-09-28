@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import type { FooterColumnData } from './footerData.ts'
 
-function FooterColumn({ titleKey, links }: FooterColumnData) {
+function FooterColumn({ titleKey, links }: Readonly<FooterColumnData>) {
   const { t } = useTranslation()
 
   return (

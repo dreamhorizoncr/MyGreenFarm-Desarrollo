@@ -1,11 +1,10 @@
-import { useRef, type InputHTMLAttributes } from 'react'
+import { useEffect, useRef, type InputHTMLAttributes } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CloudUploadIcon, XIcon } from '@animateicons/react/lucide'
 import PhoneInput from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import Button from './ui/Button.tsx'
 import TextField from './ui/TextField.tsx'
-import useDismiss from '../hooks/useDismiss.ts'
 import { useVacancyApplicationForm } from '../hooks/useVacancyApplicationForm.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
@@ -27,43 +26,35 @@ interface ApplyVacancyModalProps {
   onClose: () => void
 }
 
-function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose }: ApplyVacancyModalProps) {
+function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose }: Readonly<ApplyVacancyModalProps>) {
   const { t } = useTranslation()
-  const overlayRef = useRef<HTMLDivElement>(null)
+  const dialogRef = useRef<HTMLDialogElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const certificatesInputRef = useRef<HTMLInputElement>(null)
 
   const form = useVacancyApplicationForm({ vacancyId, requiredFields }, onSubmit)
   const heading = vacancyId === null ? title : t('vacancies.applyModalTitle')
 
-  useDismiss({
-    ref: overlayRef,
-    isOpen: true,
-    onClose,
-    includeClickOutside: false,
-  })
+  useEffect(() => {
+    dialogRef.current?.showModal()
+  }, [])
 
   const handleSubmitClick = async () => {
     const succeeded = await form.handleSubmit()
     if (succeeded) onClose()
   }
 
-  const handleOverlayClick = (event: React.MouseEvent) => {
-    if (event.target === overlayRef.current) onClose()
-  }
-
   return (
-    <div
-      className="fixed inset-0 z-100 grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]"
-      ref={overlayRef}
-      onClick={handleOverlayClick}
+    <dialog
+      ref={dialogRef}
+      onClose={onClose}
+      onClick={(event) => {
+        if (event.target === dialogRef.current) onClose()
+      }}
+      aria-label={heading}
+      className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
-      <div
-        className="relative w-[min(620px,92vw)] max-h-[90vh] overflow-y-auto rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
-        role="dialog"
-        aria-modal="true"
-        aria-label={heading}
-      >
+      <div className="relative p-[28px_22px_30px]">
         <button
           type="button"
           className="absolute right-3 top-6.5 z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity duration-150 hover:opacity-65 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
@@ -228,7 +219,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
           </div>
         </div>
       </div>
-    </div>
+    </dialog>
   )
 }
 

@@ -70,47 +70,44 @@ public class ScheduleConfigService {
 
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
-        
-        List<Appointment> existingAppointments = appointmentRepository.findByAppointmentDateBetween(startOfDay, endOfDay);
-        
+
+        List<Appointment> existingAppointments = appointmentRepository.findByAppointmentDateBetween(startOfDay,
+                endOfDay);
+
         // Obtiene los intervalos de las citas activas (PENDING o CONFIRMED)
         List<LocalDateTime> bookedAppointmentStarts = existingAppointments.stream()
                 .filter(a -> a.getStatus() == AppointmentStatus.PENDING || a.getStatus() == AppointmentStatus.CONFIRMED)
-            .map(Appointment::getAppointmentDate)
+                .map(Appointment::getAppointmentDate)
                 .toList();
 
         // Oculta cualquier bloque de una hora que se cruce con una cita activa.
         slots.removeIf(slot -> {
             LocalDateTime slotStart = date.atTime(slot);
             LocalDateTime slotEnd = slotStart.plusHours(1);
-            return bookedAppointmentStarts.stream().anyMatch(appointmentStart ->
-                slotStart.isBefore(appointmentStart.plusHours(1))
-                    && slotEnd.isAfter(appointmentStart));
+            return bookedAppointmentStarts.stream()
+                    .anyMatch(appointmentStart -> slotStart.isBefore(appointmentStart.plusHours(1))
+                            && slotEnd.isAfter(appointmentStart));
         });
 
         return slots;
     }
 
- // Incluye el nombre del evento especial para que la reserva pueda informarlo al cliente.
-public Map<String, AvailableDayResponse> getAvailableSlotsForWeek(LocalDate startDate) {
-    //  la semana nunca empieza antes de mañana
-    LocalDate tomorrow = LocalDate.now().plusDays(1);
-    LocalDate effectiveStart = startDate.isBefore(tomorrow) ? tomorrow : startDate;
+    public Map<String, AvailableDayResponse> getAvailableSlotsForWeek(LocalDate startDate) {
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        LocalDate effectiveStart = startDate.isBefore(tomorrow) ? tomorrow : startDate;
 
-    //el tipo de retorno con AvailableDayResponse
-    Map<String, AvailableDayResponse> weekSlots = new java.util.LinkedHashMap<>();
+        Map<String, AvailableDayResponse> weekSlots = new java.util.LinkedHashMap<>();
 
-    for (int i = 0; i < 7; i++) {
-        LocalDate currentDay = effectiveStart.plusDays(i);   // <- usa effectiveStart
-        Optional<ScheduleException> exceptionOpt = exceptionRepo.findByExceptionDate(currentDay);
-        boolean specialDay = exceptionOpt.isPresent();
-        String eventName = specialDay ? exceptionOpt.get().getReason() : null;
-        List<LocalTime> slots;
+        for (int i = 0; i < 7; i++) {
+            LocalDate currentDay = effectiveStart.plusDays(i); 
+            Optional<ScheduleException> exceptionOpt = exceptionRepo.findByExceptionDate(currentDay);
+            boolean specialDay = exceptionOpt.isPresent();
+            String eventName = specialDay ? exceptionOpt.get().getReason() : null;
+            List<LocalTime> slots;
 
-        // Fin de semana (hoy y días pasados ya no pueden aparecer gracias a effectiveStart)
-        if (currentDay.getDayOfWeek().getValue() >= 6) {
-            slots = List.of();
-        } else {
+            if (currentDay.getDayOfWeek().getValue() >= 6) {
+                slots = List.of();
+            } else {
                 slots = getAvailableSlotsForDate(currentDay);
             }
             weekSlots.put(currentDay.toString(), new AvailableDayResponse(slots, specialDay, eventName));

@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FileTextIcon, LockIcon, XIcon } from '@animateicons/react/lucide'
 import TermsSection from './TermsSection.tsx'
-import useDismiss from '../hooks/useDismiss.ts'
 
 type LegalTab = 'terms' | 'privacy'
 
@@ -10,17 +9,14 @@ interface TermsModalProps {
   onClose: () => void
 }
 
-function TermsModal({ onClose }: TermsModalProps) {
+function TermsModal({ onClose }: Readonly<TermsModalProps>) {
   const { t } = useTranslation()
-  const overlayRef = useRef<HTMLDivElement>(null)
+  const dialogRef = useRef<HTMLDialogElement>(null)
   const [activeTab, setActiveTab] = useState<LegalTab>('terms')
 
-  useDismiss({
-    ref: overlayRef,
-    isOpen: true,
-    onClose,
-    includeClickOutside: false,
-  })
+  useEffect(() => {
+    dialogRef.current?.showModal()
+  }, [])
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow
@@ -44,27 +40,22 @@ function TermsModal({ onClose }: TermsModalProps) {
     { title: t('legalModal.privacy4Title'), body: t('legalModal.privacy4Body') },
   ]
 
-  const handleOverlayClick = (event: React.MouseEvent) => {
-    if (event.target === overlayRef.current) onClose()
-  }
-
   const tabClassName = (tab: LegalTab) =>
     `inline-flex flex-1 items-center justify-center gap-xs rounded-full px-md py-sm font-body text-sm font-semibold transition-colors ${
       activeTab === tab ? 'bg-green-500 text-white' : 'bg-(--grey-100) text-body-text hover:bg-(--grey-200)'
     }`
 
   return (
-    <div
-      className="fixed inset-0 z-100 grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]"
-      ref={overlayRef}
-      onClick={handleOverlayClick}
+    <dialog
+      ref={dialogRef}
+      onClose={onClose}
+      onClick={(event) => {
+        if (event.target === dialogRef.current) onClose()
+      }}
+      aria-label={t('legalModal.title')}
+      className="m-auto max-h-[90vh] w-[min(680px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
-      <div
-        className="relative w-[min(680px,92vw)] max-h-[90vh] overflow-y-auto scrollbar-none rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
-        role="dialog"
-        aria-modal="true"
-        aria-label={t('legalModal.title')}
-      >
+      <div className="relative p-[28px_22px_30px]">
         <button
           type="button"
           className="absolute right-3 top-6.5 z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity duration-150 hover:opacity-65 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
@@ -111,7 +102,7 @@ function TermsModal({ onClose }: TermsModalProps) {
           )}
         </div>
       </div>
-    </div>
+    </dialog>
   )
 }
 

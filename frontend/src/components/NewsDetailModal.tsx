@@ -25,7 +25,6 @@ const TYPE_LABEL_KEY: Record<AnnouncementType,
         TRANSPORT: 'newspage.category6',
     };
 
-//Método para formatear la fecha de la noticia según el idioma actual
 function formatDate(
     iso: string|null|undefined,
     lang: string,
@@ -42,10 +41,9 @@ function formatDate(
 function NewsDetailModal({
     announcement,
     onClose,
-}: NewsDetailModalProps) {
+}: Readonly<NewsDetailModalProps>) {
     const { t, i18n } = useTranslation();
 
-    //Hook que se encarga de obtener y cargar las imágenes de la noticia
     const {
         images,
         loading,
@@ -53,14 +51,12 @@ function NewsDetailModal({
         fetchImages,
     } = useAnnouncementImages();
 
-    //Cada vez que cambia la noticia, se trae las imágenes desde el backend
     useEffect(() => {
         void fetchImages([announcement.id]);
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [announcement.id]);
 
-    //Se encarga de cerrar el modal cuando se presiona la tecla Escape y de deshabilitar el scroll del body mientras el modal está abierto
     useEffect(() => {
         const handleEscape = (event: KeyboardEvent) => {
         if (event.key === "Escape") {
@@ -70,43 +66,45 @@ function NewsDetailModal({
 
     document.addEventListener("keydown", handleEscape);
 
-    //Se guarda el overflow anterior del body para restaurarlo cuando se cierre el modal
     const previousOverflow = document.body.style.overflow;
-    //Se bloquea el scroll del body mientras el modal está abierto
     document.body.style.overflow = "hidden";
 
-    //Limpia el event listener y restaura el overflow del body cuando se cierra el modal
     return () => {
         document.removeEventListener("keydown", handleEscape);
         document.body.style.overflow = previousOverflow;
         };
     }, [onClose]);
 
-    //Obtenemos todas las imágenes que pertenezcan a la noticia seleccionada. En caso de que no hayan, se asigna un array vacío
     const announcementImages = images[announcement.id] ?? [];
 
-    //Busca específicamente la imagen de portada. Si no hay ninguna marcada como portada, entonces usa la primera imagen que esté disponible del array.
     const coverImage =
     announcementImages.find((image) => image.isCover) ??
     announcementImages[0];
 
-    //Todas las imágenes que no sean la portada pasan a formar parte de la galería. Si no hay, se le asigna un array vacío.
     const galleryImages = announcementImages.filter(
         (image) => !image.isCover,
     );
 
+    let galleryGridColumns = "grid-cols-1 sm:grid-cols-2 md:grid-cols-4"
+    if (galleryImages.length === 1) galleryGridColumns = "grid-cols-1"
+    else if (galleryImages.length === 2) galleryGridColumns = "grid-cols-1 sm:grid-cols-2"
+
     return (
-        //Fondo oscuro que cubre toda la pantalla y que al hacer click, cierra el modal.
         <div
-        className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-[16px] md:p-[30px]"
-        onClick={onClose}
+        className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]"
         >
-        {/*Contenedor Principal*/}
+        <button
+            type="button"
+            tabIndex={-1}
+            aria-label={t('admin.cancel')}
+            className="absolute inset-0 size-full cursor-default"
+            onClick={onClose}
+        />
+
         <article
             className="relative mx-auto w-full max-w-[1100px] rounded-[24px] bg-bg-page"
             onClick={(event) => event.stopPropagation()}
         >
-            {/* Cerrar */}
             <button
                 type="button"
                 onClick={onClose}
@@ -116,21 +114,16 @@ function NewsDetailModal({
                 <XIcon size={20} />
             </button>
 
-        {/*Contenido Interno*/}
         <div className="px-[22px] pb-[45px] pt-[40px] md:px-[55px] md:pb-[60px] md:pt-[55px]">
 
-          {/* Encabezado */}
             <header className="mx-auto max-w-[850px] text-center">
 
-            {/*Tipo de Noticia*/}
             <span className="inline-flex rounded-full bg-orange-500 px-[14px] py-[6px] font-body text-[11px] text-white">
                     {t(TYPE_LABEL_KEY[announcement.type])}
             </span>
-            {/* Título */}
             <h2 className="mt-[16px] font-heading text-[32px] font-bold leading-[1.15] text-heading md:text-[44px]">
                 {announcement.title}
             </h2>
-            {/* Fecha y Ubicación */}
             <div className="mt-[16px] flex flex-wrap items-center justify-center gap-x-[18px] gap-y-[8px] font-body text-[13px] text-neutral-500">
 
                 {announcement.eventDate && (
@@ -156,21 +149,18 @@ function NewsDetailModal({
             </div>
             </header>
 
-            {/* Estado de carga de las imágenes */}
                 {loading && (
                 <p className="mt-[35px] text-center font-body text-[14px] text-neutral-500">
                     {t("common.loading")}
                 </p>
             )}
 
-            {/* Error cargando imágenes */}
                 {error && (
                 <p className="mt-[35px] text-center font-body text-[14px] text-danger">
                     {error}
                 </p>
             )}
 
-            {/* Portada */}
                 {!loading && coverImage && (
                     <div className="mt-[40px] overflow-hidden rounded-[22px]">
                         <img
@@ -181,7 +171,6 @@ function NewsDetailModal({
                     </div>
                 )}
 
-            {/* Resumen generado por IA */}
                 {announcement.aiSummary && (
                     <section className="mx-auto mt-[40px] max-w-[950px] rounded-[20px] bg-gradient-to-br from-green-50 to-white p-[22px] text-left shadow-sm ring-1 ring-green-100 md:p-[28px]">
                         <div className="mb-[12px] inline-flex items-center gap-[6px] rounded-full bg-green-500 px-[12px] py-[6px]">
@@ -196,14 +185,12 @@ function NewsDetailModal({
                     </section>
                 )}
 
-            {/* Contenido */}
             <section className={`mx-auto max-w-[950px] text-left ${announcement.aiSummary ? 'mt-[30px]' : 'mt-[50px]'}`}>
                 <p className="whitespace-pre-line font-body text-[15px] leading-[1.85] text-body-text md:text-[16px]">
                     {announcement.content}
                     </p>
             </section>
 
-            {/* Galería de imágenes */}
                 {!loading && galleryImages.length > 0 && (
                     <section className="mt-[60px]">
 
@@ -212,13 +199,7 @@ function NewsDetailModal({
                 </h3>
 
                 <div
-                    className={`grid gap-[12px] ${
-                        galleryImages.length === 1
-                        ? "grid-cols-1"
-                        : galleryImages.length === 2
-                        ? "grid-cols-1 sm:grid-cols-2"
-                        : "grid-cols-1 sm:grid-cols-2 md:grid-cols-4"
-                    }`}
+                    className={`grid gap-[12px] ${galleryGridColumns}`}
                 >
                     {galleryImages.map((image) => (
                     <div

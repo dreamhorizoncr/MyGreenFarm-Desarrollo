@@ -6,11 +6,14 @@ import taller.multimedia.backend.model.appointment.AppointmentStatus;
 import taller.multimedia.backend.model.curriculum.Curriculum;
 import taller.multimedia.backend.repository.newsletter_subscriber.NewsletterSubscriberRepository;
 import taller.multimedia.backend.repository.newsletter_subscriber.SubscriberEmailProjection;
+import taller.multimedia.backend.service.translation.TranslationService;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +33,7 @@ public class EmailService {
     private final MessageSource messageSource;
     private final BrevoEmailService brevoEmailService;
     private final NewsletterSubscriberRepository newsletterRepository;
+    private final TranslationService translationService;
 
     @Value("${mail.support}")
     private String supportEmail;
@@ -43,11 +47,13 @@ public class EmailService {
     public EmailService(TemplateEngine templateEngine, 
                         MessageSource messageSource, 
                         BrevoEmailService brevoEmailService,
-                        NewsletterSubscriberRepository newsletterRepository) {
+                        NewsletterSubscriberRepository newsletterRepository,
+                        TranslationService translationService) {
         this.templateEngine = templateEngine;
         this.messageSource = messageSource;
         this.brevoEmailService = brevoEmailService;
         this.newsletterRepository = newsletterRepository;
+        this.translationService = translationService;
     }
 
     @Async
@@ -59,7 +65,7 @@ public class EmailService {
         context.setVariable("resetLink", resetLink);
         context.setVariable("supportEmail", supportEmail);
 
-        String html = templateEngine.process("email/reset-password", context);
+        String html = templateEngine.process("email/auth/reset-password", context);
 
         sendEmail(toEmail, "Cambio de contraseña", html);
     }
@@ -85,7 +91,7 @@ public class EmailService {
         String fecha = appointment.getAppointmentDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
         context.setVariable("appointmentDate", fecha);
 
-        String html = templateEngine.process("email/appointment-pending", context);
+        String html = templateEngine.process("email/appointments/appointment-pending", context);
         String subject = messageSource.getMessage("email.appointment.pending.subject", null, locale);
 
         sendEmail(appointment.getParentEmail(), subject, html);
@@ -99,8 +105,8 @@ public class EmailService {
         context.setVariable("status", appointment.getStatus().name());
 
         String template = (appointment.getStatus() == AppointmentStatus.CONFIRMED)
-                ? "email/appointment-confirmed"
-                : "email/appointment-cancelled";
+                ? "email/appointments/appointment-confirmed"
+                : "email/appointments/appointment-cancelled";
 
         String subjectKey = (appointment.getStatus() == AppointmentStatus.CONFIRMED)
                 ? "email.appointment.confirmed.subject"
@@ -146,7 +152,7 @@ public class EmailService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
             context.setVariable("appointmentDate", appointment.getAppointmentDate().format(formatter));
 
-            String html = templateEngine.process("email/appointment-reschedule", context);
+            String html = templateEngine.process("email/appointments/appointment-reschedule", context);
 
             String subject = messageSource.getMessage("email.appointment.reschedule.subject", null, locale);
 
@@ -166,7 +172,7 @@ public class EmailService {
         context.setVariable("applicantName", curriculum.getApplicantName());
         context.setVariable("vacancyTitle", vacancyTitle);
 
-        String html = templateEngine.process("email/application-received", context);
+        String html = templateEngine.process("email/applications/application-received", context);
         String subject = messageSource.getMessage("email.application.received.subject", null, locale);
 
         sendEmail(curriculum.getApplicantEmail(), subject, html);
@@ -178,7 +184,7 @@ public class EmailService {
         context.setVariable("supportEmail", supportEmail);
         context.setVariable("vacancyTitle", vacancyTitle);
 
-        String html = templateEngine.process("email/application-hired", context);
+        String html = templateEngine.process("email/applications/application-hired", context);
         String subject = messageSource.getMessage("email.application.hired.subject", null, locale);
 
         sendEmail(curriculum.getApplicantEmail(), subject, html);
@@ -196,7 +202,7 @@ public class EmailService {
             context.setVariable("parentNotes",
                     appointment.getParentNotes() != null ? appointment.getParentNotes() : "Ninguna");
 
-            String htmlContent = templateEngine.process("email/appointment-reminder", context);
+            String htmlContent = templateEngine.process("email/appointments/appointment-reminder", context);
 
             String subject;
             String lang = locale.getLanguage();
@@ -219,15 +225,51 @@ public class EmailService {
     }
 
     @Async
-    public void sendBroadcastEmail(List<SubscriberEmailProjection> recipients, String subject, String messageContent) {
+    public void sendBroadcastEmail(List<SubscriberEmailProjection> recipients, String subject,
+            String messageContent) {
+        Map<String, List<String>> translatedContentByLanguage = new HashMap<>();
+        Map<String, Long> recipientsByLanguage = new HashMap<>();
+        for (SubscriberEmailProjection recipient : recipients) {
+            recipientsByLanguage.merge(normalizeNewsletterLanguage(recipient.getLanguage()), 1L, Long::sum);
+        }
+        log.info("Newsletter recipients by saved language: {}", recipientsByLanguage);
+
         for (SubscriberEmailProjection recipient : recipients) {
             try {
-                Locale locale = Locale.forLanguageTag(recipient.getLanguage());
+                String targetLanguage = normalizeNewsletterLanguage(recipient.getLanguage());
+                Locale locale = Locale.forLanguageTag(targetLanguage);
+
+                List<String> translatedContent = translatedContentByLanguage.get(targetLanguage);
+                if (translatedContent == null) {
+                    try {
+                        translatedContent = translationService.translateBatchWithoutSaving(
+                                List.of(subject, messageContent), targetLanguage, "text/plain");
+                        if (translatedContent.size() != 2) {
+                            throw new IOException("Google Translate no devolvió el asunto y el mensaje.");
+                        }
+                        if (!subject.isBlank() && translatedContent.get(0).isBlank()) {
+                            throw new IOException("Google Translate devolvió un asunto vacío.");
+                        }
+                        if (!messageContent.isBlank() && translatedContent.get(1).isBlank()) {
+                            throw new IOException("Google Translate devolvió un mensaje vacío.");
+                        }
+                        if (messageContent.trim().length() > 1 && translatedContent.get(1).trim().length() <= 1) {
+                            log.warn("La traducción del cuerpo al idioma {} llegó truncada; se conservará el original.",
+                                    targetLanguage);
+                            translatedContent = List.of(translatedContent.get(0), messageContent);
+                        }
+                    } catch (Exception e) {
+                        log.warn("No se pudo traducir el boletín al idioma {}; se enviará el texto original.",
+                                targetLanguage, e);
+                        translatedContent = List.of(subject, messageContent);
+                    }
+                    translatedContentByLanguage.put(targetLanguage, translatedContent);
+                }
 
                 Context context = new Context(locale);
                 context.setVariable("supportEmail", supportEmail);
                 context.setVariable("frontendUrl", frontendUrl);
-                context.setVariable("broadcastMessage", messageContent);
+                context.setVariable("broadcastMessage", translatedContent.get(1));
                 context.setVariable("recipientEmail", recipient.getEmail());
 
                 boolean isSubscriber = newsletterRepository.existsByEmailAndIsActiveTrue(recipient.getEmail());
@@ -235,11 +277,20 @@ public class EmailService {
 
                 String html = templateEngine.process("email/newsletter_suscriber/broadcast-newsletter", context);
 
-                sendEmail(recipient.getEmail(), subject, html);
+                sendEmail(recipient.getEmail(), translatedContent.get(0), html);
 
             } catch (Exception e) {
-                log.error("Error al enviar boletín masivo a {}: {}", recipient.getEmail(), e.getMessage());
+                log.error("Error al enviar boletín masivo a {}: {}", recipient.getEmail(), e.getMessage(), e);
             }
         }
     }
+
+    private String normalizeNewsletterLanguage(String language) {
+        if (language == null || language.isBlank()) {
+            return "es";
+        }
+        String normalized = language.toLowerCase(Locale.ROOT).split("[-_]")[0];
+        return List.of("es", "en", "fr").contains(normalized) ? normalized : "es";
+    }
+
 }

@@ -5,12 +5,12 @@ import Button from '../../ui/Button.tsx'
 import { userStorage } from '../../../utils/userStorage.ts'
 import type { BlogPost, BlogPostInput } from '../../../types/forum.ts'
 
-const ALLOWED_IMAGE_TYPES = [
+const ALLOWED_IMAGE_TYPES = new Set([
   'image/png',
   'image/jpg',
   'image/jpeg',
   'image/svg+xml',
-]
+])
 
 const MAX_TITLE = 120
 const MAX_TOPIC = 60
@@ -30,7 +30,7 @@ interface BlogPostFormModalProps {
   onSubmit: (input: BlogPostInput) => void
 }
 
-function BlogPostFormModal({ post, onClose, onSubmit }: BlogPostFormModalProps) {
+function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormModalProps>) {
   const { t } = useTranslation()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -87,7 +87,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: BlogPostFormModalProps) 
 
     if (!file) return
 
-    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
       setImageError(t('adminForum.invalidImageType'))
       return
     }
@@ -134,13 +134,20 @@ function BlogPostFormModal({ post, onClose, onSubmit }: BlogPostFormModalProps) 
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-[16px] md:p-[30px]"
-      onClick={onClose}
+      className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]"
     >
+      <button
+        type="button"
+        tabIndex={-1}
+        aria-label={t('adminForum.close')}
+        className="absolute inset-0 size-full cursor-default"
+        onClick={onClose}
+      />
+
       <form
         onSubmit={handleSubmit}
         onClick={(event) => event.stopPropagation()}
-        className="mx-auto my-[20px] w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg md:my-[40px] md:p-xl"
+        className="relative mx-auto my-[20px] w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg md:my-[40px] md:p-xl"
       >
         <div className="flex items-center justify-between gap-md">
           <h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -336,13 +343,15 @@ function BlogPostFormModal({ post, onClose, onSubmit }: BlogPostFormModalProps) 
       </form>
 
       {pendingChanges && (
-        <div className="fixed inset-0 z-[100] grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]">
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label={t('adminForum.confirmChangesTitle')}
-            className="relative max-h-[90vh] w-[min(620px,92vw)] overflow-y-auto rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
-          >
+        <dialog
+          ref={(el) => {
+            if (el && !el.open) el.showModal()
+          }}
+          onClose={() => { setPendingChanges(null); setConfirmationText('') }}
+          aria-label={t('adminForum.confirmChangesTitle')}
+          className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+        >
+          <div className="relative p-[28px_22px_30px]">
             <button
               type="button"
               className="absolute right-3 top-[26px] z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity hover:opacity-65"
@@ -385,7 +394,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: BlogPostFormModalProps) 
               </div>
             </div>
           </div>
-        </div>
+        </dialog>
       )}
     </div>
   )

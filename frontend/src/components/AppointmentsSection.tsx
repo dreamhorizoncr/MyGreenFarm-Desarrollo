@@ -56,12 +56,11 @@ function AppointmentsSection() {
         : 'bg-[var(--grey-100)] text-body-text hover:bg-[var(--grey-200)]'
     }`
 
-  const badgeClassName = (status: AppointmentStatus) =>
-    status === 'CONFIRMED'
-      ? 'bg-green-100 text-green-700'
-      : status === 'CANCELLED'
-        ? 'bg-red-100 text-red-700'
-        : 'bg-[var(--info-100)] text-[var(--info-700)]'
+  const badgeClassName = (status: AppointmentStatus) => {
+    if (status === 'CONFIRMED') return 'bg-green-100 text-green-700'
+    if (status === 'CANCELLED') return 'bg-red-100 text-red-700'
+    return 'bg-[var(--info-100)] text-[var(--info-700)]'
+  }
 
   const formatDate = (iso: string) => {
     const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
@@ -146,23 +145,20 @@ function AppointmentsSection() {
         ) : (
           <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
             {filteredAppointments.map((appointment) => (
-              <article
+              <div
                 key={appointment.id}
-                role="button"
-                tabIndex={0}
-                aria-label={t('teacherAppointments.viewDetails')}
-                onClick={() => setAppointmentToView(appointment)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault()
-                    setAppointmentToView(appointment)
-                  }
-                }}
-                className={`flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
+                className={`relative flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${
                   actionId === appointment.id ? 'opacity-60' : ''
                 }`}
               >
-                <header className="flex items-center justify-between gap-sm">
+                <button
+                  type="button"
+                  onClick={() => setAppointmentToView(appointment)}
+                  aria-label={t('teacherAppointments.viewDetails')}
+                  className="absolute inset-0 z-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+                />
+
+                <header className="relative z-10 flex items-center justify-between gap-sm">
                   <span className={`inline-flex rounded-full px-sm py-2xs font-body text-xs font-semibold ${badgeClassName(appointment.status)}`}>
                     {statusLabel(appointment.status)}
                   </span>
@@ -208,7 +204,7 @@ function AppointmentsSection() {
                 <p className="m-0 mt-md font-body text-sm font-semibold text-link">
                   {t('teacherAppointments.viewDetails')}
                 </p>
-              </article>
+              </div>
             ))}
           </div>
         )

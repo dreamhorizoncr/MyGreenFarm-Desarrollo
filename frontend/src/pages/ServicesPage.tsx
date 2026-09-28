@@ -19,13 +19,13 @@ function PlanCard({
   isLoading,
   exchangeRate,
   idioma,
-}: {
+}: Readonly<{
   plan: ServicePlan
   onSubscribe: (plan: ServicePlan) => void
   isLoading?: boolean
   exchangeRate: ExchangeRate | null
   idioma: string
-}) {
+}>) {
   const { t } = useTranslation()
   const [currency, setCurrency] = useState<Currency>('USD')
   const price = exchangeRate

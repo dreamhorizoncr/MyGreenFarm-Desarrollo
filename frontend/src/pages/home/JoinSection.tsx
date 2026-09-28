@@ -1,12 +1,28 @@
+import { useState} from 'react'
 import { CirclePlusIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import pollitos from '../../assets/imgs/pollitos.svg'
 import nubesPink from '../../assets/imgs/nubesPink.svg'
 import Container from '../../components/home/Container.tsx'
 import PillButton from '../../components/ui/PillButton.tsx'
+import { useNewsletter } from '../../hooks/useNewsletter.ts'
 
 function JoinSection() {
   const { t } = useTranslation()
+  const [email, setEmail] = useState('')
+  const { subscribe, loading, error, successMessage } = useNewsletter()
+
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!email.trim()) return
+
+    try {
+      await subscribe(email.trim())
+      setEmail('')
+    } catch {
+      // Manejado por el hook
+    }
+  }
 
   return (
     <section id="join" className="relative flex min-h-[100svh] w-full flex-col">
@@ -45,18 +61,35 @@ function JoinSection() {
                 {t('home.join.description')}
               </p>
 
-              <form className="flex w-full max-w-[30rem] flex-col gap-sm sm:flex-row">
+              <form onSubmit={handleSubmit} className="flex w-full max-w-[30rem] flex-col gap-sm sm:flex-row">
                 <input
                   type="email"
                   name="email"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder={t('home.join.emailPlaceholder')}
+                  disabled={loading}
                   className="h-12 w-full rounded-full border-none bg-white px-md font-body text-body-sm text-body-text outline-none placeholder:text-[var(--grey-700)] sm:flex-1"
                 />
-                <PillButton type="submit" className="h-12 w-full bg-green-500 font-body text-white sm:w-auto">
-                  {t('home.join.subscribe')}
+                <PillButton type="submit" disabled={loading} className="h-12 w-full bg-green-500 font-body text-white disabled:opacity-70 sm:w-auto">
+                  {loading ? t('home.join.subscribing') : t('home.join.subscribe')}
                 </PillButton>
+
+                
               </form>
+
+              {error && (
+                  <p className="m-0 max-w-[30rem] font-body text-body-sm text-red-700 px-md py rounded-full">
+                    {error}
+                  </p>
+                )}
+
+                {successMessage && (
+                  <p className="m-0 max-w-[30rem] font-body text-body-sm text-green-800 px-md py rounded-full">
+                    {successMessage}
+                  </p>
+                )}
             </div>
           </div>
         </Container>

@@ -84,7 +84,7 @@ function AdminServicePlansPage() {
             {plans.map(plan => (
               <div
                 key={plan.id}
-                className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                className="flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
                   {plan.imageUrl ? (
@@ -102,7 +102,7 @@ function AdminServicePlansPage() {
                   )}
                 </div>
 
-                <div className="flex flex-col gap-sm p-lg">
+                <div className="flex flex-1 flex-col gap-sm p-lg">
                   <h3 className="m-0 font-heading text-h5 font-bold text-heading line-clamp-1">
                     {plan.name}
                   </h3>
@@ -134,7 +134,7 @@ function AdminServicePlansPage() {
                     </p>
                   )}
 
-                  <div className="flex justify-end gap-sm pt-sm">
+                  <div className="mt-auto flex justify-end gap-sm pt-sm">
                     <button
                       type="button"
                       onClick={() => setEditingPlan(plan)}
@@ -203,21 +203,24 @@ function AdminServicePlansPage() {
       )}
 
       {confirmDeleteId && planToDelete && (
-        <div
-          className="fixed inset-0 z-[100] grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
+        <dialog
+          ref={(el) => {
+            if (el && !el.open) el.showModal()
+          }}
+          onClose={() => {
+            setConfirmDeleteId(null)
+            setConfirmText('')
+          }}
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
               setConfirmDeleteId(null)
               setConfirmText('')
             }
           }}
+          aria-label={t('admin.servicios.deleteTitle')}
+          className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
         >
-          <div
-            className="relative max-h-[90vh] w-[min(620px,92vw)] overflow-y-auto scrollbar-none rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
-            role="dialog"
-            aria-modal="true"
-            aria-label={t('admin.servicios.deleteTitle')}
-          >
+          <div className="relative p-[28px_22px_30px]">
             <button
               type="button"
               className="absolute right-3 top-[26px] z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity duration-150 hover:opacity-65 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
@@ -279,7 +282,7 @@ function AdminServicePlansPage() {
             </div>
             </div>
           </div>
-        </div>
+        </dialog>
       )}
     </AdminLayout>
   )

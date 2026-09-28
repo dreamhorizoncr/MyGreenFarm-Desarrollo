@@ -6,7 +6,7 @@ interface AboutWallCardProps {
   community?: boolean
 }
 
-function AboutWallCard({ onGoToCommunity, community = false }: AboutWallCardProps) {
+function AboutWallCard({ onGoToCommunity, community = false }: Readonly<AboutWallCardProps>) {
   const { t } = useTranslation()
 
   const handleScrollToFeed = () => {

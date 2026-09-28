@@ -14,7 +14,7 @@ interface PublishExperienceModalProps {
 function PublishExperienceModal({
   onClose,
   onPublish,
-}: PublishExperienceModalProps) {
+}: Readonly<PublishExperienceModalProps>) {
   const { t } = useTranslation()
   const [name, setName] = useState('')
   const [content, setContent] = useState('')
@@ -61,9 +61,16 @@ function PublishExperienceModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-[16px] md:p-[30px]"
-      onClick={onClose}
+      className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]"
     >
+      <button
+        type="button"
+        tabIndex={-1}
+        aria-label={t('forum.community.cancel')}
+        className="absolute inset-0 size-full cursor-default"
+        onClick={onClose}
+      />
+
       <article
         className="relative mx-auto my-[20px] w-full max-w-[640px] rounded-[24px] bg-white"
         onClick={(event) => event.stopPropagation()}

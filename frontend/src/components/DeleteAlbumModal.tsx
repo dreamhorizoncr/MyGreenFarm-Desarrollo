@@ -1,8 +1,7 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
-import useDismiss from '../hooks/useDismiss.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { Gallery } from '../types/gallery.ts'
 
@@ -12,9 +11,9 @@ interface DeleteAlbumModalProps {
   onClose: () => void
 }
 
-function DeleteAlbumModal({ gallery, onConfirm, onClose }: DeleteAlbumModalProps) {
+function DeleteAlbumModal({ gallery, onConfirm, onClose }: Readonly<DeleteAlbumModalProps>) {
   const { t } = useTranslation()
-  const overlayRef = useRef<HTMLDivElement>(null)
+  const dialogRef = useRef<HTMLDialogElement>(null)
 
   const [confirmText, setConfirmText] = useState('')
   const [deleting, setDeleting] = useState(false)
@@ -22,12 +21,9 @@ function DeleteAlbumModal({ gallery, onConfirm, onClose }: DeleteAlbumModalProps
 
   const matchesName = confirmText.trim() === gallery.title
 
-  useDismiss({
-    ref: overlayRef,
-    isOpen: true,
-    onClose,
-    includeClickOutside: false,
-  })
+  useEffect(() => {
+    dialogRef.current?.showModal()
+  }, [])
 
   const handleConfirm = async () => {
     if (!matchesName) return
@@ -43,22 +39,17 @@ function DeleteAlbumModal({ gallery, onConfirm, onClose }: DeleteAlbumModalProps
     }
   }
 
-  const handleOverlayClick = (event: React.MouseEvent) => {
-    if (event.target === overlayRef.current) onClose()
-  }
-
   return (
-    <div
-      className="fixed inset-0 z-[100] grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]"
-      ref={overlayRef}
-      onClick={handleOverlayClick}
+    <dialog
+      ref={dialogRef}
+      onClose={onClose}
+      onClick={(event) => {
+        if (event.target === dialogRef.current) onClose()
+      }}
+      aria-label={t('admin.gallery.deleteAlbumTitle')}
+      className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
-      <div
-        className="relative w-[min(620px,92vw)] max-h-[90vh] overflow-y-auto rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
-        role="dialog"
-        aria-modal="true"
-        aria-label={t('admin.gallery.deleteAlbumTitle')}
-      >
+      <div className="relative p-[28px_22px_30px]">
         <button
           type="button"
           className="absolute right-3 top-[26px] z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity duration-150 hover:opacity-65 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
@@ -122,7 +113,7 @@ function DeleteAlbumModal({ gallery, onConfirm, onClose }: DeleteAlbumModalProps
           </div>
         </div>
       </div>
-    </div>
+    </dialog>
   )
 }
 

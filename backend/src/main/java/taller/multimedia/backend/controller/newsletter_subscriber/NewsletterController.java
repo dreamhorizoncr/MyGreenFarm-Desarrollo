@@ -6,10 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import taller.multimedia.backend.dto.newsletter_subscriber.BroadcastEmail;
 import taller.multimedia.backend.dto.newsletter_subscriber.SubscriberInfo;
 import taller.multimedia.backend.model.newsletter_subscriber.NewsletterSubscriber;
 import taller.multimedia.backend.repository.newsletter_subscriber.NewsletterSubscriberRepository;
+import taller.multimedia.backend.repository.parent.ParentRepository;
 import taller.multimedia.backend.service.newsletter_subscriber.BroadcastService;
 import taller.multimedia.backend.service.newsletter_subscriber.NewsletterService;
 
@@ -18,15 +21,30 @@ import taller.multimedia.backend.service.newsletter_subscriber.NewsletterService
 public class NewsletterController {
 
     private final NewsletterSubscriberRepository newsletterRepository;
+    private final ParentRepository parentRepository;
     private final BroadcastService broadcastService;
     private final NewsletterService newsletterService;
 
     public NewsletterController(NewsletterSubscriberRepository newsletterRepository,
+                                ParentRepository parentRepository,
                                 BroadcastService broadcastService,
                                 NewsletterService newsletterService) {
         this.newsletterRepository = newsletterRepository;
+        this.parentRepository = parentRepository;
         this.broadcastService = broadcastService;
         this.newsletterService = newsletterService;
+    }
+
+    @GetMapping("/subscribers")
+    @PreAuthorize("hasAnyRole('OWNER')")
+    public ResponseEntity<List<String>> getSubscriberEmails() {
+        return ResponseEntity.ok(newsletterRepository.findAllActiveSubscriberEmails());
+    }
+
+    @GetMapping("/parents")
+    @PreAuthorize("hasAnyRole('OWNER')")
+    public ResponseEntity<List<String>> getParentEmails() {
+        return ResponseEntity.ok(parentRepository.findAllActiveParentEmails());
     }
 
     // Endpoint para que los usuarios se suscriban desde la nueva sección
@@ -43,7 +61,7 @@ public class NewsletterController {
 
     // Endpoint para no recibir más correos
     @DeleteMapping("/unsubscribe")
-    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<String> unsubscribe(@RequestParam String email) {
         try {
             newsletterService.unsubscribe(email);
@@ -55,7 +73,7 @@ public class NewsletterController {
 
     // Endpoint para disparar el envío masivo
     @PostMapping("/broadcast")
-    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<String> sendBroadcast(@Valid @RequestBody BroadcastEmail dto) {
         try {
             broadcastService.sendBroadcast(dto);

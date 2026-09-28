@@ -31,6 +31,7 @@ public class ParentService {
         parent.setFirstName(dto.getFirstName().trim());
         parent.setLastName(dto.getLastName().trim());
         parent.setLanguage(resolverLangCode(dto.getLanguage()));
+        parent.setIsActive(true);
 
         return parentRepository.save(parent);
     }
@@ -129,5 +130,16 @@ public class ParentService {
     public void deleteParent(Integer id) {
         Parent parent = getParentById(id);
         parentRepository.delete(parent);
+    }
+
+    public void unsubscribeFromNewsletter(String email) {
+        String cleanEmail = sanitizeEmail(email);
+        Parent parent = parentRepository.findByEmail(cleanEmail)
+                .orElseThrow(() -> new RuntimeException("El padre no se encuentra registrado."));
+
+        if (parent.isActiveForNewsletter()) {
+            parent.setIsActive(false);
+            parentRepository.save(parent);
+        }
     }
 }
