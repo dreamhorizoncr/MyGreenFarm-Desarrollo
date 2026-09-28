@@ -78,7 +78,7 @@ public class NewsletterService {
         );
 
         if (!allowedDomains.contains(domain)) {
-            throw new RuntimeException("Solo se permiten correos de proveedores comunes (Gmail, Hotmail, Outlook, etc.).");
+            throw new RuntimeException("Solo se permiten correos de proveedores comunes (Gmail, Hotmail, Outlook, etc).");
         }
 
         return cleanEmail;

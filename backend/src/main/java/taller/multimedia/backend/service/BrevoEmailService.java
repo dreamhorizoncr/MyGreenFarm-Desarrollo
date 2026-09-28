@@ -23,7 +23,7 @@ public class BrevoEmailService {
 
     public BrevoEmailService(BrevoProperties brevoProperties) {
         this.brevoProperties = brevoProperties;
-        this.httpClient = new OkHttpClient(); // o reutiliza el client que ya uses para Google Translation
+        this.httpClient = new OkHttpClient();
         this.objectMapper = new ObjectMapper();
     }
 

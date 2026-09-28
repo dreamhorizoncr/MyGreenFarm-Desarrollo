@@ -90,7 +90,7 @@ function AdminExpedientsPage() {
             <button
               type="button"
               onClick={() => setIsCreateModalOpen(true)}
-              className="group flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-heading text-white transition-all duration-300 hover:scale-105"
+              className="group flex h-12 w-12 shrink-0 items-center justify-center bg-orange-500 rounded-full bg-heading text-white transition-all duration-300 hover:scale-105"
               aria-label="Agregar expediente"
               title="Agregar expediente"
             >

@@ -34,7 +34,10 @@ apiClient.interceptors.response.use(
     }
 
     const url = error.config?.url ?? ''
-    if (error.response?.status === 401 && !url.startsWith('/auth/')) {
+
+    const isPublicRoute = url.startsWith('/auth/') || url.includes('/newsletter/subscribe')
+
+    if (error.response?.status === 401 && !isPublicRoute) {
       tokenStorage.clear()
       window.dispatchEvent(new Event('mgf:unauthorized'))
     }
