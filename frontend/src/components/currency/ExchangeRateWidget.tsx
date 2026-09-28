@@ -61,7 +61,7 @@ export function ExchangeRateWidget({ data, loading, error }: ExchangeRateWidgetP
             role="dialog"
             aria-modal="true"
             aria-labelledby="exchange-rate-title"
-            className="relative w-[min(520px,94vw)] rounded-3xl border border-green-500 bg-white p-lg shadow-xl animate-[modal-in_0.2s_ease-out]"
+            className="relative w-[min(520px,94vw)] rounded-3xl border border-neutral-200 bg-white p-lg shadow-xl animate-[modal-in_0.2s_ease-out]"
           >
             <button
               type="button"
@@ -96,14 +96,14 @@ export function ExchangeRateWidget({ data, loading, error }: ExchangeRateWidgetP
                     { symbol: '$', name: t('moneda.currency.USD'), sell: data.usdSell },
                     { symbol: '\u20ac', name: t('moneda.currency.EUR'), sell: data.eurSell },
                   ].map((row) => (
-                    <div key={row.symbol} className="flex items-center justify-between gap-sm rounded-2xl border border-neutral-200 bg-transparent p-md">
-                      <div className="flex items-center gap-sm">
-                        <span className="flex size-12 items-center justify-center rounded-full bg-transparent font-heading text-2xl font-bold text-heading">
+                    <div key={row.symbol} className="flex min-w-0 items-center justify-between gap-xs rounded-2xl border border-neutral-200 bg-transparent px-sm py-md">
+                      <div className="flex min-w-0 flex-1 items-center gap-xs">
+                        <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-transparent font-heading text-2xl font-bold text-heading">
                           {row.symbol}
                         </span>
-                        <span className="font-heading text-h6 font-bold text-heading">{row.name}</span>
+                        <span className="min-w-0 font-heading text-body-sm font-bold text-heading">{row.name}</span>
                       </div>
-                      <span className="font-heading text-h5 font-bold text-heading">
+                      <span className="shrink-0 whitespace-nowrap font-heading text-h6 font-bold text-heading">
                         {'\u20a1'}{formatCurrency(row.sell, 'CRC', locale)}
                       </span>
                     </div>
