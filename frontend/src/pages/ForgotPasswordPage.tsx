@@ -7,10 +7,12 @@ import AuthLayout from "../layout/AuthLayout.tsx";
 import { useForgotPassword } from "../hooks/useForgotPassword.ts";
 import { validateEmail } from "../utils/validators.ts";
 import { notify } from "../utils/notifications.ts";
+import { userStorage } from "../utils/userStorage.ts";
 import i18n from "../i18n/index.ts";
 
 function ForgotPasswordPage() {
   const { t } = useTranslation();
+  const isAuthenticated = !!userStorage.getUser();
   const [email, setEmail] = useState("");
   const [emailValidationError, setEmailValidationError] = useState<
     string | null
@@ -53,7 +55,7 @@ function ForgotPasswordPage() {
   return (
     <AuthLayout
       overtitle={t("forgotPassword.overtitle")}
-      closeTo="/login"
+      closeTo={isAuthenticated ? "/profile" : "/login"}
       contentClassName="max-w-[303px] md:max-w-[430px]"
     >
       {/* Título */}
