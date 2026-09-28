@@ -881,6 +881,33 @@ export default {
     rescheduledToastDescription: "Le parent ou le tuteur a été notifié.",
     rescheduleErrorToastTitle: "Impossible de reprogrammer le rendez-vous",
   },
+  moneda: {
+    convertTo: "Afficher le prix en",
+    sellRate: "Taux de vente",
+    todayRate: "Taux indicatif",
+    priceDisclaimer: "Le prix converti est indicatif et peut varier selon le taux appliqué au moment du paiement.",
+    title: "Convertisseur de devises",
+    description:
+      "Convertissez entre colones, dollars et euros avec le taux du jour de BAC Credomatic.",
+    amount: "Montant",
+    from: "Convertir depuis",
+    to: "Convertir en",
+    swap: "Inverser les devises",
+    sideLabel: "Je veux",
+    buy: "Acheter",
+    sell: "Vendre",
+    youReceive: "Vous recevriez",
+    sourceAndDate: "Taux de {{source}} au {{rateDate}}",
+    approx: "≈",
+    loading: "Chargement du taux de change...",
+    error: "Impossible de charger le taux de change.",
+    unavailable: "Le taux de change n'est pas disponible pour le moment.",
+    currency: {
+      CRC: "Colones",
+      USD: "Dollar américain",
+      EUR: "Euro",
+    },
+  },
   services: {
     title: "Nos Services",
     description:
