@@ -134,6 +134,11 @@ public class TranslationService {
         return result;
     }
 
+    public List<String> translateBatchWithoutSaving(List<String> texts, String targetLanguage,
+            String mimeType) throws IOException {
+        return callTranslateApiBatch(texts, null, targetLanguage, mimeType);
+    }
+
     private String unescapeHtml(String text) {
         return StringEscapeUtils.unescapeHtml4(text);
     }
@@ -143,14 +148,25 @@ public class TranslationService {
     }
 
     private List<String> callTranslateApiBatch(List<String> texts, String targetLanguage) throws IOException {
+        return callTranslateApiBatch(texts, null, targetLanguage, null);
+    }
+
+    private List<String> callTranslateApiBatch(List<String> texts, String sourceLanguage,
+            String targetLanguage, String mimeType) throws IOException {
         googleCredentials.refreshIfExpired();
         String accessToken = googleCredentials.getAccessToken().getTokenValue();
 
         String url = "https://translation.googleapis.com/v3/projects/" + projectId + "/locations/global:translateText";
 
-        Map<String, Object> body = Map.of(
-                "contents", texts,
-                "targetLanguageCode", targetLanguage);
+        Map<String, Object> body = new HashMap<>();
+        body.put("contents", texts);
+        body.put("targetLanguageCode", targetLanguage);
+        if (sourceLanguage != null && !sourceLanguage.isBlank()) {
+            body.put("sourceLanguageCode", sourceLanguage);
+        }
+        if (mimeType != null && !mimeType.isBlank()) {
+            body.put("mimeType", mimeType);
+        }
         String jsonBody = objectMapper.writeValueAsString(body);
 
         Request request = new Request.Builder()
@@ -169,6 +185,9 @@ public class TranslationService {
             for (JsonNode node : root.path("translations")) {
                 String translatedText = node.path("translatedText").asString();
                 results.add(unescapeHtml(translatedText));
+            }
+            if (results.size() != texts.size()) {
+                throw new IOException("Google Translate devolvió una cantidad inesperada de traducciones.");
             }
             return results;
         }

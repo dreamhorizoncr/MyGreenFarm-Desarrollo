@@ -24,6 +24,21 @@ function translateKnownMessage(message: string): string {
   if (message === MAX_FEATURED_MESSAGE) {
     return i18n.t('admin.gallery.maxFeaturedReached')
   }
+  if (message === 'Este correo ya se encuentra suscrito activamente al boletín.') {
+    return i18n.t('home.join.emailAlreadySubscribed')
+  }
+  if (message === 'El correo electrónico es obligatorio.') {
+    return i18n.t('home.join.emailRequired')
+  }
+  if (message === 'El formato del correo electrónico no es válido.') {
+    return i18n.t('home.join.emailInvalid')
+  }
+  if (message === 'El dominio del correo no es válido.') {
+    return i18n.t('home.join.domainInvalid')
+  }
+  if (message.startsWith('Solo se permiten correos de proveedores comunes')) {
+    return i18n.t('home.join.emailProviderNotAllowed')
+  }
   return message
 }
 
@@ -37,9 +52,7 @@ function messageFromBody(data: unknown): string | undefined {
   }
 
   if (typeof data === 'string') {
-    return data === CALENDAR_AVAILABILITY_MESSAGE
-      ? i18n.t('common.calendarAvailabilityError')
-      : data
+    return translateKnownMessage(data)
   }
 
   return undefined

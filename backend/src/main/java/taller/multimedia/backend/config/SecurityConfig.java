@@ -132,6 +132,7 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, "/api/service-plans/onvo").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/payments/create-checkout-session").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/service-plans/*/checkout").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/newsletter/subscribe").permitAll()
             .requestMatchers("/api/service-plans/webhooks/**").permitAll()
             .requestMatchers(request -> !request.getRequestURI().startsWith("/api")).permitAll()
             .anyRequest().authenticated())
