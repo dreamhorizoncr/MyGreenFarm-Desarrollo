@@ -39,7 +39,7 @@ function FooterColumn({ titleKey, links }: Readonly<FooterColumnData>) {
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="font-body text-body-sm text-white"
+                    className="font-body text-body-sm text-white underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
                     {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                   >
                     {label}

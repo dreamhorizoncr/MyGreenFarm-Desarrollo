@@ -8,10 +8,12 @@ import AuthLayout from '../layout/AuthLayout.tsx'
 import { useResetPassword } from '../hooks/useResetPassword.ts'
 import { validatePassword } from '../utils/validators.ts'
 import { notify } from '../utils/notifications.ts'
+import { userStorage } from '../utils/userStorage.ts'
 import i18n from '../i18n/index.ts'
 
 function ResetPasswordPage() {
   const { t } = useTranslation();
+  const isAuthenticated = !!userStorage.getUser();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
 
@@ -66,7 +68,7 @@ function ResetPasswordPage() {
   };
 
   return (
-    <AuthLayout overtitle={t('resetPassword.overtitle')} closeTo="/login">
+    <AuthLayout overtitle={t('resetPassword.overtitle')} closeTo={isAuthenticated ? '/profile' : '/login'}>
       {/*Título*/}
       <h2 className="mb-[50px] text-left font-heading text-[28px] leading-none text-heading md:text-[42px]">
         {t('resetPassword.title')}
@@ -148,13 +150,13 @@ function ResetPasswordPage() {
             </div>
           )}
 
-          {/*Volver al inicio de sesión*/}
+          {/*Volver al inicio de sesión o al perfil*/}
           <p className="mt-[35px] text-center">
             <Link
-              to="/login"
+              to={isAuthenticated ? '/profile' : '/login'}
               className="font-link text-[14px] text-heading transition-opacity hover:opacity-70"
             >
-              {t('resetPassword.backToLogin')}
+              {isAuthenticated ? t('resetPassword.backToProfile') : t('resetPassword.backToLogin')}
             </Link>
           </p>
         </form>

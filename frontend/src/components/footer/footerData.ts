@@ -8,9 +8,12 @@ export const footerColumns = [
       },
       {
         label: 'footer.contactPhone',
-        href: 'tel:+506 8327 8347',
+        href: 'https://wa.me/50683278347',
       },
-      { label: 'footer.contactAddress' },
+      {
+        label: 'footer.contactAddress',
+        href: 'https://www.google.com/maps/search/?api=1&query=My+Green+Farm+JHGC%2BF6+Liberia+Guanacaste',
+      },
     ],
   },
 ] as const
