@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { FileImageIcon, XIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import Button from '../../ui/Button.tsx'
-import { userStorage } from '../../../utils/userStorage.ts'
 import type { BlogPost, BlogPostInput } from '../../../types/forum.ts'
 
 const ALLOWED_IMAGE_TYPES = new Set([
@@ -14,8 +13,6 @@ const ALLOWED_IMAGE_TYPES = new Set([
 
 const MAX_TITLE = 120
 const MAX_TOPIC = 60
-const MAX_NAME = 60
-const MAX_ROLE = 80
 const MAX_ALT = 140
 const MAX_CONTENT = 4000
 
@@ -39,21 +36,15 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
       return {
         title: post.title,
         topic: post.topic,
-        authorName: post.authorName,
-        authorRole: post.authorRole,
         content: post.content,
         imageUrl: post.imageUrl,
         imageAlt: post.imageAlt,
       }
     }
 
-    const user = userStorage.getUser()
-
     return {
       title: '',
       topic: '',
-      authorName: user ? `${user.firstName} ${user.lastName}`.trim() : '',
-      authorRole: t('adminForum.defaultRole'),
       content: '',
     }
   })
@@ -95,13 +86,13 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
     setImageError('')
     setAltError('')
     setImage({ file, previewUrl: URL.createObjectURL(file) })
-    setForm((current) => ({ ...current, imageAlt: '' }))
+    setForm((current) => ({ ...current, imageAlt: '', removeImage: false }))
   }
 
   function removeImage() {
     if (image) URL.revokeObjectURL(image.previewUrl)
     setImage(null)
-    setForm((current) => ({ ...current, imageUrl: undefined, imageAlt: '' }))
+    setForm((current) => ({ ...current, imageUrl: undefined, imageAlt: '', removeImage: true }))
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -115,11 +106,11 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
     const input = {
       title: form.title.trim(),
       topic: form.topic.trim(),
-      authorName: form.authorName.trim(),
-      authorRole: form.authorRole.trim(),
       content: form.content.trim(),
       imageUrl: image ? image.previewUrl : form.imageUrl,
       imageAlt: form.imageAlt?.trim() || undefined,
+      imageFile: image?.file,
+      removeImage: form.removeImage,
     }
 
     if (post) {
@@ -191,35 +182,6 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
                 setForm({ ...form, topic: event.target.value })
               }
               placeholder={t('adminForum.postTopicPlaceholder')}
-              className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
-            />
-          </label>
-
-          <label className="font-body text-sm font-semibold text-heading">
-            {t('adminForum.authorName')}
-
-            <input
-              required
-              maxLength={MAX_NAME}
-              value={form.authorName}
-              onChange={(event) =>
-                setForm({ ...form, authorName: event.target.value })
-              }
-              className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
-            />
-          </label>
-
-          <label className="font-body text-sm font-semibold text-heading">
-            {t('adminForum.authorRole')}
-
-            <input
-              required
-              maxLength={MAX_ROLE}
-              value={form.authorRole}
-              onChange={(event) =>
-                setForm({ ...form, authorRole: event.target.value })
-              }
-              placeholder={t('adminForum.defaultRole')}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
           </label>

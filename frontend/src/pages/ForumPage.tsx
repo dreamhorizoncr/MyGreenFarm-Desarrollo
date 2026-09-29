@@ -18,7 +18,9 @@ function ForumPage() {
     communityPosts,
     addCommunityPost,
     blogPosts,
-    getComments,
+    getCommentCount,
+    isLoading,
+    error,
     isLiked,
     getLikeCount,
     toggleLike,
@@ -73,7 +75,19 @@ function ForumPage() {
                 aria-label={t('forum.blog.label')}
                 className="flex scroll-mt-24 flex-col gap-md"
               >
-                {blogPosts.length === 0 && (
+                {isLoading && (
+                  <p className="m-0 rounded-2xl border border-neutral-200 bg-white p-lg font-body text-body-sm text-neutral-500">
+                    Cargando artículos...
+                  </p>
+                )}
+
+                {!isLoading && error && (
+                  <p className="m-0 rounded-2xl border border-neutral-200 bg-white p-lg font-body text-body-sm text-danger">
+                    {error}
+                  </p>
+                )}
+
+                {!isLoading && !error && blogPosts.length === 0 && (
                   <p className="m-0 rounded-2xl border border-neutral-200 bg-white p-lg font-body text-body-sm text-neutral-500">
                     {t('forum.blog.empty')}
                   </p>
@@ -89,7 +103,7 @@ function ForumPage() {
                   <BlogPostCard
                     key={post.id}
                     post={post}
-                    commentCount={getComments(post.id).length}
+                    commentCount={getCommentCount(post.id)}
                     isLiked={isLiked(post.id)}
                     likeCount={getLikeCount(post.id)}
                     onToggleLike={toggleLike}
@@ -104,7 +118,19 @@ function ForumPage() {
                 aria-label={t('forum.community.label')}
                 className="flex scroll-mt-24 flex-col gap-md"
               >
-                {communityPosts.length === 0 && (
+                {isLoading && (
+                  <p className="m-0 rounded-2xl border border-neutral-200 bg-white p-lg font-body text-body-sm text-neutral-500">
+                    Cargando comunidad...
+                  </p>
+                )}
+
+                {!isLoading && error && (
+                  <p className="m-0 rounded-2xl border border-neutral-200 bg-white p-lg font-body text-body-sm text-danger">
+                    {error}
+                  </p>
+                )}
+
+                {!isLoading && !error && communityPosts.length === 0 && (
                   <p className="m-0 rounded-2xl border border-neutral-200 bg-white p-lg font-body text-body-sm text-neutral-500">
                     {t('forum.community.empty')}
                   </p>

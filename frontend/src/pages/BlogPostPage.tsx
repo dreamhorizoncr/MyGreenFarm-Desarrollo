@@ -19,6 +19,9 @@ function BlogPostPage() {
     blogPosts,
     getComments,
     addComment,
+    loadComments,
+    loadArticle,
+    isLoading,
     isLiked,
     getLikeCount,
     toggleLike,
@@ -26,6 +29,7 @@ function BlogPostPage() {
   const [name, setName] = useState('')
   const [content, setContent] = useState('')
   const [error, setError] = useState('')
+  const [isDetailLoading, setIsDetailLoading] = useState(true)
 
   useEffect(() => {
     if (window.location.hash !== '#comments') return
@@ -38,8 +42,21 @@ function BlogPostPage() {
     })
   }, [id])
 
+  useEffect(() => {
+    if (!id) return
+
+    setIsDetailLoading(true)
+    void Promise.all([loadArticle(id), loadComments(id)]).finally(() => {
+      setIsDetailLoading(false)
+    })
+  }, [id, loadArticle, loadComments])
+
   const post = blogPosts.find((item) => item.id === id)
   const comments = post ? getComments(post.id) : []
+
+  if (isLoading || isDetailLoading) {
+    return <p className="p-lg font-body text-body-sm text-neutral-500">Cargando artículo...</p>
+  }
 
   if (!post) return <Navigate to="/forum" replace />
 
@@ -52,7 +69,7 @@ function BlogPostPage() {
     return { paragraph, key: `${occurrence}-${paragraph}` }
   })
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const trimmedName = name.trim()
     const trimmedContent = content.trim()
 
@@ -67,14 +84,18 @@ function BlogPostPage() {
       return
     }
 
-    addComment(postId, { name: trimmedName, content: trimmedContent })
-    setName('')
-    setContent('')
-    setError('')
-    notify.success({
-      title: t('forum.blog.toastTitle'),
-      description: t('forum.blog.toastDescription'),
-    })
+    try {
+      await addComment(postId, { alias: trimmedName, content: trimmedContent })
+      setName('')
+      setContent('')
+      setError('')
+      notify.success({
+        title: t('forum.blog.toastTitle'),
+        description: t('forum.blog.toastDescription'),
+      })
+    } catch {
+      setError('No se pudo publicar el comentario')
+    }
   }
 
   return (
@@ -173,11 +194,11 @@ function BlogPostPage() {
 
                 {comments.map((comment) => (
                   <div key={comment.id} className="flex items-start gap-md">
-                    <PostAvatar name={comment.name} size={32} />
+                    <PostAvatar name={comment.alias} size={32} />
 
                     <div className="min-w-0 flex-1">
                       <p className="m-0 text-left font-heading text-[14px] font-bold text-heading">
-                        {comment.name}
+                        {comment.alias}
                       </p>
 
                       <p className="m-0 mt-3xs whitespace-pre-line break-words text-left font-body text-[14px] leading-[1.55] text-body-text">

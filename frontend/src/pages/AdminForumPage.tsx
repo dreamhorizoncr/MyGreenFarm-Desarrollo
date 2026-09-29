@@ -16,10 +16,12 @@ function AdminForumPage() {
     addBlogPost,
     updateBlogPost,
     removeBlogPost,
-    getComments,
+    getCommentCount,
     isLiked,
     getLikeCount,
     toggleLike,
+    isLoading,
+    error,
   } = useForumFeedContext()
 
   const [formOpen, setFormOpen] = useState(false)
@@ -42,28 +44,37 @@ function AdminForumPage() {
     setEditing(null)
   }
 
-  function handleSubmit(input: BlogPostInput) {
-    if (editing) {
-      updateBlogPost(editing.id, input)
-      notify.success({
-        title: t('adminForum.updatedToastTitle'),
-        description: t('adminForum.updatedToastDescription'),
-      })
-    } else {
-      addBlogPost(input)
-      notify.success({
-        title: t('adminForum.createdToastTitle'),
-        description: t('adminForum.createdToastDescription'),
-      })
-    }
+  async function handleSubmit(input: BlogPostInput) {
+    try {
+      if (editing) {
+        await updateBlogPost(editing.id, input)
+        notify.success({
+          title: t('adminForum.updatedToastTitle'),
+          description: t('adminForum.updatedToastDescription'),
+        })
+      } else {
+        await addBlogPost(input)
+        notify.success({
+          title: t('adminForum.createdToastTitle'),
+          description: t('adminForum.createdToastDescription'),
+        })
+      }
 
-    closeForm()
+      closeForm()
+    } catch {
+      notify.error('No se pudo guardar el artículo')
+    }
   }
 
-  function confirmDelete() {
+  async function confirmDelete() {
     if (!postToDelete) return
 
-    removeBlogPost(postToDelete.id)
+    try {
+      await removeBlogPost(postToDelete.id)
+    } catch {
+      notify.error('No se pudo eliminar el artículo')
+      return
+    }
 
     if (editing?.id === postToDelete.id) closeForm()
 
@@ -98,7 +109,15 @@ function AdminForumPage() {
         </button>
       </div>
 
-      {blogPosts.length === 0 ? (
+      {isLoading ? (
+        <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-sm text-neutral-500">
+          Cargando artículos...
+        </p>
+      ) : error ? (
+        <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-sm text-danger">
+          {error}
+        </p>
+      ) : blogPosts.length === 0 ? (
         <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-sm text-neutral-500">
           {t('adminForum.empty')}
         </p>
@@ -108,7 +127,7 @@ function AdminForumPage() {
             <li key={post.id} className="flex flex-col gap-sm">
               <BlogPostCard
                 post={post}
-                commentCount={getComments(post.id).length}
+                commentCount={getCommentCount(post.id)}
                 isLiked={isLiked(post.id)}
                 likeCount={getLikeCount(post.id)}
                 onToggleLike={toggleLike}

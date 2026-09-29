@@ -1,9 +1,6 @@
-import { useCallback, useState } from 'react'
-import {
-  blogCommentsByPost as seedComments,
-  blogPosts as seedBlogPosts,
-  communityPosts as seedCommunityPosts,
-} from '../components/forum/forumData.ts'
+import { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { forumService } from '../services/forum.ts'
 import type {
   BlogComment,
   BlogPost,
@@ -16,68 +13,164 @@ interface NameContentInput {
   content: string
 }
 
-function useForumFeed() {
-  const [communityPosts, setCommunityPosts] = useState<CommunityPost[]>(
-    seedCommunityPosts,
-  )
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(seedBlogPosts)
-  const [commentsByPost, setCommentsByPost] = useState<
-    Record<string, BlogComment[]>
-  >(seedComments)
-  const [likesByPost, setLikesByPost] = useState<Record<string, boolean>>({})
+interface CommentInput {
+  alias: string
+  content: string
+}
 
-  const addCommunityPost = useCallback((input: NameContentInput) => {
-    const post: CommunityPost = {
-      id: `community-${Date.now()}`,
-      name: input.name,
-      createdAt: new Date().toISOString(),
-      content: input.content,
+const ARTICLE_TRANSLATION_TYPE = 'FORUM_ARTICLE'
+const COMMENT_TRANSLATION_TYPE = 'FORUM_COMMENT'
+const COMMUNITY_TRANSLATION_TYPE = 'FORUM_COMMUNITY_POST'
+
+function useForumFeed() {
+  const { i18n } = useTranslation()
+  const [communityPosts, setCommunityPosts] = useState<CommunityPost[]>([])
+  const [sourceCommunityPosts, setSourceCommunityPosts] = useState<CommunityPost[]>([])
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
+  const [sourceBlogPosts, setSourceBlogPosts] = useState<BlogPost[]>([])
+  const [commentsByPost, setCommentsByPost] = useState<Record<string, BlogComment[]>>({})
+  const [sourceCommentsByPost, setSourceCommentsByPost] = useState<Record<string, BlogComment[]>>({})
+  const [likesByPost, setLikesByPost] = useState<Record<string, boolean>>({})
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let active = true
+
+    async function loadForum() {
+      try {
+        const [articles, likedIds, community] = await Promise.all([
+          forumService.getArticles(),
+          forumService.getMyLikes(),
+          forumService.getCommunityPosts(),
+        ])
+
+        if (!active) return
+
+        const likedIdSet = new Set(likedIds)
+        const articlesWithLikes = articles.content.map((article) => ({
+          ...article,
+          reacted: likedIdSet.has(article.id) || article.reacted,
+        }))
+
+        setSourceBlogPosts(articlesWithLikes)
+        setBlogPosts(articlesWithLikes)
+        setLikesByPost(
+          articlesWithLikes.reduce<Record<string, boolean>>((likes, article) => {
+            likes[article.id] = article.reacted
+            return likes
+          }, {}),
+        )
+        setSourceCommunityPosts(community.content)
+        setCommunityPosts(community.content)
+      } catch {
+        if (active) setError('No se pudo cargar el foro')
+      } finally {
+        if (active) setIsLoading(false)
+      }
     }
 
+    void loadForum()
+    return () => {
+      active = false
+    }
+  }, [])
+
+  useEffect(() => {
+    const language = (i18n.resolvedLanguage ?? i18n.language).split('-')[0]
+    if (!sourceBlogPosts.length && !sourceCommunityPosts.length && !Object.keys(sourceCommentsByPost).length) {
+      return
+    }
+
+    let active = true
+    async function translateForum() {
+      try {
+        const articleItems = sourceBlogPosts.flatMap((post) => [
+          { entityId: post.id, fieldName: 'title', originalText: post.title },
+          { entityId: post.id, fieldName: 'topic', originalText: post.topic },
+          { entityId: post.id, fieldName: 'content', originalText: post.content },
+        ])
+        const commentItems = Object.values(sourceCommentsByPost).flatMap((comments) =>
+          comments.flatMap((comment) => [
+            { entityId: comment.id, fieldName: 'content', originalText: comment.content },
+          ]),
+        )
+        const communityItems = sourceCommunityPosts.flatMap((post) => [
+          { entityId: post.id, fieldName: 'content', originalText: post.content },
+        ])
+
+        const [articleTranslations, commentTranslations, communityTranslations] = await Promise.all([
+          forumService.translateBatch(ARTICLE_TRANSLATION_TYPE, language, articleItems),
+          forumService.translateBatch(COMMENT_TRANSLATION_TYPE, language, commentItems),
+          forumService.translateBatch(COMMUNITY_TRANSLATION_TYPE, language, communityItems),
+        ])
+
+        if (!active) return
+
+        setBlogPosts(sourceBlogPosts.map((post) => ({
+          ...post,
+          title: articleTranslations[`${post.id}:title`] ?? post.title,
+          topic: articleTranslations[`${post.id}:topic`] ?? post.topic,
+          content: articleTranslations[`${post.id}:content`] ?? post.content,
+        })))
+        setCommentsByPost(
+          Object.fromEntries(
+            Object.entries(sourceCommentsByPost).map(([postId, comments]) => [
+              postId,
+              comments.map((comment) => ({
+                ...comment,
+                content: commentTranslations[`${comment.id}:content`] ?? comment.content,
+              })),
+            ]),
+          ),
+        )
+        setCommunityPosts(sourceCommunityPosts.map((post) => ({
+          ...post,
+          content: communityTranslations[`${post.id}:content`] ?? post.content,
+        })))
+      } catch {
+        // Keep the original language visible if translation is unavailable.
+      }
+    }
+
+    void translateForum()
+    return () => {
+      active = false
+    }
+  }, [i18n.language, i18n.resolvedLanguage, sourceBlogPosts, sourceCommentsByPost, sourceCommunityPosts])
+
+  const addCommunityPost = useCallback(async (input: NameContentInput) => {
+    const post = await forumService.createCommunityPost(input)
+    setSourceCommunityPosts((previous) => [post, ...previous])
     setCommunityPosts((previous) => [post, ...previous])
   }, [])
 
-  const addBlogPost = useCallback((input: BlogPostInput) => {
-    const post: BlogPost = {
-      id: `blog-${Date.now()}`,
-      title: input.title,
-      topic: input.topic,
-      authorName: input.authorName,
-      authorRole: input.authorRole,
-      createdAt: new Date().toISOString(),
-      content: input.content,
-      imageUrl: input.imageUrl,
-      imageAlt: input.imageAlt,
-      likeCount: 0,
-    }
-
+  const addBlogPost = useCallback(async (input: BlogPostInput) => {
+    const post = await forumService.createArticle(input)
+    setSourceBlogPosts((previous) => [post, ...previous])
     setBlogPosts((previous) => [post, ...previous])
   }, [])
 
-  const updateBlogPost = useCallback(
-    (postId: string, input: BlogPostInput) => {
-      setBlogPosts((previous) =>
-        previous.map((post) =>
-          post.id === postId
-            ? {
-                ...post,
-                title: input.title,
-                topic: input.topic,
-                authorName: input.authorName,
-                authorRole: input.authorRole,
-                content: input.content,
-                imageUrl: input.imageUrl,
-                imageAlt: input.imageAlt,
-              }
-            : post,
-        ),
-      )
-    },
-    [],
-  )
+  const updateBlogPost = useCallback(async (postId: string, input: BlogPostInput) => {
+    const updated = await forumService.updateArticle(postId, input)
+    setSourceBlogPosts((previous) => previous.map((post) => post.id === postId ? updated : post))
+    setBlogPosts((previous) => previous.map((post) => post.id === postId ? updated : post))
+  }, [])
 
-  const removeBlogPost = useCallback((postId: string) => {
+  const removeBlogPost = useCallback(async (postId: string) => {
+    await forumService.deleteArticle(postId)
+    setSourceBlogPosts((previous) => previous.filter((post) => post.id !== postId))
     setBlogPosts((previous) => previous.filter((post) => post.id !== postId))
+    setCommentsByPost((previous) => {
+      const next = { ...previous }
+      delete next[postId]
+      return next
+    })
+    setSourceCommentsByPost((previous) => {
+      const next = { ...previous }
+      delete next[postId]
+      return next
+    })
   }, [])
 
   const getComments = useCallback(
@@ -85,39 +178,67 @@ function useForumFeed() {
     [commentsByPost],
   )
 
-  const addComment = useCallback(
-    (postId: string, input: NameContentInput) => {
-      const comment: BlogComment = {
-        id: `comment-${postId}-${Date.now()}`,
-        name: input.name,
-        createdAt: new Date().toISOString(),
-        content: input.content,
-      }
+  const addComment = useCallback(async (postId: string, input: CommentInput) => {
+    const comment = await forumService.createComment(postId, input)
+    setSourceCommentsByPost((previous) => ({
+      ...previous,
+      [postId]: [...(previous[postId] ?? []), comment],
+    }))
+    setCommentsByPost((previous) => ({
+      ...previous,
+      [postId]: [...(previous[postId] ?? []), comment],
+    }))
+    setSourceBlogPosts((previous) => previous.map((post) =>
+      post.id === postId ? { ...post, commentCount: post.commentCount + 1 } : post,
+    ))
+    setBlogPosts((previous) => previous.map((post) =>
+      post.id === postId ? { ...post, commentCount: post.commentCount + 1 } : post,
+    ))
+  }, [])
 
-      setCommentsByPost((previous) => ({
-        ...previous,
-        [postId]: [...(previous[postId] ?? []), comment],
-      }))
-    },
-    [],
-  )
+  const loadComments = useCallback(async (postId: string) => {
+    const page = await forumService.getComments(postId)
+    setSourceCommentsByPost((previous) => ({ ...previous, [postId]: page.content }))
+    setCommentsByPost((previous) => ({ ...previous, [postId]: page.content }))
+  }, [])
 
-  const isLiked = useCallback(
-    (postId: string) => likesByPost[postId] ?? false,
-    [likesByPost],
-  )
+  const loadArticle = useCallback(async (postId: string) => {
+    const article = await forumService.getArticle(postId)
+    setSourceBlogPosts((previous) => {
+      const exists = previous.some((post) => post.id === postId)
+      return exists ? previous.map((post) => post.id === postId ? article : post) : [article, ...previous]
+    })
+    setBlogPosts((previous) => {
+      const exists = previous.some((post) => post.id === postId)
+      return exists ? previous.map((post) => post.id === postId ? article : post) : [article, ...previous]
+    })
+  }, [])
+
+  const isLiked = useCallback((postId: string) => likesByPost[postId] ?? false, [likesByPost])
 
   const getLikeCount = useCallback(
-    (postId: string) => {
-      const base = seedBlogPosts.find((post) => post.id === postId)?.likeCount ?? 0
-
-      return isLiked(postId) ? base + 1 : base
-    },
-    [isLiked],
+    (postId: string) => blogPosts.find((post) => post.id === postId)?.likeCount ?? 0,
+    [blogPosts],
   )
 
-  const toggleLike = useCallback((postId: string) => {
-    setLikesByPost((previous) => ({ ...previous, [postId]: !previous[postId] }))
+  const getCommentCount = useCallback(
+    (postId: string) => blogPosts.find((post) => post.id === postId)?.commentCount ?? 0,
+    [blogPosts],
+  )
+
+  const toggleLike = useCallback(async (postId: string) => {
+    try {
+      const result = await forumService.toggleLike(postId)
+      setLikesByPost((previous) => ({ ...previous, [postId]: result.liked }))
+      setSourceBlogPosts((previous) => previous.map((post) =>
+        post.id === postId ? { ...post, likeCount: result.totalLikes, reacted: result.liked } : post,
+      ))
+      setBlogPosts((previous) => previous.map((post) =>
+        post.id === postId ? { ...post, likeCount: result.totalLikes, reacted: result.liked } : post,
+      ))
+    } catch {
+      setError('No se pudo actualizar la reacción')
+    }
   }, [])
 
   return {
@@ -129,9 +250,14 @@ function useForumFeed() {
     removeBlogPost,
     getComments,
     addComment,
+    loadComments,
+    loadArticle,
     isLiked,
     getLikeCount,
+    getCommentCount,
     toggleLike,
+    isLoading,
+    error,
   }
 }
 
