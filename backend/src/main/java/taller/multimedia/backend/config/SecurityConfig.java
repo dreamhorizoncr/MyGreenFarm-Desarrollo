@@ -123,6 +123,10 @@ public class SecurityConfig {
                 "/api/webhooks/**",
                 "/api/gallery/likes/**")
             .permitAll()
+              .requestMatchers("/api/forum/articles/likes/**").permitAll()
+              .requestMatchers("/api/forum/community").permitAll()
+              .requestMatchers(HttpMethod.GET, "/api/forum/articles/**").permitAll()
+              .requestMatchers(HttpMethod.POST, "/api/forum/articles/*/comments").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/announcements").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/announcements/*/images").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/gallery/**").permitAll()

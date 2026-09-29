@@ -8,7 +8,7 @@ const MAX_CONTENT = 4000
 
 interface PublishExperienceModalProps {
   onClose: () => void
-  onPublish: (input: { name: string; content: string }) => void
+  onPublish: (input: { name: string; content: string }) => Promise<void>
 }
 
 function PublishExperienceModal({
@@ -36,7 +36,7 @@ function PublishExperienceModal({
     }
   }, [onClose])
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const trimmedName = name.trim()
     const trimmedContent = content.trim()
 
@@ -51,12 +51,16 @@ function PublishExperienceModal({
       return
     }
 
-    onPublish({ name: trimmedName, content: trimmedContent })
-    notify.success({
-      title: t('forum.community.toastTitle'),
-      description: t('forum.community.toastDescription'),
-    })
-    onClose()
+    try {
+      await onPublish({ name: trimmedName, content: trimmedContent })
+      notify.success({
+        title: t('forum.community.toastTitle'),
+        description: t('forum.community.toastDescription'),
+      })
+      onClose()
+    } catch {
+      setError('No se pudo publicar la experiencia')
+    }
   }
 
   return (
