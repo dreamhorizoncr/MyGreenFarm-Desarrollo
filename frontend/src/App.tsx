@@ -21,6 +21,7 @@ import BlogPostPage from './pages/BlogPostPage.tsx'
 import AdminForumPage from './pages/AdminForumPage.tsx'
 import AnnouncementsPage from './pages/AnnouncementsPage.tsx'
 import AdminExpedientsPage from './pages/AdminExpedientsPage.tsx'
+import AdminParentsPage from './pages/AdminParentPage.tsx'
 import GalleryPage from './pages/GalleryPage.tsx'
 import AlbumDetailPage from './pages/AlbumDetailPage.tsx'
 import AdminGalleryPage from './pages/AdminGalleryPage.tsx'
@@ -66,6 +67,7 @@ function App() {
             <Route path="/admin/announcements" element={<AnnouncementsPage />} />
             <Route path="/admin/gallery" element={<AdminGalleryPage />} />
             <Route path="/admin/curriculums" element={<AdminCurriculumsPage />} />
+            <Route path="/admin/parents" element={<AdminParentsPage />} />
           <Route element={<OwnerRoute />}>
             <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />
             <Route path="/admin/disponibilidad" element={<OwnerAvailabilityPage />} />

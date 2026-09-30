@@ -29,6 +29,7 @@ type SidebarItemId =
   | "galeria"
   | "cv"
   | "expedientes"
+  | "padres"
   | "miPerfil"
   | "servicios"
   | "disponibilidad"
@@ -67,6 +68,7 @@ function AdminSidebar() {
     { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
     { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
     { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
+    { id: 'padres', icon: UsersIcon, path: '/admin/parents'},
     { id: 'boletín', icon: MailPlus, path: '/admin/newsletter' },
     { id: 'miPerfil', icon: UserIcon, path: '/profile' },
   ]
@@ -78,6 +80,7 @@ function AdminSidebar() {
     { id: 'docentes', icon: UsersIcon, path: '/admin/users' },
     { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
     { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
+    { id: 'padres', icon: UsersIcon, path: '/admin/parents'},
     { id: 'miPerfil', icon: UserIcon, path: '/profile' },
   ]
   const teacherItems: SidebarItem[] = [
