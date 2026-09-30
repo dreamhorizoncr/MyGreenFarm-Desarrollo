@@ -3,6 +3,7 @@ package taller.multimedia.backend.controller.expedient;
 import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.expedient.ExpedientRequest;
 import taller.multimedia.backend.dto.expedient.ExpedientResponse;
+import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.service.expedient.ExpedientService;
 import tools.jackson.databind.ObjectMapper;
 
@@ -38,6 +39,8 @@ public class ExpedientController {
             
             ExpedientResponse created = expedientService.createExpedient(request, file);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        } catch (InvalidFieldException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error al procesar el expediente: " + e.getMessage());
         }
@@ -83,6 +86,8 @@ public class ExpedientController {
             ExpedientRequest request = objectMapper.readValue(requestJson, ExpedientRequest.class);
             ExpedientResponse updated = expedientService.uploadOrUpdatePhoto(id, request, file);
             return ResponseEntity.ok(updated);
+        } catch (InvalidFieldException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error al actualizar el expediente: " + e.getMessage());
         }

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -131,5 +132,21 @@ class AppointmentServiceTest {
         ArgumentCaptor<Appointment> savedAppointment = ArgumentCaptor.forClass(Appointment.class);
         verify(appointmentRepository).save(savedAppointment.capture());
         assertThat(savedAppointment.getValue().getParentNotes()).isEqualTo(multilineNotes);
+    }
+
+    @Test
+    void updateAppointmentStatus_rejectsAMaliciousTeacherConclusionAndNeverSaves() {
+        java.util.UUID appointmentId = java.util.UUID.randomUUID();
+        Appointment existing = new Appointment();
+        existing.setStatus(taller.multimedia.backend.model.appointment.AppointmentStatus.PENDING);
+        when(appointmentRepository.findById(appointmentId)).thenReturn(Optional.of(existing));
+
+        assertThrows(InvalidFieldException.class, () -> appointmentService.updateAppointmentStatus(
+                appointmentId,
+                taller.multimedia.backend.model.appointment.AppointmentStatus.PENDING,
+                "<script>alert(1)</script>Todo bien",
+                "es"));
+
+        verify(appointmentRepository, never()).save(any());
     }
 }

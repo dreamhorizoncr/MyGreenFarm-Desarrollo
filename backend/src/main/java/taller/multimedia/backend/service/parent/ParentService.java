@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import taller.multimedia.backend.dto.parent.ParentRequest;
 import taller.multimedia.backend.model.parent.Parent;
 import taller.multimedia.backend.repository.parent.ParentRepository;
+import taller.multimedia.backend.util.Sanitizer;
 
 import java.util.List;
 
@@ -24,12 +25,12 @@ public class ParentService {
         }
 
         Parent parent = new Parent();
-        parent.setIdentification(dto.getIdentification().trim());
+        parent.setIdentification(Sanitizer.requireClean("identification", dto.getIdentification()));
         parent.setEmail(cleanEmail);
-        parent.setPhoneNumber(dto.getPhoneNumber().trim());
-        parent.setAddress(dto.getAddress().trim());
-        parent.setFirstName(dto.getFirstName().trim());
-        parent.setLastName(dto.getLastName().trim());
+        parent.setPhoneNumber(Sanitizer.requireClean("phoneNumber", dto.getPhoneNumber()));
+        parent.setAddress(Sanitizer.requireClean("address", dto.getAddress()));
+        parent.setFirstName(Sanitizer.requireClean("firstName", dto.getFirstName()));
+        parent.setLastName(Sanitizer.requireClean("lastName", dto.getLastName()));
         parent.setLanguage(resolverLangCode(dto.getLanguage()));
         parent.setIsActive(true);
 
@@ -114,12 +115,12 @@ public class ParentService {
 
         this.sanitizeEmail(existingParent.getEmail());
 
-        existingParent.setIdentification(dto.getIdentification());
-        existingParent.setEmail(dto.getEmail());
-        existingParent.setPhoneNumber(dto.getPhoneNumber());
-        existingParent.setAddress(dto.getAddress());
-        existingParent.setFirstName(dto.getFirstName());
-        existingParent.setLastName(dto.getLastName());
+        existingParent.setIdentification(Sanitizer.requireClean("identification", dto.getIdentification()));
+        existingParent.setEmail(sanitizeEmail(dto.getEmail()));
+        existingParent.setPhoneNumber(Sanitizer.requireClean("phoneNumber", dto.getPhoneNumber()));
+        existingParent.setAddress(Sanitizer.requireClean("address", dto.getAddress()));
+        existingParent.setFirstName(Sanitizer.requireClean("firstName", dto.getFirstName()));
+        existingParent.setLastName(Sanitizer.requireClean("lastName", dto.getLastName()));
 
         // Actualizamos y normalizamos el idioma por si cambió
         existingParent.setLanguage(resolverLangCode(dto.getLanguage()));

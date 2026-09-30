@@ -243,7 +243,8 @@ public class AppointmentService {
         appointment.setStatus(newStatus);
 
         if (teacherConclusion != null && !teacherConclusion.isBlank()) {
-            appointment.setTeacherConclusion(teacherConclusion);
+            appointment.setTeacherConclusion(
+                    Sanitizer.requireCleanPreserveLineBreaks("teacherConclusion", teacherConclusion));
         }
 
         Appointment updatedAppointment = appointmentRepository.save(appointment);

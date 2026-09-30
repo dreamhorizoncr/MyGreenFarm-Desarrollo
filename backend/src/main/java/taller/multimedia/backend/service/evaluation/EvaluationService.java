@@ -11,6 +11,7 @@ import taller.multimedia.backend.model.evaluation.Evaluation;
 import taller.multimedia.backend.model.expedient.Expedient;
 import taller.multimedia.backend.repository.evaluation.EvaluationRepository;
 import taller.multimedia.backend.repository.expedient.ExpedientRepository;
+import taller.multimedia.backend.util.Sanitizer;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,11 +33,16 @@ public class EvaluationService {
         Evaluation evaluation = new Evaluation();
         evaluation.setEvaluationDate(request.getEvaluationDate());
         evaluation.setExpedientId(expedient);
-        evaluation.setCommunicationProgress(request.getCommunicationProgress());
-        evaluation.setLanguageProgress(request.getLanguageProgress());
-        evaluation.setReadingProgress(request.getReadingProgress());
-        evaluation.setMotorProgress(request.getMotorProgress());
-        evaluation.setTeacherObservation(request.getTeacherObservation());
+        evaluation.setCommunicationProgress(
+                Sanitizer.requireCleanPreserveLineBreaks("communicationProgress", request.getCommunicationProgress()));
+        evaluation.setLanguageProgress(
+                Sanitizer.requireCleanPreserveLineBreaks("languageProgress", request.getLanguageProgress()));
+        evaluation.setReadingProgress(
+                Sanitizer.requireCleanPreserveLineBreaks("readingProgress", request.getReadingProgress()));
+        evaluation.setMotorProgress(
+                Sanitizer.requireCleanPreserveLineBreaks("motorProgress", request.getMotorProgress()));
+        evaluation.setTeacherObservation(
+                Sanitizer.requireCleanPreserveLineBreaks("teacherObservation", request.getTeacherObservation()));
 
         return evaluationRepository.save(evaluation);
     }
@@ -68,11 +74,16 @@ public class EvaluationService {
 
         existingEvaluation.setEvaluationDate(request.getEvaluationDate());
         existingEvaluation.setExpedientId(expedient);
-        existingEvaluation.setCommunicationProgress(request.getCommunicationProgress());
-        existingEvaluation.setLanguageProgress(request.getLanguageProgress());
-        existingEvaluation.setReadingProgress(request.getReadingProgress());
-        existingEvaluation.setMotorProgress(request.getMotorProgress());
-        existingEvaluation.setTeacherObservation(request.getTeacherObservation());
+        existingEvaluation.setCommunicationProgress(
+                Sanitizer.requireCleanPreserveLineBreaks("communicationProgress", request.getCommunicationProgress()));
+        existingEvaluation.setLanguageProgress(
+                Sanitizer.requireCleanPreserveLineBreaks("languageProgress", request.getLanguageProgress()));
+        existingEvaluation.setReadingProgress(
+                Sanitizer.requireCleanPreserveLineBreaks("readingProgress", request.getReadingProgress()));
+        existingEvaluation.setMotorProgress(
+                Sanitizer.requireCleanPreserveLineBreaks("motorProgress", request.getMotorProgress()));
+        existingEvaluation.setTeacherObservation(
+                Sanitizer.requireCleanPreserveLineBreaks("teacherObservation", request.getTeacherObservation()));
 
         return evaluationRepository.save(existingEvaluation);
     }
