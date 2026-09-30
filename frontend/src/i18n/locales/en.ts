@@ -571,6 +571,7 @@ export default {
       title: "Newsletter Management",
       subtitle: "Manage subscribers and parents, and send bulk emails.",
       searchPlaceholder: "Search by email...",
+      sendBroadcast: "Send",
       sendSubscribers: "Send to subscribers",
       sendParents: "Send to parents",
       sendAll: "Send to everyone",

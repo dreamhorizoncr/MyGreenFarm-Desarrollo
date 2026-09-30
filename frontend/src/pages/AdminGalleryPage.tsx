@@ -15,6 +15,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import useEmblaCarousel from 'embla-carousel-react'
 import AdminLayout from '../layout/AdminLayout.tsx'
+import Skeleton from '../components/ui/Skeleton.tsx'
 import DeleteAlbumModal from '../components/DeleteAlbumModal.tsx'
 import DeleteYearModal from '../components/DeleteYearModal.tsx'
 import { useGalleryAdmin } from '../hooks/useGalleryAdmin.ts'
@@ -398,6 +399,36 @@ function AdminAlbumCarousel({
 	)
 }
 
+function AlbumCardSkeleton() {
+	return (
+		<div className="min-w-0 flex-[0_0_260px] md:flex-[0_0_280px]">
+			<article className="h-full rounded-3xl border border-neutral-100 bg-white shadow-sm">
+				<div className="m-sm overflow-hidden rounded-[20px]">
+					<Skeleton shape="rect" className="aspect-[4/3] w-full" />
+				</div>
+				<div className="flex flex-col gap-sm px-lg pb-lg text-left">
+					<Skeleton shape="line" className="h-5 w-4/5" />
+					<Skeleton shape="line" className="h-4 w-full" />
+					<Skeleton shape="line" className="h-4 w-2/3" />
+				</div>
+			</article>
+		</div>
+	)
+}
+
+function AlbumCarouselSkeleton() {
+	return (
+		<div className="mt-xl">
+			<Skeleton shape="pill" className="h-9 w-32" />
+			<div className="mt-md flex gap-md py-md">
+				<AlbumCardSkeleton />
+				<AlbumCardSkeleton />
+				<AlbumCardSkeleton />
+			</div>
+		</div>
+	)
+}
+
 const emptyForm: GalleryRequest = {
 	categoryId: '',
 	title: '',
@@ -654,7 +685,7 @@ function AdminGalleryPage() {
 				<button
 					type="button"
 					onClick={openCreate}
-					className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-sm font-semibold text-white"
+					className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-sm font-semibold text-white transition-colors hover:bg-orange-600"
 				>
 					<PlusIcon size={18} aria-hidden="true" />
 					{t('admin.gallery.addAlbum')}
@@ -849,14 +880,9 @@ onCreateYear={handleCreateYear}
 				</h2>
 
 				{loading && !formOpen && (
-					<output
-						className="flex items-center gap-sm border-t border-neutral-200 py-xl text-sm text-neutral-500"
-					>
-						<span
-							className="size-4 animate-spin rounded-full border-2 border-neutral-300 border-t-heading"
-							aria-hidden="true"
-						/>
-						{t('common.loading')}
+					<output className="contents" aria-label={t('common.loading')}>
+						<AlbumCarouselSkeleton />
+						<AlbumCarouselSkeleton />
 					</output>
 				)}
 

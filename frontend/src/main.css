@@ -54,3 +54,12 @@
     transform: none;
   }
 }
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}

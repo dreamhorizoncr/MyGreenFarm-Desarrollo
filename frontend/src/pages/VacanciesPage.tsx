@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import ApplyVacancyModal from '../components/ApplyVacancyModal.tsx'
+import Skeleton from '../components/ui/Skeleton.tsx'
 import { useVacancies } from '../hooks/useVacancies.ts'
 import { useCurriculums } from '../hooks/useCurriculums.ts'
 import { notify } from '../utils/notifications.ts'
@@ -16,6 +17,22 @@ interface ApplyTarget {
 }
 
 const SPONTANEOUS_REQUIRED_FIELDS: OptionalApplicationField[] = ['file']
+
+function VacancyCardSkeleton() {
+  return (
+    <article className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow">
+      <Skeleton shape="line" className="h-6 w-3/4" />
+      <div className="mt-sm flex flex-1 flex-col gap-2xs">
+        <Skeleton shape="line" className="h-4 w-full" />
+        <Skeleton shape="line" className="h-4 w-full" />
+        <Skeleton shape="line" className="h-4 w-2/3" />
+      </div>
+      <div className="mt-md flex justify-end">
+        <Skeleton shape="pill" className="h-11 w-28" />
+      </div>
+    </article>
+  )
+}
 
 function VacanciesPage() {
   const { t } = useTranslation()
@@ -71,7 +88,12 @@ function VacanciesPage() {
 
       <main>
         <Container className="py-10 md:py-12">
-          {loading && <p className="m-0 p-xl text-center font-body text-base text-neutral-500">{t('common.loading')}</p>}
+          {loading && (
+            <div className="grid grid-cols-1 gap-md md:grid-cols-2">
+              <VacancyCardSkeleton />
+              <VacancyCardSkeleton />
+            </div>
+          )}
           {error && <p className="m-0 p-xl text-center font-body text-base text-danger">{error}</p>}
 
           {!loading && !error && (

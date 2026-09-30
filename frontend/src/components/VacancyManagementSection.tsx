@@ -2,7 +2,25 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PlusIcon, Trash2Icon } from '@animateicons/react/lucide'
 import CreateVacancyModal from './CreateVacancyModal.tsx'
+import Skeleton from './ui/Skeleton.tsx'
 import type { Vacancy, VacancyInput } from '../types/vacancy.ts'
+
+function VacancyCardSkeleton() {
+  return (
+    <article className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
+      <div className="flex items-start justify-between gap-sm">
+        <Skeleton shape="line" className="h-5 w-1/2" />
+        <Skeleton shape="circle" className="h-9 w-9 shrink-0" />
+      </div>
+      <Skeleton shape="line" className="mt-sm h-4 w-full" />
+      <Skeleton shape="line" className="mt-2 h-4 w-2/3" />
+      <div className="mt-md flex items-center justify-between gap-md">
+        <Skeleton shape="line" className="h-4 w-24" />
+        <Skeleton shape="pill" className="h-9 w-24" />
+      </div>
+    </article>
+  )
+}
 
 interface VacancyManagementSectionProps {
   vacancies: Vacancy[]
@@ -40,7 +58,12 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
         </button>
       </div>
 
-      {loading && <p className="m-0 p-xl text-center font-body text-base text-neutral-500">{t('common.loading')}</p>}
+      {loading && (
+        <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
+          <VacancyCardSkeleton />
+          <VacancyCardSkeleton />
+        </div>
+      )}
       {error && <p className="m-0 p-xl text-center font-body text-base text-danger">{error}</p>}
 
       {!loading && !error && (

@@ -1,4 +1,4 @@
-import { useEffect, useState, type ComponentType } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
@@ -41,18 +41,35 @@ interface SidebarItem {
   path?: string;
 }
 
+const SIDEBAR_SCROLL_KEY = 'admin-sidebar-scroll-top'
+
 function AdminSidebar() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { logout } = useLogin()
   const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
+  const asideRef = useRef<HTMLElement>(null)
 
   const [filled, setFilled] = useState(false)
   useEffect(() => {
     const frame = requestAnimationFrame(() => setFilled(true))
     return () => cancelAnimationFrame(frame)
   }, [])
+
+  useLayoutEffect(() => {
+    const saved = sessionStorage.getItem(SIDEBAR_SCROLL_KEY)
+    if (saved && asideRef.current) {
+      asideRef.current.scrollTop = Number(saved)
+    }
+  }, [])
+
+  const handleScroll = () => {
+    if (asideRef.current) {
+      sessionStorage.setItem(SIDEBAR_SCROLL_KEY, String(asideRef.current.scrollTop))
+    }
+  }
+
   const { setSidebarHovered } = useProfileAvatar()
 
   const role = userStorage.getUser()?.role
@@ -105,6 +122,8 @@ function AdminSidebar() {
 
   return (
     <aside
+      ref={asideRef}
+      onScroll={handleScroll}
       onMouseEnter={() => setSidebarHovered(true)}
       onMouseLeave={() => setSidebarHovered(false)}
       onFocus={() => setSidebarHovered(true)}
@@ -113,7 +132,7 @@ function AdminSidebar() {
           setSidebarHovered(false)
         }
       }}
-      className="w-full shrink-0 bg-bg-page p-md md:sticky md:top-0 md:flex md:h-svh md:w-[260px] md:flex-col md:self-start md:overflow-y-auto md:py-lg"
+      className="w-full shrink-0 bg-bg-page p-md md:sticky md:top-0 md:flex md:max-h-[calc(100svh-4rem)] md:w-[260px] md:flex-col md:self-start md:overflow-y-auto md:py-lg"
     >
       {/*Menu Exclusivo de Admin*/}
       <div className="md:hidden">

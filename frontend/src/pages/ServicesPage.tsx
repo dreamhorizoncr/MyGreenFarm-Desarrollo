@@ -5,6 +5,8 @@ import Container from '../components/home/Container.tsx'
 import { useServicePlans } from '../hooks/useServicePlans.ts'
 import { useExchangeRate } from '../hooks/useExchangeRate.ts'
 import { ExchangeRateWidget } from '../components/currency/ExchangeRateWidget.tsx'
+import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
+import Skeleton from '../components/ui/Skeleton.tsx'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { notify } from '../utils/notifications.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
@@ -63,7 +65,10 @@ function PlanCard({
 
         <div className="flex flex-col items-center justify-center gap-sm text-center">
           <span className="font-heading text-h3 font-bold text-green-500">
-            {currencySymbol(currency)}{formatCurrency(price, currency, idioma)}
+            <AnimatedNumber
+              value={price}
+              format={(n) => `${currencySymbol(currency)}${formatCurrency(n, currency, idioma)}`}
+            />
           </span>
           <div className="flex flex-wrap justify-center gap-xs" aria-label={t('moneda.convertTo')}>
             {(['USD', 'CRC', 'EUR'] as Currency[]).map(option => (
@@ -104,6 +109,35 @@ function PlanCard({
           >
             {isLoading ? t('common.loading') : t('services.subscribe')}
           </button>
+        </div>
+      </div>
+    </article>
+  )
+}
+
+function PlanCardSkeleton() {
+  return (
+    <article className="flex h-full flex-col overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow">
+      <Skeleton shape="rect" className="h-[200px] w-full rounded-none" />
+
+      <div className="flex flex-1 flex-col gap-sm p-lg">
+        <Skeleton shape="line" className="h-5 w-3/4" />
+        <Skeleton shape="line" className="h-4 w-full" />
+        <Skeleton shape="line" className="h-4 w-2/3" />
+
+        <div className="flex flex-col items-center gap-sm py-sm">
+          <Skeleton shape="line" className="h-8 w-24" />
+          <div className="flex gap-xs">
+            <Skeleton shape="pill" className="h-6 w-12" />
+            <Skeleton shape="pill" className="h-6 w-12" />
+            <Skeleton shape="pill" className="h-6 w-12" />
+          </div>
+        </div>
+
+        <Skeleton shape="line" className="h-3 w-3/5" />
+
+        <div className="mt-auto pt-sm">
+          <Skeleton shape="pill" className="h-11 w-full" />
         </div>
       </div>
     </article>
@@ -162,9 +196,11 @@ function ServicesPage() {
 
         <Container className="grid grid-cols-1 gap-[24px] md:grid-cols-3">
           {loading && (
-            <p className="col-span-full p-xl text-center font-body text-base text-neutral-500">
-              {t('common.loading')}
-            </p>
+            <>
+              <PlanCardSkeleton />
+              <PlanCardSkeleton />
+              <PlanCardSkeleton />
+            </>
           )}
 
           {error && (
