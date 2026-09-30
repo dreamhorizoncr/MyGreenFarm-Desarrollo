@@ -100,10 +100,10 @@ function SignUpPage() {
           description: t("signup.success"),
         });
       },
-      () => {
+      (message) => {
         notify.error({
           title: t("signup.errorToastTitle"),
-          description: t("signup.errorToastDescription"),
+          description: message,
         });
       },
     );

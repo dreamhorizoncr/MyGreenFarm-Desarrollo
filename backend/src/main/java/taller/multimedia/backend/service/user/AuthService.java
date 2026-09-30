@@ -16,7 +16,6 @@ import taller.multimedia.backend.dto.AuthResult;
 import taller.multimedia.backend.dto.LoginRequest;
 import taller.multimedia.backend.dto.SignupRequest;
 import taller.multimedia.backend.dto.UserInfoResponse;
-import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.model.user.User;
 import taller.multimedia.backend.repository.user.UserRepository;
@@ -45,9 +44,9 @@ public class AuthService {
 
     // Register a new user
     public void registerUser(SignupRequest request) {
-        String email = requireClean("email", request.getEmail());
-        String firstName = requireClean("firstName", request.getFirstName());
-        String lastName = requireClean("lastName", request.getLastName());
+        String email = Sanitizer.requireClean("email", request.getEmail());
+        String firstName = Sanitizer.requireClean("firstName", request.getFirstName());
+        String lastName = Sanitizer.requireClean("lastName", request.getLastName());
 
         if (userRepository.existsByEmail(email)) {
             throw new RuntimeException("Error: Email is already in use!");
@@ -69,7 +68,7 @@ public class AuthService {
 
     // Authenticate user and return user info
     public AuthResult authenticateUser(LoginRequest request) {
-        String email = requireClean("email", request.getEmail());
+        String email = Sanitizer.requireClean("email", request.getEmail());
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(email, request.getPassword()));
 
@@ -117,7 +116,7 @@ public class AuthService {
 }
 
     public void forgotPassword(String email) {
-        String cleanEmail = requireClean("email", email);
+        String cleanEmail = Sanitizer.requireClean("email", email);
         User user = userRepository.findByEmail(cleanEmail)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         
@@ -141,13 +140,5 @@ public class AuthService {
         user.setResetPasswordToken(null);
         user.setTokenExpirationDate(null);
         userRepository.save(user);
-    }
-
-    // Rejects fields that contain HTML tags or control characters instead of silently stripping them.
-    private String requireClean(String field, String value) {
-        if (Sanitizer.hasMaliciousContent(value)) {
-            throw new InvalidFieldException(field, "El campo " + field + " contiene caracteres no permitidos");
-        }
-        return Sanitizer.text(value);
     }
 }

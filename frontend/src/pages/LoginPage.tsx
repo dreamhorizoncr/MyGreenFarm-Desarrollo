@@ -50,10 +50,10 @@ function LoginPage() {
         });
         navigate('/admin/dashboard');
       },
-      () => {
+      (message) => {
         notify.error({
           title: t("login.errorToastTitle"),
-          description: t("login.errorToastDescription"),
+          description: message,
         });
 
         const attempts = failedAttempts + 1;

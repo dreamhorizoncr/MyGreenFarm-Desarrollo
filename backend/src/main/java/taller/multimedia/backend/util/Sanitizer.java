@@ -7,6 +7,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.parser.Parser;
 import org.jsoup.safety.Safelist;
 
+import taller.multimedia.backend.exception.InvalidFieldException;
+
 public final class Sanitizer {
 
     private static final int MAX_PASSES = 5;
@@ -18,6 +20,14 @@ public final class Sanitizer {
 
     public static boolean hasMaliciousContent(String input) {
         return input != null && SUSPICIOUS.matcher(input).find();
+    }
+
+    // Rejects a field that contains HTML tags or control characters instead of silently stripping them.
+    public static String requireClean(String field, String value) {
+        if (hasMaliciousContent(value)) {
+            throw new InvalidFieldException(field, "El campo " + field + " contiene caracteres no permitidos");
+        }
+        return text(value);
     }
 
     public static String text(String input) {
