@@ -4,6 +4,7 @@ import { CalendarClockIcon, PencilIcon, SearchIcon } from '@animateicons/react/l
 import ChangeAppointmentStatusModal from './ChangeAppointmentStatusModal.tsx'
 import RescheduleAppointmentModal from './RescheduleAppointmentModal.tsx'
 import AppointmentDetailsModal from './AppointmentDetailsModal.tsx'
+import Skeleton from './ui/Skeleton.tsx'
 import { useAppointments } from '../hooks/useAppointments.ts'
 import { notify } from '../utils/notifications.ts'
 import type { Appointment, AppointmentStatus } from '../types/appointment.ts'
@@ -11,6 +12,24 @@ import type { Appointment, AppointmentStatus } from '../types/appointment.ts'
 type StatusFilter = 'ALL' | AppointmentStatus
 
 const STATUS_FILTERS: StatusFilter[] = ['ALL', 'PENDING', 'CONFIRMED', 'CANCELLED']
+
+function AppointmentCardSkeleton() {
+  return (
+    <div className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
+      <div className="flex items-center justify-between gap-sm">
+        <Skeleton shape="pill" className="h-6 w-24" />
+        <div className="flex items-center gap-2xs">
+          <Skeleton shape="circle" className="h-[38px] w-[38px]" />
+          <Skeleton shape="circle" className="h-[38px] w-[38px]" />
+        </div>
+      </div>
+      <Skeleton shape="line" className="mt-sm h-5 w-1/2" />
+      <Skeleton shape="line" className="mt-2 h-3 w-1/3" />
+      <Skeleton shape="line" className="mt-md h-4 w-2/5" />
+    </div>
+  )
+}
+
 function AppointmentsSection() {
   const { t, i18n } = useTranslation()
   const {
@@ -131,7 +150,14 @@ function AppointmentsSection() {
         <p className="m-0 mb-md text-left font-body text-sm text-danger">{actionError}</p>
       )}
 
-      {loading && <p className="m-0 p-xl text-center font-body text-base text-neutral-500">{t('common.loading')}</p>}
+      {loading && (
+        <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
+          <AppointmentCardSkeleton />
+          <AppointmentCardSkeleton />
+          <AppointmentCardSkeleton />
+          <AppointmentCardSkeleton />
+        </div>
+      )}
 
       {error && <p className="m-0 p-xl text-center font-body text-base text-danger">{error}</p>}
 
@@ -147,7 +173,7 @@ function AppointmentsSection() {
             {filteredAppointments.map((appointment) => (
               <div
                 key={appointment.id}
-                className={`relative flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${
+                className={`group relative flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${
                   actionId === appointment.id ? 'opacity-60' : ''
                 }`}
               >
@@ -201,7 +227,7 @@ function AppointmentsSection() {
                   {formatDate(appointment.appointmentDate)}
                 </p>
 
-                <p className="m-0 mt-md font-body text-sm font-semibold text-link">
+                <p className="m-0 mt-md font-body text-sm font-semibold text-link underline-offset-2 transition-colors group-hover:underline">
                   {t('teacherAppointments.viewDetails')}
                 </p>
               </div>

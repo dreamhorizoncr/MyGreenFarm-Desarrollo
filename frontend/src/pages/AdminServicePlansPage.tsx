@@ -3,11 +3,29 @@ import { useTranslation } from 'react-i18next'
 import { PlusIcon, Trash2Icon, PencilIcon, XIcon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import Button from '../components/ui/Button.tsx'
+import Skeleton from '../components/ui/Skeleton.tsx'
 import CreateServicePlanModal from '../components/CreateServicePlanModal.tsx'
 import { useServicePlanAdmin } from '../hooks/useServicePlanAdmin.ts'
 import { notify } from '../utils/notifications.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
+
+function ServicePlanCardSkeleton() {
+  return (
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
+      <Skeleton shape="rect" className="h-[180px] w-full rounded-none" />
+      <div className="flex flex-1 flex-col gap-sm p-lg">
+        <Skeleton shape="line" className="h-5 w-3/4" />
+        <Skeleton shape="line" className="h-4 w-full" />
+        <Skeleton shape="line" className="h-4 w-2/3" />
+        <div className="flex items-center gap-sm">
+          <Skeleton shape="pill" className="h-6 w-20" />
+          <Skeleton shape="line" className="h-6 w-16" />
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function AdminServicePlansPage() {
   const { t } = useTranslation()
@@ -66,7 +84,11 @@ function AdminServicePlansPage() {
         </div>
 
         {loading && (
-          <p className="text-center font-body text-base text-neutral-500">{t('common.loading')}</p>
+          <div className="grid grid-cols-1 gap-xl md:grid-cols-2 lg:grid-cols-3">
+            <ServicePlanCardSkeleton />
+            <ServicePlanCardSkeleton />
+            <ServicePlanCardSkeleton />
+          </div>
         )}
 
         {error && (

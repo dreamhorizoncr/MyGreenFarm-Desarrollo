@@ -573,6 +573,7 @@ export default {
       title: "Gestion de la newsletter",
       subtitle: "Gérez les abonnés et les parents, et envoyez des e-mails groupés.",
       searchPlaceholder: "Rechercher par e-mail...",
+      sendBroadcast: "Envoyer",
       sendSubscribers: "Envoyer aux abonnés",
       sendParents: "Envoyer aux parents",
       sendAll: "Envoyer à tous",
