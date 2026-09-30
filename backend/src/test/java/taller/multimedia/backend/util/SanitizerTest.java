@@ -3,12 +3,15 @@ package taller.multimedia.backend.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import taller.multimedia.backend.exception.InvalidFieldException;
 
 class SanitizerTest {
 
@@ -112,6 +115,28 @@ class SanitizerTest {
     void veryLongTextDoesNotBreak() {
         String longText = "a".repeat(6000);
         assertEquals(6000, Sanitizer.text(longText).length());
+    }
+
+    @Test
+    void requireCleanPreserveLineBreaks_keepsTheLineBreaksTheAuthorTyped() {
+        String multiline = "Primer párrafo.\n\nSegundo párrafo con más detalle.";
+        assertEquals(multiline, Sanitizer.requireCleanPreserveLineBreaks("content", multiline));
+    }
+
+    @Test
+    void requireCleanPreserveLineBreaks_normalizesCrlfToLf() {
+        assertEquals("Línea 1\nLínea 2", Sanitizer.requireCleanPreserveLineBreaks("content", "Línea 1\r\nLínea 2"));
+    }
+
+    @Test
+    void requireCleanPreserveLineBreaks_trimsOnlyTheOuterEdges() {
+        assertEquals("Hola\n\nMundo", Sanitizer.requireCleanPreserveLineBreaks("content", "  Hola\n\nMundo  "));
+    }
+
+    @Test
+    void requireCleanPreserveLineBreaks_rejectsHtmlJustLikeRequireClean() {
+        assertThrows(InvalidFieldException.class,
+                () -> Sanitizer.requireCleanPreserveLineBreaks("content", "<script>alert(1)</script>Hola"));
     }
 
     @Test

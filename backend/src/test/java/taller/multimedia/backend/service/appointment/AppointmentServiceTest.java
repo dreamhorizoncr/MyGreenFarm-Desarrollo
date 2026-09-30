@@ -11,16 +11,19 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import taller.multimedia.backend.dto.appointment.AppointmentRequest;
 import taller.multimedia.backend.exception.InvalidFieldException;
+import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.ReferralSource;
 import taller.multimedia.backend.repository.appointment.AppointmentRepository;
 import taller.multimedia.backend.service.EmailService;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
@@ -113,5 +116,20 @@ class AppointmentServiceTest {
         assertThrows(InvalidFieldException.class, () -> appointmentService.createAppointment(request));
 
         verify(appointmentRepository, never()).save(any());
+    }
+
+    @Test
+    void createAppointment_keepsTheLineBreaksInParentNotes() {
+        String multilineNotes = "Primer detalle.\n\nSegundo detalle importante.";
+        AppointmentRequest request = validRequest();
+        request.setParentNotes(multilineNotes);
+
+        when(appointmentRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        appointmentService.createAppointment(request);
+
+        ArgumentCaptor<Appointment> savedAppointment = ArgumentCaptor.forClass(Appointment.class);
+        verify(appointmentRepository).save(savedAppointment.capture());
+        assertThat(savedAppointment.getValue().getParentNotes()).isEqualTo(multilineNotes);
     }
 }

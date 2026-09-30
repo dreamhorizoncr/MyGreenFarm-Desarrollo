@@ -85,7 +85,7 @@ public class AppointmentService {
         String parentName = Sanitizer.requireClean("parentName", dto.getParentName());
         String parentOccupation = Sanitizer.requireClean("parentOccupation", dto.getParentOccupation());
         String childName = Sanitizer.requireClean("childName", dto.getChildName());
-        String parentNotes = Sanitizer.requireClean("parentNotes", dto.getParentNotes());
+        String parentNotes = Sanitizer.requireCleanPreserveLineBreaks("parentNotes", dto.getParentNotes());
         String referralOtherDetail = dto.getReferralOtherDetail() == null
                 ? null
                 : Sanitizer.requireClean("referralOtherDetail", dto.getReferralOtherDetail());

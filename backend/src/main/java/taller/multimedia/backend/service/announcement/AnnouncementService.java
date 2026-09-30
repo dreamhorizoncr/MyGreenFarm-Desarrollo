@@ -28,7 +28,7 @@ public class AnnouncementService {
     @Transactional
     public AnnouncementResponse create(AnnouncementRequest dto) {
         String title = Sanitizer.requireClean("title", dto.getTitle());
-        String content = Sanitizer.requireClean("content", dto.getContent());
+        String content = Sanitizer.requireCleanPreserveLineBreaks("content", dto.getContent());
         String location = dto.getLocation() == null ? null : Sanitizer.requireClean("location", dto.getLocation());
 
         if (announcementRepository.existsByTitle(title)) {
@@ -85,7 +85,7 @@ public class AnnouncementService {
                 .orElseThrow(() -> new RuntimeException("Anuncio no encontrado con ID: " + id));
 
         String title = Sanitizer.requireClean("title", dto.getTitle());
-        String content = Sanitizer.requireClean("content", dto.getContent());
+        String content = Sanitizer.requireCleanPreserveLineBreaks("content", dto.getContent());
         String location = dto.getLocation() == null ? null : Sanitizer.requireClean("location", dto.getLocation());
 
         if (announcementRepository.existsByTitleAndIdNot(title, id)) {

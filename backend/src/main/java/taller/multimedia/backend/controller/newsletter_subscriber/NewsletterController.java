@@ -10,6 +10,7 @@ import java.util.List;
 
 import taller.multimedia.backend.dto.newsletter_subscriber.BroadcastEmail;
 import taller.multimedia.backend.dto.newsletter_subscriber.SubscriberInfo;
+import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.model.newsletter_subscriber.NewsletterSubscriber;
 import taller.multimedia.backend.repository.newsletter_subscriber.NewsletterSubscriberRepository;
 import taller.multimedia.backend.repository.parent.ParentRepository;
@@ -78,6 +79,8 @@ public class NewsletterController {
         try {
             broadcastService.sendBroadcast(dto);
             return ResponseEntity.ok("Correo masivo enviado exitosamente a la audiencia: " + dto.getAudienceType());
+        } catch (InvalidFieldException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al enviar correos: " + e.getMessage());
         }
