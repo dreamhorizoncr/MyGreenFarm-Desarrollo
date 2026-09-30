@@ -12,6 +12,7 @@ import taller.multimedia.backend.repository.curriculum.CurriculumRepository;
 import taller.multimedia.backend.repository.vacancy.VacancyRepository;
 import taller.multimedia.backend.service.EmailService;
 import taller.multimedia.backend.service.StorageService;
+import taller.multimedia.backend.util.Sanitizer;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -43,16 +44,18 @@ public class CurriculumService {
     public ApplicationResponse submitApplication(ApplicationRequest request, MultipartFile file, List<MultipartFile> certificates) {
         Curriculum curriculum = new Curriculum();
         curriculum.setVacancyId(request.getVacancyId());
-        curriculum.setApplicantName(request.getApplicantName());
-        curriculum.setApplicantEmail(request.getApplicantEmail());
-        curriculum.setApplicantPhone(request.getApplicantPhone());
+        curriculum.setApplicantName(Sanitizer.requireClean("applicantName", request.getApplicantName()));
+        curriculum.setApplicantEmail(Sanitizer.requireClean("applicantEmail", request.getApplicantEmail()));
+        curriculum.setApplicantPhone(request.getApplicantPhone() == null
+                ? null
+                : Sanitizer.requireClean("applicantPhone", request.getApplicantPhone()));
         curriculum.setLanguage(resolverLangCode(request.getLanguage()));
 
         if (file != null && !file.isEmpty()) {
             if (!isValidCvFormat(file.getContentType())) {
                 throw new IllegalArgumentException("El CV debe ser un archivo PDF.");
             }
-            curriculum.setFileName(file.getOriginalFilename());
+            curriculum.setFileName(Sanitizer.safeFileName(file.getOriginalFilename()));
             curriculum.setFileUrl(storageService.uploadFile(file, curriculumsBucket, "cvs"));
         }
 
@@ -64,7 +67,7 @@ public class CurriculumService {
                 }
 
                 CurriculumCertificate certificate = new CurriculumCertificate();
-                certificate.setFileName(certificateFile.getOriginalFilename());
+                certificate.setFileName(Sanitizer.safeFileName(certificateFile.getOriginalFilename()));
                 certificate.setFileUrl(storageService.uploadFile(certificateFile, curriculumsBucket, "certificates"));
                 certificate.setCurriculum(curriculum);
                 curriculum.getCertificates().add(certificate);

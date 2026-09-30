@@ -113,4 +113,43 @@ class SanitizerTest {
         String longText = "a".repeat(6000);
         assertEquals(6000, Sanitizer.text(longText).length());
     }
+
+    @Test
+    void safeFileName_keepsALegitimateNameAsIs() {
+        assertEquals("cv-ana-perez.pdf", Sanitizer.safeFileName("cv-ana-perez.pdf"));
+    }
+
+    @Test
+    void safeFileName_dropsAnyDirectoryPortion() {
+        assertEquals("cv.pdf", Sanitizer.safeFileName("/etc/passwd/cv.pdf"));
+        assertEquals("cv.pdf", Sanitizer.safeFileName("..\\..\\windows\\cv.pdf"));
+    }
+
+    @Test
+    void safeFileName_stripsScriptTagsFromTheBaseName() {
+        String result = Sanitizer.safeFileName("<script>alert(1)</script>.pdf");
+        assertFalse(result.contains("<"));
+        assertFalse(result.contains(">"));
+    }
+
+    @Test
+    void safeFileName_removesReservedCharacters() {
+        assertEquals("cvmalicioso.pdf", Sanitizer.safeFileName("cv:malicioso*?\"<>|.pdf"));
+    }
+
+    @Test
+    void safeFileName_fallsBackToADefaultNameWhenNothingLegibleIsLeft() {
+        assertEquals("file.pdf", Sanitizer.safeFileName("***.pdf"));
+        assertEquals("file", Sanitizer.safeFileName(""));
+    }
+
+    @Test
+    void safeFileName_handlesNull() {
+        assertEquals("file", Sanitizer.safeFileName(null));
+    }
+
+    @Test
+    void safeFileName_lowercasesAndCleansTheExtension() {
+        assertEquals("cv.pdf", Sanitizer.safeFileName("cv.PDF"));
+    }
 }

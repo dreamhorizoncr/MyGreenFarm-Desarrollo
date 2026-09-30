@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.MediaType;
 
 import taller.multimedia.backend.dto.service_plan.ServicePlanRequest;
+import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.model.service_plans.ServicePlan;
 import taller.multimedia.backend.service.service_plan.ServicePlanService;
 import tools.jackson.databind.ObjectMapper;
@@ -61,6 +62,8 @@ public class ServicePlanController {
 
             ServicePlan created = servicePlanService.createPlan(dto, file);
             return ResponseEntity.ok(created);
+        } catch (InvalidFieldException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error al procesar el plan: " + e.getMessage());
         }
