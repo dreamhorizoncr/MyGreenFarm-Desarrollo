@@ -8,6 +8,7 @@ import {
   XIcon,
 } from "@animateicons/react/lucide";
 import AdminLayout from "../layout/AdminLayout.tsx";
+import Skeleton from "../components/ui/Skeleton.tsx";
 import { useAnnouncements } from "../hooks/useAnnouncements.ts";
 import { notify } from "../utils/notifications.ts";
 import type {
@@ -47,6 +48,19 @@ type AdminNewsCategory =
   | "NOTICE"
   | "GENERAL"
   | "TRANSPORT";
+
+function NewsRowSkeleton() {
+  return (
+    <div className="border-t border-neutral-200 px-md py-lg">
+      <Skeleton shape="line" className="h-3 w-24" />
+      <Skeleton shape="line" className="mt-xs h-6 w-2/3" />
+      <div className="mt-xs flex flex-col gap-2xs">
+        <Skeleton shape="line" className="h-4 w-full" />
+        <Skeleton shape="line" className="h-4 w-1/2" />
+      </div>
+    </div>
+  )
+}
 
 function AnnouncementsPage() {
   const {
@@ -534,15 +548,10 @@ function AnnouncementsPage() {
 
       <section className="mt-xl grid gap-md">
         {loading && !formOpen && (
-          <output
-            className="flex items-center gap-sm border-t border-neutral-200 py-xl text-sm text-neutral-500"
-          >
-            <span
-              className="size-4 animate-spin rounded-full border-2 border-neutral-300 border-t-heading"
-              aria-hidden="true"
-            />
-
-            {t("adminNews.newsload")}
+          <output className="contents" aria-label={t("adminNews.newsload")}>
+            <NewsRowSkeleton />
+            <NewsRowSkeleton />
+            <NewsRowSkeleton />
           </output>
         )}
 

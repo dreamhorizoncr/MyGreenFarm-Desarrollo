@@ -8,6 +8,8 @@ import ForumSidebar from '../components/forum/ForumSidebar.tsx'
 import ForumTabs from '../components/forum/ForumTabs.tsx'
 import type { ForumTab } from '../components/forum/ForumTabs.tsx'
 import PublishExperienceModal from '../components/forum/PublishExperienceModal.tsx'
+import BlogPostCardSkeleton from '../components/forum/BlogPostCardSkeleton.tsx'
+import CommunityPostCardSkeleton from '../components/forum/CommunityPostCardSkeleton.tsx'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 
 function ForumPage() {
@@ -76,9 +78,11 @@ function ForumPage() {
                 className="flex scroll-mt-24 flex-col gap-md"
               >
                 {isLoading && (
-                  <p className="m-0 rounded-2xl border border-neutral-200 bg-white p-lg font-body text-body-sm text-neutral-500">
-                    Cargando artículos...
-                  </p>
+                  <>
+                    <BlogPostCardSkeleton />
+                    <BlogPostCardSkeleton />
+                    <BlogPostCardSkeleton />
+                  </>
                 )}
 
                 {!isLoading && error && (
@@ -119,9 +123,11 @@ function ForumPage() {
                 className="flex scroll-mt-24 flex-col gap-md"
               >
                 {isLoading && (
-                  <p className="m-0 rounded-2xl border border-neutral-200 bg-white p-lg font-body text-body-sm text-neutral-500">
-                    Cargando comunidad...
-                  </p>
+                  <>
+                    <CommunityPostCardSkeleton />
+                    <CommunityPostCardSkeleton />
+                    <CommunityPostCardSkeleton />
+                  </>
                 )}
 
                 {!isLoading && error && (

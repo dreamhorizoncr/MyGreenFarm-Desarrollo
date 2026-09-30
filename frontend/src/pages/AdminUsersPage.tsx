@@ -6,11 +6,27 @@ import AdminLayout from '../layout/AdminLayout.tsx'
 import EditUserModal from '../components/EditUserModal.tsx'
 import DeleteUserModal from '../components/DeleteUserModal.tsx'
 import TeacherCard from '../components/TeacherCard.tsx'
+import Skeleton from '../components/ui/Skeleton.tsx'
 import { useAdmin } from '../hooks/useAdmin.ts'
 import useDismiss from '../hooks/useDismiss.ts'
 import { notify } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
+
+function TeacherCardSkeleton() {
+  return (
+    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
+      <div className="flex items-start justify-between gap-sm">
+        <div className="min-w-0 flex-1">
+          <Skeleton shape="line" className="h-5 w-1/2" />
+          <Skeleton shape="line" className="mt-2 h-3 w-20" />
+        </div>
+        <Skeleton shape="circle" className="h-[34px] w-[34px] shrink-0" />
+      </div>
+      <Skeleton shape="line" className="mt-md h-4 w-2/3" />
+    </article>
+  )
+}
 
 function AdminUsersPage() {
   const { t } = useTranslation()
@@ -122,7 +138,14 @@ function AdminUsersPage() {
           ))}
         </div>
 
-        {loading && <p className="m-0 p-xl text-center font-body text-base text-neutral-500">{t('common.loading')}</p>}
+        {loading && (
+          <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
+            <TeacherCardSkeleton />
+            <TeacherCardSkeleton />
+            <TeacherCardSkeleton />
+            <TeacherCardSkeleton />
+          </div>
+        )}
 
         {error && <p className="m-0 p-xl text-center font-body text-base text-danger">{error}</p>}
 

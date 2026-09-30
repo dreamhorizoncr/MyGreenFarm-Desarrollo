@@ -3,6 +3,7 @@ import { PencilIcon, PlusIcon, Trash2Icon, XIcon } from '@animateicons/react/luc
 import { useTranslation } from 'react-i18next'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import BlogPostCard from '../components/forum/BlogPostCard.tsx'
+import BlogPostCardSkeleton from '../components/forum/BlogPostCardSkeleton.tsx'
 import BlogPostFormModal from '../components/forum/admin/BlogPostFormModal.tsx'
 import Button from '../components/ui/Button.tsx'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
@@ -110,9 +111,10 @@ function AdminForumPage() {
       </div>
 
       {isLoading ? (
-        <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-sm text-neutral-500">
-          Cargando artículos...
-        </p>
+        <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
+          <li><BlogPostCardSkeleton /></li>
+          <li><BlogPostCardSkeleton /></li>
+        </ul>
       ) : error ? (
         <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-sm text-danger">
           {error}

@@ -581,6 +581,7 @@ export default {
       title: "Gestión de Boletín",
       subtitle: "Administra suscriptores, padres de familia y realiza envíos masivos.",
       searchPlaceholder: "Buscar por correo...",
+      sendBroadcast: "Enviar",
       sendSubscribers: "Enviar a suscriptores",
       sendParents: "Enviar a padres",
       sendAll: "Enviar a todos",

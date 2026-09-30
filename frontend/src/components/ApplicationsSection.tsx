@@ -4,9 +4,26 @@ import { ChevronDownIcon, SearchIcon } from '@animateicons/react/lucide'
 import CurriculumCard from './CurriculumCard.tsx'
 import ConfirmCurriculumDecisionModal from './ConfirmCurriculumDecisionModal.tsx'
 import DeleteCurriculumModal from './DeleteCurriculumModal.tsx'
+import Skeleton from './ui/Skeleton.tsx'
 import { ALL_VACANCIES, SPONTANEOUS_APPLICATIONS, useApplicationFilters } from '../hooks/useApplicationFilters.ts'
 import type { Curriculum } from '../types/curriculum.ts'
 import type { Vacancy } from '../types/vacancy.ts'
+
+function CurriculumRowSkeleton() {
+  return (
+    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
+      <div className="flex items-center justify-between gap-sm">
+        <div className="min-w-0 flex-1">
+          <Skeleton shape="line" className="h-5 w-1/3" />
+          <Skeleton shape="line" className="mt-2 h-3 w-2/3" />
+        </div>
+        <Skeleton shape="line" className="h-4 w-24" />
+        <Skeleton shape="circle" className="h-9 w-9 shrink-0" />
+        <Skeleton shape="circle" className="h-9 w-9 shrink-0" />
+      </div>
+    </article>
+  )
+}
 
 interface ApplicationsSectionProps {
   curriculums: Curriculum[]
@@ -67,7 +84,13 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
         </div>
       </div>
 
-      {loading && <p className="m-0 p-xl text-center font-body text-base text-neutral-500">{t('common.loading')}</p>}
+      {loading && (
+        <div className="flex flex-col gap-md">
+          <CurriculumRowSkeleton />
+          <CurriculumRowSkeleton />
+          <CurriculumRowSkeleton />
+        </div>
+      )}
       {error && <p className="m-0 p-xl text-center font-body text-base text-danger">{error}</p>}
 
       {!loading && !error && (

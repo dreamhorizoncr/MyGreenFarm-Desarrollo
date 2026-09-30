@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { Toaster } from 'sileo'
 
 import HomePage from './pages/HomePage.tsx'
@@ -43,6 +43,16 @@ import BlobGooFilter from './components/ui/BlobGooFilter.tsx'
 function SessionWatcher() {
   useSessionExpiredNotice()
   return null
+}
+
+function isDashboardPath(pathname: string) {
+  return pathname === '/profile' || pathname.startsWith('/admin')
+}
+
+function GlobalFooter() {
+  const { pathname } = useLocation()
+  if (isDashboardPath(pathname)) return null
+  return <Footer />
 }
 
 function App() {
@@ -98,7 +108,7 @@ function App() {
             </ForumFeedProvider>
           </ProfileAvatarProvider>
         </div>
-        <Footer />
+        <GlobalFooter />
         <ScrollToTopButton />
       </div>
     </BrowserRouter>

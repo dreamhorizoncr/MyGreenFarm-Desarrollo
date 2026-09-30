@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { SendIcon, UserSearchIcon, XIcon } from '@animateicons/react/lucide'
+import { ChevronDownIcon, SendIcon, UserSearchIcon, XIcon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import ConfirmNewsletterUnsubscribeModal from '../components/ConfirmNewsletterUnsubscribeModal.tsx'
+import useDismiss from '../hooks/useDismiss.ts'
 import { useNewsletter } from '../hooks/useNewsletter.ts'
 import { notify } from '../utils/notifications.ts'
 import type { AudienceType } from '../types/newsletter.ts'
@@ -22,6 +23,14 @@ function AdminNewsletterPage() {
     const [selectedAudience, setSelectedAudience] = useState<AudienceType>('BOTH')
     const [subject, setSubject] = useState('')
     const [message, setMessage] = useState('')
+    const [isSendMenuOpen, setIsSendMenuOpen] = useState(false)
+    const sendMenuRef = useRef<HTMLDivElement>(null)
+
+    useDismiss({
+        ref: sendMenuRef,
+        isOpen: isSendMenuOpen,
+        onClose: () => setIsSendMenuOpen(false),
+    })
 
     // Cargar los suscriptores y padres al montar el componente
     useEffect(() => {
@@ -64,6 +73,7 @@ function AdminNewsletterPage() {
     const handleOpenBroadcast = (audience: AudienceType) => {
         setSelectedAudience(audience)
         setIsBroadcastModalOpen(true)
+        setIsSendMenuOpen(false)
     }
 
     const handleUnsubscribe = async (recipient: NewsletterRecipient) => {
@@ -113,34 +123,54 @@ function AdminNewsletterPage() {
                         />
                     </div>
 
-                    {/* Botones para enviar a suscriptores, padres o todos */}
-                    <div className="flex flex-wrap gap-sm">
+                    <div className="relative inline-flex" ref={sendMenuRef}>
                         <button
                             type="button"
-                            onClick={() => handleOpenBroadcast('SUBSCRIBERS')}
+                            onClick={() => setIsSendMenuOpen((prev) => !prev)}
+                            aria-expanded={isSendMenuOpen}
+                            aria-haspopup="menu"
                             className="inline-flex h-[44px] items-center gap-xs whitespace-nowrap rounded-full border border-orange-500 px-md font-body text-[15px] font-semibold text-orange-500 transition-colors hover:bg-orange-500 hover:text-white"
                         >
                             <SendIcon size={18} aria-hidden="true" />
-                            <span>{t('admin.newsletter.sendSubscribers')}</span>
+                            <span>{t('admin.newsletter.sendBroadcast')}</span>
+                            <ChevronDownIcon
+                                size={16}
+                                className={`transition-transform duration-200 ${isSendMenuOpen ? 'rotate-180' : ''}`}
+                                aria-hidden="true"
+                            />
                         </button>
 
-                        <button
-                            type="button"
-                            onClick={() => handleOpenBroadcast('PARENTS')}
-                            className="inline-flex h-[44px] items-center gap-xs whitespace-nowrap rounded-full border border-orange-500 px-md font-body text-[15px] font-semibold  text-orange-500 transition-colors hover:bg-orange-500 hover:text-white"
-                        >
-                            <SendIcon size={18} aria-hidden="true" />
-                            <span>{t('admin.newsletter.sendParents')}</span>
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => handleOpenBroadcast('BOTH')}
-                            className="inline-flex h-[44px] items-center gap-xs whitespace-nowrap rounded-full border border-orange-500 px-md font-body text-[15px] font-semibold  text-orange-500 transition-colors hover:bg-orange-500 hover:text-white"
-                        >
-                            <SendIcon size={18} aria-hidden="true" />
-                            <span>{t('admin.newsletter.sendAll')}</span>
-                        </button>
+                        {isSendMenuOpen && (
+                            <div
+                                className="absolute right-0 top-[calc(100%+var(--spacing-2xs))] z-30 min-w-[220px] rounded-xl border border-neutral-200 bg-white p-2xs shadow animate-[admin-row-menu-in_0.12s_ease-out]"
+                                role="menu"
+                            >
+                                <button
+                                    type="button"
+                                    role="menuitem"
+                                    onClick={() => handleOpenBroadcast('SUBSCRIBERS')}
+                                    className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-sm text-body-text transition-colors hover:bg-(--grey-100)"
+                                >
+                                    {t('admin.newsletter.sendSubscribers')}
+                                </button>
+                                <button
+                                    type="button"
+                                    role="menuitem"
+                                    onClick={() => handleOpenBroadcast('PARENTS')}
+                                    className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-sm text-body-text transition-colors hover:bg-(--grey-100)"
+                                >
+                                    {t('admin.newsletter.sendParents')}
+                                </button>
+                                <button
+                                    type="button"
+                                    role="menuitem"
+                                    onClick={() => handleOpenBroadcast('BOTH')}
+                                    className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-sm text-body-text transition-colors hover:bg-(--grey-100)"
+                                >
+                                    {t('admin.newsletter.sendAll')}
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
 

@@ -5,6 +5,7 @@ import Container from "../components/home/Container";
 import { useTranslation } from "react-i18next";
 import NewsDetailModal from "../components/NewsDetailModal.tsx";
 import BlobButton from "../components/ui/BlobButton.tsx";
+import Skeleton from "../components/ui/Skeleton.tsx";
 
 import { useAnnouncements } from "../hooks/useAnnouncements";
 import { useAnnouncementImages } from "../hooks/useAnnouncementImages";
@@ -35,6 +36,28 @@ function formatDate(iso: string | null | undefined, lang: string): string {
     day: "numeric",
     month: "long",
   });
+}
+
+function NewsCardSkeleton({ big }: Readonly<{ big: boolean }>) {
+  return (
+    <article
+      className={`relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow md:h-[340px] ${
+        big ? "md:col-span-8" : "md:col-span-4"
+      }`}
+    >
+      <div className="relative h-[240px] md:absolute md:inset-y-0 md:left-0 md:h-auto md:w-1/2">
+        <Skeleton shape="rect" className="h-full w-full rounded-none" />
+      </div>
+
+      <div className="relative flex flex-col gap-sm p-[22px] text-left md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2 md:justify-center">
+        <Skeleton shape="line" className="h-3 w-1/3" />
+        <Skeleton shape="line" className="h-6 w-4/5" />
+        <Skeleton shape="line" className="h-4 w-full" />
+        <Skeleton shape="line" className="h-4 w-2/3" />
+        <Skeleton shape="pill" className="h-8 w-28" />
+      </div>
+    </article>
+  );
 }
 
 function NewsPage() {
@@ -149,9 +172,14 @@ const cards = announcements.filter(
       <main>
         <Container className="py-[45px] md:py-[55px]">
           {(loading || imagesLoading) && (
-            <p className="m-0 p-xl text-center font-body text-base text-neutral-500">
-              {t("common.loading")}
-            </p>
+            <div className="flex flex-col gap-[18px]">
+              {[0, 1].map((rowIndex) => (
+                <div key={rowIndex} className="grid grid-cols-1 gap-[18px] md:grid-cols-12">
+                  <NewsCardSkeleton big={rowIndex % 2 === 0} />
+                  <NewsCardSkeleton big={rowIndex % 2 !== 0} />
+                </div>
+              ))}
+            </div>
           )}
 
           {(error || imagesError) && (
