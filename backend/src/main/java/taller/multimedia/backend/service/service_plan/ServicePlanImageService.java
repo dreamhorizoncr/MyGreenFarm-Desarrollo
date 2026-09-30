@@ -10,6 +10,7 @@ import taller.multimedia.backend.dto.service_plan.ServicePlanRequest;
 import taller.multimedia.backend.model.service_plans.ServicePlan;
 import taller.multimedia.backend.repository.service_plan.ServicePlanRepository;
 import taller.multimedia.backend.service.StorageService;
+import taller.multimedia.backend.util.Sanitizer;
 
 import java.util.UUID;
 
@@ -53,8 +54,8 @@ public class ServicePlanImageService {
         plan.setType(dto.getType());
         plan.setPaymentUrl(dto.getPaymentUrl());
         plan.setImageUrl(imageUrl);
-        plan.setSchedule(dto.getSchedule());
-        plan.setIncludes(dto.getIncludes());
+        plan.setSchedule(Sanitizer.requireClean("schedule", dto.getSchedule()));
+        plan.setIncludes(Sanitizer.requireClean("includes", dto.getIncludes()));
         plan.setActive(true);
 
         return servicePlanRepository.save(plan);
@@ -66,8 +67,8 @@ public class ServicePlanImageService {
                 .orElseThrow(() -> new IllegalArgumentException("Configuración de plan no encontrada con ID: " + id));
 
         existing.setGatewayPriceId(dto.getGatewayPriceId());
-        existing.setSchedule(dto.getSchedule());
-        existing.setIncludes(dto.getIncludes());
+        existing.setSchedule(Sanitizer.requireClean("schedule", dto.getSchedule()));
+        existing.setIncludes(Sanitizer.requireClean("includes", dto.getIncludes()));
 
         // Si el usuario subió una nueva imagen, reemplazamos la anterior
         if (file != null && !file.isEmpty()) {

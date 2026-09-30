@@ -11,9 +11,15 @@ import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.ConstraintViolationException;
 import taller.multimedia.backend.dto.MessageResponse;
+import taller.multimedia.backend.exception.InvalidFieldException;
 
 @RestControllerAdvice(basePackageClasses = ForumArticleController.class)
 public class ForumExceptionHandler {
+
+    @ExceptionHandler(InvalidFieldException.class)
+    public ResponseEntity<MessageResponse> handleInvalidField(InvalidFieldException exception) {
+        return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<MessageResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException exception) {

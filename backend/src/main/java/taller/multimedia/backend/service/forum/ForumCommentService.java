@@ -20,6 +20,7 @@ import taller.multimedia.backend.model.user.User;
 import taller.multimedia.backend.repository.forum.ForumArticleRepository;
 import taller.multimedia.backend.repository.forum.ForumCommentRepository;
 import taller.multimedia.backend.repository.user.UserRepository;
+import taller.multimedia.backend.util.Sanitizer;
 
 @Service
 @RequiredArgsConstructor
@@ -43,8 +44,8 @@ public class ForumCommentService {
 
         ForumComment comment = new ForumComment();
         comment.setArticle(article);
-        comment.setAlias(escape(request.getAlias()));
-        comment.setContent(escape(request.getContent()));
+        comment.setAlias(Sanitizer.requireClean("alias", request.getAlias()));
+        comment.setContent(Sanitizer.requireCleanPreserveLineBreaks("content", request.getContent()));
 
         return forumMapper.toCommentResponse(commentRepository.save(comment));
     }
@@ -76,14 +77,5 @@ public class ForumCommentService {
         if (!articleRepository.existsById(articleId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Artículo no encontrado: " + articleId);
         }
-    }
-
-    private String escape(String value) {
-        return value.trim()
-                .replace("&", "&amp;")
-                .replace("<", "&lt;")
-                .replace(">", "&gt;")
-                .replace("\"", "&quot;")
-                .replace("'", "&#39;");
     }
 }

@@ -3,6 +3,7 @@ package taller.multimedia.backend.controller.curriculum;
 import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.curriculum.ApplicationRequest;
 import taller.multimedia.backend.dto.curriculum.ApplicationResponse;
+import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.model.curriculum.CurriculumStatus;
 import taller.multimedia.backend.service.curriculum.CurriculumService;
 import tools.jackson.databind.ObjectMapper;
@@ -38,6 +39,8 @@ public class CurriculumController {
             ApplicationResponse created = curriculumService.submitApplication(
                     request, file, certificates == null ? Collections.emptyList() : certificates);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        } catch (InvalidFieldException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Error al procesar la postulación: " + e.getMessage());
         }

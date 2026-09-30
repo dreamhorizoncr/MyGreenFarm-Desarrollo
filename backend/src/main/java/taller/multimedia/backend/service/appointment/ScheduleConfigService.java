@@ -20,6 +20,7 @@ import taller.multimedia.backend.model.appointment.WeeklySchedule;
 import taller.multimedia.backend.repository.appointment.AppointmentRepository;
 import taller.multimedia.backend.repository.appointment.ScheduleExceptionRepository;
 import taller.multimedia.backend.repository.appointment.WeeklyScheduleRepository;
+import taller.multimedia.backend.util.Sanitizer;
 
 @Service
 public class ScheduleConfigService {
@@ -134,6 +135,9 @@ public class ScheduleConfigService {
     }
 
     public ScheduleException saveException(ScheduleException exception) {
+        if (exception.getReason() != null) {
+            exception.setReason(Sanitizer.requireClean("reason", exception.getReason()));
+        }
         return exceptionRepo.save(exception);
     }
 

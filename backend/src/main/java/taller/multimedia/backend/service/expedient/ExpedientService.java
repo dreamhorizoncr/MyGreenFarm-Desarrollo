@@ -6,6 +6,7 @@ import taller.multimedia.backend.dto.expedient.ExpedientResponse;
 import taller.multimedia.backend.model.expedient.Expedient;
 import taller.multimedia.backend.repository.expedient.ExpedientRepository;
 import taller.multimedia.backend.service.StorageService;
+import taller.multimedia.backend.util.Sanitizer;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,15 +30,20 @@ public class ExpedientService {
 
     @Transactional
     public ExpedientResponse createExpedient(ExpedientRequest request, MultipartFile file) {
-        if (expedientRepository.existsByChildName(request.getChildName())) {
-            throw new RuntimeException("Ya existe un expediente registrado para: " + request.getChildName());
+        String childName = Sanitizer.requireClean("childName", request.getChildName());
+        String generalObservations = request.getGeneralObservations() == null
+                ? null
+                : Sanitizer.requireClean("generalObservations", request.getGeneralObservations());
+
+        if (expedientRepository.existsByChildName(childName)) {
+            throw new RuntimeException("Ya existe un expediente registrado para: " + childName);
         }
 
         Expedient expedient = new Expedient();
-        expedient.setChildName(request.getChildName());
+        expedient.setChildName(childName);
         expedient.setAdmisionDate(request.getAdmisionDate());
         expedient.setEducationalLevel(request.getEducationalLevel());
-        expedient.setGeneralObservations(request.getGeneralObservations());
+        expedient.setGeneralObservations(generalObservations);
 
         // Si se envió un archivo, lo procesamos
         if (file != null && !file.isEmpty()) {
@@ -100,15 +106,20 @@ public class ExpedientService {
     public ExpedientResponse uploadOrUpdatePhoto(UUID expedientId, ExpedientRequest request, MultipartFile file) {
         Expedient existing = findEntityById(expedientId);
 
-        if (!existing.getChildName().equals(request.getChildName()) &&
-                expedientRepository.existsByChildName(request.getChildName())) {
-            throw new RuntimeException("Ya existe otro expediente registrado con el nombre: " + request.getChildName());
+        String childName = Sanitizer.requireClean("childName", request.getChildName());
+        String generalObservations = request.getGeneralObservations() == null
+                ? null
+                : Sanitizer.requireClean("generalObservations", request.getGeneralObservations());
+
+        if (!existing.getChildName().equals(childName) &&
+                expedientRepository.existsByChildName(childName)) {
+            throw new RuntimeException("Ya existe otro expediente registrado con el nombre: " + childName);
         }
 
-        existing.setChildName(request.getChildName());
+        existing.setChildName(childName);
         existing.setAdmisionDate(request.getAdmisionDate());
         existing.setEducationalLevel(request.getEducationalLevel());
-        existing.setGeneralObservations(request.getGeneralObservations());
+        existing.setGeneralObservations(generalObservations);
 
         // Si mandaron un nuevo archivo, reemplazamos el anterior
         if (file != null && !file.isEmpty()) {

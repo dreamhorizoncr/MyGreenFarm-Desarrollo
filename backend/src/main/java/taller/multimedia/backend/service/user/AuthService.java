@@ -22,6 +22,7 @@ import taller.multimedia.backend.repository.user.UserRepository;
 import taller.multimedia.backend.security.jwt.JwtUtils;
 import taller.multimedia.backend.security.services.UserDetailsImpl;
 import taller.multimedia.backend.service.EmailService;
+import taller.multimedia.backend.util.Sanitizer;
 
 @Service
 public class AuthService {
@@ -43,7 +44,11 @@ public class AuthService {
 
     // Register a new user
     public void registerUser(SignupRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        String email = Sanitizer.requireClean("email", request.getEmail());
+        String firstName = Sanitizer.requireClean("firstName", request.getFirstName());
+        String lastName = Sanitizer.requireClean("lastName", request.getLastName());
+
+        if (userRepository.existsByEmail(email)) {
             throw new RuntimeException("Error: Email is already in use!");
         }
 
@@ -51,10 +56,10 @@ public class AuthService {
 
         // Create a new user entity
         User user = new User(
-                request.getEmail(),
+                email,
                 encoder.encode(request.getPassword()),
-                request.getFirstName(),
-                request.getLastName(),
+                firstName,
+                lastName,
                 role,
                 true);
 
@@ -63,8 +68,9 @@ public class AuthService {
 
     // Authenticate user and return user info
     public AuthResult authenticateUser(LoginRequest request) {
+        String email = Sanitizer.requireClean("email", request.getEmail());
         Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(email, request.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -110,7 +116,8 @@ public class AuthService {
 }
 
     public void forgotPassword(String email) {
-        User user = userRepository.findByEmail(email)
+        String cleanEmail = Sanitizer.requireClean("email", email);
+        User user = userRepository.findByEmail(cleanEmail)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         
         String token = UUID.randomUUID().toString();

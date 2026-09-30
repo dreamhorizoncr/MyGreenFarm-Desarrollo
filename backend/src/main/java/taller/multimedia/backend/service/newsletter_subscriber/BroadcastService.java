@@ -9,6 +9,7 @@ import taller.multimedia.backend.repository.newsletter_subscriber.NewsletterSubs
 import taller.multimedia.backend.repository.newsletter_subscriber.SubscriberEmailProjection;
 import taller.multimedia.backend.repository.parent.ParentRepository;
 import taller.multimedia.backend.service.EmailService;
+import taller.multimedia.backend.util.Sanitizer;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -32,6 +33,9 @@ public class BroadcastService {
     }
 
     public void sendBroadcast(BroadcastEmail dto) {
+        String subject = Sanitizer.requireClean("subject", dto.getSubject());
+        String message = Sanitizer.requireCleanPreserveLineBreaks("message", dto.getMessage());
+
         List<SubscriberEmailProjection> recipients = new ArrayList<>();
 
         switch (dto.getAudienceType()) {
@@ -47,7 +51,7 @@ public class BroadcastService {
         }
 
         log.info("Newsletter broadcast audience={} activeRecipients={}", dto.getAudienceType(), recipients.size());
-        emailService.sendBroadcastEmail(recipients, dto.getSubject(), dto.getMessage());
+        emailService.sendBroadcastEmail(recipients, subject, message);
     }
 
     private List<SubscriberEmailProjection> getUniqueActiveRecipients() {
