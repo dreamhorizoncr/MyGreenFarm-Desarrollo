@@ -43,10 +43,10 @@ function ForgotPasswordPage() {
           description: t("forgotPassword.success"),
         });
       },
-      () => {
+      (message) => {
         notify.error({
           title: t("forgotPassword.errorToastTitle"),
-          description: t("forgotPassword.errorToastDescription"),
+          description: message,
         });
       },
     );

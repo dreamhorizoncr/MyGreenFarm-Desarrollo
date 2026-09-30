@@ -8,6 +8,7 @@ import taller.multimedia.backend.dto.gallery.CategoryGalleryResponse;
 import taller.multimedia.backend.model.gallery.CategoryGallery;
 import taller.multimedia.backend.model.gallery.Gallery;
 import taller.multimedia.backend.repository.gallery.CategoryGalleryRepository;
+import taller.multimedia.backend.util.Sanitizer;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,7 +24,7 @@ public class CategoryGalleryService {
     @Transactional
     public CategoryGalleryResponse create(CategoryGalleryRequest dto) {
         CategoryGallery category = new CategoryGallery();
-        category.setTitle(dto.getTitle());
+        category.setTitle(Sanitizer.requireClean("title", dto.getTitle()));
 
         CategoryGallery saved = categoryGalleryRepository.save(category);
         return mapToResponse(saved);
@@ -48,7 +49,7 @@ public class CategoryGalleryService {
         CategoryGallery category = categoryGalleryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada con ID: " + id));
 
-        category.setTitle(dto.getTitle());
+        category.setTitle(Sanitizer.requireClean("title", dto.getTitle()));
 
         CategoryGallery updated = categoryGalleryRepository.save(category);
         return mapToResponse(updated);

@@ -5,6 +5,7 @@ import taller.multimedia.backend.dto.vacancy.VacancyRequest;
 import taller.multimedia.backend.dto.vacancy.VacancyResponse;
 import taller.multimedia.backend.model.vacancy.Vacancy;
 import taller.multimedia.backend.repository.vacancy.VacancyRepository;
+import taller.multimedia.backend.util.Sanitizer;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +24,8 @@ public class VacancyService {
     @Transactional
     public VacancyResponse createVacancy(VacancyRequest request) {
         Vacancy vacancy = new Vacancy();
-        vacancy.setTitle(request.getTitle());
-        vacancy.setDescription(request.getDescription());
+        vacancy.setTitle(Sanitizer.requireClean("title", request.getTitle()));
+        vacancy.setDescription(Sanitizer.requireClean("description", request.getDescription()));
         vacancy.setRequiredFields(toCsv(request.getRequiredFields()));
 
         Vacancy saved = vacancyRepository.save(vacancy);

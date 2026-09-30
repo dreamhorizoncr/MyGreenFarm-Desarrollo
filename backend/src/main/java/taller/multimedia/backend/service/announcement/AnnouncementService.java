@@ -12,6 +12,7 @@ import taller.multimedia.backend.dto.announcement.AnnouncementRequest;
 import taller.multimedia.backend.dto.announcement.AnnouncementResponse;
 import taller.multimedia.backend.model.announcement.Announcement;
 import taller.multimedia.backend.repository.announcement.AnnouncementRepository;
+import taller.multimedia.backend.util.Sanitizer;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,17 +27,20 @@ public class AnnouncementService {
 
     @Transactional
     public AnnouncementResponse create(AnnouncementRequest dto) {
+        String title = Sanitizer.requireClean("title", dto.getTitle());
+        String content = Sanitizer.requireCleanPreserveLineBreaks("content", dto.getContent());
+        String location = dto.getLocation() == null ? null : Sanitizer.requireClean("location", dto.getLocation());
 
-        if (announcementRepository.existsByTitle(dto.getTitle())) {
-            throw new IllegalArgumentException("Ya existe un anuncio con el título: " + dto.getTitle());
+        if (announcementRepository.existsByTitle(title)) {
+            throw new IllegalArgumentException("Ya existe un anuncio con el título: " + title);
         }
 
         Announcement announcement = new Announcement();
-        announcement.setTitle(dto.getTitle());
-        announcement.setContent(dto.getContent());
+        announcement.setTitle(title);
+        announcement.setContent(content);
         announcement.setType(dto.getType());
         announcement.setEventDate(dto.getEventDate());
-        announcement.setLocation(dto.getLocation());
+        announcement.setLocation(location);
 
         Announcement saved = announcementRepository.save(announcement);
         return mapToResponse(saved, "es"); // Por defecto se guarda/crea en español
@@ -80,16 +84,20 @@ public class AnnouncementService {
         Announcement announcement = announcementRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Anuncio no encontrado con ID: " + id));
 
-        if (announcementRepository.existsByTitleAndIdNot(dto.getTitle(), id)) {
-            throw new IllegalArgumentException("Ya existe un anuncio con el título: " + dto.getTitle());
+        String title = Sanitizer.requireClean("title", dto.getTitle());
+        String content = Sanitizer.requireCleanPreserveLineBreaks("content", dto.getContent());
+        String location = dto.getLocation() == null ? null : Sanitizer.requireClean("location", dto.getLocation());
+
+        if (announcementRepository.existsByTitleAndIdNot(title, id)) {
+            throw new IllegalArgumentException("Ya existe un anuncio con el título: " + title);
         }
 
         // 2. Actualiza los campos con los nuevos datos
-        announcement.setTitle(dto.getTitle());
-        announcement.setContent(dto.getContent());
+        announcement.setTitle(title);
+        announcement.setContent(content);
         announcement.setType(dto.getType());
         announcement.setEventDate(dto.getEventDate());
-        announcement.setLocation(dto.getLocation());
+        announcement.setLocation(location);
 
         // 3. Guarda los cambios en la base de datos
         Announcement updated = announcementRepository.save(announcement);

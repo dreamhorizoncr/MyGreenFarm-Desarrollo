@@ -24,6 +24,7 @@ import taller.multimedia.backend.model.appointment.AppointmentStatus;
 import taller.multimedia.backend.model.appointment.ReferralSource;
 import taller.multimedia.backend.repository.appointment.AppointmentRepository;
 import taller.multimedia.backend.service.EmailService;
+import taller.multimedia.backend.util.Sanitizer;
 
 @Slf4j
 @Service
@@ -78,7 +79,16 @@ public class AppointmentService {
 
         validateParentIdentification(dto.getIdType(), dto.getParentIdentification());
 
-        validateAllowedEmail(dto.getParentEmail());
+        String parentEmail = Sanitizer.requireClean("parentEmail", dto.getParentEmail());
+        validateAllowedEmail(parentEmail);
+
+        String parentName = Sanitizer.requireClean("parentName", dto.getParentName());
+        String parentOccupation = Sanitizer.requireClean("parentOccupation", dto.getParentOccupation());
+        String childName = Sanitizer.requireClean("childName", dto.getChildName());
+        String parentNotes = Sanitizer.requireCleanPreserveLineBreaks("parentNotes", dto.getParentNotes());
+        String referralOtherDetail = dto.getReferralOtherDetail() == null
+                ? null
+                : Sanitizer.requireClean("referralOtherDetail", dto.getReferralOtherDetail());
 
         String formattedPhone = parseAndValidatePhone(dto.getParentPhone());
 
@@ -96,22 +106,22 @@ public class AppointmentService {
 
         Appointment appointment = new Appointment();
         appointment.setParentIdentification(dto.getParentIdentification());
-        appointment.setParentName(dto.getParentName());
-        appointment.setParentEmail(dto.getParentEmail());
+        appointment.setParentName(parentName);
+        appointment.setParentEmail(parentEmail);
         appointment.setParentPhone(formattedPhone);
-        appointment.setParentOccupation(dto.getParentOccupation());
+        appointment.setParentOccupation(parentOccupation);
         appointment.setReferralSource(dto.getReferralSource());
         if (dto.getReferralSource() == ReferralSource.OTHER) {
-            if (dto.getReferralOtherDetail() == null || dto.getReferralOtherDetail().isBlank()) {
+            if (referralOtherDetail == null || referralOtherDetail.isBlank()) {
                 throw new IllegalArgumentException("Debes indicar cómo nos conociste.");
             }
-            appointment.setReferralOtherDetail(dto.getReferralOtherDetail().trim());
+            appointment.setReferralOtherDetail(referralOtherDetail);
         }
-        appointment.setChildName(dto.getChildName());
+        appointment.setChildName(childName);
         String langCode = resolverLangCode(dto.getLanguage());
         appointment.setLanguage(langCode);
         appointment.setAppointmentDate(dto.getAppointmentDate());
-        appointment.setParentNotes(dto.getParentNotes());
+        appointment.setParentNotes(parentNotes);
 
         // Nace obligatoriamente en PENDING
         appointment.setStatus(AppointmentStatus.PENDING);
@@ -233,7 +243,8 @@ public class AppointmentService {
         appointment.setStatus(newStatus);
 
         if (teacherConclusion != null && !teacherConclusion.isBlank()) {
-            appointment.setTeacherConclusion(teacherConclusion);
+            appointment.setTeacherConclusion(
+                    Sanitizer.requireCleanPreserveLineBreaks("teacherConclusion", teacherConclusion));
         }
 
         Appointment updatedAppointment = appointmentRepository.save(appointment);
