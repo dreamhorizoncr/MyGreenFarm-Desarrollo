@@ -16,6 +16,7 @@ import taller.multimedia.backend.model.gallery.CategoryGallery;
 import taller.multimedia.backend.model.gallery.Gallery;
 import taller.multimedia.backend.repository.gallery.CategoryGalleryRepository;
 import taller.multimedia.backend.repository.gallery.GalleryRepository;
+import taller.multimedia.backend.util.Sanitizer;
 
 import java.util.List;
 import java.util.UUID;
@@ -35,8 +36,8 @@ public class GalleryService {
 
         Gallery gallery = new Gallery();
         gallery.setCategoryGallery(category);
-        gallery.setTitle(dto.getTitle());
-        gallery.setDescription(dto.getDescription());
+        gallery.setTitle(Sanitizer.requireClean("title", dto.getTitle()));
+        gallery.setDescription(Sanitizer.requireClean("description", dto.getDescription()));
 
         Gallery saved = galleryRepository.save(gallery);
         return mapToResponse(saved);
@@ -79,8 +80,8 @@ public class GalleryService {
         }
 
         gallery.setCategoryGallery(category);
-        gallery.setTitle(dto.getTitle());
-        gallery.setDescription(dto.getDescription());
+        gallery.setTitle(Sanitizer.requireClean("title", dto.getTitle()));
+        gallery.setDescription(Sanitizer.requireClean("description", dto.getDescription()));
         gallery.setFeatured(dto.getFeatured() != null ? dto.getFeatured() : false);
 
         Gallery updated = galleryRepository.save(gallery);

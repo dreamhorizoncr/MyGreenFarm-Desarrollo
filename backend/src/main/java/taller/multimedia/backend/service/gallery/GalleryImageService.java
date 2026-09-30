@@ -16,6 +16,7 @@ import taller.multimedia.backend.repository.gallery.GalleryRepository;
 import taller.multimedia.backend.repository.gallery.ImageLikeCountProjection;
 import taller.multimedia.backend.repository.gallery.ImageLikeRepository;
 import taller.multimedia.backend.service.StorageService;
+import taller.multimedia.backend.util.Sanitizer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +52,8 @@ public class GalleryImageService {
             throw new IllegalArgumentException("El título de la imagen es obligatorio.");
         }
 
+        String cleanTitle = Sanitizer.requireClean("title", title);
+
         List<GalleryImageResponse> responses = new ArrayList<>();
 
         for (MultipartFile file : files) {
@@ -66,7 +69,7 @@ public class GalleryImageService {
 
             GalleryImages image = new GalleryImages();
             image.setGallery(gallery);
-            image.setTitle(title);
+            image.setTitle(cleanTitle);
             image.setFileUrl(fileUrl);
 
             GalleryImages saved = imageRepository.save(image);
