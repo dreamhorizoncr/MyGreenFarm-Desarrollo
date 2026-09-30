@@ -10,6 +10,7 @@ import taller.multimedia.backend.dto.UserInfoResponse;
 import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.model.user.User;
 import taller.multimedia.backend.repository.user.UserRepository;
+import taller.multimedia.backend.util.Sanitizer;
 
 @Service
 public class UserService {
@@ -63,11 +64,11 @@ public class UserService {
             throw new RuntimeException("You do not have permission to edit this user");
         }
 
-        targetUser.setFirstName(request.getFirstName());
-        targetUser.setLastName(request.getLastName());
+        targetUser.setFirstName(Sanitizer.requireClean("firstName", request.getFirstName()));
+        targetUser.setLastName(Sanitizer.requireClean("lastName", request.getLastName()));
 
         if (isSelf) {
-            String newEmail = request.getEmail().trim();
+            String newEmail = Sanitizer.requireClean("email", request.getEmail());
             if (!newEmail.equals(targetUser.getEmail())) {
                 if (userRepository.existsByEmail(newEmail)) {
                     throw new RuntimeException("Error: Email is already in use!");
