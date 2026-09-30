@@ -27,6 +27,7 @@ import taller.multimedia.backend.repository.forum.ForumArticleRepository;
 import taller.multimedia.backend.repository.forum.ForumCommentRepository;
 import taller.multimedia.backend.repository.user.UserRepository;
 import taller.multimedia.backend.service.StorageService;
+import taller.multimedia.backend.util.Sanitizer;
 
 @Service
 @RequiredArgsConstructor
@@ -53,9 +54,9 @@ public class ForumArticleService {
         validateImage(request, image);
 
         ForumArticle article = new ForumArticle();
-        article.setTitle(request.getTitle().trim());
-        article.setTopic(request.getTopic().trim());
-        article.setContent(request.getContent().trim());
+        article.setTitle(Sanitizer.requireClean("title", request.getTitle()));
+        article.setTopic(Sanitizer.requireClean("topic", request.getTopic()));
+        article.setContent(Sanitizer.requireCleanPreserveLineBreaks("content", request.getContent()));
         article.setAuthor(author);
         article.setAuthorName(fullName(author));
         article.setAuthorRole(author.getRole().name());
@@ -88,9 +89,9 @@ public class ForumArticleService {
         ensureCanManage(article, currentUser);
         validateImage(request, image);
 
-        article.setTitle(request.getTitle().trim());
-        article.setTopic(request.getTopic().trim());
-        article.setContent(request.getContent().trim());
+        article.setTitle(Sanitizer.requireClean("title", request.getTitle()));
+        article.setTopic(Sanitizer.requireClean("topic", request.getTopic()));
+        article.setContent(Sanitizer.requireCleanPreserveLineBreaks("content", request.getContent()));
 
         if (request.isRemoveImage()) {
             deleteStoredImage(article.getImageUrl());
@@ -101,7 +102,7 @@ public class ForumArticleService {
             applyImage(article, image, request.getImageAlt());
         } else if (article.getImageUrl() != null) {
             if (request.getImageAlt() != null && !request.getImageAlt().isBlank()) {
-                article.setImageAlt(request.getImageAlt().trim());
+                article.setImageAlt(Sanitizer.requireClean("imageAlt", request.getImageAlt()));
             }
         } else {
             article.setImageAlt(null);
@@ -202,7 +203,7 @@ public class ForumArticleService {
         }
 
         article.setImageUrl(storageService.uploadFile(image, forumBucket, "forum_articles"));
-        article.setImageAlt(imageAlt.trim());
+        article.setImageAlt(Sanitizer.requireClean("imageAlt", imageAlt));
     }
 
     private void deleteStoredImage(String imageUrl) {
