@@ -35,8 +35,8 @@ function AdminCurriculumsPage() {
   const [activeTab, setActiveTab] = useState<Tab>('vacancies')
 
   useEffect(() => {
-    fetchVacancies()
-    fetchCurriculums()
+    void fetchVacancies()
+    void fetchCurriculums()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

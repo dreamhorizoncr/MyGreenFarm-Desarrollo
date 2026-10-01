@@ -247,7 +247,6 @@ function AnnouncementsPage() {
 
           <form
             onSubmit={handleSubmit}
-            onClick={(event: React.MouseEvent) => event.stopPropagation()}
             className="relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
           >
             <div className="flex items-center justify-between gap-md">

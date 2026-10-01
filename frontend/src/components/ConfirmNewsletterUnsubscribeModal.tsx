@@ -2,7 +2,6 @@ import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
-import useDismiss from '../hooks/useDismiss.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { NewsletterRecipient } from '../types/newsletter.ts'
 
@@ -14,16 +13,9 @@ interface ConfirmNewsletterUnsubscribeModalProps {
 
 function ConfirmNewsletterUnsubscribeModal({ recipient, onConfirm, onClose }: Readonly<ConfirmNewsletterUnsubscribeModalProps>) {
     const { t } = useTranslation()
-    const overlayRef = useRef<HTMLDivElement>(null)
+    const dialogRef = useRef<HTMLDialogElement>(null)
     const [unsubscribing, setUnsubscribing] = useState(false)
     const [error, setError] = useState<string | null>(null)
-
-    useDismiss({
-        ref: overlayRef,
-        isOpen: true,
-        onClose,
-        includeClickOutside: false,
-    })
 
     const handleConfirm = async () => {
         setUnsubscribing(true)
@@ -38,22 +30,22 @@ function ConfirmNewsletterUnsubscribeModal({ recipient, onConfirm, onClose }: Re
         }
     }
 
-    const handleOverlayClick = (event: React.MouseEvent) => {
-        if (event.target === overlayRef.current) onClose()
-    }
-
     return (
-        <div
-            className="fixed inset-0 z-100 grid place-items-center bg-scrim p-lg animate-[modal-overlay-in_0.15s_ease-out]"
-            ref={overlayRef}
-            onClick={handleOverlayClick}
+        <dialog
+            ref={(el) => {
+                dialogRef.current = el
+                if (el && !el.open) el.showModal()
+            }}
+            onClose={onClose}
+            onClick={(event) => {
+                if (event.target === dialogRef.current) onClose()
+            }}
+            onKeyDown={(event) => {
+                if (event.key === 'Escape') onClose()
+            }}
+            aria-labelledby="newsletter-unsubscribe-title"
+            className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none overflow-y-auto rounded-2xl bg-bg-card p-[28px_22px_30px] backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
         >
-            <div
-                className="relative w-[min(620px,92vw)] max-h-[90vh] overflow-y-auto rounded-2xl bg-bg-card p-[28px_22px_30px] animate-[modal-in_0.2s_ease-out]"
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="newsletter-unsubscribe-title"
-            >
                 <button
                     type="button"
                     className="absolute right-3 top-6.5 z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity duration-150 hover:opacity-65 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
@@ -95,8 +87,7 @@ function ConfirmNewsletterUnsubscribeModal({ recipient, onConfirm, onClose }: Re
                         </Button>
                     </div>
                 </div>
-            </div>
-        </div>
+        </dialog>
     )
 }
 

@@ -92,7 +92,7 @@ function SignUpPage() {
     )
       return;
 
-    submitRegister(
+    void submitRegister(
       { firstName, lastName, email, password, role },
       () => {
         notify.success({

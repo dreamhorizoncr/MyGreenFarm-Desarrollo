@@ -28,7 +28,7 @@ function AdminParentsPage() {
 
   // Obtiene los padres cuando carga la página
   useEffect(() => {
-    fetchParents();
+    void fetchParents();
   }, []);
 
   // Filtra los padres por nombre, apellido, identificación o correo

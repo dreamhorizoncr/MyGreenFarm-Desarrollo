@@ -309,6 +309,12 @@ function BookingPage() {
         : 'bg-[var(--grey-100)] text-body-text hover:bg-[var(--grey-200)]'
     }`
 
+  function computePhoneErrorMessage() {
+    if (!phoneError) return null
+    if (!phoneCountry) return t('validation.countryRequired')
+    return validateRequired(phone, t('booking.phone'), t) ?? validatePhoneNumber(phone, t)
+  }
+
   function computeStepErrorMessages() {
     return {
       fullNameErrorMessage: fullNameError
@@ -320,11 +326,7 @@ function BookingPage() {
       emailErrorMessage: emailError
         ? validateRequired(email, t('booking.email'), t) ?? validateEmail(email, t)
         : null,
-      phoneErrorMessage: phoneError
-        ? (phoneCountry
-            ? validateRequired(phone, t('booking.phone'), t) ?? validatePhoneNumber(phone, t)
-            : t('validation.countryRequired'))
-        : null,
+      phoneErrorMessage: computePhoneErrorMessage(),
       occupationErrorMessage: occupationError
         ? validateRequired(occupation, t('booking.occupation'), t)
         : null,

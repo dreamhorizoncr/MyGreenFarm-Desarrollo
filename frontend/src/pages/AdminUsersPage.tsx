@@ -41,7 +41,7 @@ function AdminUsersPage() {
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    fetchUsers()
+    void fetchUsers()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
