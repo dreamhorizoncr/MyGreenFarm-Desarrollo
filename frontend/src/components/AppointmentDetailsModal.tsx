@@ -48,6 +48,9 @@ function AppointmentDetailsModal({ appointment, onClose }: Readonly<AppointmentD
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose()
       }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') onClose()
+      }}
       aria-labelledby="appointment-details-title"
       className="m-auto max-h-[90vh] w-[min(720px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >

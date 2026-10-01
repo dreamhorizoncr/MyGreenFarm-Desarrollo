@@ -41,7 +41,7 @@ function LoginPage() {
     setEmailValidationError(emailErrorMessage);
     setPasswordValidationError(passwordErrorMessage);
     if (emailErrorMessage || passwordErrorMessage) return;
-    submitLogin(
+    void submitLogin(
       { email, password },
       (user) => {
         notify.success({

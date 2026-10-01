@@ -137,7 +137,6 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
 
       <form
         onSubmit={handleSubmit}
-        onClick={(event) => event.stopPropagation()}
         className="relative mx-auto my-[20px] w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg md:my-[40px] md:p-xl"
       >
         <div className="flex items-center justify-between gap-md">

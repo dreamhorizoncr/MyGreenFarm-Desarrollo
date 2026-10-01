@@ -77,7 +77,6 @@ function PublishExperienceModal({
 
       <article
         className="relative mx-auto my-[20px] w-full max-w-[640px] rounded-[24px] bg-white"
-        onClick={(event) => event.stopPropagation()}
       >
         <button
           type="button"

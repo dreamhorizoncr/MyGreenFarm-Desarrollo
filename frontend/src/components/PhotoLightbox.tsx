@@ -58,8 +58,11 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose()
       }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') onClose()
+      }}
       aria-label={image?.title || alt}
-      className="inset-0 m-0 flex max-h-none max-w-none items-center justify-center bg-transparent p-[16px] backdrop:bg-black/90 md:p-[30px]"
+      className="inset-0 m-0 flex h-full w-full max-h-none max-w-none items-center justify-center bg-transparent p-[16px] backdrop:bg-black/90 md:p-[30px]"
     >
       <button
         type="button"
@@ -72,7 +75,6 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
 
       <figure
         className="relative flex max-h-full max-w-full flex-col items-center gap-md"
-        onClick={(event) => event.stopPropagation()}
       >
         <div className="relative">
           <img

@@ -239,6 +239,12 @@ function AdminServicePlansPage() {
               setConfirmText('')
             }
           }}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              setConfirmDeleteId(null)
+              setConfirmText('')
+            }
+          }}
           aria-label={t('admin.servicios.deleteTitle')}
           className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
         >

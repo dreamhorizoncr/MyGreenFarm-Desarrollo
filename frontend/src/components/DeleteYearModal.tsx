@@ -46,6 +46,9 @@ function DeleteYearModal({ category, onConfirm, onClose }: Readonly<DeleteYearMo
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose()
       }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') onClose()
+      }}
       aria-label={t('admin.gallery.deleteYearTitle')}
       className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >

@@ -6,8 +6,7 @@ import ConfirmNewsletterUnsubscribeModal from '../components/ConfirmNewsletterUn
 import useDismiss from '../hooks/useDismiss.ts'
 import { useNewsletter } from '../hooks/useNewsletter.ts'
 import { notify } from '../utils/notifications.ts'
-import type { AudienceType } from '../types/newsletter.ts'
-import type { NewsletterRecipient } from '../types/newsletter.ts'
+import type { AudienceType, NewsletterRecipient } from '../types/newsletter.ts'
 
 function AdminNewsletterPage() {
     const { t } = useTranslation()
@@ -25,6 +24,7 @@ function AdminNewsletterPage() {
     const [message, setMessage] = useState('')
     const [isSendMenuOpen, setIsSendMenuOpen] = useState(false)
     const sendMenuRef = useRef<HTMLDivElement>(null)
+    const broadcastDialogRef = useRef<HTMLDialogElement>(null)
 
     useDismiss({
         ref: sendMenuRef,
@@ -44,7 +44,7 @@ function AdminNewsletterPage() {
                 notify.error(t('admin.newsletter.loadError'))
             }
         }
-        fetchAudienceData()
+        void fetchAudienceData()
     }, [getSubscribers])
 
     const filterClassName = (active: boolean) =>
@@ -85,6 +85,12 @@ function AdminNewsletterPage() {
         setSubscribers((current) => current.filter((item) => item.id !== recipient.id))
         notify.success(t('admin.newsletter.unsubscribed'))
     }
+
+    const broadcastModalTitle = (() => {
+        if (selectedAudience === 'BOTH') return t('admin.newsletter.sendAll')
+        if (selectedAudience === 'PARENTS') return t('admin.newsletter.sendParents')
+        return t('admin.newsletter.sendSubscribers')
+    })()
 
     const handleBroadcastSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -233,13 +239,21 @@ function AdminNewsletterPage() {
                 )}
 
                 {isBroadcastModalOpen && (
-                    <div className="fixed inset-0 z-100 grid place-items-center bg-scrim p-lg">
-                        <section
-                            className="relative w-[min(560px,92vw)] rounded-2xl bg-bg-card p-xl shadow-xl"
-                            role="dialog"
-                            aria-modal="true"
-                            aria-labelledby="newsletter-broadcast-title"
-                        >
+                    <dialog
+                        ref={(el) => {
+                            broadcastDialogRef.current = el
+                            if (el && !el.open) el.showModal()
+                        }}
+                        onClose={() => setIsBroadcastModalOpen(false)}
+                        onClick={(event) => {
+                            if (event.target === broadcastDialogRef.current) setIsBroadcastModalOpen(false)
+                        }}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Escape') setIsBroadcastModalOpen(false)
+                        }}
+                        aria-labelledby="newsletter-broadcast-title"
+                        className="m-auto w-[min(560px,92vw)] max-w-none rounded-2xl bg-bg-card p-xl shadow-xl backdrop:bg-scrim"
+                    >
                             <button
                                 type="button"
                                 className="absolute right-md top-md inline-flex size-10 items-center justify-center rounded-full text-body-text"
@@ -249,11 +263,7 @@ function AdminNewsletterPage() {
                                 <XIcon size={20} aria-hidden="true" />
                             </button>
                             <h2 id="newsletter-broadcast-title" className="mb-lg pr-12 font-heading text-2xl font-bold text-heading">
-                                {selectedAudience === 'BOTH'
-                                    ? t('admin.newsletter.sendAll')
-                                    : selectedAudience === 'PARENTS'
-                                        ? t('admin.newsletter.sendParents')
-                                        : t('admin.newsletter.sendSubscribers')}
+                                {broadcastModalTitle}
                             </h2>
                             <form className="flex flex-col gap-md" onSubmit={handleBroadcastSubmit}>
                                 <label className="flex flex-col gap-xs font-body text-sm font-semibold text-heading">
@@ -293,8 +303,7 @@ function AdminNewsletterPage() {
                                     </button>
                                 </div>
                             </form>
-                        </section>
-                    </div>
+                    </dialog>
                 )}
             </AdminLayout>
             {recipientToUnsubscribe && (

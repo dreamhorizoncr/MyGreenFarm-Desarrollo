@@ -10,10 +10,9 @@ import Skeleton from '../components/ui/Skeleton.tsx'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { notify } from '../utils/notifications.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
-import type { ExchangeRate } from '../types/exchangeRate.ts'
+import type { ExchangeRate, Currency } from '../types/exchangeRate.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 import { convertCurrency, formatCurrency, currencySymbol } from '../utils/currency.ts'
-import type { Currency } from '../types/exchangeRate.ts'
 
 function PlanCard({
   plan,

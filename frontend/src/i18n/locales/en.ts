@@ -885,7 +885,7 @@ export default {
     invalidCertificateType: "Files must be PDF, PNG or JPG",
     certificateTooLarge: "Each file cannot exceed 5 MB",
     certificatesRequired: "You must attach at least one degree or certificate",
-    submitApplication: "Submit application",
+    submitApplication: "Send",
     publishModalTitle: "Publish new vacancy",
     formFieldsSectionTitle: "Fields for the applicant",
     formFieldsSectionHint: "Select the fields the applicant must fill in.",

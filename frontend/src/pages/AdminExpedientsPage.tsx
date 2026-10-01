@@ -67,7 +67,7 @@ function AdminExpedientsPage() {
 
   // Obtiene los expedientes cuando carga la página
   useEffect(() => {
-    fetchExpedients();
+    void fetchExpedients();
   }, []);
 
   // Filtra los expedientes por el nombre del niño o niña

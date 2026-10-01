@@ -44,7 +44,7 @@ function VacanciesPage() {
   const [applicationSent, setApplicationSent] = useState(false)
 
   useEffect(() => {
-    fetchVacancies()
+    void fetchVacancies()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -167,6 +167,9 @@ function VacanciesPage() {
           onClose={() => setApplicationSent(false)}
           onClick={(event) => {
             if (event.target === event.currentTarget) setApplicationSent(false)
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') setApplicationSent(false)
           }}
           aria-label={t('vacancies.applicationSentTitle')}
           className="m-auto w-[min(420px,92vw)] max-w-none rounded-2xl bg-bg-card text-center backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"

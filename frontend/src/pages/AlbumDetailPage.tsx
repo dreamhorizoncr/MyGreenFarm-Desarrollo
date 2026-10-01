@@ -68,7 +68,7 @@ function AlbumDetailPage() {
   // inicializa likes cuando el álbum ya tiene imágenes cargadas
   useEffect(() => {
     if (album && album.galleryImages.length > 0) {
-      galleryService.getMyLikes().then((likedImageIds) => {
+      void galleryService.getMyLikes().then((likedImageIds) => {
         initializeLikes(album.galleryImages, likedImageIds)
       })
     }
