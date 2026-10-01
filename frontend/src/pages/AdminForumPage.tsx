@@ -87,6 +87,71 @@ function AdminForumPage() {
     })
   }
 
+  function renderBlogPosts() {
+    if (isLoading) {
+      return (
+        <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
+          <li><BlogPostCardSkeleton /></li>
+          <li><BlogPostCardSkeleton /></li>
+        </ul>
+      )
+    }
+
+    if (error) {
+      return (
+        <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-sm text-danger">
+          {error}
+        </p>
+      )
+    }
+
+    if (blogPosts.length === 0) {
+      return (
+        <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-sm text-neutral-500">
+          {t('adminForum.empty')}
+        </p>
+      )
+    }
+
+    return (
+      <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
+        {blogPosts.map((post) => (
+          <li key={post.id} className="flex flex-col gap-sm">
+            <BlogPostCard
+              post={post}
+              commentCount={getCommentCount(post.id)}
+              isLiked={isLiked(post.id)}
+              likeCount={getLikeCount(post.id)}
+              onToggleLike={toggleLike}
+            />
+
+            <div className="flex items-center justify-end gap-xs">
+              <button
+                type="button"
+                onClick={() => openEdit(post)}
+                aria-label={`${t('adminForum.edit')} — ${post.title}`}
+                className="inline-flex h-9 items-center gap-2xs rounded-full border border-neutral-200 bg-white px-md text-xs font-semibold text-heading transition-colors hover:border-heading"
+              >
+                <PencilIcon size={15} aria-hidden="true" />
+                {t('adminForum.edit')}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setPostToDelete(post)}
+                aria-label={`${t('adminForum.delete')} — ${post.title}`}
+                className="inline-flex h-9 items-center gap-2xs rounded-full border border-neutral-200 bg-white px-md text-xs font-semibold text-danger transition-colors hover:border-danger"
+              >
+                <Trash2Icon size={15} aria-hidden="true" />
+                {t('adminForum.delete')}
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
   return (
     <AdminLayout>
       <div className="flex flex-wrap items-center justify-between gap-md">
@@ -110,56 +175,7 @@ function AdminForumPage() {
         </button>
       </div>
 
-      {isLoading ? (
-        <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
-          <li><BlogPostCardSkeleton /></li>
-          <li><BlogPostCardSkeleton /></li>
-        </ul>
-      ) : error ? (
-        <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-sm text-danger">
-          {error}
-        </p>
-      ) : blogPosts.length === 0 ? (
-        <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-sm text-neutral-500">
-          {t('adminForum.empty')}
-        </p>
-      ) : (
-        <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
-          {blogPosts.map((post) => (
-            <li key={post.id} className="flex flex-col gap-sm">
-              <BlogPostCard
-                post={post}
-                commentCount={getCommentCount(post.id)}
-                isLiked={isLiked(post.id)}
-                likeCount={getLikeCount(post.id)}
-                onToggleLike={toggleLike}
-              />
-
-              <div className="flex items-center justify-end gap-xs">
-                <button
-                  type="button"
-                  onClick={() => openEdit(post)}
-                  aria-label={`${t('adminForum.edit')} — ${post.title}`}
-                  className="inline-flex h-9 items-center gap-2xs rounded-full border border-neutral-200 bg-white px-md text-xs font-semibold text-heading transition-colors hover:border-heading"
-                >
-                  <PencilIcon size={15} aria-hidden="true" />
-                  {t('adminForum.edit')}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setPostToDelete(post)}
-                  aria-label={`${t('adminForum.delete')} — ${post.title}`}
-                  className="inline-flex h-9 items-center gap-2xs rounded-full border border-neutral-200 bg-white px-md text-xs font-semibold text-danger transition-colors hover:border-danger"
-                >
-                  <Trash2Icon size={15} aria-hidden="true" />
-                  {t('adminForum.delete')}
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+      {renderBlogPosts()}
 
       {formOpen && (
         <BlogPostFormModal
@@ -177,6 +193,9 @@ function AdminForumPage() {
           onClose={() => { setPostToDelete(null); setDeleteConfirmation('') }}
           onClick={(event) => {
             if (event.target === event.currentTarget) { setPostToDelete(null); setDeleteConfirmation('') }
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') { setPostToDelete(null); setDeleteConfirmation('') }
           }}
           aria-label={t('adminForum.deleteTitle')}
           className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"

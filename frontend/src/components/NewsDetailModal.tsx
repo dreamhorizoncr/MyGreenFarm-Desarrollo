@@ -103,7 +103,6 @@ function NewsDetailModal({
 
         <article
             className="relative mx-auto w-full max-w-[1100px] rounded-[24px] bg-bg-page"
-            onClick={(event) => event.stopPropagation()}
         >
             <button
                 type="button"

@@ -5,7 +5,7 @@ FROM node:20-alpine AS frontend-build
 WORKDIR /app/frontend
 
 COPY frontend/package*.json ./
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 COPY frontend/ ./
 RUN npm run build
@@ -37,8 +37,12 @@ WORKDIR /app
 
 ENV PORT=8080
 
+RUN addgroup -S app && adduser -S app -G app
+
 # Copiamos el JAR resultante tomando como referencia absoluta la carpeta backend/target
 COPY --from=backend-build /app/target/*.jar app.jar
+
+USER app
 
 EXPOSE 8080
 

@@ -889,7 +889,7 @@ export default {
     certificateTooLarge: "Chaque fichier ne peut pas dépasser 5 Mo",
     certificatesRequired:
       "Vous devez joindre au moins un diplôme ou certificat",
-    submitApplication: "Envoyer la candidature",
+    submitApplication: "Envoyer",
     publishModalTitle: "Publier une nouvelle offre",
     formFieldsSectionTitle: "Champs pour le candidat",
     formFieldsSectionHint:

@@ -898,7 +898,7 @@ export default {
     invalidCertificateType: "Los archivos deben ser PDF, PNG o JPG",
     certificateTooLarge: "Cada archivo no puede superar los 5 MB",
     certificatesRequired: "Debes adjuntar al menos un título o certificado",
-    submitApplication: "Enviar postulación",
+    submitApplication: "Enviar",
     publishModalTitle: "Publicar nueva vacante",
     formFieldsSectionTitle: "Campos para el postulante",
     formFieldsSectionHint:
