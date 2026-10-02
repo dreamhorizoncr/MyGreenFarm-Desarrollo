@@ -74,7 +74,7 @@ function AlbumMenu({ onEdit, onDelete }: Readonly<AlbumMenuProps>) {
 								setOpen(false)
 								onEdit()
 							}}
-							className="flex w-full items-center gap-sm px-md py-sm text-sm text-heading transition hover:bg-neutral-50"
+							className="flex w-full items-center gap-sm px-md py-sm text-body-sm text-heading transition hover:bg-neutral-50"
 						>
 							<PencilIcon size={15} />
 							{t('admin.edit')}
@@ -85,7 +85,7 @@ function AlbumMenu({ onEdit, onDelete }: Readonly<AlbumMenuProps>) {
 								setOpen(false)
 								onDelete()
 							}}
-							className="flex w-full items-center gap-sm px-md py-sm text-sm text-danger transition hover:bg-red-50"
+							className="flex w-full items-center gap-sm px-md py-sm text-body-sm text-danger transition hover:bg-red-50"
 						>
 							<Trash2Icon size={15} />
 							{t('admin.delete')}
@@ -175,7 +175,7 @@ function YearDropdown({
 						{categories.map((category) => (
 							<div
 								key={category.id}
-								className="flex w-full items-center justify-between pr-sm text-sm transition hover:bg-neutral-50"
+								className="flex w-full items-center justify-between pr-sm text-body-sm transition hover:bg-neutral-50"
 							>
 								<button
 									type="button"
@@ -223,7 +223,7 @@ function YearDropdown({
 										}
 									}}
 									placeholder={t('admin.gallery.newYearPlaceholder')}
-									className="h-9 w-full min-w-0 rounded-lg border border-neutral-200 px-sm font-body text-sm outline-none focus:border-heading"
+									className="h-9 w-full min-w-0 rounded-lg border border-neutral-200 px-sm font-body text-body-sm outline-none focus:border-heading"
 								/>
 								<button
 									type="button"
@@ -250,7 +250,7 @@ function YearDropdown({
 							<button
 								type="button"
 								onClick={() => setAdding(true)}
-								className="flex w-full items-center gap-sm px-md py-sm text-sm font-semibold text-heading transition hover:bg-neutral-50"
+								className="flex w-full items-center gap-sm px-md py-sm text-body-sm font-semibold text-heading transition hover:bg-neutral-50"
 							>
 								<PlusIcon size={16} aria-hidden="true" />
 								{t('admin.gallery.addNewYear')}
@@ -281,7 +281,7 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured }: Readonl
 					alt={gallery.title}
 					className="block aspect-[4/3] w-full object-cover"
 				/>
-				<span className="absolute bottom-sm left-sm rounded-full bg-orange-500 px-md py-xs font-body text-body-sm font-bold text-white shadow">
+				<span className="absolute bottom-sm left-sm rounded-full bg-orange-500 px-sm py-2xs font-body text-caption font-semibold text-white shadow">
 					{t('home.galeria.photoCount', { count: gallery.galleryImages.length })}
 				</span>
 				<button
@@ -352,7 +352,7 @@ function AdminAlbumCarousel({
 	return (
 		<div className="mt-xl">
 			<div className="flex items-center justify-between gap-md">
-				<h3 className="inline-flex rounded-full bg-green-700 px-lg py-sm font-body text-sm font-bold text-white">
+				<h3 className="inline-flex rounded-full border border-green-700 bg-green-700 px-md py-xs font-body text-body-sm font-semibold text-white">
 					{categoryTitle}
 				</h3>
 				{(prevEnabled || nextEnabled) && (
@@ -675,28 +675,37 @@ function AdminGalleryPage() {
 		<AdminLayout>
 			<div className="flex flex-wrap items-start justify-between gap-md">
 				<div>
-					<h1 className="m-0 font-heading text-[34px] font-bold leading-[1.15] text-heading">
+					<h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
 						{t('admin.gallery.title')}
 					</h1>
-					<p className="mt-2 font-body text-base text-neutral-500">
+					<p className="mt-2 font-body text-body text-neutral-500">
 						{t('admin.gallery.subtitle')}
 					</p>
 				</div>
 				<button
 					type="button"
 					onClick={openCreate}
-					className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+					className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
 				>
 					<PlusIcon size={18} aria-hidden="true" />
 					{t('admin.gallery.addAlbum')}
 				</button>
 			</div>
 
-			{error && <p className="mt-lg rounded-xl bg-red-50 p-md text-sm text-red-700">{error}</p>}
+			{error && <p className="mt-lg rounded-xl bg-red-50 p-md text-body-sm text-red-700">{error}</p>}
 
 			{/* Formulario de álbum */}
 			{formOpen && (
-				<form onSubmit={handleSubmit} className="mt-xl border-t border-neutral-200 pt-xl">
+				<div className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]">
+					<button
+						type="button"
+						tabIndex={-1}
+						aria-label={t('admin.gallery.close')}
+						className="absolute inset-0 size-full cursor-default"
+						onClick={closeForm}
+					/>
+
+					<form onSubmit={handleSubmit} className="relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl">
 					<div className="flex items-center justify-between gap-md">
 						<h2 className="m-0 font-heading text-2xl font-bold text-heading">
 							{editing ? t('admin.gallery.editAlbum') : t('admin.gallery.newAlbum')}
@@ -712,7 +721,7 @@ function AdminGalleryPage() {
 					</div>
 
 					<div className="mt-lg grid gap-md md:grid-cols-2">
-						<label className="font-body text-sm font-semibold text-heading">
+						<label className="font-body text-body-sm font-semibold text-heading">
 							{t('admin.gallery.albumTitle')}
 							<input
 								required
@@ -724,7 +733,7 @@ function AdminGalleryPage() {
 							/>
 						</label>
 
-						<label className="font-body text-sm font-semibold text-heading">
+						<label className="font-body text-body-sm font-semibold text-heading">
 							{t('admin.gallery.albumYear')}
 							<YearDropdown
 								categories={categories}
@@ -737,11 +746,11 @@ onCreateYear={handleCreateYear}
 							onDeleteYear={(category) => setDeleteYearTarget(category)}
 						/>
 							{formError && (
-								<p className="mt-xs text-xs font-normal text-red-700">{formError}</p>
+								<p className="mt-xs text-caption font-normal text-red-700">{formError}</p>
 							)}
 						</label>
 
-						<label className="font-body text-sm font-semibold text-heading md:col-span-2">
+						<label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
 							{t('admin.gallery.albumDescription')}
 							<textarea
 								required
@@ -754,7 +763,7 @@ onCreateYear={handleCreateYear}
 							/>
 						</label>
 
-						<label className="flex items-center gap-sm font-body text-sm font-semibold text-heading md:col-span-2">
+						<label className="flex items-center gap-sm font-body text-body-sm font-semibold text-heading md:col-span-2">
 							<input
 								type="checkbox"
 								checked={form.featured}
@@ -765,7 +774,7 @@ onCreateYear={handleCreateYear}
 							{t('admin.gallery.featured')}
 						</label>
 
-						<div className="font-body text-sm font-semibold text-heading md:col-span-2">
+						<div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
 							<span className="block">{t('admin.gallery.chooseImages')}</span>
 							<input
 								ref={imagesInputRef}
@@ -778,23 +787,23 @@ onCreateYear={handleCreateYear}
 							<button
 								type="button"
 								onClick={() => imagesInputRef.current?.click()}
-								className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-sm font-semibold text-heading"
+								className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-body-sm font-semibold text-heading"
 							>
 								<FileImageIcon size={17} aria-hidden="true" />
 								{t('admin.gallery.chooseImages')}
 							</button>
 
-							<p className="mt-xs text-xs font-normal text-neutral-500">
+							<p className="mt-xs text-caption font-normal text-neutral-500">
 								{t('admin.gallery.addPhotosHelp')}
 							</p>
 
 							{fileError && (
-								<p className="mt-xs text-xs font-normal text-red-700">{fileError}</p>
+								<p className="mt-xs text-caption font-normal text-red-700">{fileError}</p>
 							)}
 
 							{files.length > 0 && (
 								<div className="mt-md">
-									<h3 className="font-body text-sm font-semibold text-heading">
+									<h3 className="font-body text-body-sm font-semibold text-heading">
 										{t('admin.gallery.newPhotos')}
 									</h3>
 									<div className="mt-sm grid grid-cols-3 gap-sm sm:grid-cols-4 md:grid-cols-6">
@@ -816,7 +825,7 @@ onCreateYear={handleCreateYear}
 											</div>
 										))}
 									</div>
-									<p className="mt-sm text-xs font-normal text-neutral-500">
+									<p className="mt-sm text-caption font-normal text-neutral-500">
 										{files.length} {files.length === 1 ? t('admin.gallery.file') : t('admin.gallery.files')}
 									</p>
 								</div>
@@ -826,7 +835,7 @@ onCreateYear={handleCreateYear}
 
 					{images.length > 0 && (
 						<div className="mt-lg">
-							<h3 className="font-body text-sm font-semibold text-heading">
+							<h3 className="font-body text-body-sm font-semibold text-heading">
 								{t('admin.gallery.currentImages')}
 							</h3>
 							<div className="mt-sm flex flex-wrap gap-md">
@@ -858,19 +867,20 @@ onCreateYear={handleCreateYear}
 						<button
 							type="button"
 							onClick={closeForm}
-							className="rounded-full border border-neutral-300 px-lg py-sm font-body text-sm font-semibold text-heading"
+							className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
 						>
 							{t('admin.cancel')}
 						</button>
 						<button
 							type="submit"
 							disabled={submitting}
-							className="rounded-full bg-heading px-lg py-sm font-body text-sm font-semibold text-white disabled:opacity-60"
+							className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-60"
 						>
 							{submitting ? t('common.loading') : idleSubmitLabel}
 						</button>
 					</div>
-				</form>
+					</form>
+				</div>
 			)}
 
 			{/* Álbumes agrupados por año */}
@@ -887,7 +897,7 @@ onCreateYear={handleCreateYear}
 				)}
 
 				{categories.length === 0 && !loading && (
-					<p className="border-t border-neutral-200 py-xl text-sm text-neutral-500">
+					<p className="border-t border-neutral-200 py-xl text-body-sm text-neutral-500">
 						{t('admin.gallery.noCategories')}
 					</p>
 				)}

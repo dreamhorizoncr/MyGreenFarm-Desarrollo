@@ -65,7 +65,7 @@ function Navbar() {
             {isAuthenticated && !isProtectedPage && (
               <Link
                 to="/admin/dashboard"
-                className="font-body text-sm font-normal text-body-text-dark transition-colors hover:text-heading"
+                className="font-body text-body-sm font-normal text-body-text-dark transition-colors hover:text-heading"
               >
                 {t('navbar.dashboard')}
               </Link>
@@ -151,7 +151,7 @@ function Navbar() {
             <Link
               to="/admin/dashboard"
               onClick={() => setDrawerOpen(false)}
-              className="font-body text-sm font-normal text-body-text-dark transition-colors hover:text-heading"
+              className="font-body text-body-sm font-normal text-body-text-dark transition-colors hover:text-heading"
             >
               {t('navbar.dashboard')}
             </Link>

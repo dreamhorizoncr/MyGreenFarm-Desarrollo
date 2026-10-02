@@ -70,9 +70,9 @@ function JoinSection() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t('home.join.emailPlaceholder')}
                   disabled={loading}
-                  className="h-12 w-full rounded-full border-none bg-white px-md font-body text-body-sm text-body-text outline-none placeholder:text-[var(--grey-700)] sm:flex-1"
+                  className="h-11 w-full rounded-full border-none bg-white px-md font-body text-body-sm text-body-text outline-none placeholder:text-[var(--grey-700)] sm:flex-1"
                 />
-                <PillButton type="submit" disabled={loading} className="h-12 w-full bg-green-500 font-body text-white disabled:opacity-70 sm:w-auto">
+                <PillButton type="submit" disabled={loading} className="h-11 w-full bg-green-500 font-body text-button text-white disabled:opacity-70 sm:w-auto">
                   {loading ? t('home.join.subscribing') : t('home.join.subscribe')}
                 </PillButton>
 

@@ -21,7 +21,7 @@ function BookingPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="h-[38px] w-full border-b border-neutral-300 bg-transparent pl-2 font-body text-[15px] text-body-text outline-none transition focus:border-green-500"
+      className="h-[38px] w-full border-b border-neutral-300 bg-transparent pl-2 font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
     />
   )
 }
@@ -82,8 +82,8 @@ function WizardProgress({ step }: Readonly<{ step: number }>) {
         const stepNum = i + 1
         const isActive = step === stepNum
         const isCompleted = step > stepNum
-        let stepCircleClass = 'bg-[var(--grey-100)] text-body-text'
-        if (isActive) stepCircleClass = 'bg-green-500/20 text-green-600 ring-2 ring-green-500'
+        let stepCircleClass = 'border border-green-500 bg-white text-green-600'
+        if (isActive) stepCircleClass = 'bg-green-500 text-white'
         if (isCompleted) stepCircleClass = 'bg-green-500 text-white'
         return (
           <div
@@ -91,16 +91,18 @@ function WizardProgress({ step }: Readonly<{ step: number }>) {
             className={`flex min-w-0 items-center gap-sm ${i < STEPS.length - 1 ? 'flex-1' : 'shrink-0'}`}
           >
             <div
-              className={`flex size-8 shrink-0 items-center justify-center rounded-full font-body text-sm font-semibold transition-colors ${stepCircleClass}`}
+              className={`flex size-8 shrink-0 items-center justify-center rounded-full font-body text-body-sm font-semibold transition-colors ${stepCircleClass}`}
             >
               {isCompleted ? <CheckIcon size={16} /> : stepNum}
             </div>
             {i < STEPS.length - 1 && (
-              <div
-                className={`h-0.5 min-w-2 flex-1 transition-colors ${
-                  step > stepNum ? 'bg-green-500' : 'bg-[var(--grey-100)]'
-                }`}
-              />
+              <div className="h-0.5 min-w-2 flex-1 overflow-hidden bg-[var(--grey-100)]">
+                <div
+                  className={`h-full origin-left bg-green-500 transition-transform duration-500 ease-out ${
+                    step > stepNum ? 'scale-x-100' : 'scale-x-0'
+                  }`}
+                />
+              </div>
             )}
           </div>
         )
@@ -303,10 +305,10 @@ function BookingPage() {
   }, [])
 
   const selectableClassName = (active: boolean) =>
-    `rounded-full px-md py-sm font-body text-sm font-semibold transition-colors ${
+    `rounded-full border px-md py-sm font-body text-body-sm font-semibold transition-colors ${
       active
-        ? 'bg-green-500 text-white'
-        : 'bg-[var(--grey-100)] text-body-text hover:bg-[var(--grey-200)]'
+        ? 'border-green-500 bg-green-500 text-white'
+        : 'border-green-500 bg-white text-heading hover:bg-green-50'
     }`
 
   function computePhoneErrorMessage() {
@@ -415,7 +417,7 @@ function BookingPage() {
           <button
             type="button"
             onClick={() => fetchWeek(toISODate(getTomorrow()))}
-            className="w-fit rounded-full bg-green-500 px-lg py-sm font-body text-sm font-semibold text-white transition-colors hover:bg-green-600"
+            className="w-fit rounded-full bg-green-500 px-lg py-sm font-body text-body-sm font-semibold text-white transition-colors hover:bg-green-600"
           >
             {t('booking.retry')}
           </button>
@@ -437,7 +439,7 @@ function BookingPage() {
                 type="button"
                 aria-pressed={effectiveDay === date}
                 onClick={() => selectDay(date)}
-                className={`${selectableClassName(effectiveDay === date)} inline-flex h-11 w-full items-center justify-center whitespace-nowrap text-xs sm:text-sm`}
+                className={`${selectableClassName(effectiveDay === date)} inline-flex h-11 w-full items-center justify-center whitespace-nowrap text-caption sm:text-body-sm`}
               >
                 {dayLabel(date)}
               </button>
@@ -445,14 +447,14 @@ function BookingPage() {
           </div>
 
           <div className="flex flex-col gap-sm">
-            <h4 className="m-0 text-left font-body text-base font-bold text-body-text">
+            <h4 className="m-0 text-left font-body text-body font-bold text-body-text">
               {t('booking.morning')}
             </h4>
             {renderSlots(morningSlots)}
           </div>
 
           <div className="flex flex-col gap-sm">
-            <h4 className="m-0 text-left font-body text-base font-bold text-body-text">
+            <h4 className="m-0 text-left font-body text-body font-bold text-body-text">
               {t('booking.afternoon')}
             </h4>
             {renderSlots(afternoonSlots)}
@@ -491,11 +493,11 @@ function BookingPage() {
             if (reasonError) setReasonError(false)
           }}
           rows={3}
-          className="w-full resize-none border-b border-neutral-300 bg-transparent px-0 font-body text-[15px] text-body-text outline-none transition focus:border-green-500"
+          className="w-full resize-none border-b border-neutral-300 bg-transparent px-0 font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
         />
       </TextField>
       <div className="flex flex-col gap-sm">
-        <h4 className="m-0 text-left font-body text-base font-bold text-body-text">
+        <h4 className="m-0 text-left font-body text-body font-bold text-body-text">
           {t('booking.referral.title')}
         </h4>
         <label htmlFor="booking-referral-source" className="sr-only">
@@ -514,14 +516,14 @@ function BookingPage() {
             }
           }}
           aria-invalid={referralSourceError}
-          className="h-[38px] w-full border-b border-neutral-300 bg-transparent px-0 font-body text-[15px] text-body-text outline-none transition focus:border-green-500"
+          className="h-[38px] w-full border-b border-neutral-300 bg-transparent px-0 font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
         >
           <option value="">{t('booking.referral.placeholder')}</option>
           {REFERRAL_SOURCES.map((source) => (
             <option key={source} value={source}>{t(`booking.referral.options.${source}`)}</option>
           ))}
         </select>
-        {referralSourceError && <p className="m-0 text-left font-body text-sm text-danger" role="alert">{t('booking.referral.required')}</p>}
+        {referralSourceError && <p className="m-0 text-left font-body text-body-sm text-danger" role="alert">{t('booking.referral.required')}</p>}
       </div>
       {referralSource === 'OTHER' && (
         <TextField
@@ -555,7 +557,7 @@ function BookingPage() {
         error={fullNameErrorMessage}
       />
       <div className="flex flex-col gap-sm">
-        <label className="mb-[4px] block text-left font-body text-[16px] text-body-text">
+        <label className="mb-[4px] block text-left font-body text-body text-body-text">
           {t('booking.idType')}
         </label>
         <div className="flex flex-wrap gap-sm">
@@ -644,8 +646,8 @@ function BookingPage() {
 
       <div className="flex flex-col gap-md">
         <div className="flex flex-col gap-xs">
-          <span className="font-body text-xs text-body-text">{t('booking.wizard.schedule')}</span>
-          <span className="font-body text-sm font-semibold text-heading">
+          <span className="font-body text-caption text-body-text">{t('booking.wizard.schedule')}</span>
+          <span className="font-body text-body-sm font-semibold text-heading">
             {effectiveDay && dayLabel(effectiveDay)} - {effectiveTime}
           </span>
         </div>
@@ -653,16 +655,16 @@ function BookingPage() {
         <div className="h-px bg-neutral-300" />
 
         <div className="flex flex-col gap-xs">
-          <span className="font-body text-xs text-body-text">{t('booking.childName')}</span>
-          <span className="font-body text-sm font-semibold text-heading">{childName}</span>
+          <span className="font-body text-caption text-body-text">{t('booking.childName')}</span>
+          <span className="font-body text-body-sm font-semibold text-heading">{childName}</span>
         </div>
         <div className="flex flex-col gap-xs">
-          <span className="font-body text-xs text-body-text">{t('booking.reason')}</span>
-          <span className="font-body text-sm text-heading">{reason}</span>
+          <span className="font-body text-caption text-body-text">{t('booking.reason')}</span>
+          <span className="font-body text-body-sm text-heading">{reason}</span>
         </div>
         <div className="flex flex-col gap-xs">
-          <span className="font-body text-xs text-body-text">{t('booking.referral.title')}</span>
-          <span className="font-body text-sm text-heading">
+          <span className="font-body text-caption text-body-text">{t('booking.referral.title')}</span>
+          <span className="font-body text-body-sm text-heading">
             {referralSource && t(`booking.referral.options.${referralSource}`)}{referralSource === 'OTHER' && referralOtherDetail ? `: ${referralOtherDetail}` : ''}
           </span>
         </div>
@@ -670,29 +672,29 @@ function BookingPage() {
         <div className="h-px bg-neutral-300" />
 
         <div className="flex flex-col gap-xs">
-          <span className="font-body text-xs text-body-text">{t('booking.fullName')}</span>
-          <span className="font-body text-sm font-semibold text-heading">{fullName}</span>
+          <span className="font-body text-caption text-body-text">{t('booking.fullName')}</span>
+          <span className="font-body text-body-sm font-semibold text-heading">{fullName}</span>
         </div>
         <div className="flex flex-col gap-xs">
-          <span className="font-body text-xs text-body-text">{t('booking.idNumber')}</span>
-          <span className="font-body text-sm text-heading">{idType} - {idNumber}</span>
+          <span className="font-body text-caption text-body-text">{t('booking.idNumber')}</span>
+          <span className="font-body text-body-sm text-heading">{idType} - {idNumber}</span>
         </div>
         <div className="flex flex-col gap-xs">
-          <span className="font-body text-xs text-body-text">{t('booking.occupation')}</span>
-          <span className="font-body text-sm text-heading">{occupation}</span>
+          <span className="font-body text-caption text-body-text">{t('booking.occupation')}</span>
+          <span className="font-body text-body-sm text-heading">{occupation}</span>
         </div>
         <div className="flex flex-col gap-xs">
-          <span className="font-body text-xs text-body-text">{t('booking.email')}</span>
-          <span className="font-body text-sm text-heading">{email}</span>
+          <span className="font-body text-caption text-body-text">{t('booking.email')}</span>
+          <span className="font-body text-body-sm text-heading">{email}</span>
         </div>
         <div className="flex flex-col gap-xs">
-          <span className="font-body text-xs text-body-text">{t('booking.phone')}</span>
-          <span className="font-body text-sm text-heading">{phone}</span>
+          <span className="font-body text-caption text-body-text">{t('booking.phone')}</span>
+          <span className="font-body text-body-sm text-heading">{phone}</span>
         </div>
       </div>
 
       {submitError && (
-        <p className="m-0 text-center font-body text-sm text-danger">
+        <p className="m-0 text-center font-body text-body-sm text-danger">
           {submitError}
         </p>
       )}
@@ -744,7 +746,7 @@ function BookingPage() {
                 <button
                   type="button"
                   onClick={handleBack}
-                  className="flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm font-body text-sm font-semibold text-heading transition-colors hover:bg-[var(--grey-100)]"
+                  className="flex h-11 items-center gap-xs rounded-full border border-green-500 px-md font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
                 >
                   <ArrowLeftIcon size={16} />
                   {t('booking.wizard.back')}
@@ -757,7 +759,7 @@ function BookingPage() {
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="flex items-center gap-xs rounded-full bg-green-500 px-lg py-sm font-body text-sm font-semibold text-white transition-colors hover:bg-green-600"
+                  className="flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
                 >
                   {t('booking.wizard.next')}
                 </button>
@@ -766,7 +768,7 @@ function BookingPage() {
                   type="button"
                   onClick={handleSubmit}
                   disabled={submitting}
-                  className="flex items-center gap-xs rounded-full bg-green-500 px-lg py-sm font-body text-sm font-semibold text-white transition-colors hover:bg-green-600 disabled:cursor-not-allowed disabled:bg-[var(--grey-600)] disabled:hover:bg-[var(--grey-600)]"
+                  className="flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:bg-[var(--grey-600)] disabled:hover:bg-[var(--grey-600)]"
                 >
                   {submitting ? t('booking.submitting') : t('booking.wizard.confirm')}
                   <CheckIcon size={16} />

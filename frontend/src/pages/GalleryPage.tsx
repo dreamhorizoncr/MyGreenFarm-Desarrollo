@@ -63,11 +63,11 @@ function GalleryPage() {
       {/* Header de Galería */}
       <section className="flex min-h-[280px] items-center bg-white px-[30px] py-[40px] text-center md:min-h-[320px]">
         <div className="mx-auto w-full max-w-[700px]">
-          <h1 className="m-0 font-heading text-[34px] font-bold leading-tight text-green-500 md:text-[46px]">
+          <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-green-500 md:text-h1">
             {t('home.galeria.title')}
           </h1>
 
-          <p className="mx-auto mt-[20px] max-w-[560px] font-body text-[13px] leading-[1.6] text-green-500 md:text-[15px]">
+          <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">
             {t('home.galeria.description')}
           </p>
 
@@ -77,8 +77,10 @@ function GalleryPage() {
               <button
                 type="button"
                 onClick={() => selectCategory(null)}
-                className={`shrink-0 rounded-full px-[18px] py-[8px] font-body text-[12px] text-white transition md:text-[14px] ${
-                  activeCategory === null ? 'bg-orange-500' : 'bg-green-500'
+                className={`shrink-0 rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
+                  activeCategory === null
+                    ? 'border-orange-500 bg-orange-500 text-white'
+                    : 'border-orange-500 bg-white text-orange-600 hover:bg-orange-50'
                 }`}
               >
                 {t('home.galeria.filterAll')}
@@ -89,8 +91,10 @@ function GalleryPage() {
                   key={category.id}
                   type="button"
                   onClick={() => selectCategory(category.id)}
-                  className={`shrink-0 rounded-full px-[18px] py-[8px] font-body text-[12px] text-white transition md:text-[14px] ${
-                    activeCategory === category.id ? 'bg-orange-500' : 'bg-green-500'
+                  className={`shrink-0 rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
+                    activeCategory === category.id
+                      ? 'border-orange-500 bg-orange-500 text-white'
+                      : 'border-orange-500 bg-white text-orange-600 hover:bg-orange-50'
                   }`}
                 >
                   {category.title}
@@ -126,13 +130,13 @@ function GalleryPage() {
             )}
 
             {error && (
-              <p className="col-span-full m-0 p-xl text-center font-body text-base text-white">
+              <p className="col-span-full m-0 p-xl text-center font-body text-body text-white">
                 {error}
               </p>
             )}
 
             {!loading && !error && visibleGalleries.length === 0 && (
-              <p className="col-span-full m-0 p-xl text-center font-body text-base text-white">
+              <p className="col-span-full m-0 p-xl text-center font-body text-body text-white">
                 {activeCategory ? t('home.galeria.empty') : t('home.galeria.noGalleries')}
               </p>
             )}

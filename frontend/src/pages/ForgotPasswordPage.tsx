@@ -59,12 +59,12 @@ function ForgotPasswordPage() {
       contentClassName="max-w-[303px] md:max-w-[430px]"
     >
       {/* Título */}
-      <h2 className="mb-[28px] text-left font-heading text-[28px] leading-none text-heading md:mb-[45px] md:text-[42px]">
+      <h2 className="mb-[28px] text-left font-heading text-[28px] leading-none text-heading md:mb-[45px] md:text-h1">
         {t("forgotPassword.title")}
       </h2>
 
       {/* Descripción */}
-      <p className="mb-[36px] text-left font-body text-[13px] leading-[1.5] text-body-text md:mb-[50px] md:text-[15px] md:leading-[1.7]">
+      <p className="mb-[36px] text-left font-body text-body-sm leading-[1.5] text-body-text md:mb-[50px] md:text-body-sm md:leading-[1.7]">
         {t("forgotPassword.description")}
       </p>
 
@@ -88,14 +88,14 @@ function ForgotPasswordPage() {
 
         {/* Error del backend */}
         {error && (
-          <p className="mt-4 text-center font-body text-sm text-danger">
+          <p className="mt-4 text-center font-body text-body-sm text-danger">
             {error}
           </p>
         )}
 
         {/* Mensaje de éxito */}
         {success && (
-          <p className="mt-4 text-center font-body text-sm text-body-text">
+          <p className="mt-4 text-center font-body text-body-sm text-body-text">
             {t("forgotPassword.success")}
           </p>
         )}

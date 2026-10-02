@@ -64,10 +64,10 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
   }
 
   const optionClassName = (active: boolean) =>
-    `rounded-full px-md py-sm font-body text-sm font-semibold transition-colors ${
+    `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
       active
-        ? 'bg-green-500 text-white'
-        : 'bg-[var(--grey-100)] text-body-text hover:bg-[var(--grey-200)]'
+        ? 'border-green-500 bg-green-500 text-white'
+        : 'border-green-500 bg-white text-heading hover:bg-green-50'
     }`
 
   return (
@@ -94,7 +94,7 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
         </button>
 
         <div className="relative mb-lg text-center">
-          <h2 className="m-0 font-heading text-[42px] font-bold leading-none text-heading">
+          <h2 className="m-0 font-heading text-h1 font-bold leading-none text-heading">
             {t('teacherAppointments.changeStatus')}
           </h2>
         </div>
@@ -109,14 +109,14 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
         <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px]">
           {step === 0 && (
             <>
-              <p className="rounded-2xl border border-neutral-200 bg-[var(--grey-100)] px-md py-sm text-left font-body text-base leading-relaxed text-body-text">
+              <p className="rounded-2xl border border-neutral-200 bg-[var(--grey-100)] px-md py-sm text-left font-body text-body leading-relaxed text-body-text">
                 {t('booking.childName')}: <span className="font-bold">{appointment.childName}</span>
                 {' · '}
                 {t('teacherAppointments.date')}: <span className="font-bold">{formatDate(appointment.appointmentDate)}</span>
               </p>
 
               <div className="flex flex-col gap-sm">
-                <label className="font-body text-base font-normal leading-[1.6] text-body-text">
+                <label className="font-body text-body font-normal leading-[1.6] text-body-text">
                   {t('teacherAppointments.state')}
                 </label>
                 <div className="flex flex-wrap gap-sm">
@@ -140,7 +140,7 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
 
               {requiresConclusion && (
                 <div className="flex flex-col">
-                  <label htmlFor="change-status-conclusion" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+                  <label htmlFor="change-status-conclusion" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
                     {t('teacherAppointments.rejectNoteLabel')}
                   </label>
                   <textarea
@@ -154,22 +154,22 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
                       if (saveError) setSaveError(null)
                     }}
                     placeholder={t('teacherAppointments.rejectNotePlaceholder')}
-                    className="w-full resize-none border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
+                    className="w-full resize-none border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
                   />
                   {conclusionError && (
-                    <p className="mt-2xs text-left font-body text-sm text-danger">{conclusionError}</p>
+                    <p className="mt-2xs text-left font-body text-body-sm text-danger">{conclusionError}</p>
                   )}
                 </div>
               )}
 
               <div className="mt-sm flex gap-md">
-                <Button variant="secondary" onClick={onClose} className="h-[47px] flex-1 font-body text-[17px]">
+                <Button variant="secondary" onClick={onClose} className="h-11 flex-1 border-green-500 font-body text-button text-heading hover:bg-green-50">
                   {t('admin.cancel')}
                 </Button>
                 <Button
                   variant="primary"
                   onClick={advanceToConfirm}
-                  className="h-[47px] flex-1 bg-green-500 font-body text-[17px] font-normal text-white"
+                  className="h-11 flex-1 bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600"
                 >
                   {t('teacherAppointments.continue')}
                 </Button>
@@ -179,23 +179,23 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
 
           {step === 1 && (
             <>
-              <p className="rounded-2xl border border-neutral-200 bg-[var(--grey-100)] px-md py-sm text-left font-body text-base leading-relaxed text-body-text">
+              <p className="rounded-2xl border border-neutral-200 bg-[var(--grey-100)] px-md py-sm text-left font-body text-body leading-relaxed text-body-text">
                 {t('teacherAppointments.confirmStatusQuestion', { child: appointment.childName, status: selectedStatusLabel })}
               </p>
 
               {saveError && (
-                <p className="m-0 text-left font-body text-sm text-danger">{saveError}</p>
+                <p className="m-0 text-left font-body text-body-sm text-danger">{saveError}</p>
               )}
 
               <div className="mt-sm flex gap-md">
-                <Button variant="secondary" onClick={() => setStep(0)} className="h-[47px] flex-1 font-body text-[17px]">
+                <Button variant="secondary" onClick={() => setStep(0)} className="h-11 flex-1 border-green-500 font-body text-button text-heading hover:bg-green-50">
                   {t('teacherAppointments.back')}
                 </Button>
                 <Button
                   variant="primary"
                   onClick={handleConfirm}
                   loading={saving}
-                  className="h-[47px] flex-1 bg-green-500 font-body text-[17px] font-normal text-white"
+                  className="h-11 flex-1 bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600"
                 >
                   {saving ? t('common.loading') : t('teacherAppointments.confirmAction')}
                 </Button>

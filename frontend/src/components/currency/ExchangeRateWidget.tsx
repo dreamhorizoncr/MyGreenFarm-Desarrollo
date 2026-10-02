@@ -51,7 +51,7 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
             </div>
           ))}
         </div>
-        <p className="m-0 mt-lg rounded-2xl bg-transparent p-md font-body text-sm leading-relaxed text-green-700">
+        <p className="m-0 mt-lg rounded-2xl bg-transparent p-md font-body text-body-sm leading-relaxed text-green-700">
           {t('moneda.priceDisclaimer')}
         </p>
       </>
@@ -68,7 +68,7 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
         }}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
-        className="inline-flex items-center gap-sm rounded-full border border-green-500 bg-green-500 px-lg py-sm font-body text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-green-500"
+        className="inline-flex items-center gap-sm rounded-full border border-green-500 bg-green-500 px-lg py-sm font-body text-body-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-green-500"
       >
         <BanknoteIcon size={20} aria-hidden="true" />
         <span>{t('moneda.sellRate')}</span>

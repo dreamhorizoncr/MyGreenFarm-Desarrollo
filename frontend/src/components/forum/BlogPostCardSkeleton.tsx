@@ -1,6 +1,10 @@
 import Skeleton from '../ui/Skeleton.tsx'
 
-function BlogPostCardSkeleton() {
+interface BlogPostCardSkeletonProps {
+  isAdmin?: boolean
+}
+
+function BlogPostCardSkeleton({ isAdmin = false }: Readonly<BlogPostCardSkeletonProps>) {
   return (
     <article className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white text-left">
       <Skeleton shape="rect" className="h-[160px] w-full rounded-none xs:h-[220px]" />
@@ -22,6 +26,13 @@ function BlogPostCardSkeleton() {
       <div className="flex items-center gap-lg border-t border-neutral-100 px-lg py-md">
         <Skeleton shape="line" className="h-4 w-10" />
         <Skeleton shape="line" className="h-4 w-10" />
+
+        {isAdmin && (
+          <div className="ml-auto flex items-center gap-xs">
+            <Skeleton shape="circle" className="h-9 w-9" />
+            <Skeleton shape="circle" className="h-9 w-9" />
+          </div>
+        )}
       </div>
     </article>
   )

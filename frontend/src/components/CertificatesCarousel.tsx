@@ -22,7 +22,7 @@ function CertificatesCarousel({ certificates }: Readonly<CertificatesCarouselPro
 
   return (
     <div className="mt-md">
-      <p className="m-0 mb-sm font-body text-sm font-semibold text-heading">
+      <p className="m-0 mb-sm font-body text-body-sm font-semibold text-heading">
         {t('admin.curriculums.certificates')}
       </p>
 
@@ -57,7 +57,7 @@ function CertificatesCarousel({ certificates }: Readonly<CertificatesCarouselPro
           </button>
         </div>
 
-        <p className="m-0 mt-xs truncate text-center font-body text-xs text-neutral-500">
+        <p className="m-0 mt-xs truncate text-center font-body text-caption text-neutral-500">
           {current.fileName} · {t('admin.curriculums.certificateCounter', { current: index + 1, total: certificates.length })}
         </p>
       </div>
