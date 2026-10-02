@@ -175,7 +175,6 @@ function ForumPage() {
             )}
 
             <ForumSidebar
-              onGoToCommunity={() => handleTabChange('community')}
               showPublish={activeTab === 'community'}
               onPublish={() => setIsPublishOpen(true)}
               showBlogSearch={activeTab === 'blog'}

@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar.tsx'
 import PostAvatar from '../components/forum/PostAvatar.tsx'
 import Button from '../components/ui/Button.tsx'
 import { forumService } from '../services/forum.ts'
-import type { CommunityComment, CommunityPost } from '../types/forum.ts'
+import type { CommunityComment } from '../types/forum.ts'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 
 function CommunityPostPage() {
