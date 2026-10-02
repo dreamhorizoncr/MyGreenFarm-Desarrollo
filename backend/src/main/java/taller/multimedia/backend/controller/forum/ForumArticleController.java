@@ -51,6 +51,17 @@ public class ForumArticleController {
         return ResponseEntity.ok(articleService.getAll(topic, pageable, anonId));
     }
 
+    @GetMapping("/mine")
+    @PreAuthorize("hasRole('TEACHER')")
+    public ResponseEntity<Page<ForumArticleResponse>> getMine(
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(10) int size,
+            @CurrentSecurityContext SecurityContext context,
+            @CookieValue(name = "anon_id", required = false) String anonId) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(articleService.getMine(currentEmail(context), pageable, anonId));
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("permitAll()")
     public ResponseEntity<ForumArticleResponse> getById(

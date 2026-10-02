@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { PencilIcon, PlusIcon, Trash2Icon, XIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import AdminLayout from '../layout/AdminLayout.tsx'
@@ -9,9 +9,12 @@ import Button from '../components/ui/Button.tsx'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 import { notify } from '../utils/notifications.ts'
 import type { BlogPost, BlogPostInput } from '../types/forum.ts'
+import { userStorage } from '../utils/userStorage.ts'
+import { forumService } from '../services/forum.ts'
 
 function AdminForumPage() {
   const { t } = useTranslation()
+  const isTeacher = userStorage.getUser()?.role === 'TEACHER'
   const {
     blogPosts,
     addBlogPost,
@@ -29,6 +32,32 @@ function AdminForumPage() {
   const [editing, setEditing] = useState<BlogPost | null>(null)
   const [postToDelete, setPostToDelete] = useState<BlogPost | null>(null)
   const [deleteConfirmation, setDeleteConfirmation] = useState('')
+  const [teacherPosts, setTeacherPosts] = useState<BlogPost[]>([])
+  const [teacherPostsLoading, setTeacherPostsLoading] = useState(isTeacher)
+  const [teacherPostsError, setTeacherPostsError] = useState('')
+
+  const refreshTeacherPosts = useCallback(async () => {
+    if (!isTeacher) return
+
+    setTeacherPostsLoading(true)
+    try {
+      const page = await forumService.getMyArticles()
+      setTeacherPosts(page.content)
+      setTeacherPostsError('')
+    } catch {
+      setTeacherPostsError('No se pudieron cargar tus publicaciones')
+    } finally {
+      setTeacherPostsLoading(false)
+    }
+  }, [isTeacher])
+
+  useEffect(() => {
+    if (isTeacher) void refreshTeacherPosts()
+  }, [isTeacher, refreshTeacherPosts])
+
+  const visiblePosts = isTeacher ? teacherPosts : blogPosts
+  const visibleIsLoading = isLoading || (isTeacher && teacherPostsLoading)
+  const visibleError = isTeacher ? teacherPostsError : error
 
   function openCreate() {
     setEditing(null)
@@ -49,12 +78,14 @@ function AdminForumPage() {
     try {
       if (editing) {
         await updateBlogPost(editing.id, input)
+        await refreshTeacherPosts()
         notify.success({
           title: t('adminForum.updatedToastTitle'),
           description: t('adminForum.updatedToastDescription'),
         })
       } else {
         await addBlogPost(input)
+        await refreshTeacherPosts()
         notify.success({
           title: t('adminForum.createdToastTitle'),
           description: t('adminForum.createdToastDescription'),
@@ -72,6 +103,7 @@ function AdminForumPage() {
 
     try {
       await removeBlogPost(postToDelete.id)
+      await refreshTeacherPosts()
     } catch {
       notify.error('No se pudo eliminar el artículo')
       return
@@ -88,7 +120,7 @@ function AdminForumPage() {
   }
 
   function renderBlogPosts() {
-    if (isLoading) {
+    if (visibleIsLoading) {
       return (
         <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
           <li><BlogPostCardSkeleton /></li>
@@ -97,25 +129,25 @@ function AdminForumPage() {
       )
     }
 
-    if (error) {
+    if (visibleError) {
       return (
         <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-sm text-danger">
-          {error}
+          {visibleError}
         </p>
       )
     }
 
-    if (blogPosts.length === 0) {
+    if (visiblePosts.length === 0) {
       return (
         <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-sm text-neutral-500">
-          {t('adminForum.empty')}
+          {t(isTeacher ? 'adminForum.ownEmpty' : 'adminForum.empty')}
         </p>
       )
     }
 
     return (
       <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
-        {blogPosts.map((post) => (
+        {visiblePosts.map((post) => (
           <li key={post.id} className="flex flex-col gap-sm">
             <BlogPostCard
               post={post}

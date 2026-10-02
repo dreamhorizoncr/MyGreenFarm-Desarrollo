@@ -6,7 +6,7 @@ import FeaturedBannerCard from './FeaturedBannerCard.tsx'
 import PublishButtonCard from './PublishButtonCard.tsx'
 
 interface ForumSidebarProps {
-  onGoToCommunity?: () => void
+  variant?: 'all' | 'controls' | 'details'
   showPublish?: boolean
   onPublish?: () => void
   showBlogSearch?: boolean
@@ -15,7 +15,7 @@ interface ForumSidebarProps {
 }
 
 function ForumSidebar({
-  onGoToCommunity,
+  variant = 'all',
   showPublish = false,
   onPublish,
   showBlogSearch = false,
@@ -23,16 +23,18 @@ function ForumSidebar({
   onBlogSearchChange,
 }: Readonly<ForumSidebarProps>) {
   const { t } = useTranslation()
+  const showControls = variant !== 'details'
+  const showDetails = variant !== 'controls'
 
   return (
     <aside
       aria-label={t('forum.sidebarLabel')}
-      className="grid grid-cols-1 gap-md xs:grid-cols-[repeat(auto-fit,minmax(260px,1fr))] lg:grid-cols-1"
+      className="grid grid-cols-1 gap-md lg:grid-cols-1"
     >
-      {showPublish && onPublish && <PublishButtonCard onPublish={onPublish} />}
+      {showControls && showPublish && onPublish && <div className="hidden lg:block"><PublishButtonCard onPublish={onPublish} /></div>}
 
-      {showBlogSearch && onBlogSearchChange && (
-        <label className="flex h-12 items-center gap-sm rounded-xl border border-neutral-200 bg-white px-md text-neutral-500 focus-within:border-heading">
+      {showControls && showBlogSearch && onBlogSearchChange && (
+        <label className="hidden h-12 items-center gap-sm rounded-xl border border-neutral-200 bg-white px-md text-neutral-500 focus-within:border-heading lg:flex">
           <SearchIcon size={20} aria-hidden="true" />
           <input
             type="search"
@@ -45,9 +47,13 @@ function ForumSidebar({
         </label>
       )}
 
-      <AboutWallCard onGoToCommunity={onGoToCommunity} community={showPublish} />
-      <PopularTopicsCard />
-      <FeaturedBannerCard />
+      {showDetails && (
+        <>
+          <AboutWallCard community={showPublish} />
+          <PopularTopicsCard />
+          <FeaturedBannerCard />
+        </>
+      )}
     </aside>
   )
 }

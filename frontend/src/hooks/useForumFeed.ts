@@ -39,10 +39,11 @@ function useForumFeed() {
 
     async function loadForum() {
       try {
-        const [articles, likedIds, community] = await Promise.all([
+        const [articles, likedIds, community, communityLikedIds] = await Promise.all([
           forumService.getArticles(),
           forumService.getMyLikes(),
           forumService.getCommunityPosts(),
+          forumService.getMyCommunityLikes(),
         ])
 
         if (!active) return
@@ -61,8 +62,10 @@ function useForumFeed() {
             return likes
           }, {}),
         )
-        setSourceCommunityPosts(community.content)
-        setCommunityPosts(community.content)
+        const communityLikedSet = new Set(communityLikedIds)
+        const communityWithLikes = community.content.map((post) => ({ ...post, reacted: communityLikedSet.has(post.id) }))
+        setSourceCommunityPosts(communityWithLikes)
+        setCommunityPosts(communityWithLikes)
       } catch {
         if (active) setError('No se pudo cargar el foro')
       } finally {
@@ -141,8 +144,17 @@ function useForumFeed() {
 
   const addCommunityPost = useCallback(async (input: NameContentInput) => {
     const post = await forumService.createCommunityPost(input)
-    setSourceCommunityPosts((previous) => [post, ...previous])
-    setCommunityPosts((previous) => [post, ...previous])
+    const completePost = { ...post, likeCount: 0, commentCount: 0, reacted: false }
+    setSourceCommunityPosts((previous) => [completePost, ...previous])
+    setCommunityPosts((previous) => [completePost, ...previous])
+  }, [])
+
+  const toggleCommunityLike = useCallback(async (postId: string) => {
+    const result = await forumService.toggleCommunityLike(postId)
+    const update = (posts: CommunityPost[]) => posts.map((post) => post.id === postId
+      ? { ...post, likeCount: result.totalLikes, reacted: result.liked } : post)
+    setSourceCommunityPosts(update)
+    setCommunityPosts(update)
   }, [])
 
   const addBlogPost = useCallback(async (input: BlogPostInput) => {
@@ -256,6 +268,7 @@ function useForumFeed() {
     getLikeCount,
     getCommentCount,
     toggleLike,
+    toggleCommunityLike,
     isLoading,
     error,
   }

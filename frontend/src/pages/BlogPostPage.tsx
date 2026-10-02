@@ -32,15 +32,15 @@ function BlogPostPage() {
   const [isDetailLoading, setIsDetailLoading] = useState(true)
 
   useEffect(() => {
-    if (window.location.hash !== '#comments') return
+    if (window.location.hash !== '#comments' || isLoading || isDetailLoading) return
 
     requestAnimationFrame(() => {
-      document.getElementById('blog-comments')?.scrollIntoView({
+      document.getElementById('comments')?.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
       })
     })
-  }, [id])
+  }, [id, isLoading, isDetailLoading])
 
   useEffect(() => {
     if (!id) return
@@ -105,7 +105,7 @@ function BlogPostPage() {
       <main className="mx-auto w-full max-w-[1120px] px-[14px] py-10 xs:px-[20px] xs:py-12">
         <Link
           to="/forum"
-          className="flex w-fit items-center gap-xs text-left font-body text-body-sm font-semibold text-heading transition-opacity hover:opacity-70"
+          className="flex w-fit items-center gap-xs text-left font-body text-body-sm font-semibold text-heading"
         >
           <ArrowLeftIcon size={18} />
           <span>{t('forum.blog.backToBlog')}</span>
@@ -122,11 +122,11 @@ function BlogPostPage() {
                 />
 
                 <div className="min-w-0 flex-1">
-                  <p className="m-0 truncate text-left font-heading text-h6 font-bold text-heading">
+                  <p className="m-0 truncate text-left font-heading text-body-sm font-bold text-heading">
                     {post.authorName}
                   </p>
 
-                  <p className="m-0 mt-3xs truncate text-left font-body text-body-sm text-neutral-500">
+                    <p className="m-0 mt-3xs truncate text-left font-body text-[14px] text-neutral-500">
                     {post.authorRole}
                   </p>
                 </div>
@@ -180,7 +180,7 @@ function BlogPostPage() {
               </div>
             </header>
 
-            <section id="blog-comments" className="scroll-mt-24 rounded-2xl border border-neutral-200 bg-white p-lg">
+            <section id="comments" className="scroll-mt-24 rounded-2xl border border-neutral-200 bg-white p-lg">
               <h2 className="m-0 text-left font-heading text-h5 font-bold text-heading">
                 {t('forum.blog.commentsTitle')}
               </h2>
@@ -197,11 +197,11 @@ function BlogPostPage() {
                     <PostAvatar name={comment.alias} size={32} />
 
                     <div className="min-w-0 flex-1">
-                      <p className="m-0 text-left font-heading text-[14px] font-bold text-heading">
+                      <p className="m-0 text-left font-heading text-[16px] font-bold text-heading">
                         {comment.alias}
                       </p>
 
-                      <p className="m-0 mt-3xs whitespace-pre-line break-words text-left font-body text-[14px] leading-[1.55] text-body-text">
+                      <p className="m-0 mt-3xs whitespace-pre-line break-words text-left font-body text-[16px] leading-[1.55] text-body-text">
                         {comment.content}
                       </p>
                     </div>
@@ -244,7 +244,7 @@ function BlogPostPage() {
 
                 <Button
                   onClick={handleSubmit}
-                  className="mt-md h-[47px] rounded-full bg-green-500 font-body text-[17px] font-normal text-white"
+                  className="mt-md h-[47px] rounded-full bg-green-500 font-body text-[17px] font-normal text-white hover:opacity-100"
                 >
                   {t('forum.blog.commentSubmit')}
                 </Button>

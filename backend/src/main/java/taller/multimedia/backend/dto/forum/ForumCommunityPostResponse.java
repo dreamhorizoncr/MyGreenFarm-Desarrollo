@@ -16,4 +16,6 @@ public class ForumCommunityPostResponse {
     private String name;
     private String content;
     private LocalDateTime createdAt;
+    private int reactionCount;
+    private long commentCount;
 }

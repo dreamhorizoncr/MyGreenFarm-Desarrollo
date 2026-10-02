@@ -136,11 +136,11 @@ function BlogPostCard({
           />
 
           <div className="min-w-0 flex-1">
-            <p className="m-0 truncate font-heading text-[14px] font-bold text-heading">
+            <p className="m-0 truncate font-heading text-body-sm font-bold text-heading">
               {post.authorName}
             </p>
 
-            <p className="m-0 truncate font-body text-body-sm text-neutral-500">
+            <p className="m-0 truncate font-body text-[14px] text-neutral-500">
               {post.authorRole}
             </p>
           </div>
