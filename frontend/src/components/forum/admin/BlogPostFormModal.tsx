@@ -162,7 +162,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
         </div>
 
         <div className="mt-lg grid gap-md md:grid-cols-2">
-          <label className="font-body text-sm font-semibold text-heading">
+          <label className="font-body text-body-sm font-semibold text-heading">
             {t('adminForum.postTitle')}
 
             <input
@@ -177,7 +177,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
             />
           </label>
 
-          <label className="font-body text-sm font-semibold text-heading">
+          <label className="font-body text-body-sm font-semibold text-heading">
             {t('adminForum.postTopic')}
 
             <input
@@ -192,7 +192,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
             />
           </label>
 
-          <label className="font-body text-sm font-semibold text-heading">
+          <label className="font-body text-body-sm font-semibold text-heading">
             {t('adminForum.authorName')}
             <input
               required
@@ -203,7 +203,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
             />
           </label>
 
-          <label className="font-body text-sm font-semibold text-heading">
+          <label className="font-body text-body-sm font-semibold text-heading">
             {t('adminForum.authorRole')}
             <input
               required
@@ -214,7 +214,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
             />
           </label>
 
-          <label className="font-body text-sm font-semibold text-heading md:col-span-2">
+          <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
             {t('adminForum.postContent')}
 
             <textarea
@@ -229,16 +229,16 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
               className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
             />
 
-            <span className="mt-xs block text-right text-xs font-normal text-neutral-500">
+            <span className="mt-xs block text-right text-caption font-normal text-neutral-500">
               {form.content.length}/{MAX_CONTENT}
             </span>
 
-            <span className="mt-xs block text-xs font-normal text-neutral-500">
+            <span className="mt-xs block text-caption font-normal text-neutral-500">
               {t('adminForum.contentHint')}
             </span>
           </label>
 
-          <div className="font-body text-sm font-semibold text-heading md:col-span-2">
+          <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
             <span className="block">{t('adminForum.postImage')}</span>
 
             <input
@@ -258,7 +258,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
                 />
 
                 <div className="min-w-0 flex-1">
-                  <p className="m-0 truncate text-xs font-normal text-neutral-500">
+                  <p className="m-0 truncate text-caption font-normal text-neutral-500">
                     {image
                       ? image.file.name
                       : t('adminForum.currentImage')}
@@ -267,7 +267,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
                   <button
                     type="button"
                     onClick={removeImage}
-                    className="mt-2xs inline-flex h-9 items-center rounded-full border border-neutral-200 px-md text-xs font-semibold text-danger transition-colors hover:border-danger"
+                    className="mt-2xs inline-flex h-9 items-center rounded-full border border-neutral-200 px-md text-caption font-semibold text-danger transition-colors hover:border-danger"
                   >
                     {t('adminForum.removeImage')}
                   </button>
@@ -277,7 +277,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="mt-xs inline-flex h-11 items-center gap-xs rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-md text-sm font-semibold text-heading transition-colors hover:border-heading"
+                className="mt-xs inline-flex h-11 items-center gap-xs rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-md text-body-sm font-semibold text-heading transition-colors hover:border-heading"
               >
                 <FileImageIcon size={18} aria-hidden="true" />
                 {t('adminForum.chooseImage')}
@@ -285,13 +285,13 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
             )}
 
             {imageError && (
-              <p className="m-0 mt-xs text-xs font-normal text-danger">
+              <p className="m-0 mt-xs text-caption font-normal text-danger">
                 {imageError}
               </p>
             )}
           </div>
 
-          <label className="font-body text-sm font-semibold text-heading md:col-span-2">
+          <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
             {t('adminForum.imageAlt')}
 
             <input
@@ -306,7 +306,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
             />
 
             {altError && (
-              <span className="mt-xs block text-xs font-normal text-danger">
+              <span className="mt-xs block text-caption font-normal text-danger">
                 {altError}
               </span>
             )}
@@ -318,14 +318,14 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
             type="button"
             variant="secondary"
             onClick={onClose}
-            className="h-[47px] rounded-full font-body text-[17px]"
+            className="h-11 rounded-full border-green-500 font-body text-button text-heading hover:bg-green-50"
           >
             {t('adminForum.cancel')}
           </Button>
 
           <Button
             type="submit"
-            className="h-[47px] rounded-full bg-green-500 font-body text-[17px] font-normal text-white"
+            className="h-11 rounded-full bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600"
           >
             {post ? t('adminForum.saveChanges') : t('adminForum.publish')}
           </Button>
@@ -350,11 +350,11 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
             >
               <XIcon size={20} />
             </button>
-            <h3 className="m-0 text-center font-heading text-[42px] font-bold leading-none text-heading">
+            <h3 className="m-0 text-center font-heading text-h1 font-bold leading-none text-heading">
               {t('adminForum.confirmChangesTitle')}
             </h3>
             <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px]">
-              <p className="m-0 text-left font-body text-[16px] text-neutral-500">
+              <p className="m-0 text-left font-body text-body text-neutral-500">
                 {t('adminForum.confirmChangesDescription', { word: t('adminForum.confirmWord') })}
               </p>
               <input
@@ -362,14 +362,14 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
                 value={confirmationText}
                 onChange={(event) => setConfirmationText(event.target.value)}
                 aria-label={t('adminForum.confirmWord')}
-                className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500"
+                className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500"
               />
               <div className="mt-sm flex gap-md">
                 <Button
                   type="button"
                   variant="secondary"
                   onClick={() => { setPendingChanges(null); setConfirmationText('') }}
-                  className="h-[47px] flex-1 rounded-full font-body text-[17px] uppercase tracking-wide"
+                  className="h-11 flex-1 rounded-full font-body text-button uppercase tracking-wide"
                 >
                   {t('adminForum.cancel')}
                 </Button>
@@ -377,7 +377,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
                   type="button"
                   disabled={confirmationText.trim().toLocaleUpperCase() !== t('adminForum.confirmWord').toLocaleUpperCase()}
                   onClick={() => onSubmit(pendingChanges)}
-                  className="h-[47px] flex-1 rounded-full font-body text-[17px] font-normal uppercase tracking-wide text-white disabled:cursor-not-allowed disabled:opacity-50"
+                  className="h-11 flex-1 rounded-full font-body text-button font-normal uppercase tracking-wide text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {t('adminForum.confirmChanges')}
                 </Button>

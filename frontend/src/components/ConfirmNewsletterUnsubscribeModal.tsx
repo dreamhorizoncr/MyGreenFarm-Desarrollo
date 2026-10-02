@@ -56,24 +56,24 @@ function ConfirmNewsletterUnsubscribeModal({ recipient, onConfirm, onClose }: Re
                 </button>
 
                 <div className="relative mb-lg text-center">
-                    <h2 id="newsletter-unsubscribe-title" className="m-0 font-heading text-[34px] font-bold leading-tight text-heading">
+                    <h2 id="newsletter-unsubscribe-title" className="m-0 font-heading text-page-title font-bold leading-tight text-heading">
                         {t('admin.newsletter.unsubscribeConfirmTitle')}
                     </h2>
                 </div>
 
                 <div className="flex flex-col gap-md px-7 pb-8 pt-2.5">
-                    <p className="m-0 break-all text-left font-body text-[15px] text-body-text">
+                    <p className="m-0 break-all text-left font-body text-body-sm text-body-text">
                         {t('admin.newsletter.unsubscribeConfirmMessage', { email: recipient.email })}
                     </p>
 
-                    {error && <p className="m-0 text-left font-body text-sm text-danger">{error}</p>}
+                    {error && <p className="m-0 text-left font-body text-body-sm text-danger">{error}</p>}
 
                     <div className="mt-sm flex gap-md">
                         <Button
                             variant="secondary"
                             onClick={onClose}
                             disabled={unsubscribing}
-                            className="h-11.75 flex-1 rounded-full font-body text-[17px] uppercase tracking-wide"
+                            className="h-11 flex-1 rounded-full font-body text-button uppercase tracking-wide"
                         >
                             {t('admin.cancel', 'Cancelar')}
                         </Button>
@@ -81,7 +81,7 @@ function ConfirmNewsletterUnsubscribeModal({ recipient, onConfirm, onClose }: Re
                             variant="danger"
                             onClick={handleConfirm}
                             loading={unsubscribing}
-                            className="h-11.75 flex-1 rounded-full bg-danger font-body text-[17px] font-normal uppercase tracking-wide"
+                            className="h-11 flex-1 rounded-full bg-danger font-body text-button font-normal uppercase tracking-wide"
                         >
                             {t('admin.newsletter.unsubscribe')}
                         </Button>

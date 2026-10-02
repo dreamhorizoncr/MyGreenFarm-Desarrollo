@@ -51,7 +51,7 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
         <button
           type="button"
           onClick={() => setShowCreateModal(true)}
-          className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-md font-body text-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+          className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-md font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
         >
           <PlusIcon size={18} aria-hidden="true" />
           <span>{t('vacancies.publish')}</span>
@@ -64,11 +64,11 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
           <VacancyCardSkeleton />
         </div>
       )}
-      {error && <p className="m-0 p-xl text-center font-body text-base text-danger">{error}</p>}
+      {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
 
       {!loading && !error && (
         vacancies.length === 0 ? (
-          <p className="m-0 p-xl text-center font-body text-base text-neutral-500">
+          <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
             {t('vacancies.noVacancies')}
           </p>
         ) : (
@@ -85,18 +85,18 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
                     onClick={() => onDelete(vacancy.id)}
                     aria-label={t('admin.delete')}
                     title={t('admin.delete')}
-                    className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-transparent text-neutral-400 transition-colors hover:bg-(--grey-100) hover:text-danger focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+                    className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
                   >
                     <Trash2Icon size={16} aria-hidden="true" />
                   </button>
                 </div>
 
-                <p className="mt-sm flex-1 font-body text-[15px] text-body-text">
+                <p className="mt-sm flex-1 font-body text-body-sm text-body-text">
                   {vacancy.description}
                 </p>
 
                 <div className="mt-md flex flex-wrap items-center justify-between gap-md">
-                  <span className="inline-flex items-center gap-xs font-body text-sm font-semibold text-body-text">
+                  <span className="inline-flex items-center gap-xs font-body text-body-sm font-semibold text-body-text">
                     <span
                       className={`inline-block size-2.5 rounded-full ${statusDotClass(vacancy)}`}
                       aria-hidden="true"
@@ -110,7 +110,7 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
                     <button
                       type="button"
                       onClick={() => onRelease(vacancy.id)}
-                      className="inline-flex h-9 items-center whitespace-nowrap rounded-full border border-neutral-200 px-md font-body text-sm font-semibold text-body-text hover:bg-(--grey-100)"
+                      className="inline-flex h-9 items-center whitespace-nowrap rounded-full border border-green-500 px-md font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
                     >
                       {t('vacancies.release')}
                     </button>
@@ -118,7 +118,7 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
                     <button
                       type="button"
                       onClick={() => onSetOpen(vacancy.id, !vacancy.isOpen)}
-                      className="inline-flex h-9 items-center whitespace-nowrap rounded-full border border-neutral-200 px-md font-body text-sm font-semibold text-body-text hover:bg-(--grey-100)"
+                      className="inline-flex h-9 items-center whitespace-nowrap rounded-full border border-green-500 px-md font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
                     >
                       {vacancy.isOpen ? t('vacancies.close') : t('vacancies.reopen')}
                     </button>

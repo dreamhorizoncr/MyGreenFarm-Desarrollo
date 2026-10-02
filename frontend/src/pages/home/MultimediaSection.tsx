@@ -46,13 +46,13 @@ function MultimediaSection() {
 
         <Container className="grid auto-rows-fr grid-cols-1 gap-xl pb-1500 pt-1000 md:grid-cols-3">
           {loading && (
-            <p className="col-span-full m-0 p-xl text-center font-body text-base text-white">
+            <p className="col-span-full m-0 p-xl text-center font-body text-body text-white">
               {t('common.loading')}
             </p>
           )}
 
           {!loading && !error && featuredGalleries.length === 0 && (
-            <p className="col-span-full m-0 p-xl text-center font-body text-base text-white">
+            <p className="col-span-full m-0 p-xl text-center font-body text-body text-white">
               {t('home.galeria.noGalleries')}
             </p>
           )}

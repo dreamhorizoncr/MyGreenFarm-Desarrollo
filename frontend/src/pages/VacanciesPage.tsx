@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ArrowRightIcon } from '@animateicons/react/lucide'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import ApplyVacancyModal from '../components/ApplyVacancyModal.tsx'
@@ -77,10 +78,10 @@ function VacanciesPage() {
 
       <section className="flex min-h-[280px] items-center bg-green-500 px-7.5 py-10 text-center text-white md:min-h-[320px]">
         <div className="mx-auto w-full max-w-175">
-          <h1 className="m-0 font-heading text-[34px] font-bold leading-tight text-white md:text-[46px]">
+          <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
             {t('vacancies.title')}
           </h1>
-          <p className="mx-auto mt-5 max-w-140 font-body text-[13px] leading-[1.6] text-white md:text-[15px]">
+          <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-white md:text-body-sm">
             {t('vacancies.subtitle')}
           </p>
         </div>
@@ -94,19 +95,19 @@ function VacanciesPage() {
               <VacancyCardSkeleton />
             </div>
           )}
-          {error && <p className="m-0 p-xl text-center font-body text-base text-danger">{error}</p>}
+          {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
 
           {!loading && !error && (
             openVacancies.length === 0 ? (
               <div className="mx-auto max-w-140 rounded-2xl border border-neutral-200 bg-white p-xl text-center">
-                <p className="m-0 font-body text-base text-neutral-500">
+                <p className="m-0 font-body text-body text-neutral-500">
                   {t('vacancies.noVacancies')}
                 </p>
 
                 <h2 className="mt-lg font-heading text-xl font-bold leading-snug text-heading">
                   {t('vacancies.spontaneousTitle')}
                 </h2>
-                <p className="mt-sm font-body text-[15px] text-body-text">
+                <p className="mt-sm font-body text-body-sm text-body-text">
                   {t('vacancies.spontaneousDescription')}
                 </p>
 
@@ -114,7 +115,7 @@ function VacanciesPage() {
                   <button
                     type="button"
                     onClick={openSpontaneousApply}
-                    className="inline-flex h-11 items-center whitespace-nowrap rounded-full bg-green-500 px-lg font-body text-sm font-semibold text-white hover:opacity-90"
+                    className="inline-flex h-11 items-center whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
                   >
                     {t('vacancies.spontaneousCta')}
                   </button>
@@ -123,12 +124,12 @@ function VacanciesPage() {
             ) : (
               <div className="grid grid-cols-1 gap-md md:grid-cols-2">
                 {openVacancies.map((vacancy) => (
-                  <article key={vacancy.id} className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow transition hover:-translate-y-1 hover:shadow-lg">
+                  <article key={vacancy.id} className="group flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow transition hover:-translate-y-1 hover:shadow-lg">
                     <h2 className="m-0 font-heading text-xl font-bold leading-snug text-heading">
                       {vacancy.title}
                     </h2>
 
-                    <p className="mt-sm flex-1 font-body text-[15px] text-body-text">
+                    <p className="mt-sm flex-1 font-body text-body-sm text-body-text">
                       {vacancy.description}
                     </p>
 
@@ -136,9 +137,14 @@ function VacanciesPage() {
                       <button
                         type="button"
                         onClick={() => setApplyTarget({ title: vacancy.title, vacancyId: vacancy.id, requiredFields: vacancy.requiredFields })}
-                        className="inline-flex h-11 items-center whitespace-nowrap rounded-full bg-green-500 px-lg font-body text-sm font-semibold text-white hover:opacity-90"
+                        className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
                       >
                         {t('vacancies.apply')}
+                        <ArrowRightIcon
+                          size={16}
+                          aria-hidden="true"
+                          className="transition-transform group-hover:translate-x-0.5"
+                        />
                       </button>
                     </div>
                   </article>
@@ -176,11 +182,11 @@ function VacanciesPage() {
         >
           <div className="p-xl">
             <h2 className="m-0 font-heading text-2xl font-bold text-heading">{t('vacancies.applicationSentTitle')}</h2>
-            <p className="mt-sm font-body text-[15px] text-body-text">{t('vacancies.applicationSentMessage')}</p>
+            <p className="mt-sm font-body text-body-sm text-body-text">{t('vacancies.applicationSentMessage')}</p>
             <button
               type="button"
               onClick={() => setApplicationSent(false)}
-              className="mt-lg inline-flex h-11 w-full items-center justify-center rounded-full bg-green-500 font-body text-sm font-semibold uppercase tracking-wide text-white"
+              className="mt-lg inline-flex h-11 w-full items-center justify-center rounded-full bg-green-500 font-body text-body-sm font-semibold uppercase tracking-wide text-white"
             >
               {t('vacancies.gotIt')}
             </button>

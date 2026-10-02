@@ -34,7 +34,7 @@ function LanguageSwitcher() {
     <div className="relative inline-flex" ref={rootRef}>
       <button
         type="button"
-        className="inline-flex min-w-0 items-center justify-center gap-xs rounded-2xl border border-neutral-200 bg-white p-xs font-body text-sm text-heading transition-colors duration-200 hover:border-link focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:min-w-[160px] md:px-md md:py-sm"
+        className="inline-flex min-w-0 items-center justify-center gap-xs rounded-2xl border border-neutral-200 bg-white p-xs font-body text-body-sm text-heading transition-colors duration-200 hover:border-link focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:min-w-[160px] md:px-md md:py-sm"
         onClick={() => setOpen((open) => !open)}
         aria-label={t('languageSwitcher.label')}
         aria-haspopup="menu"
@@ -62,7 +62,7 @@ function LanguageSwitcher() {
               <button
                 type="button"
                 role="menuitem"
-                className={`flex w-full items-center justify-between gap-2 rounded-lg px-md py-sm text-left font-body text-sm text-heading transition-colors duration-150 hover:bg-orange-100 ${
+                className={`flex w-full items-center justify-between gap-2 rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100 ${
                   language.code === currentLanguage ? 'font-semibold text-link' : ''
                 }`}
                 onClick={() => selectLanguage(language.code)}

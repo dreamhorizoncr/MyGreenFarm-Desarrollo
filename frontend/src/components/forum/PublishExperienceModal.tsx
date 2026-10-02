@@ -76,7 +76,7 @@ function PublishExperienceModal({
       />
 
       <article
-        className="relative mx-auto my-[20px] w-full max-w-[640px] rounded-[24px] bg-white"
+        className="relative mx-auto my-[20px] w-full max-w-[640px] rounded-3xl bg-white"
       >
         <button
           type="button"
@@ -100,7 +100,7 @@ function PublishExperienceModal({
             maxLength={40}
             aria-label={t('forum.community.nameLabel')}
             placeholder={t('forum.community.nameLabel')}
-            className="mt-md h-11 w-full rounded-xl border border-neutral-200 bg-white px-md text-left font-body text-[15px] text-body-text outline-none focus:border-heading"
+            className="mt-md h-11 w-full rounded-xl border border-neutral-200 bg-white px-md text-left font-body text-body-sm text-body-text outline-none focus:border-heading"
           />
 
           <textarea
@@ -111,10 +111,10 @@ function PublishExperienceModal({
             rows={6}
             aria-label={t('forum.community.contentLabel')}
             placeholder={t('forum.community.contentLabel')}
-            className="mt-md w-full resize-y rounded-xl border border-neutral-200 bg-white p-md text-left font-body text-[15px] text-body-text outline-none focus:border-heading"
+            className="mt-md w-full resize-y rounded-xl border border-neutral-200 bg-white p-md text-left font-body text-body-sm text-body-text outline-none focus:border-heading"
           />
 
-          <p className="m-0 mt-xs text-right font-body text-xs text-body-text">
+          <p className="m-0 mt-xs text-right font-body text-caption text-body-text">
             {content.length}/{MAX_CONTENT}
           </p>
 
@@ -128,13 +128,13 @@ function PublishExperienceModal({
             <Button
               variant="secondary"
               onClick={onClose}
-              className="h-[47px] flex-1 rounded-full font-body text-[17px]"
+              className="h-11 flex-1 rounded-full font-body text-button"
             >
               {t('forum.community.cancel')}
             </Button>
             <Button
               onClick={handleSubmit}
-              className="h-[47px] flex-1 rounded-full bg-green-500 font-body text-[17px] font-normal text-white"
+              className="h-11 flex-1 rounded-full bg-green-500 font-body text-button font-normal text-white"
             >
               {t('forum.community.submit')}
             </Button>

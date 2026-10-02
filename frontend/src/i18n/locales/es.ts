@@ -327,7 +327,7 @@ export default {
       "Publicá investigaciones para que las familias las lean en la pestaña Blog del foro.",
     noPersistenceNotice:
       "Todavía no hay conexión con el servidor: lo que publiques acá se ve en el foro mientras no recargues la página.",
-    addPost: "Publicar investigación",
+    addPost: "Agregar investigación",
     newPost: "Nueva investigación",
     editPost: "Editar investigación",
     postTitle: "Título",
@@ -874,7 +874,7 @@ export default {
     title: "Vacantes",
     subtitle:
       "Conoce las oportunidades laborales abiertas en My Green Farm y postúlate enviando tu currículum.",
-    publish: "Publicar vacante",
+    publish: "Agregar vacante",
     noVacancies: "No hay vacantes disponibles por el momento.",
     spontaneousTitle: "¿No ves una vacante que te interese?",
     spontaneousDescription:

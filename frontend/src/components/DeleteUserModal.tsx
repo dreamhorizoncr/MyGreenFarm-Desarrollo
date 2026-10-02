@@ -64,24 +64,24 @@ function DeleteUserModal({ user, onConfirm, onClose }: Readonly<DeleteUserModalP
         </button>
 
         <div className="relative mb-lg text-center">
-          <h2 className="m-0 font-heading text-[42px] font-bold leading-none text-heading">
+          <h2 className="m-0 font-heading text-h1 font-bold leading-none text-heading">
             {t('admin.deleteConfirmTitle')}
           </h2>
         </div>
 
         <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px]">
-          <p className="mt-2xs text-left font-body text-[13px] text-neutral-500">
+          <p className="mt-2xs text-left font-body text-body-sm text-neutral-500">
             {t('admin.deleteConfirmMessage', { name: fullName })}
           </p>
 
           <div className="flex flex-col">
-            <label htmlFor="admin-delete-confirm" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+            <label htmlFor="admin-delete-confirm" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
               {t('admin.deleteConfirmFieldLabel', { name: fullName })}
             </label>
             <input
               id="admin-delete-confirm"
               type="text"
-              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
+              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
               value={confirmText}
               onChange={(e) => {
                 setConfirmText(e.target.value)
@@ -90,12 +90,12 @@ function DeleteUserModal({ user, onConfirm, onClose }: Readonly<DeleteUserModalP
               placeholder={t('admin.deleteConfirmPlaceholder', { name: fullName })}
             />
             {deleteError && (
-              <p className="mt-2xs text-left font-body text-sm text-danger">{deleteError}</p>
+              <p className="mt-2xs text-left font-body text-body-sm text-danger">{deleteError}</p>
             )}
           </div>
 
           <div className="flex gap-md mt-sm">
-            <Button variant="secondary" onClick={onClose} className="h-[47px] flex-1 rounded-full font-body text-[17px] uppercase tracking-wide">
+            <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-full font-body text-button uppercase tracking-wide">
               {t('admin.cancel')}
             </Button>
             <Button
@@ -103,7 +103,7 @@ function DeleteUserModal({ user, onConfirm, onClose }: Readonly<DeleteUserModalP
               onClick={handleConfirm}
               loading={deleting}
               disabled={!matchesName}
-              className="h-[47px] flex-1 rounded-full font-body text-[17px] font-normal uppercase tracking-wide"
+              className="h-11 flex-1 rounded-full font-body text-button font-normal uppercase tracking-wide"
             >
               {deleting ? t('common.loading') : t('admin.delete')}
             </Button>

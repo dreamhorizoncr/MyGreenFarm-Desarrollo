@@ -324,7 +324,7 @@ export default {
       "Publish research so families can read it in the forum's blog tab.",
     noPersistenceNotice:
       "There is no server connection yet: anything you publish here shows up in the forum until you reload the page.",
-    addPost: "Publish research",
+    addPost: "Add research",
     newPost: "New research",
     editPost: "Edit research",
     postTitle: "Title",
@@ -861,7 +861,7 @@ export default {
     title: "Vacancies",
     subtitle:
       "Check out the open positions at My Green Farm and apply by sending your resume.",
-    publish: "Publish vacancy",
+    publish: "Add vacancy",
     noVacancies: "No vacancies available right now.",
     spontaneousTitle: "Don't see a vacancy that fits you?",
     spontaneousDescription:

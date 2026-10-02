@@ -105,11 +105,11 @@ const cards = announcements.filter(
       {/* Hero de Noticias */}
       <section className="flex min-h-[280px] items-center bg-green-500 px-[30px] py-[40px] text-center text-white md:min-h-[320px]">
         <div className="mx-auto w-full max-w-[700px]">
-          <h1 className="m-0 font-heading text-[34px] font-bold leading-tight text-white md:text-[46px]">
+          <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
             {t("newspage.title")}
           </h1>
 
-          <p className="mx-auto mt-[20px] max-w-[560px] font-body text-[13px] leading-[1.6] text-white md:text-[15px]">
+          <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-sm leading-[1.6] text-white md:text-body-sm">
             {t("newspage.description")}
           </p>
 
@@ -118,8 +118,10 @@ const cards = announcements.filter(
             <button
               type="button"
               onClick={() => setActiveCategory("All")}
-              className={`rounded-full px-[18px] py-[8px] font-body text-[12px] text-white transition md:text-[14px] ${
-                activeCategory === "All" ? "bg-orange-500" : "bg-orange-400"
+              className={`rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
+                activeCategory === "All"
+                  ? "border-orange-500 bg-orange-500 text-white"
+                  : "border-white bg-transparent text-white hover:bg-white/10"
               }`}
             >
               {t("newspage.category1")}
@@ -128,8 +130,10 @@ const cards = announcements.filter(
             <button
               type="button"
               onClick={() => setActiveCategory("NEWS")}
-              className={`rounded-full px-[18px] py-[8px] font-body text-[12px] text-white transition md:text-[14px] ${
-                activeCategory === "NEWS" ? "bg-orange-500" : "bg-orange-400"
+              className={`rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
+                activeCategory === "NEWS"
+                  ? "border-orange-500 bg-orange-500 text-white"
+                  : "border-white bg-transparent text-white hover:bg-white/10"
               }`}
             >
               {t("newspage.category2")}
@@ -138,8 +142,10 @@ const cards = announcements.filter(
             <button
               type="button"
               onClick={() => setActiveCategory("EVENT")}
-              className={`rounded-full px-[18px] py-[8px] font-body text-[12px] text-white transition md:text-[14px] ${
-                activeCategory === "EVENT" ? "bg-orange-500" : "bg-orange-400"
+              className={`rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
+                activeCategory === "EVENT"
+                  ? "border-orange-500 bg-orange-500 text-white"
+                  : "border-white bg-transparent text-white hover:bg-white/10"
               }`}
             >
               {t("newspage.category3")}
@@ -148,8 +154,10 @@ const cards = announcements.filter(
             <button
               type="button"
               onClick={() => setActiveCategory("NOTICE")}
-              className={`rounded-full px-[18px] py-[8px] font-body text-[12px] text-white transition md:text-[14px] ${
-                activeCategory === "NOTICE" ? "bg-orange-500" : "bg-orange-400"
+              className={`rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
+                activeCategory === "NOTICE"
+                  ? "border-orange-500 bg-orange-500 text-white"
+                  : "border-white bg-transparent text-white hover:bg-white/10"
               }`}
             >
               {t("newspage.category4")}
@@ -158,8 +166,10 @@ const cards = announcements.filter(
             <button
               type="button"
               onClick={() => setActiveCategory("TRANSPORT")}
-              className={`rounded-full px-[18px] py-[8px] font-body text-[12px] text-white transition md:text-[14px] ${
-                activeCategory === "TRANSPORT" ? "bg-orange-500" : "bg-orange-400"
+              className={`rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
+                activeCategory === "TRANSPORT"
+                  ? "border-orange-500 bg-orange-500 text-white"
+                  : "border-white bg-transparent text-white hover:bg-white/10"
               }`}
             >
               {t("newspage.category6")}
@@ -183,7 +193,7 @@ const cards = announcements.filter(
           )}
 
           {(error || imagesError) && (
-            <p className="m-0 p-xl text-center font-body text-base text-danger">
+            <p className="m-0 p-xl text-center font-body text-body text-danger">
               {error || imagesError}
             </p>
           )}
@@ -225,14 +235,14 @@ const cards = announcements.filter(
                               </div>
                             )}
 
-                            <span className="absolute left-[14px] top-[14px] rounded-full bg-orange-500 px-[12px] py-[5px] font-body text-[11px] text-white">
+                            <span className="absolute left-[14px] top-[14px] rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
                               {t(TYPE_LABEL_KEY[a.type])}
                             </span>
                           </div>
 
                           {/* Contenido */}
                           <div className="relative flex flex-col items-start p-[22px] pb-[60px] text-left md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2">
-                            <span className="font-body text-[11px] text-neutral-500">
+                            <span className="font-body text-caption text-neutral-500">
                               {formatDate(a.eventDate, i18n.language)}
                             </span>
 
@@ -240,14 +250,14 @@ const cards = announcements.filter(
                               {a.title}
                             </h2>
 
-                            <p className="mt-[14px] line-clamp-3 font-body text-[13px] leading-[1.6] text-body-text">
+                            <p className="mt-[14px] line-clamp-3 font-body text-body-sm leading-[1.6] text-body-text">
                               {a.content}
                             </p>
 
                             <div className="absolute bottom-[22px] left-[22px]">
                               <BlobButton
                                 onClick={() => setSelectedAnnouncement(a)}
-                                className="w-fit px-[16px] py-[7px] font-body text-[11px] uppercase"
+                                className="h-11 w-fit px-lg font-body text-caption uppercase"
                               >
                                 {t("newspage.readMore")}
                               </BlobButton>
@@ -258,7 +268,7 @@ const cards = announcements.filter(
                         // Tarjeta pequeña
                         <article
                           key={a.id}
-                          className="relative overflow-hidden rounded-[16px] border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-4 md:h-[340px]"
+                          className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-4 md:h-[340px]"
                         >
                           {/* Imagen */}
                           <div className="relative h-[200px] md:absolute md:inset-x-0 md:top-0 md:h-[125px]">
@@ -278,14 +288,14 @@ const cards = announcements.filter(
                               </div>
                             )}
 
-                            <span className="absolute left-[14px] top-[14px] rounded-full bg-orange-500 px-[12px] py-[5px] font-body text-[11px] text-white">
+                            <span className="absolute left-[14px] top-[14px] rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
                               {t(TYPE_LABEL_KEY[a.type])}
                             </span>
                           </div>
 
                           {/* Contenido */}
                           <div className="relative flex flex-col items-start p-[20px] pb-[56px] text-left md:absolute md:inset-x-0 md:bottom-0 md:top-[125px]">
-                            <span className="font-body text-[11px] text-neutral-500">
+                            <span className="font-body text-caption text-neutral-500">
                               {formatDate(a.eventDate, i18n.language)}
                             </span>
 
@@ -293,14 +303,14 @@ const cards = announcements.filter(
                               {a.title}
                             </h2>
 
-                            <p className="mt-[2px] line-clamp-1 font-body text-[12px] leading-[1.55] text-body-text">
+                            <p className="mt-[2px] line-clamp-1 font-body text-caption leading-[1.55] text-body-text">
                               {a.content}
                             </p>
 
                             <div className="absolute bottom-[20px] left-[20px]">
                               <BlobButton
                                 onClick={() => setSelectedAnnouncement(a)}
-                                className="w-fit px-[16px] py-[7px] font-body text-[11px] uppercase"
+                                className="h-11 w-fit px-lg font-body text-caption uppercase"
                               >
                                 {t("newspage.readMore")}
                               </BlobButton>
@@ -335,7 +345,7 @@ const cards = announcements.filter(
                         key={page}
                         type="button"
                         onClick={() => setCurrentPage(page)}
-                        className={`flex size-[38px] items-center justify-center rounded-full font-body text-[13px] transition ${
+                        className={`flex size-[38px] items-center justify-center rounded-full font-body text-body-sm transition ${
                           currentPage === page
                             ? "bg-green-500 text-white"
                             : "border border-neutral-200 bg-white text-heading hover:border-green-500"

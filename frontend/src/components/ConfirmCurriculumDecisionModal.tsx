@@ -67,29 +67,29 @@ function ConfirmCurriculumDecisionModal({ application, action, onConfirm, onClos
         </button>
 
         <div className="relative mb-lg text-center">
-          <h2 className="m-0 font-heading text-[34px] font-bold leading-none text-heading">
+          <h2 className="m-0 font-heading text-page-title font-bold leading-none text-heading">
             {title}
           </h2>
         </div>
 
         <div className="flex flex-col gap-md px-7 pb-8 pt-2.5">
-          <p className="m-0 text-left font-body text-[15px] text-body-text">
+          <p className="m-0 text-left font-body text-body-sm text-body-text">
             {message}
           </p>
 
           {submitError && (
-            <p className="mt-2xs text-left font-body text-sm text-danger">{submitError}</p>
+            <p className="mt-2xs text-left font-body text-body-sm text-danger">{submitError}</p>
           )}
 
           <div className="flex gap-md mt-sm">
-            <Button variant="secondary" onClick={onClose} className="h-11.75 flex-1 rounded-xl font-body text-[17px] uppercase tracking-wide">
+            <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-xl border-green-500 font-body text-button uppercase tracking-wide text-heading hover:bg-green-50">
               {t('admin.cancel')}
             </Button>
             <Button
               variant={isApprove ? 'success' : 'danger'}
               onClick={handleConfirm}
               loading={submitting}
-              className={`h-11.75 flex-1 rounded-xl font-body text-[17px] font-normal uppercase tracking-wide text-white ${isApprove ? 'bg-green-500' : ''}`}
+              className={`h-11 flex-1 rounded-xl font-body text-button font-normal uppercase tracking-wide text-white ${isApprove ? 'bg-green-500' : ''}`}
             >
               {submitting ? t('common.loading') : confirmLabel}
             </Button>

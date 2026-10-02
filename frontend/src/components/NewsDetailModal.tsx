@@ -102,7 +102,7 @@ function NewsDetailModal({
         />
 
         <article
-            className="relative mx-auto w-full max-w-[1100px] rounded-[24px] bg-bg-page"
+            className="relative mx-auto w-full max-w-[1100px] rounded-3xl bg-bg-page"
         >
             <button
                 type="button"
@@ -117,13 +117,13 @@ function NewsDetailModal({
 
             <header className="mx-auto max-w-[850px] text-center">
 
-            <span className="inline-flex rounded-full bg-orange-500 px-[14px] py-[6px] font-body text-[11px] text-white">
+            <span className="inline-flex rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
                     {t(TYPE_LABEL_KEY[announcement.type])}
             </span>
-            <h2 className="mt-[16px] font-heading text-[32px] font-bold leading-[1.15] text-heading md:text-[44px]">
+            <h2 className="mt-[16px] font-heading text-[32px] font-bold leading-[1.15] text-heading md:text-h1">
                 {announcement.title}
             </h2>
-            <div className="mt-[16px] flex flex-wrap items-center justify-center gap-x-[18px] gap-y-[8px] font-body text-[13px] text-neutral-500">
+            <div className="mt-[16px] flex flex-wrap items-center justify-center gap-x-[18px] gap-y-[8px] font-body text-body-sm text-neutral-500">
 
                 {announcement.eventDate && (
                     <div className="flex items-center gap-[6px]">
@@ -149,13 +149,13 @@ function NewsDetailModal({
             </header>
 
                 {loading && (
-                <p className="mt-[35px] text-center font-body text-[14px] text-neutral-500">
+                <p className="mt-[35px] text-center font-body text-body-sm text-neutral-500">
                     {t("common.loading")}
                 </p>
             )}
 
                 {error && (
-                <p className="mt-[35px] text-center font-body text-[14px] text-danger">
+                <p className="mt-[35px] text-center font-body text-body-sm text-danger">
                     {error}
                 </p>
             )}
@@ -174,18 +174,18 @@ function NewsDetailModal({
                     <section className="mx-auto mt-[40px] max-w-[950px] rounded-[20px] bg-gradient-to-br from-green-50 to-white p-[22px] text-left shadow-sm ring-1 ring-green-100 md:p-[28px]">
                         <div className="mb-[12px] inline-flex items-center gap-[6px] rounded-full bg-green-500 px-[12px] py-[6px]">
                             <SparklesIcon size={14} className="text-white" aria-hidden="true" />
-                            <span className="font-heading text-[11px] font-bold uppercase tracking-wide text-white">
+                            <span className="font-heading text-caption font-bold uppercase tracking-wide text-white">
                                 {t("newspage.aiSummary")}
                             </span>
                         </div>
-                        <p className="font-body text-[16px] leading-[1.7] text-heading md:text-[17px]">
+                        <p className="font-body text-body leading-[1.7] text-heading md:text-button">
                             {announcement.aiSummary}
                         </p>
                     </section>
                 )}
 
             <section className={`mx-auto max-w-[950px] text-left ${announcement.aiSummary ? 'mt-[30px]' : 'mt-[50px]'}`}>
-                <p className="whitespace-pre-line font-body text-[15px] leading-[1.85] text-body-text md:text-[16px]">
+                <p className="whitespace-pre-line font-body text-body-sm leading-[1.85] text-body-text md:text-body">
                     {announcement.content}
                     </p>
             </section>
@@ -203,7 +203,7 @@ function NewsDetailModal({
                     {galleryImages.map((image) => (
                     <div
                         key={image.id}
-                        className="overflow-hidden rounded-[16px]"
+                        className="overflow-hidden rounded-2xl"
                     >
                         <img
                         src={image.fileUrl}
