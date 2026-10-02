@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 # ==========================================
 # ETAPA 1: Compilar el Frontend (React/Vite)
 # ==========================================
@@ -7,7 +5,7 @@ FROM node:20-alpine AS frontend-build
 WORKDIR /app/frontend
 
 COPY frontend/package*.json ./
-RUN --mount=type=cache,target=/root/.npm npm ci --ignore-scripts
+RUN npm ci --ignore-scripts
 
 COPY frontend/ ./
 RUN npm run build
@@ -23,13 +21,13 @@ COPY backend/ ./
 
 # Damos permisos al mvnw y descargamos dependencias
 RUN chmod +x mvnw
-RUN --mount=type=cache,target=/root/.m2 ./mvnw dependency:go-offline
+RUN ./mvnw dependency:go-offline
 
 # Copiamos la build de Vite directamente al directorio estático de Spring Boot
 COPY --from=frontend-build /app/frontend/dist/ ./src/main/resources/static/
 
 # Compilamos el proyecto
-RUN --mount=type=cache,target=/root/.m2 ./mvnw clean package -DskipTests
+RUN ./mvnw clean package -DskipTests
 
 # ==========================================
 # ETAPA 3: Imagen de Ejecución (Java 22 JRE)
