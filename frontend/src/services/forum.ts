@@ -13,6 +13,13 @@ import type {
   CommunityComment,
 } from '../types/forum.ts'
 
+type ForumCommunityPostResponse = Omit<CommunityPost, 'likeCount' | 'reacted' | 'commentCount'> & {
+  reactionCount?: number
+  likeCount?: number
+  reacted?: boolean
+  commentCount?: number
+}
+
 function mapArticle(article: ForumArticleResponse): BlogPost {
   return {
     id: article.id,
@@ -130,7 +137,7 @@ export const forumService = {
   },
 
   async getCommunityPosts(page = 0, size = 10): Promise<ForumCommunityPage> {
-    const response = await apiClient.get<ForumCommunityPage & { content: Array<CommunityPost & { reactionCount?: number }> }>('/forum/community', {
+    const response = await apiClient.get<Omit<ForumCommunityPage, 'content'> & { content: ForumCommunityPostResponse[] }>('/forum/community', {
       params: { page, size },
     })
     return { ...response.data, content: response.data.content.map((post) => ({
