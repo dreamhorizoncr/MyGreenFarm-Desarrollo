@@ -70,20 +70,20 @@ function ResetPasswordPage() {
   return (
     <AuthLayout overtitle={t('resetPassword.overtitle')} closeTo={isAuthenticated ? '/profile' : '/login'}>
       {/*Título*/}
-      <h2 className="mb-[50px] text-left font-heading text-[28px] leading-none text-heading md:text-[42px]">
+      <h2 className="mb-[50px] text-left font-heading text-[28px] leading-none text-heading md:text-h1">
         {t('resetPassword.title')}
       </h2>
 
       {!token ? (
         /*Sin Token*/
         <div className="text-center">
-          <p className="mb-[35px] font-body text-[15px] leading-[1.7] text-body-text">
+          <p className="mb-[35px] font-body text-body-sm leading-[1.7] text-body-text">
             {t('resetPassword.missingToken')}
           </p>
 
           <Link
             to="/forgot-password"
-            className="font-link text-[14px] text-heading transition-opacity hover:opacity-70"
+            className="font-link text-body-sm text-heading transition-opacity hover:opacity-70"
           >
             {t('resetPassword.requestNewLink')}
           </Link>
@@ -127,14 +127,14 @@ function ResetPasswordPage() {
 
           {/*Error del backend*/}
           {error && (
-            <p className="mt-4 text-center font-body text-sm text-danger">
+            <p className="mt-4 text-center font-body text-body-sm text-danger">
               {error}
             </p>
           )}
 
           {/*Mensaje de éxito*/}
           {success && (
-            <p className="mt-5 text-center font-body text-sm text-body-text">
+            <p className="mt-5 text-center font-body text-body-sm text-body-text">
               {t('resetPassword.success')}
             </p>
           )}
@@ -154,7 +154,7 @@ function ResetPasswordPage() {
           <p className="mt-[35px] text-center">
             <Link
               to={isAuthenticated ? '/profile' : '/login'}
-              className="font-link text-[14px] text-heading transition-opacity hover:opacity-70"
+              className="font-link text-body-sm text-heading transition-opacity hover:opacity-70"
             >
               {isAuthenticated ? t('resetPassword.backToProfile') : t('resetPassword.backToLogin')}
             </Link>

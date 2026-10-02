@@ -59,11 +59,11 @@ function ForumPage() {
 
       <section className="flex min-h-[280px] items-center bg-green-500 px-[30px] py-[40px] text-center text-white xs:min-h-[320px]">
         <div className="mx-auto w-full max-w-[700px]">
-          <h1 className="m-0 font-heading text-[34px] font-bold leading-tight text-white md:text-[46px]">
+          <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
             {t('forum.title')}
           </h1>
 
-          <p className="mx-auto mt-[20px] max-w-[560px] font-body text-[13px] leading-[1.6] text-white md:text-[15px]">
+          <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-sm leading-[1.6] text-white md:text-body-sm">
             {t('forum.subtitle')}
           </p>
 

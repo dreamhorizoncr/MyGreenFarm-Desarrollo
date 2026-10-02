@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { ChevronDownIcon } from "@animateicons/react/lucide";
 
 import { parentService } from "../services/parent";
 import { notify } from "../utils/notifications.ts";
@@ -116,7 +117,7 @@ function ParentFormModal({
                 : t("admin.parents.addTitle")}
             </h2>
 
-            <p className="mt-1 font-body text-sm text-body-text">
+            <p className="mt-1 font-body text-body-sm text-body-text">
               {isEditing
                 ? t("admin.parents.editDescription")
                 : t("admin.parents.addDescription")}
@@ -240,22 +241,29 @@ function ParentFormModal({
               {t("admin.parents.language")}
             </label>
 
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value as ParentLanguage)}
-              required
-              className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 font-body outline-none focus:border-heading"
-            >
-              {languages.map((lang) => (
-                <option key={lang} value={lang}>
-                  {t(`admin.parents.languages.${lang}`)}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as ParentLanguage)}
+                required
+                className="w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-11 font-body outline-none focus:border-heading"
+              >
+                {languages.map((lang) => (
+                  <option key={lang} value={lang}>
+                    {t(`admin.parents.languages.${lang}`)}
+                  </option>
+                ))}
+              </select>
+              <ChevronDownIcon
+                size={16}
+                className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500"
+                aria-hidden="true"
+              />
+            </div>
           </div>
 
           {/* Error */}
-          {error && <p className="font-body text-sm text-red-500">{error}</p>}
+          {error && <p className="font-body text-body-sm text-red-500">{error}</p>}
 
           {/* Botones */}
           <div className="flex justify-end gap-3 pt-2">
@@ -263,7 +271,7 @@ function ParentFormModal({
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="rounded-full border border-heading px-6 py-3 font-body font-bold text-heading transition hover:bg-gray-50"
+              className="h-11 rounded-full border border-green-500 px-6 font-body font-bold text-heading transition-colors hover:bg-green-50"
             >
               {t("admin.parents.cancel")}
             </button>
@@ -271,7 +279,7 @@ function ParentFormModal({
             <button
               type="submit"
               disabled={saving}
-              className="rounded-full bg-heading px-7 py-3 font-body font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-11 rounded-full bg-orange-500 px-7 font-body font-bold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving ? t("admin.parents.saving") : idleSaveLabel}
             </button>

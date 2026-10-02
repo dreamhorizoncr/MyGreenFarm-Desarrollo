@@ -34,7 +34,7 @@ function ExpedientCard({ expedient, onEdit, onDelete }: Readonly<ExpedientCardPr
   const { t } = useTranslation();
 
   return (
-    <article className="rounded-3xl bg-gray-100 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
       {/* Nombre y acciones */}
       <div className="flex items-start justify-between gap-4">
         {/* Nombre */}
@@ -47,7 +47,7 @@ function ExpedientCard({ expedient, onEdit, onDelete }: Readonly<ExpedientCardPr
           <button
             type="button"
             onClick={() => onEdit(expedient)}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-heading transition hover:scale-105"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
           >
             <Pencil size={16} />
           </button>
@@ -55,7 +55,7 @@ function ExpedientCard({ expedient, onEdit, onDelete }: Readonly<ExpedientCardPr
           <button
             type="button"
             onClick={() => onDelete(expedient)}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-red-500 transition hover:scale-105"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50"
           >
             <Trash2 size={16} />
           </button>
@@ -76,9 +76,9 @@ function ExpedientCard({ expedient, onEdit, onDelete }: Readonly<ExpedientCardPr
       </div>
 
       {/* Fotografía y observaciones */}
-      <div className="mt-6 flex flex-col gap-5 sm:flex-row">
+      <div className="mt-6 flex flex-col gap-5 border-t border-neutral-100 pt-5 sm:flex-row">
         {/* Fotografía */}
-        <div className="h-40 w-full shrink-0 overflow-hidden rounded-2xl bg-white sm:w-40">
+        <div className="h-40 w-full shrink-0 overflow-hidden rounded-2xl bg-[var(--grey-100)] sm:w-40">
           {expedient.photoUrl ? (
             <img
               src={expedient.photoUrl}
@@ -87,18 +87,18 @@ function ExpedientCard({ expedient, onEdit, onDelete }: Readonly<ExpedientCardPr
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center px-4 text-center">
-              <p className="font-body text-sm text-body-text">Sin fotografía</p>
+              <p className="font-body text-body-sm text-body-text">Sin fotografía</p>
             </div>
           )}
         </div>
 
         {/* Observaciones */}
-        <div className="min-w-0 flex-1 rounded-2xl bg-white p-5">
-          <h3 className="font-body text-base font-bold text-heading">
+        <div className="min-w-0 flex-1">
+          <h3 className="font-body text-body font-bold text-heading">
             {t('admin.expedients.notes')}
           </h3>
 
-          <p className="mt-2 break-words font-body text-sm leading-relaxed text-body-text">
+          <p className="mt-2 break-words font-body text-body-sm leading-relaxed text-body-text">
             {expedient.generalObservations || "Sin observaciones."}
           </p>
         </div>

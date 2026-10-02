@@ -27,12 +27,12 @@ function WizardSteps({ steps, current }: Readonly<WizardStepsProps>) {
 
             <li className="flex shrink-0 flex-col items-center gap-1">
               <span
-                className={`flex size-8 items-center justify-center rounded-full font-body text-sm font-semibold ${stepClassName}`}
+                className={`flex size-8 items-center justify-center rounded-full font-body text-body-sm font-semibold ${stepClassName}`}
                 aria-current={active ? 'step' : undefined}
               >
                 {completed ? <CheckIcon size={16} /> : index + 1}
               </span>
-              <span className={`font-body text-xs leading-tight ${active ? 'font-semibold text-body-text' : 'text-neutral-500'}`}>
+              <span className={`font-body text-caption leading-tight ${active ? 'font-semibold text-body-text' : 'text-neutral-500'}`}>
                 {label}
               </span>
             </li>

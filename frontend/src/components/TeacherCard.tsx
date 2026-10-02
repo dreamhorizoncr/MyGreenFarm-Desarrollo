@@ -1,18 +1,15 @@
 import { useTranslation } from 'react-i18next'
-import { EllipsisVerticalIcon, PencilIcon, Trash2Icon } from '@animateicons/react/lucide'
+import { PencilIcon, Trash2Icon } from '@animateicons/react/lucide'
 import type { UserInfo } from '../types/auth.ts'
 
 interface TeacherCardProps {
   user: UserInfo
-  isMenuOpen: boolean
   isSelf: boolean
-  menuRef?: (el: HTMLDivElement | null) => void
-  onToggleMenu: () => void
   onEdit: () => void
   onDelete: () => void
 }
 
-function TeacherCard({ user, isMenuOpen, isSelf, menuRef, onToggleMenu, onEdit, onDelete }: Readonly<TeacherCardProps>) {
+function TeacherCard({ user, isSelf, onEdit, onDelete }: Readonly<TeacherCardProps>) {
   const { t } = useTranslation()
 
   return (
@@ -27,49 +24,30 @@ function TeacherCard({ user, isMenuOpen, isSelf, menuRef, onToggleMenu, onEdit, 
           </p>
         </div>
 
-        <div className="relative inline-flex shrink-0" ref={menuRef}>
+        <div className="flex shrink-0 items-center gap-xs">
           <button
             type="button"
-            className="inline-flex size-[34px] items-center justify-center rounded-full bg-transparent text-link transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-            onClick={onToggleMenu}
-            aria-expanded={isMenuOpen}
-            aria-haspopup="menu"
-            aria-label={t('admin.actions')}
+            onClick={onEdit}
+            aria-label={t('admin.edit')}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
           >
-            <EllipsisVerticalIcon size={16} />
+            <PencilIcon size={17} />
           </button>
 
-          {isMenuOpen && (
-            <div
-              className="absolute right-0 top-[calc(100%+var(--spacing-2xs))] z-30 min-w-[180px] rounded-xl border border-neutral-200 bg-white p-2xs shadow animate-[admin-row-menu-in_0.12s_ease-out]"
-              role="menu"
-            >
-              <button
-                type="button"
-                className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-sm text-body-text transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-[-2px]"
-                role="menuitem"
-                onClick={onEdit}
-              >
-                <PencilIcon size={14} />
-                <span>{t('admin.edit')}</span>
-              </button>
-              <button
-                type="button"
-                className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-sm text-danger transition-colors hover:bg-danger-100 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-[-2px] disabled:cursor-not-allowed disabled:opacity-50"
-                role="menuitem"
-                onClick={onDelete}
-                disabled={isSelf}
-                title={isSelf ? t('admin.selfDeleteNotAllowed') : undefined}
-              >
-                <Trash2Icon size={14} />
-                <span>{t('admin.delete')}</span>
-              </button>
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={onDelete}
+            disabled={isSelf}
+            title={isSelf ? t('admin.selfDeleteNotAllowed') : undefined}
+            aria-label={t('admin.delete')}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Trash2Icon size={17} />
+          </button>
         </div>
       </header>
 
-      <p className="m-0 mt-md break-words font-body text-[15px] text-body-text">
+      <p className="m-0 mt-md break-words font-body text-body-sm text-body-text">
         {user.email}
       </p>
     </article>

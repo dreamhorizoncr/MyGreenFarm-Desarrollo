@@ -1,14 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { PlusIcon, UserSearchIcon } from '@animateicons/react/lucide'
+import { PlusIcon, SearchIcon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import EditUserModal from '../components/EditUserModal.tsx'
 import DeleteUserModal from '../components/DeleteUserModal.tsx'
 import TeacherCard from '../components/TeacherCard.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import { useAdmin } from '../hooks/useAdmin.ts'
-import useDismiss from '../hooks/useDismiss.ts'
 import { notify } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
@@ -21,7 +20,10 @@ function TeacherCardSkeleton() {
           <Skeleton shape="line" className="h-5 w-1/2" />
           <Skeleton shape="line" className="mt-2 h-3 w-20" />
         </div>
-        <Skeleton shape="circle" className="h-[34px] w-[34px] shrink-0" />
+        <div className="flex shrink-0 items-center gap-xs">
+          <Skeleton shape="circle" className="h-10 w-10" />
+          <Skeleton shape="circle" className="h-10 w-10" />
+        </div>
       </div>
       <Skeleton shape="line" className="mt-md h-4 w-2/3" />
     </article>
@@ -37,19 +39,11 @@ function AdminUsersPage() {
   const [userToDelete, setUserToDelete] = useState<UserInfo | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState<string>('ALL')
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null)
-  const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     void fetchUsers()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  useDismiss({
-    ref: menuRef,
-    isOpen: openMenuId !== null,
-    onClose: () => setOpenMenuId(null),
-  })
 
   const filteredUsers = useMemo(() => {
     const term = searchTerm.trim().toLowerCase()
@@ -65,8 +59,8 @@ function AdminUsersPage() {
   const roleOptions = useMemo(() => ['ALL', ...Array.from(new Set(['OWNER', ...users.map((user) => user.role)]))], [users])
 
   const roleFilterClassName = (active: boolean) =>
-    `rounded-full px-md py-sm font-body text-sm font-semibold transition-colors ${
-      active ? 'bg-green-500 text-white' : 'bg-[var(--grey-100)] text-body-text hover:bg-[var(--grey-200)]'
+    `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
+      active ? 'border-green-500 bg-green-500 text-white' : 'border-green-500 bg-white text-heading hover:bg-green-50'
     }`
 
   const handleSave = async (id: string, data: UpdateUserData) => {
@@ -79,35 +73,30 @@ function AdminUsersPage() {
     }
   }
 
-  const handleToggleMenu = (id: string) => () =>
-    setOpenMenuId((prev) => (prev === id ? null : id))
-
   const handleEdit = (user: UserInfo) => () => {
     setUserToEdit(user)
-    setOpenMenuId(null)
   }
 
   const handleDelete = (user: UserInfo) => () => {
     setUserToDelete(user)
-    setOpenMenuId(null)
   }
 
   return (
     <div id="admin-users">
       <AdminLayout>
-        <h1 className="m-0 font-heading text-[34px] font-bold leading-[1.15] text-heading">
+        <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
           {t('admin.docentesTitle')}
         </h1>
-        <p className="mt-2 font-body text-base text-neutral-500">
+        <p className="mt-2 font-body text-body text-neutral-500">
           {t('admin.docentesSubtitle')}
         </p>
 
         <div className="mb-[var(--spacing-lg)] mt-[var(--spacing-xl)] flex flex-wrap items-center justify-between gap-md">
-          <div className="flex h-[44px] min-w-[240px] max-w-[420px] flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
-            <UserSearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
+          <div className="flex h-11 min-w-[240px] max-w-[420px] flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
+            <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
             <input
               type="search"
-              className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-[15px] text-body-text outline-none placeholder:text-neutral-400"
+              className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
               placeholder={t('admin.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -117,7 +106,7 @@ function AdminUsersPage() {
 
           <Link
             to="/signup"
-            className="inline-flex h-[44px] items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-[var(--scale-600)] font-body text-[15px] font-semibold text-white no-underline transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+            className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-[var(--scale-600)] font-body text-body-sm font-semibold text-white no-underline transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
           >
             <PlusIcon size={18} aria-hidden="true" />
             <span>{t('admin.addDocente')}</span>
@@ -147,11 +136,11 @@ function AdminUsersPage() {
           </div>
         )}
 
-        {error && <p className="m-0 p-xl text-center font-body text-base text-danger">{error}</p>}
+        {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
 
         {!loading && !error && (
           filteredUsers.length === 0 ? (
-            <p className="m-0 p-xl text-center font-body text-base text-neutral-500">
+            <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
               {searchTerm.trim() || roleFilter !== 'ALL' ? t('admin.noResults') : t('common.noUsers')}
             </p>
           ) : (
@@ -160,14 +149,7 @@ function AdminUsersPage() {
                 <TeacherCard
                   key={user.id}
                   user={user}
-                  isMenuOpen={openMenuId === user.id}
                   isSelf={user.id === currentUser?.id}
-                  menuRef={(element) => {
-                    if (openMenuId === user.id) {
-                      menuRef.current = element
-                    }
-                  }}
-                  onToggleMenu={handleToggleMenu(user.id)}
                   onEdit={handleEdit(user)}
                   onDelete={handleDelete(user)}
                 />

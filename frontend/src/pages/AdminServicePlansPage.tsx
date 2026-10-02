@@ -22,6 +22,10 @@ function ServicePlanCardSkeleton() {
           <Skeleton shape="pill" className="h-6 w-20" />
           <Skeleton shape="line" className="h-6 w-16" />
         </div>
+        <div className="mt-auto flex justify-end gap-sm pt-sm">
+          <Skeleton shape="circle" className="h-10 w-10" />
+          <Skeleton shape="circle" className="h-10 w-10" />
+        </div>
       </div>
     </div>
   )
@@ -64,10 +68,10 @@ function AdminServicePlansPage() {
     <AdminLayout>
       <div className="flex flex-col gap-lg">
         <div>
-          <h1 className="m-0 font-heading text-[34px] font-bold leading-[1.15] text-heading">
+          <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
             {t('admin.servicios.title')}
           </h1>
-          <p className="mt-2 font-body text-base text-neutral-500">
+          <p className="mt-2 font-body text-body text-neutral-500">
             {t('admin.servicios.subtitle')}
           </p>
         </div>
@@ -76,7 +80,7 @@ function AdminServicePlansPage() {
           <button
             type="button"
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+            className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
           >
             <PlusIcon size={18} aria-hidden="true" />
             {t('admin.servicios.addPlan')}
@@ -92,11 +96,11 @@ function AdminServicePlansPage() {
         )}
 
         {error && (
-          <p className="text-center font-body text-base text-danger">{error}</p>
+          <p className="text-center font-body text-body text-danger">{error}</p>
         )}
 
         {!loading && !error && plans.length === 0 && (
-          <p className="text-center font-body text-base text-neutral-500">
+          <p className="text-center font-body text-body text-neutral-500">
             {t('admin.servicios.empty')}
           </p>
         )}
@@ -117,7 +121,7 @@ function AdminServicePlansPage() {
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center">
-                      <span className="font-body text-sm text-neutral-400">
+                      <span className="font-body text-body-sm text-neutral-400">
                         {t('admin.servicios.chooseImage')}
                       </span>
                     </div>
@@ -128,12 +132,12 @@ function AdminServicePlansPage() {
                   <h3 className="m-0 font-heading text-h5 font-bold text-heading line-clamp-1">
                     {plan.name}
                   </h3>
-                  <p className="m-0 font-body text-sm text-body-text-dark line-clamp-2">
+                  <p className="m-0 font-body text-body-sm text-body-text-dark line-clamp-2">
                     {plan.description}
                   </p>
 
                   <div className="flex items-center gap-sm">
-                    <span className="rounded-full bg-green-100 px-md py-xs font-body text-xs font-semibold text-green-700">
+                    <span className="rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
                       {/* No tiene que ser ANY, cambiarlo luego */}
                       {getPlanTypeLabel(plan.type, t as any)} 
                     </span>
@@ -143,14 +147,14 @@ function AdminServicePlansPage() {
                   </div>
 
                   {plan.schedule && (
-                    <p className="m-0 font-body text-xs text-neutral-500">
+                    <p className="m-0 font-body text-caption text-neutral-500">
                       <span className="font-semibold">{t('admin.servicios.scheduleLabel')}:</span>{' '}
                       {plan.schedule}
                     </p>
                   )}
 
                   {plan.includes && (
-                    <p className="m-0 font-body text-xs text-neutral-500 line-clamp-3">
+                    <p className="m-0 font-body text-caption text-neutral-500 line-clamp-3">
                       <span className="font-semibold">{t('admin.servicios.includesLabel')}:</span>{' '}
                       {plan.includes}
                     </p>
@@ -160,19 +164,19 @@ function AdminServicePlansPage() {
                     <button
                       type="button"
                       onClick={() => setEditingPlan(plan)}
-                      className="flex items-center gap-xs rounded-full px-md py-xs font-body text-xs text-heading transition-colors hover:bg-neutral-50"
+                      aria-label={t('admin.edit')}
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
                     >
-                      <PencilIcon size={14} />
-                      {t('admin.edit')}
+                      <PencilIcon size={17} />
                     </button>
                     <button
                       type="button"
                       onClick={() => setConfirmDeleteId(plan.id)}
                       disabled={deletingId === plan.id}
-                      className="flex items-center gap-xs rounded-full px-md py-xs font-body text-xs text-danger transition-colors hover:bg-red-50 disabled:opacity-50"
+                      aria-label={t('admin.delete')}
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 disabled:opacity-50"
                     >
-                      <Trash2Icon size={14} />
-                      {t('admin.delete')}
+                      <Trash2Icon size={17} />
                     </button>
                   </div>
                 </div>
@@ -268,12 +272,12 @@ function AdminServicePlansPage() {
             </div>
 
             <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px]">
-              <p className="mt-2xs text-left font-body text-[16px] text-neutral-500">
+              <p className="mt-2xs text-left font-body text-body text-neutral-500">
                 {t('admin.servicios.deleteConfirm', { name: planToDelete.name })}
               </p>
 
               <div className="flex flex-col">
-                <label htmlFor="admin-delete-plan-confirm" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+                <label htmlFor="admin-delete-plan-confirm" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
                   {t('admin.servicios.deleteConfirmField', { name: planToDelete.name })}
                 </label>
                 <input
@@ -282,7 +286,7 @@ function AdminServicePlansPage() {
                   value={confirmText}
                   onChange={(e) => setConfirmText(e.target.value)}
                   placeholder={t('admin.servicios.deletePlaceholder')}
-                  className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400"
+                  className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400"
                   autoFocus
                 />
               </div>
@@ -294,7 +298,7 @@ function AdminServicePlansPage() {
                   setConfirmDeleteId(null)
                   setConfirmText('')
                 }}
-                className="h-[47px] flex-1 rounded-full font-body text-[17px] uppercase tracking-wide"
+                className="h-11 flex-1 rounded-full font-body text-button uppercase tracking-wide"
               >
                 {t('admin.cancel')}
               </Button>
@@ -303,7 +307,7 @@ function AdminServicePlansPage() {
                 onClick={() => handleDelete(confirmDeleteId)}
                 loading={deletingId === confirmDeleteId}
                 disabled={!matchesName}
-                className="h-[47px] flex-1 rounded-full font-body text-[17px] uppercase tracking-wide"
+                className="h-11 flex-1 rounded-full font-body text-button uppercase tracking-wide"
               >
                 {deletingId === confirmDeleteId ? t('common.loading') : t('admin.delete')}
               </Button>

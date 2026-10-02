@@ -16,7 +16,7 @@ function MultimediaCard({ imageSrc, alt, badge, title, description, onClick }: R
           alt={alt}
           className="block aspect-[4/3] w-full object-cover"
         />
-        <span className="absolute bottom-sm left-sm rounded-full bg-[var(--orange-500)] px-md py-xs font-body text-body-sm font-bold text-white shadow">
+        <span className="absolute bottom-sm left-sm rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
           {badge}
         </span>
       </div>

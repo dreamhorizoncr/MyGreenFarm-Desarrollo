@@ -69,10 +69,10 @@ function AppointmentsSection() {
       : t(`teacherAppointments.status.${filter.toLowerCase()}` as 'teacherAppointments.status.pending')
 
   const filterClassName = (active: boolean) =>
-    `rounded-full px-md py-sm font-body text-sm font-semibold transition-colors ${
+    `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
       active
-        ? 'bg-green-500 text-white'
-        : 'bg-[var(--grey-100)] text-body-text hover:bg-[var(--grey-200)]'
+        ? 'border-green-500 bg-green-500 text-white'
+        : 'border-green-500 bg-white text-heading hover:bg-green-50'
     }`
 
   const badgeClassName = (status: AppointmentStatus) => {
@@ -111,19 +111,19 @@ function AppointmentsSection() {
 
   return (
     <div id="appointments-section">
-      <h1 className="m-0 font-heading text-[34px] font-bold leading-[1.15] text-heading">
+      <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
         {t('teacherAppointments.title')}
       </h1>
-      <p className="mt-2 font-body text-base text-neutral-500">
+      <p className="mt-2 font-body text-body text-neutral-500">
         {t('teacherAppointments.subtitle')}
       </p>
 
       <div className="mb-[var(--spacing-lg)] mt-[var(--spacing-xl)] flex flex-wrap items-center justify-between gap-md">
-        <div className="flex h-[44px] min-w-[240px] max-w-[420px] flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
+        <div className="flex h-11 min-w-[240px] max-w-[420px] flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
           <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
           <input
             type="search"
-            className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-[15px] text-body-text outline-none placeholder:text-neutral-400"
+            className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
             placeholder={t('teacherAppointments.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -147,7 +147,7 @@ function AppointmentsSection() {
       </div>
 
       {actionError && (
-        <p className="m-0 mb-md text-left font-body text-sm text-danger">{actionError}</p>
+        <p className="m-0 mb-md text-left font-body text-body-sm text-danger">{actionError}</p>
       )}
 
       {loading && (
@@ -159,11 +159,11 @@ function AppointmentsSection() {
         </div>
       )}
 
-      {error && <p className="m-0 p-xl text-center font-body text-base text-danger">{error}</p>}
+      {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
 
       {!loading && !error && (
         filteredAppointments.length === 0 ? (
-          <p className="m-0 p-xl text-center font-body text-base text-neutral-500">
+          <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
             {searchTerm.trim() || statusFilter !== 'ALL'
               ? t('teacherAppointments.noResults')
               : t('teacherAppointments.empty')}
@@ -185,7 +185,7 @@ function AppointmentsSection() {
                 />
 
                 <header className="relative z-10 flex items-center justify-between gap-sm">
-                  <span className={`inline-flex rounded-full px-sm py-2xs font-body text-xs font-semibold ${badgeClassName(appointment.status)}`}>
+                  <span className={`inline-flex rounded-full px-sm py-2xs font-body text-caption font-semibold ${badgeClassName(appointment.status)}`}>
                     {statusLabel(appointment.status)}
                   </span>
 
@@ -227,7 +227,7 @@ function AppointmentsSection() {
                   {formatDate(appointment.appointmentDate)}
                 </p>
 
-                <p className="m-0 mt-md font-body text-sm font-semibold text-link underline-offset-2 transition-colors group-hover:underline">
+                <p className="m-0 mt-md font-body text-body-sm font-semibold text-link underline-offset-2 transition-colors group-hover:underline">
                   {t('teacherAppointments.viewDetails')}
                 </p>
               </div>
