@@ -231,6 +231,13 @@ export default {
       cancel: "Cancel",
       submit: "Send",
       toastTitle: "Post sent",
+      commentsLoading: "Loading replies...",
+      commentsLoadError: "Could not load replies. Please try again.",
+      commentsEmpty: "There are no replies yet.",
+      commentNameLabel: "Name",
+      commentContentLabel: "Your reply",
+      commentSubmit: "Send reply",
+      addComment: "Add comment",
       toastDescription: "Your experience is now on the board.",
     },
     blog: {
@@ -327,6 +334,7 @@ export default {
     authorName: "Author name",
     authorRole: "Author role",
     defaultRole: "Teacher at My Green Farm",
+    defaultOwnerRole: "My Green Farm Administration",
     postContent: "Content",
     postContentPlaceholder: "Write the full research.",
     contentHint:
@@ -346,6 +354,7 @@ export default {
     cancel: "Cancel",
     close: "Close",
     empty: "There are no research posts yet.",
+    ownEmpty: "You haven't published anything yet.",
     deleteTitle: "Delete research",
     deleteDescription:
       "The research {{title}} will disappear from the forum blog.",

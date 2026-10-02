@@ -3,7 +3,12 @@ export interface CommunityPost {
   name: string
   createdAt: string
   content: string
+  likeCount: number
+  reacted: boolean
+  commentCount: number
 }
+
+export interface CommunityComment { id: string; communityPostId: string; alias: string; content: string; createdAt: string }
 
 export interface BlogPost {
   id: string
@@ -33,6 +38,8 @@ export interface BlogPostInput {
   title: string
   topic: string
   content: string
+  authorName?: string
+  authorRole?: string
   imageUrl?: string
   imageAlt?: string
   imageFile?: File

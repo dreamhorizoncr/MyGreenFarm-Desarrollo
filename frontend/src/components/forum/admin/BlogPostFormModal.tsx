@@ -3,6 +3,7 @@ import { FileImageIcon, XIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import Button from '../../ui/Button.tsx'
 import type { BlogPost, BlogPostInput } from '../../../types/forum.ts'
+import { userStorage } from '../../../utils/userStorage.ts'
 
 const ALLOWED_IMAGE_TYPES = new Set([
   'image/png',
@@ -30,6 +31,8 @@ interface BlogPostFormModalProps {
 function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormModalProps>) {
   const { t } = useTranslation()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const currentUser = userStorage.getUser()
+  const isTeacher = currentUser?.role === 'TEACHER'
 
   const [form, setForm] = useState<BlogPostInput>(() => {
     if (post) {
@@ -37,6 +40,8 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
         title: post.title,
         topic: post.topic,
         content: post.content,
+        authorName: post.authorName,
+        authorRole: post.authorRole,
         imageUrl: post.imageUrl,
         imageAlt: post.imageAlt,
       }
@@ -46,6 +51,8 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
       title: '',
       topic: '',
       content: '',
+      authorName: `${currentUser?.firstName ?? ''} ${currentUser?.lastName ?? ''}`.trim(),
+      authorRole: t(isTeacher ? 'adminForum.defaultRole' : 'adminForum.defaultOwnerRole'),
     }
   })
 
@@ -181,6 +188,28 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
                 setForm({ ...form, topic: event.target.value })
               }
               placeholder={t('adminForum.postTopicPlaceholder')}
+              className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+            />
+          </label>
+
+          <label className="font-body text-sm font-semibold text-heading">
+            {t('adminForum.authorName')}
+            <input
+              required
+              maxLength={120}
+              value={form.authorName ?? ''}
+              onChange={(event) => setForm({ ...form, authorName: event.target.value })}
+              className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+            />
+          </label>
+
+          <label className="font-body text-sm font-semibold text-heading">
+            {t('adminForum.authorRole')}
+            <input
+              required
+              maxLength={40}
+              value={form.authorRole ?? ''}
+              onChange={(event) => setForm({ ...form, authorRole: event.target.value })}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
           </label>

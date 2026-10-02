@@ -103,6 +103,7 @@ function AdminSidebar() {
   const teacherItems: SidebarItem[] = [
     { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
     { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
+    { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
     { id: 'miPerfil', icon: UserIcon, path: '/profile' },
   ]
   const itemsByRole: Record<string, SidebarItem[]> = { OWNER: ownerItems, ADMIN: adminItems }

@@ -10,6 +10,7 @@ import type {
   ForumCommentPage,
   ForumCommunityPage,
   CommunityPost,
+  CommunityComment,
 } from '../types/forum.ts'
 
 function mapArticle(article: ForumArticleResponse): BlogPost {
@@ -39,6 +40,8 @@ function toArticleFormData(input: BlogPostInput): FormData {
           title: input.title,
           topic: input.topic,
           content: input.content,
+          authorName: input.authorName,
+          authorRole: input.authorRole,
           imageAlt: input.imageAlt,
           removeImage: input.removeImage ?? false,
         }),
@@ -58,6 +61,14 @@ export const forumService = {
       {
       params: { page, size },
       },
+    )
+    return { ...response.data, content: response.data.content.map(mapArticle) }
+  },
+
+  async getMyArticles(page = 0, size = 10): Promise<ForumArticlePage> {
+    const response = await apiClient.get<ForumArticlePage & { content: ForumArticleResponse[] }>(
+      '/forum/articles/mine',
+      { params: { page, size } },
     )
     return { ...response.data, content: response.data.content.map(mapArticle) }
   },
@@ -119,14 +130,36 @@ export const forumService = {
   },
 
   async getCommunityPosts(page = 0, size = 10): Promise<ForumCommunityPage> {
-    const response = await apiClient.get<ForumCommunityPage>('/forum/community', {
+    const response = await apiClient.get<ForumCommunityPage & { content: Array<CommunityPost & { reactionCount?: number }> }>('/forum/community', {
       params: { page, size },
     })
-    return response.data
+    return { ...response.data, content: response.data.content.map((post) => ({
+      ...post,
+      likeCount: post.reactionCount ?? post.likeCount ?? 0,
+      commentCount: post.commentCount ?? 0,
+      reacted: false,
+    })) }
   },
 
   async createCommunityPost(input: Pick<CommunityPost, 'name' | 'content'>): Promise<CommunityPost> {
     const response = await apiClient.post<CommunityPost>('/forum/community', input)
+    return response.data
+  },
+
+  async toggleCommunityLike(id: string): Promise<{ communityPostId: string; totalLikes: number; liked: boolean }> {
+    const response = await apiClient.post(`/forum/posts/likes/${id}`)
+    return response.data
+  },
+  async getMyCommunityLikes(): Promise<string[]> {
+    const response = await apiClient.get<string[]>('/forum/posts/likes/mine')
+    return response.data
+  },
+  async getCommunityComments(id: string): Promise<CommunityComment[]> {
+    const response = await apiClient.get<{ content: CommunityComment[] }>(`/forum/community/${id}/comments`, { params: { size: 50 } })
+    return response.data.content
+  },
+  async createCommunityComment(id: string, input: Pick<CommunityComment, 'alias' | 'content'>): Promise<CommunityComment> {
+    const response = await apiClient.post<CommunityComment>(`/forum/community/${id}/comments`, input)
     return response.data
   },
 

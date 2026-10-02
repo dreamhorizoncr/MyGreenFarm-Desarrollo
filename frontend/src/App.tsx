@@ -14,10 +14,12 @@ import ProfilePage from './pages/ProfilePage.tsx'
 import ProtectedRoute from './routes/ProtectedRoute.tsx'
 import AdminRoute from './routes/AdminRoute.tsx'
 import OwnerRoute from './routes/OwnerRoute.tsx'
+import ForumManagementRoute from './routes/ForumManagementRoute.tsx'
 import ExpedientsRoute from './routes/ExpedientsRoute.tsx'
 import NewsPage from './pages/NewsPage.tsx'
 import ForumPage from './pages/ForumPage.tsx'
 import BlogPostPage from './pages/BlogPostPage.tsx'
+import CommunityPostPage from './pages/CommunityPostPage.tsx'
 import AdminForumPage from './pages/AdminForumPage.tsx'
 import AnnouncementsPage from './pages/AnnouncementsPage.tsx'
 import AdminExpedientsPage from './pages/AdminExpedientsPage.tsx'
@@ -71,6 +73,9 @@ function App() {
           <Route element={<ProtectedRoute />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          <Route element={<ForumManagementRoute />}>
+            <Route path="/admin/forum" element={<AdminForumPage />} />
+          </Route>
           <Route element={<AdminRoute />}>
             <Route path="/admin/citas" element={<AdminCitasPage />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
@@ -82,7 +87,6 @@ function App() {
             <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />
             <Route path="/admin/disponibilidad" element={<OwnerAvailabilityPage />} />
             <Route path="/admin/newsletter" element={<OwnerNewsletter />} />
-            <Route path="/admin/forum" element={<AdminForumPage />} />
           </Route>
         </Route>
         <Route element={<ExpedientsRoute />}>
@@ -97,6 +101,7 @@ function App() {
         <Route path="/news" element={<NewsPage />} />
         <Route path="/forum" element={<ForumPage />} />
         <Route path="/forum/blog/:id" element={<BlogPostPage />} />
+        <Route path="/forum/community/:id" element={<CommunityPostPage />} />
         <Route path="/multimedia" element={<GalleryPage />} />
         <Route path="/albumes/:id" element={<AlbumDetailPage />} />
         <Route path="/services" element={<ServicesPage />} />
