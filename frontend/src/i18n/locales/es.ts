@@ -234,6 +234,13 @@ export default {
       cancel: "Cancelar",
       submit: "Enviar",
       toastTitle: "Publicación enviada",
+      commentsLoading: "Cargando respuestas...",
+      commentsLoadError: "No se pudieron cargar las respuestas. Intentá de nuevo.",
+      commentsEmpty: "Todavía no hay respuestas.",
+      commentNameLabel: "Nombre",
+      commentContentLabel: "Tu respuesta",
+      commentSubmit: "Enviar respuesta",
+      addComment: "Agregar comentario",
       toastDescription: "Tu experiencia ya está en el muro.",
     },
     blog: {
@@ -330,6 +337,7 @@ export default {
     authorName: "Nombre del autor",
     authorRole: "Rol del autor",
     defaultRole: "Docente de My Green Farm",
+    defaultOwnerRole: "Administración de My Green Farm",
     postContent: "Contenido",
     postContentPlaceholder: "Escribí la investigación completa.",
     contentHint:
@@ -349,6 +357,7 @@ export default {
     cancel: "Cancelar",
     close: "Cerrar",
     empty: "Todavía no hay investigaciones publicadas.",
+    ownEmpty: "Todavía no tienes publicaciones.",
     deleteTitle: "Eliminar investigación",
     deleteDescription:
       "La investigación {{title}} va a desaparecer del blog del foro.",

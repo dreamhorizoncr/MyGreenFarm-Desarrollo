@@ -3,7 +3,7 @@ package taller.multimedia.backend.controller.forum;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.http.HttpStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
@@ -30,12 +30,12 @@ public class ForumPostLikeController {
 
     @PostMapping ("/{postId}")
     public ResponseEntity<ForumPostLikeResponse> react(
-            @PathVariable UUID articleId,
+            @PathVariable("postId") UUID postId,
             @CurrentSecurityContext SecurityContext context,
             @CookieValue (name = "anon_id", required = false) String anonId,
             HttpServletResponse response) {
         if (!(context.getAuthentication() instanceof AnonymousAuthenticationToken)) {
-            return ResponseEntity.status(HttpStatus.SC_FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         if (anonId == null || anonId.isBlank()) {
@@ -47,7 +47,7 @@ public class ForumPostLikeController {
             response.addCookie(cookie);
         }
 
-        return ResponseEntity.ok(postLikeService.toggleLike(articleId, anonId));
+        return ResponseEntity.ok(postLikeService.toggleLike(postId, anonId));
     }
 
     @GetMapping ("/mine")

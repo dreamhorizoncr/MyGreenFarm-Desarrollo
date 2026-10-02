@@ -2,20 +2,11 @@ import { useTranslation } from 'react-i18next'
 import { UsersIcon } from '@animateicons/react/lucide'
 
 interface AboutWallCardProps {
-  onGoToCommunity?: () => void
   community?: boolean
 }
 
-function AboutWallCard({ onGoToCommunity, community = false }: Readonly<AboutWallCardProps>) {
+function AboutWallCard({ community = false }: Readonly<AboutWallCardProps>) {
   const { t } = useTranslation()
-
-  const handleScrollToFeed = () => {
-    onGoToCommunity?.()
-
-    document
-      .getElementById('forum-feed')
-      ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
 
   return (
     <section className="flex flex-col items-start rounded-2xl border border-neutral-200 bg-white p-lg text-left">
@@ -31,13 +22,6 @@ function AboutWallCard({ onGoToCommunity, community = false }: Readonly<AboutWal
         {t(community ? 'forum.about.communityDescription' : 'forum.about.description')}
       </p>
 
-      <button
-        type="button"
-        onClick={handleScrollToFeed}
-        className="mt-lg inline-flex h-11 w-fit items-center justify-center rounded-full bg-green-500 px-lg font-body text-sm font-semibold text-white transition-opacity hover:opacity-90"
-      >
-        {t('forum.about.cta')}
-      </button>
     </section>
   )
 }

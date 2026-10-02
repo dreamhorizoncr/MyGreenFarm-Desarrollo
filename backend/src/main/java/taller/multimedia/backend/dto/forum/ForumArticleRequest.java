@@ -19,6 +19,12 @@ public class ForumArticleRequest {
     @Size(max = 4000, message = "El contenido no puede superar los 4000 caracteres")
     private String content;
 
+    @Size(max = 120, message = "El nombre del autor no puede superar los 120 caracteres")
+    private String authorName;
+
+    @Size(max = 40, message = "El puesto del autor no puede superar los 40 caracteres")
+    private String authorRole;
+
     @Size(max = 140, message = "El texto alternativo no puede superar los 140 caracteres")
     private String imageAlt;
 

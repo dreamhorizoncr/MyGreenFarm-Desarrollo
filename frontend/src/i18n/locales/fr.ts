@@ -230,6 +230,13 @@ export default {
       cancel: "Annuler",
       submit: "Envoyer",
       toastTitle: "Publication envoyée",
+      commentsLoading: "Chargement des réponses...",
+      commentsLoadError: "Impossible de charger les réponses. Réessayez.",
+      commentsEmpty: "Il n'y a pas encore de réponses.",
+      commentNameLabel: "Nom",
+      commentContentLabel: "Votre réponse",
+      commentSubmit: "Envoyer la réponse",
+      addComment: "Ajouter un commentaire",
       toastDescription: "Votre expérience est sur le mur.",
     },
     blog: {
@@ -326,6 +333,7 @@ export default {
     authorName: "Nom de l'auteur",
     authorRole: "Rôle de l'auteur",
     defaultRole: "Enseignant de My Green Farm",
+    defaultOwnerRole: "Administration de My Green Farm",
     postContent: "Contenu",
     postContentPlaceholder: "Rédigez la recherche complète.",
     contentHint:
@@ -345,6 +353,7 @@ export default {
     cancel: "Annuler",
     close: "Fermer",
     empty: "Il n'y a pas encore de recherches publiées.",
+    ownEmpty: "Vous n'avez pas encore publié de contenu.",
     deleteTitle: "Supprimer la recherche",
     deleteDescription:
       "La recherche {{title}} va disparaître du blog du forum.",

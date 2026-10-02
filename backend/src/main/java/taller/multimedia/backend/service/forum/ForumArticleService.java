@@ -58,8 +58,11 @@ public class ForumArticleService {
         article.setTopic(Sanitizer.requireClean("topic", request.getTopic()));
         article.setContent(Sanitizer.requireCleanPreserveLineBreaks("content", request.getContent()));
         article.setAuthor(author);
-        article.setAuthorName(fullName(author));
-        article.setAuthorRole(author.getRole().name());
+        String defaultAuthorRole = author.getRole() == Role.TEACHER
+                ? "Docente de My Green Farm"
+                : "Administración de My Green Farm";
+        article.setAuthorName(displayValue(request.getAuthorName(), fullName(author)));
+        article.setAuthorRole(displayValue(request.getAuthorRole(), defaultAuthorRole));
         applyImage(article, image, request.getImageAlt());
 
         ForumArticle saved = articleRepository.save(article);
@@ -72,6 +75,14 @@ public class ForumArticleService {
                 ? articleRepository.findAllByOrderByCreatedAtDesc(pageable)
                 : articleRepository.findByTopicIgnoreCaseOrderByCreatedAtDesc(topic.trim(), pageable);
 
+        return mapPage(articles, anonId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ForumArticleResponse> getMine(String currentEmail, Pageable pageable, String anonId) {
+        User author = findUser(currentEmail);
+        Page<ForumArticle> articles = articleRepository.findAllByAuthor_IdOrderByCreatedAtDesc(
+                author.getId(), pageable);
         return mapPage(articles, anonId);
     }
 
@@ -92,6 +103,8 @@ public class ForumArticleService {
         article.setTitle(Sanitizer.requireClean("title", request.getTitle()));
         article.setTopic(Sanitizer.requireClean("topic", request.getTopic()));
         article.setContent(Sanitizer.requireCleanPreserveLineBreaks("content", request.getContent()));
+        article.setAuthorName(displayValue(request.getAuthorName(), article.getAuthorName()));
+        article.setAuthorRole(displayValue(request.getAuthorRole(), article.getAuthorRole()));
 
         if (request.isRemoveImage()) {
             deleteStoredImage(article.getImageUrl());
@@ -129,7 +142,11 @@ public class ForumArticleService {
                 .map(ForumArticle::getId)
                 .toList();
 
-        Map<UUID, Long> reactionCounts = likeRepository.countByArticleIdIn(articleIds).stream()
+        List<ForumArticleLikeCountProjection> reactionProjections = articleIds.isEmpty()
+                ? List.of()
+                : likeRepository.countByArticleIdIn(articleIds);
+
+        Map<UUID, Long> reactionCounts = reactionProjections.stream()
                 .collect(Collectors.toMap(
                         ForumArticleLikeCountProjection::getArticleId,
                         ForumArticleLikeCountProjection::getTotal));
@@ -220,5 +237,10 @@ public class ForumArticleService {
 
     private String fullName(User user) {
         return (user.getFirstName() + " " + user.getLastName()).trim();
+    }
+
+    private String displayValue(String value, String fallback) {
+        String normalized = value == null ? "" : value.trim();
+        return Sanitizer.requireClean("author", normalized.isBlank() ? fallback : normalized);
     }
 }
