@@ -15,7 +15,7 @@ function HeaderSection() {
         <Container className="pb-1600 pt-1500">
           <div className="grid w-full items-center gap-lg md:grid-cols-2">
             <div className="flex flex-col items-start gap-700">
-              <span className="inline-flex w-fit items-center rounded-full bg-orange-500 px-lg py-xs font-heading text-h6 font-normal text-white">
+              <span className="inline-flex w-fit items-center rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
                 {t('home.header.badge')}
               </span>
 
@@ -31,7 +31,7 @@ function HeaderSection() {
 
               <BlobButton
                 variant="filled"
-                className="w-fit px-lg py-xs font-heading text-h6"
+                className="h-11 w-fit px-lg font-heading text-h6"
                 onClick={() => navigate('/booking')}
               >
                 {t('home.header.cta')}

@@ -80,7 +80,7 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
           <img
             src={image?.fileUrl}
             alt={image?.title || alt || ''}
-            className="max-h-[80vh] max-w-full rounded-[16px] object-contain"
+            className="max-h-[80vh] max-w-full rounded-2xl object-contain"
           />
 
           {total > 1 && (

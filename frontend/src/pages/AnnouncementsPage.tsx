@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  ChevronDownIcon,
   FileImageIcon,
   PencilIcon,
   PlusIcon,
@@ -208,11 +209,11 @@ function AnnouncementsPage() {
     <AdminLayout>
       <div className="flex flex-wrap items-start justify-between gap-md">
         <div>
-          <h1 className="m-0 font-heading text-[34px] font-bold leading-[1.15] text-heading">
+          <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
             {t("adminNews.title")}
           </h1>
 
-          <p className="mt-2 font-body text-base text-neutral-500">
+          <p className="mt-2 font-body text-body text-neutral-500">
             {t("adminNews.description")}
           </p>
         </div>
@@ -220,7 +221,7 @@ function AnnouncementsPage() {
         <button
           type="button"
           onClick={openCreate}
-          className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+          className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
         >
           <PlusIcon size={18} aria-hidden="true" />
           {t("adminNews.addNews")}
@@ -228,7 +229,7 @@ function AnnouncementsPage() {
       </div>
 
       {error && (
-        <p className="mt-lg rounded-xl bg-red-50 p-md text-sm text-red-700">
+        <p className="mt-lg rounded-xl bg-red-50 p-md text-body-sm text-red-700">
           {error}
         </p>
       )}
@@ -265,7 +266,7 @@ function AnnouncementsPage() {
             </div>
 
             <div className="mt-lg grid gap-md md:grid-cols-2">
-              <label className="font-body text-sm font-semibold text-heading">
+              <label className="font-body text-body-sm font-semibold text-heading">
                 {t("adminNews.newsTitle")}
 
                 <input
@@ -283,28 +284,35 @@ function AnnouncementsPage() {
                 />
               </label>
 
-              <label className="font-body text-sm font-semibold text-heading">
+              <label className="font-body text-body-sm font-semibold text-heading">
                 {t("adminNews.newstype")}
 
-                <select
-                  value={form.type}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      type: e.target.value as AnnouncementType,
-                    })
-                  }
-                  className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
-                >
-                  {Object.entries(typeLabels).map(([value, label]) => (
-                    <option key={value} value={value}>
-                      {t(label)}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative mt-xs">
+                  <select
+                    value={form.type}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        type: e.target.value as AnnouncementType,
+                      })
+                    }
+                    className="h-11 w-full appearance-none rounded-xl border border-neutral-200 bg-white px-md pr-xl font-normal outline-none focus:border-heading"
+                  >
+                    {Object.entries(typeLabels).map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {t(label)}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDownIcon
+                    size={16}
+                    className="pointer-events-none absolute right-md top-1/2 -translate-y-1/2 text-neutral-500"
+                    aria-hidden="true"
+                  />
+                </div>
               </label>
 
-              <label className="font-body text-sm font-semibold text-heading md:col-span-2">
+              <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
                 {t("adminNews.newscontent")}
 
                 <textarea
@@ -323,7 +331,7 @@ function AnnouncementsPage() {
                 />
               </label>
 
-              <label className="font-body text-sm font-semibold text-heading">
+              <label className="font-body text-body-sm font-semibold text-heading">
                 {t("adminNews.newslocation")}
 
                 <input
@@ -338,7 +346,7 @@ function AnnouncementsPage() {
                 />
               </label>
 
-              <label className="font-body text-sm font-semibold text-heading">
+              <label className="font-body text-body-sm font-semibold text-heading">
                 {t("adminNews.newsdate")}
 
                 <input
@@ -354,7 +362,7 @@ function AnnouncementsPage() {
                 />
               </label>
 
-              <div className="font-body text-sm font-semibold text-heading">
+              <div className="font-body text-body-sm font-semibold text-heading">
                 <span className="block">{t("adminNews.newscover")}</span>
 
                 <input
@@ -368,20 +376,20 @@ function AnnouncementsPage() {
                 <button
                   type="button"
                   onClick={() => coverInputRef.current?.click()}
-                  className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
+                  className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-body-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
                 >
                   <FileImageIcon size={17} aria-hidden="true" />
                   {t("adminNews.chooseCover")}
                 </button>
 
                 {cover && (
-                  <p className="mt-xs text-xs font-normal text-neutral-500">
+                  <p className="mt-xs text-caption font-normal text-neutral-500">
                     {cover.name}
                   </p>
                 )}
               </div>
 
-              <div className="font-body text-sm font-semibold text-heading">
+              <div className="font-body text-body-sm font-semibold text-heading">
                 <span className="block">{t("adminNews.newsgaleryimages")}</span>
 
                 <input
@@ -398,14 +406,14 @@ function AnnouncementsPage() {
                 <button
                   type="button"
                   onClick={() => galleryInputRef.current?.click()}
-                  className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
+                  className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-body-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
                 >
                   <FileImageIcon size={17} aria-hidden="true" />
                   {t("adminNews.newschooseimages")}
                 </button>
 
                 {gallery.length > 0 && (
-                  <p className="mt-xs text-xs font-normal text-neutral-500">
+                  <p className="mt-xs text-caption font-normal text-neutral-500">
                     {gallery.length} archivo(s) seleccionado(s)
                   </p>
                 )}
@@ -414,7 +422,7 @@ function AnnouncementsPage() {
 
             {images.length > 0 && (
               <div className="mt-lg">
-                <h3 className="font-body text-sm font-semibold text-heading">
+                <h3 className="font-body text-body-sm font-semibold text-heading">
                   {t("adminNews.newsactualimage")}
                 </h3>
 
@@ -430,7 +438,7 @@ function AnnouncementsPage() {
                         className="size-16 rounded-lg object-cover"
                       />
 
-                      <span className="text-xs text-neutral-500">
+                      <span className="text-caption text-neutral-500">
                         {image.isCover
                           ? t("adminNews.newscover")
                           : t("adminNews.newsgallery")}
@@ -454,7 +462,7 @@ function AnnouncementsPage() {
               <button
                 type="button"
                 onClick={closeForm}
-                className="rounded-full border border-neutral-300 px-lg py-sm font-body text-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
+                className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
               >
                 {t("adminNews.newscancel")}
               </button>
@@ -462,7 +470,7 @@ function AnnouncementsPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="rounded-full bg-heading px-lg py-sm font-body text-sm font-semibold text-white transition-colors hover:bg-green-700 disabled:opacity-60"
+                className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-60"
               >
                 {loading ? t("adminNews.newssaving") : idleSubmitLabel}
               </button>
@@ -475,10 +483,10 @@ function AnnouncementsPage() {
         <button
           type="button"
           onClick={() => setActiveCategory("All")}
-          className={`rounded-full px-md py-sm font-body text-sm transition ${
+          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
             activeCategory === "All"
-              ? "bg-orange-500 text-white"
-              : "border border-neutral-300 bg-white text-heading hover:bg-neutral-50"
+              ? "border-green-500 bg-green-500 text-white"
+              : "border-green-500 bg-white text-heading hover:bg-green-50"
           }`}
         >
           {t("adminNews.filterAll")}
@@ -487,10 +495,10 @@ function AnnouncementsPage() {
         <button
           type="button"
           onClick={() => setActiveCategory("NEWS")}
-          className={`rounded-full px-md py-sm font-body text-sm transition ${
+          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
             activeCategory === "NEWS"
-              ? "bg-orange-500 text-white"
-              : "border border-neutral-300 bg-white text-heading hover:bg-neutral-50"
+              ? "border-green-500 bg-green-500 text-white"
+              : "border-green-500 bg-white text-heading hover:bg-green-50"
           }`}
         >
           {t("adminNews.typeNews")}
@@ -499,10 +507,10 @@ function AnnouncementsPage() {
         <button
           type="button"
           onClick={() => setActiveCategory("EVENT")}
-          className={`rounded-full px-md py-sm font-body text-sm transition ${
+          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
             activeCategory === "EVENT"
-              ? "bg-orange-500 text-white"
-              : "border border-neutral-300 bg-white text-heading hover:bg-neutral-50"
+              ? "border-green-500 bg-green-500 text-white"
+              : "border-green-500 bg-white text-heading hover:bg-green-50"
           }`}
         >
           {t("adminNews.typeEvent")}
@@ -511,10 +519,10 @@ function AnnouncementsPage() {
         <button
           type="button"
           onClick={() => setActiveCategory("NOTICE")}
-          className={`rounded-full px-md py-sm font-body text-sm transition ${
+          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
             activeCategory === "NOTICE"
-              ? "bg-orange-500 text-white"
-              : "border border-neutral-300 bg-white text-heading hover:bg-neutral-50"
+              ? "border-green-500 bg-green-500 text-white"
+              : "border-green-500 bg-white text-heading hover:bg-green-50"
           }`}
         >
           {t("adminNews.typeNotice")}
@@ -523,10 +531,10 @@ function AnnouncementsPage() {
         <button
           type="button"
           onClick={() => setActiveCategory("GENERAL")}
-          className={`rounded-full px-md py-sm font-body text-sm transition ${
+          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
             activeCategory === "GENERAL"
-              ? "bg-orange-500 text-white"
-              : "border border-neutral-300 bg-white text-heading hover:bg-neutral-50"
+              ? "border-green-500 bg-green-500 text-white"
+              : "border-green-500 bg-white text-heading hover:bg-green-50"
           }`}
         >
           {t("adminNews.typeGeneral")}
@@ -535,10 +543,10 @@ function AnnouncementsPage() {
         <button
           type="button"
           onClick={() => setActiveCategory("TRANSPORT")}
-          className={`rounded-full px-md py-sm font-body text-sm transition ${
+          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
             activeCategory === "TRANSPORT"
-              ? "bg-orange-500 text-white"
-              : "border border-neutral-300 bg-white text-heading hover:bg-neutral-50"
+              ? "border-green-500 bg-green-500 text-white"
+              : "border-green-500 bg-white text-heading hover:bg-green-50"
           }`}
         >
           {t("adminNews.typeTransport")}
@@ -561,7 +569,7 @@ function AnnouncementsPage() {
           >
             <div className="flex flex-col gap-md">
               <div>
-                <span className="text-xs font-semibold uppercase tracking-wide text-green-700">
+                <span className="text-caption font-semibold uppercase tracking-wide text-green-700">
                   {t(typeLabels[announcement.type])}
                 </span>
 
@@ -569,12 +577,12 @@ function AnnouncementsPage() {
                   {announcement.title}
                 </h2>
 
-                <p className="mt-xs whitespace-pre-line text-sm text-neutral-600">
+                <p className="mt-xs whitespace-pre-line text-body-sm text-neutral-600">
                   {announcement.content}
                 </p>
 
                 {(announcement.location || announcement.eventDate) && (
-                  <p className="mt-sm text-xs text-neutral-500">
+                  <p className="mt-sm text-caption text-neutral-500">
                     {announcement.location}
 
                     {announcement.location && announcement.eventDate
@@ -612,7 +620,7 @@ function AnnouncementsPage() {
         ))}
 
         {!loading && announcements.length === 0 && (
-          <p className="border-t border-neutral-200 py-xl text-sm text-neutral-500">
+          <p className="border-t border-neutral-200 py-xl text-body-sm text-neutral-500">
             {t("adminNews.noNews")}
           </p>
         )}
@@ -625,7 +633,7 @@ function AnnouncementsPage() {
               {t("adminNews.deleteModalTitle")}
             </h2>
 
-            <p className="mt-[12px] font-body text-sm text-neutral-600">
+            <p className="mt-[12px] font-body text-body-sm text-neutral-600">
               {t("adminNews.deleteModalMessage")}{" "}
               <span className="font-semibold">
                 "{announcementToDelete.title}"
@@ -639,7 +647,7 @@ function AnnouncementsPage() {
                   setDeleteModalOpen(false);
                   setAnnouncementToDelete(null);
                 }}
-                className="rounded-full border border-neutral-300 px-[18px] py-[9px] font-body text-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
+                className="rounded-full border border-neutral-300 px-[18px] py-[9px] font-body text-body-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
               >
                 {t("adminNews.deleteModalCancel")}
               </button>
@@ -647,7 +655,7 @@ function AnnouncementsPage() {
               <button
                 type="button"
                 onClick={() => void confirmDelete()}
-                className="rounded-full bg-red-500 px-[18px] py-[9px] font-body text-sm font-semibold text-white transition-colors hover:bg-red-600"
+                className="rounded-full bg-red-500 px-[18px] py-[9px] font-body text-body-sm font-semibold text-white transition-colors hover:bg-red-600"
               >
                 {t("adminNews.deleteModalConfirm")}
               </button>

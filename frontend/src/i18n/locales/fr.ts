@@ -323,7 +323,7 @@ export default {
       "Publiez des recherches pour que les familles les lisent dans l'onglet Blog du forum.",
     noPersistenceNotice:
       "Il n'y a pas encore de connexion au serveur : ce que vous publiez ici apparaît dans le forum jusqu'à ce que vous rechargiez la page.",
-    addPost: "Publier une recherche",
+    addPost: "Ajouter une recherche",
     newPost: "Nouvelle recherche",
     editPost: "Modifier la recherche",
     postTitle: "Titre",
@@ -864,7 +864,7 @@ export default {
     title: "Postes vacants",
     subtitle:
       "Découvrez les postes ouverts chez My Green Farm et postulez en envoyant votre CV.",
-    publish: "Publier une offre",
+    publish: "Ajouter une offre",
     noVacancies: "Aucune offre disponible pour le moment.",
     spontaneousTitle: "Aucune offre ne vous correspond ?",
     spontaneousDescription:

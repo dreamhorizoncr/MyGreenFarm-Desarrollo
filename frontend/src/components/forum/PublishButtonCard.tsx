@@ -12,7 +12,7 @@ function PublishButtonCard({ onPublish }: Readonly<PublishButtonCardProps>) {
     <button
       type="button"
       onClick={onPublish}
-      className="inline-flex w-full items-center justify-center gap-[8px] rounded-full bg-primary px-[18px] py-[11px] font-heading text-[14px] font-semibold text-white transition hover:opacity-90 active:scale-[0.98]"
+      className="inline-flex w-full items-center justify-center gap-[8px] rounded-full bg-primary px-[18px] py-[11px] font-heading text-body-sm font-semibold text-white transition hover:opacity-90 active:scale-[0.98]"
     >
       <MessageSquarePlusIcon size={17} />
       {t('forum.community.publish')}

@@ -14,7 +14,7 @@ function PhilosophyPillarItem({ icon, tag, title, body }: Readonly<PhilosophyPil
         <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-(--green-50) text-green-500">
           {icon}
         </span>
-        <span className="font-body text-[12px] font-semibold uppercase tracking-wide text-orange-500">
+        <span className="font-body text-caption font-semibold uppercase tracking-wide text-orange-500">
           {tag}
         </span>
       </div>

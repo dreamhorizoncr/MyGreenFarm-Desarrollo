@@ -43,7 +43,7 @@ function ProfilePage() {
   }
 
   const fieldClass =
-    'h-10 w-full rounded-lg border border-neutral-200 bg-neutral-50 px-md font-body text-[15px] text-body-text'
+    'h-10 w-full rounded-lg border border-neutral-200 bg-neutral-50 px-md font-body text-body-sm text-body-text'
 
   return (
     <>
@@ -51,7 +51,7 @@ function ProfilePage() {
       <h1 className="m-0 font-heading text-[30px] font-bold leading-[1.15] text-heading">
         {t('profile.title')}
       </h1>
-      <p className="mt-2 font-body text-base text-neutral-500">
+      <p className="mt-2 font-body text-body text-neutral-500">
         {t('profile.description')}
       </p>
 
@@ -72,7 +72,7 @@ function ProfilePage() {
             <div>
               <label
                 htmlFor="profile-firstname"
-                className="mb-xs block font-body text-sm font-medium text-body-text"
+                className="mb-xs block font-body text-body-sm font-medium text-body-text"
               >
                 {t('profile.firstName')}
               </label>
@@ -82,7 +82,7 @@ function ProfilePage() {
             <div>
               <label
                 htmlFor="profile-lastname"
-                className="mb-xs block font-body text-sm font-medium text-body-text"
+                className="mb-xs block font-body text-body-sm font-medium text-body-text"
               >
                 {t('profile.lastName')}
               </label>
@@ -92,7 +92,7 @@ function ProfilePage() {
             <div>
               <label
                 htmlFor="profile-email"
-                className="mb-xs block font-body text-sm font-medium text-body-text"
+                className="mb-xs block font-body text-body-sm font-medium text-body-text"
               >
                 {t('profile.email')}
               </label>
@@ -102,7 +102,7 @@ function ProfilePage() {
             <div>
               <label
                 htmlFor="profile-role"
-                className="mb-xs block font-body text-sm font-medium text-body-text"
+                className="mb-xs block font-body text-body-sm font-medium text-body-text"
               >
                 {t('profile.role')}
               </label>
@@ -115,7 +115,7 @@ function ProfilePage() {
           <button
             type="button"
             onClick={() => setShowResetPasswordModal(true)}
-            className="flex h-11 w-full items-center justify-center rounded-full border border-heading px-5 font-body text-[15px] font-semibold text-heading transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 sm:w-auto"
+            className="flex h-11 w-full items-center justify-center rounded-full border border-heading px-5 font-body text-body-sm font-semibold text-heading transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 sm:w-auto"
           >
             {t('profile.resetPassword')}
           </button>
@@ -127,7 +127,7 @@ function ProfilePage() {
             onMouseLeave={() => setLogoutHovered(false)}
             onFocus={() => setLogoutHovered(true)}
             onBlur={() => setLogoutHovered(false)}
-            className="h-11 w-full rounded-full bg-danger px-5 font-body text-[15px] font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 sm:w-auto"
+            className="h-11 w-full rounded-full bg-danger px-5 font-body text-body-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 sm:w-auto"
           >
             {t('profile.logout')}
           </button>
