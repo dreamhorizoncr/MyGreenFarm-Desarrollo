@@ -105,8 +105,8 @@ function App() {
         <Route path="/multimedia" element={<GalleryPage />} />
         <Route path="/albumes/:id" element={<AlbumDetailPage />} />
         <Route path="/services" element={<ServicesPage />} />
-        <Route path="/pago-exitoso" element={<PaymentSuccessPage />} />
-        <Route path="/pago-cancelado" element={<PaymentFailedPage />} />
+        <Route path="/payment-success" element={<PaymentSuccessPage />} />
+        <Route path="/payment-failed" element={<PaymentFailedPage />} />
         <Route path="/vacantes" element={<VacanciesPage />} />
         {/* <Route path="/news/:id" element={<NewsDetailPage />} /> */}
         {/* Redirigir cualquier ruta no definida a la página de inicio */}
