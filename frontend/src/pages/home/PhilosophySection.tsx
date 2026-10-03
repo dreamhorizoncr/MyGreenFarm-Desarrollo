@@ -18,13 +18,14 @@ function PhilosophySection() {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
-    <section id="philosophy" className="relative flex min-h-[100svh] w-full flex-col bg-green-500">
+    <section id="philosophy" data-scroll-bg="green" className="relative flex min-h-[100svh] w-full flex-col bg-green-500">
       <div className="flex w-full flex-1 flex-col justify-center">
         <Container className="py-1500">
           <div className="grid w-full items-center gap-lg rounded-3xl bg-white p-lg md:grid-cols-2 md:gap-xl md:p-xl">
             <img
               src={nino}
               alt="Niña con los brazos extendidos al aire libre"
+              data-scroll-bg="green"
               className="h-full w-full rounded-2xl object-cover"
             />
 

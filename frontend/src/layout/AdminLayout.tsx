@@ -12,7 +12,7 @@ function AdminLayout({ children }: Readonly<AdminLayoutProps>) {
     <div className="flex h-svh flex-col overflow-hidden">
       <Navbar />
 
-      <div className="flex-1 overflow-y-auto bg-bg-page">
+      <div id="admin-scroll-container" className="flex-1 overflow-y-auto bg-bg-page">
         <div className="flex w-full flex-col items-stretch md:flex-row">
           <AdminSidebar />
 

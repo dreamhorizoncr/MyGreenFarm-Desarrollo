@@ -86,6 +86,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
           src={nino}
           alt=""
           aria-hidden="true"
+          data-scroll-bg="green"
           className="h-64 w-full rounded-t-2xl object-cover md:h-80"
         />
 

@@ -47,7 +47,7 @@ function HeaderSection() {
         </Container>
       </div>
 
-      <img src={nubesUp} alt="" aria-hidden="true" className="-mt-500 block w-full" />
+      <img src={nubesUp} alt="" aria-hidden="true" data-scroll-bg="green" className="-mt-500 block w-full" />
     </section>
   )
 }

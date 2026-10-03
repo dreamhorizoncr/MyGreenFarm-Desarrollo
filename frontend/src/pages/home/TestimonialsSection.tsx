@@ -8,7 +8,7 @@ function TestimonialsSection() {
 
   return (
     <section id="testimonials" className="relative flex min-h-[100svh] w-full flex-col">
-      <img src={nubesDown} alt="" aria-hidden="true" className="block w-full" />
+      <img src={nubesDown} alt="" aria-hidden="true" data-scroll-bg="green" className="block w-full" />
 
       <div className="flex w-full flex-1 flex-col justify-center">
         <Container className="flex flex-col items-center gap-lg py-1500">
