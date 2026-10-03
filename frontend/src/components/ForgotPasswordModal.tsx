@@ -44,6 +44,9 @@ function ForgotPasswordModal({ email, onClose }: Readonly<ForgotPasswordModalPro
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose()
       }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') onClose()
+      }}
       aria-label={t('profile.resetPassword')}
       className="m-auto max-h-[90vh] w-[min(480px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
@@ -63,7 +66,7 @@ function ForgotPasswordModal({ email, onClose }: Readonly<ForgotPasswordModalPro
             <h2 className="m-0 font-heading text-[26px] font-bold leading-none text-heading">
               {t('forgotPassword.successToastTitle')}
             </h2>
-            <p className="m-0 max-w-[22rem] font-body text-[15px] text-body-text">
+            <p className="m-0 max-w-[22rem] font-body text-body-sm text-body-text">
               {t('forgotPassword.success')}
             </p>
           </div>
@@ -76,12 +79,12 @@ function ForgotPasswordModal({ email, onClose }: Readonly<ForgotPasswordModalPro
             </div>
 
             <div className="flex flex-col gap-md px-[10px] pb-[10px] text-left">
-              <p className="m-0 font-body text-[15px] text-body-text">
+              <p className="m-0 font-body text-body-sm text-body-text">
                 {t('forgotPassword.description')}
               </p>
 
               <div className="flex flex-col">
-                <label htmlFor="profile-reset-email" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+                <label htmlFor="profile-reset-email" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
                   {t('forgotPassword.email')}
                 </label>
                 <input
@@ -89,23 +92,23 @@ function ForgotPasswordModal({ email, onClose }: Readonly<ForgotPasswordModalPro
                   type="email"
                   value={email}
                   readOnly
-                  className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none disabled:cursor-not-allowed"
+                  className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none disabled:cursor-not-allowed"
                 />
               </div>
 
               {error && (
-                <p className="m-0 text-left font-body text-sm text-danger">{error}</p>
+                <p className="m-0 text-left font-body text-body-sm text-danger">{error}</p>
               )}
 
               <div className="flex gap-md mt-sm">
-                <Button variant="secondary" onClick={onClose} className="h-[47px] flex-1 rounded-full font-body text-[17px] uppercase tracking-wide">
+                <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-full font-body text-button uppercase tracking-wide">
                   {t('admin.cancel')}
                 </Button>
                 <Button
                   variant="success"
                   onClick={handleSubmit}
                   loading={loading}
-                  className="h-[47px] flex-1 rounded-full bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
+                  className="h-11 flex-1 rounded-full bg-green-500 font-body text-button font-normal uppercase tracking-wide text-white"
                 >
                   {loading ? t('forgotPassword.loading') : t('forgotPassword.buttonLabel')}
                 </Button>

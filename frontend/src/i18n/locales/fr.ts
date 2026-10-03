@@ -230,6 +230,13 @@ export default {
       cancel: "Annuler",
       submit: "Envoyer",
       toastTitle: "Publication envoyée",
+      commentsLoading: "Chargement des réponses...",
+      commentsLoadError: "Impossible de charger les réponses. Réessayez.",
+      commentsEmpty: "Il n'y a pas encore de réponses.",
+      commentNameLabel: "Nom",
+      commentContentLabel: "Votre réponse",
+      commentSubmit: "Envoyer la réponse",
+      addComment: "Ajouter un commentaire",
       toastDescription: "Votre expérience est sur le mur.",
     },
     blog: {
@@ -316,7 +323,7 @@ export default {
       "Publiez des recherches pour que les familles les lisent dans l'onglet Blog du forum.",
     noPersistenceNotice:
       "Il n'y a pas encore de connexion au serveur : ce que vous publiez ici apparaît dans le forum jusqu'à ce que vous rechargiez la page.",
-    addPost: "Publier une recherche",
+    addPost: "Ajouter une recherche",
     newPost: "Nouvelle recherche",
     editPost: "Modifier la recherche",
     postTitle: "Titre",
@@ -326,6 +333,7 @@ export default {
     authorName: "Nom de l'auteur",
     authorRole: "Rôle de l'auteur",
     defaultRole: "Enseignant de My Green Farm",
+    defaultOwnerRole: "Administration de My Green Farm",
     postContent: "Contenu",
     postContentPlaceholder: "Rédigez la recherche complète.",
     contentHint:
@@ -345,6 +353,7 @@ export default {
     cancel: "Annuler",
     close: "Fermer",
     empty: "Il n'y a pas encore de recherches publiées.",
+    ownEmpty: "Vous n'avez pas encore publié de contenu.",
     deleteTitle: "Supprimer la recherche",
     deleteDescription:
       "La recherche {{title}} va disparaître du blog du forum.",
@@ -855,7 +864,7 @@ export default {
     title: "Postes vacants",
     subtitle:
       "Découvrez les postes ouverts chez My Green Farm et postulez en envoyant votre CV.",
-    publish: "Publier une offre",
+    publish: "Ajouter une offre",
     noVacancies: "Aucune offre disponible pour le moment.",
     spontaneousTitle: "Aucune offre ne vous correspond ?",
     spontaneousDescription:
@@ -889,7 +898,7 @@ export default {
     certificateTooLarge: "Chaque fichier ne peut pas dépasser 5 Mo",
     certificatesRequired:
       "Vous devez joindre au moins un diplôme ou certificat",
-    submitApplication: "Envoyer la candidature",
+    submitApplication: "Envoyer",
     publishModalTitle: "Publier une nouvelle offre",
     formFieldsSectionTitle: "Champs pour le candidat",
     formFieldsSectionHint:

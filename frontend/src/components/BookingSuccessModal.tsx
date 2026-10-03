@@ -22,6 +22,9 @@ function BookingSuccessModal({ onClose }: Readonly<BookingSuccessModalProps>) {
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose()
       }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') onClose()
+      }}
       aria-label={t('booking.modalTitle')}
       className="m-auto max-h-[90vh] w-[min(620px,calc(100vw-48px))] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
@@ -36,7 +39,7 @@ function BookingSuccessModal({ onClose }: Readonly<BookingSuccessModalProps>) {
         </button>
 
         <div className="flex flex-col items-center gap-md px-[28px] pb-[32px] pt-[30px]">
-          <h2 className="m-0 text-center font-heading text-[42px] font-bold leading-none text-heading">
+          <h2 className="m-0 text-center font-heading text-h1 font-bold leading-none text-heading">
             {t('booking.modalTitle')}
           </h2>
 
@@ -48,7 +51,7 @@ function BookingSuccessModal({ onClose }: Readonly<BookingSuccessModalProps>) {
         <div className="flex justify-center">
           <Button
             onClick={onClose}
-            className="h-[47px] w-40 rounded-full bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
+            className="h-11 w-40 rounded-full bg-green-500 font-body text-button font-normal uppercase tracking-wide text-white"
           >
             {t('booking.close')}
           </Button>

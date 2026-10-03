@@ -124,7 +124,7 @@ public class SecurityConfig {
                 "/api/gallery/likes/**")
             .permitAll()
               .requestMatchers("/api/forum/articles/likes/**").permitAll()
-              .requestMatchers("/api/forum/community").permitAll()
+              .requestMatchers("/api/forum/community/**", "/api/forum/posts/likes/**").permitAll()
               .requestMatchers(HttpMethod.GET, "/api/forum/articles/**").permitAll()
               .requestMatchers(HttpMethod.POST, "/api/forum/articles/*/comments").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/announcements").permitAll()

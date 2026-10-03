@@ -10,10 +10,9 @@ import Skeleton from '../components/ui/Skeleton.tsx'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { notify } from '../utils/notifications.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
-import type { ExchangeRate } from '../types/exchangeRate.ts'
+import type { ExchangeRate, Currency } from '../types/exchangeRate.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 import { convertCurrency, formatCurrency, currencySymbol } from '../utils/currency.ts'
-import type { Currency } from '../types/exchangeRate.ts'
 
 function PlanCard({
   plan,
@@ -45,10 +44,10 @@ function PlanCard({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <span className="font-body text-sm text-neutral-400">{plan.name}</span>
+            <span className="font-body text-body-sm text-neutral-400">{plan.name}</span>
           </div>
         )}
-        <span className="absolute bottom-sm left-sm rounded-full bg-[var(--orange-500)] px-md py-xs font-body text-body-sm font-bold text-white shadow">
+        <span className="absolute bottom-sm left-sm rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
           {/* No tiene que ser ANY, cambiarlo luego */}
           {getPlanTypeLabel(plan.type, t as any)}
         </span>
@@ -78,7 +77,7 @@ function PlanCard({
                 onClick={() => setCurrency(option)}
                 aria-pressed={currency === option}
                 disabled={!exchangeRate && option !== 'USD'}
-                className={`rounded-full border px-sm py-2xs font-body text-xs transition disabled:cursor-not-allowed disabled:opacity-40 ${
+                className={`rounded-full border px-sm py-2xs font-body text-caption transition disabled:cursor-not-allowed disabled:opacity-40 ${
                   currency === option ? 'border-green-500 bg-green-500 text-white' : 'border-neutral-200 text-neutral-600 hover:border-green-500'
                 }`}
               >
@@ -89,13 +88,13 @@ function PlanCard({
         </div>
 
         {plan.schedule && (
-          <p className="m-0 font-body text-xs text-neutral-500">
+          <p className="m-0 font-body text-caption text-neutral-500">
             <span className="font-semibold">{t('services.schedule')}:</span> {plan.schedule}
           </p>
         )}
 
         {plan.includes && (
-          <p className="m-0 font-body text-xs leading-relaxed text-neutral-500 line-clamp-3">
+          <p className="m-0 font-body text-caption leading-relaxed text-neutral-500 line-clamp-3">
             <span className="font-semibold">{t('services.includes')}:</span> {plan.includes}
           </p>
         )}
@@ -105,7 +104,7 @@ function PlanCard({
             type="button"
             onClick={() => onSubscribe(plan)}
             disabled={isLoading}
-            className="w-full rounded-full bg-green-500 py-md font-body text-sm font-semibold text-white transition hover:bg-green-600 disabled:opacity-60"
+            className="h-11 w-full rounded-full bg-orange-500 font-body text-body-sm font-semibold text-white transition hover:bg-orange-600 disabled:opacity-60"
           >
             {isLoading ? t('common.loading') : t('services.subscribe')}
           </button>
@@ -175,10 +174,10 @@ function ServicesPage() {
 
       <section className="flex min-h-[220px] items-center bg-white px-[30px] py-[32px] text-center md:min-h-[250px]">
         <div className="mx-auto w-full max-w-[700px]">
-          <h1 className="m-0 font-heading text-[34px] font-bold leading-tight text-green-500 md:text-[46px]">
+          <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-green-500 md:text-h1">
             {t('services.title')}
           </h1>
-          <p className="mx-auto mt-[20px] max-w-[560px] font-body text-[13px] leading-[1.6] text-green-500 md:text-[15px]">
+          <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">
             {t('services.description')}
           </p>
         </div>
@@ -204,13 +203,13 @@ function ServicesPage() {
           )}
 
           {error && (
-            <p className="col-span-full p-xl text-center font-body text-base text-danger">
+            <p className="col-span-full p-xl text-center font-body text-body text-danger">
               {error}
             </p>
           )}
 
           {!loading && !error && plans.length === 0 && (
-            <p className="col-span-full p-xl text-center font-body text-base text-neutral-500">
+            <p className="col-span-full p-xl text-center font-body text-body text-neutral-500">
               {t('services.empty')}
             </p>
           )}

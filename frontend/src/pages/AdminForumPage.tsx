@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { PencilIcon, PlusIcon, Trash2Icon, XIcon } from '@animateicons/react/lucide'
+import { useCallback, useEffect, useState } from 'react'
+import { PlusIcon, XIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import BlogPostCard from '../components/forum/BlogPostCard.tsx'
@@ -9,9 +9,12 @@ import Button from '../components/ui/Button.tsx'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 import { notify } from '../utils/notifications.ts'
 import type { BlogPost, BlogPostInput } from '../types/forum.ts'
+import { userStorage } from '../utils/userStorage.ts'
+import { forumService } from '../services/forum.ts'
 
 function AdminForumPage() {
   const { t } = useTranslation()
+  const isTeacher = userStorage.getUser()?.role === 'TEACHER'
   const {
     blogPosts,
     addBlogPost,
@@ -29,6 +32,32 @@ function AdminForumPage() {
   const [editing, setEditing] = useState<BlogPost | null>(null)
   const [postToDelete, setPostToDelete] = useState<BlogPost | null>(null)
   const [deleteConfirmation, setDeleteConfirmation] = useState('')
+  const [teacherPosts, setTeacherPosts] = useState<BlogPost[]>([])
+  const [teacherPostsLoading, setTeacherPostsLoading] = useState(isTeacher)
+  const [teacherPostsError, setTeacherPostsError] = useState('')
+
+  const refreshTeacherPosts = useCallback(async () => {
+    if (!isTeacher) return
+
+    setTeacherPostsLoading(true)
+    try {
+      const page = await forumService.getMyArticles()
+      setTeacherPosts(page.content)
+      setTeacherPostsError('')
+    } catch {
+      setTeacherPostsError('No se pudieron cargar tus publicaciones')
+    } finally {
+      setTeacherPostsLoading(false)
+    }
+  }, [isTeacher])
+
+  useEffect(() => {
+    if (isTeacher) void refreshTeacherPosts()
+  }, [isTeacher, refreshTeacherPosts])
+
+  const visiblePosts = isTeacher ? teacherPosts : blogPosts
+  const visibleIsLoading = isLoading || (isTeacher && teacherPostsLoading)
+  const visibleError = isTeacher ? teacherPostsError : error
 
   function openCreate() {
     setEditing(null)
@@ -49,12 +78,14 @@ function AdminForumPage() {
     try {
       if (editing) {
         await updateBlogPost(editing.id, input)
+        await refreshTeacherPosts()
         notify.success({
           title: t('adminForum.updatedToastTitle'),
           description: t('adminForum.updatedToastDescription'),
         })
       } else {
         await addBlogPost(input)
+        await refreshTeacherPosts()
         notify.success({
           title: t('adminForum.createdToastTitle'),
           description: t('adminForum.createdToastDescription'),
@@ -72,6 +103,7 @@ function AdminForumPage() {
 
     try {
       await removeBlogPost(postToDelete.id)
+      await refreshTeacherPosts()
     } catch {
       notify.error('No se pudo eliminar el artículo')
       return
@@ -87,6 +119,51 @@ function AdminForumPage() {
     })
   }
 
+  function renderBlogPosts() {
+    if (visibleIsLoading) {
+      return (
+        <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
+          <li><BlogPostCardSkeleton isAdmin /></li>
+          <li><BlogPostCardSkeleton isAdmin /></li>
+        </ul>
+      )
+    }
+
+    if (visibleError) {
+      return (
+        <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-body-sm text-danger">
+          {visibleError}
+        </p>
+      )
+    }
+
+    if (visiblePosts.length === 0) {
+      return (
+        <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-body-sm text-neutral-500">
+          {t(isTeacher ? 'adminForum.ownEmpty' : 'adminForum.empty')}
+        </p>
+      )
+    }
+
+    return (
+      <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
+        {visiblePosts.map((post) => (
+          <li key={post.id} className="flex flex-col gap-sm">
+            <BlogPostCard
+              post={post}
+              commentCount={getCommentCount(post.id)}
+              isLiked={isLiked(post.id)}
+              likeCount={getLikeCount(post.id)}
+              onToggleLike={toggleLike}
+              onEdit={() => openEdit(post)}
+              onDelete={() => setPostToDelete(post)}
+            />
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
   return (
     <AdminLayout>
       <div className="flex flex-wrap items-center justify-between gap-md">
@@ -95,7 +172,7 @@ function AdminForumPage() {
             {t('adminForum.title')}
           </h1>
 
-          <p className="m-0 mt-2 text-base text-neutral-500">
+          <p className="m-0 mt-2 text-body text-neutral-500">
             {t('adminForum.description')}
           </p>
         </div>
@@ -103,63 +180,14 @@ function AdminForumPage() {
         <button
           type="button"
           onClick={openCreate}
-          className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+          className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
         >
           <PlusIcon size={18} aria-hidden="true" />
           {t('adminForum.addPost')}
         </button>
       </div>
 
-      {isLoading ? (
-        <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
-          <li><BlogPostCardSkeleton /></li>
-          <li><BlogPostCardSkeleton /></li>
-        </ul>
-      ) : error ? (
-        <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-sm text-danger">
-          {error}
-        </p>
-      ) : blogPosts.length === 0 ? (
-        <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-sm text-neutral-500">
-          {t('adminForum.empty')}
-        </p>
-      ) : (
-        <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
-          {blogPosts.map((post) => (
-            <li key={post.id} className="flex flex-col gap-sm">
-              <BlogPostCard
-                post={post}
-                commentCount={getCommentCount(post.id)}
-                isLiked={isLiked(post.id)}
-                likeCount={getLikeCount(post.id)}
-                onToggleLike={toggleLike}
-              />
-
-              <div className="flex items-center justify-end gap-xs">
-                <button
-                  type="button"
-                  onClick={() => openEdit(post)}
-                  aria-label={`${t('adminForum.edit')} — ${post.title}`}
-                  className="inline-flex h-9 items-center gap-2xs rounded-full border border-neutral-200 bg-white px-md text-xs font-semibold text-heading transition-colors hover:border-heading"
-                >
-                  <PencilIcon size={15} aria-hidden="true" />
-                  {t('adminForum.edit')}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setPostToDelete(post)}
-                  aria-label={`${t('adminForum.delete')} — ${post.title}`}
-                  className="inline-flex h-9 items-center gap-2xs rounded-full border border-neutral-200 bg-white px-md text-xs font-semibold text-danger transition-colors hover:border-danger"
-                >
-                  <Trash2Icon size={15} aria-hidden="true" />
-                  {t('adminForum.delete')}
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+      {renderBlogPosts()}
 
       {formOpen && (
         <BlogPostFormModal
@@ -178,12 +206,15 @@ function AdminForumPage() {
           onClick={(event) => {
             if (event.target === event.currentTarget) { setPostToDelete(null); setDeleteConfirmation('') }
           }}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') { setPostToDelete(null); setDeleteConfirmation('') }
+          }}
           aria-label={t('adminForum.deleteTitle')}
           className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
         >
           <div className="relative p-[28px_22px_30px]">
             <div className="flex items-center justify-between gap-md">
-              <h2 className="m-0 w-full text-center font-heading text-[42px] font-bold leading-none text-heading">
+              <h2 className="m-0 w-full text-center font-heading text-h1 font-bold leading-none text-heading">
                 {t('adminForum.deleteTitle')}
               </h2>
 
@@ -198,17 +229,17 @@ function AdminForumPage() {
             </div>
 
             <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px]">
-              <p className="m-0 text-left font-body text-[16px] text-neutral-500">
+              <p className="m-0 text-left font-body text-body text-neutral-500">
                 {t('adminForum.deleteDescription', { title: postToDelete.title })}
               </p>
 
-              <label className="flex flex-col font-body text-base font-normal leading-[1.6] text-body-text">
+              <label className="flex flex-col font-body text-body font-normal leading-[1.6] text-body-text">
                 {t('adminForum.deleteConfirmFieldLabel', { title: postToDelete.title })}
                 <input
                   autoFocus
                   value={deleteConfirmation}
                   onChange={(event) => setDeleteConfirmation(event.target.value)}
-                  className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500"
+                  className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500"
                 />
               </label>
 
@@ -216,7 +247,7 @@ function AdminForumPage() {
                 <Button
                   variant="secondary"
                   onClick={() => { setPostToDelete(null); setDeleteConfirmation('') }}
-                  className="h-[47px] flex-1 rounded-full font-body text-[17px] uppercase tracking-wide"
+                  className="h-11 flex-1 rounded-full font-body text-button uppercase tracking-wide"
                 >
                   {t('adminForum.cancel')}
                 </Button>
@@ -225,7 +256,7 @@ function AdminForumPage() {
                   variant="danger"
                   onClick={confirmDelete}
                   disabled={deleteConfirmation !== postToDelete.title}
-                  className="h-[47px] flex-1 rounded-full font-body text-[17px] font-normal uppercase tracking-wide"
+                  className="h-11 flex-1 rounded-full font-body text-button font-normal uppercase tracking-wide"
                 >
                   {t('adminForum.delete')}
                 </Button>

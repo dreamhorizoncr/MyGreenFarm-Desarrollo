@@ -48,6 +48,9 @@ function AppointmentDetailsModal({ appointment, onClose }: Readonly<AppointmentD
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose()
       }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') onClose()
+      }}
       aria-labelledby="appointment-details-title"
       className="m-auto max-h-[90vh] w-[min(720px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
@@ -62,30 +65,30 @@ function AppointmentDetailsModal({ appointment, onClose }: Readonly<AppointmentD
         </button>
 
         <div className="mb-lg px-[28px] pr-10">
-          <span className="inline-flex rounded-full px-sm py-2xs font-body text-xs font-semibold text-body-text bg-[var(--grey-100)]">
+          <span className="inline-flex rounded-full px-sm py-2xs font-body text-caption font-semibold text-body-text bg-[var(--grey-100)]">
             {statusLabel}
           </span>
           <h2 id="appointment-details-title" className="m-0 mt-sm font-heading text-[30px] font-bold leading-tight text-heading">
             {appointment.childName}
           </h2>
-          <p className="m-0 mt-2xs font-body text-[15px] text-neutral-500">{appointmentDate}</p>
+          <p className="m-0 mt-2xs font-body text-body-sm text-neutral-500">{appointmentDate}</p>
         </div>
 
         <dl className="grid grid-cols-1 gap-x-lg gap-y-md px-[28px] sm:grid-cols-2">
           {infoRows.map(({ label, value }) => (
             <div key={label}>
-              <dt className="font-body text-xs font-semibold uppercase tracking-[0.4px] text-neutral-default">{label}</dt>
-              <dd className="m-0 mt-2xs break-words font-body text-[15px] leading-6 text-body-text">{value || '—'}</dd>
+              <dt className="font-body text-caption font-semibold uppercase tracking-[0.4px] text-neutral-default">{label}</dt>
+              <dd className="m-0 mt-2xs break-words font-body text-body-sm leading-6 text-body-text">{value || '—'}</dd>
             </div>
           ))}
           <div className="sm:col-span-2">
-            <dt className="font-body text-xs font-semibold uppercase tracking-[0.4px] text-neutral-default">{t('booking.reason')}</dt>
-            <dd className="m-0 mt-2xs whitespace-pre-wrap break-words font-body text-[15px] leading-6 text-body-text">{appointment.parentNotes || '—'}</dd>
+            <dt className="font-body text-caption font-semibold uppercase tracking-[0.4px] text-neutral-default">{t('booking.reason')}</dt>
+            <dd className="m-0 mt-2xs whitespace-pre-wrap break-words font-body text-body-sm leading-6 text-body-text">{appointment.parentNotes || '—'}</dd>
           </div>
           {appointment.status === 'CANCELLED' && (
             <div className="sm:col-span-2">
-              <dt className="font-body text-xs font-semibold uppercase tracking-[0.4px] text-neutral-default">{t('teacherAppointments.conclusion')}</dt>
-              <dd className="m-0 mt-2xs whitespace-pre-wrap break-words font-body text-[15px] leading-6 text-body-text">{appointment.teacherConclusion || '—'}</dd>
+              <dt className="font-body text-caption font-semibold uppercase tracking-[0.4px] text-neutral-default">{t('teacherAppointments.conclusion')}</dt>
+              <dd className="m-0 mt-2xs whitespace-pre-wrap break-words font-body text-body-sm leading-6 text-body-text">{appointment.teacherConclusion || '—'}</dd>
             </div>
           )}
         </dl>

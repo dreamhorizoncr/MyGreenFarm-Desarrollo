@@ -92,7 +92,7 @@ function SignUpPage() {
     )
       return;
 
-    submitRegister(
+    void submitRegister(
       { firstName, lastName, email, password, role },
       () => {
         notify.success({
@@ -123,20 +123,20 @@ function SignUpPage() {
         contentClassName="max-w-[303px] md:max-w-[560px]"
     >
       {/* Título */}
-      <h2 className="mb-[32px] text-left font-heading text-[28px] leading-none text-heading md:mb-[45px] md:text-[42px]">
+      <h2 className="mb-[32px] text-left font-heading text-[28px] leading-none text-heading md:mb-[45px] md:text-h1">
         {t("signup.title")}
       </h2>
 
       {success ? (
         /* Mensaje de éxito */
         <div className="text-center">
-          <p className="font-body text-[14px] text-body-text md:text-[16px]">
+          <p className="font-body text-body-sm text-body-text md:text-body">
             {t("signup.success")}
           </p>
 
           <Link
             to="/login"
-            className="mt-5 inline-block font-link text-[13px] text-heading transition-opacity hover:opacity-70 md:text-[14px]"
+            className="mt-5 inline-block font-link text-body-sm text-heading transition-opacity hover:opacity-70 md:text-body-sm"
           >
             {t("signup.goToLogin")}
           </Link>
@@ -213,7 +213,7 @@ function SignUpPage() {
                     setPasswordValidationError(null);
                   }
                 }}
-                className="h-9.5 w-full border-b border-neutral-300 bg-transparent px-0 font-body text-[14px] text-body-text outline-none transition focus:border-green-500 md:text-[15px]"
+                className="h-9.5 w-full border-b border-neutral-300 bg-transparent px-0 font-body text-body-sm text-body-text outline-none transition focus:border-green-500 md:text-body-sm"
                 showAriaLabel={t("passwordInput.showPassword")}
                 hideAriaLabel={t("passwordInput.hidePassword")}
               />
@@ -222,7 +222,7 @@ function SignUpPage() {
 
           {/*Rol*/}
           <fieldset className="mt-[32px] text-left">
-            <legend className="mb-[4px] font-body text-[16px] text-body-text">
+            <legend className="mb-[4px] font-body text-body text-body-text">
               {t('signup.role')}
             </legend>
 
@@ -230,7 +230,7 @@ function SignUpPage() {
               {roleOptions.map((option) => (
                 <label
                   key={option.value}
-                  className={`flex cursor-pointer items-center gap-xs rounded-full border px-lg py-sm font-body text-[15px] transition-colors ${
+                  className={`flex cursor-pointer items-center gap-xs rounded-full border px-lg py-sm font-body text-body-sm transition-colors ${
                     role === option.value
                       ? 'border-green-500 bg-green-500/10 text-heading'
                       : 'border-neutral-300 bg-white text-body-text'
@@ -256,7 +256,7 @@ function SignUpPage() {
             </div>
 
             {roleValidationError && (
-              <p className="mt-2 font-body text-sm text-danger">
+              <p className="mt-2 font-body text-body-sm text-danger">
                 {roleValidationError}
               </p>
             )}
@@ -264,7 +264,7 @@ function SignUpPage() {
 
           {/* Error backend */}
           {error && (
-            <p className="mt-4 text-center font-body text-sm text-danger">
+            <p className="mt-4 text-center font-body text-body-sm text-danger">
               {error}
             </p>
           )}

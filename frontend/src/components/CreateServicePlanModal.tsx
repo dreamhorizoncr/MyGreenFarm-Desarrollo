@@ -130,6 +130,9 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose()
       }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') onClose()
+      }}
       aria-label={isEditing ? t('admin.servicios.editPlan') : t('admin.servicios.newPlan')}
       className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
@@ -144,7 +147,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
         </button>
 
         <div className={`${isEditing ? 'mb-md' : 'mb-lg'} relative text-center`}>
-          <h2 className={`m-0 font-heading font-bold leading-none text-heading ${isEditing ? 'text-[32px]' : 'text-[42px]'}`}>
+          <h2 className={`m-0 font-heading font-bold leading-none text-heading ${isEditing ? 'text-[32px]' : 'text-h1'}`}>
             {isEditing ? t('admin.servicios.editPlan') : t('admin.servicios.newPlan')}
           </h2>
         </div>
@@ -156,7 +159,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
           }`}
         >
           <div className="flex flex-col">
-            <label htmlFor="create-plan-onvo" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+            <label htmlFor="create-plan-onvo" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
               {t('admin.servicios.selectPlan')}
             </label>
             <select
@@ -167,7 +170,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
                 if (onvoError) setOnvoError(null)
               }}
               disabled={isEditing}
-              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500 disabled:opacity-50"
+              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 disabled:opacity-50"
             >
               <option value="">{t('admin.servicios.selectPlan')}</option>
               {availablePlans.map(plan => (
@@ -177,17 +180,17 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
               ))}
             </select>
             {availablePlans.length === 0 && !isEditing && (
-              <p className="mt-2xs text-left font-body text-[13px] text-neutral-500">
+              <p className="mt-2xs text-left font-body text-body-sm text-neutral-500">
                 {t('admin.servicios.noOnvoPlans')}
               </p>
             )}
             {onvoError && (
-              <p className="mt-2xs text-left font-body text-sm text-danger">{onvoError}</p>
+              <p className="mt-2xs text-left font-body text-body-sm text-danger">{onvoError}</p>
             )}
           </div>
 
           <div className="flex flex-col">
-            <label htmlFor="create-plan-schedule" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+            <label htmlFor="create-plan-schedule" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
               {t('admin.servicios.scheduleLabel')}
             </label>
             <input
@@ -200,15 +203,15 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
                 if (scheduleError) setScheduleError(null)
               }}
               placeholder={t('admin.servicios.schedulePlaceholder')}
-              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400"
+              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400"
             />
             {scheduleError && (
-              <p className="mt-2xs text-left font-body text-sm text-danger">{scheduleError}</p>
+              <p className="mt-2xs text-left font-body text-body-sm text-danger">{scheduleError}</p>
             )}
           </div>
 
           <div className="flex flex-col">
-            <label htmlFor="create-plan-includes" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+            <label htmlFor="create-plan-includes" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
               {t('admin.servicios.includesLabel')}
             </label>
             <textarea
@@ -221,15 +224,15 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
               }}
               placeholder={t('admin.servicios.includesPlaceholder')}
               rows={3}
-              className="w-full resize-none border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400"
+              className="w-full resize-none border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400"
             />
             {includesError && (
-              <p className="mt-2xs text-left font-body text-sm text-danger">{includesError}</p>
+              <p className="mt-2xs text-left font-body text-body-sm text-danger">{includesError}</p>
             )}
           </div>
 
           <div className="flex flex-col">
-            <span className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+            <span className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
               {t('admin.servicios.chooseImage')}
             </span>
             <input
@@ -242,7 +245,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex h-[44px] items-center justify-center gap-sm rounded-xl border border-dashed border-neutral-300 bg-neutral-50 font-body text-sm text-body-text-dark transition-colors hover:border-green-500 hover:bg-green-50"
+              className="flex h-11 items-center justify-center gap-sm rounded-xl border border-dashed border-neutral-300 bg-neutral-50 font-body text-body-sm text-body-text-dark transition-colors hover:border-green-500 hover:bg-green-50"
             >
               <FileImageIcon size={18} />
               {selectedImage ? selectedImage.file.name : t('admin.servicios.chooseImage')}
@@ -274,13 +277,13 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
                   alt={t('admin.servicios.currentImage')}
                   className="h-[80px] w-[120px] rounded-lg object-cover"
                 />
-                <span className="absolute bottom-1 left-1 rounded bg-black/50 px-1 py-0.5 font-body text-[10px] text-white">
+                <span className="absolute bottom-1 left-1 rounded bg-black/50 px-1 py-0.5 font-body text-caption text-white">
                   {t('admin.servicios.currentImage')}
                 </span>
               </div>
             )}
             {imageError && (
-              <p className="mt-2xs text-left font-body text-sm text-danger">{imageError}</p>
+              <p className="mt-2xs text-left font-body text-body-sm text-danger">{imageError}</p>
             )}
           </div>
 
@@ -289,7 +292,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
               variant="secondary"
               type="button"
               onClick={onClose}
-              className="h-[47px] flex-1 rounded-full font-body text-[17px] uppercase tracking-wide"
+              className="h-11 flex-1 rounded-full border-green-500 font-body text-button uppercase tracking-wide text-heading hover:bg-green-50"
             >
               {t('admin.cancel')}
             </Button>
@@ -297,7 +300,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
               variant="success"
               type="submit"
               loading={saving}
-              className="h-[47px] flex-1 rounded-full bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
+              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-normal uppercase tracking-wide text-white hover:bg-orange-600"
             >
               {saving ? t('common.loading') : idleSubmitLabel}
             </Button>

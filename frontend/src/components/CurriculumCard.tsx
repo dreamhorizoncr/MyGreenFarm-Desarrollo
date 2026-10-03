@@ -23,7 +23,7 @@ function StatusBadge({ status }: Readonly<{ status: Curriculum['status'] }>) {
   }[status]
 
   return (
-    <span className="inline-flex items-center gap-xs whitespace-nowrap font-body text-sm font-semibold text-body-text">
+    <span className="inline-flex items-center gap-xs whitespace-nowrap font-body text-body-sm font-semibold text-body-text">
       <span className={`inline-block size-2.5 rounded-full ${config.dot}`} aria-hidden="true" />
       {config.label}
     </span>
@@ -59,7 +59,7 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
           onClick={onDelete}
           aria-label={t('admin.delete')}
           title={t('admin.delete')}
-          className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-transparent text-neutral-400 transition-colors hover:bg-(--grey-100) hover:text-danger focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+          className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
         >
           <Trash2Icon size={16} aria-hidden="true" />
         </button>
@@ -82,7 +82,7 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
       {isExpanded && (
         <div className="mt-md border-t border-neutral-200 pt-md">
           {application.applicantPhone && (
-            <p className="m-0 mb-sm font-body text-sm text-neutral-500">
+            <p className="m-0 mb-sm font-body text-body-sm text-neutral-500">
               {application.applicantPhone}
             </p>
           )}
@@ -104,7 +104,7 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
               type="button"
               onClick={onApprove}
               disabled={application.status !== 'PENDING'}
-              className="inline-flex h-11 min-w-35 items-center justify-center whitespace-nowrap rounded-full bg-green-500 px-lg font-body text-sm font-semibold uppercase tracking-wide text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-11 min-w-35 items-center justify-center whitespace-nowrap rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold uppercase tracking-wide text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {t('admin.curriculums.approve')}
             </button>
@@ -112,7 +112,7 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
               type="button"
               onClick={onReject}
               disabled={application.status !== 'PENDING'}
-              className="inline-flex h-11 min-w-35 items-center justify-center whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-sm font-semibold uppercase tracking-wide text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-11 min-w-35 items-center justify-center whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold uppercase tracking-wide text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {t('admin.curriculums.reject')}
             </button>

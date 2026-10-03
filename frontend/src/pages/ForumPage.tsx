@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { SearchIcon } from '@animateicons/react/lucide'
 import Navbar from '../components/Navbar.tsx'
 import BlogPostCard from '../components/forum/BlogPostCard.tsx'
 import CommunityPostCard from '../components/forum/CommunityPostCard.tsx'
@@ -10,6 +11,7 @@ import type { ForumTab } from '../components/forum/ForumTabs.tsx'
 import PublishExperienceModal from '../components/forum/PublishExperienceModal.tsx'
 import BlogPostCardSkeleton from '../components/forum/BlogPostCardSkeleton.tsx'
 import CommunityPostCardSkeleton from '../components/forum/CommunityPostCardSkeleton.tsx'
+import PublishButtonCard from '../components/forum/PublishButtonCard.tsx'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 
 function ForumPage() {
@@ -26,6 +28,7 @@ function ForumPage() {
     isLiked,
     getLikeCount,
     toggleLike,
+    toggleCommunityLike,
   } = useForumFeedContext()
 
   const activeTab: ForumTab =
@@ -56,11 +59,11 @@ function ForumPage() {
 
       <section className="flex min-h-[280px] items-center bg-green-500 px-[30px] py-[40px] text-center text-white xs:min-h-[320px]">
         <div className="mx-auto w-full max-w-[700px]">
-          <h1 className="m-0 font-heading text-[34px] font-bold leading-tight text-white md:text-[46px]">
+          <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
             {t('forum.title')}
           </h1>
 
-          <p className="mx-auto mt-[20px] max-w-[560px] font-body text-[13px] leading-[1.6] text-white md:text-[15px]">
+          <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-sm leading-[1.6] text-white md:text-body-sm">
             {t('forum.subtitle')}
           </p>
 
@@ -71,6 +74,24 @@ function ForumPage() {
       <main>
         <div className="mx-auto w-full max-w-[1120px] px-[14px] py-10 xs:px-[20px] xs:py-12">
           <div className="grid grid-cols-1 items-start gap-md lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-xl">
+            {activeTab === 'blog' && (
+              <label className="flex h-12 items-center gap-sm rounded-xl border border-neutral-200 bg-white px-md text-neutral-500 focus-within:border-heading lg:hidden">
+                <SearchIcon size={20} aria-hidden="true" />
+                <input
+                  type="search"
+                  value={blogSearch}
+                  onChange={(event) => setBlogSearch(event.target.value)}
+                  placeholder={t('forum.blog.searchPlaceholder')}
+                  aria-label={t('forum.blog.searchLabel')}
+                  className="h-full min-w-0 flex-1 bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
+                />
+              </label>
+            )}
+            {activeTab === 'community' && (
+              <div className="lg:hidden">
+                <PublishButtonCard onPublish={() => setIsPublishOpen(true)} />
+              </div>
+            )}
             {activeTab === 'blog' ? (
               <section
                 id="forum-feed"
@@ -143,13 +164,17 @@ function ForumPage() {
                 )}
 
                 {communityPosts.map((post) => (
-                  <CommunityPostCard key={post.id} post={post} />
+                  <CommunityPostCard
+                    key={post.id}
+                    post={post}
+                    onToggleLike={toggleCommunityLike}
+                    onOpenComments={(postId) => navigate(`/forum/community/${postId}`)}
+                  />
                 ))}
               </section>
             )}
 
             <ForumSidebar
-              onGoToCommunity={() => handleTabChange('community')}
               showPublish={activeTab === 'community'}
               onPublish={() => setIsPublishOpen(true)}
               showBlogSearch={activeTab === 'blog'}

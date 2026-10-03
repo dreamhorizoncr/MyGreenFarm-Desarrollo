@@ -13,7 +13,7 @@ function VacancyPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="h-[38px] w-full border-b border-neutral-300 bg-transparent pl-2 font-body text-[15px] text-body-text outline-none transition focus:border-green-500"
+      className="h-[38px] w-full border-b border-neutral-300 bg-transparent pl-2 font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
     />
   )
 }
@@ -51,6 +51,9 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose()
       }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') onClose()
+      }}
       aria-label={heading}
       className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
@@ -69,7 +72,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
             {heading}
           </h2>
           {vacancyId !== null && (
-            <p className="m-0 mt-2xs font-body text-[15px] text-neutral-500">{title}</p>
+            <p className="m-0 mt-2xs font-body text-body-sm text-neutral-500">{title}</p>
           )}
         </div>
 
@@ -120,24 +123,24 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
                 id="apply-file-input"
               />
 
-              <p className="mb-2xs font-body text-[15px] font-semibold text-body-text">
+              <p className="mb-2xs font-body text-body-sm font-semibold text-body-text">
                 {t('vacancies.resumeLabel')}
               </p>
 
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="flex h-11 w-fit items-center gap-sm whitespace-nowrap rounded-full border border-neutral-200 bg-white px-md font-body text-[15px] font-semibold text-body-text hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+                className="flex h-11 w-fit items-center gap-sm whitespace-nowrap rounded-full border border-neutral-200 bg-white px-md font-body text-body-sm font-semibold text-body-text hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
               >
                 <CloudUploadIcon size={18} aria-hidden="true" />
                 <span>{t('vacancies.chooseFile')}</span>
               </button>
 
-              <p className="mt-2xs font-body text-[13px] text-neutral-500">
+              <p className="mt-2xs font-body text-body-sm text-neutral-500">
                 {form.file ? form.file.name : t('vacancies.noFileChosen')}
               </p>
 
-              {form.fileError && <p className="mt-2xs text-left font-body text-sm text-danger">{form.fileError}</p>}
+              {form.fileError && <p className="mt-2xs text-left font-body text-body-sm text-danger">{form.fileError}</p>}
             </div>
           )}
 
@@ -153,24 +156,24 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
                 id="apply-certificates-input"
               />
 
-              <p className="mb-2xs font-body text-[15px] font-semibold text-body-text">
+              <p className="mb-2xs font-body text-body-sm font-semibold text-body-text">
                 {t('vacancies.certificates')}
               </p>
-              <p className="mb-xs font-body text-[13px] text-neutral-500">
+              <p className="mb-xs font-body text-body-sm text-neutral-500">
                 {t('vacancies.certificatesHint')}
               </p>
 
               <button
                 type="button"
                 onClick={() => certificatesInputRef.current?.click()}
-                className="flex h-11 w-fit items-center gap-sm whitespace-nowrap rounded-full border border-neutral-200 bg-white px-md font-body text-[15px] font-semibold text-body-text hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+                className="flex h-11 w-fit items-center gap-sm whitespace-nowrap rounded-full border border-neutral-200 bg-white px-md font-body text-body-sm font-semibold text-body-text hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
               >
                 <CloudUploadIcon size={18} aria-hidden="true" />
                 <span>{t('vacancies.chooseCertificates')}</span>
               </button>
 
               {form.certificates.length === 0 ? (
-                <p className="mt-2xs font-body text-[13px] text-neutral-500">
+                <p className="mt-2xs font-body text-body-sm text-neutral-500">
                   {t('vacancies.noCertificatesChosen')}
                 </p>
               ) : (
@@ -180,7 +183,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
                       key={`${certificateFile.name}-${index}`}
                       className="flex items-center justify-between gap-sm rounded-lg border border-neutral-200 bg-white px-sm py-2xs"
                     >
-                      <span className="min-w-0 truncate font-body text-[13px] text-body-text">
+                      <span className="min-w-0 truncate font-body text-body-sm text-body-text">
                         {certificateFile.name}
                       </span>
                       <button
@@ -197,22 +200,22 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
               )}
 
               {form.certificatesError && (
-                <p className="mt-2xs text-left font-body text-sm text-danger">{form.certificatesError}</p>
+                <p className="mt-2xs text-left font-body text-body-sm text-danger">{form.certificatesError}</p>
               )}
             </div>
           )}
 
-          {form.submitError && <p className="text-left font-body text-sm text-danger">{form.submitError}</p>}
+          {form.submitError && <p className="text-left font-body text-body-sm text-danger">{form.submitError}</p>}
 
           <div className="mt-sm flex gap-md">
-            <Button variant="secondary" onClick={onClose} className="h-11.75 flex-1 rounded-full font-body text-[17px] uppercase tracking-wide">
+            <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-full font-body text-button uppercase tracking-wide">
               {t('admin.cancel')}
             </Button>
             <Button
               variant="success"
               onClick={handleSubmitClick}
               loading={form.submitting}
-              className="h-11.75 flex-1 rounded-full bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
+              className="h-11 flex-1 rounded-full bg-green-500 font-body text-button font-normal uppercase tracking-wide text-white"
             >
               {form.submitting ? t('common.loading') : t('vacancies.submitApplication')}
             </Button>

@@ -42,6 +42,9 @@ function DeleteCurriculumModal({ application, onConfirm, onClose }: Readonly<Del
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose()
       }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') onClose()
+      }}
       aria-label={t('admin.curriculums.deleteConfirmTitle')}
       className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
@@ -56,29 +59,29 @@ function DeleteCurriculumModal({ application, onConfirm, onClose }: Readonly<Del
         </button>
 
         <div className="relative mb-lg text-center">
-          <h2 className="m-0 font-heading text-[34px] font-bold leading-none text-heading">
+          <h2 className="m-0 font-heading text-page-title font-bold leading-none text-heading">
             {t('admin.curriculums.deleteConfirmTitle')}
           </h2>
         </div>
 
         <div className="flex flex-col gap-md px-7 pb-8 pt-2.5">
-          <p className="m-0 text-left font-body text-[15px] text-body-text">
+          <p className="m-0 text-left font-body text-body-sm text-body-text">
             {t('admin.curriculums.deleteConfirmMessage', { name: application.applicantName })}
           </p>
 
           {deleteError && (
-            <p className="mt-2xs text-left font-body text-sm text-danger">{deleteError}</p>
+            <p className="mt-2xs text-left font-body text-body-sm text-danger">{deleteError}</p>
           )}
 
           <div className="flex gap-md mt-sm">
-            <Button variant="secondary" onClick={onClose} className="h-11.75 flex-1 rounded-none font-body text-[17px] uppercase tracking-wide">
+            <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-none font-body text-button uppercase tracking-wide">
               {t('admin.cancel')}
             </Button>
             <Button
               variant="danger"
               onClick={handleConfirm}
               loading={deleting}
-              className="h-11.75 flex-1 rounded-none font-body text-[17px] font-normal uppercase tracking-wide"
+              className="h-11 flex-1 rounded-none font-body text-button font-normal uppercase tracking-wide"
             >
               {deleting ? t('common.loading') : t('admin.delete')}
             </Button>

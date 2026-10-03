@@ -56,7 +56,7 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
           <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
           <input
             type="search"
-            className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-[15px] text-body-text outline-none placeholder:text-neutral-400"
+            className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
             placeholder={t('admin.curriculums.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -68,7 +68,7 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
           <select
             value={vacancyFilter}
             onChange={(e) => setVacancyFilter(e.target.value)}
-            className="h-11 appearance-none rounded-full border border-neutral-200 bg-white py-sm pl-md pr-xl font-body text-sm text-body-text outline-none focus:border-green-500"
+            className="h-11 appearance-none rounded-full border border-neutral-200 bg-white py-sm pl-md pr-xl font-body text-body-sm text-body-text outline-none focus:border-green-500"
           >
             <option value={ALL_VACANCIES}>{t('admin.curriculums.allVacancies')}</option>
             <option value={SPONTANEOUS_APPLICATIONS}>{t('admin.curriculums.spontaneousApplications')}</option>
@@ -91,11 +91,11 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
           <CurriculumRowSkeleton />
         </div>
       )}
-      {error && <p className="m-0 p-xl text-center font-body text-base text-danger">{error}</p>}
+      {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
 
       {!loading && !error && (
         filteredApplications.length === 0 ? (
-          <p className="m-0 p-xl text-center font-body text-base text-neutral-500">
+          <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
             {t('admin.curriculums.noResults')}
           </p>
         ) : (

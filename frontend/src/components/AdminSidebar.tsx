@@ -103,6 +103,7 @@ function AdminSidebar() {
   const teacherItems: SidebarItem[] = [
     { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
     { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
+    { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
     { id: 'miPerfil', icon: UserIcon, path: '/profile' },
   ]
   const itemsByRole: Record<string, SidebarItem[]> = { OWNER: ownerItems, ADMIN: adminItems }
@@ -118,7 +119,7 @@ function AdminSidebar() {
   }
 
   const itemClasses =
-    'relative flex shrink-0 items-center gap-sm overflow-hidden rounded-full px-md py-sm text-left font-body text-[15px] font-semibold text-body-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:w-full'
+    'relative flex shrink-0 items-center gap-sm overflow-hidden rounded-full px-md py-sm text-left font-body text-body-sm font-semibold text-body-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:w-full'
 
   const activeFillClasses =
     'absolute inset-0 origin-left bg-heading transition-transform duration-300 ease-out'
@@ -142,7 +143,7 @@ function AdminSidebar() {
         <button
           type="button"
           onClick={() => setOpen((prev) => !prev)}
-          className="flex w-full items-center justify-between rounded-full bg-heading px-md py-sm font-body text-[15px] font-semibold text-white"
+          className="flex w-full items-center justify-between rounded-full bg-heading px-md py-sm font-body text-body-sm font-semibold text-white"
           aria-expanded={open}
         >
           <span className="flex items-center gap-sm">

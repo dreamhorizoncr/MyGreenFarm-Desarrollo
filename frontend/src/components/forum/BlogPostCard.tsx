@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { HeartIcon, MessageCircleIcon } from '@animateicons/react/lucide'
+import { HeartIcon, MessageCircleIcon, PencilIcon, Trash2Icon } from '@animateicons/react/lucide'
 import type { BlogPost } from '../../types/forum.ts'
 import PostAvatar from './PostAvatar.tsx'
 
@@ -11,6 +11,8 @@ interface BlogPostCardProps {
   onToggleLike: (postId: string) => void
   onOpen?: (postId: string) => void
   onOpenComments?: (postId: string) => void
+  onEdit?: (postId: string) => void
+  onDelete?: (postId: string) => void
 }
 
 interface LikeControlProps {
@@ -98,7 +100,10 @@ function BlogPostCard({
   onToggleLike,
   onOpen,
   onOpenComments,
+  onEdit,
+  onDelete,
 }: Readonly<BlogPostCardProps>) {
+  const { t } = useTranslation()
   const isInteractive = Boolean(onOpen)
 
   return (
@@ -136,16 +141,16 @@ function BlogPostCard({
           />
 
           <div className="min-w-0 flex-1">
-            <p className="m-0 truncate font-heading text-[14px] font-bold text-heading">
+            <p className="m-0 truncate font-heading text-body-sm font-bold text-heading">
               {post.authorName}
             </p>
 
-            <p className="m-0 truncate font-body text-body-sm text-neutral-500">
+            <p className="m-0 truncate font-body text-[14px] text-neutral-500">
               {post.authorRole}
             </p>
           </div>
 
-          <span className="ml-auto shrink-0 rounded-full bg-[var(--info-50)] px-md py-2xs font-body text-body-sm font-semibold text-[var(--info-500)]">
+          <span className="ml-auto shrink-0 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
             {post.topic}
           </span>
         </div>
@@ -154,7 +159,7 @@ function BlogPostCard({
           {post.title}
         </h2>
 
-        <p className="m-0 mt-xs min-h-[4.8em] line-clamp-3 break-words text-left font-body text-[15px] leading-[1.6] text-body-text">
+        <p className="m-0 mt-xs min-h-[4.8em] line-clamp-3 break-words text-left font-body text-body-sm leading-[1.6] text-body-text">
           {post.content}
         </p>
       </div>
@@ -171,6 +176,38 @@ function BlogPostCard({
           commentCount={commentCount}
           onOpenComments={onOpenComments ? () => onOpenComments(post.id) : undefined}
         />
+
+        {(onEdit || onDelete) && (
+          <div className="ml-auto flex items-center gap-xs">
+            {onEdit && (
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onEdit(post.id)
+                }}
+                aria-label={`${t('adminForum.edit')} — ${post.title}`}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
+              >
+                <PencilIcon size={15} aria-hidden="true" />
+              </button>
+            )}
+
+            {onDelete && (
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onDelete(post.id)
+                }}
+                aria-label={`${t('adminForum.delete')} — ${post.title}`}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50"
+              >
+                <Trash2Icon size={15} aria-hidden="true" />
+              </button>
+            )}
+          </div>
+        )}
       </footer>
     </article>
   )

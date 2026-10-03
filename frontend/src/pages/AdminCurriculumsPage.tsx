@@ -35,8 +35,8 @@ function AdminCurriculumsPage() {
   const [activeTab, setActiveTab] = useState<Tab>('vacancies')
 
   useEffect(() => {
-    fetchVacancies()
-    fetchCurriculums()
+    void fetchVacancies()
+    void fetchCurriculums()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -118,17 +118,17 @@ function AdminCurriculumsPage() {
   }
 
   const tabClassName = (tab: Tab) =>
-    `rounded-full px-md py-sm font-body text-sm font-semibold transition-colors ${
-      activeTab === tab ? 'bg-green-500 text-white' : 'bg-[var(--grey-100)] text-body-text hover:bg-[var(--grey-200)]'
+    `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
+      activeTab === tab ? 'border-green-500 bg-green-500 text-white' : 'border-green-500 bg-white text-heading hover:bg-green-50'
     }`
 
   return (
     <div id="admin-curriculums">
       <AdminLayout>
-        <h1 className="m-0 font-heading text-[34px] font-bold leading-[1.15] text-heading">
+        <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
           {t('admin.curriculums.title')}
         </h1>
-        <p className="mt-2 font-body text-base text-neutral-500">
+        <p className="mt-2 font-body text-body text-neutral-500">
           {t('admin.curriculums.subtitle')}
         </p>
 

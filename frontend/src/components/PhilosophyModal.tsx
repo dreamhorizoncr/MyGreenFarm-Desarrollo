@@ -66,6 +66,9 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose()
       }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') onClose()
+      }}
       aria-label={t('home.philosophy.title')}
       className="m-auto max-h-[90vh] w-[min(760px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
@@ -110,7 +113,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
               <Button
                 variant="success"
                 onClick={handleCtaClick}
-                className="h-11.75 w-full rounded-full bg-green-500 font-body text-[15px] font-normal uppercase tracking-wide text-white md:w-auto md:px-2xl"
+                className="h-11 w-full rounded-full bg-green-500 font-body text-button font-normal uppercase tracking-wide text-white md:w-auto md:px-2xl"
               >
                 {t('home.philosophy.modalCta')}
               </Button>

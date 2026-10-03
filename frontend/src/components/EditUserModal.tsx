@@ -67,6 +67,9 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose()
       }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') onClose()
+      }}
       aria-label={t('admin.edit')}
       className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
@@ -81,14 +84,14 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
         </button>
 
         <div className="relative mb-lg text-center">
-          <h2 className="m-0 font-heading text-[42px] font-bold leading-none text-heading">
+          <h2 className="m-0 font-heading text-h1 font-bold leading-none text-heading">
             {t('admin.edit')}
           </h2>
         </div>
 
         <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px] text-left">
           <div className="flex flex-col">
-            <label htmlFor="admin-edit-firstname" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+            <label htmlFor="admin-edit-firstname" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
               {t('admin.firstName')}
             </label>
             <input
@@ -99,15 +102,15 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
                 setFirstName(e.target.value)
                 if (firstNameValidationError) setFirstNameValidationError(null)
               }}
-              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
+              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
             />
             {firstNameValidationError && (
-              <p className="mt-2xs text-left font-body text-sm text-danger">{firstNameValidationError}</p>
+              <p className="mt-2xs text-left font-body text-body-sm text-danger">{firstNameValidationError}</p>
             )}
           </div>
 
           <div className="flex flex-col">
-            <label htmlFor="admin-edit-lastname" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+            <label htmlFor="admin-edit-lastname" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
               {t('admin.lastName')}
             </label>
             <input
@@ -118,15 +121,15 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
                 setLastName(e.target.value)
                 if (lastNameValidationError) setLastNameValidationError(null)
               }}
-              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
+              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
             />
             {lastNameValidationError && (
-              <p className="mt-2xs text-left font-body text-sm text-danger">{lastNameValidationError}</p>
+              <p className="mt-2xs text-left font-body text-body-sm text-danger">{lastNameValidationError}</p>
             )}
           </div>
 
           <div className="flex flex-col">
-            <label htmlFor="admin-edit-email" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+            <label htmlFor="admin-edit-email" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
               {t('admin.email')}
             </label>
             <input
@@ -138,22 +141,22 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
                 if (emailValidationError) setEmailValidationError(null)
               }}
               disabled={!isEditingSelf}
-              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
+              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
             />
             {!isEditingSelf && (
-              <p className="mt-2xs text-left font-body text-[13px] text-neutral-500">{t('admin.emailLockedHint')}</p>
+              <p className="mt-2xs text-left font-body text-body-sm text-neutral-500">{t('admin.emailLockedHint')}</p>
             )}
             {emailValidationError && (
-              <p className="mt-2xs text-left font-body text-sm text-danger">{emailValidationError}</p>
+              <p className="mt-2xs text-left font-body text-body-sm text-danger">{emailValidationError}</p>
             )}
           </div>
 
           {saveError && (
-            <p className="m-0 text-left font-body text-sm text-danger">{saveError}</p>
+            <p className="m-0 text-left font-body text-body-sm text-danger">{saveError}</p>
           )}
 
           <div className="flex gap-md mt-sm">
-            <Button variant="secondary" onClick={onClose} className="h-[47px] flex-1 rounded-full font-body text-[17px] uppercase tracking-wide">
+            <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-full border-green-500 font-body text-button uppercase tracking-wide text-heading hover:bg-green-50">
               {t('admin.cancel')}
             </Button>
             <Button
@@ -161,7 +164,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
               onClick={handleSave}
               loading={saving}
               disabled={!firstName.trim() || !lastName.trim()}
-              className="h-[47px] flex-1 rounded-full bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
+              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-normal uppercase tracking-wide text-white hover:bg-orange-600"
             >
               {saving ? t('common.loading') : t('admin.save')}
             </Button>

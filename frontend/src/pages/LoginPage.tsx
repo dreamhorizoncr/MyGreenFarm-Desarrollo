@@ -41,7 +41,7 @@ function LoginPage() {
     setEmailValidationError(emailErrorMessage);
     setPasswordValidationError(passwordErrorMessage);
     if (emailErrorMessage || passwordErrorMessage) return;
-    submitLogin(
+    void submitLogin(
       { email, password },
       (user) => {
         notify.success({
@@ -80,14 +80,14 @@ function LoginPage() {
       contentClassName="max-w-[303px] md:max-w-[390px]"
     >
       {/* Título */}
-      <h2 className="mb-[35px] text-left font-heading text-[28px] leading-none text-heading md:mb-[55px] md:text-[42px]">
+      <h2 className="mb-[35px] text-left font-heading text-[28px] leading-none text-heading md:mb-[55px] md:text-h1">
         {t("login.title")}
       </h2>
 
       {sessionExpired && (
         <p
           role="alert"
-          className="mb-4 text-center font-body text-sm text-danger"
+          className="mb-4 text-center font-body text-body-sm text-danger"
         >
           {t("common.sessionExpired")}
         </p>
@@ -129,7 +129,7 @@ function LoginPage() {
                 setPasswordValidationError(null);
               }
             }}
-            className="h-9.5 w-full border-b border-neutral-300 bg-transparent px-0 font-body text-[14px] text-body-text outline-none transition focus:border-green-500 md:text-[15px]"
+            className="h-9.5 w-full border-b border-neutral-300 bg-transparent px-0 font-body text-body-sm text-body-text outline-none transition focus:border-green-500 md:text-body-sm"
             showAriaLabel={t("passwordInput.showPassword")}
             hideAriaLabel={t("passwordInput.hidePassword")}
           />
@@ -139,7 +139,7 @@ function LoginPage() {
         <div className="mt-[12px] text-right md:mt-[15px]">
           <Link
             to="/forgot-password"
-            className="font-link text-[12px] text-heading transition-opacity hover:opacity-70 md:text-[13px]"
+            className="font-link text-caption text-heading transition-opacity hover:opacity-70 md:text-body-sm"
           >
             {t("login.forgotPassword")}
           </Link>
@@ -147,7 +147,7 @@ function LoginPage() {
 
         {/* Error de autenticación */}
         {error && (
-          <p className="mt-4 text-center font-body text-sm text-danger">
+          <p className="mt-4 text-center font-body text-body-sm text-danger">
             {error}
           </p>
         )}
@@ -158,7 +158,7 @@ function LoginPage() {
             type="submit"
             loading={loading}
             variant="success"
-            className="h-[47px] w-full rounded-full bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
+            className="h-11 w-full rounded-full bg-green-500 font-body text-button font-normal uppercase tracking-wide text-white"
           >
             {loading ? t("login.loading") : t("login.buttonLabel")}
           </Button>

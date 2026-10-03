@@ -64,6 +64,9 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose()
       }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') onClose()
+      }}
       aria-label={t('vacancies.publishModalTitle')}
       className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
@@ -96,7 +99,7 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
           />
 
           <div className="flex flex-col">
-            <label htmlFor="vacancy-description" className="mb-1 font-body text-base font-normal leading-[1.6] text-body-text">
+            <label htmlFor="vacancy-description" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
               {t('vacancies.formDescription')}
             </label>
             <textarea
@@ -107,23 +110,23 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
                 setDescription(e.target.value)
                 if (descriptionError) setDescriptionError(null)
               }}
-              className="w-full resize-none rounded-xl border border-neutral-300 bg-transparent p-sm font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500"
+              className="w-full resize-none rounded-xl border border-neutral-300 bg-transparent p-sm font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500"
             />
             {descriptionError && (
-              <p className="mt-2xs text-left font-body text-sm text-danger">{descriptionError}</p>
+              <p className="mt-2xs text-left font-body text-body-sm text-danger">{descriptionError}</p>
             )}
           </div>
 
           <fieldset>
-            <legend className="mb-2xs font-body text-base font-normal leading-[1.6] text-body-text">
+            <legend className="mb-2xs font-body text-body font-normal leading-[1.6] text-body-text">
               {t('vacancies.formFieldsSectionTitle')}
             </legend>
-            <p className="mb-sm font-body text-[13px] text-neutral-500">
+            <p className="mb-sm font-body text-body-sm text-neutral-500">
               {t('vacancies.formFieldsSectionHint')}
             </p>
 
             <div className="flex flex-col gap-xs">
-              <label className="flex cursor-pointer items-center gap-sm rounded-lg border border-neutral-200 px-md py-sm font-body text-[15px] text-body-text">
+              <label className="flex cursor-pointer items-center gap-sm rounded-lg border border-neutral-200 px-md py-sm font-body text-body-sm text-body-text">
                 <input
                   type="checkbox"
                   checked={requiredFields.includes('applicantPhone')}
@@ -133,7 +136,7 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
                 {t('vacancies.applicantPhone')}
               </label>
 
-              <label className="flex cursor-pointer items-center gap-sm rounded-lg border border-neutral-200 px-md py-sm font-body text-[15px] text-body-text">
+              <label className="flex cursor-pointer items-center gap-sm rounded-lg border border-neutral-200 px-md py-sm font-body text-body-sm text-body-text">
                 <input
                   type="checkbox"
                   checked={requiredFields.includes('file')}
@@ -143,7 +146,7 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
                 {t('vacancies.resumeLabel')}
               </label>
 
-              <label className="flex cursor-pointer items-center gap-sm rounded-lg border border-neutral-200 px-md py-sm font-body text-[15px] text-body-text">
+              <label className="flex cursor-pointer items-center gap-sm rounded-lg border border-neutral-200 px-md py-sm font-body text-body-sm text-body-text">
                 <input
                   type="checkbox"
                   checked={requiredFields.includes('certificates')}
@@ -155,17 +158,17 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
             </div>
           </fieldset>
 
-          {saveError && <p className="text-left font-body text-sm text-danger">{saveError}</p>}
+          {saveError && <p className="text-left font-body text-body-sm text-danger">{saveError}</p>}
 
           <div className="mt-sm flex gap-md">
-            <Button variant="secondary" onClick={onClose} className="h-11.75 flex-1 rounded-full font-body text-[17px] uppercase tracking-wide">
+            <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-full border-green-500 font-body text-button uppercase tracking-wide text-heading hover:bg-green-50">
               {t('admin.cancel')}
             </Button>
             <Button
               variant="success"
               onClick={handleSubmit}
               loading={saving}
-              className="h-11.75 flex-1 rounded-full bg-green-500 font-body text-[17px] font-normal uppercase tracking-wide text-white"
+              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-normal uppercase tracking-wide text-white hover:bg-orange-600"
             >
               {saving ? t('common.loading') : t('vacancies.publish')}
             </Button>

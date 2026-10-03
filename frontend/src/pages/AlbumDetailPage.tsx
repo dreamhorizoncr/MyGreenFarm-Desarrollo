@@ -38,7 +38,7 @@ function LikeBadge({ albumTitle, liked, totalLikes, loading, onToggle }: Readonl
         className={liked ? 'fill-current text-red-500' : 'text-neutral-400'}
         aria-hidden="true"
       />
-      <span className="font-body text-[12px] font-bold text-neutral-800">{totalLikes}</span>
+      <span className="font-body text-caption font-bold text-neutral-800">{totalLikes}</span>
     </button>
   )
 }
@@ -68,7 +68,7 @@ function AlbumDetailPage() {
   // inicializa likes cuando el álbum ya tiene imágenes cargadas
   useEffect(() => {
     if (album && album.galleryImages.length > 0) {
-      galleryService.getMyLikes().then((likedImageIds) => {
+      void galleryService.getMyLikes().then((likedImageIds) => {
         initializeLikes(album.galleryImages, likedImageIds)
       })
     }
@@ -84,7 +84,7 @@ function AlbumDetailPage() {
         <Container>
           <nav
             aria-label="breadcrumb"
-            className="flex flex-wrap items-center gap-[6px] font-body text-[16px] text-neutral-500"
+            className="flex flex-wrap items-center gap-[6px] font-body text-body text-neutral-500"
           >
             <Link className="transition hover:text-green-500" to="/multimedia">
               {t('home.galeria.breadcrumbGallery')}
@@ -111,11 +111,11 @@ function AlbumDetailPage() {
 
           {album && (
             <header className="mx-auto mt-[32px] max-w-[760px] text-center">
-              <h1 className="mt-0 font-heading text-[30px] font-bold leading-tight text-green-500 md:text-[42px]">
+              <h1 className="mt-0 font-heading text-[30px] font-bold leading-tight text-green-500 md:text-h1">
                 {album.title}
               </h1>
 
-              <p className="mt-[16px] font-body text-[13px] leading-[1.7] text-green-500 md:text-[15px]">
+              <p className="mt-[16px] font-body text-body-sm leading-[1.7] text-green-500 md:text-body-sm">
                 {album.description}
               </p>
             </header>

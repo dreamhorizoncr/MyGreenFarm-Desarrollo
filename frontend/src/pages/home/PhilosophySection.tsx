@@ -56,7 +56,7 @@ function PhilosophySection() {
 
               <BlobButton
                 onClick={() => setIsModalOpen(true)}
-                className="w-fit px-[16px] py-[7px] font-body text-[11px] uppercase"
+                className="h-11 w-fit px-lg font-body text-caption uppercase"
               >
                 {t('home.philosophy.cta')}
               </BlobButton>

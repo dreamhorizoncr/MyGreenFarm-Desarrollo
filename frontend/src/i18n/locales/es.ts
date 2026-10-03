@@ -234,6 +234,13 @@ export default {
       cancel: "Cancelar",
       submit: "Enviar",
       toastTitle: "Publicación enviada",
+      commentsLoading: "Cargando respuestas...",
+      commentsLoadError: "No se pudieron cargar las respuestas. Intentá de nuevo.",
+      commentsEmpty: "Todavía no hay respuestas.",
+      commentNameLabel: "Nombre",
+      commentContentLabel: "Tu respuesta",
+      commentSubmit: "Enviar respuesta",
+      addComment: "Agregar comentario",
       toastDescription: "Tu experiencia ya está en el muro.",
     },
     blog: {
@@ -320,7 +327,7 @@ export default {
       "Publicá investigaciones para que las familias las lean en la pestaña Blog del foro.",
     noPersistenceNotice:
       "Todavía no hay conexión con el servidor: lo que publiques acá se ve en el foro mientras no recargues la página.",
-    addPost: "Publicar investigación",
+    addPost: "Agregar investigación",
     newPost: "Nueva investigación",
     editPost: "Editar investigación",
     postTitle: "Título",
@@ -330,6 +337,7 @@ export default {
     authorName: "Nombre del autor",
     authorRole: "Rol del autor",
     defaultRole: "Docente de My Green Farm",
+    defaultOwnerRole: "Administración de My Green Farm",
     postContent: "Contenido",
     postContentPlaceholder: "Escribí la investigación completa.",
     contentHint:
@@ -349,6 +357,7 @@ export default {
     cancel: "Cancelar",
     close: "Cerrar",
     empty: "Todavía no hay investigaciones publicadas.",
+    ownEmpty: "Todavía no tienes publicaciones.",
     deleteTitle: "Eliminar investigación",
     deleteDescription:
       "La investigación {{title}} va a desaparecer del blog del foro.",
@@ -865,7 +874,7 @@ export default {
     title: "Vacantes",
     subtitle:
       "Conoce las oportunidades laborales abiertas en My Green Farm y postúlate enviando tu currículum.",
-    publish: "Publicar vacante",
+    publish: "Agregar vacante",
     noVacancies: "No hay vacantes disponibles por el momento.",
     spontaneousTitle: "¿No ves una vacante que te interese?",
     spontaneousDescription:
@@ -898,7 +907,7 @@ export default {
     invalidCertificateType: "Los archivos deben ser PDF, PNG o JPG",
     certificateTooLarge: "Cada archivo no puede superar los 5 MB",
     certificatesRequired: "Debes adjuntar al menos un título o certificado",
-    submitApplication: "Enviar postulación",
+    submitApplication: "Enviar",
     publishModalTitle: "Publicar nueva vacante",
     formFieldsSectionTitle: "Campos para el postulante",
     formFieldsSectionHint:

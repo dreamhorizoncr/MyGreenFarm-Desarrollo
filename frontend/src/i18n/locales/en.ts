@@ -231,6 +231,13 @@ export default {
       cancel: "Cancel",
       submit: "Send",
       toastTitle: "Post sent",
+      commentsLoading: "Loading replies...",
+      commentsLoadError: "Could not load replies. Please try again.",
+      commentsEmpty: "There are no replies yet.",
+      commentNameLabel: "Name",
+      commentContentLabel: "Your reply",
+      commentSubmit: "Send reply",
+      addComment: "Add comment",
       toastDescription: "Your experience is now on the board.",
     },
     blog: {
@@ -317,7 +324,7 @@ export default {
       "Publish research so families can read it in the forum's blog tab.",
     noPersistenceNotice:
       "There is no server connection yet: anything you publish here shows up in the forum until you reload the page.",
-    addPost: "Publish research",
+    addPost: "Add research",
     newPost: "New research",
     editPost: "Edit research",
     postTitle: "Title",
@@ -327,6 +334,7 @@ export default {
     authorName: "Author name",
     authorRole: "Author role",
     defaultRole: "Teacher at My Green Farm",
+    defaultOwnerRole: "My Green Farm Administration",
     postContent: "Content",
     postContentPlaceholder: "Write the full research.",
     contentHint:
@@ -346,6 +354,7 @@ export default {
     cancel: "Cancel",
     close: "Close",
     empty: "There are no research posts yet.",
+    ownEmpty: "You haven't published anything yet.",
     deleteTitle: "Delete research",
     deleteDescription:
       "The research {{title}} will disappear from the forum blog.",
@@ -852,7 +861,7 @@ export default {
     title: "Vacancies",
     subtitle:
       "Check out the open positions at My Green Farm and apply by sending your resume.",
-    publish: "Publish vacancy",
+    publish: "Add vacancy",
     noVacancies: "No vacancies available right now.",
     spontaneousTitle: "Don't see a vacancy that fits you?",
     spontaneousDescription:
@@ -885,7 +894,7 @@ export default {
     invalidCertificateType: "Files must be PDF, PNG or JPG",
     certificateTooLarge: "Each file cannot exceed 5 MB",
     certificatesRequired: "You must attach at least one degree or certificate",
-    submitApplication: "Submit application",
+    submitApplication: "Send",
     publishModalTitle: "Publish new vacancy",
     formFieldsSectionTitle: "Fields for the applicant",
     formFieldsSectionHint: "Select the fields the applicant must fill in.",

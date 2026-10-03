@@ -64,7 +64,7 @@ html [data-sileo-button][data-state] {
   border: none;
   border-radius: 999px;
   background-color: transparent;
-  color: var(--pink-500);
+  color: var(--orange-500);
   cursor: pointer;
   transition: color 0.5s;
 }
@@ -74,7 +74,7 @@ html [data-sileo-button][data-state] {
   z-index: 1;
   position: absolute;
   inset: 0;
-  border: 1px solid var(--pink-400);
+  border: 1px solid var(--orange-500);
   border-radius: 999px;
 }
 
@@ -121,7 +121,7 @@ html [data-sileo-button][data-state] {
   top: 1px;
   width: 25%;
   height: 100%;
-  background: var(--pink-400);
+  background: var(--orange-500);
   border-radius: 100%;
   transform: translate3d(0, 150%, 0) scale(1.7);
   transition: transform 0.45s;
@@ -172,11 +172,11 @@ html [data-sileo-button][data-state] {
 }
 
 .blob-btn--filled .blob-btn__inner {
-  background: var(--pink-400);
+  background: var(--orange-500);
 }
 
 .blob-btn--filled .blob-btn__blob {
-  background: var(--pink-300);
+  background: var(--orange-400);
 }
 
 /* ---------------------------------------------------------------------------

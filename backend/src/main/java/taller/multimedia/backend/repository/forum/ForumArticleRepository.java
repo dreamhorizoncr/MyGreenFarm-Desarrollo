@@ -14,5 +14,7 @@ public interface ForumArticleRepository extends JpaRepository<ForumArticle, UUID
 
     Page<ForumArticle> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
+    Page<ForumArticle> findAllByAuthor_IdOrderByCreatedAtDesc(UUID authorId, Pageable pageable);
+
     Page<ForumArticle> findByTopicIgnoreCaseOrderByCreatedAtDesc(String topic, Pageable pageable);
 }

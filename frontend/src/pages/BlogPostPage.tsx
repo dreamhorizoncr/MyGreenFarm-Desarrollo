@@ -32,15 +32,15 @@ function BlogPostPage() {
   const [isDetailLoading, setIsDetailLoading] = useState(true)
 
   useEffect(() => {
-    if (window.location.hash !== '#comments') return
+    if (window.location.hash !== '#comments' || isLoading || isDetailLoading) return
 
     requestAnimationFrame(() => {
-      document.getElementById('blog-comments')?.scrollIntoView({
+      document.getElementById('comments')?.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
       })
     })
-  }, [id])
+  }, [id, isLoading, isDetailLoading])
 
   useEffect(() => {
     if (!id) return
@@ -105,7 +105,7 @@ function BlogPostPage() {
       <main className="mx-auto w-full max-w-[1120px] px-[14px] py-10 xs:px-[20px] xs:py-12">
         <Link
           to="/forum"
-          className="flex w-fit items-center gap-xs text-left font-body text-body-sm font-semibold text-heading transition-opacity hover:opacity-70"
+          className="flex w-fit items-center gap-xs text-left font-body text-body-sm font-semibold text-heading"
         >
           <ArrowLeftIcon size={18} />
           <span>{t('forum.blog.backToBlog')}</span>
@@ -122,21 +122,21 @@ function BlogPostPage() {
                 />
 
                 <div className="min-w-0 flex-1">
-                  <p className="m-0 truncate text-left font-heading text-h6 font-bold text-heading">
+                  <p className="m-0 truncate text-left font-heading text-body-sm font-bold text-heading">
                     {post.authorName}
                   </p>
 
-                  <p className="m-0 mt-3xs truncate text-left font-body text-body-sm text-neutral-500">
+                    <p className="m-0 mt-3xs truncate text-left font-body text-[14px] text-neutral-500">
                     {post.authorRole}
                   </p>
                 </div>
 
-                <span className="shrink-0 rounded-full bg-[var(--info-50)] px-md py-2xs font-body text-body-sm font-semibold text-[var(--info-500)]">
+                <span className="shrink-0 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
                   {post.topic}
                 </span>
               </div>
 
-              <h1 className="m-0 mt-md text-left font-heading text-[26px] font-bold leading-tight text-heading md:text-[34px]">
+              <h1 className="m-0 mt-md text-left font-heading text-[26px] font-bold leading-tight text-heading md:text-page-title">
                 {post.title}
               </h1>
 
@@ -152,7 +152,7 @@ function BlogPostPage() {
                 {keyedParagraphs.map(({ paragraph, key }) => (
                   <p
                     key={key}
-                    className="m-0 whitespace-pre-line break-words text-left font-body text-[16px] leading-[1.75] text-body-text [&:not(:first-child)]:mt-md"
+                    className="m-0 whitespace-pre-line break-words text-left font-body text-body leading-[1.75] text-body-text [&:not(:first-child)]:mt-md"
                   >
                     {paragraph}
                   </p>
@@ -180,7 +180,7 @@ function BlogPostPage() {
               </div>
             </header>
 
-            <section id="blog-comments" className="scroll-mt-24 rounded-2xl border border-neutral-200 bg-white p-lg">
+            <section id="comments" className="scroll-mt-24 rounded-2xl border border-neutral-200 bg-white p-lg">
               <h2 className="m-0 text-left font-heading text-h5 font-bold text-heading">
                 {t('forum.blog.commentsTitle')}
               </h2>
@@ -197,11 +197,11 @@ function BlogPostPage() {
                     <PostAvatar name={comment.alias} size={32} />
 
                     <div className="min-w-0 flex-1">
-                      <p className="m-0 text-left font-heading text-[14px] font-bold text-heading">
+                      <p className="m-0 text-left font-heading text-body-sm font-bold text-heading">
                         {comment.alias}
                       </p>
 
-                      <p className="m-0 mt-3xs whitespace-pre-line break-words text-left font-body text-[14px] leading-[1.55] text-body-text">
+                      <p className="m-0 mt-3xs whitespace-pre-line break-words text-left font-body text-body-sm leading-[1.55] text-body-text">
                         {comment.content}
                       </p>
                     </div>
@@ -218,7 +218,7 @@ function BlogPostPage() {
                   maxLength={40}
                   aria-label={t('forum.blog.commentNameLabel')}
                   placeholder={t('forum.blog.commentNameLabel')}
-                  className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md text-left font-body text-[15px] text-body-text outline-none focus:border-heading"
+                  className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md text-left font-body text-body-sm text-body-text outline-none focus:border-heading"
                 />
 
                 <textarea
@@ -229,10 +229,10 @@ function BlogPostPage() {
                   rows={4}
                   aria-label={t('forum.blog.commentContentLabel')}
                   placeholder={t('forum.blog.commentContentLabel')}
-                  className="mt-md w-full resize-y rounded-xl border border-neutral-200 bg-white p-md text-left font-body text-[15px] text-body-text outline-none focus:border-heading"
+                  className="mt-md w-full resize-y rounded-xl border border-neutral-200 bg-white p-md text-left font-body text-body-sm text-body-text outline-none focus:border-heading"
                 />
 
-                <p className="m-0 mt-xs text-right font-body text-xs text-body-text">
+                <p className="m-0 mt-xs text-right font-body text-caption text-body-text">
                   {content.length}/{MAX_CONTENT}
                 </p>
 
@@ -244,7 +244,7 @@ function BlogPostPage() {
 
                 <Button
                   onClick={handleSubmit}
-                  className="mt-md h-[47px] rounded-full bg-green-500 font-body text-[17px] font-normal text-white"
+                  className="mt-md h-11 rounded-full bg-orange-500 font-body text-button font-normal text-white"
                 >
                   {t('forum.blog.commentSubmit')}
                 </Button>

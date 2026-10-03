@@ -46,6 +46,9 @@ function DeleteYearModal({ category, onConfirm, onClose }: Readonly<DeleteYearMo
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose()
       }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') onClose()
+      }}
       aria-label={t('admin.gallery.deleteYearTitle')}
       className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
@@ -60,13 +63,13 @@ function DeleteYearModal({ category, onConfirm, onClose }: Readonly<DeleteYearMo
         </button>
 
         <div className="relative mb-lg text-center">
-          <h2 className="m-0 font-heading text-[42px] font-bold leading-none text-heading">
+          <h2 className="m-0 font-heading text-h1 font-bold leading-none text-heading">
             {t('admin.gallery.deleteYearTitle')}
           </h2>
         </div>
 
         <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px]">
-          <p className="mt-2xs text-left font-body text-[16px] text-neutral-500">
+          <p className="mt-2xs text-left font-body text-body text-neutral-500">
             {t('admin.gallery.confirmDeleteYear', { year: category.title })}
           </p>
 
@@ -80,7 +83,7 @@ function DeleteYearModal({ category, onConfirm, onClose }: Readonly<DeleteYearMo
             <input
               id="admin-delete-year-confirm"
               type="text"
-              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-[15px] text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
+              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
               value={confirmText}
               onChange={(e) => {
                 setConfirmText(e.target.value)
@@ -89,7 +92,7 @@ function DeleteYearModal({ category, onConfirm, onClose }: Readonly<DeleteYearMo
               placeholder={t('admin.gallery.deleteYearConfirmPlaceholder')}
             />
             {deleteError && (
-              <p className="mt-2xs text-left font-body text-sm text-danger">{deleteError}</p>
+              <p className="mt-2xs text-left font-body text-body-sm text-danger">{deleteError}</p>
             )}
           </div>
 
@@ -97,7 +100,7 @@ function DeleteYearModal({ category, onConfirm, onClose }: Readonly<DeleteYearMo
             <Button
               variant="secondary"
               onClick={onClose}
-              className="h-[47px] flex-1 rounded-full font-body text-[17px] uppercase tracking-wide"
+              className="h-11 flex-1 rounded-full font-body text-button uppercase tracking-wide"
             >
               {t('admin.cancel')}
             </Button>
@@ -106,7 +109,7 @@ function DeleteYearModal({ category, onConfirm, onClose }: Readonly<DeleteYearMo
               onClick={() => void handleConfirm()}
               loading={deleting}
               disabled={!matchesYear}
-              className="h-[47px] flex-1 rounded-full font-body text-[17px] font-normal uppercase tracking-wide"
+              className="h-11 flex-1 rounded-full font-body text-button font-normal uppercase tracking-wide"
             >
               {deleting ? t('common.loading') : t('admin.delete')}
             </Button>

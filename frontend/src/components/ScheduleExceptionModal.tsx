@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { XIcon } from '@animateicons/react/lucide'
+import { ChevronDownIcon, XIcon } from '@animateicons/react/lucide'
 import type { ScheduleException } from '../types/availability.ts'
 import { DEFAULT_END_TIME, DEFAULT_START_TIME, toApiTime, timeValue } from '../types/availability.ts'
 
@@ -89,6 +89,9 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose()
       }}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') onClose()
+      }}
       aria-labelledby="exception-modal-title"
       className="m-0 mt-auto max-h-[92vh] w-full max-w-none scrollbar-none overflow-y-auto rounded-t-3xl bg-bg-card p-xl backdrop:bg-scrim md:m-auto md:w-[min(560px,92vw)] md:rounded-2xl"
     >
@@ -99,23 +102,23 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
         <h2 id="exception-modal-title" className="m-0 pr-12 font-heading text-2xl font-bold text-heading">
           {exception ? 'Editar día especial' : 'Agregar día especial'}
         </h2>
-        <p className="mt-2 font-body text-sm text-neutral-500">Este día reemplaza tu horario normal.</p>
+        <p className="mt-2 font-body text-body-sm text-neutral-500">Este día reemplaza tu horario normal.</p>
 
         <div className="mt-lg flex flex-col gap-md">
           <div>
-            <label htmlFor="exception-date" className="mb-xs block font-body text-sm font-semibold text-body-text">Fecha</label>
-            <input id="exception-date" type="date" min={todayIso()} value={date} onChange={(event) => { handleDateChange(event.target.value); setFormError(null) }} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-base text-body-text focus:border-green-500 focus:outline-none" />
-            {date && new Date(`${date}T00:00:00`).getDay() % 6 === 0 && <p className="mt-xs text-sm text-danger">Los fines de semana no están disponibles.</p>}
-            {existing && <p className="mt-xs text-sm text-link">Ya existe una excepción para esta fecha; se actualizará.</p>}
+            <label htmlFor="exception-date" className="mb-xs block font-body text-body-sm font-semibold text-body-text">Fecha</label>
+            <input id="exception-date" type="date" min={todayIso()} value={date} onChange={(event) => { handleDateChange(event.target.value); setFormError(null) }} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body text-body-text focus:border-green-500 focus:outline-none" />
+            {date && new Date(`${date}T00:00:00`).getDay() % 6 === 0 && <p className="mt-xs text-body-sm text-danger">Los fines de semana no están disponibles.</p>}
+            {existing && <p className="mt-xs text-body-sm text-link">Ya existe una excepción para esta fecha; se actualizará.</p>}
           </div>
 
           <fieldset className="flex flex-col gap-sm">
-            <legend className="mb-xs font-body text-sm font-semibold text-body-text">¿Cómo será ese día?</legend>
-            <label className="flex min-h-12 cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md font-body text-base text-body-text">
+            <legend className="mb-xs font-body text-body-sm font-semibold text-body-text">¿Cómo será ese día?</legend>
+            <label className="flex min-h-12 cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md font-body text-body text-body-text">
               <input type="radio" name="exception-mode" checked={closed} onChange={() => setClosed(true)} className="size-5 accent-green-500" />
               <span>Cerrado todo el día</span>
             </label>
-            <label className="flex min-h-12 cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md font-body text-base text-body-text">
+            <label className="flex min-h-12 cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md font-body text-body text-body-text">
               <input type="radio" name="exception-mode" checked={!closed} onChange={() => setClosed(false)} className="size-5 accent-green-500" />
               <span>Atiende solo en un horario</span>
             </label>
@@ -123,20 +126,20 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
 
           {!closed && (
             <div className="grid grid-cols-2 gap-md">
-              <label className="font-body text-sm font-semibold text-body-text">Desde<select value={startTime} onChange={(event) => setStartTime(event.target.value)} className="mt-xs h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal text-base focus:border-green-500 focus:outline-none">{hours.slice(0, -1).map((hour) => <option key={hour}>{hour}</option>)}</select></label>
-              <label className="font-body text-sm font-semibold text-body-text">Hasta<select value={endTime} onChange={(event) => setEndTime(event.target.value)} className="mt-xs h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal text-base focus:border-green-500 focus:outline-none">{hours.slice(1).map((hour) => <option key={hour}>{hour}</option>)}</select></label>
+              <label className="font-body text-body-sm font-semibold text-body-text">Desde<div className="relative mt-xs"><select value={startTime} onChange={(event) => setStartTime(event.target.value)} className="h-12 w-full appearance-none rounded-xl border border-neutral-200 bg-white px-md pr-xl font-normal text-body focus:border-green-500 focus:outline-none">{hours.slice(0, -1).map((hour) => <option key={hour}>{hour}</option>)}</select><ChevronDownIcon size={16} className="pointer-events-none absolute right-md top-1/2 -translate-y-1/2 text-neutral-500" aria-hidden="true" /></div></label>
+              <label className="font-body text-body-sm font-semibold text-body-text">Hasta<div className="relative mt-xs"><select value={endTime} onChange={(event) => setEndTime(event.target.value)} className="h-12 w-full appearance-none rounded-xl border border-neutral-200 bg-white px-md pr-xl font-normal text-body focus:border-green-500 focus:outline-none">{hours.slice(1).map((hour) => <option key={hour}>{hour}</option>)}</select><ChevronDownIcon size={16} className="pointer-events-none absolute right-md top-1/2 -translate-y-1/2 text-neutral-500" aria-hidden="true" /></div></label>
             </div>
           )}
 
           <div>
-            <label htmlFor="exception-reason" className="mb-xs block font-body text-sm font-semibold text-body-text">Motivo <span className="font-normal text-neutral-500">(opcional)</span></label>
-            <input id="exception-reason" value={reason} maxLength={1000} onChange={(event) => setReason(event.target.value)} placeholder="Ej. Cita médica o feriado" className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-base focus:border-green-500 focus:outline-none" />
+            <label htmlFor="exception-reason" className="mb-xs block font-body text-body-sm font-semibold text-body-text">Motivo <span className="font-normal text-neutral-500">(opcional)</span></label>
+            <input id="exception-reason" value={reason} maxLength={1000} onChange={(event) => setReason(event.target.value)} placeholder="Ej. Cita médica o feriado" className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body focus:border-green-500 focus:outline-none" />
           </div>
 
-          {formError && <p className="m-0 text-sm text-danger" role="alert">{formError}</p>}
+          {formError && <p className="m-0 text-body-sm text-danger" role="alert">{formError}</p>}
           <div className="flex flex-col-reverse gap-xl sm:flex-row sm:justify-between">
-            <button type="button" onClick={onClose} className="h-12 rounded-full border border-heading px-xl font-body font-semibold text-heading focus-visible:outline-2 focus-visible:outline-link">Cancelar</button>
-            <button type="button" onClick={() => void handleSubmit()} disabled={saving} className="inline-flex h-12 items-center justify-center gap-sm rounded-full bg-green-500 px-xl font-body font-semibold text-white disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-link">
+            <button type="button" onClick={onClose} className="h-11 rounded-full border border-heading px-xl font-body text-button font-semibold text-heading focus-visible:outline-2 focus-visible:outline-link">Cancelar</button>
+            <button type="button" onClick={() => void handleSubmit()} disabled={saving} className="inline-flex h-11 items-center justify-center gap-sm rounded-full bg-green-500 px-xl font-body text-button font-semibold text-white disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-link">
               {saving && <span className="size-4 animate-spin rounded-full border-2 border-white border-r-transparent" aria-hidden="true" />}
               Guardar día especial
             </button>
