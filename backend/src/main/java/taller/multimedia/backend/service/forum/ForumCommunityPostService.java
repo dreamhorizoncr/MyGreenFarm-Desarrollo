@@ -21,6 +21,7 @@ public class ForumCommunityPostService {
     private final ForumCommunityPostRepository communityPostRepository;
     private final ForumPostLikeRepository postLikeRepository;
     private final ForumCommunityCommentRepository commentRepository;
+    private final ForumModerationService moderationService;
 
     @Transactional(readOnly = true)
     public Page<ForumCommunityPostResponse> getAll(Pageable pageable) {
@@ -30,9 +31,13 @@ public class ForumCommunityPostService {
 
     @Transactional
     public ForumCommunityPostResponse create(ForumCommunityPostRequest request) {
+        String name = Sanitizer.requireClean("name", request.getName());
+        String content = Sanitizer.requireCleanPreserveLineBreaks("content", request.getContent());
+        content = moderationService.assertAppropriate(content);
+
         ForumCommunityPost post = new ForumCommunityPost();
-        post.setName(Sanitizer.requireClean("name", request.getName()));
-        post.setContent(Sanitizer.requireCleanPreserveLineBreaks("content", request.getContent()));
+        post.setName(name);
+        post.setContent(content);
         return toResponse(communityPostRepository.save(post));
     }
 

@@ -372,8 +372,13 @@
   --radius-xl: var(--scale-300);
   --radius-2xl: var(--scale-400);
 
-  /*SHADOW*/
-  --shadow: 0 4px 12px rgba(18, 18, 18, 0.08);
+  /* SHADOW — tinte violeta claro en vez de negro/gris, para un look más limpio
+     (afecta a shadow-sm/shadow/shadow-md/shadow-lg/shadow-xl en todo el sistema) */
+  --shadow-sm: 0 2px 8px rgba(139, 92, 246, 0.06);
+  --shadow: 0 3px 10px rgba(139, 92, 246, 0.07);
+  --shadow-md: 0 4px 14px rgba(139, 92, 246, 0.08);
+  --shadow-lg: 0 6px 18px rgba(139, 92, 246, 0.09);
+  --shadow-xl: 0 8px 24px rgba(139, 92, 246, 0.10);
 
   /* BREAKPOINTS — genera la variante xs: (680px, límite móvil/tablet) */
   --breakpoint-xs: 42.5rem;

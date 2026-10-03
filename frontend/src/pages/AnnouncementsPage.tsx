@@ -569,7 +569,7 @@ function AnnouncementsPage() {
           >
             <div className="flex flex-col gap-md">
               <div>
-                <span className="text-caption font-semibold uppercase tracking-wide text-green-700">
+                <span className="inline-flex rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
                   {t(typeLabels[announcement.type])}
                 </span>
 

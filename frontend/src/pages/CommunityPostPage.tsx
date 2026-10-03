@@ -5,9 +5,12 @@ import { useTranslation } from 'react-i18next'
 import Navbar from '../components/Navbar.tsx'
 import PostAvatar from '../components/forum/PostAvatar.tsx'
 import Button from '../components/ui/Button.tsx'
+import ForumPendingReviewModal from '../components/forum/ForumPendingReviewModal.tsx'
 import { forumService } from '../services/forum.ts'
 import type { CommunityComment } from '../types/forum.ts'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
+import { getErrorMessage } from '../utils/error.ts'
+import { notify } from '../utils/notifications.ts'
 
 function CommunityPostPage() {
   const { t } = useTranslation()
@@ -18,9 +21,9 @@ function CommunityPostPage() {
   const [name, setName] = useState('')
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(true)
-  const [sending, setSending] = useState(false)
   const [formOpen, setFormOpen] = useState(false)
   const [error, setError] = useState('')
+  const [pendingReview, setPendingReview] = useState(false)
 
   useEffect(() => {
     if (!id) return
@@ -42,22 +45,30 @@ function CommunityPostPage() {
     }
   }, [loading])
 
-  async function submitComment(event: FormEvent<HTMLFormElement>) {
+  function submitComment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!id || !name.trim() || !content.trim()) return
-    setSending(true)
-    setError('')
-    try {
-      const comment = await forumService.createCommunityComment(id, { alias: name.trim(), content: content.trim() })
-      setComments((current) => [...current, comment])
-      setName('')
-      setContent('')
-      setFormOpen(false)
-    } catch {
-      setError('No se pudo publicar la respuesta')
-    } finally {
-      setSending(false)
-    }
+
+    const payload = { alias: name.trim(), content: content.trim() }
+    // Show the "sent for review" confirmation right away instead of leaving
+    // the form stuck while the moderation check runs; the real outcome
+    // arrives later as a toast (success or rejection reason).
+    setName('')
+    setContent('')
+    setFormOpen(false)
+    setPendingReview(true)
+
+    forumService.createCommunityComment(id, payload)
+      .then((comment) => {
+        setComments((current) => [...current, comment])
+        notify.success({
+          title: t('forum.community.commentToastTitle'),
+          description: t('forum.community.commentToastDescription'),
+        })
+      })
+      .catch((err) => {
+        notify.error(getErrorMessage(err))
+      })
   }
 
   if (loading || (feedLoading && !post)) return <p className="p-lg font-body text-body-sm text-neutral-500">{t('forum.community.commentsLoading')}</p>
@@ -93,14 +104,21 @@ function CommunityPostPage() {
         <button type="button" onClick={() => setFormOpen((open) => !open)} aria-expanded={formOpen} className="w-full rounded-full bg-green-500 px-lg py-sm font-body text-body-sm font-semibold text-white">
           {formOpen ? t('forum.community.cancel') : t('forum.community.addComment')}
         </button>
-        {formOpen && <form onSubmit={(event) => void submitComment(event)} className="mt-md flex w-full flex-col gap-md rounded-2xl border border-neutral-200 bg-white p-lg">
+        {formOpen && <form onSubmit={submitComment} className="mt-md flex w-full flex-col gap-md rounded-2xl border border-neutral-200 bg-white p-lg">
           <input value={name} onChange={(event) => setName(event.target.value)} maxLength={40} required aria-label={t('forum.community.commentNameLabel')} placeholder={t('forum.community.commentNameLabel')} className="h-11 w-full rounded-xl border border-neutral-300 bg-white px-md font-body text-[15px] text-body-text outline-none focus:border-heading" />
           <textarea value={content} onChange={(event) => setContent(event.target.value)} maxLength={4000} rows={5} required aria-label={t('forum.community.commentContentLabel')} placeholder={t('forum.community.commentContentLabel')} className="min-h-[130px] w-full resize-y rounded-xl border border-neutral-300 bg-white p-md font-body text-[15px] text-body-text outline-none focus:border-heading" />
-          {error && <p role="alert" className="m-0 font-body text-body-sm text-danger">{error}</p>}
-          <Button type="submit" disabled={sending} className="h-[47px] rounded-full bg-green-500 font-body text-[17px] font-normal text-white hover:opacity-100 disabled:opacity-50">{t('forum.community.commentSubmit')}</Button>
+          <Button type="submit" className="h-11 rounded-full bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600">{t('forum.community.commentSubmit')}</Button>
         </form>}
       </div>
     </main>
+
+    {pendingReview && (
+      <ForumPendingReviewModal
+        title={t('forum.community.commentPendingTitle')}
+        description={t('forum.community.commentPendingDescription')}
+        onClose={() => setPendingReview(false)}
+      />
+    )}
   </div>
 }
 

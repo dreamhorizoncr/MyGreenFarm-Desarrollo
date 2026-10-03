@@ -23,6 +23,7 @@ public class ForumMapper {
                 .content(article.getContent())
                 .imageUrl(article.getImageUrl())
                 .imageAlt(article.getImageAlt())
+                .aiSummary(article.getAiSummary())
                 .createdAt(article.getCreatedAt())
                 .updatedAt(article.getUpdatedAt())
                 .reactionCount((int) reactionCount)

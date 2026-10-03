@@ -37,7 +37,7 @@ function MultimediaSection() {
 
             <Link
               to="/multimedia"
-              className="whitespace-nowrap font-link text-body-sm uppercase tracking-wide text-white hover:opacity-80"
+              className="whitespace-nowrap font-link text-body-sm uppercase tracking-wide text-white underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
             >
               {t('home.multimedia.viewMore')}
             </Link>

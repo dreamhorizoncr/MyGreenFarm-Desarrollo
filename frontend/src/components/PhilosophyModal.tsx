@@ -94,7 +94,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
             <h2 className="m-0 font-heading text-[30px] font-bold leading-tight text-heading">
               {t('home.philosophy.title')}
             </h2>
-            <div className="mx-auto mt-xs h-1 w-12 rounded-full bg-orange-500" aria-hidden="true" />
+            <div className="mx-auto mt-xs h-1 w-12 rounded-full bg-[var(--pink-400)]" aria-hidden="true" />
           </div>
 
           <div className="flex flex-col gap-lg px-2 pb-4 pt-2.5 text-left md:px-5">
@@ -111,9 +111,9 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
 
             <div className="mt-sm flex justify-center">
               <Button
-                variant="success"
+                variant="primary"
                 onClick={handleCtaClick}
-                className="h-11 w-full rounded-full bg-green-500 font-body text-button font-normal uppercase tracking-wide text-white md:w-auto md:px-2xl"
+                className="h-11 w-full rounded-full bg-orange-500 font-body text-button font-normal uppercase tracking-wide text-white hover:bg-orange-600 md:w-auto md:px-lg"
               >
                 {t('home.philosophy.modalCta')}
               </Button>

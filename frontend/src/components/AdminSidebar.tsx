@@ -269,6 +269,21 @@ function AdminSidebar() {
           );
         })}
       </nav>
+
+      <button
+        type="button"
+        className={`${itemClasses} mt-xl text-danger md:mt-auto`}
+        onClick={handleLogout}
+      >
+        <span
+          className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-danger"
+          aria-hidden="true"
+        >
+          <LogOutIcon size={18} />
+        </span>
+
+        <span>{t('profile.logout')}</span>
+      </button>
     </aside>
   );
 }

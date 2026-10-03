@@ -33,7 +33,7 @@ function PhilosophySection() {
                 {t('home.philosophy.title')}
               </h2>
 
-              <div className="h-1 w-12 rounded-full bg-orange-500" aria-hidden="true" />
+              <div className="h-1 w-12 rounded-full bg-[var(--pink-400)]" aria-hidden="true" />
 
               <p className="line-clamp-4 font-body text-body-sm font-normal text-body-text">
                 {t('home.philosophy.description')}
@@ -44,7 +44,7 @@ function PhilosophySection() {
                   <li key={item} className="flex items-start gap-sm">
                     <StarIcon
                       size={16}
-                      className="mt-1 shrink-0 text-orange-500 [&_svg]:fill-current"
+                      className="mt-1 shrink-0 text-[var(--pink-400)] [&_svg]:fill-current"
                       aria-hidden="true"
                     />
                     <span className="font-body text-body-sm font-normal text-body-text">
