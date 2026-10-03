@@ -1,4 +1,4 @@
-package taller.multimedia.backend.dto.children;
+package taller.multimedia.backend.dto.child;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -17,7 +17,7 @@ import taller.multimedia.backend.model.children.Relationship;
 @AllArgsConstructor 
 @Builder 
 @Data 
-public class ChildrenRequest {
+public class ChildRequest {
 
     @NotNull (message = "El ID del padre/tutor es obligatorio")
     private Long parentId;

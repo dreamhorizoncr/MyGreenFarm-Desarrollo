@@ -1,13 +1,13 @@
-package taller.multimedia.backend.service.children;
+package taller.multimedia.backend.service.child;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import taller.multimedia.backend.dto.children.ChildrenRequest;
-import taller.multimedia.backend.dto.children.ChildrenResponse;
-import taller.multimedia.backend.model.children.Children;
+import taller.multimedia.backend.dto.child.ChildRequest;
+import taller.multimedia.backend.dto.child.ChildResponse;
+import taller.multimedia.backend.model.children.Child;
 import taller.multimedia.backend.model.club.Club;
 import taller.multimedia.backend.model.parent.Parent;
-import taller.multimedia.backend.repository.children.ChildrenRepository;
+import taller.multimedia.backend.repository.child.ChildRepository;
 import taller.multimedia.backend.repository.club.ClubRepository;
 import taller.multimedia.backend.repository.parent.ParentRepository;
 import taller.multimedia.backend.util.Sanitizer;
@@ -23,14 +23,15 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ChildrenService {
+public class ChildService {
 
-    private final ChildrenRepository childrenRepository;
+    private final ChildRepository childRepository;
     private final ParentRepository parentRepository;
     private final ClubRepository clubRepository;
+    private final StudentIdGeneratorService studentIdGeneratorService;
 
     @Transactional
-    public ChildrenResponse create(ChildrenRequest dto) {
+    public ChildResponse create(ChildRequest dto) {
         Parent parent = parentRepository.findById(dto.getParentId().intValue())
                 .orElseThrow(() -> new EntityNotFoundException("Padre/Tutor no encontrado con ID: " + dto.getParentId()));
 
@@ -38,12 +39,15 @@ public class ChildrenService {
         String lastName = Sanitizer.requireClean("lastName", dto.getLastName());
         String medicalNotes = dto.getMedicalNotes() == null ? null : Sanitizer.requireCleanPreserveLineBreaks("medicalNotes", dto.getMedicalNotes());
 
+        String studentId = studentIdGeneratorService.generateNextStudentId();
+
         Set<Club> clubs = new HashSet<>();
         if (dto.getClubIds() != null && !dto.getClubIds().isEmpty()) {
             clubs = new HashSet<>(clubRepository.findAllById(dto.getClubIds()));
         }
 
-        Children child = Children.builder()
+        Child child = Child.builder()
+                .studentId(studentId)
                 .parent(parent)
                 .relationship(dto.getRelationship())
                 .firstName(firstName)
@@ -53,30 +57,30 @@ public class ChildrenService {
                 .clubs(clubs)
                 .build();
 
-        Children saved = childrenRepository.save(child);
+        Child saved = childRepository.save(child);
         return mapToResponse(saved);
     }
 
     @Transactional(readOnly = true)
-    public Page<ChildrenResponse> getAll(Pageable pageable) {
-        return childrenRepository.findAll(pageable).map(this::mapToResponse);
+    public Page<ChildResponse> getAll(Pageable pageable) {
+        return childRepository.findAll(pageable).map(this::mapToResponse);
     }
 
     @Transactional(readOnly = true)
-    public Page<ChildrenResponse> getByParentId(Long parentId, Pageable pageable) {
-        return childrenRepository.findByParentId(parentId, pageable).map(this::mapToResponse);
+    public Page<ChildResponse> getByParentId(Long parentId, Pageable pageable) {
+        return childRepository.findByParentId(parentId, pageable).map(this::mapToResponse);
     }
 
     @Transactional(readOnly = true)
-    public ChildrenResponse getById(Long id) {
-        Children child = childrenRepository.findById(id)
+    public ChildResponse getById(Long id) {
+        Child child = childRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Registro de niño no encontrado con ID: " + id));
         return mapToResponse(child);
     }
 
     @Transactional
-    public ChildrenResponse update(Long id, ChildrenRequest dto) {
-        Children child = childrenRepository.findById(id)
+    public ChildResponse update(Long id, ChildRequest dto) {
+        Child child = childRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Registro de niño no encontrado con ID: " + id));
 
         Parent parent = parentRepository.findById(dto.getParentId().intValue())
@@ -99,18 +103,18 @@ public class ChildrenService {
         child.setMedicalNotes(medicalNotes);
         child.setClubs(clubs);
 
-        Children updated = childrenRepository.save(child);
+        Child updated = childRepository.save(child);
         return mapToResponse(updated);
     }
 
     @Transactional
     public void delete(Long id) {
-        Children child = childrenRepository.findById(id)
+        Child child = childRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Registro de niño no encontrado con ID: " + id));
-        childrenRepository.delete(child);
+        childRepository.delete(child);
     }
 
-    private ChildrenResponse mapToResponse(Children child) {
+    private ChildResponse mapToResponse(Child child) {
         Set<String> clubNames = child.getClubs().stream()
                 .map(Club::getName)
                 .collect(Collectors.toSet());
@@ -119,7 +123,7 @@ public class ChildrenService {
                 ? child.getParent().getFirstName() + " " + child.getParent().getLastName()
                 : null;
 
-        ChildrenResponse response = new ChildrenResponse();
+        ChildResponse response = new ChildResponse();
         response.setId(child.getId());
         response.setParentId(child.getParent() != null ? child.getParent().getId() : null);
         response.setParentName(parentFullName);

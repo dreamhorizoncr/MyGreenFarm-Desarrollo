@@ -12,6 +12,7 @@ import java.util.UUID;
 public class ExpedientResponse {
     private UUID id;
     private String childName;
+    private String studentId;
     private LocalDate admisionDate;
     private EducationalLevel educationalLevel;
     private String generalObservations;

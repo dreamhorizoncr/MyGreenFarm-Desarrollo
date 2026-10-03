@@ -34,7 +34,7 @@ import taller.multimedia.backend.model.parent.Parent;
 @NoArgsConstructor 
 @AllArgsConstructor
 @Builder 
-public class Children {
+public class Child {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -44,6 +44,9 @@ public class Children {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Parent parent;
+
+    @Column(name = "student_id", nullable = false, unique = true, length = 10)
+    private String studentId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "relationship", nullable = false, length = 30)

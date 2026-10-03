@@ -3,7 +3,6 @@ package taller.multimedia.backend.model.onvo;
 import jakarta.persistence.*;
 import lombok.*;
 import taller.multimedia.backend.model.parent.Parent;
-import taller.multimedia.backend.model.children.Children;
 import taller.multimedia.backend.model.service_plans.ServicePlan;
 
 import java.math.BigDecimal;
