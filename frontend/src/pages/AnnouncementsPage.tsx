@@ -601,7 +601,7 @@ function AnnouncementsPage() {
                   type="button"
                   onClick={() => void openEdit(announcement)}
                   aria-label={t("adminNews.editButton")}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition"
                 >
                   <PencilIcon size={17} />
                 </button>
@@ -610,7 +610,7 @@ function AnnouncementsPage() {
                   type="button"
                   onClick={() => handleDelete(announcement)}
                   aria-label={t("adminNews.deleteButton")}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition"
                 >
                   <Trash2Icon size={17} />
                 </button>
