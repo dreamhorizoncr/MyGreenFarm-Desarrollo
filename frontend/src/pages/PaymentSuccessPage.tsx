@@ -2,10 +2,17 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { CircleCheck } from '@animateicons/react/lucide'
 import Navbar from '../components/Navbar.tsx'
+import { useEffect } from 'react'
 
 function PaymentSuccessPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const channel = new BroadcastChannel('payment_channel')
+    channel.postMessage('PAYMENT_SUCCESS')
+    channel.close()
+  }, [])
 
   return (
     <div className="min-h-screen bg-bg-page">

@@ -48,9 +48,9 @@ export const servicePlanService = {
     await apiClient.delete(`/service-plans/${id}`)
   },
 
-  async checkoutPlan(planId: string): Promise<string> {
-    const response = await apiClient.post<{ url: string }>(`/service-plans/${planId}/checkout`)
-    return response.data.url
+  async checkoutPlan(planId: string): Promise<{ url: string; gatewaySessionId: string }> {
+    const response = await apiClient.post<{ url: string; gatewaySessionId: string }>(`/service-plans/${planId}/checkout`)
+    return response.data
   },
   async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {
           const response = await apiClient.post<Record<string, string>>('/translations/batch', {
@@ -60,4 +60,9 @@ export const servicePlanService = {
           })
           return response.data
       },
+
+  async checkPaymentStatus(gatewaySessionId: string): Promise<{ isPaid: boolean; isFailed: boolean; status: string }> {
+    const response = await apiClient.get(`/service-plans/status/${gatewaySessionId}`);
+    return response.data;
+  }
 }

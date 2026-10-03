@@ -12,4 +12,7 @@ public interface PaymentRecordRepository extends JpaRepository<PaymentRecord, UU
     
     // Permite al Webhook encontrar la compra usando el ID de la sesión que devuelve Onvo
     Optional<PaymentRecord> findByGatewaySessionId(String gatewaySessionId);
+
+    Optional<PaymentRecord> findTopByGatewayPriceIdOrderByCreatedAtDesc(String gatewayPriceId);
 }
+

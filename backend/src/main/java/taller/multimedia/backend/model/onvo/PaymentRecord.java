@@ -24,14 +24,6 @@ public class PaymentRecord {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id", nullable = false)
-    private Parent parent;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "child_id", nullable = false)
-    private Children children;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_plan_id", nullable = false)
     private ServicePlan servicePlan;
 
@@ -47,6 +39,9 @@ public class PaymentRecord {
 
     @Column(name = "gateway_session_id")
     private String gatewaySessionId;
+
+    @Column(name = "gateway_price_id")
+    private String gatewayPriceId;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

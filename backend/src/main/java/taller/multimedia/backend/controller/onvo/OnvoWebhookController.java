@@ -1,6 +1,5 @@
 package taller.multimedia.backend.controller.onvo;
 
-import java.math.BigDecimal;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -12,20 +11,18 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.model.onvo.PaymentRecord;
 import taller.multimedia.backend.model.onvo.PaymentStatus;
-import taller.multimedia.backend.model.service_plans.ServicePlan;
 import taller.multimedia.backend.repository.onvo.PaymentRecordRepository;
-import taller.multimedia.backend.repository.service_plan.ServicePlanRepository;
 
-@RestController 
-@RequestMapping ("/api/webhooks")
+@RestController
+@RequestMapping("/api/webhooks")
 @RequiredArgsConstructor
 public class OnvoWebhookController {
 
-    private ServicePlanRepository servicePlanRepository;
     private final PaymentRecordRepository paymentRecordRepository;
 
     @PostMapping("/onvo")
     public ResponseEntity<String> handleOnvoWebhook(@RequestBody Map<String, Object> payload) {
+        System.out.println("¡Webhook recibido con éxito!");
         String eventType = (String) payload.get("type");
         Map<String, Object> data = (Map<String, Object>) payload.get("data");
 
@@ -33,45 +30,47 @@ public class OnvoWebhookController {
             return ResponseEntity.ok("Received");
         }
 
-        // 1. Si el pago web fue exitoso
-        if ("checkout.session.completed".equals(eventType) || "payment.successful".equals(eventType)) {
-            String gatewaySessionId = (String) data.get("id");
-            System.out.println("Pago recibido por pasarela para la sesión: " + gatewaySessionId);
+        System.out.println("Estoy en el onvo ");
 
-            // Buscamos el registro que se creó previamente en estado PENDING con este ID de sesión
-            PaymentRecord paymentRecord = paymentRecordRepository.findByGatewaySessionId(gatewaySessionId).orElse(null);
+        boolean paymentSucceeded = "checkout-session.succeeded".equals(eventType)
+                || "checkout.session.completed".equals(eventType)
+                || "payment.successful".equals(eventType);
+        boolean paymentFailed = "checkout-session.failed".equals(eventType)
+                || "checkout-session.expired".equals(eventType)
+                || "payment-intent.failed".equals(eventType);
 
-            if (paymentRecord != null) {
-                paymentRecord.setStatus(PaymentStatus.PAID);
-                paymentRecord.setPaidAmount(paymentRecord.getTotalAmount()); // Pago completado al 100%
-                paymentRecordRepository.save(paymentRecord);
-                
-                System.out.println("¡Estado de pago actualizado a PAID para el registro ID: " + paymentRecord.getId() + "!");
-                // Opcional: Aquí puedes disparar el envío de correo con Resend notificando la compra
-            } else {
-                System.out.println("Aviso: No se encontró ningún PaymentRecord asociado al gateway_session_id: " + gatewaySessionId);
+        if (paymentSucceeded || paymentFailed) {
+            Object metadataValue = data.get("metadata");
+            String gatewaySessionId = null;
+
+            if (metadataValue instanceof Map<?, ?> metadata) {
+                Object sessionIdValue = metadata.get("gatewaySessionId");
+                gatewaySessionId = sessionIdValue == null ? null : sessionIdValue.toString();
             }
-        }
 
-        // 2. Si se editó el precio/producto directamente en el panel de OnvoPay
-        if ("price.updated".equals(eventType) || "product.updated".equals(eventType)) {
-            String gatewayPriceId = (String) data.get("id");
-            
-            ServicePlan plan = servicePlanRepository.findByGatewayPriceId(gatewayPriceId).orElse(null);
-            
-            if (plan != null) {
-                if (data.get("name") != null) {
-                    plan.setName((String) data.get("name"));
+            if (gatewaySessionId == null) {
+                gatewaySessionId = (String) data.get("id");
+            }
+
+            System.out.println("UUID/Session intentando buscar en la BD: " + gatewaySessionId);
+
+            if (gatewaySessionId != null) {
+                PaymentRecord paymentRecord = paymentRecordRepository.findByGatewaySessionId(gatewaySessionId)
+                        .orElse(null);
+
+                if (paymentRecord != null) {
+                    if (paymentSucceeded) {
+                        paymentRecord.setStatus(PaymentStatus.PAID);
+                        paymentRecord.setPaidAmount(paymentRecord.getTotalAmount());
+                    } else {
+                        paymentRecord.setStatus(PaymentStatus.FAILED);
+                    }
+                    paymentRecordRepository.save(paymentRecord);
+                    System.out.println("¡Estado de pago actualizado correctamente para el registro!");
+                } else {
+                    System.err
+                            .println("Aviso: No se encontró ningún PaymentRecord asociado al ID: " + gatewaySessionId);
                 }
-                if (data.get("description") != null) {
-                    plan.setDescription((String) data.get("description"));
-                }
-                if (data.get("amount") != null) {
-                    plan.setPrice(new BigDecimal(data.get("amount").toString()));
-                }
-                
-                servicePlanRepository.save(plan);
-                System.out.println("Plan sincronizado automáticamente por webhook: " + gatewayPriceId);
             }
         }
 
