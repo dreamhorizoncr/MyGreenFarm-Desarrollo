@@ -9,5 +9,7 @@ import java.util.UUID;
 
 @Repository
 public interface ExpedientRepository extends JpaRepository<Expedient, UUID> {
+
+    boolean existsByChildId(Long childId);
     boolean existsByChildName(String childName);
 }

@@ -2,9 +2,10 @@ package taller.multimedia.backend.service.child;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import taller.multimedia.backend.dto.child.ChildOptionResponse;
 import taller.multimedia.backend.dto.child.ChildRequest;
 import taller.multimedia.backend.dto.child.ChildResponse;
-import taller.multimedia.backend.model.children.Child;
+import taller.multimedia.backend.model.child.Child;
 import taller.multimedia.backend.model.club.Club;
 import taller.multimedia.backend.model.parent.Parent;
 import taller.multimedia.backend.repository.child.ChildRepository;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -112,6 +114,18 @@ public class ChildService {
         Child child = childRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Registro de niño no encontrado con ID: " + id));
         childRepository.delete(child);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChildOptionResponse> getChildrenOptions() {
+        return childRepository.findAll()
+                .stream()
+                .map(child -> new ChildOptionResponse(
+                        child.getId(),
+                        child.getStudentId(),
+                        child.getStudentId() + " - " + child.getFirstName() + " " + child.getLastName()
+                ))
+                .toList();
     }
 
     private ChildResponse mapToResponse(Child child) {

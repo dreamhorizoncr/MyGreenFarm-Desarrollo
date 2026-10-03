@@ -3,7 +3,9 @@ package taller.multimedia.backend.service.expedient;
 import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.expedient.ExpedientRequest;
 import taller.multimedia.backend.dto.expedient.ExpedientResponse;
+import taller.multimedia.backend.model.child.Child;
 import taller.multimedia.backend.model.expedient.Expedient;
+import taller.multimedia.backend.repository.child.ChildRepository;
 import taller.multimedia.backend.repository.expedient.ExpedientRepository;
 import taller.multimedia.backend.service.StorageService;
 import taller.multimedia.backend.util.Sanitizer;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +26,7 @@ import java.util.stream.Collectors;
 public class ExpedientService {
 
     private final ExpedientRepository expedientRepository;
+    private final ChildRepository childRepository;
 
     private final StorageService storageService;
 
@@ -30,22 +35,23 @@ public class ExpedientService {
 
     @Transactional
     public ExpedientResponse createExpedient(ExpedientRequest request, MultipartFile file) {
-        String childName = Sanitizer.requireClean("childName", request.getChildName());
+        Child child = childRepository.findById(request.getChildId())
+                .orElseThrow(() -> new EntityNotFoundException("Niño no encontrado con ID: " + request.getChildId()));
+
+        if (expedientRepository.existsByChildId(child.getId())) {
+            throw new IllegalStateException("Ya existe un expediente registrado para el niño: " + child.getFirstName() + " " + child.getLastName());
+        }
+
         String generalObservations = request.getGeneralObservations() == null
                 ? null
                 : Sanitizer.requireClean("generalObservations", request.getGeneralObservations());
 
-        if (expedientRepository.existsByChildName(childName)) {
-            throw new RuntimeException("Ya existe un expediente registrado para: " + childName);
-        }
-
         Expedient expedient = new Expedient();
-        expedient.setChildName(childName);
+        expedient.setChild(child);
         expedient.setAdmisionDate(request.getAdmisionDate());
         expedient.setEducationalLevel(request.getEducationalLevel());
         expedient.setGeneralObservations(generalObservations);
 
-        // Si se envió un archivo, lo procesamos
         if (file != null && !file.isEmpty()) {
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
@@ -106,29 +112,31 @@ public class ExpedientService {
     public ExpedientResponse uploadOrUpdatePhoto(UUID expedientId, ExpedientRequest request, MultipartFile file) {
         Expedient existing = findEntityById(expedientId);
 
-        String childName = Sanitizer.requireClean("childName", request.getChildName());
+        // Si el request incluye cambio de niño, lo actualizamos y verificamos duplicados
+        if (!existing.getChild().getId().equals(request.getChildId())) {
+            Child newChild = childRepository.findById(request.getChildId())
+                    .orElseThrow(() -> new EntityNotFoundException("Niño no encontrado con ID: " + request.getChildId()));
+
+            if (expedientRepository.existsByChildId(newChild.getId())) {
+                throw new IllegalStateException("Ya existe otro expediente registrado para el niño especificado.");
+            }
+            existing.setChild(newChild);
+        }
+
         String generalObservations = request.getGeneralObservations() == null
                 ? null
                 : Sanitizer.requireClean("generalObservations", request.getGeneralObservations());
 
-        if (!existing.getChildName().equals(childName) &&
-                expedientRepository.existsByChildName(childName)) {
-            throw new RuntimeException("Ya existe otro expediente registrado con el nombre: " + childName);
-        }
-
-        existing.setChildName(childName);
         existing.setAdmisionDate(request.getAdmisionDate());
         existing.setEducationalLevel(request.getEducationalLevel());
         existing.setGeneralObservations(generalObservations);
 
-        // Si mandaron un nuevo archivo, reemplazamos el anterior
         if (file != null && !file.isEmpty()) {
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
                 throw new IllegalArgumentException("Formato no permitido. Solo se aceptan PNG, JPG, JPEG, SVG.");
             }
 
-            // Borrar foto anterior si existía
             if (existing.getPhotoUrl() != null && !existing.getPhotoUrl().isEmpty()) {
                 String oldPath = extractPathFromUrl(existing.getPhotoUrl(), expedientsBucket);
                 if (oldPath != null) {
@@ -190,9 +198,13 @@ public class ExpedientService {
             }
         }
 
+        Child child = expedient.getChild();
+
         return ExpedientResponse.builder()
                 .id(expedient.getId())
-                .childName(expedient.getChildName())
+                .childId(child.getId())
+                .studentId(child.getStudentId())
+                .childName(child.getFirstName() + " " + child.getLastName())
                 .admisionDate(expedient.getAdmisionDate())
                 .educationalLevel(expedient.getEducationalLevel())
                 .generalObservations(expedient.getGeneralObservations())

@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import taller.multimedia.backend.model.children.Relationship;
+import taller.multimedia.backend.model.child.Relationship;
 
 @NoArgsConstructor 
 @AllArgsConstructor 

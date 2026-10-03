@@ -1,4 +1,4 @@
-package taller.multimedia.backend.model.children;
+package taller.multimedia.backend.model.child;
 
 import java.time.LocalDate;
 import java.util.HashSet;

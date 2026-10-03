@@ -2,6 +2,9 @@ package taller.multimedia.backend.controller.child;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -10,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import taller.multimedia.backend.dto.child.ChildOptionResponse;
 import taller.multimedia.backend.dto.child.ChildRequest;
 import taller.multimedia.backend.dto.child.ChildResponse;
 import taller.multimedia.backend.service.child.ChildService;
@@ -62,5 +66,10 @@ public class ChildController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         childService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/options")
+    public ResponseEntity<List<ChildOptionResponse>> getChildrenOptions() {
+        return ResponseEntity.ok(childService.getChildrenOptions());
     }
 }

@@ -11,9 +11,8 @@ import java.time.LocalDate;
 @Data
 public class ExpedientRequest {
 
-    @NotBlank(message = "El nombre del niño o niña es obligatorio")
-    @Size(min = 2, max = 150, message = "El nombre debe tener entre 2 y 150 caracteres")
-    private String childName;
+    @NotNull(message = "El ID del niño es obligatorio")
+    private Long childId;
 
     @NotNull(message = "La fecha de admisión es obligatoria")
     private LocalDate admisionDate;

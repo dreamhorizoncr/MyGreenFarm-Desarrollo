@@ -1,4 +1,4 @@
-package taller.multimedia.backend.model.children;
+package taller.multimedia.backend.model.child;
 
 public enum Relationship {
     FATHER,
