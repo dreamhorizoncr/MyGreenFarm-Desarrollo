@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.forum.ForumCommunityPostRequest;
 import taller.multimedia.backend.dto.forum.ForumCommunityPostResponse;
 import taller.multimedia.backend.service.forum.ForumCommunityPostService;
+import taller.multimedia.backend.service.forum.ForumModerationService;
 
 @Validated
 @RestController
@@ -38,6 +39,7 @@ public class ForumCommunityPostController {
     private final ForumCommunityPostService communityPostService;
     private final ForumCommunityPostRepository postRepository;
     private final ForumCommunityCommentRepository commentRepository;
+    private final ForumModerationService moderationService;
 
     @GetMapping
     @PreAuthorize("permitAll()")
@@ -74,10 +76,14 @@ public class ForumCommunityPostController {
             @Valid @RequestBody ForumCommunityCommentRequest request) {
         var post = postRepository.findById(postId).orElse(null);
         if (post == null) return ResponseEntity.notFound().build();
+        String alias = Sanitizer.requireClean("alias", request.getAlias());
+        String content = Sanitizer.requireCleanPreserveLineBreaks("content", request.getContent());
+        content = moderationService.assertAppropriate(content);
+
         var comment = new ForumCommunityComment();
         comment.setCommunityPost(post);
-        comment.setAlias(Sanitizer.requireClean("alias", request.getAlias()));
-        comment.setContent(Sanitizer.requireCleanPreserveLineBreaks("content", request.getContent()));
+        comment.setAlias(alias);
+        comment.setContent(content);
         var saved = commentRepository.save(comment);
         return ResponseEntity.status(HttpStatus.CREATED).body(ForumCommunityCommentResponse.builder().id(saved.getId())
                 .communityPostId(postId).alias(saved.getAlias()).content(saved.getContent()).createdAt(saved.getCreatedAt()).build());

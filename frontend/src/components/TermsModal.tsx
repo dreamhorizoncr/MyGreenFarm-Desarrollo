@@ -41,8 +41,8 @@ function TermsModal({ onClose }: Readonly<TermsModalProps>) {
   ]
 
   const tabClassName = (tab: LegalTab) =>
-    `inline-flex flex-1 items-center justify-center gap-xs rounded-full px-md py-sm font-body text-body-sm font-semibold transition-colors ${
-      activeTab === tab ? 'bg-green-500 text-white' : 'bg-(--grey-100) text-body-text hover:bg-(--grey-200)'
+    `inline-flex h-11 flex-1 items-center justify-center gap-xs rounded-full px-lg font-body text-body-sm font-semibold transition-colors ${
+      activeTab === tab ? 'bg-orange-500 text-white' : 'bg-(--grey-100) text-body-text hover:bg-(--grey-200)'
     }`
 
   return (

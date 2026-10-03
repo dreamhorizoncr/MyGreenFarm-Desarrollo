@@ -30,6 +30,7 @@ public class ForumCommentService {
     private final ForumArticleRepository articleRepository;
     private final UserRepository userRepository;
     private final ForumMapper forumMapper;
+    private final ForumModerationService moderationService;
 
     @Transactional(readOnly = true)
     public Page<ForumCommentResponse> getByArticle(UUID articleId, Pageable pageable) {
@@ -42,10 +43,14 @@ public class ForumCommentService {
     public ForumCommentResponse create(UUID articleId, ForumCommentRequest request) {
         ForumArticle article = findArticle(articleId);
 
+        String alias = Sanitizer.requireClean("alias", request.getAlias());
+        String content = Sanitizer.requireCleanPreserveLineBreaks("content", request.getContent());
+        content = moderationService.assertCommentRelevant(article.getTopic(), article.getTitle(), content);
+
         ForumComment comment = new ForumComment();
         comment.setArticle(article);
-        comment.setAlias(Sanitizer.requireClean("alias", request.getAlias()));
-        comment.setContent(Sanitizer.requireCleanPreserveLineBreaks("content", request.getContent()));
+        comment.setAlias(alias);
+        comment.setContent(content);
 
         return forumMapper.toCommentResponse(commentRepository.save(comment));
     }

@@ -190,14 +190,14 @@ function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Readonl
               )}
 
               <div className="mt-sm flex gap-md">
-                <Button variant="secondary" onClick={onClose} className="h-11 flex-1 border-green-500 font-body text-button text-heading hover:bg-green-50">
+                <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-full border-green-500 font-body text-button text-heading hover:bg-green-50">
                   {t('admin.cancel')}
                 </Button>
                 <Button
                   variant="primary"
                   onClick={() => setStep(1)}
                   disabled={!date || !selectedSlot}
-                  className="h-11 flex-1 bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600"
+                  className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600"
                 >
                   {t('teacherAppointments.continue')}
                 </Button>
@@ -216,14 +216,14 @@ function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Readonl
               )}
 
               <div className="mt-sm flex gap-md">
-                <Button variant="secondary" onClick={() => setStep(0)} className="h-11 flex-1 border-green-500 font-body text-button text-heading hover:bg-green-50">
+                <Button variant="secondary" onClick={() => setStep(0)} className="h-11 flex-1 rounded-full border-green-500 font-body text-button text-heading hover:bg-green-50">
                   {t('teacherAppointments.back')}
                 </Button>
                 <Button
                   variant="primary"
                   onClick={handleConfirm}
                   loading={saving}
-                  className="h-11 flex-1 bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600"
+                  className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600"
                 >
                   {saving ? t('common.loading') : t('teacherAppointments.rescheduleAction')}
                 </Button>

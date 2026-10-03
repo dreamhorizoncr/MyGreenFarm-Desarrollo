@@ -14,20 +14,23 @@ function WizardSteps({ steps, current }: Readonly<WizardStepsProps>) {
         const active = index === current
         const stepClassName = completed || active
           ? 'bg-green-500 text-white'
-          : 'bg-[var(--grey-100)] text-body-text'
+          : 'border border-green-500 bg-white text-green-600'
 
         return (
           <Fragment key={label}>
             {index > 0 && (
-              <span
-                className={`mt-4 h-px flex-1 ${index <= current ? 'bg-green-500' : 'bg-neutral-300'}`}
-                aria-hidden="true"
-              />
+              <span className="mt-4 h-0.5 flex-1 overflow-hidden bg-[var(--grey-100)]" aria-hidden="true">
+                <span
+                  className={`block h-full origin-left bg-green-500 transition-transform duration-500 ease-out ${
+                    index <= current ? 'scale-x-100' : 'scale-x-0'
+                  }`}
+                />
+              </span>
             )}
 
             <li className="flex shrink-0 flex-col items-center gap-1">
               <span
-                className={`flex size-8 items-center justify-center rounded-full font-body text-body-sm font-semibold ${stepClassName}`}
+                className={`flex size-8 items-center justify-center rounded-full font-body text-body-sm font-semibold transition-colors ${stepClassName}`}
                 aria-current={active ? 'step' : undefined}
               >
                 {completed ? <CheckIcon size={16} /> : index + 1}
