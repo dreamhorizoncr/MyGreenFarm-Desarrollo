@@ -22,7 +22,7 @@ function Footer() {
   const [isLegalModalOpen, setIsLegalModalOpen] = useState(false)
 
   return (
-    <footer className="w-full text-white">
+    <footer data-scroll-bg="green" className="w-full text-white">
       <img
         src={nubeFooter}
         alt=""
