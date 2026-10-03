@@ -129,7 +129,7 @@ function AdminNewsletterPage() {
                             onClick={() => setIsSendMenuOpen((prev) => !prev)}
                             aria-expanded={isSendMenuOpen}
                             aria-haspopup="menu"
-                            className="inline-flex h-[44px] items-center gap-xs whitespace-nowrap rounded-full border border-orange-500 px-md font-body text-[15px] font-semibold text-orange-500 transition-colors hover:bg-orange-500 hover:text-white"
+                            className="inline-flex h-[44px] items-center gap-xs whitespace-nowrap rounded-full border bg-orange-500 hover:bg-orange-600 px-md font-body text-[15px] font-semibold text-white transition-colors"
                         >
                             <SendIcon size={18} aria-hidden="true" />
                             <span>{t('admin.newsletter.sendBroadcast')}</span>
