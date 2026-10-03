@@ -92,6 +92,9 @@ function useForumFeed() {
           { entityId: post.id, fieldName: 'title', originalText: post.title },
           { entityId: post.id, fieldName: 'topic', originalText: post.topic },
           { entityId: post.id, fieldName: 'content', originalText: post.content },
+          ...(post.aiSummary
+            ? [{ entityId: post.id, fieldName: 'aiSummary', originalText: post.aiSummary }]
+            : []),
         ])
         const commentItems = Object.values(sourceCommentsByPost).flatMap((comments) =>
           comments.flatMap((comment) => [
@@ -115,6 +118,9 @@ function useForumFeed() {
           title: articleTranslations[`${post.id}:title`] ?? post.title,
           topic: articleTranslations[`${post.id}:topic`] ?? post.topic,
           content: articleTranslations[`${post.id}:content`] ?? post.content,
+          aiSummary: post.aiSummary
+            ? articleTranslations[`${post.id}:aiSummary`] ?? post.aiSummary
+            : post.aiSummary,
         })))
         setCommentsByPost(
           Object.fromEntries(

@@ -20,6 +20,7 @@ public class ForumArticleResponse {
     private String content;
     private String imageUrl;
     private String imageAlt;
+    private String aiSummary;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Integer reactionCount;

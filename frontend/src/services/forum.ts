@@ -30,6 +30,7 @@ function mapArticle(article: ForumArticleResponse): BlogPost {
     content: article.content,
     imageUrl: article.imageUrl,
     imageAlt: article.imageAlt,
+    aiSummary: article.aiSummary,
     createdAt: article.createdAt,
     likeCount: article.reactionCount,
     reacted: article.reacted,

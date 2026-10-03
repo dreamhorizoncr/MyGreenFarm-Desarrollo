@@ -21,6 +21,7 @@ export interface BlogPost {
   content: string
   imageUrl?: string
   imageAlt?: string
+  aiSummary?: string | null
   likeCount: number
   reacted: boolean
   commentCount: number
@@ -61,6 +62,7 @@ export interface ForumArticleResponse {
   content: string
   imageUrl?: string
   imageAlt?: string
+  aiSummary?: string | null
   createdAt: string
   updatedAt: string
   reactionCount: number

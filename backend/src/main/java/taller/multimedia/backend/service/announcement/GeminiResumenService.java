@@ -29,6 +29,11 @@ public class GeminiResumenService {
                     + "en español, con tono claro y cálido. "
                     + "Usa solo la información del texto, sin inventar datos.\n\nNoticia:\n";
 
+    private static final String PROMPT_ARTICULO_FORO =
+            "Resume el siguiente artículo del foro de una guardería en una sola oración breve (máximo 30 palabras), "
+                    + "en español, con tono claro y cálido. "
+                    + "Usa solo la información del texto, sin inventar datos.\n\nArtículo:\n";
+
     private final ObjectMapper objectMapper;
 
     @Value("${gemini.api.key}")
@@ -46,10 +51,18 @@ public class GeminiResumenService {
             .build();
 
     public String generarResumen(String contenido) {
+        return callGemini(PROMPT_BASE + contenido);
+    }
+
+    public String generarResumenArticulo(String contenido) {
+        return callGemini(PROMPT_ARTICULO_FORO + contenido);
+    }
+
+    private String callGemini(String prompt) {
         try {
             String url = baseUrl + "/models/" + model + ":generateContent";
 
-            Map<String, Object> part = Map.of("text", PROMPT_BASE + contenido);
+            Map<String, Object> part = Map.of("text", prompt);
             Map<String, Object> content = Map.of("parts", List.of(part));
             Map<String, Object> generationConfig = Map.of(
                     "temperature", 0.3,
