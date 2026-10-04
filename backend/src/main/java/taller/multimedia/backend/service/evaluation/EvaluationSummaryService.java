@@ -12,6 +12,7 @@ import taller.multimedia.backend.repository.evaluation.EvaluationRepository;
 import taller.multimedia.backend.repository.expedient.ExpedientRepository;
 import taller.multimedia.backend.service.EmailService;
 import taller.multimedia.backend.service.announcement.GeminiResumenService;
+import taller.multimedia.backend.service.translation.TranslationService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,6 +26,7 @@ public class EvaluationSummaryService {
     private final EvaluationRepository evaluationRepository;
     private final GeminiResumenService geminiResumenService;
     private final EmailService emailService;
+    private final TranslationService translationService;
 
     @Transactional (readOnly = true)
     public void generateAndSendSemiannualSummaries() {
@@ -70,14 +72,40 @@ public class EvaluationSummaryService {
 
                 // 3. Obtener el email del encargado/padre desde la entidad Child/Parent y enviar el correo
                 String parentEmail = expedient.getChild().getParent().getEmail(); 
-                String period = "Semestre " + (LocalDate.now().getMonthValue() <= 6 ? "I" : "II") + " - " + LocalDate.now().getYear();
                 String parentLanguage = parent.getLanguage() != null ? parent.getLanguage() : "es";
+                String period = formatPeriodByLanguage(parentLanguage);
 
-                emailService.sendSemiannualEvaluationSummaryEmail(parentEmail, childFullName, summary, period, parentLanguage);
+                String finalSummary = summary;
+                if (!"es".equalsIgnoreCase(parentLanguage)) {
+                    List<String> translations = translationService.translateBatchWithoutSaving(
+                            List.of(summary), 
+                            parentLanguage, 
+                            "text/plain"
+                    );
+                    if (translations != null && !translations.isEmpty()) {
+                        finalSummary = translations.get(0);
+                    }
+                }
+
+                emailService.sendSemiannualEvaluationSummaryEmail(parentEmail, childFullName, finalSummary, period, parentLanguage);
 
             } catch (Exception e) {
                 log.error("Error procesando resumen para expediente ID {}: {}", expedient.getId(), e.getMessage(), e);
             }
+        }
+    }
+
+    private String formatPeriodByLanguage(String languageCode) {
+        int currentYear = LocalDate.now().getYear();
+        boolean isFirstSemester = LocalDate.now().getMonthValue() <= 6;
+
+        switch (languageCode.toLowerCase()) {
+            case "en":
+                return (isFirstSemester ? "Semester I" : "Semester II") + " - " + currentYear;
+            case "fr":
+                return (isFirstSemester ? "Semestre I" : "Semestre II") + " - " + currentYear;
+            default:
+                return (isFirstSemester ? "Semestre I" : "Semestre II") + " - " + currentYear;
         }
     }
 }
