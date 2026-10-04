@@ -1,6 +1,7 @@
 package taller.multimedia.backend.service.appointment;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.DateTime;
@@ -11,9 +12,11 @@ import com.google.auth.oauth2.GoogleCredentials;
 
 import lombok.extern.slf4j.Slf4j;
 import taller.multimedia.backend.model.appointment.Appointment;
+import taller.multimedia.backend.model.user.User;
 import taller.multimedia.backend.service.CalendarServiceException;
 
 import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
@@ -84,38 +87,38 @@ public class GoogleCalendarService {
                 .build();
     }
 
-    public List<String> getAvailableSlots(LocalDate date) {
-        try {
-            Calendar service = getCalendarService();
+    // public List<String> getAvailableSlots(LocalDate date) {
+    //     try {
+    //         Calendar service = getCalendarService();
 
-            String timeMin = date.atTime(7, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toString();
-            String timeMax = date.atTime(17, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toString();
+    //         String timeMin = date.atTime(7, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toString();
+    //         String timeMax = date.atTime(17, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toString();
 
-            FreeBusyRequest requestBody = new FreeBusyRequest();
-            requestBody.setTimeMin(new com.google.api.client.util.DateTime(timeMin));
-            requestBody.setTimeMax(new com.google.api.client.util.DateTime(timeMax));
+    //         FreeBusyRequest requestBody = new FreeBusyRequest();
+    //         requestBody.setTimeMin(new com.google.api.client.util.DateTime(timeMin));
+    //         requestBody.setTimeMax(new com.google.api.client.util.DateTime(timeMax));
 
-            FreeBusyRequestItem item = new FreeBusyRequestItem();
-            item.setId(calendarId);
-            requestBody.setItems(List.of(item));
+    //         FreeBusyRequestItem item = new FreeBusyRequestItem();
+    //         item.setId(calendarId);
+    //         requestBody.setItems(List.of(item));
 
-            FreeBusyResponse response = service.freebusy().query(requestBody).execute();
+    //         FreeBusyResponse response = service.freebusy().query(requestBody).execute();
 
-            if (response.getCalendars() == null || response.getCalendars().get(calendarId) == null) {
-                log.error("No se pudo acceder al calendario con ID: {}", calendarId);
-                throw new CalendarServiceException("No se pudo cargar la disponibilidad en este momento");
-            }
+    //         if (response.getCalendars() == null || response.getCalendars().get(calendarId) == null) {
+    //             log.error("No se pudo acceder al calendario con ID: {}", calendarId);
+    //             throw new CalendarServiceException("No se pudo cargar la disponibilidad en este momento");
+    //         }
 
-            List<TimePeriod> busyPeriods = response.getCalendars().get(calendarId).getBusy();
-            return calculateFreeSlots(date, busyPeriods);
+    //         List<TimePeriod> busyPeriods = response.getCalendars().get(calendarId).getBusy();
+    //         return calculateFreeSlots(date, busyPeriods);
 
-        } catch (CalendarServiceException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error al consultar disponibilidad para la fecha {}", date, e);
-            throw new CalendarServiceException("No se pudo cargar la disponibilidad en este momento");
-        }
-    }
+    //     } catch (CalendarServiceException e) {
+    //         throw e;
+    //     } catch (Exception e) {
+    //         log.error("Error al consultar disponibilidad para la fecha {}", date, e);
+    //         throw new CalendarServiceException("No se pudo cargar la disponibilidad en este momento");
+    //     }
+    // }
 
     private List<String> calculateFreeSlots(LocalDate date, List<TimePeriod> busyPeriods) {
         List<String> freeSlots = new ArrayList<>();
@@ -321,5 +324,58 @@ public class GoogleCalendarService {
                     appointment.getId(), e);
             throw new RuntimeException("Error al actualizar la cita en Google Calendar", e);
         }
+    }
+
+    public String createBirthdayEvent(User teacher) throws IOException, GeneralSecurityException {
+        Calendar service = getCalendarService();
+        Event created = service.events().insert(calendarId, buildBirthdayEvent(teacher)).execute();
+        return created.getId();
+    }
+
+    // Devuelve el id del evento (cambia si hubo que recrearlo)
+    public String updateBirthdayEvent(User teacher) throws IOException, GeneralSecurityException {
+        Calendar service = getCalendarService();
+        try {
+            service.events()
+                    .update(calendarId, teacher.getBirthdayEventId(), buildBirthdayEvent(teacher))
+                    .execute();
+            return teacher.getBirthdayEventId();
+        } catch (GoogleJsonResponseException e) {
+            // Si lo borraron a mano en Google, se vuelve a crear
+            if (e.getStatusCode() == 404 || e.getStatusCode() == 410) {
+                return createBirthdayEvent(teacher);
+            }
+            throw e;
+        }
+    }
+
+    public void deleteBirthdayEvent(String eventId) throws IOException, GeneralSecurityException {
+        Calendar service = getCalendarService();
+        try {
+            service.events().delete(calendarId, eventId).execute();
+        } catch (GoogleJsonResponseException e) {
+            // Si ya no existe en Google, no hay nada que borrar
+            if (e.getStatusCode() != 404 && e.getStatusCode() != 410)
+                throw e;
+        }
+    }
+
+    private Event buildBirthdayEvent(User teacher) {
+        LocalDate next = nextBirthday(teacher.getBirthday());
+
+        return new Event()
+                .setSummary("Cumpleaños: " + teacher.getFirstName() + " " + teacher.getLastName())
+                .setStart(new EventDateTime().setDate(new com.google.api.client.util.DateTime(next.toString())))
+                .setEnd(new EventDateTime()
+                        .setDate(new com.google.api.client.util.DateTime(next.plusDays(1).toString())))
+                .setRecurrence(List.of("RRULE:FREQ=YEARLY"))
+                .setTransparency("transparent")
+                .setReminders(new Event.Reminders().setUseDefault(false));
+    }
+
+    private LocalDate nextBirthday(LocalDate birthday) {
+        LocalDate today = LocalDate.now(ZoneId.of("America/Costa_Rica"));
+        LocalDate candidate = birthday.withYear(today.getYear());
+        return candidate.isBefore(today) ? candidate.plusYears(1) : candidate;
     }
 }
