@@ -382,4 +382,37 @@ public class AppointmentService {
             }
         }
     }
+
+    // Se ejecuta cada hora para auto-cancelar citas pendientes que ya expiraron
+    @Scheduled(cron = "0 0 * * * *")
+    @Transactional
+    public void autoCancelExpiredPendingAppointments() {
+        LocalDateTime now = LocalDateTime.now();
+        
+        // Busca todas las citas pendientes cuya fecha ya pasó
+        List<Appointment> expiredAppointments = appointmentRepository.findByAppointmentDateBeforeAndStatus(
+                now, AppointmentStatus.PENDING);
+
+        for (Appointment appointment : expiredAppointments) {
+            try {
+                appointment.setStatus(AppointmentStatus.CANCELLED);
+                Appointment savedAppointment = appointmentRepository.save(appointment);
+                
+                log.info("Cita pendiente ID: {} auto-cancelada por expiración de fecha.", savedAppointment.getId());
+
+                calendarSyncAsyncService.updateAppointmentStatusAsync(
+                        savedAppointment.getId(),
+                        AppointmentStatus.CANCELLED);
+
+                String languageCode = savedAppointment.getLanguage() != null ? savedAppointment.getLanguage() : "es";
+                Locale locale = Locale.forLanguageTag(languageCode);
+
+                emailService.sendAppointmentStatusUpdateEmail(savedAppointment, locale);
+                emailService.sendAdminCancelledAppointmentAlert(savedAppointment);
+
+            } catch (Exception e) {
+                log.error("Error al auto-cancelar la cita {}: {}", appointment.getId(), e.getMessage());
+            }
+        }
+    }
 }

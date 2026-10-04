@@ -346,7 +346,7 @@ function AdminServicePlansPage() {
                 onClick={() => handleDelete(confirmDeleteId)}
                 loading={deletingId === confirmDeleteId}
                 disabled={!matchesName}
-                className="h-11 flex-1 rounded-full font-body text-button uppercase tracking-wide"
+                className="h-11 flex-1  rounded-full font-body text-button uppercase tracking-wide"
               >
                 {deletingId === confirmDeleteId ? t('common.loading') : t('admin.delete')}
               </Button>
