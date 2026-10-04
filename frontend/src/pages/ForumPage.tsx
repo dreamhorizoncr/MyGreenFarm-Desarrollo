@@ -181,6 +181,7 @@ function ForumPage() {
               blogSearch={blogSearch}
               onBlogSearchChange={setBlogSearch}
               blogPosts={blogPosts}
+              showPopularTopics={activeTab === 'blog'}
             />
           </div>
         </div>
