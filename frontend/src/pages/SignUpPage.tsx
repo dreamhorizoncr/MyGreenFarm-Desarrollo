@@ -290,7 +290,6 @@ function SignUpPage() {
           <div className="mx-auto mt-[30px] w-[209px] md:mt-[38px] md:w-[70%]">
             <AuthButton loading={loading}>
               {loading ? t("signup.loading") : t("signup.buttonLabel")}
-              {!loading && <ArrowRightIcon size={18} aria-hidden="true" />}
             </AuthButton>
           </div>
 

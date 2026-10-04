@@ -235,10 +235,23 @@ public class EmailService {
                 .map(t -> t.getFirstName() + " " + t.getLastName())
                 .toList());
 
-        String html = templateEngine.process("email/birthdays/birthday-reminder", context);
+        String html = templateEngine.process("email/birthday/birthday-reminder", context);
         String subject = messageSource.getMessage("email.birthday.reminder.subject", null, locale);
 
         sendEmail(correoAdmin, subject, html);
+    }
+
+    @Async
+    public void sendBirthdayGreetingEmail(User teacher, LocalDate birthdayDate, Locale locale) {
+        Context context = new Context(locale);
+        context.setVariable("supportEmail", supportEmail);
+        context.setVariable("teacherName", teacher.getFirstName());
+        context.setVariable("birthdayDate", birthdayDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+        String html = templateEngine.process("email/birthday/birthday-greeting", context);
+        String subject = messageSource.getMessage("email.birthday.greeting.subject", null, locale);
+
+        sendEmail(teacher.getEmail(), subject, html);
     }
 
     @Async
