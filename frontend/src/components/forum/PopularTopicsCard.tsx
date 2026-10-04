@@ -1,8 +1,18 @@
 import { useTranslation } from 'react-i18next'
-import { popularTopics } from './forumData.ts'
+import type { BlogPost } from '../../types/forum.ts'
 
-function PopularTopicsCard() {
+interface PopularTopicsCardProps {
+  blogPosts: BlogPost[]
+}
+
+function PopularTopicsCard({ blogPosts }: Readonly<PopularTopicsCardProps>) {
   const { t } = useTranslation()
+  const popularTopics = [...blogPosts]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 5)
+    .filter((post) => post.topic.trim())
+    .map((post) => post.topic.trim())
+    .filter((topic, index, topics) => topics.indexOf(topic) === index)
 
   return (
     <section className="rounded-2xl border border-neutral-200 bg-white p-lg text-left">
@@ -12,12 +22,12 @@ function PopularTopicsCard() {
 
       <ul className="m-0 mt-md flex list-none flex-wrap gap-xs p-0">
         {popularTopics.map((topic) => (
-          <li key={topic.id}>
+          <li key={topic}>
             <button
               type="button"
               className="rounded-full bg-[var(--bg-200)] px-md py-2xs font-body text-body-sm font-semibold text-body-text transition-colors hover:bg-green-500 hover:text-white"
             >
-              #{topic.label}
+              #{topic}
             </button>
           </li>
         ))}
