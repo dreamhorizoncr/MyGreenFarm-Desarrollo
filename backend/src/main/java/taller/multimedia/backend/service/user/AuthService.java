@@ -1,6 +1,7 @@
 package taller.multimedia.backend.service.user;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.UUID;
@@ -11,7 +12,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import jakarta.transaction.Transactional;
 import taller.multimedia.backend.dto.AuthResult;
 import taller.multimedia.backend.dto.LoginRequest;
 import taller.multimedia.backend.dto.SignupRequest;
@@ -22,6 +26,7 @@ import taller.multimedia.backend.repository.user.UserRepository;
 import taller.multimedia.backend.security.jwt.JwtUtils;
 import taller.multimedia.backend.security.services.UserDetailsImpl;
 import taller.multimedia.backend.service.EmailService;
+import taller.multimedia.backend.service.appointment.CalendarSyncAsyncService;
 import taller.multimedia.backend.util.Sanitizer;
 
 @Service
@@ -32,39 +37,63 @@ public class AuthService {
     private final AuthenticationManager authenticationManager; // Authentication manager for handling authentication
     private final JwtUtils jwtUtils; // Utility class for generating and validating JWT tokens
     private final EmailService emailService;
+    private final CalendarSyncAsyncService calendarSyncAsyncService;
 
     public AuthService(UserRepository userRepository, PasswordEncoder encoder,
-            AuthenticationManager authenticationManager, JwtUtils jwtUtils, EmailService emailService) {
+            AuthenticationManager authenticationManager, JwtUtils jwtUtils, EmailService emailService,
+            CalendarSyncAsyncService calendarSyncAsyncService) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtils = jwtUtils;
         this.emailService = emailService;
+        this.calendarSyncAsyncService = calendarSyncAsyncService;
     }
 
-    // Register a new user
-    public void registerUser(SignupRequest request) {
-        String email = Sanitizer.requireClean("email", request.getEmail());
-        String firstName = Sanitizer.requireClean("firstName", request.getFirstName());
-        String lastName = Sanitizer.requireClean("lastName", request.getLastName());
+   @Transactional
+public void registerUser(SignupRequest request) {
+    String email = Sanitizer.requireClean("email", request.getEmail());
+    String firstName = Sanitizer.requireClean("firstName", request.getFirstName());
+    String lastName = Sanitizer.requireClean("lastName", request.getLastName());
+    LocalDate birthday = request.getBirthday();
 
-        if (userRepository.existsByEmail(email)) {
-            throw new RuntimeException("Error: Email is already in use!");
+    if (userRepository.existsByEmail(email)) {
+        throw new RuntimeException("Error: Email is already in use!");
+    }
+
+    Role role = resolveRole(request.getRole()); // defaults to USER if not provided
+
+    // Birthday is optional, but only teachers can have one
+    if (birthday != null && role != Role.TEACHER) {
+        throw new RuntimeException("Error: Birthday is only allowed for TEACHER role!");
+    }
+
+    User user = new User(
+            email,
+            encoder.encode(request.getPassword()),
+            firstName,
+            lastName,
+            role,
+            true
+    );
+    user.setBirthday(birthday);
+
+    User saved = userRepository.save(user);
+
+    if (saved != null && saved.getBirthday() != null && saved.getId() != null) {
+        scheduleBirthdaySync(saved.getId());
+    }
+}
+
+// Sincroniza con Google Calendar solo después de que se confirme el guardado en la BD
+private void scheduleBirthdaySync(UUID userId) {
+    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+        @Override
+        public void afterCommit() {
+            calendarSyncAsyncService.syncBirthdayAsync(userId);
         }
-
-        Role role = resolveRole(request.getRole());  // Resolve the role from the request, defaulting to USER if not provided
-
-        // Create a new user entity
-        User user = new User(
-                email,
-                encoder.encode(request.getPassword()),
-                firstName,
-                lastName,
-                role,
-                true);
-
-        userRepository.save(user);
-    }
+    });
+}
 
     // Authenticate user and return user info
     public AuthResult authenticateUser(LoginRequest request) {
@@ -81,7 +110,9 @@ public class AuthService {
                 userDetails.getUsername(),
                 userDetails.getFirstName(),
                 userDetails.getLastName(),
-                userDetails.getRole());
+                userDetails.getRole(),
+                userDetails.getBirthday()
+            );
 
         return new AuthResult(userInfo, userDetails);
     }

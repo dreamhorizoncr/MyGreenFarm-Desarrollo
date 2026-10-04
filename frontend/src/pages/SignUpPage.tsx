@@ -26,6 +26,7 @@ function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
+  const [birthday, setBirthday] = useState("");
 
   const [firstNameValidationError, setFirstNameValidationError] = useState<
     string | null
@@ -93,7 +94,7 @@ function SignUpPage() {
       return;
 
     void submitRegister(
-      { firstName, lastName, email, password, role },
+      { firstName, lastName, email, password, role, birthday: role === "TEACHER" && birthday ? birthday : undefined },
       () => {
         notify.success({
           title: t("signup.successToastTitle"),
@@ -110,17 +111,17 @@ function SignUpPage() {
   };
 
   const roleOptions = [
-  { value: 'TEACHER', label: t('signup.teacherRole') },
-  { value: 'ADMIN', label: t('signup.adminRole') }
-] as const;
+    { value: 'TEACHER', label: t('signup.teacherRole') },
+    { value: 'ADMIN', label: t('signup.adminRole') }
+  ] as const;
 
   return (
     <AuthLayout
       overtitle={t("signup.overtitle")}
       closeTo={isAdminAddingTeacher ? "/admin/users" : "/login"}
-        containerClassName="md:max-w-[1250px]"
-      rightPanelClassName="px-[15px] pb-[28px] pt-[65px] md:px-[55px] md:py-[45px]"
-        contentClassName="max-w-[303px] md:max-w-[560px]"
+      containerClassName="md:max-w-[1250px]"
+      rightPanelClassName="flex flex-col overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-[15px] pb-[28px] pt-[65px] md:px-[55px] md:py-[45px]"
+      contentClassName="my-auto w-full mx-auto max-w-[303px] md:max-w-[560px]"
     >
       {/* Título */}
       <h2 className="mb-[32px] text-left font-heading text-[28px] leading-none text-heading md:mb-[45px] md:text-h1">
@@ -230,11 +231,10 @@ function SignUpPage() {
               {roleOptions.map((option) => (
                 <label
                   key={option.value}
-                  className={`flex cursor-pointer items-center gap-xs rounded-full border px-lg py-sm font-body text-body-sm transition-colors ${
-                    role === option.value
-                      ? 'border-green-500 bg-green-500/10 text-heading'
-                      : 'border-neutral-300 bg-white text-body-text'
-                  }`}
+                  className={`flex cursor-pointer items-center gap-xs rounded-full border px-lg py-sm font-body text-body-sm transition-colors ${role === option.value
+                    ? 'border-green-500 bg-green-500/10 text-heading'
+                    : 'border-neutral-300 bg-white text-body-text'
+                    }`}
                 >
                   <input
                     type="radio"
@@ -243,6 +243,10 @@ function SignUpPage() {
                     checked={role === option.value}
                     onChange={(e) => {
                       setRole(e.target.value)
+
+                      if (e.target.value !== "TEACHER") {
+                        setBirthday("");
+                      }
 
                       if (roleValidationError) {
                         setRoleValidationError(null)
@@ -262,6 +266,19 @@ function SignUpPage() {
             )}
           </fieldset>
 
+          {/* Birthday */}
+          {role === "TEACHER" && (
+            <div className="mt-[26px] md:mt-[32px] md:w-[calc(50%-27.5px)]">
+              <TextField
+                id="signup-birthday"
+                type="date"
+                value={birthday}
+                onChange={(e) => setBirthday(e.target.value)}
+                label={t("signup.birthdayOptional")}
+                error={null}
+              />
+            </div>
+          )}
           {/* Error backend */}
           {error && (
             <p className="mt-4 text-center font-body text-body-sm text-danger">
@@ -273,7 +290,6 @@ function SignUpPage() {
           <div className="mx-auto mt-[30px] w-[209px] md:mt-[38px] md:w-[70%]">
             <AuthButton loading={loading}>
               {loading ? t("signup.loading") : t("signup.buttonLabel")}
-              {!loading && <ArrowRightIcon size={18} aria-hidden="true" />}
             </AuthButton>
           </div>
 

@@ -63,7 +63,7 @@ class ForumArticleServiceTest {
     @ParameterizedTest
     @ValueSource(strings = { "title", "topic", "content" })
     void create_rejectsMaliciousFieldsAndNeverSaves(String field) {
-        User author = new User("owner@ejemplo.com", "hashed", "Owner", "Test", Role.OWNER, true);
+        User author = new User("owner@ejemplo.com", "hashed", "Owner", "Test", Role.OWNER,true);
         when(userRepository.findByEmail("owner@ejemplo.com")).thenReturn(Optional.of(author));
 
         String maliciousValue = "<script>alert(1)</script>x";

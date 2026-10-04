@@ -1,5 +1,6 @@
 package taller.multimedia.backend.security.services;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -30,9 +31,10 @@ public class UserDetailsImpl implements UserDetails {
     private boolean isActive;
 
     private Collection<? extends GrantedAuthority> authorities;
+    private LocalDate birthday;
 
     public UserDetailsImpl(UUID id, String email, String password, String firstName, String lastName,
-            String role, boolean isActive,
+            String role, boolean isActive, LocalDate birthday,
             Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.email = email;
@@ -41,6 +43,7 @@ public class UserDetailsImpl implements UserDetails {
         this.lastName = lastName;
         this.role = role;
         this.isActive = isActive;
+        this.birthday = birthday;
         this.authorities = authorities;
     }
 
@@ -56,6 +59,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getLastName(),
                 user.getRole().name(),
                 user.isActive(),
+                user.getBirthday(),
                 authorities);
     }
 
@@ -88,9 +92,12 @@ public class UserDetailsImpl implements UserDetails {
         return role;
     }
 
-   
     public boolean isActive() {
         return isActive;
+    }
+
+    public LocalDate getBirthday() {
+        return birthday;
     }
 
     @Override
