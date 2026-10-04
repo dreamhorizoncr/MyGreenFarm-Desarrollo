@@ -1,5 +1,7 @@
 package taller.multimedia.backend.dto;
 
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -31,5 +33,7 @@ public class SignupRequest {
     private String lastName;
 
     private String role;
+
+    private LocalDate birthday;
 
 }

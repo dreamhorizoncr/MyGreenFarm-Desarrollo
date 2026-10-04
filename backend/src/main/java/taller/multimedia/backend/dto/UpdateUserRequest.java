@@ -1,5 +1,7 @@
 package taller.multimedia.backend.dto;
 
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -21,4 +23,6 @@ public class UpdateUserRequest {
         message = "The email must end in .com or .go.cr"
     )
     private String email;
+
+    private LocalDate birthday;
 }

@@ -4,11 +4,13 @@ import taller.multimedia.backend.dto.newsletter_subscriber.SubscriberInfo;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
 import taller.multimedia.backend.model.curriculum.Curriculum;
+import taller.multimedia.backend.model.user.User;
 import taller.multimedia.backend.repository.newsletter_subscriber.NewsletterSubscriberRepository;
 import taller.multimedia.backend.repository.newsletter_subscriber.SubscriberEmailProjection;
 import taller.multimedia.backend.service.translation.TranslationService;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
@@ -44,11 +46,11 @@ public class EmailService {
     @Value("${daycare.mail.admin}")
     private String correoAdmin;
 
-    public EmailService(TemplateEngine templateEngine, 
-                        MessageSource messageSource, 
-                        BrevoEmailService brevoEmailService,
-                        NewsletterSubscriberRepository newsletterRepository,
-                        TranslationService translationService) {
+    public EmailService(TemplateEngine templateEngine,
+            MessageSource messageSource,
+            BrevoEmailService brevoEmailService,
+            NewsletterSubscriberRepository newsletterRepository,
+            TranslationService translationService) {
         this.templateEngine = templateEngine;
         this.messageSource = messageSource;
         this.brevoEmailService = brevoEmailService;
@@ -222,6 +224,34 @@ public class EmailService {
             System.err.println("Error al enviar el correo de recordatorio: " + e.getMessage());
             throw new RuntimeException("No se pudo enviar el correo de recordatorio", e);
         }
+    }
+
+    @Async
+    public void sendBirthdayReminderEmail(List<User> teachers, LocalDate birthdayDate, Locale locale) {
+        Context context = new Context(locale);
+        context.setVariable("supportEmail", supportEmail);
+        context.setVariable("birthdayDate", birthdayDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        context.setVariable("teacherNames", teachers.stream()
+                .map(t -> t.getFirstName() + " " + t.getLastName())
+                .toList());
+
+        String html = templateEngine.process("email/birthday/birthday-reminder", context);
+        String subject = messageSource.getMessage("email.birthday.reminder.subject", null, locale);
+
+        sendEmail(correoAdmin, subject, html);
+    }
+
+    @Async
+    public void sendBirthdayGreetingEmail(User teacher, LocalDate birthdayDate, Locale locale) {
+        Context context = new Context(locale);
+        context.setVariable("supportEmail", supportEmail);
+        context.setVariable("teacherName", teacher.getFirstName());
+        context.setVariable("birthdayDate", birthdayDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
+        String html = templateEngine.process("email/birthday/birthday-greeting", context);
+        String subject = messageSource.getMessage("email.birthday.greeting.subject", null, locale);
+
+        sendEmail(teacher.getEmail(), subject, html);
     }
 
     @Async

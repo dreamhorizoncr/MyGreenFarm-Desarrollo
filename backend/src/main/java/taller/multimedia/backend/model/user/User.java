@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -31,7 +32,7 @@ public class User {
 
     @Column(nullable = false)
     private String password;
-    
+
     @Column(nullable = false)
     private String firstName;
 
@@ -45,6 +46,12 @@ public class User {
     @Column(nullable = false)
     private boolean isActive;
 
+    @Column(name = "birthday", nullable = true)
+    private LocalDate birthday;
+
+    @Column(name = "birthday_event_id")
+    private String birthdayEventId;
+
     @Column(name = "reset_password_token")
     private String resetPasswordToken;
 
@@ -57,11 +64,17 @@ public class User {
     }
 
     public User(String email, String password, String firstName, String lastName, Role role, boolean isActive) {
+        this(email, password, firstName, lastName, role, null, isActive);
+    }
+
+    public User(String email, String password, String firstName, String lastName, Role role,
+            LocalDate birthday, boolean isActive) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.role = role;
+        this.birthday = birthday;
         this.isActive = isActive;
     }
 

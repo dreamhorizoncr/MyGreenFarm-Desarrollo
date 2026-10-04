@@ -22,6 +22,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
   const [firstName, setFirstName] = useState(userToEdit.firstName)
   const [lastName, setLastName] = useState(userToEdit.lastName)
   const [email, setEmail] = useState(userToEdit.email)
+  const [birthday, setBirthday] = useState(userToEdit.birthday ?? '')
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 
@@ -51,6 +52,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         email: email.trim(),
+        birthday: birthday || undefined,
       })
       onClose()
     } catch (err) {
@@ -149,6 +151,19 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
             {emailValidationError && (
               <p className="mt-2xs text-left font-body text-body-sm text-danger">{emailValidationError}</p>
             )}
+          </div>
+
+          <div className="flex flex-col">
+            <label htmlFor="admin-edit-birthday" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
+              {t('admin.birthday')}
+            </label>
+            <input
+              id="admin-edit-birthday"
+              type="date"
+              value={birthday}
+              onChange={(e) => setBirthday(e.target.value)}
+              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
+            />
           </div>
 
           {saveError && (

@@ -10,7 +10,12 @@ interface TeacherCardProps {
 }
 
 function TeacherCard({ user, isSelf, onEdit, onDelete }: Readonly<TeacherCardProps>) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const formattedBirthday = user.birthday
+    ? new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(
+        new Date(`${user.birthday}T00:00:00`),
+      )
+    : t('admin.notAvailable')
 
   return (
     <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
@@ -49,6 +54,11 @@ function TeacherCard({ user, isSelf, onEdit, onDelete }: Readonly<TeacherCardPro
 
       <p className="m-0 mt-md break-words font-body text-body-sm text-body-text">
         {user.email}
+      </p>
+
+      <p className="m-0 mt-sm font-body text-body-sm text-body-text">
+        <span className="font-semibold">{t('admin.birthday')}:</span>{' '}
+        {formattedBirthday}
       </p>
     </article>
   )
