@@ -1,11 +1,13 @@
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { LockIcon, MenuIcon, XIcon } from '@animateicons/react/lucide'
 import LanguageSwitcher from './LanguageSwitcher.tsx'
 import ProfileButton from './ProfileButton.tsx'
 import { userStorage } from '../utils/userStorage.ts'
 import logo from '../assets/imgs/Logo.svg'
+import { authService } from '../services/auth.ts'
+import { tokenStorage } from '../utils/token.ts'
 
 function Brand() {
   const isAdminSection = useLocation().pathname.startsWith('/admin')
@@ -24,6 +26,7 @@ function Brand() {
 function Navbar() {
   const { t } = useTranslation()
   const { pathname } = useLocation()
+  const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const isAuthenticated = Boolean(userStorage.getUser())
   const isProtectedPage =
@@ -38,6 +41,16 @@ function Navbar() {
     { to: '/services', label: t('navbar.services') },
     { to: '/vacantes', label: t('navbar.vacancies') },
   ]
+
+  const handleLogout = async () => {
+    await authService.signout()
+
+    tokenStorage.clear()
+    userStorage.clear()
+
+    setDrawerOpen(false)
+    navigate('/')
+  }
 
   return (
     <header className="relative z-40 h-16 border-b border-neutral-200 bg-bg-page">
@@ -70,6 +83,8 @@ function Navbar() {
                 {t('navbar.dashboard')}
               </Link>
             )}
+              
+              {isAuthenticated && !isProtectedPage && <ProfileButton />}
 
             {!isAuthenticated && (
               <Link
@@ -140,34 +155,53 @@ function Navbar() {
               key={link.to}
               to={link.to}
               className={`relative w-fit font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-full after:origin-center after:bg-green-500 after:transition-transform after:duration-300 after:content-[''] ${
-                pathname === link.to ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100'
+              pathname === link.to ? 'after:scale-x-100' : 'after:scale-x-0 hover:after:scale-x-100'
               }`}
               onClick={() => setDrawerOpen(false)}
             >
-              {link.label}
+            {link.label}
             </Link>
-          ))}
+            ))}
           {isAuthenticated && !isProtectedPage && (
-            <Link
-              to="/admin/dashboard"
-              onClick={() => setDrawerOpen(false)}
-              className="font-body text-body-sm font-normal text-body-text-dark transition-colors hover:text-heading"
+          <>
+          <Link
+            to="/admin/dashboard"
+            onClick={() => setDrawerOpen(false)}
+            className="font-body text-body-sm font-normal text-body-text-dark transition-colors hover:text-heading"
             >
               {t('navbar.dashboard')}
             </Link>
-          )}
-          {!isAuthenticated && (
+
             <Link
-              to="/login"
-              aria-label={t('navbar.adminLogin')}
-              title={t('navbar.adminLogin')}
+              to="/profile"
               onClick={() => setDrawerOpen(false)}
-              className="inline-flex size-10 items-center justify-center text-green-500 transition-opacity hover:opacity-70"
+              className="font-body text-body-sm font-normal text-body-text-dark transition-colors hover:text-heading"
             >
-              <LockIcon size={18} aria-hidden="true" />
+              {t('profile.viewProfile')}
             </Link>
-          )}
-        </nav>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="font-body text-body-sm font-normal text-danger transition-colors hover:opacity-70"
+            >
+              {t('profile.logout')}
+            </button>
+      </>
+  )}
+
+  {!isAuthenticated && (
+    <Link
+      to="/login"
+      aria-label={t('navbar.adminLogin')}
+      title={t('navbar.adminLogin')}
+      onClick={() => setDrawerOpen(false)}
+      className="inline-flex size-10 items-center justify-center text-green-500 transition-opacity hover:opacity-70"
+    >
+      <LockIcon size={18} aria-hidden="true" />
+    </Link>
+  )}
+</nav>
 
         {isAuthenticated && isProtectedPage && (
           <div className="px-6 pt-8">

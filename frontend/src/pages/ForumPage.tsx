@@ -180,6 +180,8 @@ function ForumPage() {
               showBlogSearch={activeTab === 'blog'}
               blogSearch={blogSearch}
               onBlogSearchChange={setBlogSearch}
+              blogPosts={blogPosts}
+              showPopularTopics={activeTab === 'blog'}
             />
           </div>
         </div>
