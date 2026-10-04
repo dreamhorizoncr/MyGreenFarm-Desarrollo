@@ -139,6 +139,7 @@ public class ChildService {
 
         ChildResponse response = new ChildResponse();
         response.setId(child.getId());
+        response.setStudentId(child.getStudentId());
         response.setParentId(child.getParent() != null ? child.getParent().getId() : null);
         response.setParentName(parentFullName);
         response.setRelationship(child.getRelationship());

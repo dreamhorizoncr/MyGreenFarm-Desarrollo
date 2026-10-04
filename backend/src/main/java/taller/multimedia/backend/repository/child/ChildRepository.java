@@ -19,7 +19,7 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
     // Búsqueda en lista simple por el ID del encargado/padre
     List<Child> findByParentId(Long parentId);
 
-    @Query("SELECT c.studentId FROM Children c WHERE c.studentId LIKE :prefix ORDER BY c.studentId DESC LIMIT 1")
+    @Query("SELECT c.studentId FROM Child c WHERE c.studentId LIKE :prefix ORDER BY c.studentId DESC LIMIT 1")
     String findLastStudentIdByPrefix(@Param("prefix") String prefix);
 
     @Query("SELECT c FROM Child c WHERE c.id NOT IN (SELECT e.child.id FROM Expedient e)")
