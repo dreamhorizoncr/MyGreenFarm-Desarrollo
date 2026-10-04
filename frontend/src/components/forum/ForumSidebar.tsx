@@ -4,6 +4,7 @@ import AboutWallCard from './AboutWallCard.tsx'
 import PopularTopicsCard from './PopularTopicsCard.tsx'
 import FeaturedBannerCard from './FeaturedBannerCard.tsx'
 import PublishButtonCard from './PublishButtonCard.tsx'
+import type { BlogPost } from '../../types/forum.ts'
 
 interface ForumSidebarProps {
   variant?: 'all' | 'controls' | 'details'
@@ -12,6 +13,7 @@ interface ForumSidebarProps {
   showBlogSearch?: boolean
   blogSearch?: string
   onBlogSearchChange?: (value: string) => void
+  blogPosts?: BlogPost[]
 }
 
 function ForumSidebar({
@@ -21,6 +23,7 @@ function ForumSidebar({
   showBlogSearch = false,
   blogSearch = '',
   onBlogSearchChange,
+  blogPosts = [],
 }: Readonly<ForumSidebarProps>) {
   const { t } = useTranslation()
   const showControls = variant !== 'details'
@@ -50,7 +53,7 @@ function ForumSidebar({
       {showDetails && (
         <>
           <AboutWallCard community={showPublish} />
-          <PopularTopicsCard />
+          <PopularTopicsCard blogPosts={blogPosts} />
           <FeaturedBannerCard />
         </>
       )}
