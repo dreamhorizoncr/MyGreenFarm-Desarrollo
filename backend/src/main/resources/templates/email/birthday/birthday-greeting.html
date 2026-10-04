@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{email.birthday.greeting.pagetitle}">Feliz cumpleaños</title>
+</head>
+<body style="margin:0; padding:0; background-color:#E8EFE6; font-family: Georgia, 'Times New Roman', serif;">
+    <table role="presentation" style="padding:48px 16px; border-spacing:0; width:100%;">
+        <tr>
+            <td style="padding:0; text-align:center;">
+                <table role="presentation" style="background-color:#FFFDF8; border-radius:6px; overflow:hidden; border:1px solid #B9D4BC; border-spacing:0; width:520px; max-width:100%;">
+                    <tr>
+                        <td style="padding:30px 40px 22px; background-color:#019F62; text-align:center;">
+                            <p style="margin:0; color:#DFF3E6; font-size:12px; letter-spacing:3px; text-transform:uppercase;">My Green Farm</p>
+                            <h1 th:text="#{email.header.educationalcenter}" style="margin:6px 0 0; color:#FFFFFF; font-size:24px; font-weight:normal;">Centro Educativo</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:32px 40px; text-align:center;">
+                            <h2 th:text="#{email.birthday.greeting.title}" style="color:#1E4A32; font-size:22px; margin:0 0 18px; font-weight:normal;">¡Feliz cumpleaños!</h2>
+                            <p th:text="#{email.birthday.greeting.message(${teacherName})}" style="color:#3F4A3B; font-size:15.5px; line-height:1.75; margin:0 0 18px;">
+                                ¡Feliz cumpleaños, docente!
+                            </p>
+                            <p th:text="#{email.birthday.greeting.closing}" style="color:#3F4A3B; font-size:15.5px; line-height:1.75; margin:0;">
+                                Te deseamos un día lleno de alegría y buenos momentos.
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:14px; background-color:#019F62; text-align:center;">
+                            <p th:text="#{email.footer.slogan}" style="margin:0; color:#DFF3E6; font-size:11px; letter-spacing:1px;">
+                                CRECIENDO JUNTO A LA NATURALEZA
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+                <p style="color:#8A9686; font-size:11px; margin-top:18px;">My Green Farm</p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

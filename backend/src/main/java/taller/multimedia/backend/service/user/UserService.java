@@ -1,24 +1,31 @@
 package taller.multimedia.backend.service.user;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import jakarta.transaction.Transactional;
 import taller.multimedia.backend.dto.UpdateUserRequest;
 import taller.multimedia.backend.dto.UserInfoResponse;
 import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.model.user.User;
 import taller.multimedia.backend.repository.user.UserRepository;
+import taller.multimedia.backend.service.appointment.CalendarSyncAsyncService;
 import taller.multimedia.backend.util.Sanitizer;
 
 @Service
 public class UserService {
 
+    private final CalendarSyncAsyncService calendarSyncAsyncService;
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CalendarSyncAsyncService calendarSyncAsyncService) {
         this.userRepository = userRepository;
+        this.calendarSyncAsyncService = calendarSyncAsyncService;
     }
 
     public List<UserInfoResponse> getAllUsers(String currentEmail) {
@@ -51,6 +58,7 @@ public class UserService {
         return toResponse(targetUser);
     }
 
+    @Transactional
     public UserInfoResponse updateUser(UUID targetId, UpdateUserRequest request, String currentEmail) {
         User currentUser = userRepository.findByEmail(currentEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -68,19 +76,44 @@ public class UserService {
         targetUser.setLastName(Sanitizer.requireClean("lastName", request.getLastName()));
 
         if (isSelf) {
-            String newEmail = Sanitizer.requireClean("email", request.getEmail());
-            if (!newEmail.equals(targetUser.getEmail())) {
-                if (userRepository.existsByEmail(newEmail)) {
-                    throw new RuntimeException("Error: Email is already in use!");
-                }
-                targetUser.setEmail(newEmail);
-            }
+            applyEmailChange(targetUser, request.getEmail());
         }
 
-        userRepository.save(targetUser);
+        applyBirthday(targetUser, request.getBirthday());
 
         return toResponse(targetUser);
     }
+
+    private void applyEmailChange(User user, String rawEmail) {
+        String newEmail = Sanitizer.requireClean("email", rawEmail);
+        if (newEmail.equals(user.getEmail()))
+            return;
+        if (userRepository.existsByEmail(newEmail)) {
+            throw new RuntimeException("Error: Email is already in use!");
+        }
+        user.setEmail(newEmail);
+    }
+
+   private void applyBirthday(User user, LocalDate birthday) {
+    if (birthday == null) return;
+    if (user.getRole() != Role.TEACHER) {
+        throw new RuntimeException("Only teachers can set a birthday");
+    }
+    if (birthday.equals(user.getBirthday())) return;
+
+    user.setBirthday(birthday);
+    scheduleBirthdaySync(user.getId());
+}
+
+private void scheduleBirthdaySync(UUID userId) {
+    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+        @Override
+        public void afterCommit() {
+            calendarSyncAsyncService.syncBirthdayAsync(userId);
+        }
+    });
+
+}
 
     public void deleteUser(UUID targetId, String currentEmail) {
         User currentUser = userRepository.findByEmail(currentEmail)
@@ -108,7 +141,8 @@ public class UserService {
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getRole().name());
+                user.getRole().name(),
+                user.getBirthday());
     }
 
     private boolean canManageUsers(Role role) {

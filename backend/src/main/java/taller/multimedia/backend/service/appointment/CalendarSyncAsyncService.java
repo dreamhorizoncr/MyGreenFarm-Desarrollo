@@ -11,7 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
+import taller.multimedia.backend.model.user.Role;
+import taller.multimedia.backend.model.user.User;
 import taller.multimedia.backend.repository.appointment.AppointmentRepository;
+import taller.multimedia.backend.repository.user.UserRepository;
 
 @Service
 public class CalendarSyncAsyncService {
@@ -21,12 +24,15 @@ public class CalendarSyncAsyncService {
 
     private final GoogleCalendarService googleCalendarService;
     private final AppointmentRepository appointmentRepository;
+    private final UserRepository userRepository;
 
     public CalendarSyncAsyncService(
             GoogleCalendarService googleCalendarService,
-            AppointmentRepository appointmentRepository) {
+            AppointmentRepository appointmentRepository,
+            UserRepository userRepository) {
         this.googleCalendarService = googleCalendarService;
         this.appointmentRepository = appointmentRepository;
+        this.userRepository = userRepository;
     }
 
     @Async("taskExecutor")
@@ -104,4 +110,28 @@ public class CalendarSyncAsyncService {
                     e);
         }
     }
+
+    @Async
+@Transactional
+public void syncBirthdayAsync(UUID userId) {
+    User user = userRepository.findById(userId).orElse(null);
+    if (user == null) return;
+
+    try {
+        boolean shouldHaveEvent = user.getRole() == Role.TEACHER && user.getBirthday() != null;
+
+        if (!shouldHaveEvent) {
+            if (user.getBirthdayEventId() != null) {
+                googleCalendarService.deleteBirthdayEvent(user.getBirthdayEventId());
+                user.setBirthdayEventId(null);
+            }
+        } else if (user.getBirthdayEventId() == null) {
+            user.setBirthdayEventId(googleCalendarService.createBirthdayEvent(user));
+        } else {
+            googleCalendarService.updateBirthdayEvent(user);
+        }
+    } catch (Exception e) {
+        log.error("No se pudo sincronizar el cumpleaños del usuario {}", userId, e);
+    }
+}
 }

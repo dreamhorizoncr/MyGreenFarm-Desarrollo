@@ -9,6 +9,7 @@ interface AuthLayoutProps {
   rightPanelClassName?: string;
   contentClassName?: string;
   containerClassName?: string;
+  scrollable?: boolean;
   closeTo?: string;
   children: ReactNode;
 }
@@ -18,65 +19,61 @@ function AuthLayout({
   rightPanelClassName = "px-[15px] pb-[28px] pt-[65px] md:px-[70px] md:py-[55px]",
   contentClassName = "max-w-[430px]",
   containerClassName = "md:max-w-[900px]",
+  scrollable = false,
   closeTo = "/",
   children,
 }: Readonly<AuthLayoutProps>) {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-bg-page">
-      <Navbar />
+  <Navbar />
 
-      <main className="flex items-center justify-center px-[30px] py-[30px] md:px-6 md:py-16">
-      
-      {/* Contenedor Principal */}
-      <section className={`relative flex w-full max-w-[333px] flex-col overflow-hidden rounded-[13px] bg-bg-card shadow md:h-[500px] md:flex-row md:rounded-2xl ${containerClassName}`}>
+  <main className="flex items-center justify-center px-[30px] py-[30px] md:px-6 md:py-16">
+    {/* Contenedor Principal: crece con el contenido hasta el máximo */}
+    <section
+      className={`relative flex w-full max-w-[333px] flex-col overflow-hidden rounded-[13px] bg-bg-card shadow md:min-h-[500px] md:max-h-[calc(100svh-8rem)] md:flex-row md:rounded-2xl ${containerClassName}`}
+    >
+      {/* Panel de Ilustración */}
+      <div className="relative h-[205px] w-full shrink-0 overflow-hidden md:h-auto md:w-1/2">
+        <img
+          src={illustration}
+          alt="My Green Farm"
+          className="absolute inset-0 h-full w-full object-cover object-[center_65%] md:object-center"
+        />
 
-        {/* Panel de Ilustración */}
-        <div className="relative h-[205px] w-full shrink-0 overflow-hidden md:h-full md:w-1/2">
-
-          {/* Ilustración */}
-          <img
-            src={illustration}
-            alt="My Green Farm"
-            className="absolute inset-0 h-full w-full object-cover object-[center_65%] md:object-center"
-          />
-
-          {/* Welcome */}
-          <div className="absolute left-0 top-[18px] z-10 w-full text-center md:top-[9%]">
-            <h1 className="m-0 font-heading text-[20px] leading-none tracking-wide text-white md:text-h1">
-              {overtitle}
-            </h1>
-          </div>
-
+        <div className="absolute left-0 top-[18px] z-10 w-full text-center md:top-[9%]">
+          <h1 className="m-0 font-heading text-[20px] leading-none tracking-wide text-white md:text-h1">
+            {overtitle}
+          </h1>
         </div>
+      </div>
 
-        {/* Panel Derecho */}
-        <div
-          className={`relative flex w-full flex-col bg-bg-card md:w-1/2 ${rightPanelClassName}`}
+      {/* Panel Derecho */}
+      <div className="relative flex w-full flex-col bg-bg-card md:min-h-0 md:w-1/2">
+        {/* Botón cerrar (fijo, no se mueve con el scroll) */}
+        <button
+          type="button"
+          onClick={() => navigate(closeTo)}
+          className="absolute right-[15px] top-[30px] z-20 inline-flex size-8 items-center justify-center rounded-full text-heading focus-visible:outline-2 focus-visible:outline-green-500 focus-visible:outline-offset-2 md:right-[30px] md:top-[25px]"
+          aria-label="Close"
         >
-          {/* Botón cerrar */}
-          <button
-            type="button"
-            onClick={() => navigate(closeTo)}
-            className="absolute right-[15px] top-[30px] z-20 inline-flex size-8 items-center justify-center rounded-full text-heading focus-visible:outline-2 focus-visible:outline-green-500 focus-visible:outline-offset-2 md:right-[30px] md:top-[25px]"
-            aria-label="Close"
-          >
-            <XIcon size={20} aria-hidden="true" />
-          </button>
+          <XIcon size={20} aria-hidden="true" />
+        </button>
 
-          {/* Contenido */}
+        {/* Zona con scroll: solo scrollea si el contenido no cabe */}
+        <div
+          className={`flex flex-col md:min-h-0 md:flex-1 md:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${rightPanelClassName}`}
+        >
           <div
-            className={`mx-auto flex w-full flex-col justify-start md:h-full md:justify-center ${contentClassName}`}
+            className={`mx-auto flex w-full shrink-0 flex-col justify-start md:my-auto ${contentClassName}`}
           >
             {children}
           </div>
-
         </div>
-
-      </section>
-
-    </main>
-    </div>
+      </div>
+    </section>
+  </main>
+</div>
   );
 }
 
