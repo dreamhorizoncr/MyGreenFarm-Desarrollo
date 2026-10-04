@@ -24,18 +24,18 @@ public class PaymentController {
     private String paymentCancelUrl;
 
     @PostMapping("/create-checkout-session")
-    public ResponseEntity<?> createCheckoutSession(@RequestBody Map<String, String> request) {
-        String priceId = request.get("priceId");
-        
-        // URLs a donde redirigirá Onvo al terminar o cancelar el pago
-        String successUrl = this.paymentSuccessUrl;
-        String cancelUrl = this.paymentCancelUrl;
+    public ResponseEntity<?> createCheckoutSession(@RequestBody Map<String, Object> request) {
+        Double amount = Double.valueOf(request.get("amount").toString());
+        String currency = (String) request.get("currency"); // "USD", "CRC", "EUR"
+        String customerEmail = (String) request.get("customerEmail");
+        String customerName = (String) request.get("customerName");
 
         try {
-            String paymentUrl = onvoService.createCheckoutLink(priceId, successUrl, cancelUrl);
+            String paymentUrl = onvoService.createCheckoutSession(amount, currency, customerEmail, customerName);
             return ResponseEntity.ok(Map.of("url", paymentUrl));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
         }
     }
+    
 }

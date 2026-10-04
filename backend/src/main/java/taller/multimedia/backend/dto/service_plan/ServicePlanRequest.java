@@ -36,6 +36,10 @@ public class ServicePlanRequest {
     @Size(max = 800, message = "Los beneficios deben tener como máximo 800 caracteres")
     private String includes;
 
+    @NotBlank(message = "La moneda es obligatoria")
+    @Size(max = 6, message = "El máximo de caracteres es de 6")
+    private String currency;
+
     @NotBlank(message = "El payment URL es obligatorio")
     @Size(max = 300, message = "El payment URL deben tener como máximo 300 caracteres")
     private String paymentUrl;

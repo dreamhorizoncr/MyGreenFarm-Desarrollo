@@ -80,6 +80,9 @@ public class ServicePlanService {
         Object priceObj = targetOnvoPlan.get("price");
         dto.setPrice(priceObj != null ? new BigDecimal(priceObj.toString()) : BigDecimal.ZERO);
 
+        String currency = targetOnvoPlan.get("currency") != null ? targetOnvoPlan.get("currency").toString() : "CRC";
+        dto.setCurrency(currency); 
+
         dto.setType(
                 targetOnvoPlan.get("type") != null ? targetOnvoPlan.get("type").toString().toUpperCase() : "ONE_TIME");
         String realCheckoutUrl = generateCheckoutUrl(dto.getGatewayPriceId());
@@ -130,9 +133,17 @@ public class ServicePlanService {
                     Map<String, Object> info = new HashMap<>();
                     Map<String, Object> prod = prodMap.getOrDefault(item.get("productId"), Collections.emptyMap());
 
+                    Boolean priceActive = (Boolean) item.get("active");
+                    Boolean prodActive = (Boolean) prod.get("active");
+                    
+                    if ((priceActive != null && !priceActive) || (prodActive != null && !prodActive)) {
+                        continue;
+                    }
+
                     info.put("gatewayPriceId", item.get("id"));
                     info.put("name", prod.get("name"));
                     info.put("description", prod.get("description"));
+                    info.put("currency", item.get("currency") != null ? item.get("currency").toString().toUpperCase() : "CRC");
 
                     // Precio en formato decimal
                     Object amount = item.get("unitAmount");

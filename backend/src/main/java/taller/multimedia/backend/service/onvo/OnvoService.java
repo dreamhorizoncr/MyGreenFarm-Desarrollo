@@ -2,11 +2,13 @@ package taller.multimedia.backend.service.onvo;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -51,5 +53,27 @@ public class OnvoService {
         }
         
         throw new RuntimeException("No se pudo obtener la URL de pago de Onvo.");
+    }
+
+    public String createCheckoutSession(double amount, String currency, String email, String name) {
+        String url = onvoApiUrl + "/checkout/sessions";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(onvoApiKey.trim());
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("amountTotal", (int) amount);
+        requestBody.put("currency", currency.toUpperCase());
+        requestBody.put("customerEmail", email);
+        requestBody.put("customerName", name);
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+
+        if (response.getBody() != null) {
+            return (String) response.getBody().get("url");
+        }
+        throw new RuntimeException("No se pudo obtener la URL de pago de Onvo");
     }
 }

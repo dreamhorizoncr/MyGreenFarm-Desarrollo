@@ -103,31 +103,25 @@ public class ServicePlanController {
         return ResponseEntity.ok(Map.of("message", "Plan de servicio eliminado exitosamente"));
     }
 
-    // @GetMapping("/status/{gatewaySessionId}")
-    // public ResponseEntity<Map<String, Object>> checkStatus(@PathVariable String gatewaySessionId) {
-    //     Optional<PaymentRecord> recordOpt = paymentRecordRepository.findByGatewaySessionId(gatewaySessionId);
-
-    //     Map<String, Object> response = new HashMap<>();
-    //     if (recordOpt.isPresent()) {
-    //         PaymentRecord record = recordOpt.get();
-    //         boolean isPaid = record.getStatus() == PaymentStatus.PAID;
-    //         boolean isFailed = record.getStatus() == PaymentStatus.FAILED;
-
-    //         response.put("isPaid", isPaid);
-    //         response.put("isFailed", isFailed);
-    //         response.put("status", record.getStatus());
-    //     } else {
-    //         response.put("isPaid", false);
-    //         response.put("isFailed", false);
-    //         response.put("status", "PENDING");
-    //     }
-
-    //     return ResponseEntity.ok(response);
-    // }
-
     @GetMapping("/status/{gatewaySessionId}")
-    public ResponseEntity<Map<String, Object>> checkPaymentStatus(@PathVariable String gatewaySessionId) {
-        Map<String, Object> statusResponse = servicePlanService.checkPaymentStatus(gatewaySessionId);
-        return ResponseEntity.ok(statusResponse);
+    public ResponseEntity<Map<String, Object>> checkStatus(@PathVariable String gatewaySessionId) {
+        Optional<PaymentRecord> recordOpt = paymentRecordRepository.findByGatewaySessionId(gatewaySessionId);
+
+        Map<String, Object> response = new HashMap<>();
+        if (recordOpt.isPresent()) {
+            PaymentRecord record = recordOpt.get();
+            boolean isPaid = record.getStatus() == PaymentStatus.PAID;
+            boolean isFailed = record.getStatus() == PaymentStatus.FAILED;
+
+            response.put("isPaid", isPaid);
+            response.put("isFailed", isFailed);
+            response.put("status", record.getStatus());
+        } else {
+            response.put("isPaid", false);
+            response.put("isFailed", false);
+            response.put("status", "PENDING");
+        }
+
+        return ResponseEntity.ok(response);
     }
 }

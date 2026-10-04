@@ -49,6 +49,7 @@ public class ServicePlanImageService {
         ServicePlan plan = new ServicePlan();
         plan.setGatewayPriceId(dto.getGatewayPriceId());
         plan.setName(dto.getName());
+        plan.setCurrency(dto.getCurrency());
         plan.setDescription(dto.getDescription()); 
         plan.setPrice(dto.getPrice());
         plan.setType(dto.getType());
