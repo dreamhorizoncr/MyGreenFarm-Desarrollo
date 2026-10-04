@@ -14,6 +14,7 @@ interface ForumSidebarProps {
   blogSearch?: string
   onBlogSearchChange?: (value: string) => void
   blogPosts?: BlogPost[]
+  showPopularTopics?: boolean
 }
 
 function ForumSidebar({
@@ -24,6 +25,7 @@ function ForumSidebar({
   blogSearch = '',
   onBlogSearchChange,
   blogPosts = [],
+  showPopularTopics = true,
 }: Readonly<ForumSidebarProps>) {
   const { t } = useTranslation()
   const showControls = variant !== 'details'
@@ -53,7 +55,7 @@ function ForumSidebar({
       {showDetails && (
         <>
           <AboutWallCard community={showPublish} />
-          <PopularTopicsCard blogPosts={blogPosts} />
+          {showPopularTopics && <PopularTopicsCard blogPosts={blogPosts} />}
           <FeaturedBannerCard />
         </>
       )}
