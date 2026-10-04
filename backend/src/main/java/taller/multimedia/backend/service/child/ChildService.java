@@ -34,8 +34,10 @@ public class ChildService {
 
     @Transactional
     public ChildResponse create(ChildRequest dto) {
-        Parent parent = parentRepository.findById(dto.getParentId().intValue())
-                .orElseThrow(() -> new EntityNotFoundException("Padre/Tutor no encontrado con ID: " + dto.getParentId()));
+        String parentIdentification = Sanitizer.requireClean("parentIdentification", dto.getParentIdentification());
+
+        Parent parent = parentRepository.findByIdentification(parentIdentification)
+                .orElseThrow(() -> new EntityNotFoundException("Padre/Tutor no encontrado con la cédula: " + parentIdentification));
 
         String firstName = Sanitizer.requireClean("firstName", dto.getFirstName());
         String lastName = Sanitizer.requireClean("lastName", dto.getLastName());
@@ -85,8 +87,8 @@ public class ChildService {
         Child child = childRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Registro de niño no encontrado con ID: " + id));
 
-        Parent parent = parentRepository.findById(dto.getParentId().intValue())
-                .orElseThrow(() -> new EntityNotFoundException("Padre/Tutor no encontrado con ID: " + dto.getParentId()));
+        Parent parent = parentRepository.findByIdentification(dto.getParentIdentification())
+                .orElseThrow(() -> new EntityNotFoundException("Padre/Tutor no encontrado con ID: " + dto.getParentIdentification()));
 
         String firstName = Sanitizer.requireClean("firstName", dto.getFirstName());
         String lastName = Sanitizer.requireClean("lastName", dto.getLastName());
@@ -140,7 +142,7 @@ public class ChildService {
         ChildResponse response = new ChildResponse();
         response.setId(child.getId());
         response.setStudentId(child.getStudentId());
-        response.setParentId(child.getParent() != null ? child.getParent().getId() : null);
+        response.setParentIdentification(child.getParent() != null ? child.getParent().getIdentification() : null);
         response.setParentName(parentFullName);
         response.setRelationship(child.getRelationship());
         response.setFirstName(child.getFirstName());
