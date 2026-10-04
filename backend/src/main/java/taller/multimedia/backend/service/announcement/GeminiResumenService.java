@@ -29,6 +29,14 @@ public class GeminiResumenService {
                     + "en español, con tono claro y cálido. "
                     + "Usa solo la información del texto, sin inventar datos.\n\nNoticia:\n";
 
+    private static final String PROMPT_EVALUATION = 
+        "Eres un pedagogo experto de una guardería. Genera un resumen semestral de progreso, "
+        + "cálido, motivador y profesional en español (máximo 120 palabras), "
+        + "dirigido a los padres del niño/a %s. "
+        + "Finaliza el mensaje despidiéndote explícitamente a nombre del equipo de The Green Farm. "
+        + "A continuación tienes las evaluaciones registradas en el último semestre en las áreas de "
+        + "comunicación, lenguaje, lectura, desarrollo motor y observaciones del docente:\n\n%s";
+        
     private static final String PROMPT_ARTICULO_FORO =
             "Resume el siguiente artículo del foro de una guardería en una sola oración breve (máximo 30 palabras), "
                     + "en español, con tono claro y cálido. "
@@ -52,6 +60,11 @@ public class GeminiResumenService {
 
     public String generarResumen(String contenido) {
         return callGemini(PROMPT_BASE + contenido);
+    }
+
+    public String generateSemiannualEvaluationSummary(String childName, String historialEvaluaciones) {
+        String prompt = String.format(PROMPT_EVALUATION, childName, historialEvaluaciones);
+        return callGemini(prompt);
     }
 
     public String generarResumenArticulo(String contenido) {
@@ -105,7 +118,7 @@ public class GeminiResumenService {
                 return text.trim();
             }
         } catch (Exception e) {
-            log.error("Error generando resumen con Gemini API: {}", e.getMessage());
+            log.error("Error generando resumen con Gemini API: {}", e.getMessage(), e);
             return null;
         }
     }

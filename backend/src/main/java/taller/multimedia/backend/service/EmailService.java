@@ -285,6 +285,43 @@ public class EmailService {
         }
     }
 
+    @Async
+    public void sendSemiannualEvaluationSummaryEmail(String parentEmail, String childName, String summaryText, String period, String parentLanguage) {
+        try {
+            // Normalizar el idioma recibido (por defecto 'es')
+            String lang = normalizeNewsletterLanguage(parentLanguage);
+            Locale locale = Locale.forLanguageTag(lang);
+
+            // Pasar la Locale al contexto de Thymeleaf para soporte i18n
+            Context context = new Context(locale);
+            context.setVariable("childName", childName);
+            context.setVariable("summaryText", summaryText);
+            context.setVariable("period", period);
+            context.setVariable("supportEmail", supportEmail);
+
+            // Asuntos según el idioma
+            String subject;
+            switch (lang) {
+                case "en":
+                    subject = "Semiannual Progress Report - " + childName;
+                    break;
+                case "fr":
+                    subject = "Rapport de Progrès Semestriel - " + childName;
+                    break;
+                default:
+                    subject = "Resumen de Progreso Semestral - " + childName;
+                    break;
+            }
+
+            String htmlContent = templateEngine.process("email/evaluations/semiannual-summary", context);
+
+            sendEmail(parentEmail, subject, htmlContent);
+            log.info("Resumen semestral enviado con éxito a: {} (Idioma: {})", parentEmail, lang);
+        } catch (Exception e) {
+            log.error("Error al enviar resumen semestral a {}: {}", parentEmail, e.getMessage(), e);
+        }
+    }
+
     private String normalizeNewsletterLanguage(String language) {
         if (language == null || language.isBlank()) {
             return "es";

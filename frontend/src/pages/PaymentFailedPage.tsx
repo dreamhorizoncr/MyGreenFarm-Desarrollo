@@ -2,10 +2,17 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { TriangleAlert } from '@animateicons/react/lucide'
 import Navbar from '../components/Navbar.tsx'
+import { useEffect } from 'react'
 
 function PaymentFailedPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const channel = new BroadcastChannel('payment_channel')
+    channel.postMessage('PAYMENT_FAILED')
+    channel.close()
+  }, [])
 
   return (
     <div className="min-h-screen bg-bg-page">

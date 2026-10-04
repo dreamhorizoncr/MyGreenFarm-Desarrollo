@@ -7,13 +7,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import taller.multimedia.backend.model.child.Child;
 
 @Entity
 @Table (name = "expedient")
@@ -28,8 +32,9 @@ public class Expedient {
     @Column(name= "photo_url")
     private String photoUrl;
 
-    @Column(name= "child_name", nullable = false, unique = true)
-    private String childName;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "child_id", nullable = false, unique = true)
+    private Child child;
 
     @Column(name= "admision_date", nullable = false)
     private LocalDate admisionDate;

@@ -10,7 +10,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import taller.multimedia.backend.dto.service_plan.ServicePlanRequest;
+import taller.multimedia.backend.model.onvo.PaymentRecord;
+import taller.multimedia.backend.model.onvo.PaymentStatus;
 import taller.multimedia.backend.model.service_plans.ServicePlan;
+import taller.multimedia.backend.repository.onvo.PaymentRecordRepository;
 import taller.multimedia.backend.repository.service_plan.ServicePlanRepository;
 
 import java.math.BigDecimal;
@@ -29,6 +32,7 @@ public class ServicePlanService {
     private final ServicePlanRepository servicePlanRepository;
     private final ServicePlanImageService servicePlanImagesService;
     private final RestTemplate restTemplate;
+    private final PaymentRecordRepository paymentRecordRepository;
 
     @Value("${onvo.api.key}")
     private String onvoApiKey;
@@ -117,10 +121,10 @@ public class ServicePlanService {
             }
 
             // 2. Obtener precios y unificarlos
-                long pricesRequestStart = System.currentTimeMillis();
+            long pricesRequestStart = System.currentTimeMillis();
             ResponseEntity<Map> priceRes = restTemplate.exchange(onvoApiUrl + "/prices", HttpMethod.GET, entity,
                     Map.class);
-                log.info("Consultar precios de Onvo tardó: {} ms", System.currentTimeMillis() - pricesRequestStart);
+            log.info("Consultar precios de Onvo tardó: {} ms", System.currentTimeMillis() - pricesRequestStart);
             if (priceRes.getBody() != null && priceRes.getBody().get("data") != null) {
                 for (Map<String, Object> item : (List<Map<String, Object>>) priceRes.getBody().get("data")) {
                     Map<String, Object> info = new HashMap<>();
@@ -203,6 +207,16 @@ public class ServicePlanService {
     // Genera la sesión de pago dinámica en OnvoPay cuando el cliente
     // presiona "Pagar"
     public String generateCheckoutUrl(String gatewayPriceId) {
+        return generateCheckoutUrlInternal(gatewayPriceId, null);
+    }
+
+    // La que usa createCheckoutSessionForPlan (con UUID en la
+    // metadata para el sondeo)
+    public String generateCheckoutUrl(String gatewayPriceId, String gatewaySessionId) {
+        return generateCheckoutUrlInternal(gatewayPriceId, gatewaySessionId);
+    }
+
+    private String generateCheckoutUrlInternal(String gatewayPriceId, String gatewaySessionId) {
         if (gatewayPriceId == null || gatewayPriceId.isEmpty()) {
             throw new IllegalStateException("Este plan no tiene asociado un precio de OnvoPay.");
         }
@@ -213,27 +227,31 @@ public class ServicePlanService {
         headers.setBearerAuth(onvoApiKey);
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // Estructura correcta exigida por el endpoint de Onvo
         Map<String, Object> requestBody = new HashMap<>();
 
         List<Map<String, Object>> lineItems = new ArrayList<>();
         Map<String, Object> item = new HashMap<>();
-        item.put("priceId", gatewayPriceId); 
+        item.put("priceId", gatewayPriceId);
         item.put("quantity", 1);
         lineItems.add(item);
 
         requestBody.put("lineItems", lineItems);
 
+        // Si viene un gatewaySessionId (flujo anónimo), se lo inyectamos a la metadata
+        if (gatewaySessionId != null && !gatewaySessionId.isEmpty()) {
+            Map<String, String> metadata = new HashMap<>();
+            metadata.put("gatewaySessionId", gatewaySessionId);
+            requestBody.put("metadata", metadata);
+        }
+
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
         try {
-            long checkoutRequestStart = System.currentTimeMillis();
             ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
-            log.info("Generar checkout de Onvo tardó: {} ms", System.currentTimeMillis() - checkoutRequestStart);
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 Map<String, Object> body = response.getBody();
-                return (String) body.get("url"); // Devuelve la URL real (buy.onvopay.com/...)
+                return (String) body.get("url");
             }
         } catch (Exception e) {
             throw new RuntimeException("Error al comunicarse con OnvoPay: " + e.getMessage());
@@ -242,13 +260,33 @@ public class ServicePlanService {
         throw new RuntimeException("No se pudo obtener el enlace de pago de OnvoPay.");
     }
 
-    public String createCheckoutSessionForPlan(UUID planId) {
-        return generateCheckoutUrl(getPlanById(planId).getGatewayPriceId());
+    public Map<String, String> createCheckoutSessionForPlan(UUID planId) {
+        ServicePlan plan = getPlanById(planId);
+        String gatewayPriceId = plan.getGatewayPriceId();
+
+        // 1. Generas tu UUID primero
+        String gatewaySessionId = UUID.randomUUID().toString();
+
+        // 2. Se lo pasas a tu método para que viaje a Onvo
+        String checkoutUrl = generateCheckoutUrl(gatewayPriceId, gatewaySessionId);
+
+        // 3. Guardas el registro normalmente
+        PaymentRecord record = new PaymentRecord();
+        record.setServicePlan(plan);
+        record.setGatewayPriceId(gatewayPriceId);
+        record.setGatewaySessionId(gatewaySessionId);
+        record.setStatus(PaymentStatus.PENDING);
+        record.setTotalAmount(plan.getPrice() != null ? plan.getPrice() : BigDecimal.ZERO);
+        record.setPaidAmount(BigDecimal.ZERO);
+
+        paymentRecordRepository.save(record);
+
+        return Map.of(
+                "url", checkoutUrl,
+                "gatewaySessionId", gatewaySessionId);
     }
 
-    // Puedes eliminar createPaymentIntentOrCheckout por completo si no lo usas,
-    // o hacer que apunte al mismo flujo si quieres conservar el nombre:
-    public String createPaymentIntentOrCheckout(UUID planId) {
+    public Map<String, String> createPaymentIntentOrCheckout(UUID planId) {
         return createCheckoutSessionForPlan(planId);
     }
 }

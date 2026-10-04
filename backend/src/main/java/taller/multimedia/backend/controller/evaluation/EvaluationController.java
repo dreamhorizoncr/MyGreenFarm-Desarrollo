@@ -6,6 +6,7 @@ import taller.multimedia.backend.dto.evaluation.EvaluationRequest;
 import taller.multimedia.backend.dto.evaluation.EvaluationResponse;
 import taller.multimedia.backend.model.evaluation.Evaluation;
 import taller.multimedia.backend.service.evaluation.EvaluationService;
+import taller.multimedia.backend.service.evaluation.EvaluationSummaryService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class EvaluationController {
 
     private final EvaluationService evaluationService;
+    private final EvaluationSummaryService evaluationSummaryService;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
@@ -62,5 +64,12 @@ public class EvaluationController {
     public ResponseEntity<Void> deleteEvaluation(@PathVariable UUID id) {
         evaluationService.deleteEvaluation(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/send-semiannual-summaries")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
+    public ResponseEntity<String> sendSemiannualSummaries() {
+        evaluationSummaryService.generateAndSendSemiannualSummaries();
+        return ResponseEntity.ok("Proceso de generación y envío de resúmenes semestrales ejecutado correctamente.");
     }
 }

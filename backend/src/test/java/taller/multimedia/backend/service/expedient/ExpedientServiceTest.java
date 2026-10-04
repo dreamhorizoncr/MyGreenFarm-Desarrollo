@@ -1,7 +1,9 @@
 package taller.multimedia.backend.service.expedient;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
+import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -11,7 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import taller.multimedia.backend.dto.expedient.ExpedientRequest;
 import taller.multimedia.backend.exception.InvalidFieldException;
+import taller.multimedia.backend.model.child.Child;
 import taller.multimedia.backend.model.expedient.EducationalLevel;
+import taller.multimedia.backend.repository.child.ChildRepository;
 import taller.multimedia.backend.repository.expedient.ExpedientRepository;
 import taller.multimedia.backend.service.StorageService;
 
@@ -19,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ExpedientServiceTest {
@@ -29,32 +34,41 @@ class ExpedientServiceTest {
     @Mock
     private StorageService storageService;
 
+    @Mock
+    private ChildRepository childRepository;
+
     @InjectMocks
     private ExpedientService expedientService;
 
-    private ExpedientRequest requestWith(String childName, String generalObservations) {
+    private ExpedientRequest requestWith(Long childId, String generalObservations) {
         ExpedientRequest request = new ExpedientRequest();
-        request.setChildName(childName);
+        request.setChildId(childId);
         request.setAdmisionDate(LocalDate.now());
         request.setEducationalLevel(EducationalLevel.KINDER);
         request.setGeneralObservations(generalObservations);
         return request;
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = { "childName", "generalObservations" })
-    void createExpedient_rejectsMaliciousFieldsAndNeverSaves(String field) {
-        String maliciousValue = "<script>alert(1)</script>x";
-        ExpedientRequest request = requestWith("Pedrito", "Le gusta dibujar");
+    @Test 
+    void createExpedient_rejectsMaliciousGeneralObservationsAndNeverSaves() {
+        Long childId = 1L;
+        String maliciousObservations = "<script>alert(1)</script>x";
 
-        switch (field) {
-            case "childName" -> request.setChildName(maliciousValue);
-            case "generalObservations" -> request.setGeneralObservations(maliciousValue);
-            default -> throw new IllegalStateException("Campo no cubierto: " + field);
-        }
+        Child mockChild = new Child();
+        mockChild.setId(childId);
+        mockChild.setFirstName("Pedrito");
+        mockChild.setLastName("Pérez");
+        mockChild.setStudentId("A6001");
 
+        // Simular que el niño sí existe en la base de datos
+        when(childRepository.findById(childId)).thenReturn(Optional.of(mockChild));
+
+        ExpedientRequest request = requestWith(childId, maliciousObservations);
+
+        // Verifica que la llamada lance InvalidFieldException debido al Sanitizer
         assertThrows(InvalidFieldException.class, () -> expedientService.createExpedient(request, null));
 
+        // Garantiza que nunca se intente persistir en el repositorio
         verify(expedientRepository, never()).save(any());
     }
 }
