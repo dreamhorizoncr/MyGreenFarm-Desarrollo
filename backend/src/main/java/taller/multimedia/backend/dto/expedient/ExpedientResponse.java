@@ -11,6 +11,8 @@ import java.util.UUID;
 @Builder
 public class ExpedientResponse {
     private UUID id;
+    private Long childId;
+    private String studentId;
     private String childName;
     private LocalDate admisionDate;
     private EducationalLevel educationalLevel;

@@ -9,12 +9,17 @@ import org.springframework.http.MediaType;
 
 import taller.multimedia.backend.dto.service_plan.ServicePlanRequest;
 import taller.multimedia.backend.exception.InvalidFieldException;
+import taller.multimedia.backend.model.onvo.PaymentRecord;
+import taller.multimedia.backend.model.onvo.PaymentStatus;
 import taller.multimedia.backend.model.service_plans.ServicePlan;
+import taller.multimedia.backend.repository.onvo.PaymentRecordRepository;
 import taller.multimedia.backend.service.service_plan.ServicePlanService;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -24,6 +29,7 @@ public class ServicePlanController {
 
     private final ServicePlanService servicePlanService;
     private final ObjectMapper objectMapper;
+    private final PaymentRecordRepository paymentRecordRepository;
 
     // Catálogo público: cualquier visitante puede ver los planes activos o todos
     @GetMapping
@@ -73,9 +79,8 @@ public class ServicePlanController {
     
     @PostMapping("/{id}/checkout")
     public ResponseEntity<Map<String, String>> createCheckoutSession(@PathVariable UUID id) {
-        String paymentUrl = servicePlanService.createPaymentIntentOrCheckout(id);
-
-        return ResponseEntity.ok(Map.of("url", paymentUrl));
+        Map<String, String> checkoutData = servicePlanService.createCheckoutSessionForPlan(id);
+        return ResponseEntity.ok(checkoutData); 
     }
 
     // Actualizar un plan existente
@@ -96,5 +101,33 @@ public class ServicePlanController {
     public ResponseEntity<?> deletePlan(@PathVariable UUID id) {
         servicePlanService.deletePlan(id);
         return ResponseEntity.ok(Map.of("message", "Plan de servicio eliminado exitosamente"));
+    }
+
+    // @GetMapping("/status/{gatewaySessionId}")
+    // public ResponseEntity<Map<String, Object>> checkStatus(@PathVariable String gatewaySessionId) {
+    //     Optional<PaymentRecord> recordOpt = paymentRecordRepository.findByGatewaySessionId(gatewaySessionId);
+
+    //     Map<String, Object> response = new HashMap<>();
+    //     if (recordOpt.isPresent()) {
+    //         PaymentRecord record = recordOpt.get();
+    //         boolean isPaid = record.getStatus() == PaymentStatus.PAID;
+    //         boolean isFailed = record.getStatus() == PaymentStatus.FAILED;
+
+    //         response.put("isPaid", isPaid);
+    //         response.put("isFailed", isFailed);
+    //         response.put("status", record.getStatus());
+    //     } else {
+    //         response.put("isPaid", false);
+    //         response.put("isFailed", false);
+    //         response.put("status", "PENDING");
+    //     }
+
+    //     return ResponseEntity.ok(response);
+    // }
+
+    @GetMapping("/status/{gatewaySessionId}")
+    public ResponseEntity<Map<String, Object>> checkPaymentStatus(@PathVariable String gatewaySessionId) {
+        Map<String, Object> statusResponse = servicePlanService.checkPaymentStatus(gatewaySessionId);
+        return ResponseEntity.ok(statusResponse);
     }
 }

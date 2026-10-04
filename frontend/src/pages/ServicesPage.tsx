@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import { useServicePlans } from '../hooks/useServicePlans.ts'
@@ -76,9 +77,8 @@ function PlanCard({
                 onClick={() => setCurrency(option)}
                 aria-pressed={currency === option}
                 disabled={!exchangeRate && option !== 'USD'}
-                className={`rounded-full border px-sm py-2xs font-body text-caption leading-tight transition disabled:cursor-not-allowed disabled:opacity-40 ${
-                  currency === option ? 'border-green-500 bg-green-500 text-white' : 'border-neutral-200 text-neutral-600 hover:border-green-500'
-                }`}
+                className={`rounded-full border px-sm py-2xs font-body text-caption transition disabled:cursor-not-allowed disabled:opacity-40 ${currency === option ? 'border-green-500 bg-green-500 text-white' : 'border-neutral-200 text-neutral-600 hover:border-green-500'
+                  }`}
               >
                 {option}
               </button>
@@ -160,21 +160,150 @@ function PlanCardSkeleton() {
 
 function ServicesPage() {
   const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
   const { plans, loading, error, fetchPlans } = useServicePlans()
   const { data: exchangeRate, loading: exchangeRateLoading, error: exchangeRateError, reload: reloadExchangeRate } = useExchangeRate()
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
+  const checkoutWindowRef = useRef<Window | null>(null)
 
   useEffect(() => {
     void fetchPlans(i18n.language)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i18n.language])
 
+  useEffect(() => {
+    const handlePaymentReturn = (event: MessageEvent<{ type?: string }>) => {
+      if (event.origin !== window.location.origin || event.source !== checkoutWindowRef.current) return
+
+      if (event.data?.type === 'payment-success') {
+        navigate('/payment-success')
+      } else if (event.data?.type === 'payment-failed') {
+        navigate('/payment-failed')
+      } else {
+        return
+      }
+
+      checkoutWindowRef.current = null
+    }
+
+    const paymentChannel = new BroadcastChannel('payment_channel')
+    paymentChannel.onmessage = (event: MessageEvent<string>) => {
+      if (event.data === 'PAYMENT_SUCCESS') {
+        navigate('/payment-success')
+      } else if (event.data === 'PAYMENT_FAILED') {
+        navigate('/payment-failed')
+      }
+    }
+
+    window.addEventListener('message', handlePaymentReturn)
+    return () => {
+      window.removeEventListener('message', handlePaymentReturn)
+      paymentChannel.close()
+    }
+  }, [navigate])
+
   const handleSubscribe = async (plan: ServicePlan) => {
+    // 1. Abrimos la pestaña en blanco inmediatamente para evitar bloqueadores de pop-ups
+    const checkoutWindow = window.open('', '_blank')
+
+    if (!checkoutWindow) {
+      notify.error({
+        title: t('services.checkoutErrorToastTitle'),
+        description: t('services.checkoutErrorToastDescription'),
+      })
+      return
+    }
+
+    checkoutWindowRef.current = checkoutWindow
+
+    const doc = checkoutWindow.document;
+    doc.title = 'Conectando con Pasarela de Pago...';
+    doc.body.style.cssText = `
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #f6f8f5;
+      color: #263b2f;
+      font-family: system-ui, -apple-system, sans-serif;
+    `;
+
+    doc.body.innerHTML = `
+      <style>
+        @keyframes pulse-soft {
+          0%, 100% { opacity: 0.4; transform: scale(0.98); }
+          50% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+        .loader-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 16px;
+        }
+        .spinner {
+          width: 40px;
+          height: 40px;
+          border: 3px solid #d8e2dc;
+          border-top-color: #3b5d50;
+          border-radius: 50%;
+          animation: spin 0.8s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite;
+        }
+        .text {
+          font-size: 16px;
+          font-weight: 500;
+          letter-spacing: -0.01em;
+          animation: pulse-soft 2s ease-in-out infinite;
+        }
+      </style>
+      <div class="loader-container">
+        <div class="spinner"></div>
+        <p class="text">Preparando pago seguro...</p>
+      </div>
+    `;
+
     setCheckoutLoading(plan.id)
+
     try {
-      const url = await servicePlanService.checkoutPlan(plan.id)
-      window.open(url, '_blank', 'noopener,noreferrer')
-    } catch {
+
+      const checkout = await servicePlanService.checkoutPlan(plan.id)
+
+      checkoutWindow.location.replace(checkout.url)
+
+      const pollInterval = setInterval(async () => {
+        try {
+          const statusResponse = await servicePlanService.checkPaymentStatus(checkout.gatewaySessionId)
+          console.log("Estado actual del pago:", statusResponse)
+          if (statusResponse.isPaid) {
+            clearInterval(pollInterval)
+            clearInterval(closeCheckInterval)
+            setCheckoutLoading(null)
+            navigate('/payment-success')
+          } else if (statusResponse.isFailed) {
+            clearInterval(pollInterval)
+            clearInterval(closeCheckInterval)
+            setCheckoutLoading(null)
+            navigate('/payment-failed')
+          }
+        } catch (err) {
+          console.error("Error consultando el estado del pago", err)
+        }
+      }, 3000)
+
+      const closeCheckInterval = setInterval(() => {
+        if (checkoutWindow.closed) {
+          clearInterval(closeCheckInterval)
+          clearInterval(pollInterval)
+          setCheckoutLoading(null)
+        }
+      }, 1500)
+
+    } catch (error) {
+      checkoutWindow.close()
       setCheckoutLoading(null)
       notify.error({
         title: t('services.checkoutErrorToastTitle'),
@@ -201,10 +330,10 @@ function ServicesPage() {
       <section className="relative w-full bg-bg-page py-[36px] md:py-[48px]">
         <Container className="!max-w-[1400px] mb-[36px] flex justify-start md:mb-[48px]">
           <ExchangeRateWidget
-              data={exchangeRate}
-              loading={exchangeRateLoading}
-              error={exchangeRateError}
-              onOpen={() => void reloadExchangeRate()}
+            data={exchangeRate}
+            loading={exchangeRateLoading}
+            error={exchangeRateError}
+            onOpen={() => void reloadExchangeRate()}
           />
         </Container>
 

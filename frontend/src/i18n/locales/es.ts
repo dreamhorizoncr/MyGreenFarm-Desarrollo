@@ -566,6 +566,7 @@ export default {
     logout: "Cerrar sesión",
     resetPassword: "Restablecer contraseña",
     logoutToastTitle: "Sesión cerrada",
+    viewProfile: "Ver perfil",
   },
   admin: {
     docentesTitle: "Gestión de Usuarios",

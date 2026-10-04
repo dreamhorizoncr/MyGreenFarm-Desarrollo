@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{email.evaluation.summary.pagetitle}">Resumen Semestral de Progreso</title>
+</head>
+
+<body style="margin:0; padding:0; background-color:#E8EFE6; font-family: Georgia, 'Times New Roman', serif;">
+
+    <table role="presentation" style="padding: 48px 16px; border-spacing:0; width:100%">
+        <tr>
+            <td style="padding:0; text-align:center">
+                <table role="presentation"
+                    style="background-color:#FFFDF8; border-radius:6px; overflow:hidden; border:1px solid #B9D4BC; border-spacing:0; width:520px; margin: 0 auto; text-align:left;">
+
+                    <!-- Top Accent Bar -->
+                    <tr>
+                        <td style="padding:0; background-color:#015C39; height:8px; line-height:8px; font-size:1px">
+                            &nbsp;</td>
+                    </tr>
+
+                    <!-- Header -->
+                    <tr>
+                        <td style="background-color:#019F62; padding: 30px 40px 22px; text-align:center;">
+                            <table role="presentation" style="margin:0 auto 10px; border-spacing:0">
+                                <tr>
+                                    <td
+                                        style="padding:0; width:22px; height:22px; background-color:#8FD4AE; border-radius:0 100% 0 100%">
+                                        &nbsp;</td>
+                                    <td style="padding:0; width:10px">&nbsp;</td>
+                                    <td
+                                        style="padding:0; width:22px; height:22px; background-color:#B7E4C7; border-radius:100% 0 100% 0">
+                                        &nbsp;</td>
+                                    <td style="padding:0; width:10px">&nbsp;</td>
+                                    <td
+                                        style="padding:0; width:22px; height:22px; background-color:#8FD4AE; border-radius:0 100% 0 100%">
+                                        &nbsp;</td>
+                                </tr>
+                            </table>
+                            <p
+                                style="margin:0; color:#DFF3E6; font-size:12px; letter-spacing:3px; text-transform:uppercase;">
+                                My Green Farm
+                            </p>
+                            <h1 th:text="#{email.header.educationalcenter}"
+                                style="margin:6px 0 0; color:#FFFFFF; font-size:24px; font-weight:normal;">
+                                Centro Educativo
+                            </h1>
+                        </td>
+                    </tr>
+
+                    <!-- Sub-Header Divider -->
+                    <tr>
+                        <td style="padding:0; background-color:#CFE8D6; height:14px; line-height:14px; font-size:1px">
+                            &nbsp;</td>
+                    </tr>
+
+                    <!-- Main Content -->
+                    <tr>
+                        <td style="padding: 32px 40px 16px;">
+                            <h2 th:text="#{email.evaluation.summary.title}"
+                                style="color:#1E4A32; font-size:19px; margin:0 0 16px; font-weight:normal;">
+                                Resumen Semestral de Avance
+                            </h2>
+                            <p style="color:#3F4A3B; font-size:15.5px; line-height:1.75; margin:0 0 16px;">
+                                <span th:text="#{email.evaluation.summary.greeting}">Estimados padres de</span>
+                                <strong th:text="${childName}" style="color:#015C39;"></strong>:
+                            </p>
+                            <p style="color:#3F4A3B; font-size:15px; line-height:1.75; margin:0 0 20px;">
+                                <span th:text="#{email.evaluation.summary.intro}">A continuación les compartimos la
+                                    síntesis pedagógica correspondiente al período:</span>
+                                <strong th:text="${period}" style="color:#1E4A32;"></strong>.
+                            </p>
+
+                            <!-- AI Summary Box -->
+                            <div
+                                style="background-color:#F2F7F3; border-left:4px solid #019F62; border-radius:0 6px 6px 0; padding:18px 20px; margin:0 0 24px;">
+                                <p th:text="${summaryText}"
+                                    style="color:#2D3B2A; font-size:14.5px; line-height:1.8; margin:0; white-space: pre-line;">
+                                    Texto del resumen generado...
+                                </p>
+                            </div>
+
+                            <table role="presentation" style="border-spacing:0; width:100%">
+                                <tr>
+                                    <td
+                                        style="padding:0; border-top:2px dashed #B9D4BC; font-size:1px; line-height:1px">
+                                        &nbsp;</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Footer Section -->
+                    <tr>
+                        <td style="padding: 16px 40px 24px; text-align:center;">
+                            <table role="presentation" style="margin:0 auto 18px; border-spacing:0">
+                                <tr>
+                                    <td style="padding:0; background-color:#019F62; border-radius:24px">
+                                        <a th:href="${socialLink}" target="_blank" rel="noopener noreferrer"
+                                            th:text="#{email.footer.social}"
+                                            style="display:inline-block; padding:12px 24px; color:#FFFFFF; text-decoration:none; font-size:13px; letter-spacing:0.3px;">
+                                            Contáctanos en redes sociales
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="color:#8A9686; font-size:12.5px; margin:0;">
+                                <span th:text="#{email.footer.help}">¿Necesitas ayuda? Escríbenos a</span>
+                                <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}"
+                                    style="color:#019F62; text-decoration:none; border-bottom:1px solid #019F62;"></a>
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Bottom Accent Bar -->
+                    <tr>
+                        <td style="background-color:#019F62; padding: 14px; text-align:center;">
+                            <p th:text="#{email.footer.slogan}"
+                                style="margin:0; color:#DFF3E6; font-size:11px; letter-spacing:1px;">
+                                CRECIENDO JUNTO A LA NATURALEZA
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+
+                <p style="color:#8A9686; font-size:11px; margin-top:18px; font-family:Georgia, serif;">
+                    My Green Farm — <span th:text="#{email.header.educationalcenter}">Centro Educativo</span>
+                </p>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

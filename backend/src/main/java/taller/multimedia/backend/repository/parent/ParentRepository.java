@@ -21,4 +21,6 @@ public interface ParentRepository extends JpaRepository<Parent, Integer> {
 
     @Query("SELECT p.email as email, p.language as language FROM Parent p WHERE p.isActive = true")
     List<SubscriberEmailProjection> findAllActiveParentsInfo();
+
+    Optional<Parent> findByIdentification(String identification);
 }

@@ -29,6 +29,16 @@ public class GeminiResumenService {
                     + "en español, con tono claro y cálido. "
                     + "Usa solo la información del texto, sin inventar datos.\n\nNoticia:\n";
 
+    private static final String PROMPT_EVALUATION = 
+        "Eres un pedagogo experto de una guardería. Tu tarea es analizar el historial completo "
+        + "de evaluaciones del semestre del niño/a %s y sintetizar su evolución general.\n\n"
+        + "REGLAS RIGUROSAS:\n"
+        + "1. Redacta un mensaje cálido, motivador y profesional dirigido a los padres.\n"
+        + "2. NO listes fecha por fecha. Resume los avances clave en comunicación, lenguaje, lectura y desarrollo motor.\n"
+        + "3. MANTÉN EL TEXTO BREVE: Máximo 120 palabras en total.\n"
+        + "4. Finaliza el mensaje despidiéndote explícitamente a nombre del equipo de The Green Farm.\n\n"
+        + "Historial de evaluaciones del semestre:\n%s";
+        
     private static final String PROMPT_ARTICULO_FORO =
             "Resume el siguiente artículo del foro de una guardería en una sola oración breve (máximo 30 palabras), "
                     + "en español, con tono claro y cálido. "
@@ -52,6 +62,11 @@ public class GeminiResumenService {
 
     public String generarResumen(String contenido) {
         return callGemini(PROMPT_BASE + contenido);
+    }
+
+    public String generateSemiannualEvaluationSummary(String childName, String historialEvaluaciones) {
+        String prompt = String.format(PROMPT_EVALUATION, childName, historialEvaluaciones);
+        return callGemini(prompt);
     }
 
     public String generarResumenArticulo(String contenido) {
@@ -105,7 +120,7 @@ public class GeminiResumenService {
                 return text.trim();
             }
         } catch (Exception e) {
-            log.error("Error generando resumen con Gemini API: {}", e.getMessage());
+            log.error("Error generando resumen con Gemini API: {}", e.getMessage(), e);
             return null;
         }
     }
