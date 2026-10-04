@@ -556,6 +556,7 @@ export default {
     logout: "Sign out",
     resetPassword: "Reset password",
     logoutToastTitle: "Signed out",
+    viewProfile: "View profile",
   },
   admin: {
     docentesTitle: "Teacher Management",
