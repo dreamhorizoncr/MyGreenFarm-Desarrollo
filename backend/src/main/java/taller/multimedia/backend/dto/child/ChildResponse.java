@@ -13,7 +13,7 @@ import taller.multimedia.backend.model.child.Relationship;
 @AllArgsConstructor 
 public class ChildResponse {
     private Long id;
-    private Integer parentId;
+    private String parentIdentification;
     private String parentName;
     private String studentId;
     private Relationship relationship;

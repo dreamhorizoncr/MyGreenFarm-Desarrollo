@@ -48,7 +48,7 @@ public class OnvoWebhookController {
                 gatewaySessionId = sessionIdValue == null ? null : sessionIdValue.toString();
             }
 
-            if (gatewaySessionId == null) {
+            if (gatewaySessionId == null || gatewaySessionId.isEmpty()) {
                 gatewaySessionId = (String) data.get("id");
             }
 

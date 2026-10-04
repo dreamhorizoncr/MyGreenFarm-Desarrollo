@@ -16,4 +16,6 @@ public interface EvaluationRepository extends JpaRepository<Evaluation, UUID> {
 
     List<Evaluation> findByExpedientIdIdAndEvaluationDateAfter(UUID expedientId, LocalDate date);
 
+    List<Evaluation> findByExpedientIdIdAndEvaluationDateAfterOrderByEvaluationDateAsc(UUID expedientId, LocalDate date);
+
 }

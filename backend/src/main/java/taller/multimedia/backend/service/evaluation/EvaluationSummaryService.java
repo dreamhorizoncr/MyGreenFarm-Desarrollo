@@ -36,7 +36,7 @@ public class EvaluationSummaryService {
         for (Expedient expedient : expedients) {
             try {
                 List<Evaluation> evaluations = evaluationRepository
-                        .findByExpedientIdIdAndEvaluationDateAfter(expedient.getId(), sixMonthsAgo);
+                        .findByExpedientIdIdAndEvaluationDateAfterOrderByEvaluationDateAsc(expedient.getId(), sixMonthsAgo);
 
                 if (evaluations.isEmpty()) {
                     log.info("No hay evaluaciones recientes para el expediente de: {}", expedient.getChild().getFirstName());
