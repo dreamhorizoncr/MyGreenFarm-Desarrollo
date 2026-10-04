@@ -474,6 +474,7 @@ export default {
     teacherRole: "Enseignant",
     adminRole: "Administrateur",
     ownerRole: "Propriétaire",
+    birthdayOptional: "Date de naissance",
     buttonLabel: "S'inscrire",
     loading: "Inscription...",
     success: "Compte créé ! Vous pouvez maintenant vous connecter.",
@@ -549,6 +550,8 @@ export default {
     firstName: "Prénom",
     lastName: "Noms",
     email: "E-mail",
+    birthday: "Date de naissance",
+    notAvailable: "Non renseignée",
     role: "Rôle",
     roles: {
       user: "Utilisateur",

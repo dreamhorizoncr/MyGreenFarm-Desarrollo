@@ -1,6 +1,7 @@
 package taller.multimedia.backend.service.user;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.util.UUID;
@@ -47,12 +48,19 @@ public class AuthService {
         String email = Sanitizer.requireClean("email", request.getEmail());
         String firstName = Sanitizer.requireClean("firstName", request.getFirstName());
         String lastName = Sanitizer.requireClean("lastName", request.getLastName());
+        LocalDate birthday = request.getBirthday();
 
         if (userRepository.existsByEmail(email)) {
             throw new RuntimeException("Error: Email is already in use!");
         }
 
         Role role = resolveRole(request.getRole());  // Resolve the role from the request, defaulting to USER if not provided
+
+        if(role != Role.TEACHER && birthday == null) {
+            throw new RuntimeException("Error: Birthday is only for required for TEACHER role!");
+        } else if(role == Role.TEACHER && birthday == null) {
+            throw new RuntimeException("Error: Birthday is required for TEACHER role!");
+        } 
 
         // Create a new user entity
         User user = new User(
@@ -61,7 +69,8 @@ public class AuthService {
                 firstName,
                 lastName,
                 role,
-                true);
+                true
+                );
 
         userRepository.save(user);
     }
@@ -81,7 +90,9 @@ public class AuthService {
                 userDetails.getUsername(),
                 userDetails.getFirstName(),
                 userDetails.getLastName(),
-                userDetails.getRole());
+                userDetails.getRole(),
+                userDetails.getBirthday()
+            );
 
         return new AuthResult(userInfo, userDetails);
     }

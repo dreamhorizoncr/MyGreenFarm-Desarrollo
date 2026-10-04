@@ -4,6 +4,7 @@ export interface RegisterData {
   firstName: string
   lastName: string
   role: string
+  birthday?: string
 }
 
 export interface RegisterResponse {
@@ -21,6 +22,7 @@ export interface UserInfo {
   firstName: string
   lastName: string
   role: string
+  birthday?: string
 }
 
 export interface LoginResponse {
@@ -49,4 +51,5 @@ export interface UpdateUserData {
   firstName: string
   lastName: string
   email: string
+  birthday?: string
 }

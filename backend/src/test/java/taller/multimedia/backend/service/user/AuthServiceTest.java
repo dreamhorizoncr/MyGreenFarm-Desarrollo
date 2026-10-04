@@ -107,7 +107,7 @@ class AuthServiceTest {
 
         UserDetailsImpl userDetails = new UserDetailsImpl(
                 UUID.randomUUID(), "owner@ejemplo.com", "hashed-password", "Owner", "Test",
-                Role.OWNER.name(), true, List.of(new SimpleGrantedAuthority("ROLE_OWNER")));
+                Role.OWNER.name(), true, null, List.of(new SimpleGrantedAuthority("ROLE_OWNER")));
 
         Authentication authentication = org.mockito.Mockito.mock(Authentication.class);
         when(authentication.getPrincipal()).thenReturn(userDetails);

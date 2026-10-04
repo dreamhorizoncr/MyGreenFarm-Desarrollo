@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -31,7 +32,7 @@ public class User {
 
     @Column(nullable = false)
     private String password;
-    
+
     @Column(nullable = false)
     private String firstName;
 
@@ -44,6 +45,9 @@ public class User {
 
     @Column(nullable = false)
     private boolean isActive;
+
+    @Column(name = "birthday", nullable = true)
+    private LocalDate birthday;
 
     @Column(name = "reset_password_token")
     private String resetPasswordToken;

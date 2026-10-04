@@ -475,6 +475,7 @@ export default {
     teacherRole: "Teacher",
     adminRole: "Administrator",
     ownerRole: "Owner",
+    birthdayOptional: "Birthday",
     buttonLabel: "Sign up",
     loading: "Signing up...",
     success: "Account created! You can now sign in.",
@@ -547,6 +548,8 @@ export default {
     firstName: "First name",
     lastName: "Last names",
     email: "Email",
+    birthday: "Birthday",
+    notAvailable: "Not provided",
     role: "Role",
     roles: {
       user: "User",
