@@ -24,4 +24,5 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
 
     @Query("SELECT c FROM Child c WHERE c.id NOT IN (SELECT e.child.id FROM Expedient e)")
     List<Child> findAllWithoutExpedient();
+    
 }

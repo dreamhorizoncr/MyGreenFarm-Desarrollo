@@ -19,8 +19,8 @@ import taller.multimedia.backend.model.child.Relationship;
 @Data 
 public class ChildRequest {
 
-    @NotNull (message = "El ID del padre/tutor es obligatorio")
-    private Long parentId;
+    @NotNull (message = "La cédula del padre/tutor es obligatorio")
+    private String parentIdentification;
 
     @NotNull(message = "El parentesco es obligatorio")
     private Relationship relationship;

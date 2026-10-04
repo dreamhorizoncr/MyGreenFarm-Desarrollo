@@ -204,19 +204,7 @@ public class ServicePlanService {
         return onvoPlans;
     }
 
-    // Genera la sesión de pago dinámica en OnvoPay cuando el cliente
-    // presiona "Pagar"
-    public String generateCheckoutUrl(String gatewayPriceId) {
-        return generateCheckoutUrlInternal(gatewayPriceId, null);
-    }
-
-    // La que usa createCheckoutSessionForPlan (con UUID en la
-    // metadata para el sondeo)
-    public String generateCheckoutUrl(String gatewayPriceId, String gatewaySessionId) {
-        return generateCheckoutUrlInternal(gatewayPriceId, gatewaySessionId);
-    }
-
-    private String generateCheckoutUrlInternal(String gatewayPriceId, String gatewaySessionId) {
+    private Map<String, String> generateCheckoutUrlInternal(String gatewayPriceId) {
         if (gatewayPriceId == null || gatewayPriceId.isEmpty()) {
             throw new IllegalStateException("Este plan no tiene asociado un precio de OnvoPay.");
         }
@@ -237,13 +225,6 @@ public class ServicePlanService {
 
         requestBody.put("lineItems", lineItems);
 
-        // Si viene un gatewaySessionId (flujo anónimo), se lo inyectamos a la metadata
-        if (gatewaySessionId != null && !gatewaySessionId.isEmpty()) {
-            Map<String, String> metadata = new HashMap<>();
-            metadata.put("gatewaySessionId", gatewaySessionId);
-            requestBody.put("metadata", metadata);
-        }
-
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
         try {
@@ -251,7 +232,13 @@ public class ServicePlanService {
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 Map<String, Object> body = response.getBody();
-                return (String) body.get("url");
+                String checkoutUrl = (String) body.get("url");
+                String realOnvoId = (String) body.get("id");
+                
+                return Map.of(
+                    "url", checkoutUrl != null ? checkoutUrl : "",
+                    "gatewaySessionId", realOnvoId != null ? realOnvoId : ""
+                );
             }
         } catch (Exception e) {
             throw new RuntimeException("Error al comunicarse con OnvoPay: " + e.getMessage());
@@ -260,21 +247,22 @@ public class ServicePlanService {
         throw new RuntimeException("No se pudo obtener el enlace de pago de OnvoPay.");
     }
 
+    public String generateCheckoutUrl(String gatewayPriceId) {
+        return generateCheckoutUrlInternal(gatewayPriceId).get("url");
+    }
+
     public Map<String, String> createCheckoutSessionForPlan(UUID planId) {
         ServicePlan plan = getPlanById(planId);
         String gatewayPriceId = plan.getGatewayPriceId();
 
-        // 1. Generas tu UUID primero
-        String gatewaySessionId = UUID.randomUUID().toString();
+        Map<String, String> onvoResponse = generateCheckoutUrlInternal(gatewayPriceId);
+        String checkoutUrl = onvoResponse.get("url");
+        String realOnvoId = onvoResponse.get("gatewaySessionId");
 
-        // 2. Se lo pasas a tu método para que viaje a Onvo
-        String checkoutUrl = generateCheckoutUrl(gatewayPriceId, gatewaySessionId);
-
-        // 3. Guardas el registro normalmente
         PaymentRecord record = new PaymentRecord();
         record.setServicePlan(plan);
         record.setGatewayPriceId(gatewayPriceId);
-        record.setGatewaySessionId(gatewaySessionId);
+        record.setGatewaySessionId(realOnvoId);
         record.setStatus(PaymentStatus.PENDING);
         record.setTotalAmount(plan.getPrice() != null ? plan.getPrice() : BigDecimal.ZERO);
         record.setPaidAmount(BigDecimal.ZERO);
@@ -283,10 +271,68 @@ public class ServicePlanService {
 
         return Map.of(
                 "url", checkoutUrl,
-                "gatewaySessionId", gatewaySessionId);
+                "gatewaySessionId", realOnvoId);
     }
 
     public Map<String, String> createPaymentIntentOrCheckout(UUID planId) {
         return createCheckoutSessionForPlan(planId);
+    }
+
+    // 1. Consulta directa a la API de Onvo para verificar si la sesión ya fue pagada
+    public boolean checkStatusDirectlyFromOnvo(String gatewaySessionId) {
+        if (gatewaySessionId == null || gatewaySessionId.isEmpty()) {
+            return false;
+        }
+
+        String url = onvoApiUrl + "/checkout/sessions/" + gatewaySessionId;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(onvoApiKey);
+        log.info("URL consultada a Onvo: {}", url);
+        log.info("API Key usada (primeros caracteres): {}", onvoApiKey != null && onvoApiKey.length() > 5 ? onvoApiKey.substring(0, 5) + "..." : "NULL O VACÍA");
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        try {
+            ResponseEntity<Map> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                Map<String, Object> body = response.getBody();
+                
+                String status = (String) body.get("status");
+                Boolean isPaid = (Boolean) body.get("paid");
+
+                return "completed".equalsIgnoreCase(status) 
+                    || "paid".equalsIgnoreCase(status) 
+                    || (isPaid != null && isPaid);
+            }
+        } catch (Exception e) {
+            log.error("Error al consultar directamente el estado en OnvoPay: {}", e.getMessage());
+        }
+        return false;
+    }
+
+    // 2. Método llamado por el controlador del frontend para el sondeo (polling)
+    @Transactional
+    public Map<String, Object> checkPaymentStatus(String gatewaySessionId) {
+        PaymentRecord record = paymentRecordRepository.findByGatewaySessionId(gatewaySessionId)
+                .orElseThrow(() -> new RuntimeException("Registro de pago no encontrado para la sesión: " + gatewaySessionId));
+
+        // Si localmente ya figura como pagado, retornamos el éxito de inmediato
+        if (record.getStatus() == PaymentStatus.PAID) {
+            return Map.of("isPaid", true, "isFailed", false, "status", "PAID");
+        }
+
+        // Si sigue PENDING, consultamos directamente a Onvo
+        boolean isPaidOnvo = checkStatusDirectlyFromOnvo(gatewaySessionId);
+
+        if (isPaidOnvo) {
+            record.setStatus(PaymentStatus.PAID);
+            record.setPaidAmount(record.getTotalAmount());
+            paymentRecordRepository.save(record);
+            
+            return Map.of("isPaid", true, "isFailed", false, "status", "PAID");
+        }
+
+        return Map.of("isPaid", false, "isFailed", false, "status", "PENDING");
     }
 }
