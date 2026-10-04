@@ -742,6 +742,7 @@ export default {
       includesLabel: "Ce qui est inclus",
       includesPlaceholder: "Décrivez les avantages du plan...",
       chooseImage: "Choisir une image",
+      imageSelected: "Image sélectionnée",
       currentImage: "Image actuelle",
       invalidFileType:
         "«{{name}}» n'est pas une image valide. Seuls PNG, JPG, JPEG ou SVG sont autorisés.",
