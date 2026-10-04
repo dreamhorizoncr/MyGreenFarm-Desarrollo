@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import { XIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import Button from '../ui/Button.tsx'
+import ForumPendingReviewModal from './ForumPendingReviewModal.tsx'
 import { notify } from '../../utils/notifications.ts'
+import { getErrorMessage } from '../../utils/error.ts'
 
 const MAX_CONTENT = 4000
 
@@ -18,7 +20,7 @@ function PublishExperienceModal({
   const { t } = useTranslation()
   const [name, setName] = useState('')
   const [content, setContent] = useState('')
-  const [error, setError] = useState('')
+  const [submitted, setSubmitted] = useState(false)
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
@@ -36,12 +38,12 @@ function PublishExperienceModal({
     }
   }, [onClose])
 
-  async function handleSubmit() {
+  function handleSubmit() {
     const trimmedName = name.trim()
     const trimmedContent = content.trim()
 
     if (!trimmedName || !trimmedContent) {
-      setError(
+      notify.error(
         t(
           trimmedName
             ? 'forum.community.contentRequired'
@@ -51,16 +53,30 @@ function PublishExperienceModal({
       return
     }
 
-    try {
-      await onPublish({ name: trimmedName, content: trimmedContent })
-      notify.success({
-        title: t('forum.community.toastTitle'),
-        description: t('forum.community.toastDescription'),
+    // Show the "sent for review" confirmation right away instead of leaving
+    // the form stuck while the moderation check runs; the real outcome
+    // arrives later as a toast (success or rejection reason).
+    setSubmitted(true)
+    onPublish({ name: trimmedName, content: trimmedContent })
+      .then(() => {
+        notify.success({
+          title: t('forum.community.toastTitle'),
+          description: t('forum.community.toastDescription'),
+        })
       })
-      onClose()
-    } catch {
-      setError('No se pudo publicar la experiencia')
-    }
+      .catch((err) => {
+        notify.error(getErrorMessage(err))
+      })
+  }
+
+  if (submitted) {
+    return (
+      <ForumPendingReviewModal
+        title={t('forum.community.pendingTitle')}
+        description={t('forum.community.pendingDescription')}
+        onClose={onClose}
+      />
+    )
   }
 
   return (
@@ -118,23 +134,17 @@ function PublishExperienceModal({
             {content.length}/{MAX_CONTENT}
           </p>
 
-          {error && (
-            <p className="m-0 mt-xs text-left font-body text-body-sm text-danger">
-              {error}
-            </p>
-          )}
-
           <div className="mt-lg flex gap-md">
             <Button
               variant="secondary"
               onClick={onClose}
-              className="h-11 flex-1 rounded-full font-body text-button"
+              className="h-11 flex-1 rounded-full border-green-500 font-body text-button text-heading hover:bg-green-50"
             >
               {t('forum.community.cancel')}
             </Button>
             <Button
               onClick={handleSubmit}
-              className="h-11 flex-1 rounded-full bg-green-500 font-body text-button font-normal text-white"
+              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600"
             >
               {t('forum.community.submit')}
             </Button>

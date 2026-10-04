@@ -61,6 +61,12 @@ public class ForumArticle {
     @Column(name = "image_alt", length = 140)
     private String imageAlt;
 
+    @Column(name = "ai_summary", columnDefinition = "TEXT")
+    private String aiSummary;
+
+    @Column(name = "ai_summary_content_hash", length = 64)
+    private String aiSummaryContentHash;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

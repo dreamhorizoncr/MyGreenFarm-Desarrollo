@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
-import { ArrowLeftIcon, HeartIcon } from '@animateicons/react/lucide'
+import { ArrowLeftIcon, HeartIcon, SparklesIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar.tsx'
 import Button from '../components/ui/Button.tsx'
 import PostAvatar from '../components/forum/PostAvatar.tsx'
+import ForumPendingReviewModal from '../components/forum/ForumPendingReviewModal.tsx'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 import { notify } from '../utils/notifications.ts'
+import { getErrorMessage } from '../utils/error.ts'
 
 const MAX_CONTENT = 4000
 
@@ -28,8 +30,8 @@ function BlogPostPage() {
   } = useForumFeedContext()
   const [name, setName] = useState('')
   const [content, setContent] = useState('')
-  const [error, setError] = useState('')
   const [isDetailLoading, setIsDetailLoading] = useState(true)
+  const [pendingReview, setPendingReview] = useState(false)
 
   useEffect(() => {
     if (window.location.hash !== '#comments' || isLoading || isDetailLoading) return
@@ -69,12 +71,12 @@ function BlogPostPage() {
     return { paragraph, key: `${occurrence}-${paragraph}` }
   })
 
-  async function handleSubmit() {
+  function handleSubmit() {
     const trimmedName = name.trim()
     const trimmedContent = content.trim()
 
     if (!trimmedName || !trimmedContent) {
-      setError(
+      notify.error(
         t(
           trimmedName
             ? 'forum.blog.commentContentRequired'
@@ -84,18 +86,22 @@ function BlogPostPage() {
       return
     }
 
-    try {
-      await addComment(postId, { alias: trimmedName, content: trimmedContent })
-      setName('')
-      setContent('')
-      setError('')
-      notify.success({
-        title: t('forum.blog.toastTitle'),
-        description: t('forum.blog.toastDescription'),
+    // Show the "sent for review" confirmation right away instead of leaving
+    // the form stuck while the moderation check runs; the real outcome
+    // arrives later as a toast (success or rejection reason).
+    setName('')
+    setContent('')
+    setPendingReview(true)
+    addComment(postId, { alias: trimmedName, content: trimmedContent })
+      .then(() => {
+        notify.success({
+          title: t('forum.blog.toastTitle'),
+          description: t('forum.blog.toastDescription'),
+        })
       })
-    } catch {
-      setError('No se pudo publicar el comentario')
-    }
+      .catch((err) => {
+        notify.error(getErrorMessage(err))
+      })
   }
 
   return (
@@ -146,6 +152,20 @@ function BlogPostPage() {
                   alt={post.imageAlt ?? ''}
                   className="mt-md max-h-[520px] w-full rounded-xl object-cover"
                 />
+              )}
+
+              {post.aiSummary && (
+                <div className="mt-md rounded-[20px] bg-gradient-to-br from-green-50 to-white p-[22px] text-left shadow-sm ring-1 ring-green-100 md:p-[28px]">
+                  <div className="mb-[12px] inline-flex items-center gap-[6px] rounded-full bg-green-500 px-[12px] py-[6px]">
+                    <SparklesIcon size={14} className="text-white" aria-hidden="true" />
+                    <span className="font-heading text-caption font-bold uppercase tracking-wide text-white">
+                      {t('newspage.aiSummary')}
+                    </span>
+                  </div>
+                  <p className="font-body text-body leading-[1.7] text-heading md:text-button">
+                    {post.aiSummary}
+                  </p>
+                </div>
               )}
 
               <div className="mt-md">
@@ -236,12 +256,6 @@ function BlogPostPage() {
                   {content.length}/{MAX_CONTENT}
                 </p>
 
-                {error && (
-                  <p className="m-0 mt-xs text-left font-body text-body-sm text-danger">
-                    {error}
-                  </p>
-                )}
-
                 <Button
                   onClick={handleSubmit}
                   className="mt-md h-11 rounded-full bg-orange-500 font-body text-button font-normal text-white"
@@ -254,6 +268,14 @@ function BlogPostPage() {
 
         </div>
       </main>
+
+      {pendingReview && (
+        <ForumPendingReviewModal
+          title={t('forum.blog.commentPendingTitle')}
+          description={t('forum.blog.commentPendingDescription')}
+          onClose={() => setPendingReview(false)}
+        />
+      )}
     </div>
   )
 }

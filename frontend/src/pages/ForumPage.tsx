@@ -57,7 +57,7 @@ function ForumPage() {
     <div id="forum-page" className="min-h-screen bg-bg-page">
       <Navbar />
 
-      <section className="flex min-h-[280px] items-center bg-green-500 px-[30px] py-[40px] text-center text-white xs:min-h-[320px]">
+      <section data-scroll-bg="green" className="flex min-h-[280px] items-center bg-green-500 px-[30px] py-[40px] text-center text-white xs:min-h-[320px]">
         <div className="mx-auto w-full max-w-[700px]">
           <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
             {t('forum.title')}

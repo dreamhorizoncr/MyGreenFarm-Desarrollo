@@ -11,10 +11,10 @@ function PhilosophyPillarItem({ icon, tag, title, body }: Readonly<PhilosophyPil
   return (
     <div className="flex flex-col gap-xs rounded-2xl border border-neutral-200 bg-white p-md transition hover:-translate-y-1 hover:shadow-lg">
       <div className="flex items-center gap-sm">
-        <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-(--green-50) text-green-500">
+        <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-(--pink-50) text-[var(--pink-400)]">
           {icon}
         </span>
-        <span className="font-body text-caption font-semibold uppercase tracking-wide text-orange-500">
+        <span className="font-body text-caption font-semibold uppercase tracking-wide text-[var(--pink-400)]">
           {tag}
         </span>
       </div>

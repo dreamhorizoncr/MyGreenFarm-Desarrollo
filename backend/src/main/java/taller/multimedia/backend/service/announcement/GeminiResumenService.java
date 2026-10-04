@@ -36,6 +36,11 @@ public class GeminiResumenService {
         + "Finaliza el mensaje despidiéndote explícitamente a nombre del equipo de The Green Farm. "
         + "A continuación tienes las evaluaciones registradas en el último semestre en las áreas de "
         + "comunicación, lenguaje, lectura, desarrollo motor y observaciones del docente:\n\n%s";
+        
+    private static final String PROMPT_ARTICULO_FORO =
+            "Resume el siguiente artículo del foro de una guardería en una sola oración breve (máximo 30 palabras), "
+                    + "en español, con tono claro y cálido. "
+                    + "Usa solo la información del texto, sin inventar datos.\n\nArtículo:\n";
 
     private final ObjectMapper objectMapper;
 
@@ -54,24 +59,27 @@ public class GeminiResumenService {
             .build();
 
     public String generarResumen(String contenido) {
-        String prompt = PROMPT_BASE + contenido;
-        return callGeminiApi(prompt, 200, 0.3);
+        return callGemini(PROMPT_BASE + contenido);
     }
 
     public String generateSemiannualEvaluationSummary(String childName, String historialEvaluaciones) {
         String prompt = String.format(PROMPT_EVALUATION, childName, historialEvaluaciones);
-        return callGeminiApi(prompt, 350, 0.4);
+        return callGemini(prompt);
     }
 
-    private String callGeminiApi(String prompt, int maxOutputTokens, double temperature) {
+    public String generarResumenArticulo(String contenido) {
+        return callGemini(PROMPT_ARTICULO_FORO + contenido);
+    }
+
+    private String callGemini(String prompt) {
         try {
             String url = baseUrl + "/models/" + model + ":generateContent";
 
             Map<String, Object> part = Map.of("text", prompt);
             Map<String, Object> content = Map.of("parts", List.of(part));
             Map<String, Object> generationConfig = Map.of(
-                    "temperature", temperature,
-                    "maxOutputTokens", maxOutputTokens);
+                    "temperature", 0.3,
+                    "maxOutputTokens", 200);
             Map<String, Object> body = Map.of(
                     "contents", List.of(content),
                     "generationConfig", generationConfig);

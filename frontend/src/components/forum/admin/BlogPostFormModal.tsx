@@ -369,7 +369,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
                   type="button"
                   variant="secondary"
                   onClick={() => { setPendingChanges(null); setConfirmationText('') }}
-                  className="h-11 flex-1 rounded-full font-body text-button uppercase tracking-wide"
+                  className="h-11 flex-1 rounded-full border-green-500 font-body text-button uppercase tracking-wide text-heading hover:bg-green-50"
                 >
                   {t('adminForum.cancel')}
                 </Button>
