@@ -11,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,18 +108,17 @@ public class TranslationService {
 
     for (TranslationItem item : items) {
 
-        String k = key(item.entityId(), item.fieldName());
+        UUID translationEntityId = translationEntityId(entityType, item.entityId());
+        String cacheKey = key(translationEntityId, item.fieldName());
+        String responseKey = responseKey(item.entityId(), item.fieldName());
         String sourceTextHash = HashUtils.sha256(item.originalText());
 
-        EntityTranslation cachedTranslation = cache.get(k);
+        EntityTranslation cachedTranslation = cache.get(cacheKey);
 
         if (cachedTranslation != null
                 && sourceTextHash.equals(cachedTranslation.getSourceTextHash())) {
 
-            result.put(
-                    k,
-                    unescapeHtml(cachedTranslation.getTranslatedText())
-            );
+                result.put(responseKey, unescapeHtml(cachedTranslation.getTranslatedText()));
 
         } else {
             toTranslate.add(item);
@@ -154,22 +154,21 @@ public class TranslationService {
                 translated = translatedTexts.get(0);
             }
 
-            String k = key(item.entityId(), item.fieldName());
-
-            result.put(k, translated);
+            UUID translationEntityId = translationEntityId(entityType, item.entityId());
+            result.put(responseKey(item.entityId(), item.fieldName()), translated);
 
             // Upsert: busca si ya existe justo antes de guardar
             EntityTranslation translation = repository
                     .findByEntityTypeAndEntityIdAndFieldNameAndLanguageCode(
                             entityType,
-                            item.entityId(),
+                            translationEntityId,
                             item.fieldName(),
                             targetLanguage
                     )
                     .orElseGet(EntityTranslation::new);
 
             translation.setEntityType(entityType);
-            translation.setEntityId(item.entityId());
+            translation.setEntityId(translationEntityId);
             translation.setFieldName(item.fieldName());
             translation.setLanguageCode(targetLanguage);
             translation.setTranslatedText(translated);
@@ -198,6 +197,21 @@ public class TranslationService {
     }
 
     private String key(UUID entityId, String fieldName) {
+        return entityId + ":" + fieldName;
+    }
+
+    private UUID translationEntityId(String entityType, String entityId) {
+        try {
+            return UUID.fromString(entityId);
+        } catch (IllegalArgumentException exception) {
+            if ("club".equalsIgnoreCase(entityType) && entityId.matches("\\d+")) {
+                return UUID.nameUUIDFromBytes(("club:" + entityId).getBytes(StandardCharsets.UTF_8));
+            }
+            throw exception;
+        }
+    }
+
+    private String responseKey(String entityId, String fieldName) {
         return entityId + ":" + fieldName;
     }
 
