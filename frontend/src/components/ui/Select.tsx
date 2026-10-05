@@ -126,7 +126,7 @@ function Select({
         <ul
           ref={menuRef}
           style={{ top: position.top, left: position.left, width: position.width }}
-          className={`fixed z-50 m-0 max-h-[240px] list-none overflow-y-auto rounded-xl border border-neutral-200 bg-white p-xs shadow-lg animate-[language-switcher-in_0.15s_ease-out] ${menuClassName}`}
+          className={`fixed z-[10000] m-0 max-h-[240px] list-none overflow-y-auto rounded-xl border border-neutral-200 bg-white p-xs shadow-lg animate-[language-switcher-in_0.15s_ease-out] ${menuClassName}`}
           role="listbox"
         >
           {options.map((option) => (
@@ -152,7 +152,7 @@ function Select({
         document.body,
       )}
     </div>
-  )
+  );
 }
 
 export default Select
