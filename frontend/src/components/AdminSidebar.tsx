@@ -14,7 +14,8 @@ import {
   MessageSquarePlusIcon,
   UserIcon,
   UsersIcon,
-  MailPlus
+  MailPlus,
+  SparklesIcon
 } from '@animateicons/react/lucide'
 import { useLogin } from '../hooks/useLogin.ts'
 import { useProfileAvatar } from '../contexts/ProfileAvatarContext.tsx'
@@ -28,6 +29,7 @@ type SidebarItemId =
   | "noticias"
   | "galeria"
   | "cv"
+  | "clubs"
   | "expedientes"
   | "padres"
   | "miPerfil"
@@ -84,6 +86,7 @@ function AdminSidebar() {
     { id: 'disponibilidad', icon: CalendarDaysIcon, path: '/admin/disponibilidad' },
     { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
     { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
+    { id: 'clubs', icon: SparklesIcon, path: '/admin/clubs' },
     { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
     { id: 'padres', icon: UsersIcon, path: '/admin/parents'},
     { id: 'boletín', icon: MailPlus, path: '/admin/newsletter' },
