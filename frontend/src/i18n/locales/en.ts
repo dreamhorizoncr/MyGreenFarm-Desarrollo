@@ -628,6 +628,8 @@ export default {
       clubs: "Clubs",
       expedientes: "Records",
       padres: "Parents",
+      niños: "Children",
+      evaluaciones: "Evaluations",
       miPerfil: "My profile",
       servicios: "Services",
       disponibilidad: "My availability",
@@ -904,6 +906,66 @@ export default {
       updateErrorToastTitle: "The parent could not be updated",
       deleteSuccessToastTitle: "Parent deleted",
       deleteErrorToastTitle: "The parent could not be deleted",
+    },
+
+    children: {
+      title: 'Children',
+      description: 'Manage the children registered in My Green Farm.',
+      searchPlaceholder: 'Search children...',
+      addChild: 'Register child',
+
+      studentId: 'Student ID',
+      parent: 'Parent or guardian',
+      birthDate: 'Date of birth',
+      medicalNotes: 'Medical notes',
+      noMedicalNotes: 'No medical notes',
+      clubs: 'Clubs',
+
+      noChildren: 'No children are registered.',
+      noResults: 'No children matched your search.',
+
+      createTitle: 'Register child',
+      editTitle: 'Edit child',
+      firstName: 'First name',
+      lastName: 'Last name',
+      parentOrGuardian: 'Parent or Guardian',
+      selectParent: 'Select a parent or guardian',
+      relationship: 'Relationship',
+      birthDateLabel: 'Date of birth',
+      medicalNotesLabel: 'Medical notes',
+      medicalNotesPlaceholder:
+        'Allergies, medications, medical conditions, or other important information...',
+      noClubs: 'No clubs are available.',
+      loadingOptions: 'Loading information...',
+
+      relationships: {
+        father: 'Father',
+        mother: 'Mother',
+        grandfather: 'Grandfather',
+        grandmother: 'Grandmother',
+        legalGuardian: 'Legal guardian',
+        other: 'Other',
+      },
+
+      cancel: 'Cancel',
+      register: 'Register child',
+      saveChanges: 'Save changes',
+      saving: 'Saving...',
+
+      deleteTitle: 'Delete child',
+      deleteMessage: 'Are you sure you want to delete',
+      delete: 'Delete',
+
+      loadError: 'Children could not be loaded.',
+      optionsError: 'Parents or clubs could not be loaded.',
+      createError: 'The child could not be registered.',
+      updateError: 'The child could not be updated.',
+      deleteError: 'The child could not be deleted.',
+      deleteSuccess: 'Child deleted successfully',
+
+      firstNamePlaceholder: 'Enter the first name',
+      lastNamePlaceholder: 'Enter the last name',
+      birthDatePlaceholder: 'Select the date of birth',
     },
 
     availability: {

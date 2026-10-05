@@ -15,7 +15,8 @@ import {
   UserIcon,
   UsersIcon,
   MailPlus,
-  SparklesIcon
+  SparklesIcon,
+  ClipboardIcon
 } from '@animateicons/react/lucide'
 import { useLogin } from '../hooks/useLogin.ts'
 import { useProfileAvatar } from '../contexts/ProfileAvatarContext.tsx'
@@ -32,6 +33,8 @@ type SidebarItemId =
   | "clubs"
   | "expedientes"
   | "padres"
+  | "niños"
+  | "evaluaciones"
   | "miPerfil"
   | "servicios"
   | "disponibilidad"
@@ -89,6 +92,8 @@ function AdminSidebar() {
     { id: 'clubs', icon: SparklesIcon, path: '/admin/clubs' },
     { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
     { id: 'padres', icon: UsersIcon, path: '/admin/parents'},
+    { id: 'niños', icon: UsersIcon, path: '/admin/children' },
+    { id: 'evaluaciones', icon: ClipboardIcon, path: '/admin/evaluations' },
     { id: 'boletín', icon: MailPlus, path: '/admin/newsletter' },
     { id: 'miPerfil', icon: UserIcon, path: '/profile' },
   ]
@@ -101,11 +106,14 @@ function AdminSidebar() {
     { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
     { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
     { id: 'padres', icon: UsersIcon, path: '/admin/parents'},
+    { id: 'niños', icon: UsersIcon, path: '/admin/children' },
+    { id: 'evaluaciones', icon: ClipboardIcon, path: '/admin/evaluations' },
     { id: 'miPerfil', icon: UserIcon, path: '/profile' },
   ]
   const teacherItems: SidebarItem[] = [
     { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
     { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
+    { id: 'evaluaciones', icon: ClipboardIcon, path: '/admin/evaluations' },
     { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
     { id: 'miPerfil', icon: UserIcon, path: '/profile' },
   ]
