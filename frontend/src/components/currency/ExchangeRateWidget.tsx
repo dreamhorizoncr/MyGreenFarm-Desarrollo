@@ -35,8 +35,8 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
       <>
         <div className="grid gap-sm sm:grid-cols-2">
           {[
-            { symbol: '$', name: t('moneda.currency.USD'), sell: data.usdSell },
-            { symbol: '€', name: t('moneda.currency.EUR'), sell: data.eurSell },
+            { symbol: '$', name: t('moneda.currency.USD'), buy: data.usdBuy },
+            { symbol: '€', name: t('moneda.currency.EUR'), buy: data.eurBuy },
           ].map((row) => (
             <div key={row.symbol} className="flex min-w-0 items-center justify-between gap-xs rounded-2xl border border-neutral-200 bg-transparent px-sm py-md">
               <div className="flex min-w-0 flex-1 items-center gap-xs">
@@ -46,7 +46,7 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
                 <span className="min-w-0 font-heading text-body-sm font-bold text-heading">{row.name}</span>
               </div>
               <span className="shrink-0 whitespace-nowrap font-heading text-h6 font-bold text-heading">
-                {'₡'}{formatCurrency(row.sell, 'CRC', locale)}
+                {'₡'}{formatCurrency(row.buy, 'CRC', locale)}
               </span>
             </div>
           ))}
@@ -71,7 +71,7 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
         className="inline-flex items-center gap-sm rounded-full border border-green-500 bg-green-500 px-lg py-sm font-body text-body-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-green-500"
       >
         <BanknoteIcon size={20} aria-hidden="true" />
-        <span>{t('moneda.sellRate')}</span>
+        <span>{t('moneda.buyRate')}</span>
       </button>
 
       {isOpen && (
@@ -101,7 +101,7 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
 
           <div className="mb-lg text-center">
             <h2 id="exchange-rate-title" className="m-0 font-heading text-h4 font-bold text-green-500">
-              {t('moneda.sellRate')}
+              {t('moneda.buyRate')}
             </h2>
             {data && lastUpdated && (
               <p className="m-0 mt-xs font-body text-body-sm text-neutral-500">

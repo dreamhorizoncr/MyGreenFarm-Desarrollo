@@ -45,7 +45,7 @@ function PlanCard({
   }, [plan?.currency])
 
   const price = exchangeRate
-    ? convertCurrency(plan.price, getCleanCurrency(plan.currency), currency, 'sell', exchangeRate)
+    ? convertCurrency(plan.price, getCleanCurrency(plan.currency), currency, 'buy', exchangeRate)
     : plan.price
 
   return (
