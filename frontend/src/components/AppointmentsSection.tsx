@@ -15,19 +15,107 @@ type StatusFilter = 'ALL' | AppointmentStatus
 
 const STATUS_FILTERS: StatusFilter[] = ['ALL', 'PENDING', 'CONFIRMED', 'CANCELLED']
 
-function AppointmentCardSkeleton() {
-  return (
-    <div className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
-      <div className="flex items-center justify-between gap-sm">
-        <Skeleton shape="pill" className="h-6 w-24" />
-        <div className="flex items-center gap-2xs">
-          <Skeleton shape="circle" className="h-[38px] w-[38px]" />
-          <Skeleton shape="circle" className="h-[38px] w-[38px]" />
+interface AppointmentCardProps {
+  appointment?: Appointment
+  statusLabel?: string
+  badgeClassName?: string
+  formattedDate?: string
+  disabled?: boolean
+  onView?: () => void
+  onReschedule?: () => void
+  onChangeStatus?: () => void
+  loading?: boolean
+}
+
+function AppointmentCard({
+  appointment,
+  statusLabel,
+  badgeClassName,
+  formattedDate,
+  disabled,
+  onView,
+  onReschedule,
+  onChangeStatus,
+  loading = false,
+}: Readonly<AppointmentCardProps>) {
+  const { t } = useTranslation()
+
+  if (loading) {
+    return (
+      <div className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
+        <div className="flex items-center justify-between gap-sm">
+          <Skeleton shape="pill" className="h-6 w-24" />
+          <div className="flex items-center gap-2xs">
+            <Skeleton shape="circle" className="h-[38px] w-[38px]" />
+            <Skeleton shape="circle" className="h-[38px] w-[38px]" />
+          </div>
         </div>
+        <Skeleton shape="line" className="mt-sm h-5 w-1/2" />
+        <Skeleton shape="line" className="mt-2 h-3 w-1/3" />
+        <Skeleton shape="line" className="mt-md h-4 w-2/5" />
       </div>
-      <Skeleton shape="line" className="mt-sm h-5 w-1/2" />
-      <Skeleton shape="line" className="mt-2 h-3 w-1/3" />
-      <Skeleton shape="line" className="mt-md h-4 w-2/5" />
+    )
+  }
+
+  return (
+    <div
+      className={`group relative flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${
+        disabled ? 'opacity-60' : ''
+      }`}
+    >
+      <button
+        type="button"
+        onClick={onView}
+        aria-label={t('teacherAppointments.viewDetails')}
+        className="absolute inset-0 z-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+      />
+
+      <header className="relative z-10 flex items-center justify-between gap-sm">
+        <span className={`inline-flex rounded-full px-sm py-2xs font-body text-caption font-semibold ${badgeClassName}`}>
+          {statusLabel}
+        </span>
+
+        <div className="flex items-center gap-2xs">
+          <button
+            type="button"
+            className="inline-flex size-[38px] items-center justify-center rounded-full text-link transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={(event) => {
+              event.stopPropagation()
+              onReschedule?.()
+            }}
+            disabled={disabled || appointment!.status === 'CANCELLED'}
+            aria-label={t('teacherAppointments.rescheduleTitle')}
+            title={t('teacherAppointments.rescheduleTitle')}
+          >
+            <CalendarClockIcon size={18} />
+          </button>
+
+          <button
+            type="button"
+            className="inline-flex size-[38px] items-center justify-center rounded-full text-link transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={(event) => {
+              event.stopPropagation()
+              onChangeStatus?.()
+            }}
+            disabled={disabled}
+            aria-label={t('teacherAppointments.changeStatus')}
+            title={t('teacherAppointments.changeStatus')}
+          >
+            <PencilIcon size={18} />
+          </button>
+        </div>
+      </header>
+
+      <h3 className="m-0 mt-sm font-heading text-lg font-bold leading-snug text-heading">
+        {appointment!.childName}
+      </h3>
+      <p className="m-0 font-body text-body-sm text-neutral-500">
+        {formattedDate}
+      </p>
+
+      <p className="m-0 mt-md font-body text-body-sm font-semibold text-link underline-offset-2 transition-colors group-hover:underline">
+        {t('teacherAppointments.viewDetails')}
+      </p>
     </div>
   )
 }
@@ -156,10 +244,10 @@ function AppointmentsSection() {
 
       {loading && (
         <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-          <AppointmentCardSkeleton />
-          <AppointmentCardSkeleton />
-          <AppointmentCardSkeleton />
-          <AppointmentCardSkeleton />
+          <AppointmentCard loading />
+          <AppointmentCard loading />
+          <AppointmentCard loading />
+          <AppointmentCard loading />
         </div>
       )}
 
@@ -176,66 +264,17 @@ function AppointmentsSection() {
           <>
           <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
             {pagedAppointments.map((appointment) => (
-              <div
+              <AppointmentCard
                 key={appointment.id}
-                className={`group relative flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${
-                  actionId === appointment.id ? 'opacity-60' : ''
-                }`}
-              >
-                <button
-                  type="button"
-                  onClick={() => setAppointmentToView(appointment)}
-                  aria-label={t('teacherAppointments.viewDetails')}
-                  className="absolute inset-0 z-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-                />
-
-                <header className="relative z-10 flex items-center justify-between gap-sm">
-                  <span className={`inline-flex rounded-full px-sm py-2xs font-body text-caption font-semibold ${badgeClassName(appointment.status)}`}>
-                    {statusLabel(appointment.status)}
-                  </span>
-
-                  <div className="flex items-center gap-2xs">
-                    <button
-                      type="button"
-                      className="inline-flex size-[38px] items-center justify-center rounded-full text-link transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        setAppointmentToReschedule(appointment)
-                      }}
-                      disabled={actionId === appointment.id || appointment.status === 'CANCELLED'}
-                      aria-label={t('teacherAppointments.rescheduleTitle')}
-                      title={t('teacherAppointments.rescheduleTitle')}
-                    >
-                      <CalendarClockIcon size={18} />
-                    </button>
-
-                    <button
-                      type="button"
-                      className="inline-flex size-[38px] items-center justify-center rounded-full text-link transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      onClick={(event) => {
-                        event.stopPropagation()
-                        setAppointmentToEdit(appointment)
-                      }}
-                      disabled={actionId === appointment.id}
-                      aria-label={t('teacherAppointments.changeStatus')}
-                      title={t('teacherAppointments.changeStatus')}
-                    >
-                      <PencilIcon size={18} />
-                    </button>
-                  </div>
-                </header>
-
-                <h3 className="m-0 mt-sm font-heading text-lg font-bold leading-snug text-heading">
-                  {appointment.childName}
-                </h3>
-                <p className="m-0 font-body text-body-sm text-neutral-500">
-                  {formatDate(appointment.appointmentDate)}
-                </p>
-
-                <p className="m-0 mt-md font-body text-body-sm font-semibold text-link underline-offset-2 transition-colors group-hover:underline">
-                  {t('teacherAppointments.viewDetails')}
-                </p>
-              </div>
+                appointment={appointment}
+                statusLabel={statusLabel(appointment.status)}
+                badgeClassName={badgeClassName(appointment.status)}
+                formattedDate={formatDate(appointment.appointmentDate)}
+                disabled={actionId === appointment.id}
+                onView={() => setAppointmentToView(appointment)}
+                onReschedule={() => setAppointmentToReschedule(appointment)}
+                onChangeStatus={() => setAppointmentToEdit(appointment)}
+              />
             ))}
           </div>
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />

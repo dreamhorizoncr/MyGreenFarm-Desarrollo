@@ -19,17 +19,55 @@ interface ApplyTarget {
 
 const SPONTANEOUS_REQUIRED_FIELDS: OptionalApplicationField[] = ['file']
 
-function VacancyCardSkeleton() {
+interface VacancyCardProps {
+  title?: string
+  description?: string
+  onApply?: () => void
+  loading?: boolean
+}
+
+function VacancyCard({ title, description, onApply, loading = false }: Readonly<VacancyCardProps>) {
+  const { t } = useTranslation()
+
+  if (loading) {
+    return (
+      <article className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow">
+        <Skeleton shape="line" className="h-6 w-3/4" />
+        <div className="mt-sm flex flex-1 flex-col gap-2xs">
+          <Skeleton shape="line" className="h-4 w-full" />
+          <Skeleton shape="line" className="h-4 w-full" />
+          <Skeleton shape="line" className="h-4 w-2/3" />
+        </div>
+        <div className="mt-md flex justify-end">
+          <Skeleton shape="pill" className="h-11 w-28" />
+        </div>
+      </article>
+    )
+  }
+
   return (
-    <article className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow">
-      <Skeleton shape="line" className="h-6 w-3/4" />
-      <div className="mt-sm flex flex-1 flex-col gap-2xs">
-        <Skeleton shape="line" className="h-4 w-full" />
-        <Skeleton shape="line" className="h-4 w-full" />
-        <Skeleton shape="line" className="h-4 w-2/3" />
-      </div>
+    <article className="group flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow transition hover:-translate-y-1 hover:shadow-lg">
+      <h2 className="m-0 font-heading text-xl font-bold leading-snug text-heading">
+        {title}
+      </h2>
+
+      <p className="mt-sm flex-1 font-body text-body-sm text-body-text">
+        {description}
+      </p>
+
       <div className="mt-md flex justify-end">
-        <Skeleton shape="pill" className="h-11 w-28" />
+        <button
+          type="button"
+          onClick={onApply}
+          className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
+        >
+          {t('vacancies.apply')}
+          <ArrowRightIcon
+            size={16}
+            aria-hidden="true"
+            className="transition-transform group-hover:translate-x-0.5"
+          />
+        </button>
       </div>
     </article>
   )
@@ -91,8 +129,8 @@ function VacanciesPage() {
         <Container className="py-10 md:py-12">
           {loading && (
             <div className="grid grid-cols-1 gap-md md:grid-cols-2">
-              <VacancyCardSkeleton />
-              <VacancyCardSkeleton />
+              <VacancyCard loading />
+              <VacancyCard loading />
             </div>
           )}
           {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
@@ -124,30 +162,12 @@ function VacanciesPage() {
             ) : (
               <div className="grid grid-cols-1 gap-md md:grid-cols-2">
                 {openVacancies.map((vacancy) => (
-                  <article key={vacancy.id} className="group flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow transition hover:-translate-y-1 hover:shadow-lg">
-                    <h2 className="m-0 font-heading text-xl font-bold leading-snug text-heading">
-                      {vacancy.title}
-                    </h2>
-
-                    <p className="mt-sm flex-1 font-body text-body-sm text-body-text">
-                      {vacancy.description}
-                    </p>
-
-                    <div className="mt-md flex justify-end">
-                      <button
-                        type="button"
-                        onClick={() => setApplyTarget({ title: vacancy.title, vacancyId: vacancy.id, requiredFields: vacancy.requiredFields })}
-                        className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
-                      >
-                        {t('vacancies.apply')}
-                        <ArrowRightIcon
-                          size={16}
-                          aria-hidden="true"
-                          className="transition-transform group-hover:translate-x-0.5"
-                        />
-                      </button>
-                    </div>
-                  </article>
+                  <VacancyCard
+                    key={vacancy.id}
+                    title={vacancy.title}
+                    description={vacancy.description}
+                    onApply={() => setApplyTarget({ title: vacancy.title, vacancyId: vacancy.id, requiredFields: vacancy.requiredFields })}
+                  />
                 ))}
               </div>
             )

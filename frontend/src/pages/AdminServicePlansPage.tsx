@@ -17,12 +17,13 @@ import { convertCurrency, currencySymbol, formatCurrency } from '../utils/curren
 import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
 
 interface AdminPlanCardProps {
-  plan: ServicePlan
-  exchangeRate: ExchangeRate | null
+  plan?: ServicePlan
+  exchangeRate?: ExchangeRate | null
   deleting?: boolean
-  onEdit: () => void
-  onDelete: () => void
-  language: string
+  onEdit?: () => void
+  onDelete?: () => void
+  language?: string
+  loading?: boolean
 }
 
 function AdminPlanCard({
@@ -32,6 +33,7 @@ function AdminPlanCard({
   onEdit,
   onDelete,
   language,
+  loading = false,
 }: Readonly<AdminPlanCardProps>) {
   const { t } = useTranslation()
 
@@ -42,7 +44,7 @@ function AdminPlanCard({
   }
 
   // 2. Estado local inicial sincronizado con la moneda del plan
-  const [currency, setCurrency] = useState<Currency>(() => getCleanCurrency(plan.currency))
+  const [currency, setCurrency] = useState<Currency>(() => getCleanCurrency(plan?.currency))
 
   // 3. Forzar actualización si el plan cambia o termina de cargar con retraso
   useEffect(() => {
@@ -52,16 +54,37 @@ function AdminPlanCard({
   }, [plan?.currency])
 
   // 4. Calcular el precio usando la moneda real del plan
-  const baseCurrency = getCleanCurrency(plan.currency)
-  const price = exchangeRate
+  const baseCurrency = getCleanCurrency(plan?.currency)
+  const price = plan && exchangeRate
     ? convertCurrency(plan.price, baseCurrency, currency, 'buy', exchangeRate)
-    : plan.price
+    : plan?.price ?? 0
+
+  if (loading) {
+    return (
+      <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
+        <Skeleton shape="rect" className="h-[180px] w-full rounded-none" />
+        <div className="flex flex-1 flex-col gap-sm p-lg">
+          <Skeleton shape="line" className="h-5 w-3/4" />
+          <Skeleton shape="line" className="h-4 w-full" />
+          <Skeleton shape="line" className="h-4 w-2/3" />
+          <div className="flex items-center gap-sm">
+            <Skeleton shape="pill" className="h-6 w-20" />
+            <Skeleton shape="line" className="h-6 w-16" />
+          </div>
+          <div className="mt-auto flex justify-end gap-sm pt-sm">
+            <Skeleton shape="circle" className="size-10" />
+            <Skeleton shape="circle" className="size-10" />
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white transition hover:-translate-y-1">
+    <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white transition hover:-translate-y-1 hover:shadow-lg">
       <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
-        {plan.imageUrl ? (
-          <img src={plan.imageUrl} alt={plan.name} className="h-full w-full object-cover" />
+        {plan!.imageUrl ? (
+          <img src={plan!.imageUrl} alt={plan!.name} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
             <span className="font-body text-body-sm text-neutral-400">{t('admin.servicios.chooseImage')}</span>
@@ -72,15 +95,15 @@ function AdminPlanCard({
       <div className="flex flex-1 flex-col gap-sm px-lg pb-lg pt-md">
         <div className="flex items-start justify-between gap-sm">
           <h3 className="m-0 min-w-0 flex-1 text-left font-heading text-h4 font-bold text-green-500 line-clamp-2">
-            {plan.name}
+            {plan!.name}
           </h3>
           <span className="w-fit shrink-0 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
-            {getPlanTypeLabel(plan.type, t as any)}
+            {getPlanTypeLabel(plan!.type, t as any)}
           </span>
         </div>
 
         <p className="m-0 min-h-[48px] text-left font-body text-body-sm leading-relaxed text-body-text-dark line-clamp-2">
-          {plan.description}
+          {plan!.description}
         </p>
 
         <div className="my-1 border-t border-neutral-100" />
@@ -111,23 +134,23 @@ function AdminPlanCard({
         </div>
 
         <div className="space-y-2xs pt-xs text-left">
-          {plan.schedule && (
+          {plan!.schedule && (
             <div className="font-body text-body-sm leading-relaxed text-neutral-500">
               <div className="flex items-center gap-2">
                 <ClockIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
                 <span className="font-semibold text-neutral-600">{t('admin.servicios.scheduleLabel')}</span>
               </div>
-              <p className="m-0 mt-2xs px-1 py-2xs text-left text-body-sm">{plan.schedule}</p>
+              <p className="m-0 mt-2xs px-1 py-2xs text-left text-body-sm">{plan!.schedule}</p>
             </div>
           )}
 
-          {plan.includes && (
+          {plan!.includes && (
             <div className="font-body text-body-sm leading-relaxed text-neutral-500">
               <div className="flex items-center gap-2">
                 <CircleCheckIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
                 <span className="font-semibold text-neutral-600">{t('admin.servicios.includesLabel')}</span>
               </div>
-              <p className="m-0 mt-2xs px-1 py-2xs text-left text-body-sm line-clamp-2">{plan.includes}</p>
+              <p className="m-0 mt-2xs px-1 py-2xs text-left text-body-sm line-clamp-2">{plan!.includes}</p>
             </div>
           )}
         </div>
@@ -153,27 +176,6 @@ function AdminPlanCard({
         </div>
       </div>
     </article>
-  )
-}
-
-function ServicePlanCardSkeleton() {
-  return (
-    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
-      <Skeleton shape="rect" className="h-[180px] w-full rounded-none" />
-      <div className="flex flex-1 flex-col gap-sm p-lg">
-        <Skeleton shape="line" className="h-5 w-3/4" />
-        <Skeleton shape="line" className="h-4 w-full" />
-        <Skeleton shape="line" className="h-4 w-2/3" />
-        <div className="flex items-center gap-sm">
-          <Skeleton shape="pill" className="h-6 w-20" />
-          <Skeleton shape="line" className="h-6 w-16" />
-        </div>
-        <div className="mt-auto flex justify-end gap-sm pt-sm">
-          <Skeleton shape="circle" className="h-10 w-10" />
-          <Skeleton shape="circle" className="h-10 w-10" />
-        </div>
-      </div>
-    </div>
   )
 }
 
@@ -237,9 +239,9 @@ console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
 
         {loading && (
           <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 lg:grid-cols-3">
-            <ServicePlanCardSkeleton />
-            <ServicePlanCardSkeleton />
-            <ServicePlanCardSkeleton />
+            <AdminPlanCard loading />
+            <AdminPlanCard loading />
+            <AdminPlanCard loading />
           </div>
         )}
 

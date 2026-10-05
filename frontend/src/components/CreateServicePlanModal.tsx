@@ -135,34 +135,27 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
         if (event.key === 'Escape') onClose()
       }}
       aria-label={isEditing ? t('admin.servicios.editPlan') : t('admin.servicios.newPlan')}
-      className="fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+      className="fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim animate-[modal-in_0.2s_ease-out] md:p-xl"
     >
-      <div className={`relative ${isEditing ? 'p-[20px_18px_22px]' : 'p-[28px_22px_30px]'}`}>
+      <div className="flex items-center justify-between gap-md">
+        <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+          {isEditing ? t('admin.servicios.editPlan') : t('admin.servicios.newPlan')}
+        </h2>
+
         <button
           type="button"
-          className="absolute right-3 top-[26px] z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity duration-150 hover:opacity-65 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
           onClick={onClose}
           aria-label={t('admin.cancel')}
+          className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-neutral-100"
         >
           <XIcon size={20} />
         </button>
+      </div>
 
-        <div className={`${isEditing ? 'mb-md' : 'mb-lg'} relative text-center`}>
-          <h2 className={`m-0 font-heading font-bold leading-none text-heading ${isEditing ? 'text-[32px]' : 'text-h1'}`}>
-            {isEditing ? t('admin.servicios.editPlan') : t('admin.servicios.newPlan')}
-          </h2>
-        </div>
-
-        <form
-          onSubmit={handleSubmit}
-          className={`flex flex-col text-left ${
-            isEditing ? 'gap-sm px-[18px] pb-[18px] pt-[18px]' : 'gap-md px-[28px] pb-[32px] pt-[30px]'
-          }`}
-        >
-          <div className="flex flex-col">
-            <label htmlFor="create-plan-onvo" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
-              {t('admin.servicios.selectPlan')}
-            </label>
+      <form onSubmit={handleSubmit} className="mt-lg grid gap-md">
+        <label className="font-body text-body-sm font-semibold text-heading">
+          {t('admin.servicios.selectPlan')}
+          <div className="mt-xs">
             <Select
               id="create-plan-onvo"
               value={gatewayPriceId}
@@ -176,138 +169,133 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
                 value: plan.gatewayPriceId,
                 label: `${plan.name} — ${plan.price}`,
               }))}
-              className="h-[38px] w-full rounded-none border-0 border-b border-neutral-300 bg-transparent px-0 focus:border-green-500"
+              className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
+              aria-label={t('admin.servicios.selectPlan')}
             />
-            {availablePlans.length === 0 && !isEditing && (
-              <p className="mt-2xs text-left font-body text-body-sm text-neutral-500">
-                {t('admin.servicios.noOnvoPlans')}
-              </p>
-            )}
-            {onvoError && (
-              <p className="mt-2xs text-left font-body text-body-sm text-danger">{onvoError}</p>
-            )}
           </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="create-plan-schedule" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
-              {t('admin.servicios.scheduleLabel')}
-            </label>
-            <input
-              id="create-plan-schedule"
-              type="text"
-              maxLength={200}
-              value={schedule}
-              onChange={(e) => {
-                setSchedule(e.target.value)
-                if (scheduleError) setScheduleError(null)
-              }}
-              placeholder={t('admin.servicios.schedulePlaceholder')}
-              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400"
-            />
-            {scheduleError && (
-              <p className="mt-2xs text-left font-body text-body-sm text-danger">{scheduleError}</p>
-            )}
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="create-plan-includes" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
-              {t('admin.servicios.includesLabel')}
-            </label>
-            <textarea
-              id="create-plan-includes"
-              maxLength={800}
-              value={includes}
-              onChange={(e) => {
-                setIncludes(e.target.value)
-                if (includesError) setIncludesError(null)
-              }}
-              placeholder={t('admin.servicios.includesPlaceholder')}
-              rows={3}
-              className="w-full resize-none border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400"
-            />
-            {includesError && (
-              <p className="mt-2xs text-left font-body text-body-sm text-danger">{includesError}</p>
-            )}
-          </div>
-
-          <div className="flex flex-col">
-            <span className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
-              {t('admin.servicios.chooseImage')}
+          {availablePlans.length === 0 && !isEditing && (
+            <span className="mt-xs block font-body text-body-sm font-normal text-neutral-500">
+              {t('admin.servicios.noOnvoPlans')}
             </span>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept={ALLOWED_IMAGE_TYPES.join(',')}
-              onChange={handleFileChange}
-              className="hidden"
-            />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="flex h-11 min-w-0 items-center justify-center gap-sm overflow-hidden rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-sm font-body text-body-sm text-body-text-dark transition-colors hover:border-green-500 hover:bg-green-50"
-            >
-              <FileImageIcon size={18} />
-              <span className="truncate">
-                {selectedImage ? t('admin.servicios.imageSelected') : t('admin.servicios.chooseImage')}
-              </span>
-            </button>
-            {selectedImage && (
-              <div className="relative mt-2 inline-block w-[120px]">
-                <img
-                  src={selectedImage.previewUrl}
-                  alt={t('admin.servicios.currentImage')}
-                  className="h-[80px] w-[120px] rounded-lg object-cover"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    releasePreview(selectedImage)
-                    setSelectedImage(null)
-                  }}
-                  className="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-danger text-white transition-colors hover:opacity-90"
-                  aria-label={t('admin.cancel')}
-                >
-                  <XIcon size={12} />
-                </button>
-              </div>
-            )}
-            {!selectedImage && isEditing && planToEdit?.imageUrl && (
-              <div className="relative mt-2 inline-block w-[120px]">
-                <img
-                  src={planToEdit.imageUrl}
-                  alt={t('admin.servicios.currentImage')}
-                  className="h-[80px] w-[120px] rounded-lg object-cover"
-                />
-                <span className="absolute bottom-1 left-1 rounded bg-black/50 px-1 py-0.5 font-body text-caption text-white">
-                  {t('admin.servicios.currentImage')}
-                </span>
-              </div>
-            )}
-            {imageError && (
-              <p className="mt-2xs text-left font-body text-body-sm text-danger">{imageError}</p>
-            )}
-          </div>
+          )}
+          {onvoError && (
+            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{onvoError}</span>
+          )}
+        </label>
 
-          <div className="flex gap-md mt-sm">
-            <Button
-              variant="secondary"
-              type="button"
-              onClick={onClose}
-              className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50"
-            >
-              {t('admin.cancel')}
-            </Button>
-            <Button
-              variant="success"
-              type="submit"
-              loading={saving}
-              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold uppercase tracking-wide text-white hover:bg-orange-600"
-            >
-              {saving ? t('common.loading') : idleSubmitLabel}
-            </Button>
-          </div>
-        </form>
-      </div>
+        <label className="font-body text-body-sm font-semibold text-heading">
+          {t('admin.servicios.scheduleLabel')}
+          <input
+            id="create-plan-schedule"
+            type="text"
+            maxLength={200}
+            value={schedule}
+            onChange={(e) => {
+              setSchedule(e.target.value)
+              if (scheduleError) setScheduleError(null)
+            }}
+            placeholder={t('admin.servicios.schedulePlaceholder')}
+            className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+          />
+          {scheduleError && (
+            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{scheduleError}</span>
+          )}
+        </label>
+
+        <label className="font-body text-body-sm font-semibold text-heading">
+          {t('admin.servicios.includesLabel')}
+          <textarea
+            id="create-plan-includes"
+            maxLength={800}
+            value={includes}
+            onChange={(e) => {
+              setIncludes(e.target.value)
+              if (includesError) setIncludesError(null)
+            }}
+            placeholder={t('admin.servicios.includesPlaceholder')}
+            rows={3}
+            className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
+          />
+          {includesError && (
+            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{includesError}</span>
+          )}
+        </label>
+
+        <div className="font-body text-body-sm font-semibold text-heading">
+          {t('admin.servicios.chooseImage')}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept={ALLOWED_IMAGE_TYPES.join(',')}
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="mt-xs flex h-11 min-w-0 items-center justify-center gap-sm overflow-hidden rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-md font-body text-body-sm font-normal text-heading transition-colors hover:border-heading"
+          >
+            <FileImageIcon size={18} />
+            <span className="truncate">
+              {selectedImage ? t('admin.servicios.imageSelected') : t('admin.servicios.chooseImage')}
+            </span>
+          </button>
+          {selectedImage && (
+            <div className="relative mt-xs inline-block w-[120px]">
+              <img
+                src={selectedImage.previewUrl}
+                alt={t('admin.servicios.currentImage')}
+                className="h-[80px] w-[120px] rounded-xl object-cover"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  releasePreview(selectedImage)
+                  setSelectedImage(null)
+                }}
+                className="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-danger text-white transition-colors hover:opacity-90"
+                aria-label={t('admin.cancel')}
+              >
+                <XIcon size={12} />
+              </button>
+            </div>
+          )}
+          {!selectedImage && isEditing && planToEdit?.imageUrl && (
+            <div className="relative mt-xs inline-block w-[120px]">
+              <img
+                src={planToEdit.imageUrl}
+                alt={t('admin.servicios.currentImage')}
+                className="h-[80px] w-[120px] rounded-xl object-cover"
+              />
+              <span className="absolute bottom-1 left-1 rounded bg-black/50 px-1 py-0.5 font-body text-caption text-white">
+                {t('admin.servicios.currentImage')}
+              </span>
+            </div>
+          )}
+          {imageError && (
+            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{imageError}</span>
+          )}
+        </div>
+
+        <div className="mt-sm flex flex-wrap justify-end gap-sm">
+          <Button
+            variant="secondary"
+            type="button"
+            onClick={onClose}
+            className="h-11 w-auto rounded-full border-green-500 px-lg font-body text-body-sm font-semibold text-heading hover:bg-green-50"
+          >
+            {t('admin.cancel')}
+          </Button>
+          <Button
+            variant="success"
+            type="submit"
+            loading={saving}
+            className="h-11 w-auto rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
+          >
+            {saving ? t('common.loading') : idleSubmitLabel}
+          </Button>
+        </div>
+      </form>
     </dialog>
   )
 }

@@ -15,28 +15,73 @@ import { DEFAULT_END_TIME, DEFAULT_START_TIME, timeValue, toApiTime, WEEK_DAYS }
 
 const hours = Array.from({ length: 15 }, (_, index) => `${String(index + 6).padStart(2, '0')}:00`)
 
-function WeeklyRowSkeleton() {
+interface WeeklyDayRowProps {
+  day?: WeeklySchedule
+  hours?: string[]
+  onUpdate?: (patch: Partial<WeeklySchedule>) => void
+  onCopyToAll?: () => void
+  loading?: boolean
+}
+
+function WeeklyDayRow({ day, hours, onUpdate, onCopyToAll, loading = false }: Readonly<WeeklyDayRowProps>) {
+  if (loading) {
+    return (
+      <article className="rounded-2xl border border-neutral-200 bg-white p-md md:grid md:grid-cols-[minmax(130px,1fr)_auto_1fr_auto] md:items-center md:gap-md">
+        <Skeleton shape="line" className="h-5 w-24" />
+        <Skeleton shape="line" className="mt-sm h-4 w-32 md:mt-0" />
+        <Skeleton shape="line" className="mt-sm h-11 w-full md:mt-0" />
+        <Skeleton shape="pill" className="mt-md h-11 w-32 md:mt-0" />
+      </article>
+    )
+  }
+
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-md md:grid md:grid-cols-[minmax(130px,1fr)_auto_1fr_auto] md:items-center md:gap-md">
-      <Skeleton shape="line" className="h-5 w-24" />
-      <Skeleton shape="line" className="mt-sm h-4 w-32 md:mt-0" />
-      <Skeleton shape="line" className="mt-sm h-11 w-full md:mt-0" />
-      <Skeleton shape="pill" className="mt-md h-11 w-32 md:mt-0" />
+    <article className="rounded-2xl border border-neutral-200 bg-white p-md transition hover:-translate-y-1 hover:shadow-lg md:grid md:grid-cols-[minmax(130px,1fr)_auto_1fr_auto] md:items-center md:gap-md">
+      <h3 className="m-0 font-heading text-lg font-bold text-heading">{WEEK_DAYS.find((item) => item.value === day!.dayOfWeek)?.label}</h3>
+      <label className="mt-sm flex min-h-11 cursor-pointer items-center gap-sm font-body text-body-sm font-semibold text-body-text transition-colors hover:text-heading md:mt-0"><input type="checkbox" checked={day!.active} onChange={(event) => onUpdate!({ active: event.target.checked })} className="size-5 accent-green-500" /> Atiende este día</label>
+      <div className="mt-sm grid grid-cols-2 gap-sm md:mt-0"><label className="font-body text-body-sm text-neutral-600">Desde<div className="mt-xs"><Select disabled={!day!.active} value={day!.startTime} onChange={(value) => onUpdate!({ startTime: value })} options={hours!.slice(0, -1).map((hour) => ({ value: hour, label: hour }))} className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-sm transition-colors hover:border-neutral-400 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:hover:border-neutral-200" aria-label="Desde" /></div></label><label className="font-body text-body-sm text-neutral-600">Hasta<div className="mt-xs"><Select disabled={!day!.active} value={day!.endTime} onChange={(value) => onUpdate!({ endTime: value })} options={hours!.slice(1).map((hour) => ({ value: hour, label: hour }))} className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-sm transition-colors hover:border-neutral-400 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:hover:border-neutral-200" aria-label="Hasta" /></div></label></div>
+      <button type="button" onClick={onCopyToAll} className="mt-md inline-flex min-h-11 items-center justify-center gap-xs rounded-full border border-heading px-md font-body text-body-sm font-semibold text-heading transition-colors hover:bg-heading hover:text-white focus-visible:outline-2 focus-visible:outline-link md:mt-0" title="Copiar a todos los días"><CopyIcon size={16} aria-hidden="true" /> Copiar a todos</button>
+      {day!.active && day!.endTime <= day!.startTime && <p className="m-0 mt-sm text-body-sm text-danger md:col-start-3">La hora Hasta debe ser mayor que Desde.</p>}
     </article>
   )
 }
 
-function ExceptionCardSkeleton() {
+interface ExceptionCardProps {
+  exception?: ScheduleException
+  onEdit?: () => void
+  onDelete?: () => void
+  loading?: boolean
+}
+
+function ExceptionCard({ exception, onEdit, onDelete, loading = false }: Readonly<ExceptionCardProps>) {
+  if (loading) {
+    return (
+      <article className="rounded-2xl border border-neutral-200 bg-white p-lg">
+        <div className="flex items-start justify-between gap-md">
+          <div className="min-w-0 flex-1">
+            <Skeleton shape="line" className="h-5 w-1/2" />
+            <Skeleton shape="line" className="mt-sm h-4 w-2/3" />
+          </div>
+          <div className="flex gap-xs">
+            <Skeleton shape="circle" className="size-11" />
+            <Skeleton shape="circle" className="size-11" />
+          </div>
+        </div>
+      </article>
+    )
+  }
+
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-lg">
+    <article className="rounded-2xl border border-neutral-200 bg-white p-lg transition hover:-translate-y-1 hover:shadow-lg">
       <div className="flex items-start justify-between gap-md">
-        <div className="min-w-0 flex-1">
-          <Skeleton shape="line" className="h-5 w-1/2" />
-          <Skeleton shape="line" className="mt-sm h-4 w-2/3" />
+        <div>
+          <h3 className="m-0 font-heading text-lg font-bold text-heading">{dateLabel(exception!.exceptionDate)}</h3>
+          <p className="mt-sm m-0 font-body text-body font-semibold text-body-text">{exception!.closed ? 'Cerrado todo el día' : `Atiende solo de ${timeValue(exception!.startTime)} a ${timeValue(exception!.endTime)}`}</p>
+          {exception!.reason && <p className="mt-xs m-0 font-body text-body-sm text-neutral-500">{exception!.reason}</p>}
         </div>
         <div className="flex gap-xs">
-          <Skeleton shape="circle" className="h-11 w-11" />
-          <Skeleton shape="circle" className="h-11 w-11" />
+          <button type="button" onClick={onEdit} aria-label={`Editar ${dateLabel(exception!.exceptionDate)}`} title="Editar" className="inline-flex size-11 items-center justify-center rounded-full text-link transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link"><PencilIcon size={18} /></button>
+          <button type="button" onClick={onDelete} aria-label={`Eliminar ${dateLabel(exception!.exceptionDate)}`} title="Eliminar" className="inline-flex size-11 items-center justify-center rounded-full text-danger transition-colors hover:bg-danger-100 focus-visible:outline-2 focus-visible:outline-link"><Trash2Icon size={18} /></button>
         </div>
       </div>
     </article>
@@ -119,13 +164,13 @@ function OwnerAvailabilityPage() {
         {loading && (
           <div className="mt-xl">
             <div className="flex flex-col gap-sm">
-              <WeeklyRowSkeleton />
-              <WeeklyRowSkeleton />
-              <WeeklyRowSkeleton />
+              <WeeklyDayRow loading />
+              <WeeklyDayRow loading />
+              <WeeklyDayRow loading />
             </div>
             <div className="mt-2xl grid grid-cols-1 gap-md lg:grid-cols-2">
-              <ExceptionCardSkeleton />
-              <ExceptionCardSkeleton />
+              <ExceptionCard loading />
+              <ExceptionCard loading />
             </div>
           </div>
         )}
@@ -137,13 +182,13 @@ function OwnerAvailabilityPage() {
               <div className="flex flex-wrap items-end justify-between gap-md"><div><h2 id="weekly-title" className="m-0 font-heading text-2xl font-bold text-heading">Horario semanal</h2><p className="mt-xs m-0 font-body text-body-sm text-neutral-500">Elige un solo horario continuo para cada día.</p></div>{weeklySuccess && <output className="m-0 font-body text-body-sm font-semibold text-success">Horario guardado correctamente.</output>}</div>
               <div className="mt-md flex flex-col gap-sm">
                 {visibleDraft.map((day) => (
-                  <article key={day.dayOfWeek} className="rounded-2xl border border-neutral-200 bg-white p-md transition hover:-translate-y-1 hover:shadow-lg md:grid md:grid-cols-[minmax(130px,1fr)_auto_1fr_auto] md:items-center md:gap-md">
-                    <h3 className="m-0 font-heading text-lg font-bold text-heading">{WEEK_DAYS.find((item) => item.value === day.dayOfWeek)?.label}</h3>
-                    <label className="mt-sm flex min-h-11 cursor-pointer items-center gap-sm font-body text-body-sm font-semibold text-body-text transition-colors hover:text-heading md:mt-0"><input type="checkbox" checked={day.active} onChange={(event) => updateDay(day.dayOfWeek, { active: event.target.checked })} className="size-5 accent-green-500" /> Atiende este día</label>
-                    <div className="mt-sm grid grid-cols-2 gap-sm md:mt-0"><label className="font-body text-body-sm text-neutral-600">Desde<div className="mt-xs"><Select disabled={!day.active} value={day.startTime} onChange={(value) => updateDay(day.dayOfWeek, { startTime: value })} options={hours.slice(0, -1).map((hour) => ({ value: hour, label: hour }))} className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-sm transition-colors hover:border-neutral-400 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:hover:border-neutral-200" aria-label="Desde" /></div></label><label className="font-body text-body-sm text-neutral-600">Hasta<div className="mt-xs"><Select disabled={!day.active} value={day.endTime} onChange={(value) => updateDay(day.dayOfWeek, { endTime: value })} options={hours.slice(1).map((hour) => ({ value: hour, label: hour }))} className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-sm transition-colors hover:border-neutral-400 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:hover:border-neutral-200" aria-label="Hasta" /></div></label></div>
-                    <button type="button" onClick={() => copyToAll(day)} className="mt-md inline-flex min-h-11 items-center justify-center gap-xs rounded-full border border-heading px-md font-body text-body-sm font-semibold text-heading transition-colors hover:bg-heading hover:text-white focus-visible:outline-2 focus-visible:outline-link md:mt-0" title="Copiar a todos los días"><CopyIcon size={16} aria-hidden="true" /> Copiar a todos</button>
-                    {day.active && day.endTime <= day.startTime && <p className="m-0 mt-sm text-body-sm text-danger md:col-start-3">La hora Hasta debe ser mayor que Desde.</p>}
-                  </article>
+                  <WeeklyDayRow
+                    key={day.dayOfWeek}
+                    day={day}
+                    hours={hours}
+                    onUpdate={(patch) => updateDay(day.dayOfWeek, patch)}
+                    onCopyToAll={() => copyToAll(day)}
+                  />
                 ))}
               </div>
               {weeklyError && <p className="mt-md font-body text-body-sm text-danger" role="alert">{weeklyError}</p>}
@@ -153,7 +198,7 @@ function OwnerAvailabilityPage() {
             <section className="mt-2xl" aria-labelledby="exceptions-title">
               <div className="flex flex-wrap items-end justify-between gap-md"><div><h2 id="exceptions-title" className="m-0 font-heading text-2xl font-bold text-heading">Días especiales</h2><p className="mt-xs m-0 font-body text-body-sm text-neutral-500">Estos días reemplazan tu horario semanal.</p></div><button type="button" onClick={() => openException()} className="inline-flex min-h-11 items-center justify-center gap-xs rounded-full bg-orange-500 px-lg font-body text-button font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link"><PlusIcon size={18} aria-hidden="true" /> Agregar día especial</button></div>
               {exceptionError && <p className="mt-md text-body-sm text-danger" role="alert">{exceptionError}</p>}
-              {futureExceptions.length === 0 ? <p className="mt-lg rounded-2xl border border-dashed border-neutral-300 p-xl text-center font-body text-body text-neutral-500">Aún no tienes días especiales</p> : <><div className="mt-md grid grid-cols-1 gap-md lg:grid-cols-2">{pagedExceptions.map((exception) => <article key={exception.id ?? exception.exceptionDate} className="rounded-2xl border border-neutral-200 bg-white p-lg transition hover:-translate-y-1 hover:shadow-lg"><div className="flex items-start justify-between gap-md"><div><h3 className="m-0 font-heading text-lg font-bold text-heading">{dateLabel(exception.exceptionDate)}</h3><p className="mt-sm m-0 font-body text-body font-semibold text-body-text">{exception.closed ? 'Cerrado todo el día' : `Atiende solo de ${timeValue(exception.startTime)} a ${timeValue(exception.endTime)}`}</p>{exception.reason && <p className="mt-xs m-0 font-body text-body-sm text-neutral-500">{exception.reason}</p>}</div><div className="flex gap-xs"><button type="button" onClick={() => openException(exception)} aria-label={`Editar ${dateLabel(exception.exceptionDate)}`} title="Editar" className="inline-flex size-11 items-center justify-center rounded-full text-link transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link"><PencilIcon size={18} /></button><button type="button" onClick={() => setExceptionToDelete(exception)} aria-label={`Eliminar ${dateLabel(exception.exceptionDate)}`} title="Eliminar" className="inline-flex size-11 items-center justify-center rounded-full text-danger transition-colors hover:bg-danger-100 focus-visible:outline-2 focus-visible:outline-link"><Trash2Icon size={18} /></button></div></div></article>)}</div><Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} /></>}
+              {futureExceptions.length === 0 ? <p className="mt-lg rounded-2xl border border-dashed border-neutral-300 p-xl text-center font-body text-body text-neutral-500">Aún no tienes días especiales</p> : <><div className="mt-md grid grid-cols-1 gap-md lg:grid-cols-2">{pagedExceptions.map((exception) => <ExceptionCard key={exception.id ?? exception.exceptionDate} exception={exception} onEdit={() => openException(exception)} onDelete={() => setExceptionToDelete(exception)} />)}</div><Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} /></>}
             </section>
           </>
         )}

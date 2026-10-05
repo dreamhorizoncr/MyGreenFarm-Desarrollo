@@ -166,7 +166,7 @@ function BlogPostPage() {
 
               {post.aiSummary && (
                 <div className="mt-md rounded-[20px] bg-gradient-to-br from-green-50 to-white p-[22px] text-left shadow-sm ring-1 ring-green-100 md:p-[28px]">
-                  <div className="mb-[12px] inline-flex items-center gap-[6px] rounded-full bg-green-500 px-[12px] py-[6px]">
+                  <div className="mb-[12px] inline-flex items-center gap-[6px] rounded-full bg-[var(--pink-400)] px-[12px] py-[6px]">
                     <SparklesIcon size={14} className="text-white" aria-hidden="true" />
                     <span className="font-heading text-caption font-bold uppercase tracking-wide text-white">
                       {t('newspage.aiSummary')}

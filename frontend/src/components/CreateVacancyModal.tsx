@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
-import TextField from './ui/TextField.tsx'
 import { validateRequired } from '../utils/validators.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { OptionalApplicationField, VacancyInput } from '../types/vacancy.ts'
@@ -68,112 +67,120 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
         if (event.key === 'Escape') onClose()
       }}
       aria-label={t('vacancies.publishModalTitle')}
-      className="fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+      className="fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim animate-[modal-in_0.2s_ease-out] md:p-xl"
     >
-      <div className="relative p-[28px_22px_30px]">
+      <div className="flex items-center justify-between gap-md">
+        <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+          {t('vacancies.publishModalTitle')}
+        </h2>
+
         <button
           type="button"
-          className="absolute right-3 top-6.5 z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity duration-150 hover:opacity-65 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
           onClick={onClose}
           aria-label={t('admin.cancel')}
+          className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-neutral-100"
         >
           <XIcon size={20} />
         </button>
+      </div>
 
-        <div className="relative mb-lg text-center">
-          <h2 className="m-0 font-heading text-[30px] font-bold leading-tight text-heading">
-            {t('vacancies.publishModalTitle')}
-          </h2>
-        </div>
-
-        <div className="flex flex-col gap-md px-7 pb-8 pt-2.5 text-left">
-          <TextField
+      <div className="mt-lg grid gap-md">
+        <label className="font-body text-body-sm font-semibold text-heading">
+          {t('vacancies.formTitle')}
+          <input
             id="vacancy-title"
-            label={t('vacancies.formTitle')}
+            type="text"
             value={title}
             onChange={(e) => {
               setTitle(e.target.value)
               if (titleError) setTitleError(null)
             }}
-            error={titleError}
+            className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
           />
+          {titleError && (
+            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{titleError}</span>
+          )}
+        </label>
 
-          <div className="flex flex-col">
-            <label htmlFor="vacancy-description" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
-              {t('vacancies.formDescription')}
+        <label className="font-body text-body-sm font-semibold text-heading">
+          {t('vacancies.formDescription')}
+          <textarea
+            id="vacancy-description"
+            rows={4}
+            value={description}
+            onChange={(e) => {
+              setDescription(e.target.value)
+              if (descriptionError) setDescriptionError(null)
+            }}
+            className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
+          />
+          {descriptionError && (
+            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{descriptionError}</span>
+          )}
+        </label>
+
+        <fieldset>
+          <legend className="mb-xs font-body text-body-sm font-semibold text-heading">
+            {t('vacancies.formFieldsSectionTitle')}
+          </legend>
+          <p className="mb-sm font-body text-body-sm text-neutral-500">
+            {t('vacancies.formFieldsSectionHint')}
+          </p>
+
+          <div className="flex flex-col gap-xs">
+            <label className="flex cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md py-sm font-body text-body-sm text-body-text">
+              <input
+                type="checkbox"
+                checked={requiredFields.includes('applicantPhone')}
+                onChange={() => toggleField('applicantPhone')}
+                className="size-4 accent-green-500"
+              />
+              {t('vacancies.applicantPhone')}
             </label>
-            <textarea
-              id="vacancy-description"
-              rows={4}
-              value={description}
-              onChange={(e) => {
-                setDescription(e.target.value)
-                if (descriptionError) setDescriptionError(null)
-              }}
-              className="w-full resize-none rounded-xl border border-neutral-300 bg-transparent p-sm font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500"
-            />
-            {descriptionError && (
-              <p className="mt-2xs text-left font-body text-body-sm text-danger">{descriptionError}</p>
-            )}
+
+            <label className="flex cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md py-sm font-body text-body-sm text-body-text">
+              <input
+                type="checkbox"
+                checked={requiredFields.includes('file')}
+                onChange={() => toggleField('file')}
+                className="size-4 accent-green-500"
+              />
+              {t('vacancies.resumeLabel')}
+            </label>
+
+            <label className="flex cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md py-sm font-body text-body-sm text-body-text">
+              <input
+                type="checkbox"
+                checked={requiredFields.includes('certificates')}
+                onChange={() => toggleField('certificates')}
+                className="size-4 accent-green-500"
+              />
+              {t('vacancies.certificates')}
+            </label>
           </div>
+        </fieldset>
+      </div>
 
-          <fieldset>
-            <legend className="mb-2xs font-body text-body font-normal leading-[1.6] text-body-text">
-              {t('vacancies.formFieldsSectionTitle')}
-            </legend>
-            <p className="mb-sm font-body text-body-sm text-neutral-500">
-              {t('vacancies.formFieldsSectionHint')}
-            </p>
+      {saveError && (
+        <p className="mt-md rounded-xl bg-red-50 p-md font-body text-body-sm text-red-700">{saveError}</p>
+      )}
 
-            <div className="flex flex-col gap-xs">
-              <label className="flex cursor-pointer items-center gap-sm rounded-lg border border-neutral-200 px-md py-sm font-body text-body-sm text-body-text">
-                <input
-                  type="checkbox"
-                  checked={requiredFields.includes('applicantPhone')}
-                  onChange={() => toggleField('applicantPhone')}
-                  className="size-4 accent-green-500"
-                />
-                {t('vacancies.applicantPhone')}
-              </label>
-
-              <label className="flex cursor-pointer items-center gap-sm rounded-lg border border-neutral-200 px-md py-sm font-body text-body-sm text-body-text">
-                <input
-                  type="checkbox"
-                  checked={requiredFields.includes('file')}
-                  onChange={() => toggleField('file')}
-                  className="size-4 accent-green-500"
-                />
-                {t('vacancies.resumeLabel')}
-              </label>
-
-              <label className="flex cursor-pointer items-center gap-sm rounded-lg border border-neutral-200 px-md py-sm font-body text-body-sm text-body-text">
-                <input
-                  type="checkbox"
-                  checked={requiredFields.includes('certificates')}
-                  onChange={() => toggleField('certificates')}
-                  className="size-4 accent-green-500"
-                />
-                {t('vacancies.certificates')}
-              </label>
-            </div>
-          </fieldset>
-
-          {saveError && <p className="text-left font-body text-body-sm text-danger">{saveError}</p>}
-
-          <div className="mt-sm flex gap-md">
-            <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50">
-              {t('admin.cancel')}
-            </Button>
-            <Button
-              variant="success"
-              onClick={handleSubmit}
-              loading={saving}
-              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold uppercase tracking-wide text-white hover:bg-orange-600"
-            >
-              {saving ? t('common.loading') : t('vacancies.publish')}
-            </Button>
-          </div>
-        </div>
+      <div className="mt-lg flex flex-wrap justify-end gap-sm">
+        <Button
+          variant="secondary"
+          onClick={onClose}
+          className="h-11 w-auto rounded-full border-green-500 px-lg font-body text-body-sm font-semibold text-heading hover:bg-green-50"
+        >
+          {t('admin.cancel')}
+        </Button>
+        <Button
+          variant="success"
+          onClick={handleSubmit}
+          loading={saving}
+          className="h-11 w-auto rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
+        >
+          {saving ? t('common.loading') : t('vacancies.publish')}
+        </Button>
       </div>
     </dialog>
   )

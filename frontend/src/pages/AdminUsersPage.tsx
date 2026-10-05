@@ -6,30 +6,11 @@ import AdminLayout from '../layout/AdminLayout.tsx'
 import EditUserModal from '../components/EditUserModal.tsx'
 import DeleteUserModal from '../components/DeleteUserModal.tsx'
 import TeacherCard from '../components/TeacherCard.tsx'
-import Skeleton from '../components/ui/Skeleton.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
 import { useAdmin } from '../hooks/useAdmin.ts'
 import { notify } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
-
-function TeacherCardSkeleton() {
-  return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
-      <div className="flex items-start justify-between gap-sm">
-        <div className="min-w-0 flex-1">
-          <Skeleton shape="line" className="h-5 w-1/2" />
-          <Skeleton shape="line" className="mt-2 h-3 w-20" />
-        </div>
-        <div className="flex shrink-0 items-center gap-xs">
-          <Skeleton shape="circle" className="h-10 w-10" />
-          <Skeleton shape="circle" className="h-10 w-10" />
-        </div>
-      </div>
-      <Skeleton shape="line" className="mt-md h-4 w-2/3" />
-    </article>
-  )
-}
 
 function AdminUsersPage() {
   const { t } = useTranslation()
@@ -130,10 +111,10 @@ function AdminUsersPage() {
 
         {loading && (
           <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-            <TeacherCardSkeleton />
-            <TeacherCardSkeleton />
-            <TeacherCardSkeleton />
-            <TeacherCardSkeleton />
+            <TeacherCard loading />
+            <TeacherCard loading />
+            <TeacherCard loading />
+            <TeacherCard loading />
           </div>
         )}
 

@@ -4,7 +4,6 @@ import { SearchIcon } from "@animateicons/react/lucide";
 import AdminLayout from "../layout/AdminLayout";
 import EvaluationCard from "../components/EvaluationCard";
 import EvaluationFormModal from "../components/EvaluationFormModal";
-import Skeleton from "../components/ui/Skeleton";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal";
 
 import { evaluationService } from "../services/evaluation";
@@ -15,23 +14,6 @@ import { useEvaluations } from "../hooks/useEvaluations";
 import type { Evaluation } from "../types/evaluation";
 import type { Expedient } from "../types/expedient";
 
-function EvaluationCardSkeleton() {
-    return (
-        <div className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
-        <Skeleton className="h-6 w-48" />
-        <Skeleton className="mt-2 h-4 w-32" />
-
-        <div className="mt-6 grid grid-cols-2 gap-4">
-            <Skeleton className="h-20 w-full" />
-            <Skeleton className="h-20 w-full" />
-            <Skeleton className="h-20 w-full" />
-            <Skeleton className="h-20 w-full" />
-        </div>
-
-        <Skeleton className="mt-6 h-16 w-full" />
-        </div>
-    );
-    }
 
     function AdminEvaluationsPage() {
     const {
@@ -182,8 +164,8 @@ function EvaluationCardSkeleton() {
             {/* Loading */}
             {isLoading && (
                 <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <EvaluationCardSkeleton />
-                <EvaluationCardSkeleton />
+                <EvaluationCard loading />
+                <EvaluationCard loading />
                 </div>
             )}
 

@@ -11,15 +11,53 @@ import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { notify } from '../utils/notifications.ts'
 import type { AudienceType, NewsletterRecipient } from '../types/newsletter.ts'
 
-function SubscriberRowSkeleton() {
-    return (
-        <div className="rounded-xl border border-neutral-200 bg-white p-md shadow-sm">
-            <div className="flex items-center justify-between gap-md">
-                <div className="min-w-0 flex-1">
-                    <Skeleton shape="line" className="h-5 w-2/3" />
-                    <Skeleton shape="line" className="mt-2 h-4 w-1/3" />
+interface SubscriberRowProps {
+    item?: NewsletterRecipient
+    onUnsubscribe?: () => void
+    disabled?: boolean
+    loading?: boolean
+}
+
+function SubscriberRow({ item, onUnsubscribe, disabled, loading = false }: Readonly<SubscriberRowProps>) {
+    const { t } = useTranslation()
+
+    if (loading) {
+        return (
+            <div className="rounded-xl border border-neutral-200 bg-white p-md shadow-sm">
+                <div className="flex items-center justify-between gap-md">
+                    <div className="min-w-0 flex-1">
+                        <Skeleton shape="line" className="h-5 w-2/3" />
+                        <Skeleton shape="line" className="mt-2 h-4 w-1/3" />
+                    </div>
+                    <Skeleton shape="pill" className="h-11 w-28 shrink-0" />
                 </div>
-                <Skeleton shape="pill" className="h-11 w-28 shrink-0" />
+            </div>
+        )
+    }
+
+    return (
+        <div className="rounded-xl border border-neutral-200 bg-white p-md shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+            <div className="flex items-center justify-between gap-md">
+                <div className="min-w-0">
+                    <p className="break-all font-body font-semibold text-heading">{item!.email}</p>
+                    <span className="inline-flex items-center gap-xs font-body text-body-sm font-semibold text-body-text">
+                        <span
+                            className={`inline-block size-2.5 rounded-full ${item!.type === 'SUBSCRIBER' ? 'bg-green-500' : 'bg-orange-500'}`}
+                            aria-hidden="true"
+                        />
+                        {item!.type === 'SUBSCRIBER'
+                            ? t('admin.newsletter.subscriber')
+                            : t('admin.newsletter.parent')}
+                    </span>
+                </div>
+                <button
+                    type="button"
+                    onClick={onUnsubscribe}
+                    disabled={disabled}
+                    className="flex h-11 shrink-0 items-center rounded-full border border-danger px-md font-body text-body-sm font-semibold text-danger transition-colors hover:bg-danger hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                    {t('admin.newsletter.unsubscribe')}
+                </button>
             </div>
         </div>
     )
@@ -225,10 +263,10 @@ function AdminNewsletterPage() {
                 {/* Listado filtrado */}
                 {loadingSubscribers ? (
                     <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-                        <SubscriberRowSkeleton />
-                        <SubscriberRowSkeleton />
-                        <SubscriberRowSkeleton />
-                        <SubscriberRowSkeleton />
+                        <SubscriberRow loading />
+                        <SubscriberRow loading />
+                        <SubscriberRow loading />
+                        <SubscriberRow loading />
                     </div>
                 ) : filteredItems.length === 0 ? (
                     <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
@@ -240,30 +278,12 @@ function AdminNewsletterPage() {
                     <>
                     <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
                         {pagedItems.map((item) => (
-                            <div key={item.id} className="rounded-xl border border-neutral-200 bg-white p-md shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-                                <div className="flex items-center justify-between gap-md">
-                                    <div className="min-w-0">
-                                        <p className="break-all font-body font-semibold text-heading">{item.email}</p>
-                                        <span className="inline-flex items-center gap-xs font-body text-body-sm font-semibold text-body-text">
-                                            <span
-                                                className={`inline-block size-2.5 rounded-full ${item.type === 'SUBSCRIBER' ? 'bg-green-500' : 'bg-orange-500'}`}
-                                                aria-hidden="true"
-                                            />
-                                            {item.type === 'SUBSCRIBER'
-                                                ? t('admin.newsletter.subscriber')
-                                                : t('admin.newsletter.parent')}
-                                        </span>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        onClick={() => setRecipientToUnsubscribe(item)}
-                                        disabled={broadcastLoading}
-                                        className="flex h-11 shrink-0 items-center rounded-full border border-danger px-md font-body text-body-sm font-semibold text-danger transition-colors hover:bg-danger hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
-                                    >
-                                        {t('admin.newsletter.unsubscribe')}
-                                    </button>
-                                </div>
-                            </div>
+                            <SubscriberRow
+                                key={item.id}
+                                item={item}
+                                onUnsubscribe={() => setRecipientToUnsubscribe(item)}
+                                disabled={broadcastLoading}
+                            />
                         ))}
                     </div>
                     <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
@@ -284,51 +304,55 @@ function AdminNewsletterPage() {
                             if (event.key === 'Escape') setIsBroadcastModalOpen(false)
                         }}
                         aria-labelledby="newsletter-broadcast-title"
-                        className="fixed inset-0 m-auto w-[min(560px,92vw)] max-w-none rounded-2xl bg-bg-card p-xl shadow-xl backdrop:bg-scrim"
+                        className="fixed inset-0 m-auto w-[min(620px,92vw)] max-w-none rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl"
                     >
-                            <button
-                                type="button"
-                                className="absolute right-md top-md inline-flex size-10 items-center justify-center rounded-full text-body-text"
-                                onClick={() => setIsBroadcastModalOpen(false)}
-                                        aria-label={t('admin.cancel')}
-                            >
-                                <XIcon size={20} aria-hidden="true" />
-                            </button>
-                            <h2 id="newsletter-broadcast-title" className="mb-lg pr-12 font-heading text-2xl font-bold text-heading">
-                                {broadcastModalTitle}
-                            </h2>
-                            <form className="flex flex-col gap-md" onSubmit={handleBroadcastSubmit}>
-                                <label className="flex flex-col gap-xs font-body text-body-sm font-semibold text-heading">
+                            <div className="flex items-center justify-between gap-md">
+                                <h2 id="newsletter-broadcast-title" className="m-0 font-heading text-2xl font-bold text-heading">
+                                    {broadcastModalTitle}
+                                </h2>
+
+                                <button
+                                    type="button"
+                                    onClick={() => setIsBroadcastModalOpen(false)}
+                                    aria-label={t('admin.cancel')}
+                                    className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-neutral-100"
+                                >
+                                    <XIcon size={20} aria-hidden="true" />
+                                </button>
+                            </div>
+
+                            <form className="mt-lg grid gap-md" onSubmit={handleBroadcastSubmit}>
+                                <label className="font-body text-body-sm font-semibold text-heading">
                                     {t('admin.newsletter.subject')}
                                     <input
                                         required
                                         value={subject}
                                         onChange={(event) => setSubject(event.target.value)}
-                                        className="rounded-full border border-neutral-300 bg-white px-md py-sm font-normal text-body-text outline-none focus:border-green-500"
+                                        className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                                     />
                                 </label>
-                                <label className="flex flex-col gap-xs font-body text-body-sm font-semibold text-heading">
+                                <label className="font-body text-body-sm font-semibold text-heading">
                                     {t('admin.newsletter.message')}
                                     <textarea
                                         required
                                         rows={6}
                                         value={message}
                                         onChange={(event) => setMessage(event.target.value)}
-                                        className="resize-y rounded-xl border border-neutral-300 bg-white px-md py-sm font-normal text-body-text outline-none focus:border-green-500"
+                                        className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                                     />
                                 </label>
-                                <div className="mt-sm flex justify-end gap-sm">
+                                <div className="mt-sm flex flex-wrap justify-end gap-sm">
                                     <button
                                         type="button"
                                         onClick={() => setIsBroadcastModalOpen(false)}
-                                        className="rounded-full border border-green-500 px-md py-sm font-body text-body-sm font-bold text-heading hover:bg-green-50"
+                                        className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
                                     >
                                         {t('admin.cancel')}
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={broadcastLoading}
-                                        className="inline-flex items-center gap-xs rounded-full bg-orange-500 px-md py-sm font-body text-body-sm font-bold text-white hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
+                                        className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
                                     >
                                         <SendIcon size={16} aria-hidden="true" />
                                         {t('admin.newsletter.send')}
