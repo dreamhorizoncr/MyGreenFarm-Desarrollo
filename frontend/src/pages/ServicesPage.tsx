@@ -30,9 +30,22 @@ function PlanCard({
   idioma: string
 }>) {
   const { t } = useTranslation()
-  const [currency, setCurrency] = useState<Currency>('USD')
+
+  const getCleanCurrency = (curr?: string): Currency => {
+    const upper = curr?.toUpperCase()
+    return ['CRC', 'USD', 'EUR'].includes(upper ?? '') ? (upper as Currency) : 'CRC'
+  }
+
+  const [currency, setCurrency] = useState<Currency>(() => getCleanCurrency(plan.currency))
+
+  useEffect(() => {
+    if (plan?.currency) {
+      setCurrency(getCleanCurrency(plan.currency))
+    }
+  }, [plan?.currency])
+
   const price = exchangeRate
-    ? convertCurrency(plan.price, 'USD', currency, 'sell', exchangeRate)
+    ? convertCurrency(plan.price, getCleanCurrency(plan.currency), currency, 'sell', exchangeRate)
     : plan.price
 
   return (

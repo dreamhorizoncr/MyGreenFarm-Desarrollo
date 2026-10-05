@@ -43,7 +43,6 @@ public class EvaluationSummaryService {
                     continue;
                 }
 
-                // 1. Formatear y consolidar las evaluaciones
                 StringBuilder rawContent = new StringBuilder();
                 for (Evaluation eval : evaluations) {
                     rawContent.append("Fecha: ").append(eval.getEvaluationDate()).append("\n")
@@ -56,7 +55,6 @@ public class EvaluationSummaryService {
 
                 String childFullName = expedient.getChild().getFirstName() + " " + expedient.getChild().getLastName();
 
-                // 2. Generar resumen mediante Gemini
                 String summary = geminiResumenService.generateSemiannualEvaluationSummary(childFullName, rawContent.toString());
 
                 if (summary == null || summary.isBlank()) {
@@ -70,7 +68,6 @@ public class EvaluationSummaryService {
                     continue;
                 }
 
-                // 3. Obtener el email del encargado/padre desde la entidad Child/Parent y enviar el correo
                 String parentEmail = expedient.getChild().getParent().getEmail(); 
                 String parentLanguage = parent.getLanguage() != null ? parent.getLanguage() : "es";
                 String period = formatPeriodByLanguage(parentLanguage);

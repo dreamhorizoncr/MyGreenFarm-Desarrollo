@@ -3,6 +3,7 @@ export interface ServicePlan {
   name: string
   description: string
   gatewayPriceId: string
+  currency?: string;
   type: string
   imageUrl: string
   price: number
