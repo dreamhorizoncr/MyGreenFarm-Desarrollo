@@ -11,7 +11,7 @@ import {
 } from "@animateicons/react/lucide";
 import AdminLayout from "../layout/AdminLayout.tsx";
 import Skeleton from "../components/ui/Skeleton.tsx";
-import { clubService } from "../services/clubs.ts";
+import { clubService, type TranslationItem } from "../services/clubs.ts";
 import { notify } from "../utils/notifications.ts";
 import type {
   ClubRequest,
@@ -67,6 +67,7 @@ function OwnerClubsPage() {
   const coverInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const editImagesClubIdRef = useRef<number | null>(null);
+  const sourceClubsRef = useRef(new Map<number, Pick<ClubResponse, "name" | "description" | "schedule">>());
 
   const fetchClubs = async () => {
     try {
@@ -74,7 +75,7 @@ function OwnerClubsPage() {
       setError(null);
       const data = await clubService.getAll({ lang: i18n.language, size: 50 });
 
-      const clubsWithImages = await Promise.all(
+      let clubsWithImages = await Promise.all(
         data.content.map(async (club) => {
           try {
             let imgs = club.images;
@@ -92,6 +93,39 @@ function OwnerClubsPage() {
           }
         })
       );
+
+      sourceClubsRef.current = new Map(
+        clubsWithImages.map((club) => [club.id, {
+          name: club.name,
+          description: club.description,
+          schedule: club.schedule,
+        }])
+      );
+
+      const currentLang = i18n.language?.split("-")[0] || "es";
+      if (currentLang !== "es" && clubsWithImages.length > 0) {
+        const translationItems: TranslationItem[] = clubsWithImages.flatMap((club) => [
+          { entityId: String(club.id), fieldName: "name", originalText: club.name },
+          { entityId: String(club.id), fieldName: "description", originalText: club.description },
+          ...(club.schedule
+            ? [{ entityId: String(club.id), fieldName: "schedule", originalText: club.schedule }]
+            : []),
+        ]);
+
+        try {
+          const translations = await clubService.translateBatch("club", currentLang, translationItems);
+          clubsWithImages = clubsWithImages.map((club) => ({
+            ...club,
+            name: translations[`${club.id}:name`] ?? club.name,
+            description: translations[`${club.id}:description`] ?? club.description,
+            schedule: club.schedule
+              ? translations[`${club.id}:schedule`] ?? club.schedule
+              : club.schedule,
+          }));
+        } catch (translationError) {
+          console.error("No se pudieron traducir los clubs:", translationError);
+        }
+      }
 
       setClubs(clubsWithImages);
     } catch (err) {
@@ -117,12 +151,13 @@ function OwnerClubsPage() {
   };
 
   const openEdit = (club: ClubResponse) => {
+    const sourceClub = sourceClubsRef.current.get(club.id) ?? club;
     editImagesClubIdRef.current = club.id;
     setEditing(club);
     setForm({
-      name: club.name,
-      description: club.description,
-      schedule: club.schedule ?? "",
+      name: sourceClub.name,
+      description: sourceClub.description,
+      schedule: sourceClub.schedule ?? "",
       maxCapacity: club.maxCapacity,
     });
     setCover(null);

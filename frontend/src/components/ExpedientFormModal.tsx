@@ -59,9 +59,6 @@ function ExpedientFormModal({
   // Si existe un expediente, el modal está en modo edición
   const isEditing = Boolean(expedient);
 
-  // Datos del formulario
-  const [childName, setChildName] = useState(expedient?.childName ?? "");
-
   // Lista de estudiantes para el dropdown
   const [childrenOptions, setChildrenOptions] = useState<ChildOption[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
