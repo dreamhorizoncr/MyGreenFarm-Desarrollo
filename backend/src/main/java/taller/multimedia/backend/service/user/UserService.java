@@ -1,10 +1,11 @@
 package taller.multimedia.backend.service.user;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -28,7 +29,7 @@ public class UserService {
         this.calendarSyncAsyncService = calendarSyncAsyncService;
     }
 
-    public List<UserInfoResponse> getAllUsers(String currentEmail) {
+    public Page<UserInfoResponse> getAllUsers(String currentEmail, Pageable pageable) {
         User currentUser = userRepository.findByEmail(currentEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -36,9 +37,7 @@ public class UserService {
             throw new RuntimeException("Only owners and admins can list users");
         }
 
-        return userRepository.findAll().stream()
-                .map(this::toResponse)
-                .toList();
+        return userRepository.findAll(pageable).map(this::toResponse);
     }
 
     public UserInfoResponse getUser(UUID targetId, String currentEmail) {

@@ -11,7 +11,6 @@ import Pagination from "../components/ui/Pagination.tsx";
 import { parentService } from "../services/parent";
 import { notify } from "../utils/notifications";
 import { useParents } from "../hooks/useParents";
-import { useClientPagination } from "../hooks/useClientPagination.ts";
 
 import type { Parent } from "../types/parent";
 
@@ -47,7 +46,8 @@ function ParentCardSkeleton() {
 }
 
 function AdminParentsPage() {
-  const { parents, loading, error, fetchParents } = useParents();
+  const { parents, loading, error, totalPages, fetchParents } = useParents();
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { t } = useTranslation();
 
@@ -62,8 +62,8 @@ function AdminParentsPage() {
 
   // Obtiene los padres cuando carga la página
   useEffect(() => {
-    void fetchParents();
-  }, []);
+    void fetchParents(currentPage - 1);
+  }, [currentPage]);
 
   // Filtra los padres por nombre, apellido, identificación o correo
   const normalizedSearchTerm = searchTerm.toLowerCase().trim();
@@ -77,8 +77,6 @@ function AdminParentsPage() {
       parent.email.toLowerCase().includes(normalizedSearchTerm)
     );
   });
-
-  const { currentPage, setPage, totalPages, pageItems: pagedParents } = useClientPagination(filteredParents);
 
   // Elimina un padre
   const handleDelete = async (parent: Parent) => {
@@ -163,7 +161,7 @@ function AdminParentsPage() {
         {!loading && !error && filteredParents.length > 0 && (
           <>
             <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {pagedParents.map((parent) => (
+              {filteredParents.map((parent) => (
                 <ParentCard
                   key={parent.id}
                   parent={parent}
@@ -172,7 +170,7 @@ function AdminParentsPage() {
                 />
               ))}
             </div>
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
           </>
         )}
 

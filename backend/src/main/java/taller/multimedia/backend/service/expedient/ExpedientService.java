@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -70,10 +72,8 @@ public class ExpedientService {
     }
 
     @Transactional(readOnly = true)
-    public List<ExpedientResponse> getAllExpedients() {
-        return expedientRepository.findAll().stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+    public Page<ExpedientResponse> getAllExpedients(Pageable pageable) {
+        return expedientRepository.findAll(pageable).map(this::mapToResponse);
     }
 
     @Transactional(readOnly = true)

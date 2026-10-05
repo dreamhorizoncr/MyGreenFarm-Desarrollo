@@ -8,12 +8,14 @@ export function useAdmin() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchUsers = async () => {
+  const [totalPages, setTotalPages] = useState(0)
+  const fetchUsers = async (page = 0) => {
     setLoading(true)
     setError(null)
     try {
-      const data = await adminService.getUsers()
-      setUsers(data)
+      const data = await adminService.getUsers(page)
+      setUsers(data.content)
+      setTotalPages(data.totalPages)
     } catch (err) {
       setError(getErrorMessage(err))
     } finally {
@@ -51,5 +53,5 @@ export function useAdmin() {
     }
   }
 
-  return { users, loading, error, fetchUsers, updateUser, deleteUser }
+  return { users, loading, error, totalPages, fetchUsers, updateUser, deleteUser }
 }

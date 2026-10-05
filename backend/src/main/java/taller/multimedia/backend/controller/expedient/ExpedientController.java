@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import org.springframework.http.MediaType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 
 import java.util.List;
 import java.util.UUID;
@@ -48,8 +51,9 @@ public class ExpedientController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
-    public ResponseEntity<List<ExpedientResponse>> getAllExpedients() {
-        List<ExpedientResponse> expedients = expedientService.getAllExpedients();
+    public ResponseEntity<Page<ExpedientResponse>> getAllExpedients(
+            @PageableDefault(size = 10, sort = "child.firstName") Pageable pageable) {
+        Page<ExpedientResponse> expedients = expedientService.getAllExpedients(pageable);
         return ResponseEntity.ok(expedients);
     }
 
