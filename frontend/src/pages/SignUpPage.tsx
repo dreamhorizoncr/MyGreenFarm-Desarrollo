@@ -1,7 +1,6 @@
 import { useState, useEffect, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { ArrowRightIcon } from "@animateicons/react/lucide";
 import PasswordInput from "../components/ui/PasswordInput.tsx";
 import TextField from "../components/ui/TextField.tsx";
 import AuthButton from "../components/ui/AuthButton.tsx";

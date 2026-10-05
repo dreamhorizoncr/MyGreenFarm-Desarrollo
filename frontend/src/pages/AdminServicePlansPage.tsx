@@ -17,9 +17,10 @@ import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
 interface AdminPlanCardProps {
   plan: ServicePlan
   exchangeRate: ExchangeRate | null
-  deleting: boolean
+  deleting?: boolean
   onEdit: () => void
   onDelete: () => void
+  language: string
 }
 
 function AdminPlanCard({ 
@@ -29,14 +30,7 @@ function AdminPlanCard({
   onEdit, 
   onDelete, 
   language 
-}: Readonly<{
-  plan: ServicePlan
-  exchangeRate: ExchangeRate | null
-  deleting?: boolean
-  onEdit: () => void
-  onDelete: () => void
-  language: string
-}>) {
+}: Readonly<AdminPlanCardProps>) {
   const { t } = useTranslation()
 
   // 1. Obtener y limpiar la moneda base del plan de forma segura
