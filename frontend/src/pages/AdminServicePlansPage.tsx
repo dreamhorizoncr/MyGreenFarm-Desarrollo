@@ -12,6 +12,7 @@ import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 import { useExchangeRate } from '../hooks/useExchangeRate.ts'
 import type { Currency, ExchangeRate } from '../types/exchangeRate.ts'
 import { convertCurrency, currencySymbol, formatCurrency } from '../utils/currency.ts'
+import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
 
 interface AdminPlanCardProps {
   plan: ServicePlan
@@ -21,11 +22,43 @@ interface AdminPlanCardProps {
   onDelete: () => void
 }
 
-function AdminPlanCard({ plan, exchangeRate, deleting, onEdit, onDelete }: Readonly<AdminPlanCardProps>) {
-  const { t, i18n } = useTranslation()
-  const [currency, setCurrency] = useState<Currency>('USD')
+function AdminPlanCard({ 
+  plan, 
+  exchangeRate, 
+  deleting, 
+  onEdit, 
+  onDelete, 
+  language 
+}: Readonly<{
+  plan: ServicePlan
+  exchangeRate: ExchangeRate | null
+  deleting?: boolean
+  onEdit: () => void
+  onDelete: () => void
+  language: string
+}>) {
+  const { t } = useTranslation()
+
+  // 1. Obtener y limpiar la moneda base del plan de forma segura
+  const getCleanCurrency = (curr?: string): Currency => {
+    const upper = curr?.toUpperCase()
+    return ['CRC', 'USD', 'EUR'].includes(upper ?? '') ? (upper as Currency) : 'CRC'
+  }
+
+  // 2. Estado local inicial sincronizado con la moneda del plan
+  const [currency, setCurrency] = useState<Currency>(() => getCleanCurrency(plan.currency))
+
+  // 3. Forzar actualización si el plan cambia o termina de cargar con retraso
+  useEffect(() => {
+    if (plan?.currency) {
+      setCurrency(getCleanCurrency(plan.currency))
+    }
+  }, [plan?.currency])
+
+  // 4. Calcular el precio usando la moneda real del plan
+  const baseCurrency = getCleanCurrency(plan.currency)
   const price = exchangeRate
-    ? convertCurrency(plan.price, 'USD', currency, 'sell', exchangeRate)
+    ? convertCurrency(plan.price, baseCurrency, currency, 'sell', exchangeRate)
     : plan.price
 
   return (
@@ -74,7 +107,10 @@ function AdminPlanCard({ plan, exchangeRate, deleting, onEdit, onDelete }: Reado
             ))}
           </div>
           <span className="text-left font-heading text-h2 font-bold text-green-500">
-            {currencySymbol(currency)}{formatCurrency(price, currency, i18n.language)}
+            <AnimatedNumber
+              value={price}
+              format={(n) => `${currencySymbol(currency)}${formatCurrency(n, currency, language)}`}
+            />
           </span>
         </div>
 
@@ -101,10 +137,21 @@ function AdminPlanCard({ plan, exchangeRate, deleting, onEdit, onDelete }: Reado
         </div>
 
         <div className="mt-auto flex justify-end gap-sm pt-sm">
-          <button type="button" onClick={onEdit} aria-label={t('admin.edit')} className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50">
+          <button 
+            type="button" 
+            onClick={onEdit} 
+            aria-label={t('admin.edit')} 
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
+          >
             <PencilIcon size={17} />
           </button>
-          <button type="button" onClick={onDelete} disabled={deleting} aria-label={t('admin.delete')} className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 disabled:opacity-50">
+          <button 
+            type="button" 
+            onClick={onDelete} 
+            disabled={deleting} 
+            aria-label={t('admin.delete')} 
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 disabled:opacity-50"
+          >
             <Trash2Icon size={17} />
           </button>
         </div>
@@ -135,7 +182,7 @@ function ServicePlanCardSkeleton() {
 }
 
 function AdminServicePlansPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { plans, onvoPlans, loading, error, fetchAll, createPlan, updatePlan, deletePlan } = useServicePlanAdmin()
   const { data: exchangeRate } = useExchangeRate()
   const [showCreateModal, setShowCreateModal] = useState(false)
@@ -210,19 +257,20 @@ function AdminServicePlansPage() {
         )}
 
         {!loading && !error && plans.length > 0 && (
-          <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 lg:grid-cols-3">
-            {plans.map(plan => (
-              <AdminPlanCard
-                key={plan.id}
-                plan={plan}
-                exchangeRate={exchangeRate}
-                deleting={deletingId === plan.id}
-                onEdit={() => setEditingPlan(plan)}
-                onDelete={() => setConfirmDeleteId(plan.id)}
-              />
-            ))}
-          </div>
-        )}
+        <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 lg:grid-cols-3">
+          {plans.map(plan => (
+            <AdminPlanCard
+              key={plan.id}
+              plan={plan}
+              exchangeRate={exchangeRate}
+              language={i18n.language} // <--- ¡Añade esto aquí!
+              deleting={deletingId === plan.id}
+              onEdit={() => setEditingPlan(plan)}
+              onDelete={() => setConfirmDeleteId(plan.id)}
+            />
+          ))}
+        </div>
+      )}
       </div>
 
       {(showCreateModal || editingPlan) && (
