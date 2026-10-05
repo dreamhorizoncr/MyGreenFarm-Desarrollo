@@ -7,6 +7,7 @@ import ParentFormModal from "../components/ParentFormModal";
 import ParentCard from "../components/ParentCard";
 import Skeleton from "../components/ui/Skeleton";
 import Pagination from "../components/ui/Pagination.tsx";
+import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 
 import { parentService } from "../services/parent";
 import { notify } from "../utils/notifications";
@@ -60,6 +61,8 @@ function AdminParentsPage() {
   // Guarda el padre que se está editando
   const [editingParent, setEditingParent] = useState<Parent | null>(null);
 
+  const [parentToDelete, setParentToDelete] = useState<Parent | null>(null);
+
   // Obtiene los padres cuando carga la página
   useEffect(() => {
     void fetchParents(currentPage - 1);
@@ -78,16 +81,11 @@ function AdminParentsPage() {
     );
   });
 
-  // Elimina un padre
-  const handleDelete = async (parent: Parent) => {
-    const confirmed = window.confirm(
-      `¿Deseas eliminar a ${parent.firstName} ${parent.lastName}?`,
-    );
-
-    if (!confirmed) return;
+  const confirmDeleteParent = async () => {
+    if (!parentToDelete) return;
 
     try {
-      await parentService.delete(parent.id);
+      await parentService.delete(parentToDelete.id);
 
       // Actualiza la lista después de eliminar
       await fetchParents();
@@ -97,6 +95,7 @@ function AdminParentsPage() {
       console.error("Error al eliminar el padre:", error);
 
       notify.error(t("admin.parents.deleteErrorToastTitle"));
+      throw error;
     }
   };
 
@@ -166,7 +165,7 @@ function AdminParentsPage() {
                   key={parent.id}
                   parent={parent}
                   onEdit={setEditingParent}
-                  onDelete={handleDelete}
+                  onDelete={setParentToDelete}
                 />
               ))}
             </div>
@@ -209,6 +208,17 @@ function AdminParentsPage() {
             parent={editingParent}
             onClose={() => setEditingParent(null)}
             onCreated={fetchParents}
+          />
+        )}
+
+        {parentToDelete && (
+          <DeleteConfirmModal
+            title={t("admin.parents.deleteModalTitle")}
+            message={t("admin.parents.deleteConfirmMessage", {
+              name: `${parentToDelete.firstName} ${parentToDelete.lastName}`,
+            })}
+            onConfirm={confirmDeleteParent}
+            onClose={() => setParentToDelete(null)}
           />
         )}
       </section>

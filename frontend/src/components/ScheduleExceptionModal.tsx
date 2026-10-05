@@ -139,8 +139,8 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
 
           {formError && <p className="m-0 text-body-sm text-danger" role="alert">{formError}</p>}
           <div className="flex flex-col-reverse gap-xl sm:flex-row sm:justify-between">
-            <button type="button" onClick={onClose} className="h-11 rounded-full border border-heading px-xl font-body text-button font-semibold text-heading focus-visible:outline-2 focus-visible:outline-link">Cancelar</button>
-            <button type="button" onClick={() => void handleSubmit()} disabled={saving} className="inline-flex h-11 items-center justify-center gap-sm rounded-full bg-green-500 px-xl font-body text-button font-semibold text-white disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-link">
+            <button type="button" onClick={onClose} className="h-11 rounded-full border border-green-500 px-xl font-body text-button font-bold text-heading hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link">Cancelar</button>
+            <button type="button" onClick={() => void handleSubmit()} disabled={saving} className="inline-flex h-11 items-center justify-center gap-sm rounded-full bg-orange-500 px-xl font-body text-button font-bold text-white hover:bg-orange-600 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-link">
               {saving && <span className="size-4 animate-spin rounded-full border-2 border-white border-r-transparent" aria-hidden="true" />}
               Guardar día especial
             </button>

@@ -135,7 +135,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
         if (event.key === 'Escape') onClose()
       }}
       aria-label={isEditing ? t('admin.servicios.editPlan') : t('admin.servicios.newPlan')}
-      className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+      className="fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
       <div className={`relative ${isEditing ? 'p-[20px_18px_22px]' : 'p-[28px_22px_30px]'}`}>
         <button
@@ -293,7 +293,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
               variant="secondary"
               type="button"
               onClick={onClose}
-              className="h-11 flex-1 rounded-full border-green-500 font-body text-button uppercase tracking-wide text-heading hover:bg-green-50"
+              className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50"
             >
               {t('admin.cancel')}
             </Button>
@@ -301,7 +301,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
               variant="success"
               type="submit"
               loading={saving}
-              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-normal uppercase tracking-wide text-white hover:bg-orange-600"
+              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold uppercase tracking-wide text-white hover:bg-orange-600"
             >
               {saving ? t('common.loading') : idleSubmitLabel}
             </Button>

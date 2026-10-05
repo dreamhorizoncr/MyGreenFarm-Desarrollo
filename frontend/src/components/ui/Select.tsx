@@ -25,15 +25,6 @@ interface MenuPosition {
   width: number
 }
 
-// Custom dropdown that mirrors LanguageSwitcher's menu style (rounded card,
-// hover:bg-orange-100, bold + link-colored selected item with a checkmark)
-// so every dashboard combobox looks and behaves the same way.
-//
-// The menu is rendered through a portal into document.body instead of as a
-// normal absolutely-positioned child. Several dashboard cards lift on hover
-// (hover:-translate-y-1), and CSS transforms create a new stacking context —
-// an in-place absolute menu would get trapped inside that context and could
-// render clipped or behind sibling rows. Portaling sidesteps that entirely.
 function Select({
   value,
   onChange,
@@ -51,9 +42,6 @@ function Select({
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLUListElement>(null)
 
-  // Custom dismiss handling (not the shared useDismiss hook) because the menu
-  // is portaled out of rootRef: a click inside it would otherwise look like a
-  // click "outside" and close the menu before the option's own click fires.
   useEffect(() => {
     if (!open) return
 

@@ -73,7 +73,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
         if (event.key === 'Escape') onClose()
       }}
       aria-label={t('admin.edit')}
-      className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+      className="fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
       <div className="relative p-[28px_22px_30px]">
         <button
@@ -171,7 +171,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
           )}
 
           <div className="flex gap-md mt-sm">
-            <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-full border-green-500 font-body text-button uppercase tracking-wide text-heading hover:bg-green-50">
+            <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50">
               {t('admin.cancel')}
             </Button>
             <Button
@@ -179,7 +179,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
               onClick={handleSave}
               loading={saving}
               disabled={!firstName.trim() || !lastName.trim()}
-              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-normal uppercase tracking-wide text-white hover:bg-orange-600"
+              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold uppercase tracking-wide text-white hover:bg-orange-600"
             >
               {saving ? t('common.loading') : t('admin.save')}
             </Button>

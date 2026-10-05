@@ -18,6 +18,7 @@ import AdminLayout from '../layout/AdminLayout.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import DeleteAlbumModal from '../components/DeleteAlbumModal.tsx'
 import DeleteYearModal from '../components/DeleteYearModal.tsx'
+import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
 import { useGalleryAdmin } from '../hooks/useGalleryAdmin.ts'
 import { notify } from '../utils/notifications.ts'
 import type { Gallery, GalleryCategory, GalleryImage, GalleryRequest } from '../types/gallery.ts'
@@ -460,6 +461,7 @@ function AdminGalleryPage() {
 	const [editing, setEditing] = useState<Gallery | null>(null)
 	const [deleteTarget, setDeleteTarget] = useState<Gallery | null>(null)
 	const [deleteYearTarget, setDeleteYearTarget] = useState<GalleryCategory | null>(null)
+	const [imageToDelete, setImageToDelete] = useState<string | null>(null)
 	const [form, setForm] = useState<GalleryRequest>(emptyForm)
 	const [formError, setFormError] = useState<string | null>(null)
 	const [files, setFiles] = useState<SelectedImage[]>([])
@@ -639,14 +641,15 @@ function AdminGalleryPage() {
 		}
 	}
 
-	const handleDeleteImage = async (imageId: string) => {
-		if (!editing) return
+	const confirmDeleteImage = async () => {
+		if (!editing || !imageToDelete) return
 		try {
-			await deleteImage(editing.id, imageId)
-			setImages((prev) => prev.filter((image) => image.id !== imageId))
+			await deleteImage(editing.id, imageToDelete)
+			setImages((prev) => prev.filter((image) => image.id !== imageToDelete))
 			notify.success(t('admin.gallery.imageDeletedTitle'))
-		} catch {
+		} catch (err) {
 			notify.error(t('admin.gallery.imageDeleteErrorTitle'))
+			throw err
 		}
 	}
 
@@ -853,7 +856,7 @@ onCreateYear={handleCreateYear}
 										/>
 										<button
 											type="button"
-											onClick={() => void handleDeleteImage(image.id)}
+											onClick={() => setImageToDelete(image.id)}
 											aria-label={t('admin.delete')}
 											className="text-danger"
 										>
@@ -935,6 +938,15 @@ onCreateYear={handleCreateYear}
 					category={deleteYearTarget}
 					onConfirm={() => handleDeleteYear(deleteYearTarget)}
 					onClose={() => setDeleteYearTarget(null)}
+				/>
+			)}
+
+			{imageToDelete && (
+				<DeleteConfirmModal
+					title={t('admin.gallery.deleteImageModalTitle')}
+					message={t('admin.gallery.deleteImageModalMessage')}
+					onConfirm={confirmDeleteImage}
+					onClose={() => setImageToDelete(null)}
 				/>
 			)}
 		</AdminLayout>

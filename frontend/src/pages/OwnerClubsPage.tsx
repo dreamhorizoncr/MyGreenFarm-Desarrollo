@@ -11,6 +11,7 @@ import {
 } from "@animateicons/react/lucide";
 import AdminLayout from "../layout/AdminLayout.tsx";
 import Skeleton from "../components/ui/Skeleton.tsx";
+import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 import { clubService, type TranslationItem } from "../services/clubs.ts";
 import { notify } from "../utils/notifications.ts";
 import type {
@@ -45,9 +46,9 @@ function ClubCardSkeleton() {
 
 function OwnerClubsPage() {
   const { t: translate, i18n } = useTranslation();
-  const translateKey = translate as (key: string) => string;
-  const t = (key: string): string =>
-    translateKey(key.startsWith("admin.") ? key : `admin.${key}`);
+  const translateKey = translate as (key: string, options?: Record<string, unknown>) => string;
+  const t = (key: string, options?: Record<string, unknown>): string =>
+    translateKey(key.startsWith("admin.") ? key : `admin.${key}`, options);
 
   const [clubs, setClubs] = useState<ClubResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,8 +62,8 @@ function OwnerClubsPage() {
   const [gallery, setGallery] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<ClubImageResponse[]>([]);
 
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [clubToDelete, setClubToDelete] = useState<ClubResponse | null>(null);
+  const [imageToDelete, setImageToDelete] = useState<ClubImageResponse | null>(null);
 
   const coverInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
@@ -235,7 +236,6 @@ function OwnerClubsPage() {
 
   const handleDelete = (club: ClubResponse) => {
     setClubToDelete(club);
-    setDeleteModalOpen(true);
   };
 
   const confirmDelete = async () => {
@@ -253,23 +253,25 @@ function OwnerClubsPage() {
         description: t("ownerClubs.deletedToastDescription"),
       });
 
-      setDeleteModalOpen(false);
-      setClubToDelete(null);
       await fetchClubs();
     } catch (err) {
       console.error(err);
       notify.error(t("ownerClubs.deleteErrorToastTitle"));
+      throw err;
     }
   };
 
-  const handleDeleteImage = async (image: ClubImageResponse) => {
+  const confirmDeleteImage = async () => {
+    if (!imageToDelete) return;
+
     try {
-      await clubService.deleteImage(image.id);
-      setExistingImages((current) => current.filter((item) => item.id !== image.id));
+      await clubService.deleteImage(imageToDelete.id);
+      setExistingImages((current) => current.filter((item) => item.id !== imageToDelete.id));
       notify.success(t("ownerClubs.imageDeletedToastTitle"));
     } catch (err) {
       console.error(err);
       notify.error(t("ownerClubs.imageDeleteErrorToastTitle"));
+      throw err;
     }
   };
 
@@ -591,7 +593,7 @@ function OwnerClubsPage() {
 
                       <button
                         type="button"
-                        onClick={() => void handleDeleteImage(image)}
+                        onClick={() => setImageToDelete(image)}
                         aria-label={t("ownerClubs.deleteImage")}
                         className="rounded-full p-2xs text-red-500 transition-colors hover:bg-red-50"
                       >
@@ -624,40 +626,22 @@ function OwnerClubsPage() {
       )}
 
       {/* Modal de Confirmación de Eliminación */}
-      {deleteModalOpen && clubToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-[20px]">
-          <div className="w-full max-w-[430px] rounded-[20px] bg-white p-[28px] shadow-lg">
-            <h2 className="m-0 font-heading text-[24px] font-bold text-heading">
-              {t("ownerClubs.deleteModalTitle")}
-            </h2>
+      {clubToDelete && (
+        <DeleteConfirmModal
+          title={t("ownerClubs.deleteModalTitle")}
+          message={t("ownerClubs.deleteConfirmMessage", { name: clubToDelete.name })}
+          onConfirm={confirmDelete}
+          onClose={() => setClubToDelete(null)}
+        />
+      )}
 
-            <p className="mt-[12px] font-body text-body-sm text-neutral-600">
-              {t("ownerClubs.deleteModalMessage")}{" "}
-              <span className="font-semibold">"{clubToDelete.name}"</span>?
-            </p>
-
-            <div className="mt-[28px] flex justify-end gap-[12px]">
-              <button
-                type="button"
-                onClick={() => {
-                  setDeleteModalOpen(false);
-                  setClubToDelete(null);
-                }}
-                className="rounded-full border border-neutral-300 px-[18px] py-[9px] font-body text-body-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
-              >
-                {t("ownerClubs.deleteModalCancel")}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => void confirmDelete()}
-                className="rounded-full bg-red-500 px-[18px] py-[9px] font-body text-body-sm font-semibold text-white transition-colors hover:bg-red-600"
-              >
-                {t("ownerClubs.deleteModalConfirm")}
-              </button>
-            </div>
-          </div>
-        </div>
+      {imageToDelete && (
+        <DeleteConfirmModal
+          title={t("ownerClubs.deleteImageModalTitle")}
+          message={t("ownerClubs.deleteImageModalMessage")}
+          onConfirm={confirmDeleteImage}
+          onClose={() => setImageToDelete(null)}
+        />
       )}
     </AdminLayout>
   );

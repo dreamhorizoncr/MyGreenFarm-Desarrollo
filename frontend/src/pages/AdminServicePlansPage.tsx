@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CircleCheckIcon, ClockIcon, PlusIcon, Trash2Icon, PencilIcon, XIcon } from '@animateicons/react/lucide'
+import { CircleCheckIcon, ClockIcon, PlusIcon, Trash2Icon, PencilIcon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
-import Button from '../components/ui/Button.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import CreateServicePlanModal from '../components/CreateServicePlanModal.tsx'
+import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
 import { useServicePlanAdmin } from '../hooks/useServicePlanAdmin.ts'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
@@ -83,7 +83,7 @@ function AdminPlanCard({
           {plan.description}
         </p>
 
-        <div className="my-1 border-t border-neutral-500" />
+        <div className="my-1 border-t border-neutral-100" />
 
         <div className="flex flex-col items-start gap-2xs">
           <div className="flex w-full flex-wrap justify-end gap-1" aria-label={t('moneda.convertTo')}>
@@ -185,7 +185,6 @@ function AdminServicePlansPage() {
   const [editingPlan, setEditingPlan] = useState<ServicePlan | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
-  const [confirmText, setConfirmText] = useState('')
 
   useEffect(() => {
     void fetchAll()
@@ -199,19 +198,17 @@ function AdminServicePlansPage() {
         title: t('admin.servicios.deletedToastTitle'),
         description: t('admin.servicios.deletedToastDescription'),
       })
-    } catch {
+    } catch (err) {
       notify.error(t('admin.servicios.deleteErrorToastTitle'))
+      throw err
     } finally {
       setDeletingId(null)
-      setConfirmDeleteId(null)
-      setConfirmText('')
     }
   }
 
   const { currentPage, setPage, totalPages, pageItems: pagedPlans } = useClientPagination(plans)
 
   const planToDelete = plans.find(p => p.id === confirmDeleteId)
-  const matchesName = confirmText.trim() === (planToDelete?.name ?? '')
   console.log('onvoPlans actuales:', onvoPlans);
 console.log('existingPlans actuales:', plans);
 console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
@@ -319,92 +316,12 @@ console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
       )}
 
       {confirmDeleteId && planToDelete && (
-        <dialog
-          ref={(el) => {
-            if (el && !el.open) el.showModal()
-          }}
-          onClose={() => {
-            setConfirmDeleteId(null)
-            setConfirmText('')
-          }}
-          onClick={(event) => {
-            if (event.target === event.currentTarget) {
-              setConfirmDeleteId(null)
-              setConfirmText('')
-            }
-          }}
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') {
-              setConfirmDeleteId(null)
-              setConfirmText('')
-            }
-          }}
-          aria-label={t('admin.servicios.deleteTitle')}
-          className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
-        >
-          <div className="relative p-[28px_22px_30px]">
-            <button
-              type="button"
-              className="absolute right-3 top-[26px] z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity duration-150 hover:opacity-65 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-              onClick={() => {
-                setConfirmDeleteId(null)
-                setConfirmText('')
-              }}
-              aria-label={t('admin.cancel')}
-            >
-              <XIcon size={20} />
-            </button>
-
-            <div className="relative mb-lg text-center">
-              <h2 className="m-0 font-heading text-[36px] font-bold leading-none text-heading">
-                {t('admin.servicios.deleteTitle')}
-              </h2>
-            </div>
-
-            <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px]">
-              <p className="mt-2xs text-left font-body text-body text-neutral-500">
-                {t('admin.servicios.deleteConfirm', { name: planToDelete.name })}
-              </p>
-
-              <div className="flex flex-col">
-                <label htmlFor="admin-delete-plan-confirm" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
-                  {t('admin.servicios.deleteConfirmField', { name: planToDelete.name })}
-                </label>
-                <input
-                  id="admin-delete-plan-confirm"
-                  type="text"
-                  value={confirmText}
-                  onChange={(e) => setConfirmText(e.target.value)}
-                  placeholder={t('admin.servicios.deletePlaceholder')}
-                  className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400"
-                  autoFocus
-                />
-              </div>
-
-            <div className="mt-sm flex gap-md">
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  setConfirmDeleteId(null)
-                  setConfirmText('')
-                }}
-                className="h-11 flex-1 rounded-full font-body text-button uppercase tracking-wide"
-              >
-                {t('admin.cancel')}
-              </Button>
-              <Button
-                variant="danger"
-                onClick={() => handleDelete(confirmDeleteId)}
-                loading={deletingId === confirmDeleteId}
-                disabled={!matchesName}
-                className="h-11 flex-1  rounded-full font-body text-button uppercase tracking-wide"
-              >
-                {deletingId === confirmDeleteId ? t('common.loading') : t('admin.delete')}
-              </Button>
-            </div>
-            </div>
-          </div>
-        </dialog>
+        <DeleteConfirmModal
+          title={t('admin.servicios.deleteTitle')}
+          message={t('admin.servicios.deleteConfirm', { name: planToDelete.name })}
+          onConfirm={() => handleDelete(confirmDeleteId)}
+          onClose={() => setConfirmDeleteId(null)}
+        />
       )}
     </AdminLayout>
   )

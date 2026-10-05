@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { SearchIcon } from '@animateicons/react/lucide'
 import Navbar from '../components/Navbar.tsx'
+import Container from '../components/home/Container.tsx'
 import BlogPostCard from '../components/forum/BlogPostCard.tsx'
 import CommunityPostCard from '../components/forum/CommunityPostCard.tsx'
 import ForumSidebar from '../components/forum/ForumSidebar.tsx'
@@ -72,7 +73,7 @@ function ForumPage() {
       </section>
 
       <main>
-        <div className="mx-auto w-full max-w-[1120px] px-[14px] py-10 xs:px-[20px] xs:py-12">
+        <Container className="py-10 xs:py-12">
           <div className="grid grid-cols-1 items-start gap-md lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-xl">
             {activeTab === 'blog' && (
               <label className="flex h-12 items-center gap-sm rounded-xl border border-neutral-200 bg-white px-md text-neutral-500 focus-within:border-heading lg:hidden">
@@ -184,7 +185,7 @@ function ForumPage() {
               showPopularTopics={activeTab === 'blog'}
             />
           </div>
-        </div>
+        </Container>
       </main>
 
       {isPublishOpen && (

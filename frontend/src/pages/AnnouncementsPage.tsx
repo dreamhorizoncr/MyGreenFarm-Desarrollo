@@ -11,6 +11,7 @@ import AdminLayout from "../layout/AdminLayout.tsx";
 import Skeleton from "../components/ui/Skeleton.tsx";
 import Pagination from "../components/ui/Pagination.tsx";
 import Select from "../components/ui/Select.tsx";
+import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 import { useAnnouncements } from "../hooks/useAnnouncements.ts";
 import { notify } from "../utils/notifications.ts";
 import type {
@@ -87,9 +88,10 @@ function AnnouncementsPage() {
   const [cover, setCover] = useState<File | null>(null);
   const [gallery, setGallery] = useState<File[]>([]);
   const [images, setImages] = useState<AnnouncementImageResponse[]>([]);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [announcementToDelete, setAnnouncementToDelete] =
     useState<Announcement | null>(null);
+  const [imageToDelete, setImageToDelete] =
+    useState<AnnouncementImageResponse | null>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const { t, i18n } = useTranslation();
@@ -165,7 +167,6 @@ function AnnouncementsPage() {
 
   const handleDelete = (announcement: Announcement) => {
     setAnnouncementToDelete(announcement);
-    setDeleteModalOpen(true);
   };
 
   const confirmDelete = async () => {
@@ -182,21 +183,22 @@ function AnnouncementsPage() {
         title: t("adminNews.deletedToastTitle"),
         description: t("adminNews.deletedToastDescription"),
       });
-
-      setDeleteModalOpen(false);
-      setAnnouncementToDelete(null);
-    } catch {
+    } catch (err) {
       notify.error(t("adminNews.deleteErrorToastTitle"));
+      throw err;
     }
   };
 
-  const handleDeleteImage = async (image: AnnouncementImageResponse) => {
+  const confirmDeleteImage = async () => {
+    if (!imageToDelete) return;
+
     try {
-      await deleteImage(image.id);
-      setImages((current) => current.filter((item) => item.id !== image.id));
+      await deleteImage(imageToDelete.id);
+      setImages((current) => current.filter((item) => item.id !== imageToDelete.id));
       notify.success(t("adminNews.imageDeletedToastTitle"));
-    } catch {
+    } catch (err) {
       notify.error(t("adminNews.imageDeleteErrorToastTitle"));
+      throw err;
     }
   };
 
@@ -448,7 +450,7 @@ function AnnouncementsPage() {
 
                       <button
                         type="button"
-                        onClick={() => void handleDeleteImage(image)}
+                        onClick={() => setImageToDelete(image)}
                         aria-label={t("adminNews.deleteImage")}
                         className="rounded-full p-2xs text-danger transition-colors hover:bg-red-50"
                       >
@@ -634,42 +636,22 @@ function AnnouncementsPage() {
         onPageChange={setCurrentPage}
       />
 
-      {deleteModalOpen && announcementToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-[20px]">
-          <div className="w-full max-w-[430px] rounded-[20px] bg-white p-[28px] shadow-lg">
-            <h2 className="m-0 font-heading text-[24px] font-bold text-heading">
-              {t("adminNews.deleteModalTitle")}
-            </h2>
+      {announcementToDelete && (
+        <DeleteConfirmModal
+          title={t("adminNews.deleteModalTitle")}
+          message={t("adminNews.deleteConfirmMessage", { title: announcementToDelete.title })}
+          onConfirm={confirmDelete}
+          onClose={() => setAnnouncementToDelete(null)}
+        />
+      )}
 
-            <p className="mt-[12px] font-body text-body-sm text-neutral-600">
-              {t("adminNews.deleteModalMessage")}{" "}
-              <span className="font-semibold">
-                "{announcementToDelete.title}"
-              </span>
-            </p>
-
-            <div className="mt-[28px] flex justify-end gap-[12px]">
-              <button
-                type="button"
-                onClick={() => {
-                  setDeleteModalOpen(false);
-                  setAnnouncementToDelete(null);
-                }}
-                className="rounded-full border border-neutral-300 px-[18px] py-[9px] font-body text-body-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
-              >
-                {t("adminNews.deleteModalCancel")}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => void confirmDelete()}
-                className="rounded-full bg-red-500 px-[18px] py-[9px] font-body text-body-sm font-semibold text-white transition-colors hover:bg-red-600"
-              >
-                {t("adminNews.deleteModalConfirm")}
-              </button>
-            </div>
-          </div>
-        </div>
+      {imageToDelete && (
+        <DeleteConfirmModal
+          title={t("adminNews.deleteImageModalTitle")}
+          message={t("adminNews.deleteImageModalMessage")}
+          onConfirm={confirmDeleteImage}
+          onClose={() => setImageToDelete(null)}
+        />
       )}
     </AdminLayout>
   );
