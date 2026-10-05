@@ -26,14 +26,14 @@ public class ClubController {
     private final ClubService clubService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<ClubResponse> create(@Valid @RequestBody ClubRequest request) {
         ClubResponse createdClub = clubService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdClub);
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<ClubResponse> createWithImages(
             @Valid @ModelAttribute ClubRequest request,
             @RequestParam(name = "coverImage", required = false) MultipartFile coverImage,
@@ -43,7 +43,7 @@ public class ClubController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<Page<ClubResponse>> getAll(
             @RequestParam(defaultValue = "es") String lang,
             @PageableDefault(size = 10, sort = "name") Pageable pageable) {
@@ -51,7 +51,7 @@ public class ClubController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<ClubResponse> getById(
             @PathVariable Long id,
             @RequestParam(defaultValue = "es") String lang) {
@@ -59,7 +59,7 @@ public class ClubController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<ClubResponse> update(
             @PathVariable Long id,
             @Valid @RequestBody ClubRequest request) {
@@ -67,7 +67,7 @@ public class ClubController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         clubService.delete(id);
         return ResponseEntity.noContent().build();
