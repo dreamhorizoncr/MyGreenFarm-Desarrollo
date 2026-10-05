@@ -805,6 +805,8 @@ export default {
       updateErrorToastTitle: "Couldn't update the record",
       deleteSuccessToastTitle: "Record deleted",
       deleteErrorToastTitle: "Couldn't delete the record",
+      selectStudentError: "You must select a student.",
+      noExpedients: "No academic records registered.",
 
       levels: {
         lactantes: "Infants",

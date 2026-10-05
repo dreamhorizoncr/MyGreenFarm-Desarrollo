@@ -175,7 +175,7 @@ function AdminExpedientsPage() {
         {!loading && !error && expedients.length === 0 && (
           <div className="mt-12 text-center">
             <p className="font-body text-body-text">
-              No hay expedientes académicos registrados.
+              {t("admin.expedients.noExpedients")}
             </p>
           </div>
         )}

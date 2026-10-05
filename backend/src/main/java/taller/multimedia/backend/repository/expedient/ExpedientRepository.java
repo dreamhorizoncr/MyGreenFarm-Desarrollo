@@ -17,4 +17,6 @@ public interface ExpedientRepository extends JpaRepository<Expedient, UUID> {
 
     // 3. Buscar expediente directamente por ID de niño
     Optional<Expedient> findByChildId(Long childId);
+
+    boolean existsByChildStudentId(String studentId);
 }

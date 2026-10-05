@@ -14,6 +14,7 @@ export type EducationalLevel=
 export interface Expedient{
     id:string
     childName: string
+    studentId: string
     admisionDate: string
     educationalLevel: EducationalLevel
     generalObservations: string|null
@@ -21,7 +22,7 @@ export interface Expedient{
 }
 
 export interface ExpedientRequest{
-    childName: string
+    studentId: string
     admisionDate: string
     educationalLevel: EducationalLevel
     generalObservations?: string

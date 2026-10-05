@@ -815,6 +815,8 @@ export default {
       updateErrorToastTitle: "No se pudo actualizar el expediente",
       deleteSuccessToastTitle: "Expediente eliminado",
       deleteErrorToastTitle: "No se pudo eliminar el expediente",
+      selectStudentError: "Debe seleccionar un estudiante.",
+      noExpedients: "No hay expedientes académicos registrados.",
 
       levels: {
         lactantes: "Lactantes",

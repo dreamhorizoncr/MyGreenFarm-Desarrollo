@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import taller.multimedia.backend.model.child.Child;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ChildRepository extends JpaRepository<Child, Long> {
@@ -25,4 +26,5 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
     @Query("SELECT c FROM Child c WHERE c.id NOT IN (SELECT e.child.id FROM Expedient e)")
     List<Child> findAllWithoutExpedient();
     
+    Optional<Child> findByStudentId(String studentId);
 }

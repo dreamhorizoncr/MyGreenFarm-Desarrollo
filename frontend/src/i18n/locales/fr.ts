@@ -808,6 +808,8 @@ export default {
       updateErrorToastTitle: "Impossible de mettre à jour le dossier",
       deleteSuccessToastTitle: "Dossier supprimé",
       deleteErrorToastTitle: "Impossible de supprimer le dossier",
+      selectStudentError: "Vous devez sélectionner un élève.",
+      noExpedients: "Aucun dossier académique enregistré.",
 
       levels: {
         lactantes: "Nourrissons",

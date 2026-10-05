@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronDownIcon } from "@animateicons/react/lucide";
+import { ChevronDownIcon, ImageIcon } from "@animateicons/react/lucide";
 
 import { expedientService } from "../services/expedient";
 import { notify } from "../utils/notifications.ts";
@@ -10,6 +10,7 @@ import type {
   Expedient,
   ExpedientRequest,
 } from "../types/expedient";
+import { childService, type ChildOption } from "../services/child.ts";
 
 interface ExpedientFormModalProps {
   onClose: () => void;
@@ -60,6 +61,13 @@ function ExpedientFormModal({
   // Datos del formulario
   const [childName, setChildName] = useState(expedient?.childName ?? "");
 
+  // Lista de estudiantes para el dropdown
+  const [childrenOptions, setChildrenOptions] = useState<ChildOption[]>([]);
+  const [loadingOptions, setLoadingOptions] = useState(true);
+
+  // Selección de estudiante (studentId)
+  const [studentId, setStudentId] = useState(expedient?.studentId ?? "");
+
   const [admisionDate, setAdmisionDate] = useState(
     expedient?.admisionDate ?? "",
   );
@@ -80,15 +88,60 @@ function ExpedientFormModal({
 
   const [error, setError] = useState<string | null>(null);
 
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Sincronizar searchTerm cuando carga un expediente existente
+  useEffect(() => {
+    if (expedient && childrenOptions.length > 0) {
+      const match = childrenOptions.find((opt) => opt.studentId === expedient.studentId);
+      if (match) {
+        setSearchTerm(`${match.studentId} - ${match.fullName ?? match.childName}`);
+      }
+    }
+  }, [expedient, childrenOptions]);
+
+  // Opciones filtradas según la búsqueda
+  const filteredOptions = childrenOptions.filter((option) => {
+    const name = option.fullName ?? option.childName ?? "";
+    const query = searchTerm.toLowerCase();
+    return (
+      name.toLowerCase().includes(query) ||
+      option.studentId.toLowerCase().includes(query)
+    );
+  });
+
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        setLoadingOptions(true);
+        const options = await childService.getChildrenOptions();
+        setChildrenOptions(options);
+      } catch (err) {
+        console.error("Error al obtener las opciones de niños:", err);
+      } finally {
+        setLoadingOptions(false);
+      }
+    };
+
+    void fetchOptions();
+  }, []);
+
   // Guarda o actualiza el expediente
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!studentId) {
+      notify.error(t("admin.expedients.selectStudentError") ?? "Debe seleccionar un estudiante");
+      return;
+    }
 
     setSaving(true);
     setError(null);
 
     const data: ExpedientRequest = {
-      childName,
+      studentId,
       admisionDate,
       educationalLevel,
       generalObservations,
@@ -170,20 +223,62 @@ function ExpedientFormModal({
 
         {/* Formulario */}
         <form onSubmit={handleSubmit} className="mt-7 space-y-5">
-          {/* Nombre */}
+          {/* Estudiante (Dropdown) */}
           <div>
             <label className="mb-2 block font-body font-bold text-heading">
               {t("admin.expedients.childName")}
             </label>
 
-            <input
-              type="text"
-              value={childName}
-              onChange={(e) => setChildName(e.target.value)}
-              required
-              placeholder={t("admin.expedients.childNamePlaceholder")}
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 font-body outline-none focus:border-heading"
-            />
+            <div className="relative">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setStudentId(""); // Resetea ID hasta que elija una opción válida
+                  setIsOpen(true);
+                }}
+                onFocus={() => setIsOpen(true)}
+                onBlur={() => setTimeout(() => setIsOpen(false), 200)} // Delay para permitir click en opciones
+                placeholder={
+                  loadingOptions
+                    ? "Cargando estudiantes..."
+                    : t("admin.expedients.childNamePlaceholder") ?? "Buscar estudiante..."
+                }
+                disabled={isEditing || loadingOptions}
+                required
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 pr-11 font-body outline-none focus:border-heading disabled:bg-gray-100 disabled:cursor-not-allowed"
+              />
+
+              <ChevronDownIcon
+                size={16}
+                className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500"
+                aria-hidden="true"
+              />
+
+              {/* Desplegable de resultados */}
+              {isOpen && !isEditing && (
+                <ul className="absolute z-50 mt-1 max-h-56 w-full overflow-auto border border-gray-600 bg-white py-1 shadow-lg font-body text-body-sm">
+                  {filteredOptions.length > 0 ? (
+                    filteredOptions.map((option) => (
+                      <li
+                        key={option.studentId}
+                        onMouseDown={() => {
+                          setStudentId(option.studentId);
+                          setSearchTerm(`${option.fullName ?? option.childName}`);
+                          setIsOpen(false);
+                        }}
+                        className="cursor-pointer px-4 py-2 hover:bg-gray-600 hover:text-white transition-colors"
+                      >
+                        <span className="font-bold"></span>{option.fullName ?? option.childName}
+                      </li>
+                    ))
+                  ) : (
+                    <li className="px-4 py-2 text-gray-400">Sin resultados</li>
+                  )}
+                </ul>
+              )}
+            </div>
           </div>
 
           {/* Fecha y nivel */}
@@ -256,19 +351,35 @@ function ExpedientFormModal({
           </div>
 
           {/* Fotografía */}
+          {/* Fotografía */}
           <div>
-            <label className="mb-2 block font-body font-bold text-heading">
+            <label className="mb-2 block font-body font-bold text-emerald-600">
               {t("admin.expedients.photo")}
             </label>
 
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setFile(e.target.files?.[0])}
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 font-body text-body-text"
-            />
+            <div className="flex items-center gap-3">
+              <label className="flex cursor-pointer items-center gap-2 rounded-full border border-gray-300 px-6 py-2.5 transition-colors hover:bg-gray-50 active:bg-gray-100">
+                <ImageIcon className="h-5 w-5 text-emerald-600" />
+                <span className="font-body font-semibold text-emerald-600">
+                  {t("admin.expedients.photo")}
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setFile(e.target.files?.[0])}
+                  className="hidden"
+                />
+              </label>
 
-            <p className="mt-1 font-body text-caption text-body-text">
+              {/* Muestra el nombre del archivo si ya se seleccionó uno */}
+              {file && (
+                <span className="truncate font-body text-body-sm text-gray-600 max-w-[200px]">
+                  {file.name}
+                </span>
+              )}
+            </div>
+
+            <p className="mt-2 font-body text-caption text-gray-400">
               {isEditing
                 ? t("admin.expedients.replacePhoto")
                 : t("admin.expedients.optionalPhoto")}
