@@ -272,7 +272,7 @@ function AdminSidebar() {
 
       <button
         type="button"
-        className={`${itemClasses} mt-xl text-danger md:mt-auto`}
+        className={`${itemClasses} hidden text-danger md:mt-auto md:flex`}
         onClick={handleLogout}
       >
         <span
