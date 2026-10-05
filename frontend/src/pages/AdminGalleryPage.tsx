@@ -232,7 +232,7 @@ function YearDropdown({
 									type="button"
 									onClick={() => void handleAdd()}
 									disabled={!newYear.trim()}
-									aria-label={t('admin.save')}
+									aria-label={t('admin.gallery.addNewYear')}
 									className="flex size-9 shrink-0 items-center justify-center rounded-full bg-green-600 text-white disabled:opacity-50"
 								>
 									<CheckIcon size={16} />
@@ -267,32 +267,48 @@ function YearDropdown({
 }
 
 interface AdminAlbumCardProps {
-	gallery: Gallery
-	onEdit: () => void
-	onDelete: () => void
-	onToggleFeatured: () => void
+	gallery?: Gallery
+	onEdit?: () => void
+	onDelete?: () => void
+	onToggleFeatured?: () => void
+	loading?: boolean
 }
 
-function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured }: Readonly<AdminAlbumCardProps>) {
+function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading = false }: Readonly<AdminAlbumCardProps>) {
 	const { t } = useTranslation()
+
+	if (loading) {
+		return (
+			<article className="h-full rounded-3xl border border-neutral-100 bg-white shadow-sm">
+				<div className="m-sm overflow-hidden rounded-[20px]">
+					<Skeleton shape="rect" className="aspect-[4/3] w-full" />
+				</div>
+				<div className="flex flex-col gap-sm px-lg pb-lg text-left">
+					<Skeleton shape="line" className="h-5 w-4/5" />
+					<Skeleton shape="line" className="h-4 w-full" />
+					<Skeleton shape="line" className="h-4 w-2/3" />
+				</div>
+			</article>
+		)
+	}
 
 	return (
 		<article className="relative h-full rounded-3xl border border-neutral-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
 			<div className="relative m-sm overflow-hidden rounded-[20px]">
 				<img
-					src={gallery.galleryImages[0]?.fileUrl ?? ninos2}
-					alt={gallery.title}
+					src={gallery!.galleryImages[0]?.fileUrl ?? ninos2}
+					alt={gallery!.title}
 					className="block aspect-[4/3] w-full object-cover"
 				/>
 				<span className="absolute bottom-sm left-sm rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
-					{t('home.galeria.photoCount', { count: gallery.galleryImages.length })}
+					{t('home.galeria.photoCount', { count: gallery!.galleryImages.length })}
 				</span>
 				<button
 					type="button"
 					onClick={onToggleFeatured}
 					aria-label={t('admin.gallery.toggleFeatured')}
 					className={`absolute left-sm top-sm flex size-[34px] items-center justify-center rounded-full shadow transition ${
-						gallery.featured
+						gallery!.featured
 							? 'bg-yellow-400 text-white hover:bg-yellow-500'
 							: 'bg-white/80 text-neutral-400 hover:bg-white hover:text-yellow-500'
 					}`}
@@ -302,15 +318,15 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured }: Readonl
 			</div>
 
 			<div className="absolute right-[20px] top-[20px]">
-				<AlbumMenu onEdit={onEdit} onDelete={onDelete} />
+				<AlbumMenu onEdit={onEdit!} onDelete={onDelete!} />
 			</div>
 
 			<div className="overflow-hidden px-lg pb-lg text-left">
 				<h3 className="m-0 line-clamp-2 min-h-[2.8em] font-heading text-h5 font-bold text-heading">
-					{gallery.title}
+					{gallery!.title}
 				</h3>
 				<p className="-mt-sm line-clamp-5 min-h-[7.5em] font-body text-body-sm font-normal leading-[1.5] text-body-text-dark">
-					{gallery.description}
+					{gallery!.description}
 				</p>
 			</div>
 		</article>
@@ -402,31 +418,14 @@ function AdminAlbumCarousel({
 	)
 }
 
-function AlbumCardSkeleton() {
-	return (
-		<div className="min-w-0 flex-[0_0_260px] md:flex-[0_0_280px]">
-			<article className="h-full rounded-3xl border border-neutral-100 bg-white shadow-sm">
-				<div className="m-sm overflow-hidden rounded-[20px]">
-					<Skeleton shape="rect" className="aspect-[4/3] w-full" />
-				</div>
-				<div className="flex flex-col gap-sm px-lg pb-lg text-left">
-					<Skeleton shape="line" className="h-5 w-4/5" />
-					<Skeleton shape="line" className="h-4 w-full" />
-					<Skeleton shape="line" className="h-4 w-2/3" />
-				</div>
-			</article>
-		</div>
-	)
-}
-
 function AlbumCarouselSkeleton() {
 	return (
 		<div className="mt-xl">
 			<Skeleton shape="pill" className="h-9 w-32" />
 			<div className="mt-md flex gap-md py-md">
-				<AlbumCardSkeleton />
-				<AlbumCardSkeleton />
-				<AlbumCardSkeleton />
+				<div className="min-w-0 flex-[0_0_260px] md:flex-[0_0_280px]"><AdminAlbumCard loading /></div>
+				<div className="min-w-0 flex-[0_0_260px] md:flex-[0_0_280px]"><AdminAlbumCard loading /></div>
+				<div className="min-w-0 flex-[0_0_260px] md:flex-[0_0_280px]"><AdminAlbumCard loading /></div>
 			</div>
 		</div>
 	)

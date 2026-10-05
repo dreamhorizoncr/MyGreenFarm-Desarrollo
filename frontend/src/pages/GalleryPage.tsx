@@ -5,24 +5,8 @@ import useEmblaCarousel from 'embla-carousel-react'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import MultimediaCard from '../components/home/MultimediaCard.tsx'
-import Skeleton from '../components/ui/Skeleton.tsx'
 import { useGallery } from '../hooks/useGallery.ts'
 import ninos2 from '../assets/imgs/ninos2.svg'
-
-function GalleryCardSkeleton() {
-  return (
-    <article className="flex h-full flex-col rounded-3xl bg-white shadow">
-      <div className="m-sm overflow-hidden rounded-[20px]">
-        <Skeleton shape="rect" className="aspect-[4/3] w-full" />
-      </div>
-      <div className="flex flex-col gap-sm px-lg pb-lg text-left">
-        <Skeleton shape="line" className="h-5 w-4/5" />
-        <Skeleton shape="line" className="h-4 w-full" />
-        <Skeleton shape="line" className="h-4 w-2/3" />
-      </div>
-    </article>
-  )
-}
 
 function GalleryPage() {
   const { t, i18n } = useTranslation()
@@ -123,9 +107,9 @@ function GalleryPage() {
           <Container className="grid grid-cols-1 gap-[24px] md:grid-cols-3">
             {loading && (
               <>
-                <GalleryCardSkeleton />
-                <GalleryCardSkeleton />
-                <GalleryCardSkeleton />
+                <MultimediaCard loading />
+                <MultimediaCard loading />
+                <MultimediaCard loading />
               </>
             )}
 

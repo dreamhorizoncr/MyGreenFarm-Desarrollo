@@ -73,118 +73,108 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
         if (event.key === 'Escape') onClose()
       }}
       aria-label={t('admin.edit')}
-      className="fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+      className="fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim animate-[modal-in_0.2s_ease-out] md:p-xl"
     >
-      <div className="relative p-[28px_22px_30px]">
+      <div className="flex items-center justify-between gap-md">
+        <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+          {t('admin.edit')}
+        </h2>
+
         <button
           type="button"
-          className="absolute right-3 top-[26px] z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity duration-150 hover:opacity-65 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
           onClick={onClose}
           aria-label={t('admin.cancel')}
+          className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-neutral-100"
         >
           <XIcon size={20} />
         </button>
+      </div>
 
-        <div className="relative mb-lg text-center">
-          <h2 className="m-0 font-heading text-h1 font-bold leading-none text-heading">
-            {t('admin.edit')}
-          </h2>
-        </div>
-
-        <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px] text-left">
-          <div className="flex flex-col">
-            <label htmlFor="admin-edit-firstname" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
-              {t('admin.firstName')}
-            </label>
-            <input
-              id="admin-edit-firstname"
-              type="text"
-              value={firstName}
-              onChange={(e) => {
-                setFirstName(e.target.value)
-                if (firstNameValidationError) setFirstNameValidationError(null)
-              }}
-              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
-            />
-            {firstNameValidationError && (
-              <p className="mt-2xs text-left font-body text-body-sm text-danger">{firstNameValidationError}</p>
-            )}
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="admin-edit-lastname" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
-              {t('admin.lastName')}
-            </label>
-            <input
-              id="admin-edit-lastname"
-              type="text"
-              value={lastName}
-              onChange={(e) => {
-                setLastName(e.target.value)
-                if (lastNameValidationError) setLastNameValidationError(null)
-              }}
-              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
-            />
-            {lastNameValidationError && (
-              <p className="mt-2xs text-left font-body text-body-sm text-danger">{lastNameValidationError}</p>
-            )}
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="admin-edit-email" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
-              {t('admin.email')}
-            </label>
-            <input
-              id="admin-edit-email"
-              type="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value)
-                if (emailValidationError) setEmailValidationError(null)
-              }}
-              disabled={!isEditingSelf}
-              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
-            />
-            {!isEditingSelf && (
-              <p className="mt-2xs text-left font-body text-body-sm text-neutral-500">{t('admin.emailLockedHint')}</p>
-            )}
-            {emailValidationError && (
-              <p className="mt-2xs text-left font-body text-body-sm text-danger">{emailValidationError}</p>
-            )}
-          </div>
-
-          <div className="flex flex-col">
-            <label htmlFor="admin-edit-birthday" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
-              {t('admin.birthday')}
-            </label>
-            <input
-              id="admin-edit-birthday"
-              type="date"
-              value={birthday}
-              onChange={(e) => setBirthday(e.target.value)}
-              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
-            />
-          </div>
-
-          {saveError && (
-            <p className="m-0 text-left font-body text-body-sm text-danger">{saveError}</p>
+      <div className="mt-lg grid gap-md md:grid-cols-2">
+        <label className="font-body text-body-sm font-semibold text-heading">
+          {t('admin.firstName')}
+          <input
+            type="text"
+            value={firstName}
+            onChange={(e) => {
+              setFirstName(e.target.value)
+              if (firstNameValidationError) setFirstNameValidationError(null)
+            }}
+            className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+          />
+          {firstNameValidationError && (
+            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{firstNameValidationError}</span>
           )}
+        </label>
 
-          <div className="flex gap-md mt-sm">
-            <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50">
-              {t('admin.cancel')}
-            </Button>
-            <Button
-              variant="success"
-              onClick={handleSave}
-              loading={saving}
-              disabled={!firstName.trim() || !lastName.trim()}
-              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold uppercase tracking-wide text-white hover:bg-orange-600"
-            >
-              {saving ? t('common.loading') : t('admin.save')}
-            </Button>
-          </div>
-        </div>
+        <label className="font-body text-body-sm font-semibold text-heading">
+          {t('admin.lastName')}
+          <input
+            type="text"
+            value={lastName}
+            onChange={(e) => {
+              setLastName(e.target.value)
+              if (lastNameValidationError) setLastNameValidationError(null)
+            }}
+            className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+          />
+          {lastNameValidationError && (
+            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{lastNameValidationError}</span>
+          )}
+        </label>
+
+        <label className="font-body text-body-sm font-semibold text-heading">
+          {t('admin.email')}
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value)
+              if (emailValidationError) setEmailValidationError(null)
+            }}
+            disabled={!isEditingSelf}
+            className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading disabled:cursor-not-allowed disabled:bg-neutral-100"
+          />
+          {!isEditingSelf && (
+            <span className="mt-xs block font-body text-body-sm font-normal text-neutral-500">{t('admin.emailLockedHint')}</span>
+          )}
+          {emailValidationError && (
+            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{emailValidationError}</span>
+          )}
+        </label>
+
+        <label className="font-body text-body-sm font-semibold text-heading">
+          {t('admin.birthday')}
+          <input
+            type="date"
+            value={birthday}
+            onChange={(e) => setBirthday(e.target.value)}
+            className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+          />
+        </label>
+      </div>
+
+      {saveError && (
+        <p className="mt-md rounded-xl bg-red-50 p-md font-body text-body-sm text-red-700">{saveError}</p>
+      )}
+
+      <div className="mt-lg flex flex-wrap justify-end gap-sm">
+        <Button
+          variant="secondary"
+          onClick={onClose}
+          className="h-11 w-auto rounded-full border-green-500 px-lg font-body text-body-sm font-semibold text-heading hover:bg-green-50"
+        >
+          {t('admin.cancel')}
+        </Button>
+        <Button
+          variant="success"
+          onClick={handleSave}
+          loading={saving}
+          disabled={!firstName.trim() || !lastName.trim()}
+          className="h-11 w-auto rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
+        >
+          {saving ? t('common.loading') : t('admin.save')}
+        </Button>
       </div>
     </dialog>
   )

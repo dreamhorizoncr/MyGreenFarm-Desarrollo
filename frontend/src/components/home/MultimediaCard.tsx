@@ -1,13 +1,31 @@
+import Skeleton from '../ui/Skeleton.tsx'
+
 interface MultimediaCardProps {
-  imageSrc: string
-  alt: string
-  badge: string
-  title: string
-  description: string
+  imageSrc?: string
+  alt?: string
+  badge?: string
+  title?: string
+  description?: string
   onClick?: () => void
+  loading?: boolean
 }
 
-function MultimediaCard({ imageSrc, alt, badge, title, description, onClick }: Readonly<MultimediaCardProps>) {
+function MultimediaCard({ imageSrc, alt, badge, title, description, onClick, loading = false }: Readonly<MultimediaCardProps>) {
+  if (loading) {
+    return (
+      <article className="flex h-full flex-col rounded-3xl bg-white shadow">
+        <div className="m-sm overflow-hidden rounded-[20px]">
+          <Skeleton shape="rect" className="aspect-[4/3] w-full" />
+        </div>
+        <div className="flex flex-col gap-sm px-lg pb-lg text-left">
+          <Skeleton shape="line" className="h-5 w-4/5" />
+          <Skeleton shape="line" className="h-4 w-full" />
+          <Skeleton shape="line" className="h-4 w-2/3" />
+        </div>
+      </article>
+    )
+  }
+
   const contenido = (
     <>
       <div className="relative m-sm overflow-hidden rounded-[20px]">

@@ -4,7 +4,6 @@ import { SearchIcon } from "@animateicons/react/lucide";
 import AdminLayout from "../layout/AdminLayout";
 import ChildFormModal from "../components/ChildFormModal";
 import ChildCard from "../components/ChildCard";
-import Skeleton from "../components/ui/Skeleton";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal";
 
 import { childService } from "../services/child";
@@ -13,21 +12,6 @@ import { useChildren } from "../hooks/useChildren";
 
 import type { Child } from "../types/child";
 import { useTranslation } from "react-i18next";
-
-function ChildCardSkeleton() {
-  return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
-      <Skeleton className="h-6 w-48" />
-      <Skeleton className="mt-2 h-4 w-32" />
-
-      <div className="mt-6 space-y-4">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-10 w-full" />
-      </div>
-    </div>
-  );
-}
 
 function AdminChildrenPage() {
   const { children, loading, error, fetchChildren } = useChildren();
@@ -129,8 +113,8 @@ function AdminChildrenPage() {
 
         {loading && (
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <ChildCardSkeleton />
-            <ChildCardSkeleton />
+            <ChildCard loading />
+            <ChildCard loading />
           </div>
         )}
 

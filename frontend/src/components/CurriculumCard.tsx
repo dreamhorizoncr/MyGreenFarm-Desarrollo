@@ -1,16 +1,18 @@
 import { useTranslation } from 'react-i18next'
 import { ChevronDownIcon, Trash2Icon } from '@animateicons/react/lucide'
 import CertificatesCarousel from './CertificatesCarousel.tsx'
+import Skeleton from './ui/Skeleton.tsx'
 import type { Curriculum } from '../types/curriculum.ts'
 
 interface CurriculumCardProps {
-  application: Curriculum
-  vacancyTitle: string
-  isExpanded: boolean
-  onToggleExpand: () => void
-  onApprove: () => void
-  onReject: () => void
-  onDelete: () => void
+  application?: Curriculum
+  vacancyTitle?: string
+  isExpanded?: boolean
+  onToggleExpand?: () => void
+  onApprove?: () => void
+  onReject?: () => void
+  onDelete?: () => void
+  loading?: boolean
 }
 
 function StatusBadge({ status }: Readonly<{ status: Curriculum['status'] }>) {
@@ -30,80 +32,99 @@ function StatusBadge({ status }: Readonly<{ status: Curriculum['status'] }>) {
   )
 }
 
-function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand, onApprove, onReject, onDelete, }: Readonly<CurriculumCardProps>) {
+function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand, onApprove, onReject, onDelete, loading = false }: Readonly<CurriculumCardProps>) {
   const { t } = useTranslation()
 
   return (
     <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
       <div className="flex items-center justify-between gap-sm">
-        <button
-          type="button"
-          onClick={onToggleExpand}
-          className="flex min-w-0 flex-1 items-center gap-sm text-left focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-          aria-expanded={isExpanded}
-        >
-          <div className="min-w-0 flex-1">
-            <h3 className="m-0 font-heading text-lg font-bold leading-snug text-heading">
-              {application.applicantName}
-            </h3>
-            <p className="m-0 mt-2xs wrap-break-word font-body text-body-sm text-neutral-500">
-              {application.applicantEmail} · {vacancyTitle}
-            </p>
+        {loading ? (
+          <div className="flex min-w-0 flex-1 items-center gap-sm">
+            <div className="min-w-0 flex-1">
+              <Skeleton shape="line" className="h-5 w-1/3" />
+              <Skeleton shape="line" className="mt-2 h-3 w-2/3" />
+            </div>
+            <Skeleton shape="line" className="h-4 w-24" />
           </div>
+        ) : (
+          <button
+            type="button"
+            onClick={onToggleExpand}
+            className="flex min-w-0 flex-1 items-center gap-sm text-left focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+            aria-expanded={isExpanded}
+          >
+            <div className="min-w-0 flex-1">
+              <h3 className="m-0 font-heading text-lg font-bold leading-snug text-heading">
+                {application!.applicantName}
+              </h3>
+              <p className="m-0 mt-2xs wrap-break-word font-body text-body-sm text-neutral-500">
+                {application!.applicantEmail} · {vacancyTitle}
+              </p>
+            </div>
 
-          <StatusBadge status={application.status} />
-        </button>
+            <StatusBadge status={application!.status} />
+          </button>
+        )}
 
-        <button
-          type="button"
-          onClick={onDelete}
-          aria-label={t('admin.delete')}
-          title={t('admin.delete')}
-          className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-        >
-          <Trash2Icon size={16} aria-hidden="true" />
-        </button>
+        {loading ? (
+          <>
+            <Skeleton shape="circle" className="size-9 shrink-0" />
+            <Skeleton shape="circle" className="size-9 shrink-0" />
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={onDelete}
+              aria-label={t('admin.delete')}
+              title={t('admin.delete')}
+              className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+            >
+              <Trash2Icon size={16} aria-hidden="true" />
+            </button>
 
-        <button
-          type="button"
-          onClick={onToggleExpand}
-          aria-label={isExpanded ? t('admin.curriculums.collapse') : t('admin.curriculums.expand')}
-          aria-expanded={isExpanded}
-          className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-transparent text-neutral-500 transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-        >
-          <ChevronDownIcon
-            size={18}
-            className={`transition-transform duration-150 ${isExpanded ? 'rotate-180' : ''}`}
-            aria-hidden="true"
-          />
-        </button>
+            <button
+              type="button"
+              onClick={onToggleExpand}
+              aria-label={isExpanded ? t('admin.curriculums.collapse') : t('admin.curriculums.expand')}
+              aria-expanded={isExpanded}
+              className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-transparent text-neutral-500 transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+            >
+              <ChevronDownIcon
+                size={18}
+                className={`transition-transform duration-150 ${isExpanded ? 'rotate-180' : ''}`}
+                aria-hidden="true"
+              />
+            </button>
+          </>
+        )}
       </div>
 
-      {isExpanded && (
+      {!loading && isExpanded && (
         <div className="mt-md border-t border-neutral-200 pt-md">
-          {application.applicantPhone && (
+          {application!.applicantPhone && (
             <p className="m-0 mb-sm font-body text-body-sm text-neutral-500">
-              {application.applicantPhone}
+              {application!.applicantPhone}
             </p>
           )}
 
-          {application.fileUrl && (
+          {application!.fileUrl && (
             <div className="h-105 w-full overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50">
               <iframe
-                src={application.fileUrl}
-                title={`${t('admin.curriculums.view')} - ${application.applicantName}`}
+                src={application!.fileUrl}
+                title={`${t('admin.curriculums.view')} - ${application!.applicantName}`}
                 className="h-full w-full"
               />
             </div>
           )}
 
-          <CertificatesCarousel certificates={application.certificates} />
+          <CertificatesCarousel certificates={application!.certificates} />
 
           <div className="mt-md flex flex-wrap justify-end gap-md">
             <button
               type="button"
               onClick={onApprove}
-              disabled={application.status !== 'PENDING'}
+              disabled={application!.status !== 'PENDING'}
               className="inline-flex h-11 min-w-35 items-center justify-center whitespace-nowrap rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold uppercase tracking-wide text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {t('admin.curriculums.approve')}
@@ -111,7 +132,7 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
             <button
               type="button"
               onClick={onReject}
-              disabled={application.status !== 'PENDING'}
+              disabled={application!.status !== 'PENDING'}
               className="inline-flex h-11 min-w-35 items-center justify-center whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold uppercase tracking-wide text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {t('admin.curriculums.reject')}

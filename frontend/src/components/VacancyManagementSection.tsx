@@ -8,18 +8,88 @@ import Pagination from './ui/Pagination.tsx'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
 import type { Vacancy, VacancyInput } from '../types/vacancy.ts'
 
-function VacancyCardSkeleton() {
+interface AdminVacancyCardProps {
+  vacancy?: Vacancy
+  applicantNameById?: Map<string, string>
+  onDelete?: () => void
+  onRelease?: () => void
+  onSetOpen?: () => void
+  loading?: boolean
+}
+
+function AdminVacancyCard({ vacancy, applicantNameById, onDelete, onRelease, onSetOpen, loading = false }: Readonly<AdminVacancyCardProps>) {
+  const { t } = useTranslation()
+
+  const openStateLabel = (isOpen: boolean) =>
+    isOpen ? t('vacancies.statusOpen') : t('vacancies.statusClosed')
+
+  if (loading) {
+    return (
+      <article className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
+        <div className="flex items-start justify-between gap-sm">
+          <Skeleton shape="line" className="h-5 w-1/2" />
+          <Skeleton shape="circle" className="size-9 shrink-0" />
+        </div>
+        <Skeleton shape="line" className="mt-sm h-4 w-full" />
+        <Skeleton shape="line" className="mt-2 h-4 w-2/3" />
+        <div className="mt-md flex items-center justify-between gap-md">
+          <Skeleton shape="line" className="h-4 w-24" />
+          <Skeleton shape="pill" className="h-9 w-24" />
+        </div>
+      </article>
+    )
+  }
+
   return (
-    <article className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
+    <article className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
       <div className="flex items-start justify-between gap-sm">
-        <Skeleton shape="line" className="h-5 w-1/2" />
-        <Skeleton shape="circle" className="h-9 w-9 shrink-0" />
+        <h3 className="m-0 font-heading text-lg font-bold leading-snug text-heading">
+          {vacancy!.title}
+        </h3>
+
+        <button
+          type="button"
+          onClick={onDelete}
+          aria-label={t('admin.delete')}
+          title={t('admin.delete')}
+          className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+        >
+          <Trash2Icon size={16} aria-hidden="true" />
+        </button>
       </div>
-      <Skeleton shape="line" className="mt-sm h-4 w-full" />
-      <Skeleton shape="line" className="mt-2 h-4 w-2/3" />
-      <div className="mt-md flex items-center justify-between gap-md">
-        <Skeleton shape="line" className="h-4 w-24" />
-        <Skeleton shape="pill" className="h-9 w-24" />
+
+      <p className="mt-sm flex-1 font-body text-body-sm text-body-text">
+        {vacancy!.description}
+      </p>
+
+      <div className="mt-md flex flex-wrap items-center justify-between gap-md">
+        <span className="inline-flex items-center gap-xs font-body text-body-sm font-semibold text-body-text">
+          <span
+            className={`inline-block size-2.5 rounded-full ${statusDotClass(vacancy!)}`}
+            aria-hidden="true"
+          />
+          {vacancy!.filledByApplicationId
+            ? t('vacancies.statusFilled', { name: applicantNameById!.get(vacancy!.filledByApplicationId) ?? '—' })
+            : openStateLabel(vacancy!.isOpen)}
+        </span>
+
+        {vacancy!.filledByApplicationId ? (
+          <button
+            type="button"
+            onClick={onRelease}
+            className="inline-flex h-9 items-center whitespace-nowrap rounded-full border border-green-500 px-md font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
+          >
+            {t('vacancies.release')}
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={onSetOpen}
+            className="inline-flex h-9 items-center whitespace-nowrap rounded-full border border-green-500 px-md font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
+          >
+            {vacancy!.isOpen ? t('vacancies.close') : t('vacancies.reopen')}
+          </button>
+        )}
       </div>
     </article>
   )
@@ -47,9 +117,6 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
   const [vacancyToDelete, setVacancyToDelete] = useState<Vacancy | null>(null)
   const { currentPage, setPage, totalPages, pageItems: pagedVacancies } = useClientPagination(vacancies)
 
-  const openStateLabel = (isOpen: boolean) =>
-    isOpen ? t('vacancies.statusOpen') : t('vacancies.statusClosed')
-
   return (
     <>
       <div className="mb-lg flex justify-end">
@@ -65,8 +132,8 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
 
       {loading && (
         <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-          <VacancyCardSkeleton />
-          <VacancyCardSkeleton />
+          <AdminVacancyCard loading />
+          <AdminVacancyCard loading />
         </div>
       )}
       {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
@@ -80,57 +147,14 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
           <>
           <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
             {pagedVacancies.map((vacancy) => (
-              <article key={vacancy.id} className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-                <div className="flex items-start justify-between gap-sm">
-                  <h3 className="m-0 font-heading text-lg font-bold leading-snug text-heading">
-                    {vacancy.title}
-                  </h3>
-
-                  <button
-                    type="button"
-                    onClick={() => setVacancyToDelete(vacancy)}
-                    aria-label={t('admin.delete')}
-                    title={t('admin.delete')}
-                    className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-                  >
-                    <Trash2Icon size={16} aria-hidden="true" />
-                  </button>
-                </div>
-
-                <p className="mt-sm flex-1 font-body text-body-sm text-body-text">
-                  {vacancy.description}
-                </p>
-
-                <div className="mt-md flex flex-wrap items-center justify-between gap-md">
-                  <span className="inline-flex items-center gap-xs font-body text-body-sm font-semibold text-body-text">
-                    <span
-                      className={`inline-block size-2.5 rounded-full ${statusDotClass(vacancy)}`}
-                      aria-hidden="true"
-                    />
-                    {vacancy.filledByApplicationId
-                      ? t('vacancies.statusFilled', { name: applicantNameById.get(vacancy.filledByApplicationId) ?? '—' })
-                      : openStateLabel(vacancy.isOpen)}
-                  </span>
-
-                  {vacancy.filledByApplicationId ? (
-                    <button
-                      type="button"
-                      onClick={() => onRelease(vacancy.id)}
-                      className="inline-flex h-9 items-center whitespace-nowrap rounded-full border border-green-500 px-md font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
-                    >
-                      {t('vacancies.release')}
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => onSetOpen(vacancy.id, !vacancy.isOpen)}
-                      className="inline-flex h-9 items-center whitespace-nowrap rounded-full border border-green-500 px-md font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
-                    >
-                      {vacancy.isOpen ? t('vacancies.close') : t('vacancies.reopen')}
-                    </button>
-                  )}
-                </div>
-              </article>
+              <AdminVacancyCard
+                key={vacancy.id}
+                vacancy={vacancy}
+                applicantNameById={applicantNameById}
+                onDelete={() => setVacancyToDelete(vacancy)}
+                onRelease={() => onRelease(vacancy.id)}
+                onSetOpen={() => onSetOpen(vacancy.id, !vacancy.isOpen)}
+              />
             ))}
           </div>
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
