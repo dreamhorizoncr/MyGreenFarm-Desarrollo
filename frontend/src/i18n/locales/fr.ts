@@ -1040,7 +1040,7 @@ export default {
   },
   moneda: {
     convertTo: "Afficher le prix en",
-    sellRate: "Taux de vente",
+    buyRate: "Taux d'achat",
     todayRate: "Taux indicatif",
     priceDisclaimer: "Le prix converti est indicatif et peut varier selon le taux appliqué au moment du paiement.",
     title: "Convertisseur de devises",

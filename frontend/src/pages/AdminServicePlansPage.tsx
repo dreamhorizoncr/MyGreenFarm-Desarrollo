@@ -54,7 +54,7 @@ function AdminPlanCard({
   // 4. Calcular el precio usando la moneda real del plan
   const baseCurrency = getCleanCurrency(plan.currency)
   const price = exchangeRate
-    ? convertCurrency(plan.price, baseCurrency, currency, 'sell', exchangeRate)
+    ? convertCurrency(plan.price, baseCurrency, currency, 'buy', exchangeRate)
     : plan.price
 
   return (
