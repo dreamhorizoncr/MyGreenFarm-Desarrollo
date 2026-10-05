@@ -212,7 +212,9 @@ function AdminServicePlansPage() {
 
   const planToDelete = plans.find(p => p.id === confirmDeleteId)
   const matchesName = confirmText.trim() === (planToDelete?.name ?? '')
-
+  console.log('onvoPlans actuales:', onvoPlans);
+console.log('existingPlans actuales:', plans);
+console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
   return (
     <AdminLayout>
       <div className="flex flex-col gap-lg">
