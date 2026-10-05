@@ -33,7 +33,7 @@ public class Expedient {
     private String photoUrl;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "child_id", nullable = false, unique = true)
+    @JoinColumn(name = "student_id", referencedColumnName = "student_id", nullable = false, unique = true)
     private Child child;
 
     @Column(name= "admision_date", nullable = false)

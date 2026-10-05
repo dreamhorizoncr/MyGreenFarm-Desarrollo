@@ -40,30 +40,30 @@ class ExpedientServiceTest {
     @InjectMocks
     private ExpedientService expedientService;
 
-    private ExpedientRequest requestWith(Long childId, String generalObservations) {
+    private ExpedientRequest requestWith(String studentId, String generalObservations) {
         ExpedientRequest request = new ExpedientRequest();
-        request.setChildId(childId);
+        request.setStudentId(studentId);
         request.setAdmisionDate(LocalDate.now());
         request.setEducationalLevel(EducationalLevel.KINDER);
         request.setGeneralObservations(generalObservations);
         return request;
     }
 
-    @Test 
+    @Test
     void createExpedient_rejectsMaliciousGeneralObservationsAndNeverSaves() {
-        Long childId = 1L;
+        String studentId = "A6001";
         String maliciousObservations = "<script>alert(1)</script>x";
 
         Child mockChild = new Child();
-        mockChild.setId(childId);
+        mockChild.setId(1L);
         mockChild.setFirstName("Pedrito");
         mockChild.setLastName("Pérez");
-        mockChild.setStudentId("A6001");
+        mockChild.setStudentId(studentId);
 
-        // Simular que el niño sí existe en la base de datos
-        when(childRepository.findById(childId)).thenReturn(Optional.of(mockChild));
+        // Simular que el niño sí existe buscando por su studentId
+        when(childRepository.findByStudentId(studentId)).thenReturn(Optional.of(mockChild));
 
-        ExpedientRequest request = requestWith(childId, maliciousObservations);
+        ExpedientRequest request = requestWith(studentId, maliciousObservations);
 
         // Verifica que la llamada lance InvalidFieldException debido al Sanitizer
         assertThrows(InvalidFieldException.class, () -> expedientService.createExpedient(request, null));

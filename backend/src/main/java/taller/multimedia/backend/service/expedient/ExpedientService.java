@@ -37,11 +37,17 @@ public class ExpedientService {
 
     @Transactional
     public ExpedientResponse createExpedient(ExpedientRequest request, MultipartFile file) {
-        Child child = childRepository.findById(request.getChildId())
-                .orElseThrow(() -> new EntityNotFoundException("Niño no encontrado con ID: " + request.getChildId()));
+        String studentId = Sanitizer.requireClean("studentId", request.getStudentId());
 
-        if (expedientRepository.existsByChildId(child.getId())) {
-            throw new IllegalStateException("Ya existe un expediente registrado para el niño: " + child.getFirstName() + " " + child.getLastName());
+        // 1. Buscar el estudiante por su studentId
+        Child child = childRepository.findByStudentId(studentId)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Niño no encontrado con el carné/studentId: " + studentId));
+
+        // 2. Verificar que no tenga ya un expediente asignado
+        if (expedientRepository.existsByChildStudentId(child.getStudentId())) {
+            throw new IllegalStateException("Ya existe un expediente registrado para el niño: "
+                    + child.getFirstName() + " " + child.getLastName());
         }
 
         String generalObservations = request.getGeneralObservations() == null
@@ -112,15 +118,19 @@ public class ExpedientService {
     public ExpedientResponse uploadOrUpdatePhoto(UUID expedientId, ExpedientRequest request, MultipartFile file) {
         Expedient existing = findEntityById(expedientId);
 
-        // Si el request incluye cambio de niño, lo actualizamos y verificamos duplicados
-        if (!existing.getChild().getId().equals(request.getChildId())) {
-            Child newChild = childRepository.findById(request.getChildId())
-                    .orElseThrow(() -> new EntityNotFoundException("Niño no encontrado con ID: " + request.getChildId()));
+        if (request.getStudentId() != null && !request.getStudentId().isBlank()) {
+            String newStudentId = Sanitizer.requireClean("studentId", request.getStudentId());
 
-            if (expedientRepository.existsByChildId(newChild.getId())) {
-                throw new IllegalStateException("Ya existe otro expediente registrado para el niño especificado.");
+            if (!existing.getChild().getStudentId().equals(newStudentId)) {
+                Child newChild = childRepository.findByStudentId(newStudentId)
+                        .orElseThrow(() -> new EntityNotFoundException(
+                                "Niño no encontrado con el carné/studentId: " + newStudentId));
+
+                if (expedientRepository.existsByChildStudentId(newChild.getStudentId())) {
+                    throw new IllegalStateException("Ya existe otro expediente registrado para el niño especificado.");
+                }
+                existing.setChild(newChild);
             }
-            existing.setChild(newChild);
         }
 
         String generalObservations = request.getGeneralObservations() == null
