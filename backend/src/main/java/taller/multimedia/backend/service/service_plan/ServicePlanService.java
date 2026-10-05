@@ -129,11 +129,7 @@ public class ServicePlanService {
                 for (Map<String, Object> item : (List<Map<String, Object>>) priceRes.getBody().get("data")) {
                     Map<String, Object> prod = prodMap.getOrDefault(item.get("productId"), Collections.emptyMap());
 
-                    Boolean priceActive = (Boolean) item.get("isActive");
-                    Boolean prodActive = (Boolean) prod.get("isActive");
-
-                    // Si alguno está inactivo (false), se omite por completo
-                    if ((priceActive != null && !priceActive) || (prodActive != null && !prodActive)) {
+                    if (isArchivedOrInactive(item) || isArchivedOrInactive(prod)) {
                         continue;
                     }
 
