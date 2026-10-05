@@ -40,6 +40,7 @@ function Navbar() {
     { to: '/forum', label: t('navbar.forum') },
     { to: '/services', label: t('navbar.services') },
     { to: '/vacantes', label: t('navbar.vacancies') },
+    { to: '/clubs', label: t('navbar.clubs') },
   ]
 
   const handleLogout = async () => {

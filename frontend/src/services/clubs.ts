@@ -8,6 +8,12 @@ import type {
     PageResponse,
 } from '../types/clubs.ts'
 
+export interface TranslationItem {
+    entityId: string
+    fieldName: string
+    originalText: string
+}
+
 export const clubService = {
     async getAll(params?: PageableParams): Promise<PageResponse<ClubResponse>> {
         const response = await apiClient.get<PageResponse<ClubResponse>>('/clubs', {
@@ -106,4 +112,13 @@ export const clubService = {
     async deleteImage(imageId: number): Promise<void> {
         await apiClient.delete(`/clubs/images/${imageId}`)
     },
+
+    async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {
+            const response = await apiClient.post<Record<string, string>>('/translations/batch', {
+                entityType,
+                targetLanguage: targetLanguage?.split('-')[0] || 'es',
+                items,
+            })
+            return response.data
+        },
 }

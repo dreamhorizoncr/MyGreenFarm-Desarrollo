@@ -25,6 +25,7 @@ export default {
     forum: "Forum",
     services: "Services",
     vacancies: "Postes vacants",
+    clubs: "Clubs",
     adminLogin: "Connexion administrateurs",
     dashboard: "Tableau de bord",
   },
@@ -680,9 +681,13 @@ export default {
       newClub: "Nouveau Club",
       editClub: "Modifier le club",
       clubName: "Nom du club",
+      clubNamePlaceholder: "Ex. : Club de robotique",
       category: "Catégorie",
       descriptionLabel: "Description",
+      descriptionPlaceholder: "Détails sur les activités du club...",
       schedule: "Horaire",
+      schedulePlaceholder: "Ex. : lundi et mercredi à 15 h",
+      capacityPlaceholder: "Ex. : 20",
       location: "Lieu ou Salle de classe",
       coverImage: "Image de couverture",
       chooseCover: "Choisir la couverture",
@@ -710,6 +715,7 @@ export default {
       deleteErrorToastTitle: "Erreur lors de la suppression du club",
       imageDeletedToastTitle: "Image supprimée",
       imageDeleteErrorToastTitle: "Erreur lors de la suppression de l'image",
+      deleteImage: "Supprimer l'image",
       maxCapacity: "Capacité maximale",
       capacityLabel: "places",
       capacityUnit: "élèves"
@@ -917,6 +923,13 @@ export default {
       deleteExceptionSuccessToastTitle: "Jour spécial supprimé",
       deleteExceptionErrorToastTitle: "Impossible de supprimer le jour spécial",
     },
+  },
+  clubs: {
+    title: "Clubs et Ateliers",
+    subtitle: "Des espaces pour apprendre, partager et grandir en communauté.",
+    comingSoonTitle: "Bientôt disponible !",
+    comingSoonDescription: "Nous préparons de grandes nouveautés. Restez à l'affût sur notre site web pour découvrir très bientôt nos clubs et ateliers.",
+    statusTag: "En développement"
   },
   vacancies: {
     title: "Postes vacants",
