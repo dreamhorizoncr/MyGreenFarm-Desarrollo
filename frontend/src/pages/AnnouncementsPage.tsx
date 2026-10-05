@@ -10,6 +10,7 @@ import {
 } from "@animateicons/react/lucide";
 import AdminLayout from "../layout/AdminLayout.tsx";
 import Skeleton from "../components/ui/Skeleton.tsx";
+import Pagination from "../components/ui/Pagination.tsx";
 import { useAnnouncements } from "../hooks/useAnnouncements.ts";
 import { notify } from "../utils/notifications.ts";
 import type {
@@ -66,6 +67,7 @@ function NewsRowSkeleton() {
 function AnnouncementsPage() {
   const {
     announcements,
+    totalPages,
     loading,
     error,
     fetchAnnouncements,
@@ -81,6 +83,7 @@ function AnnouncementsPage() {
   const [form, setForm] = useState<AnnouncementRequest>(emptyForm);
   const [activeCategory, setActiveCategory] =
     useState<AdminNewsCategory>("All");
+  const [currentPage, setCurrentPage] = useState(1);
   const [cover, setCover] = useState<File | null>(null);
   const [gallery, setGallery] = useState<File[]>([]);
   const [images, setImages] = useState<AnnouncementImageResponse[]>([]);
@@ -92,8 +95,9 @@ function AnnouncementsPage() {
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    void fetchAnnouncements(i18n.language);
-  }, [i18n.language]);
+    void fetchAnnouncements(i18n.language, currentPage - 1, 10);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i18n.language, currentPage]);
 
   const openCreate = () => {
     setEditing(null);
@@ -194,6 +198,11 @@ function AnnouncementsPage() {
     } catch {
       notify.error(t("adminNews.imageDeleteErrorToastTitle"));
     }
+  };
+
+  const handleCategoryChange = (category: AdminNewsCategory) => {
+    setActiveCategory(category);
+    setCurrentPage(1);
   };
 
   const filteredAnnouncements = announcements.filter(
@@ -482,7 +491,7 @@ function AnnouncementsPage() {
       <div className="mt-xl flex flex-wrap gap-sm">
         <button
           type="button"
-          onClick={() => setActiveCategory("All")}
+          onClick={() => handleCategoryChange("All")}
           className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
             activeCategory === "All"
               ? "border-green-500 bg-green-500 text-white"
@@ -494,7 +503,7 @@ function AnnouncementsPage() {
 
         <button
           type="button"
-          onClick={() => setActiveCategory("NEWS")}
+          onClick={() => handleCategoryChange("NEWS")}
           className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
             activeCategory === "NEWS"
               ? "border-green-500 bg-green-500 text-white"
@@ -506,7 +515,7 @@ function AnnouncementsPage() {
 
         <button
           type="button"
-          onClick={() => setActiveCategory("EVENT")}
+          onClick={() => handleCategoryChange("EVENT")}
           className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
             activeCategory === "EVENT"
               ? "border-green-500 bg-green-500 text-white"
@@ -518,7 +527,7 @@ function AnnouncementsPage() {
 
         <button
           type="button"
-          onClick={() => setActiveCategory("NOTICE")}
+          onClick={() => handleCategoryChange("NOTICE")}
           className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
             activeCategory === "NOTICE"
               ? "border-green-500 bg-green-500 text-white"
@@ -530,7 +539,7 @@ function AnnouncementsPage() {
 
         <button
           type="button"
-          onClick={() => setActiveCategory("GENERAL")}
+          onClick={() => handleCategoryChange("GENERAL")}
           className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
             activeCategory === "GENERAL"
               ? "border-green-500 bg-green-500 text-white"
@@ -542,7 +551,7 @@ function AnnouncementsPage() {
 
         <button
           type="button"
-          onClick={() => setActiveCategory("TRANSPORT")}
+          onClick={() => handleCategoryChange("TRANSPORT")}
           className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
             activeCategory === "TRANSPORT"
               ? "border-green-500 bg-green-500 text-white"
@@ -625,6 +634,12 @@ function AnnouncementsPage() {
           </p>
         )}
       </section>
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
 
       {deleteModalOpen && announcementToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-[20px]">

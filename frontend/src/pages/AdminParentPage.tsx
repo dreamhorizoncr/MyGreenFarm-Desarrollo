@@ -6,10 +6,12 @@ import AdminLayout from "../layout/AdminLayout";
 import ParentFormModal from "../components/ParentFormModal";
 import ParentCard from "../components/ParentCard";
 import Skeleton from "../components/ui/Skeleton";
+import Pagination from "../components/ui/Pagination.tsx";
 
 import { parentService } from "../services/parent";
 import { notify } from "../utils/notifications";
 import { useParents } from "../hooks/useParents";
+import { useClientPagination } from "../hooks/useClientPagination.ts";
 
 import type { Parent } from "../types/parent";
 
@@ -75,6 +77,8 @@ function AdminParentsPage() {
       parent.email.toLowerCase().includes(normalizedSearchTerm)
     );
   });
+
+  const { currentPage, setPage, totalPages, pageItems: pagedParents } = useClientPagination(filteredParents);
 
   // Elimina un padre
   const handleDelete = async (parent: Parent) => {
@@ -157,16 +161,19 @@ function AdminParentsPage() {
 
         {/* Lista de padres */}
         {!loading && !error && filteredParents.length > 0 && (
-          <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {filteredParents.map((parent) => (
-              <ParentCard
-                key={parent.id}
-                parent={parent}
-                onEdit={setEditingParent}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
+          <>
+            <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+              {pagedParents.map((parent) => (
+                <ParentCard
+                  key={parent.id}
+                  parent={parent}
+                  onEdit={setEditingParent}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+          </>
         )}
 
         {/* No existen padres */}

@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { ArrowLeftIcon } from '@animateicons/react/lucide'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -24,6 +24,10 @@ function CommunityPostPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [error, setError] = useState('')
   const [pendingReview, setPendingReview] = useState(false)
+  // Ref (not state) so a second click within the same tick, before React
+  // re-renders to hide the form, is still blocked synchronously — avoids
+  // firing the Gemini moderation call twice for one submission.
+  const isSubmittingRef = useRef(false)
 
   useEffect(() => {
     if (!id) return
@@ -48,6 +52,8 @@ function CommunityPostPage() {
   function submitComment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!id || !name.trim() || !content.trim()) return
+    if (isSubmittingRef.current) return
+    isSubmittingRef.current = true
 
     const payload = { alias: name.trim(), content: content.trim() }
     // Show the "sent for review" confirmation right away instead of leaving
@@ -68,6 +74,9 @@ function CommunityPostPage() {
       })
       .catch((err) => {
         notify.error(getErrorMessage(err))
+      })
+      .finally(() => {
+        isSubmittingRef.current = false
       })
   }
 

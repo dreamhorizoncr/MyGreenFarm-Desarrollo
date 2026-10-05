@@ -25,9 +25,15 @@ public class GeminiResumenService {
     private static final Logger log = LoggerFactory.getLogger(GeminiResumenService.class);
 
     private static final String PROMPT_BASE =
-            "Resume la siguiente noticia de una guardería en 1 o 2 oraciones breves (máximo 45 palabras en total), "
+            "Resume el siguiente texto en 1 o 2 oraciones breves (máximo 45 palabras en total), "
                     + "en español, con tono claro y cálido. "
-                    + "Usa solo la información del texto, sin inventar datos.\n\nNoticia:\n";
+                    + "Usa solo la información del texto, sin inventar datos, y resume literalmente lo que dice "
+                    + "el texto sin importar el tema que trate. "
+                    + "No evalúes, juzgues ni comentes si el texto corresponde a un contexto de guardería, "
+                    + "educación infantil o cualquier otro tema esperado: tu única tarea es resumir el contenido tal "
+                    + "cual, como lo harías con cualquier texto. "
+                    + "Responde ÚNICAMENTE con el resumen en texto plano: sin notas, aclaraciones, advertencias "
+                    + "ni formato Markdown.\n\nTexto:\n";
 
     private static final String PROMPT_EVALUATION = 
         "Eres un pedagogo experto de una guardería. Tu tarea es analizar el historial completo "
@@ -40,9 +46,15 @@ public class GeminiResumenService {
         + "Historial de evaluaciones del semestre:\n%s";
         
     private static final String PROMPT_ARTICULO_FORO =
-            "Resume el siguiente artículo del foro de una guardería en una sola oración breve (máximo 30 palabras), "
+            "Resume el siguiente texto en una sola oración breve (máximo 30 palabras), "
                     + "en español, con tono claro y cálido. "
-                    + "Usa solo la información del texto, sin inventar datos.\n\nArtículo:\n";
+                    + "Usa solo la información del texto, sin inventar datos, y resume literalmente lo que dice "
+                    + "el texto sin importar el tema que trate. "
+                    + "No evalúes, juzgues ni comentes si el texto corresponde a un contexto de guardería, "
+                    + "educación infantil o cualquier otro tema esperado: tu única tarea es resumir el contenido tal "
+                    + "cual, como lo harías con cualquier texto. "
+                    + "Responde ÚNICAMENTE con el resumen en texto plano: sin notas, aclaraciones, advertencias "
+                    + "ni formato Markdown.\n\nTexto:\n";
 
     private final ObjectMapper objectMapper;
 
@@ -60,17 +72,17 @@ public class GeminiResumenService {
             .readTimeout(20, TimeUnit.SECONDS)
             .build();
 
-    public String generarResumen(String contenido) {
-        return callGemini(PROMPT_BASE + contenido);
+    public String generateSummary(String content) {
+        return callGemini(PROMPT_BASE + content);
     }
 
-    public String generateSemiannualEvaluationSummary(String childName, String historialEvaluaciones) {
-        String prompt = String.format(PROMPT_EVALUATION, childName, historialEvaluaciones);
+    public String generateSemiannualEvaluationSummary(String childName, String evaluationHistory) {
+        String prompt = String.format(PROMPT_EVALUATION, childName, evaluationHistory);
         return callGemini(prompt);
     }
 
-    public String generarResumenArticulo(String contenido) {
-        return callGemini(PROMPT_ARTICULO_FORO + contenido);
+    public String generateArticleSummary(String content) {
+        return callGemini(PROMPT_ARTICULO_FORO + content);
     }
 
     private String callGemini(String prompt) {
@@ -117,11 +129,19 @@ public class GeminiResumenService {
                     return null;
                 }
 
-                return text.trim();
+                return stripMetaNotes(text.trim());
             }
         } catch (Exception e) {
             log.error("Error generando resumen con Gemini API: {}", e.getMessage(), e);
             return null;
         }
+    }
+
+    // Gemini a veces antepone una nota/aclaración entre asteriscos (p. ej. cuando el
+    // contenido no encaja con el tema esperado) a pesar de que el prompt lo prohíbe.
+    // La quitamos como segunda capa de defensa para que nunca llegue al usuario.
+    private String stripMetaNotes(String text) {
+        String withoutLeadingNote = text.replaceFirst("^\\*[^*]+\\*\\s*", "");
+        return withoutLeadingNote.isBlank() ? text : withoutLeadingNote.trim();
     }
 }

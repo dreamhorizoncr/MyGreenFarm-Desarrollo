@@ -34,7 +34,7 @@ class AnnouncementSummaryAsyncServiceTest {
     private AnnouncementSummaryAsyncService announcementSummaryAsyncService;
 
     @Test
-    void noLlamaALaApiSiElContenidoNoCambio() {
+    void doesNotCallApiWhenContentUnchanged() {
         UUID id = UUID.randomUUID();
         Announcement announcement = new Announcement("Título", "Contenido sin cambios", AnnouncementType.NEWS);
         announcement.setId(id);
@@ -44,39 +44,39 @@ class AnnouncementSummaryAsyncServiceTest {
 
         announcementSummaryAsyncService.generateSummaryAsync(id, false);
 
-        verify(geminiResumenService, never()).generarResumen(any());
+        verify(geminiResumenService, never()).generateSummary(any());
         verify(announcementRepository, never()).save(any());
     }
 
     @Test
-    void generaYGuardaElResumenSiElContenidoCambio() {
+    void generatesAndSavesSummaryWhenContentChanged() {
         UUID id = UUID.randomUUID();
         Announcement announcement = new Announcement("Título", "Contenido nuevo", AnnouncementType.NEWS);
         announcement.setId(id);
         announcement.setAiSummaryContentHash(HashUtils.sha256("Contenido viejo"));
 
         when(announcementRepository.findById(id)).thenReturn(Optional.of(announcement));
-        when(geminiResumenService.generarResumen("Contenido nuevo")).thenReturn("Resumen generado.");
+        when(geminiResumenService.generateSummary("Contenido nuevo")).thenReturn("Resumen generado.");
 
         announcementSummaryAsyncService.generateSummaryAsync(id, false);
 
-        verify(geminiResumenService, times(1)).generarResumen(eq("Contenido nuevo"));
+        verify(geminiResumenService, times(1)).generateSummary(eq("Contenido nuevo"));
         verify(announcementRepository, times(1)).save(announcement);
     }
 
     @Test
-    void fuerzaLaRegeneracionAunqueElContenidoNoHayaCambiado() {
+    void forcesRegenerationEvenWhenContentUnchanged() {
         UUID id = UUID.randomUUID();
         Announcement announcement = new Announcement("Título", "Contenido sin cambios", AnnouncementType.NEWS);
         announcement.setId(id);
         announcement.setAiSummaryContentHash(HashUtils.sha256("Contenido sin cambios"));
 
         when(announcementRepository.findById(id)).thenReturn(Optional.of(announcement));
-        when(geminiResumenService.generarResumen("Contenido sin cambios")).thenReturn("Resumen regenerado.");
+        when(geminiResumenService.generateSummary("Contenido sin cambios")).thenReturn("Resumen regenerado.");
 
         announcementSummaryAsyncService.generateSummaryAsync(id, true);
 
-        verify(geminiResumenService, times(1)).generarResumen(eq("Contenido sin cambios"));
+        verify(geminiResumenService, times(1)).generateSummary(eq("Contenido sin cambios"));
         verify(announcementRepository, times(1)).save(announcement);
     }
 }

@@ -30,7 +30,7 @@ export const vacancyService = {
   async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {
     const response = await apiClient.post<Record<string, string>>('/translations/batch', {
       entityType,
-      targetLanguage,
+      targetLanguage: targetLanguage.split('-')[0] || 'es',
       items,
     })
     return response.data

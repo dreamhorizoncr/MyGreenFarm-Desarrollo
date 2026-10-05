@@ -5,6 +5,8 @@ import CurriculumCard from './CurriculumCard.tsx'
 import ConfirmCurriculumDecisionModal from './ConfirmCurriculumDecisionModal.tsx'
 import DeleteCurriculumModal from './DeleteCurriculumModal.tsx'
 import Skeleton from './ui/Skeleton.tsx'
+import Pagination from './ui/Pagination.tsx'
+import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { ALL_VACANCIES, SPONTANEOUS_APPLICATIONS, useApplicationFilters } from '../hooks/useApplicationFilters.ts'
 import type { Curriculum } from '../types/curriculum.ts'
 import type { Vacancy } from '../types/vacancy.ts'
@@ -39,6 +41,8 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
   const { t } = useTranslation()
   const { searchTerm, setSearchTerm, vacancyFilter, setVacancyFilter, vacancyTitleById, filteredApplications } =
     useApplicationFilters(curriculums, vacancies)
+
+  const { currentPage, setPage, totalPages, pageItems: pagedApplications } = useClientPagination(filteredApplications)
 
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [applicationToDelete, setApplicationToDelete] = useState<Curriculum | null>(null)
@@ -99,8 +103,9 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
             {t('admin.curriculums.noResults')}
           </p>
         ) : (
+          <>
           <div className="flex flex-col gap-md">
-            {filteredApplications.map((application) => (
+            {pagedApplications.map((application) => (
               <CurriculumCard
                 key={application.id}
                 application={application}
@@ -117,6 +122,8 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
               />
             ))}
           </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+          </>
         )
       )}
 

@@ -108,8 +108,8 @@ function BlogPostCard({
 
   return (
     <article
-      className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white text-left ${
-        isInteractive ? 'cursor-pointer transition hover:opacity-95' : ''
+      className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white text-left transition ${
+        isInteractive ? 'cursor-pointer hover:-translate-y-1 hover:shadow-lg' : ''
       }`}
     >
       {isInteractive && (

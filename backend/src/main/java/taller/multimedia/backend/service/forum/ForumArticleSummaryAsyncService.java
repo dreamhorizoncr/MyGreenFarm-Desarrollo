@@ -35,20 +35,20 @@ public class ForumArticleSummaryAsyncService {
             ForumArticle article = articleRepository.findById(articleId)
                     .orElseThrow(() -> new RuntimeException("Artículo no encontrado: " + articleId));
 
-            String contenidoHash = HashUtils.sha256(article.getContent());
+            String contentHash = HashUtils.sha256(article.getContent());
 
-            if (!force && contenidoHash.equals(article.getAiSummaryContentHash())) {
+            if (!force && contentHash.equals(article.getAiSummaryContentHash())) {
                 return;
             }
 
-            String resumen = geminiResumenService.generarResumenArticulo(article.getContent());
-            if (resumen == null) {
+            String summary = geminiResumenService.generateArticleSummary(article.getContent());
+            if (summary == null) {
                 log.error("No se pudo generar el resumen IA para el artículo {}", articleId);
                 return;
             }
 
-            article.setAiSummary(resumen);
-            article.setAiSummaryContentHash(contenidoHash);
+            article.setAiSummary(summary);
+            article.setAiSummaryContentHash(contentHash);
             articleRepository.save(article);
 
             log.info("Resumen IA generado para el artículo {}", articleId);
