@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ArrowLeftIcon, HeartIcon, SparklesIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate, useParams } from 'react-router-dom'
@@ -32,6 +32,10 @@ function BlogPostPage() {
   const [content, setContent] = useState('')
   const [isDetailLoading, setIsDetailLoading] = useState(true)
   const [pendingReview, setPendingReview] = useState(false)
+  // Ref (not state) so a second click within the same tick, before React
+  // re-renders, is still blocked synchronously — avoids firing the Gemini
+  // moderation call twice for one submission.
+  const isSubmittingRef = useRef(false)
 
   useEffect(() => {
     if (window.location.hash !== '#comments' || isLoading || isDetailLoading) return
@@ -72,6 +76,8 @@ function BlogPostPage() {
   })
 
   function handleSubmit() {
+    if (isSubmittingRef.current) return
+
     const trimmedName = name.trim()
     const trimmedContent = content.trim()
 
@@ -86,6 +92,7 @@ function BlogPostPage() {
       return
     }
 
+    isSubmittingRef.current = true
     // Show the "sent for review" confirmation right away instead of leaving
     // the form stuck while the moderation check runs; the real outcome
     // arrives later as a toast (success or rejection reason).
@@ -101,6 +108,9 @@ function BlogPostPage() {
       })
       .catch((err) => {
         notify.error(getErrorMessage(err))
+      })
+      .finally(() => {
+        isSubmittingRef.current = false
       })
   }
 

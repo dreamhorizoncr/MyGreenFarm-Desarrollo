@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { XIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import Button from '../ui/Button.tsx'
@@ -21,6 +21,10 @@ function PublishExperienceModal({
   const [name, setName] = useState('')
   const [content, setContent] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  // Ref (not state) so a second click within the same tick, before React
+  // re-renders to hide the button, is still blocked synchronously — avoids
+  // firing the Gemini moderation call twice for one submission.
+  const isSubmittingRef = useRef(false)
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
@@ -39,6 +43,8 @@ function PublishExperienceModal({
   }, [onClose])
 
   function handleSubmit() {
+    if (isSubmittingRef.current) return
+
     const trimmedName = name.trim()
     const trimmedContent = content.trim()
 
@@ -53,6 +59,7 @@ function PublishExperienceModal({
       return
     }
 
+    isSubmittingRef.current = true
     // Show the "sent for review" confirmation right away instead of leaving
     // the form stuck while the moderation check runs; the real outcome
     // arrives later as a toast (success or rejection reason).
@@ -144,6 +151,7 @@ function PublishExperienceModal({
             </Button>
             <Button
               onClick={handleSubmit}
+              disabled={submitted}
               className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600"
             >
               {t('forum.community.submit')}

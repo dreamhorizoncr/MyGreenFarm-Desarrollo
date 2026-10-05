@@ -3,17 +3,35 @@ import { vacancyService } from '../services/vacancy.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { Vacancy, VacancyInput } from '../types/vacancy.ts'
 
+const SOURCE_LANG = 'es'
+const ENTITY_TYPE = 'vacancy'
+
 export function useVacancies() {
   const [vacancies, setVacancies] = useState<Vacancy[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchVacancies = async () => {
+  const fetchVacancies = async (lang: string = SOURCE_LANG) => {
     setLoading(true)
     setError(null)
     try {
       const data = await vacancyService.getVacancies()
-      setVacancies(data)
+
+      let result = data
+      if (lang !== SOURCE_LANG) {
+        const items = data.flatMap((v) => [
+          { entityId: v.id, fieldName: 'title', originalText: v.title },
+          { entityId: v.id, fieldName: 'description', originalText: v.description },
+        ])
+        const translated = await vacancyService.translateBatch(ENTITY_TYPE, lang, items)
+        result = data.map((v) => ({
+          ...v,
+          title: translated[`${v.id}:title`] ?? v.title,
+          description: translated[`${v.id}:description`] ?? v.description,
+        }))
+      }
+
+      setVacancies(result)
     } catch (err) {
       setError(getErrorMessage(err))
     } finally {

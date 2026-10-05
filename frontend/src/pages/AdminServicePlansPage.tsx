@@ -5,7 +5,9 @@ import AdminLayout from '../layout/AdminLayout.tsx'
 import Button from '../components/ui/Button.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import CreateServicePlanModal from '../components/CreateServicePlanModal.tsx'
+import Pagination from '../components/ui/Pagination.tsx'
 import { useServicePlanAdmin } from '../hooks/useServicePlanAdmin.ts'
+import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { notify } from '../utils/notifications.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
@@ -17,26 +19,20 @@ import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
 interface AdminPlanCardProps {
   plan: ServicePlan
   exchangeRate: ExchangeRate | null
-  deleting: boolean
-  onEdit: () => void
-  onDelete: () => void
-}
-
-function AdminPlanCard({ 
-  plan, 
-  exchangeRate, 
-  deleting, 
-  onEdit, 
-  onDelete, 
-  language 
-}: Readonly<{
-  plan: ServicePlan
-  exchangeRate: ExchangeRate | null
   deleting?: boolean
   onEdit: () => void
   onDelete: () => void
   language: string
-}>) {
+}
+
+function AdminPlanCard({
+  plan,
+  exchangeRate,
+  deleting,
+  onEdit,
+  onDelete,
+  language,
+}: Readonly<AdminPlanCardProps>) {
   const { t } = useTranslation()
 
   // 1. Obtener y limpiar la moneda base del plan de forma segura
@@ -212,6 +208,8 @@ function AdminServicePlansPage() {
     }
   }
 
+  const { currentPage, setPage, totalPages, pageItems: pagedPlans } = useClientPagination(plans)
+
   const planToDelete = plans.find(p => p.id === confirmDeleteId)
   const matchesName = confirmText.trim() === (planToDelete?.name ?? '')
 
@@ -257,20 +255,23 @@ function AdminServicePlansPage() {
         )}
 
         {!loading && !error && plans.length > 0 && (
-        <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 lg:grid-cols-3">
-          {plans.map(plan => (
-            <AdminPlanCard
-              key={plan.id}
-              plan={plan}
-              exchangeRate={exchangeRate}
-              language={i18n.language} // <--- ¡Añade esto aquí!
-              deleting={deletingId === plan.id}
-              onEdit={() => setEditingPlan(plan)}
-              onDelete={() => setConfirmDeleteId(plan.id)}
-            />
-          ))}
-        </div>
-      )}
+          <>
+            <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 lg:grid-cols-3">
+              {pagedPlans.map(plan => (
+                <AdminPlanCard
+                  key={plan.id}
+                  plan={plan}
+                  exchangeRate={exchangeRate}
+                  language={i18n.language}
+                  deleting={deletingId === plan.id}
+                  onEdit={() => setEditingPlan(plan)}
+                  onDelete={() => setConfirmDeleteId(plan.id)}
+                />
+              ))}
+            </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+          </>
+        )}
       </div>
 
       {(showCreateModal || editingPlan) && (

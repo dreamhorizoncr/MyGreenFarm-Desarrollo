@@ -24,11 +24,6 @@ import taller.multimedia.backend.service.user.AuthService;
 
 //Controller class for handling authentication-related endpoints
 
-/*
-Antes
-@CrossOrigin(origins = "*", maxAge = 3600) // Allow cross-origin requests from any origin with a maximum age of 3600 seconds
-*/
-
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -36,15 +31,6 @@ public class AuthController {
     private final AuthService authService;
     private final JwtUtils jwtUtils;
 
-    /*
-     * ANTES (solo authService):
-     * public AuthController(AuthService authService) {
-     * this.authService = authService;
-     * }
-     */
-
-    // NUEVO: se agrega JwtUtils para generar el token y devolverlo también en el
-    // body
     public AuthController(AuthService authService, JwtUtils jwtUtils) {
         this.authService = authService;
         this.jwtUtils = jwtUtils;
@@ -67,11 +53,6 @@ public class AuthController {
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                /*
-                 * ANTES: devolvía solo el user en el body
-                 * .body(user);
-                 */
-                // NUEVO: envuelve token + user en SigninResponse
                 .body(new SigninResponse(token, result.getUserInfo()));
     }
 

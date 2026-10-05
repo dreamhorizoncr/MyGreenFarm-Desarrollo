@@ -36,7 +36,7 @@ function VacancyCardSkeleton() {
 }
 
 function VacanciesPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   const { vacancies, loading, error, fetchVacancies } = useVacancies()
   const { submitApplication } = useCurriculums()
@@ -45,9 +45,9 @@ function VacanciesPage() {
   const [applicationSent, setApplicationSent] = useState(false)
 
   useEffect(() => {
-    void fetchVacancies()
+    void fetchVacancies(i18n.language)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [i18n.language])
 
   const openVacancies = vacancies.filter((v) => v.isOpen)
 
