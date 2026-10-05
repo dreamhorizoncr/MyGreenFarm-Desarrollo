@@ -40,6 +40,9 @@ public class ServicePlan {
 
     @Column(nullable = false)
     private BigDecimal price;
+    
+    @Column(nullable = false, length = 6)
+    private String currency;
 
     @Column(nullable = false, length = 200)
     private String schedule;

@@ -9,16 +9,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import taller.multimedia.backend.model.onvo.PaymentRecord;
-import taller.multimedia.backend.model.onvo.PaymentStatus;
-import taller.multimedia.backend.repository.onvo.PaymentRecordRepository;
 
 @RestController
 @RequestMapping("/api/webhooks")
 @RequiredArgsConstructor
 public class OnvoWebhookController {
 
-    private final PaymentRecordRepository paymentRecordRepository;
 
     @PostMapping("/onvo")
     public ResponseEntity<String> handleOnvoWebhook(@RequestBody Map<String, Object> payload) {
@@ -52,26 +48,6 @@ public class OnvoWebhookController {
                 gatewaySessionId = (String) data.get("id");
             }
 
-            System.out.println("UUID/Session intentando buscar en la BD: " + gatewaySessionId);
-
-            if (gatewaySessionId != null) {
-                PaymentRecord paymentRecord = paymentRecordRepository.findByGatewaySessionId(gatewaySessionId)
-                        .orElse(null);
-
-                if (paymentRecord != null) {
-                    if (paymentSucceeded) {
-                        paymentRecord.setStatus(PaymentStatus.PAID);
-                        paymentRecord.setPaidAmount(paymentRecord.getTotalAmount());
-                    } else {
-                        paymentRecord.setStatus(PaymentStatus.FAILED);
-                    }
-                    paymentRecordRepository.save(paymentRecord);
-                    System.out.println("¡Estado de pago actualizado correctamente para el registro!");
-                } else {
-                    System.err
-                            .println("Aviso: No se encontró ningún PaymentRecord asociado al ID: " + gatewaySessionId);
-                }
-            }
         }
 
         return ResponseEntity.ok("Received");

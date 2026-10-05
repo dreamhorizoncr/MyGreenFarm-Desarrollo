@@ -10,10 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import taller.multimedia.backend.dto.service_plan.ServicePlanRequest;
-import taller.multimedia.backend.model.onvo.PaymentRecord;
-import taller.multimedia.backend.model.onvo.PaymentStatus;
 import taller.multimedia.backend.model.service_plans.ServicePlan;
-import taller.multimedia.backend.repository.onvo.PaymentRecordRepository;
 import taller.multimedia.backend.repository.service_plan.ServicePlanRepository;
 
 import java.math.BigDecimal;
@@ -32,7 +29,6 @@ public class ServicePlanService {
     private final ServicePlanRepository servicePlanRepository;
     private final ServicePlanImageService servicePlanImagesService;
     private final RestTemplate restTemplate;
-    private final PaymentRecordRepository paymentRecordRepository;
 
     @Value("${onvo.api.key}")
     private String onvoApiKey;
@@ -80,6 +76,9 @@ public class ServicePlanService {
         Object priceObj = targetOnvoPlan.get("price");
         dto.setPrice(priceObj != null ? new BigDecimal(priceObj.toString()) : BigDecimal.ZERO);
 
+        String currency = targetOnvoPlan.get("currency") != null ? targetOnvoPlan.get("currency").toString() : "CRC";
+        dto.setCurrency(currency);
+
         dto.setType(
                 targetOnvoPlan.get("type") != null ? targetOnvoPlan.get("type").toString().toUpperCase() : "ONE_TIME");
         String realCheckoutUrl = generateCheckoutUrl(dto.getGatewayPriceId());
@@ -120,19 +119,30 @@ public class ServicePlanService {
                 }
             }
 
-            // 2. Obtener precios y unificarlos
             long pricesRequestStart = System.currentTimeMillis();
             ResponseEntity<Map> priceRes = restTemplate.exchange(onvoApiUrl + "/prices", HttpMethod.GET, entity,
                     Map.class);
             log.info("Consultar precios de Onvo tardó: {} ms", System.currentTimeMillis() - pricesRequestStart);
+
+
             if (priceRes.getBody() != null && priceRes.getBody().get("data") != null) {
                 for (Map<String, Object> item : (List<Map<String, Object>>) priceRes.getBody().get("data")) {
-                    Map<String, Object> info = new HashMap<>();
                     Map<String, Object> prod = prodMap.getOrDefault(item.get("productId"), Collections.emptyMap());
 
+                    Boolean priceActive = (Boolean) item.get("isActive");
+                    Boolean prodActive = (Boolean) prod.get("isActive");
+
+                    // Si alguno está inactivo (false), se omite por completo
+                    if ((priceActive != null && !priceActive) || (prodActive != null && !prodActive)) {
+                        continue;
+                    }
+
+                    Map<String, Object> info = new HashMap<>();
                     info.put("gatewayPriceId", item.get("id"));
                     info.put("name", prod.get("name"));
                     info.put("description", prod.get("description"));
+                    info.put("currency",
+                            item.get("currency") != null ? item.get("currency").toString().toUpperCase() : "CRC");
 
                     // Precio en formato decimal
                     Object amount = item.get("unitAmount");
@@ -234,11 +244,10 @@ public class ServicePlanService {
                 Map<String, Object> body = response.getBody();
                 String checkoutUrl = (String) body.get("url");
                 String realOnvoId = (String) body.get("id");
-                
+
                 return Map.of(
-                    "url", checkoutUrl != null ? checkoutUrl : "",
-                    "gatewaySessionId", realOnvoId != null ? realOnvoId : ""
-                );
+                        "url", checkoutUrl != null ? checkoutUrl : "",
+                        "gatewaySessionId", realOnvoId != null ? realOnvoId : "");
             }
         } catch (Exception e) {
             throw new RuntimeException("Error al comunicarse con OnvoPay: " + e.getMessage());
@@ -255,30 +264,16 @@ public class ServicePlanService {
         ServicePlan plan = getPlanById(planId);
         String gatewayPriceId = plan.getGatewayPriceId();
 
-        Map<String, String> onvoResponse = generateCheckoutUrlInternal(gatewayPriceId);
-        String checkoutUrl = onvoResponse.get("url");
-        String realOnvoId = onvoResponse.get("gatewaySessionId");
-
-        PaymentRecord record = new PaymentRecord();
-        record.setServicePlan(plan);
-        record.setGatewayPriceId(gatewayPriceId);
-        record.setGatewaySessionId(realOnvoId);
-        record.setStatus(PaymentStatus.PENDING);
-        record.setTotalAmount(plan.getPrice() != null ? plan.getPrice() : BigDecimal.ZERO);
-        record.setPaidAmount(BigDecimal.ZERO);
-
-        paymentRecordRepository.save(record);
-
-        return Map.of(
-                "url", checkoutUrl,
-                "gatewaySessionId", realOnvoId);
+        // Solo genera la sesión en Onvo y retorna los datos al frontend
+        return generateCheckoutUrlInternal(gatewayPriceId);
     }
 
     public Map<String, String> createPaymentIntentOrCheckout(UUID planId) {
         return createCheckoutSessionForPlan(planId);
     }
 
-    // 1. Consulta directa a la API de Onvo para verificar si la sesión ya fue pagada
+    // 1. Consulta directa a la API de Onvo para verificar si la sesión ya fue
+    // pagada
     public boolean checkStatusDirectlyFromOnvo(String gatewaySessionId) {
         if (gatewaySessionId == null || gatewaySessionId.isEmpty()) {
             return false;
@@ -289,7 +284,8 @@ public class ServicePlanService {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(onvoApiKey);
         log.info("URL consultada a Onvo: {}", url);
-        log.info("API Key usada (primeros caracteres): {}", onvoApiKey != null && onvoApiKey.length() > 5 ? onvoApiKey.substring(0, 5) + "..." : "NULL O VACÍA");
+        log.info("API Key usada (primeros caracteres): {}",
+                onvoApiKey != null && onvoApiKey.length() > 5 ? onvoApiKey.substring(0, 5) + "..." : "NULL O VACÍA");
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
         try {
@@ -297,13 +293,13 @@ public class ServicePlanService {
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 Map<String, Object> body = response.getBody();
-                
+
                 String status = (String) body.get("status");
                 Boolean isPaid = (Boolean) body.get("paid");
 
-                return "completed".equalsIgnoreCase(status) 
-                    || "paid".equalsIgnoreCase(status) 
-                    || (isPaid != null && isPaid);
+                return "completed".equalsIgnoreCase(status)
+                        || "paid".equalsIgnoreCase(status)
+                        || (isPaid != null && isPaid);
             }
         } catch (Exception e) {
             log.error("Error al consultar directamente el estado en OnvoPay: {}", e.getMessage());
@@ -311,28 +307,4 @@ public class ServicePlanService {
         return false;
     }
 
-    // 2. Método llamado por el controlador del frontend para el sondeo (polling)
-    @Transactional
-    public Map<String, Object> checkPaymentStatus(String gatewaySessionId) {
-        PaymentRecord record = paymentRecordRepository.findByGatewaySessionId(gatewaySessionId)
-                .orElseThrow(() -> new RuntimeException("Registro de pago no encontrado para la sesión: " + gatewaySessionId));
-
-        // Si localmente ya figura como pagado, retornamos el éxito de inmediato
-        if (record.getStatus() == PaymentStatus.PAID) {
-            return Map.of("isPaid", true, "isFailed", false, "status", "PAID");
-        }
-
-        // Si sigue PENDING, consultamos directamente a Onvo
-        boolean isPaidOnvo = checkStatusDirectlyFromOnvo(gatewaySessionId);
-
-        if (isPaidOnvo) {
-            record.setStatus(PaymentStatus.PAID);
-            record.setPaidAmount(record.getTotalAmount());
-            paymentRecordRepository.save(record);
-            
-            return Map.of("isPaid", true, "isFailed", false, "status", "PAID");
-        }
-
-        return Map.of("isPaid", false, "isFailed", false, "status", "PENDING");
-    }
 }
