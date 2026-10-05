@@ -10,13 +10,15 @@ export function useParents() {
     const [error, setError] = useState<string | null>(null);
 
   // Obtiene todos los padres del backend
-    const fetchParents = async () => {
+    const [totalPages, setTotalPages] = useState(0);
+    const fetchParents = async (page = 0) => {
         setLoading(true);
         setError(null);
 
         try {
-            const data = await parentService.getParents();
-                setParents(data);
+            const data = await parentService.getParents(page);
+                setParents(data.content);
+                setTotalPages(data.totalPages);
         } catch (err) {
         setError(getErrorMessage(err));
         } finally {
@@ -29,5 +31,6 @@ export function useParents() {
         loading,
         error,
         fetchParents,
+        totalPages,
     };
 }

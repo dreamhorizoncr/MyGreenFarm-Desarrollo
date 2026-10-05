@@ -9,7 +9,6 @@ import TeacherCard from '../components/TeacherCard.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
 import { useAdmin } from '../hooks/useAdmin.ts'
-import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { notify } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
@@ -34,18 +33,18 @@ function TeacherCardSkeleton() {
 
 function AdminUsersPage() {
   const { t } = useTranslation()
-  const { users, loading, error, fetchUsers, updateUser, deleteUser } = useAdmin()
+  const { users, loading, error, totalPages, fetchUsers, updateUser, deleteUser } = useAdmin()
 
   const currentUser = userStorage.getUser()
   const [userToEdit, setUserToEdit] = useState<UserInfo | null>(null)
   const [userToDelete, setUserToDelete] = useState<UserInfo | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState<string>('ALL')
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
-    void fetchUsers()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    void fetchUsers(currentPage - 1)
+  }, [currentPage])
 
   const filteredUsers = useMemo(() => {
     const term = searchTerm.trim().toLowerCase()
@@ -59,8 +58,6 @@ function AdminUsersPage() {
   }, [users, searchTerm, roleFilter])
 
   const roleOptions = useMemo(() => ['ALL', ...Array.from(new Set(['OWNER', ...users.map((user) => user.role)]))], [users])
-
-  const { currentPage, setPage, totalPages, pageItems: pagedUsers } = useClientPagination(filteredUsers)
 
   const roleFilterClassName = (active: boolean) =>
     `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
@@ -150,7 +147,7 @@ function AdminUsersPage() {
           ) : (
             <>
               <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-                {pagedUsers.map((user) => (
+                {filteredUsers.map((user) => (
                   <TeacherCard
                     key={user.id}
                     user={user}
@@ -160,7 +157,7 @@ function AdminUsersPage() {
                   />
                 ))}
               </div>
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
             </>
           )
         )}
