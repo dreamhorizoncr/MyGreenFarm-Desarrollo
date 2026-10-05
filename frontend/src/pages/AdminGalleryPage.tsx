@@ -171,26 +171,28 @@ function YearDropdown({
 						}}
 						aria-hidden="true"
 					/>
-					<div className="absolute left-0 right-0 top-[calc(100%+6px)] z-20 overflow-hidden rounded-xl border border-neutral-200 bg-white py-sm shadow-lg">
+					<div className="absolute left-0 right-0 top-[calc(100%+6px)] z-20 overflow-hidden rounded-xl border border-neutral-200 bg-white p-xs shadow-lg">
 						{categories.map((category) => (
 							<div
 								key={category.id}
-								className="flex w-full items-center justify-between pr-sm text-body-sm transition hover:bg-neutral-50"
+								className="flex w-full items-center justify-between gap-2 text-body-sm"
 							>
 								<button
 									type="button"
+									role="option"
+									aria-selected={category.id === value}
 									onClick={() => {
 										onChange(category.id)
 										setOpen(false)
 									}}
-									className={`flex w-full flex-1 items-center justify-between px-md py-sm ${
+									className={`flex w-full flex-1 items-center justify-between gap-2 rounded-lg px-md py-sm text-left transition-colors duration-150 hover:bg-orange-100 ${
 										category.id === value
-											? 'font-semibold text-heading'
-											: 'text-neutral-600'
+											? 'font-semibold text-link'
+											: 'text-heading'
 									}`}
 								>
-									{category.title}
-									{category.id === value && <CheckIcon size={16} aria-hidden="true" />}
+									<span className="truncate">{category.title}</span>
+									{category.id === value && <CheckIcon size={16} className="shrink-0" aria-hidden="true" />}
 								</button>
 								<button
 									type="button"

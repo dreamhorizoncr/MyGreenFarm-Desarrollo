@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'r
 import { useTranslation } from 'react-i18next'
 import { FileImageIcon, XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
+import Select from './ui/Select.tsx'
 import type { OnvoRawPlan, ServicePlan } from '../types/servicePlan.ts'
 
 const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']
@@ -162,23 +163,21 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
             <label htmlFor="create-plan-onvo" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
               {t('admin.servicios.selectPlan')}
             </label>
-            <select
+            <Select
               id="create-plan-onvo"
               value={gatewayPriceId}
-              onChange={(e) => {
-                setGatewayPriceId(e.target.value)
+              onChange={(value) => {
+                setGatewayPriceId(value)
                 if (onvoError) setOnvoError(null)
               }}
               disabled={isEditing}
-              className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 disabled:opacity-50"
-            >
-              <option value="">{t('admin.servicios.selectPlan')}</option>
-              {availablePlans.map(plan => (
-                <option key={plan.gatewayPriceId} value={plan.gatewayPriceId}>
-                  {plan.name} — {plan.price}
-                </option>
-              ))}
-            </select>
+              placeholder={t('admin.servicios.selectPlan')}
+              options={availablePlans.map(plan => ({
+                value: plan.gatewayPriceId,
+                label: `${plan.name} — ${plan.price}`,
+              }))}
+              className="h-[38px] w-full rounded-none border-0 border-b border-neutral-300 bg-transparent px-0 focus:border-green-500"
+            />
             {availablePlans.length === 0 && !isEditing && (
               <p className="mt-2xs text-left font-body text-body-sm text-neutral-500">
                 {t('admin.servicios.noOnvoPlans')}
