@@ -95,7 +95,7 @@ function ExpedientFormModal({
     if (expedient && childrenOptions.length > 0) {
       const match = childrenOptions.find((opt) => opt.studentId === expedient.studentId);
       if (match) {
-        setSearchTerm(`${match.studentId} - ${match.fullName ?? match.childName}`);
+        setSearchTerm(`${match.fullName ?? match.childName}`);
       }
     }
   }, [expedient, childrenOptions]);
