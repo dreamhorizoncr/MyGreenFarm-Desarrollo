@@ -9,12 +9,14 @@ import ExpedientFormModal from "../components/ExpedientFormModal";
 import ExpedientCard from "../components/ExpedientCard";
 
 import Skeleton from "../components/ui/Skeleton";
+import Pagination from "../components/ui/Pagination.tsx";
 
 import { expedientService } from "../services/expedient";
 
 import { notify } from "../utils/notifications.ts";
 
 import { useExpedients } from "../hooks/useExpedients";
+import { useClientPagination } from "../hooks/useClientPagination.ts";
 
 import type { Expedient } from "../types/expedient";
 
@@ -74,6 +76,8 @@ function AdminExpedientsPage() {
   const filteredExpedients = expedients.filter((expedient) =>
     expedient.childName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  const { currentPage, setPage, totalPages, pageItems: pagedExpedients } = useClientPagination(filteredExpedients);
 
   // Elimina un expediente
   const handleDelete = async (expedient: Expedient) => {
@@ -157,18 +161,21 @@ function AdminExpedientsPage() {
 
         {/* Lista de expedientes */}
         {!loading && !error && filteredExpedients.length > 0 && (
-          <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {filteredExpedients.map((expedient) => (
-              <ExpedientCard
-                key={expedient.id}
-                expedient={expedient}
-                // Abre el modal de edición
-                onEdit={setEditingExpedient}
-                // Elimina el expediente
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
+          <>
+            <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+              {pagedExpedients.map((expedient) => (
+                <ExpedientCard
+                  key={expedient.id}
+                  expedient={expedient}
+                  // Abre el modal de edición
+                  onEdit={setEditingExpedient}
+                  // Elimina el expediente
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+          </>
         )}
 
         {/* No existen expedientes */}

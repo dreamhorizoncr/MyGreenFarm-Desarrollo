@@ -19,6 +19,7 @@ function AuthLayout({
   rightPanelClassName = "px-[15px] pb-[28px] pt-[65px] md:px-[70px] md:py-[55px]",
   contentClassName = "max-w-[430px]",
   containerClassName = "md:max-w-[900px]",
+  scrollable = false,
   closeTo = "/",
   children,
 }: Readonly<AuthLayoutProps>) {
@@ -30,7 +31,7 @@ function AuthLayout({
   <main className="flex items-center justify-center px-[30px] py-[30px] md:px-6 md:py-16">
     {/* Contenedor Principal: crece con el contenido hasta el máximo */}
     <section
-      className={`relative flex w-full max-w-[333px] flex-col overflow-hidden rounded-[13px] bg-bg-card shadow md:min-h-[500px] md:max-h-[calc(100svh-8rem)] md:flex-row md:rounded-2xl ${containerClassName}`}
+      className={`relative flex w-full max-w-[333px] flex-col rounded-[13px] bg-bg-card shadow md:min-h-[500px] md:max-h-[calc(100svh-8rem)] md:flex-row md:rounded-2xl ${scrollable ? "overflow-y-auto" : "overflow-hidden"} ${containerClassName}`}
     >
       {/* Panel de Ilustración */}
       <div className="relative h-[205px] w-full shrink-0 overflow-hidden md:h-auto md:w-1/2">
@@ -41,7 +42,7 @@ function AuthLayout({
         />
 
         <div className="absolute left-0 top-[18px] z-10 w-full text-center md:top-[9%]">
-          <h1 className="m-0 font-heading text-[20px] leading-none tracking-wide text-white md:text-h1">
+          <h1 className="m-0 font-heading text-[20px] leading-none tracking-wide text-heading md:text-h1">
             {overtitle}
           </h1>
         </div>

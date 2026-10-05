@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronDownIcon } from "@animateicons/react/lucide";
+import Select from "./ui/Select.tsx";
 
 import { parentService } from "../services/parent";
 import { notify } from "../utils/notifications.ts";
@@ -241,25 +241,16 @@ function ParentFormModal({
               {t("admin.parents.language")}
             </label>
 
-            <div className="relative">
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as ParentLanguage)}
-                required
-                className="w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-11 font-body outline-none focus:border-heading"
-              >
-                {languages.map((lang) => (
-                  <option key={lang} value={lang}>
-                    {t(`admin.parents.languages.${lang}`)}
-                  </option>
-                ))}
-              </select>
-              <ChevronDownIcon
-                size={16}
-                className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500"
-                aria-hidden="true"
-              />
-            </div>
+            <Select
+              value={language}
+              onChange={(value) => setLanguage(value as ParentLanguage)}
+              options={languages.map((lang) => ({
+                value: lang,
+                label: t(`admin.parents.languages.${lang}`),
+              }))}
+              className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3"
+              aria-label={t("admin.parents.language")}
+            />
           </div>
 
           {/* Error */}

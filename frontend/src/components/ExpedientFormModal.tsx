@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChevronDownIcon, ImageIcon } from "@animateicons/react/lucide";
+import Select from "./ui/Select.tsx";
 
 import { expedientService } from "../services/expedient";
 import { notify } from "../utils/notifications.ts";
@@ -304,29 +305,18 @@ function ExpedientFormModal({
                 {t("admin.expedients.grade")}
               </label>
 
-              <div className="relative">
-                <select
-                  value={educationalLevel}
-                  onChange={(e) =>
-                    setEducationalLevel(e.target.value as EducationalLevel)
-                  }
-                  required
-                  className="w-full appearance-none rounded-xl border border-gray-300 bg-white px-4 py-3 pr-11 font-body outline-none focus:border-heading"
-                >
-                  {educationalLevels.map((level) => (
-                    <option key={level} value={level}>
-                      {t(
-                        `admin.expedients.levels.${educationalLevelKeys[level]}`,
-                      )}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDownIcon
-                  size={16}
-                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500"
-                  aria-hidden="true"
-                />
-              </div>
+              <Select
+                value={educationalLevel}
+                onChange={(value) =>
+                  setEducationalLevel(value as EducationalLevel)
+                }
+                options={educationalLevels.map((level) => ({
+                  value: level,
+                  label: t(`admin.expedients.levels.${educationalLevelKeys[level]}`),
+                }))}
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3"
+                aria-label={t("admin.expedients.grade")}
+              />
             </div>
           </div>
 

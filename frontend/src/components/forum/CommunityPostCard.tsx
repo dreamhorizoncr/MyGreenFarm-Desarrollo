@@ -12,7 +12,7 @@ interface CommunityPostCardProps {
 function CommunityPostCard({ post, onToggleLike, onOpenComments }: Readonly<CommunityPostCardProps>) {
   const { t } = useTranslation()
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-lg text-left">
+    <article className="rounded-2xl border border-neutral-200 bg-white p-lg text-left transition hover:-translate-y-1 hover:shadow-lg">
       <header className="flex items-center gap-md">
         <PostAvatar name={post.name} />
 
