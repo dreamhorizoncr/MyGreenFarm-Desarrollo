@@ -184,20 +184,38 @@ public class ClubImageService {
         ClubImage image = imageRepository.findById(imageId)
                 .orElseThrow(() -> new EntityNotFoundException("Imagen no encontrada con ID: " + imageId));
 
+        // 1. Borrar archivo físico del storage
         String fileUrl = image.getFileUrl();
         String filePath = extractPathFromUrl(fileUrl, clubsBucket);
 
         if (filePath != null && !filePath.isEmpty()) {
-            storageService.deleteFile(clubsBucket, filePath);
+            try {
+                storageService.deleteFile(clubsBucket, filePath);
+            } catch (Exception e) {
+                System.err.println("No se pudo borrar el archivo físico del bucket: " + e.getMessage());
+            }
         }
 
-        imageRepository.delete(image);
+        // 2. Desvincular de la lista del club padre para evitar doble DELETE de
+        // Hibernate
+        Club club = image.getClub();
+        if (club != null && club.getImages() != null) {
+            club.getImages().remove(image);
+            image.setClub(null);
+        } else {
+            imageRepository.delete(image);
+        }
     }
 
     @Transactional
     public void deleteAllImagesByClub(Long clubId) {
         List<ClubImage> images = imageRepository.findByClubIdOrderBySortOrderAsc(clubId);
 
+        if (images.isEmpty()) {
+            return;
+        }
+
+        // 1. Borrar archivos físicos del storage
         for (ClubImage image : images) {
             String filePath = extractPathFromUrl(image.getFileUrl(), clubsBucket);
             if (filePath != null && !filePath.isEmpty()) {
@@ -208,6 +226,14 @@ public class ClubImageService {
                 }
             }
         }
+
+        // 2. Limpiar la colección del padre si el club está cargado
+        Club club = images.get(0).getClub();
+        if (club != null && club.getImages() != null) {
+            club.getImages().removeAll(images);
+        }
+
+        // 3. Borrar de la base de datos
         imageRepository.deleteAll(images);
     }
 
