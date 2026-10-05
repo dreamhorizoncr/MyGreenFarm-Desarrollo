@@ -13,6 +13,14 @@ export const apiClient = axios.create({
   withCredentials: true
 })
 
+export interface PageResponse<T> {
+  content: T[]
+  totalPages: number
+  totalElements: number
+  number: number
+  size: number
+}
+
 apiClient.interceptors.request.use((config) => {
   const token = tokenStorage.getToken()
   if (token) config.headers.Authorization = `Bearer ${token}`

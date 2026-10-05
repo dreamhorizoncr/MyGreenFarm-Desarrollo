@@ -43,6 +43,7 @@ import { useSessionExpiredNotice } from './hooks/useSessionExpiredNotice.ts'
 import { ErrorBoundary } from './components/ErrorBoundary.tsx'
 import BlobGooFilter from './components/ui/BlobGooFilter.tsx'
 import OwnerClubsPage from './pages/OwnerClubsPage.tsx'
+import ClubsPage from './pages/ClubsPage.tsx'
 
 function SessionWatcher() {
   useSessionExpiredNotice()
@@ -110,6 +111,7 @@ function App() {
         <Route path="/payment-success" element={<PaymentSuccessPage />} />
         <Route path="/payment-failed" element={<PaymentFailedPage />} />
         <Route path="/vacantes" element={<VacanciesPage />} />
+        <Route path="/clubs" element={<ClubsPage />} />
         {/* <Route path="/news/:id" element={<NewsDetailPage />} /> */}
         {/* Redirigir cualquier ruta no definida a la página de inicio */}
         <Route path="*" element={<Navigate to="/" replace />} />

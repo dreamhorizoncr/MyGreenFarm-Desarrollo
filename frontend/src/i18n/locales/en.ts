@@ -26,6 +26,7 @@ export default {
     forum: "Forum",
     services: "Services",
     vacancies: "Vacancies",
+    clubs: "Clubs",
     adminLogin: "Admin login",
     dashboard: "Dashboard",
   },
@@ -679,9 +680,13 @@ export default {
       newClub: "New Club",
       editClub: "Edit Club",
       clubName: "Club Name",
+      clubNamePlaceholder: "E.g. Robotics Club",
       category: "Category",
       descriptionLabel: "Description",
+      descriptionPlaceholder: "Details about the club activities...",
       schedule: "Schedule",
+      schedulePlaceholder: "E.g. Monday and Wednesday, 3:00 PM",
+      capacityPlaceholder: "E.g. 20",
       location: "Location or Classroom",
       coverImage: "Cover Image",
       chooseCover: "Select Cover",
@@ -709,6 +714,7 @@ export default {
       deleteErrorToastTitle: "Error deleting club",
       imageDeletedToastTitle: "Image deleted",
       imageDeleteErrorToastTitle: "Error deleting image",
+      deleteImage: "Delete image",
       maxCapacity: "Max capacity",
       capacityLabel: "spots",
       capacityUnit: "students"
@@ -914,6 +920,13 @@ export default {
       deleteExceptionSuccessToastTitle: "Special day deleted",
       deleteExceptionErrorToastTitle: "Couldn't delete the special day",
     },
+  },
+  clubs: {
+      title: "Clubs & Workshops",
+      subtitle: "Spaces to learn, share, and grow together in community.",
+      comingSoonTitle: "Coming Soon!",
+      comingSoonDescription: "We are preparing exciting updates. Stay tuned to our website to discover our clubs and workshops very soon.",
+      statusTag: "In development"
   },
   vacancies: {
     title: "Vacancies",

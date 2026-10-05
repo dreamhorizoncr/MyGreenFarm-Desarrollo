@@ -10,13 +10,15 @@ export function useExpedients() {
     const [error, setError] = useState<string | null>(null);
 
   // Obtiene todos los expedientes del backend
-    const fetchExpedients = async () => {
+    const [totalPages, setTotalPages] = useState(0);
+    const fetchExpedients = async (page = 0) => {
         setLoading(true);
         setError(null);
 
     try {
-        const data = await expedientService.getExpedients();
-        setExpedients(data);
+        const data = await expedientService.getExpedients(page);
+        setExpedients(data.content);
+        setTotalPages(data.totalPages);
     } catch (err) {
         setError(getErrorMessage(err));
     } finally {
@@ -29,5 +31,6 @@ export function useExpedients() {
         loading,
         error,
         fetchExpedients,
+        totalPages,
     };
 }

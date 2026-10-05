@@ -1,6 +1,5 @@
 package taller.multimedia.backend.controller.user;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -14,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 
 import jakarta.validation.Valid;
 import taller.multimedia.backend.dto.MessageResponse;
@@ -34,10 +36,11 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     @GetMapping
-    public ResponseEntity<?> getAllUsers() {
+    public ResponseEntity<?> getAllUsers(
+            @PageableDefault(size = 10, sort = "lastName") Pageable pageable) {
         try {
             String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-            List<UserInfoResponse> users = userService.getAllUsers(currentEmail);
+            Page<UserInfoResponse> users = userService.getAllUsers(currentEmail, pageable);
             return ResponseEntity.ok(users);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));

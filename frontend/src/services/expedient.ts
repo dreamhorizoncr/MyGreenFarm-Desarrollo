@@ -1,12 +1,12 @@
-import { apiClient } from "./api.ts";
+import { apiClient, type PageResponse } from "./api.ts";
 import { sanitizeFileName } from "../utils/sanitizeFileName.ts";
 
 import type { Expedient, ExpedientRequest } from "../types/expedient.ts";
 
 export const expedientService = {
   //Obtiene todos los expedientes.
-  async getExpedients(): Promise<Expedient[]> {
-    const response = await apiClient.get<Expedient[]>("/expedients");
+  async getExpedients(page = 0, size = 10): Promise<PageResponse<Expedient>> {
+    const response = await apiClient.get<PageResponse<Expedient>>("/expedients", { params: { page, size } });
     return response.data;
   },
 
