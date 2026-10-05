@@ -42,6 +42,7 @@ import { ForumFeedProvider } from './contexts/ForumFeedContext.tsx'
 import { useSessionExpiredNotice } from './hooks/useSessionExpiredNotice.ts'
 import { ErrorBoundary } from './components/ErrorBoundary.tsx'
 import BlobGooFilter from './components/ui/BlobGooFilter.tsx'
+import OwnerClubsPage from './pages/OwnerClubsPage.tsx'
 
 function SessionWatcher() {
   useSessionExpiredNotice()
@@ -82,6 +83,7 @@ function App() {
             <Route path="/admin/announcements" element={<AnnouncementsPage />} />
             <Route path="/admin/gallery" element={<AdminGalleryPage />} />
             <Route path="/admin/curriculums" element={<AdminCurriculumsPage />} />
+            <Route path="/admin/clubs" element={<OwnerClubsPage />} />
             <Route path="/admin/parents" element={<AdminParentsPage />} />
           <Route element={<OwnerRoute />}>
             <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />

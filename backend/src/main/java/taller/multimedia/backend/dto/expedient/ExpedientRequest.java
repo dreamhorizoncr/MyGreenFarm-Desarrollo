@@ -11,8 +11,8 @@ import java.time.LocalDate;
 @Data
 public class ExpedientRequest {
 
-    @NotNull(message = "El ID del niño es obligatorio")
-    private Long childId;
+    @NotNull(message = "El carné del niño es obligatorio")
+    private String studentId;
 
     @NotNull(message = "La fecha de admisión es obligatoria")
     private LocalDate admisionDate;
