@@ -28,12 +28,12 @@ function ProfileButton() {
 
   return (
 
-  <div className="relative">
+  <div className="relative inline-flex size-10 shrink-0 items-center justify-center">
     <button
       type="button"
       onClick={() => setMenuOpen(!menuOpen)}
       aria-label={`${user.firstName} ${user.lastName}`}
-      className="inline-flex items-center justify-center rounded-full bg-transparent transition-shadow duration-150 hover:shadow-[0_0_0_4px_var(--heading-100)] focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+      className="inline-flex size-10 items-center justify-center rounded-full bg-transparent transition-shadow duration-150 hover:shadow-[0_0_0_4px_var(--heading-100)] focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
     >
       <Blobatar
         name={user.email}

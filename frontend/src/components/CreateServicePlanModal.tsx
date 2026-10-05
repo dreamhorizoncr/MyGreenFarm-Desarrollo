@@ -245,10 +245,12 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex h-11 items-center justify-center gap-sm rounded-xl border border-dashed border-neutral-300 bg-neutral-50 font-body text-body-sm text-body-text-dark transition-colors hover:border-green-500 hover:bg-green-50"
+              className="flex h-11 min-w-0 items-center justify-center gap-sm overflow-hidden rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-sm font-body text-body-sm text-body-text-dark transition-colors hover:border-green-500 hover:bg-green-50"
             >
               <FileImageIcon size={18} />
-              {selectedImage ? selectedImage.file.name : t('admin.servicios.chooseImage')}
+              <span className="truncate">
+                {selectedImage ? t('admin.servicios.imageSelected') : t('admin.servicios.chooseImage')}
+              </span>
             </button>
             {selectedImage && (
               <div className="relative mt-2 inline-block w-[120px]">
