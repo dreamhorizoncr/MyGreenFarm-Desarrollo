@@ -14,6 +14,8 @@ import {
   MessageSquarePlusIcon,
   UserIcon,
   UsersIcon,
+  UserStarIcon,
+  ContactRoundIcon,
   MailPlus,
   SparklesIcon,
   ClipboardIcon
@@ -84,7 +86,7 @@ function AdminSidebar() {
     { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
     { id: 'noticias', icon: MegaphoneIcon, path: '/admin/announcements' },
     { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
-    { id: 'docentes', icon: UsersIcon, path: '/admin/users' },
+    { id: 'docentes', icon: ContactRoundIcon, path: '/admin/users' },
     { id: 'servicios', icon: CreditCardIcon, path: '/admin/service-plans' },
     { id: 'disponibilidad', icon: CalendarDaysIcon, path: '/admin/disponibilidad' },
     { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
@@ -92,7 +94,7 @@ function AdminSidebar() {
     { id: 'clubs', icon: SparklesIcon, path: '/admin/clubs' },
     { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
     { id: 'padres', icon: UsersIcon, path: '/admin/parents'},
-    { id: 'niños', icon: UsersIcon, path: '/admin/children' },
+    { id: 'niños', icon: UserStarIcon, path: '/admin/children' },
     { id: 'evaluaciones', icon: ClipboardIcon, path: '/admin/evaluations' },
     { id: 'boletín', icon: MailPlus, path: '/admin/newsletter' },
     { id: 'miPerfil', icon: UserIcon, path: '/profile' },
@@ -102,11 +104,11 @@ function AdminSidebar() {
     { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
     { id: 'noticias', icon: MegaphoneIcon, path: '/admin/announcements' },
     { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
-    { id: 'docentes', icon: UsersIcon, path: '/admin/users' },
+    { id: 'docentes', icon: ContactRoundIcon, path: '/admin/users' },
     { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
     { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
     { id: 'padres', icon: UsersIcon, path: '/admin/parents'},
-    { id: 'niños', icon: UsersIcon, path: '/admin/children' },
+    { id: 'niños', icon: UserStarIcon, path: '/admin/children' },
     { id: 'evaluaciones', icon: ClipboardIcon, path: '/admin/evaluations' },
     { id: 'miPerfil', icon: UserIcon, path: '/profile' },
   ]
@@ -147,7 +149,7 @@ function AdminSidebar() {
           setSidebarHovered(false)
         }
       }}
-      className="w-full shrink-0 bg-bg-page p-md md:sticky md:top-0 md:flex md:max-h-[calc(100svh-4rem)] md:w-[260px] md:flex-col md:self-start md:overflow-y-auto md:py-lg"
+      className="w-full shrink-0 bg-bg-page p-md md:sticky md:top-0 md:flex md:max-h-[calc(100svh-4rem)] md:w-[260px] md:flex-col md:gap-sm md:self-start md:overflow-y-auto md:py-lg"
     >
       {/*Menu Exclusivo de Admin*/}
       <div className="md:hidden">
@@ -283,7 +285,7 @@ function AdminSidebar() {
 
       <button
         type="button"
-        className={`${itemClasses} hidden text-danger md:mt-auto md:flex`}
+        className={`${itemClasses} hidden text-danger hover:bg-danger-100 md:mt-auto md:flex`}
         onClick={handleLogout}
       >
         <span

@@ -57,7 +57,7 @@ function ProfileButton() {
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 font-body text-body-sm text-danger transition-colors hover:bg-neutral-100"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 font-body text-body-sm text-danger transition-colors hover:bg-danger-100"
           >
             <LogOutIcon size={18} />
               {t('profile.logout')}

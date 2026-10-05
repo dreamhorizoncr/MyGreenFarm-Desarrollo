@@ -241,7 +241,7 @@ const cards = announcements.filter(
                           </div>
 
                           {/* Contenido */}
-                          <div className="relative flex flex-col items-start p-[22px] pb-[60px] text-left md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2">
+                          <div className="relative flex flex-col items-start p-[22px] text-left md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2 md:pb-[60px]">
                             <span className="font-body text-caption text-neutral-500">
                               {formatDate(a.eventDate, i18n.language)}
                             </span>
@@ -254,7 +254,7 @@ const cards = announcements.filter(
                               {a.content}
                             </p>
 
-                            <div className="absolute bottom-[22px] left-[22px]">
+                            <div className="mt-md md:absolute md:bottom-[22px] md:left-[22px]">
                               <BlobButton
                                 onClick={() => setSelectedAnnouncement(a)}
                                 className="h-11 w-fit px-lg font-body text-caption uppercase"
@@ -294,7 +294,7 @@ const cards = announcements.filter(
                           </div>
 
                           {/* Contenido */}
-                          <div className="relative flex flex-col items-start p-[20px] pb-[56px] text-left md:absolute md:inset-x-0 md:bottom-0 md:top-[125px]">
+                          <div className="relative flex flex-col items-start p-[20px] text-left md:absolute md:inset-x-0 md:bottom-0 md:top-[125px] md:pb-[56px]">
                             <span className="font-body text-caption text-neutral-500">
                               {formatDate(a.eventDate, i18n.language)}
                             </span>
@@ -307,7 +307,7 @@ const cards = announcements.filter(
                               {a.content}
                             </p>
 
-                            <div className="absolute bottom-[20px] left-[20px]">
+                            <div className="mt-sm md:absolute md:bottom-[20px] md:left-[20px]">
                               <BlobButton
                                 onClick={() => setSelectedAnnouncement(a)}
                                 className="h-11 w-fit px-lg font-body text-caption uppercase"

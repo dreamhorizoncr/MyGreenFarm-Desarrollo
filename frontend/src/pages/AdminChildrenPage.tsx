@@ -5,6 +5,7 @@ import AdminLayout from "../layout/AdminLayout";
 import ChildFormModal from "../components/ChildFormModal";
 import ChildCard from "../components/ChildCard";
 import Skeleton from "../components/ui/Skeleton";
+import DeleteConfirmModal from "../components/ui/DeleteConfirmModal";
 
 import { childService } from "../services/child";
 import { notify } from "../utils/notifications";
@@ -34,7 +35,6 @@ function AdminChildrenPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [selectedChild, setSelectedChild] = useState<Child | null>(null)
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [childToDelete, setChildToDelete] = useState<Child | null>(null)
 
   const { t } = useTranslation();
@@ -61,7 +61,6 @@ function AdminChildrenPage() {
 
   const handleDelete = (child: Child) => {
   setChildToDelete(child)
-  setDeleteModalOpen(true)
 }
 
   const confirmDelete = async () => {
@@ -70,14 +69,12 @@ function AdminChildrenPage() {
     try {
       await childService.delete(childToDelete.id)
 
-      setDeleteModalOpen(false)
-      setChildToDelete(null)
-
       await fetchChildren()
 
       notify.success('Niño eliminado correctamente')
-    } catch {
+    } catch (err) {
       notify.error('No se pudo eliminar el niño')
+      throw err
     }
   }
 
@@ -186,39 +183,13 @@ function AdminChildrenPage() {
             onSaved={() => {void fetchChildren()}}
       />
 
-      {deleteModalOpen && childToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-[20px]">
-          <div className="w-full max-w-[430px] rounded-[20px] bg-white p-[28px] shadow-lg">
-            <h2 className="m-0 font-heading text-[24px] font-bold text-heading">
-                {t('admin.children.deleteTitle')}
-            </h2>
-
-            <p className="mt-[12px] font-body text-body-sm text-neutral-600">
-              {t('admin.children.deleteMessage', { firstName: childToDelete.firstName, lastName: childToDelete.lastName })}
-            </p>
-
-          <div className="mt-[28px] flex justify-end gap-[12px]">
-            <button
-              type="button"
-              onClick={() => {
-                setDeleteModalOpen(false)
-                setChildToDelete(null)
-              }}
-              className="rounded-full border border-neutral-300 px-[18px] py-[9px] font-body text-body-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
-              >
-              {t('admin.children.cancel')}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => void confirmDelete()}
-              className="rounded-full bg-red-500 px-[18px] py-[9px] font-body text-body-sm font-semibold text-white transition-colors hover:bg-red-600"
-            >
-              {t('admin.children.delete')}
-            </button>
-            </div>
-          </div>
-        </div>
+      {childToDelete && (
+        <DeleteConfirmModal
+          title={t('admin.children.deleteTitle')}
+          message={t('admin.children.deleteMessage', { firstName: childToDelete.firstName, lastName: childToDelete.lastName })}
+          onConfirm={confirmDelete}
+          onClose={() => setChildToDelete(null)}
+        />
       )}
 
     </AdminLayout>

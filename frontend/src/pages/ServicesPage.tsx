@@ -79,7 +79,7 @@ function PlanCard({
           {plan.description}
         </p>
 
-        <div className="my-1 border-t border-neutral-500" />
+        <div className="my-1 border-t border-neutral-100" />
 
         <div className="flex flex-col items-start gap-2xs">
           <div className="flex w-full flex-wrap justify-end gap-1" aria-label={t('moneda.convertTo')}>
@@ -341,7 +341,7 @@ function ServicesPage() {
       </section>
 
       <section className="relative w-full bg-bg-page py-[36px] md:py-[48px]">
-        <Container className="!max-w-[1400px] mb-[36px] flex justify-start md:mb-[48px]">
+        <Container className="mb-[36px] flex justify-start md:mb-[48px]">
           <ExchangeRateWidget
             data={exchangeRate}
             loading={exchangeRateLoading}
@@ -350,7 +350,7 @@ function ServicesPage() {
           />
         </Container>
 
-        <Container className="!max-w-[1400px] grid grid-cols-1 gap-[20px] md:grid-cols-3">
+        <Container className="grid grid-cols-1 gap-[20px] md:grid-cols-3">
           {loading && (
             <>
               <PlanCardSkeleton />

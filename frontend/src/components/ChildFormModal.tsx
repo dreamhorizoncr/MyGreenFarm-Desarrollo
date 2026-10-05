@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { XIcon } from "@animateicons/react/lucide";
 
+import Select from "./ui/Select.tsx";
 import { childService } from "../services/child";
 import { parentService } from "../services/parent";
 import { clubService } from "../services/clubs";
@@ -212,46 +213,42 @@ import { useTranslation } from "react-i18next";
 
                 <label className="font-body text-body-sm font-semibold text-heading">
                 {t("admin.children.parent")}
-                <select
-                    required
-                    value={form.parentIdentification}
-                    onChange={(e) =>
-                    setForm({
-                        ...form,
-                        parentIdentification: e.target.value,
-                    })
-                    }
-                    className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
-                >
-                    <option value="">{t("admin.children.selectParent")}</option>
-
-                    {parents.map((parent) => (
-                    <option key={parent.id} value={parent.identification}>
-                        {parent.firstName} {parent.lastName}
-                    </option>
-                    ))}
-                </select>
+                <div className="mt-xs">
+                    <Select
+                        value={form.parentIdentification}
+                        onChange={(value) =>
+                            setForm({
+                                ...form,
+                                parentIdentification: value,
+                            })
+                        }
+                        options={parents.map((parent) => ({
+                            value: parent.identification,
+                            label: `${parent.firstName} ${parent.lastName}`,
+                        }))}
+                        placeholder={t("admin.children.selectParent")}
+                        className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
+                        aria-label={t("admin.children.parent")}
+                    />
+                </div>
                 </label>
 
                 <label className="font-body text-body-sm font-semibold text-heading">
                 {t("admin.children.relationship")}
-                <select
-                    required
-                    value={form.relationship}
-                    onChange={(e) =>
-                    setForm({
-                        ...form,
-                        relationship: e.target.value as Relationship,
-                    })
-                    }
-                    className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
-                >
-                    {relationshipOptions.map((relationship) => (
-                    <option key={relationship.value} value={relationship.value}>
-                        {relationship.label}
-                    </option>
-                    ))}
-                </select>
+                <div className="mt-xs">
+                    <Select
+                        value={form.relationship}
+                        onChange={(value) =>
+                            setForm({
+                                ...form,
+                                relationship: value as Relationship,
+                            })
+                        }
+                        options={relationshipOptions}
+                        className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
+                        aria-label={t("admin.children.relationship")}
+                    />
+                </div>
                 </label>
 
                 <label className="font-body text-body-sm font-semibold text-heading">
@@ -285,6 +282,7 @@ import { useTranslation } from "react-i18next";
                             type="checkbox"
                             checked={form.clubIds.includes(club.id)}
                             onChange={() => handleClubChange(club.id)}
+                            className="size-4 accent-green-500"
                             />
 
                             {club.name}
@@ -315,7 +313,7 @@ import { useTranslation } from "react-i18next";
                 type="button"
                 onClick={onClose}
                 disabled={saving}
-                className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 disabled:opacity-50"
+                className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-bold text-heading transition-colors hover:bg-green-50 disabled:opacity-50"
             >
                 {t("admin.children.cancel")}
             </button>
@@ -323,7 +321,7 @@ import { useTranslation } from "react-i18next";
             <button
                 type="submit"
                 disabled={saving || loadingOptions}
-                className="h-11 rounded-full bg-green-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-green-600 disabled:cursor-not-allowed disabled:opacity-50"
+                className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-bold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
             >
                 {saving
                 ? t("admin.children.saving")

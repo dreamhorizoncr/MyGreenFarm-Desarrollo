@@ -315,6 +315,10 @@ export default {
     deleteModalMessage: "¿Estás seguro de que deseas eliminar esta noticia?",
     deleteModalCancel: "Cancelar",
     deleteModalConfirm: "Eliminar",
+    deleteConfirmMessage:
+      '¿Seguro que deseas eliminar la noticia "{{title}}"? Esta acción no se puede deshacer.',
+    deleteConfirmFieldLabel: 'Para confirmar, escribe "{{title}}"',
+    deleteConfirmPlaceholder: 'Escribe "{{title}}"',
     editButton: "Editar noticia",
     deleteButton: "Eliminar noticia",
     filterAll: "Todas",
@@ -329,6 +333,8 @@ export default {
     deleteErrorToastTitle: "No se pudo eliminar la noticia",
     imageDeletedToastTitle: "Imagen eliminada",
     imageDeleteErrorToastTitle: "No se pudo eliminar la imagen",
+    deleteImageModalTitle: "Eliminar imagen",
+    deleteImageModalMessage: "¿Seguro que deseas eliminar esta imagen? Esta acción no se puede deshacer.",
   },
   adminForum: {
     title: "Blog del foro",
@@ -741,6 +747,8 @@ export default {
       yearDeleteErrorTitle: "No se pudo eliminar el año",
       imageDeletedTitle: "Imagen eliminada",
       imageDeleteErrorTitle: "No se pudo eliminar la imagen",
+      deleteImageModalTitle: "Eliminar imagen",
+      deleteImageModalMessage: "¿Seguro que deseas eliminar esta imagen? Esta acción no se puede deshacer.",
       featuredAddedTitle: "Álbum destacado",
       featuredRemovedTitle: "Álbum ya no destacado",
       featuredErrorTitle: "No se pudo actualizar el álbum",
@@ -819,6 +827,11 @@ export default {
       updateErrorToastTitle: "No se pudo actualizar el expediente",
       deleteSuccessToastTitle: "Expediente eliminado",
       deleteErrorToastTitle: "No se pudo eliminar el expediente",
+      deleteModalTitle: "Eliminar expediente",
+      deleteConfirmMessage:
+        '¿Seguro que deseas eliminar el expediente de "{{name}}"? Esta acción no se puede deshacer.',
+      deleteConfirmFieldLabel: 'Para confirmar, escribe "{{name}}"',
+      deleteConfirmPlaceholder: 'Escribe "{{name}}"',
       selectStudentError: "Debe seleccionar un estudiante.",
       noExpedients: "No hay expedientes académicos registrados.",
 
@@ -878,6 +891,11 @@ export default {
       updateErrorToastTitle: "No se pudo actualizar al padre de familia",
       deleteSuccessToastTitle: "Padre de familia eliminado",
       deleteErrorToastTitle: "No se pudo eliminar al padre de familia",
+      deleteModalTitle: "Eliminar padre de familia",
+      deleteConfirmMessage:
+        '¿Seguro que deseas eliminar a "{{name}}"? Esta acción no se puede deshacer.',
+      deleteConfirmFieldLabel: 'Para confirmar, escribe "{{name}}"',
+      deleteConfirmPlaceholder: 'Escribe "{{name}}"',
 
     },
 
@@ -926,7 +944,9 @@ export default {
       saving: 'Guardando...',
 
       deleteTitle: 'Eliminar niño',
-      deleteMessage: '¿Estás seguro de que deseas eliminar a',
+      deleteMessage: '¿Seguro que deseas eliminar a "{{firstName}} {{lastName}}"? Esta acción no se puede deshacer.',
+      deleteConfirmFieldLabel: 'Para confirmar, escribe "{{name}}"',
+      deleteConfirmPlaceholder: 'Escribe "{{name}}"',
       delete: 'Eliminar',
 
       loadError: 'No se pudieron cargar los niños.',
@@ -948,6 +968,10 @@ export default {
       saveExceptionErrorToastTitle: "No se pudo guardar el día especial",
       deleteExceptionSuccessToastTitle: "Día especial eliminado",
       deleteExceptionErrorToastTitle: "No se pudo eliminar el día especial",
+      deleteModalTitle: "Eliminar día especial",
+      deleteConfirmMessage:
+        '¿Seguro que deseas eliminar el día especial del "{{date}}"? Esta acción no se puede deshacer.',
+      deleteConfirmFieldLabel: 'Para confirmar, escribe la fecha "{{date}}"',
     },
     ownerClubs: {
       title: "Gestión de Clubes",
@@ -986,12 +1010,18 @@ export default {
       deleteModalMessage: "¿Estás seguro de que deseas eliminar el club",
       deleteModalCancel: "Cancelar",
       deleteModalConfirm: "Eliminar",
+      deleteConfirmMessage:
+        '¿Seguro que deseas eliminar el club "{{name}}"? Esta acción no se puede deshacer.',
+      deleteConfirmFieldLabel: 'Para confirmar, escribe "{{name}}"',
+      deleteConfirmPlaceholder: 'Escribe "{{name}}"',
       deletedToastTitle: "Club eliminado",
       deletedToastDescription: "El club ha sido eliminado correctamente.",
       deleteErrorToastTitle: "Error al eliminar el club",
       imageDeletedToastTitle: "Imagen eliminada",
       imageDeleteErrorToastTitle: "Error al eliminar la imagen",
       deleteImage: "Eliminar imagen",
+      deleteImageModalTitle: "Eliminar imagen",
+      deleteImageModalMessage: "¿Seguro que deseas eliminar esta imagen? Esta acción no se puede deshacer.",
       maxCapacity: "Capacidad máxima",
       capacityLabel: "cupos",
       capacityUnit: "alumnos"
@@ -1059,6 +1089,11 @@ export default {
     createErrorToastTitle: "No se pudo publicar la vacante",
     deletedToastTitle: "Vacante eliminada",
     deleteErrorToastTitle: "No se pudo eliminar la vacante",
+    deleteModalTitle: "Eliminar vacante",
+    deleteConfirmMessage:
+      '¿Seguro que deseas eliminar la vacante "{{title}}"? Esta acción no se puede deshacer.',
+    deleteConfirmFieldLabel: 'Para confirmar, escribe "{{title}}"',
+    deleteConfirmPlaceholder: 'Escribe "{{title}}"',
     openedToastTitle: "Vacante reabierta",
     closedToastTitle: "Vacante cerrada",
     statusErrorToastTitle: "No se pudo actualizar la vacante",

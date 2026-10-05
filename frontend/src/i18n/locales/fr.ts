@@ -311,6 +311,10 @@ export default {
     deleteModalMessage: "Êtes-vous sûr de vouloir supprimer cette actualité ?",
     deleteModalCancel: "Annuler",
     deleteModalConfirm: "Supprimer",
+    deleteConfirmMessage:
+      'Voulez-vous vraiment supprimer l\'actualité "{{title}}" ? Cette action est irréversible.',
+    deleteConfirmFieldLabel: 'Pour confirmer, tapez "{{title}}"',
+    deleteConfirmPlaceholder: 'Tapez "{{title}}"',
     editButton: "Modifier l’actualité",
     deleteButton: "Supprimer l’actualité",
     filterAll: "Toutes",
@@ -325,6 +329,8 @@ export default {
     deleteErrorToastTitle: "Impossible de supprimer l'actualité",
     imageDeletedToastTitle: "Image supprimée",
     imageDeleteErrorToastTitle: "Impossible de supprimer l'image",
+    deleteImageModalTitle: "Supprimer l'image",
+    deleteImageModalMessage: "Voulez-vous vraiment supprimer cette image ? Cette action est irréversible.",
   },
   adminForum: {
     title: "Blog du forum",
@@ -712,12 +718,18 @@ export default {
       deleteModalMessage: "Êtes-vous sûr de vouloir supprimer le club",
       deleteModalCancel: "Annuler",
       deleteModalConfirm: "Supprimer",
+      deleteConfirmMessage:
+        'Voulez-vous vraiment supprimer le club "{{name}}" ? Cette action est irréversible.',
+      deleteConfirmFieldLabel: 'Pour confirmer, tapez "{{name}}"',
+      deleteConfirmPlaceholder: 'Tapez "{{name}}"',
       deletedToastTitle: "Club supprimé",
       deletedToastDescription: "Le club a été supprimé avec succès.",
       deleteErrorToastTitle: "Erreur lors de la suppression du club",
       imageDeletedToastTitle: "Image supprimée",
       imageDeleteErrorToastTitle: "Erreur lors de la suppression de l'image",
       deleteImage: "Supprimer l'image",
+      deleteImageModalTitle: "Supprimer l'image",
+      deleteImageModalMessage: "Voulez-vous vraiment supprimer cette image ? Cette action est irréversible.",
       maxCapacity: "Capacité maximale",
       capacityLabel: "places",
       capacityUnit: "élèves"
@@ -780,6 +792,8 @@ export default {
       yearDeleteErrorTitle: "Impossible de supprimer l'année",
       imageDeletedTitle: "Image supprimée",
       imageDeleteErrorTitle: "Impossible de supprimer l'image",
+      deleteImageModalTitle: "Supprimer l'image",
+      deleteImageModalMessage: "Voulez-vous vraiment supprimer cette image ? Cette action est irréversible.",
       featuredAddedTitle: "Album mis en vedette",
       featuredRemovedTitle: "Album retiré des vedettes",
       featuredErrorTitle: "Impossible de mettre à jour l'album",
@@ -859,6 +873,11 @@ export default {
       updateErrorToastTitle: "Impossible de mettre à jour le dossier",
       deleteSuccessToastTitle: "Dossier supprimé",
       deleteErrorToastTitle: "Impossible de supprimer le dossier",
+      deleteModalTitle: "Supprimer le dossier",
+      deleteConfirmMessage:
+        'Voulez-vous vraiment supprimer le dossier de "{{name}}" ? Cette action est irréversible.',
+      deleteConfirmFieldLabel: 'Pour confirmer, tapez "{{name}}"',
+      deleteConfirmPlaceholder: 'Tapez "{{name}}"',
       selectStudentError: "Vous devez sélectionner un élève.",
       noExpedients: "Aucun dossier académique enregistré.",
 
@@ -915,6 +934,11 @@ export default {
       updateErrorToastTitle: "Le parent n'a pas pu être mis à jour",
       deleteSuccessToastTitle: "Parent supprimé",
       deleteErrorToastTitle: "Le parent n'a pas pu être supprimé",
+      deleteModalTitle: "Supprimer le parent",
+      deleteConfirmMessage:
+        'Voulez-vous vraiment supprimer "{{name}}" ? Cette action est irréversible.',
+      deleteConfirmFieldLabel: 'Pour confirmer, tapez "{{name}}"',
+      deleteConfirmPlaceholder: 'Tapez "{{name}}"',
     },
 
     children: {
@@ -962,7 +986,9 @@ export default {
       saving: 'Enregistrement...',
 
       deleteTitle: 'Supprimer l’enfant',
-      deleteMessage: 'Êtes-vous sûr de vouloir supprimer',
+      deleteMessage: 'Voulez-vous vraiment supprimer "{{firstName}} {{lastName}}" ? Cette action est irréversible.',
+      deleteConfirmFieldLabel: 'Pour confirmer, tapez "{{name}}"',
+      deleteConfirmPlaceholder: 'Tapez "{{name}}"',
       delete: 'Supprimer',
 
       loadError: 'Impossible de charger les enfants.',
@@ -984,6 +1010,10 @@ export default {
       saveExceptionErrorToastTitle: "Impossible d'enregistrer le jour spécial",
       deleteExceptionSuccessToastTitle: "Jour spécial supprimé",
       deleteExceptionErrorToastTitle: "Impossible de supprimer le jour spécial",
+      deleteModalTitle: "Supprimer le jour spécial",
+      deleteConfirmMessage:
+        'Voulez-vous vraiment supprimer le jour spécial du "{{date}}" ? Cette action est irréversible.',
+      deleteConfirmFieldLabel: 'Pour confirmer, tapez la date "{{date}}"',
     },
   },
   clubs: {
@@ -1049,6 +1079,11 @@ export default {
     createErrorToastTitle: "Impossible de publier l'offre",
     deletedToastTitle: "Offre supprimée",
     deleteErrorToastTitle: "Impossible de supprimer l'offre",
+    deleteModalTitle: "Supprimer l'offre",
+    deleteConfirmMessage:
+      'Voulez-vous vraiment supprimer l\'offre "{{title}}" ? Cette action est irréversible.',
+    deleteConfirmFieldLabel: 'Pour confirmer, tapez "{{title}}"',
+    deleteConfirmPlaceholder: 'Tapez "{{title}}"',
     openedToastTitle: "Offre rouverte",
     closedToastTitle: "Offre fermée",
     statusErrorToastTitle: "Impossible de mettre à jour l'offre",

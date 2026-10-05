@@ -54,7 +54,7 @@ function ConfirmCurriculumDecisionModal({ application, action, onConfirm, onClos
         if (event.key === 'Escape') onClose()
       }}
       aria-label={title}
-      className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+      className="fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
       <div className="relative p-[28px_22px_30px]">
         <button
@@ -82,14 +82,14 @@ function ConfirmCurriculumDecisionModal({ application, action, onConfirm, onClos
           )}
 
           <div className="flex gap-md mt-sm">
-            <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-xl border-green-500 font-body text-button uppercase tracking-wide text-heading hover:bg-green-50">
+            <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-xl border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50">
               {t('admin.cancel')}
             </Button>
             <Button
               variant={isApprove ? 'success' : 'danger'}
               onClick={handleConfirm}
               loading={submitting}
-              className={`h-11 flex-1 rounded-xl font-body text-button font-normal uppercase tracking-wide text-white ${isApprove ? 'bg-green-500' : ''}`}
+              className={`h-11 flex-1 rounded-xl font-body text-button font-bold uppercase tracking-wide text-white ${isApprove ? 'bg-green-500' : ''}`}
             >
               {submitting ? t('common.loading') : confirmLabel}
             </Button>

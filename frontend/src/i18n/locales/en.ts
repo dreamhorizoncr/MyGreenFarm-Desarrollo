@@ -312,6 +312,10 @@ export default {
     deleteModalMessage: "Are you sure you want to delete this news item?",
     deleteModalCancel: "Cancel",
     deleteModalConfirm: "Delete",
+    deleteConfirmMessage:
+      'Are you sure you want to delete the news item "{{title}}"? This action cannot be undone.',
+    deleteConfirmFieldLabel: 'To confirm, type "{{title}}"',
+    deleteConfirmPlaceholder: 'Type "{{title}}"',
     editButton: "Edit news",
     deleteButton: "Delete news",
     filterAll: "All",
@@ -326,6 +330,8 @@ export default {
     deleteErrorToastTitle: "Couldn't delete the news item",
     imageDeletedToastTitle: "Image deleted",
     imageDeleteErrorToastTitle: "Couldn't delete the image",
+    deleteImageModalTitle: "Delete image",
+    deleteImageModalMessage: "Are you sure you want to delete this image? This action cannot be undone.",
   },
   adminForum: {
     title: "Forum blog",
@@ -711,12 +717,18 @@ export default {
       deleteModalMessage: "Are you sure you want to delete the club",
       deleteModalCancel: "Cancel",
       deleteModalConfirm: "Delete",
+      deleteConfirmMessage:
+        'Are you sure you want to delete the club "{{name}}"? This action cannot be undone.',
+      deleteConfirmFieldLabel: 'To confirm, type "{{name}}"',
+      deleteConfirmPlaceholder: 'Type "{{name}}"',
       deletedToastTitle: "Club deleted",
       deletedToastDescription: "The club has been successfully deleted.",
       deleteErrorToastTitle: "Error deleting club",
       imageDeletedToastTitle: "Image deleted",
       imageDeleteErrorToastTitle: "Error deleting image",
       deleteImage: "Delete image",
+      deleteImageModalTitle: "Delete image",
+      deleteImageModalMessage: "Are you sure you want to delete this image? This action cannot be undone.",
       maxCapacity: "Max capacity",
       capacityLabel: "spots",
       capacityUnit: "students"
@@ -778,6 +790,8 @@ export default {
       yearDeleteErrorTitle: "Couldn't delete the year",
       imageDeletedTitle: "Image deleted",
       imageDeleteErrorTitle: "Couldn't delete the image",
+      deleteImageModalTitle: "Delete image",
+      deleteImageModalMessage: "Are you sure you want to delete this image? This action cannot be undone.",
       featuredAddedTitle: "Album featured",
       featuredRemovedTitle: "Album no longer featured",
       featuredErrorTitle: "Couldn't update the album",
@@ -856,6 +870,11 @@ export default {
       updateErrorToastTitle: "Couldn't update the record",
       deleteSuccessToastTitle: "Record deleted",
       deleteErrorToastTitle: "Couldn't delete the record",
+      deleteModalTitle: "Delete record",
+      deleteConfirmMessage:
+        'Are you sure you want to delete the record for "{{name}}"? This action cannot be undone.',
+      deleteConfirmFieldLabel: 'To confirm, type "{{name}}"',
+      deleteConfirmPlaceholder: 'Type "{{name}}"',
       selectStudentError: "You must select a student.",
       noExpedients: "No academic records registered.",
 
@@ -912,6 +931,11 @@ export default {
       updateErrorToastTitle: "The parent could not be updated",
       deleteSuccessToastTitle: "Parent deleted",
       deleteErrorToastTitle: "The parent could not be deleted",
+      deleteModalTitle: "Delete parent",
+      deleteConfirmMessage:
+        'Are you sure you want to delete "{{name}}"? This action cannot be undone.',
+      deleteConfirmFieldLabel: 'To confirm, type "{{name}}"',
+      deleteConfirmPlaceholder: 'Type "{{name}}"',
     },
 
     children: {
@@ -959,7 +983,9 @@ export default {
       saving: 'Saving...',
 
       deleteTitle: 'Delete child',
-      deleteMessage: 'Are you sure you want to delete',
+      deleteMessage: 'Are you sure you want to delete "{{firstName}} {{lastName}}"? This action cannot be undone.',
+      deleteConfirmFieldLabel: 'To confirm, type "{{name}}"',
+      deleteConfirmPlaceholder: 'Type "{{name}}"',
       delete: 'Delete',
 
       loadError: 'Children could not be loaded.',
@@ -981,6 +1007,10 @@ export default {
       saveExceptionErrorToastTitle: "Couldn't save the special day",
       deleteExceptionSuccessToastTitle: "Special day deleted",
       deleteExceptionErrorToastTitle: "Couldn't delete the special day",
+      deleteModalTitle: "Delete special day",
+      deleteConfirmMessage:
+        'Are you sure you want to delete the special day on "{{date}}"? This action cannot be undone.',
+      deleteConfirmFieldLabel: 'To confirm, type the date "{{date}}"',
     },
   },
   clubs: {
@@ -1044,6 +1074,11 @@ export default {
     createErrorToastTitle: "Couldn't publish the vacancy",
     deletedToastTitle: "Vacancy deleted",
     deleteErrorToastTitle: "Couldn't delete the vacancy",
+    deleteModalTitle: "Delete vacancy",
+    deleteConfirmMessage:
+      'Are you sure you want to delete the vacancy "{{title}}"? This action cannot be undone.',
+    deleteConfirmFieldLabel: 'To confirm, type "{{title}}"',
+    deleteConfirmPlaceholder: 'Type "{{title}}"',
     openedToastTitle: "Vacancy reopened",
     closedToastTitle: "Vacancy closed",
     statusErrorToastTitle: "Couldn't update the vacancy",

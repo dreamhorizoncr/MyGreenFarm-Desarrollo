@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { XIcon } from "@animateicons/react/lucide";
 
+import Select from "./ui/Select.tsx";
 import { evaluationService } from "../services/evaluation";
 import { expedientService } from "../services/expedient";
 import { notify } from "../utils/notifications";
@@ -163,27 +164,18 @@ import { notify } from "../utils/notifications";
                     Niño / Expediente
                 </label>
 
-                <select
+                <Select
                     value={form.expedientId}
-                    onChange={(event) =>
-                    handleChange("expedientId", event.target.value)
-                    }
-                    required
+                    onChange={(value) => handleChange("expedientId", value)}
                     disabled={loadingOptions}
-                    className="w-full rounded-[12px] border border-neutral-300 bg-white px-[14px] py-[11px] font-body text-body-sm text-heading outline-none transition-colors focus:border-green-500 disabled:bg-neutral-100"
-                >
-                    <option value="">
-                    {loadingOptions
-                        ? "Cargando expedientes..."
-                        : "Seleccione un niño"}
-                    </option>
-
-                    {expedients.map((expedient) => (
-                    <option key={expedient.id} value={expedient.id}>
-                        {expedient.childName} — {expedient.studentId}
-                    </option>
-                    ))}
-                </select>
+                    placeholder={loadingOptions ? "Cargando expedientes..." : "Seleccione un niño"}
+                    options={expedients.map((expedient) => ({
+                        value: expedient.id,
+                        label: `${expedient.childName} — ${expedient.studentId}`,
+                    }))}
+                    className="h-11 w-full rounded-[12px] border border-neutral-300 bg-white px-[14px]"
+                    aria-label="Niño / Expediente"
+                />
                 </div>
 
                 <div>

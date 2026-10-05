@@ -178,7 +178,7 @@ function VacanciesPage() {
             if (event.key === 'Escape') setApplicationSent(false)
           }}
           aria-label={t('vacancies.applicationSentTitle')}
-          className="m-auto w-[min(420px,92vw)] max-w-none rounded-2xl bg-bg-card text-center backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+          className="fixed inset-0 m-auto w-[min(420px,92vw)] max-w-none rounded-2xl bg-bg-card text-center backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
         >
           <div className="p-xl">
             <h2 className="m-0 font-heading text-2xl font-bold text-heading">{t('vacancies.applicationSentTitle')}</h2>

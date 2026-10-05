@@ -170,14 +170,14 @@ function AdminNewsletterPage() {
 
                         {isSendMenuOpen && (
                             <div
-                                className="absolute right-0 top-[calc(100%+var(--spacing-2xs))] z-30 min-w-[220px] rounded-xl border border-neutral-200 bg-white p-2xs shadow animate-[admin-row-menu-in_0.12s_ease-out]"
+                                className="absolute right-0 top-[calc(100%+var(--spacing-2xs))] z-30 min-w-[220px] rounded-xl border border-neutral-200 bg-white p-xs shadow animate-[admin-row-menu-in_0.12s_ease-out]"
                                 role="menu"
                             >
                                 <button
                                     type="button"
                                     role="menuitem"
                                     onClick={() => handleOpenBroadcast('SUBSCRIBERS')}
-                                    className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-body-sm text-body-text transition-colors hover:bg-(--grey-100)"
+                                    className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100"
                                 >
                                     {t('admin.newsletter.sendSubscribers')}
                                 </button>
@@ -185,7 +185,7 @@ function AdminNewsletterPage() {
                                     type="button"
                                     role="menuitem"
                                     onClick={() => handleOpenBroadcast('PARENTS')}
-                                    className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-body-sm text-body-text transition-colors hover:bg-(--grey-100)"
+                                    className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100"
                                 >
                                     {t('admin.newsletter.sendParents')}
                                 </button>
@@ -193,7 +193,7 @@ function AdminNewsletterPage() {
                                     type="button"
                                     role="menuitem"
                                     onClick={() => handleOpenBroadcast('BOTH')}
-                                    className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-body-sm text-body-text transition-colors hover:bg-(--grey-100)"
+                                    className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100"
                                 >
                                     {t('admin.newsletter.sendAll')}
                                 </button>
@@ -284,7 +284,7 @@ function AdminNewsletterPage() {
                             if (event.key === 'Escape') setIsBroadcastModalOpen(false)
                         }}
                         aria-labelledby="newsletter-broadcast-title"
-                        className="m-auto w-[min(560px,92vw)] max-w-none rounded-2xl bg-bg-card p-xl shadow-xl backdrop:bg-scrim"
+                        className="fixed inset-0 m-auto w-[min(560px,92vw)] max-w-none rounded-2xl bg-bg-card p-xl shadow-xl backdrop:bg-scrim"
                     >
                             <button
                                 type="button"
@@ -321,14 +321,14 @@ function AdminNewsletterPage() {
                                     <button
                                         type="button"
                                         onClick={() => setIsBroadcastModalOpen(false)}
-                                        className="rounded-full px-md py-sm font-body text-body-sm text-green-500 font-semibold text-body-text border border-neutral-300"
+                                        className="rounded-full border border-green-500 px-md py-sm font-body text-body-sm font-bold text-heading hover:bg-green-50"
                                     >
                                         {t('admin.cancel')}
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={broadcastLoading}
-                                        className="inline-flex items-center gap-xs rounded-full bg-green-500 px-md py-sm font-body text-body-sm font-semibold text-white  disabled:cursor-not-allowed disabled:opacity-60"
+                                        className="inline-flex items-center gap-xs rounded-full bg-orange-500 px-md py-sm font-body text-body-sm font-bold text-white hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
                                     >
                                         <SendIcon size={16} aria-hidden="true" />
                                         {t('admin.newsletter.send')}

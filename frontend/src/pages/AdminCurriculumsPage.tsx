@@ -112,8 +112,9 @@ function AdminCurriculumsPage() {
     try {
       await deleteVacancy(id)
       notify.success(t('vacancies.deletedToastTitle'))
-    } catch {
+    } catch (err) {
       notify.error(t('vacancies.deleteErrorToastTitle'))
+      throw err
     }
   }
 
