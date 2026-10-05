@@ -20,7 +20,7 @@ function ChildCard({ child, onEdit, onDelete }: ChildCardProps) {
   const { t } = useTranslation();
 
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
+    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <h2 className="font-heading text-xl font-bold text-heading">
@@ -121,7 +121,7 @@ function ChildCard({ child, onEdit, onDelete }: ChildCardProps) {
             {child.clubNames.map((club) => (
               <span
                 key={club}
-                className="rounded-full bg-green-100 px-3 py-1 font-body text-xs font-semibold text-green-700"
+                className="rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white"
               >
                 {club}
               </span>

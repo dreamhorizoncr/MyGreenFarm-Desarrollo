@@ -318,14 +318,14 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
             type="button"
             variant="secondary"
             onClick={onClose}
-            className="h-11 rounded-full border-green-500 font-body text-button text-heading hover:bg-green-50"
+            className="h-11 rounded-full border-green-500 font-body text-button font-bold text-heading hover:bg-green-50"
           >
             {t('adminForum.cancel')}
           </Button>
 
           <Button
             type="submit"
-            className="h-11 rounded-full bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600"
+            className="h-11 rounded-full bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
           >
             {post ? t('adminForum.saveChanges') : t('adminForum.publish')}
           </Button>
@@ -339,7 +339,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
           }}
           onClose={() => { setPendingChanges(null); setConfirmationText('') }}
           aria-label={t('adminForum.confirmChangesTitle')}
-          className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+          className="fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
         >
           <div className="relative p-[28px_22px_30px]">
             <button
@@ -369,7 +369,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
                   type="button"
                   variant="secondary"
                   onClick={() => { setPendingChanges(null); setConfirmationText('') }}
-                  className="h-11 flex-1 rounded-full border-green-500 font-body text-button uppercase tracking-wide text-heading hover:bg-green-50"
+                  className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50"
                 >
                   {t('adminForum.cancel')}
                 </Button>
@@ -377,7 +377,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
                   type="button"
                   disabled={confirmationText.trim().toLocaleUpperCase() !== t('adminForum.confirmWord').toLocaleUpperCase()}
                   onClick={() => onSubmit(pendingChanges)}
-                  className="h-11 flex-1 rounded-full font-body text-button font-normal uppercase tracking-wide text-white disabled:cursor-not-allowed disabled:opacity-50"
+                  className="h-11 flex-1 rounded-full font-body text-button font-bold uppercase tracking-wide text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {t('adminForum.confirmChanges')}
                 </Button>

@@ -10,6 +10,7 @@ import ExpedientCard from "../components/ExpedientCard";
 
 import Skeleton from "../components/ui/Skeleton";
 import Pagination from "../components/ui/Pagination.tsx";
+import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 
 import { expedientService } from "../services/expedient";
 
@@ -65,6 +66,8 @@ function AdminExpedientsPage() {
     null,
   );
 
+  const [expedientToDelete, setExpedientToDelete] = useState<Expedient | null>(null);
+
   const { t } = useTranslation();
 
   // Obtiene los expedientes cuando carga la página
@@ -77,17 +80,11 @@ function AdminExpedientsPage() {
     expedient.childName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  // Elimina un expediente
-  const handleDelete = async (expedient: Expedient) => {
-    const confirmed = window.confirm(
-      `¿Deseas eliminar el expediente de ${expedient.childName}?`,
-    );
-
-    // Si cancela, no elimina nada
-    if (!confirmed) return;
+  const confirmDeleteExpedient = async () => {
+    if (!expedientToDelete) return;
 
     try {
-      await expedientService.delete(expedient.id);
+      await expedientService.delete(expedientToDelete.id);
 
       // Actualiza la lista después de eliminar
       await fetchExpedients();
@@ -97,6 +94,7 @@ function AdminExpedientsPage() {
       console.error("Error al eliminar el expediente:", error);
 
       notify.error(t("admin.expedients.deleteErrorToastTitle"));
+      throw error;
     }
   };
 
@@ -168,7 +166,7 @@ function AdminExpedientsPage() {
                   // Abre el modal de edición
                   onEdit={setEditingExpedient}
                   // Elimina el expediente
-                  onDelete={handleDelete}
+                  onDelete={setExpedientToDelete}
                 />
               ))}
             </div>
@@ -211,6 +209,17 @@ function AdminExpedientsPage() {
             expedient={editingExpedient}
             onClose={() => setEditingExpedient(null)}
             onCreated={fetchExpedients}
+          />
+        )}
+
+        {expedientToDelete && (
+          <DeleteConfirmModal
+            title={t("admin.expedients.deleteModalTitle")}
+            message={t("admin.expedients.deleteConfirmMessage", {
+              name: expedientToDelete.childName,
+            })}
+            onConfirm={confirmDeleteExpedient}
+            onClose={() => setExpedientToDelete(null)}
           />
         )}
       </section>

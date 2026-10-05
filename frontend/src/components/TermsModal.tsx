@@ -56,7 +56,7 @@ function TermsModal({ onClose }: Readonly<TermsModalProps>) {
         if (event.key === 'Escape') onClose()
       }}
       aria-label={t('legalModal.title')}
-      className="m-auto max-h-[90vh] w-[min(680px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+      className="fixed inset-0 m-auto max-h-[90vh] w-[min(680px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
       <div className="relative p-[28px_22px_30px]">
         <button

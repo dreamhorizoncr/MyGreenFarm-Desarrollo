@@ -5,6 +5,7 @@ import AdminLayout from "../layout/AdminLayout";
 import EvaluationCard from "../components/EvaluationCard";
 import EvaluationFormModal from "../components/EvaluationFormModal";
 import Skeleton from "../components/ui/Skeleton";
+import DeleteConfirmModal from "../components/ui/DeleteConfirmModal";
 
 import { evaluationService } from "../services/evaluation";
 import { expedientService } from "../services/expedient";
@@ -49,7 +50,6 @@ function EvaluationCardSkeleton() {
     const [selectedEvaluation, setSelectedEvaluation] =
         useState<Evaluation | null>(null);
 
-    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [evaluationToDelete, setEvaluationToDelete] =
         useState<Evaluation | null>(null);
 
@@ -105,7 +105,6 @@ function EvaluationCardSkeleton() {
 
     const handleDelete = (evaluation: Evaluation) => {
         setEvaluationToDelete(evaluation);
-        setDeleteModalOpen(true);
     };
 
     const confirmDelete = async () => {
@@ -114,14 +113,12 @@ function EvaluationCardSkeleton() {
         try {
         await evaluationService.delete(evaluationToDelete.id);
 
-        setDeleteModalOpen(false);
-        setEvaluationToDelete(null);
-
         await fetchEvaluations();
 
         notify.success("Evaluación eliminada correctamente");
-        } catch {
+        } catch (err) {
         notify.error("No se pudo eliminar la evaluación");
+        throw err;
         }
     };
 
@@ -254,48 +251,13 @@ function EvaluationCardSkeleton() {
             />
 
             {/* Eliminar */}
-            {deleteModalOpen && evaluationToDelete && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-[20px]">
-                <div className="w-full max-w-[430px] rounded-[20px] bg-white p-[28px] shadow-lg">
-                <h2 className="m-0 font-heading text-[24px] font-bold text-heading">
-                    Eliminar evaluación
-                </h2>
-
-                <p className="mt-[12px] font-body text-body-sm text-neutral-600">
-                    ¿Estás seguro de que deseas eliminar la evaluación
-                    {deletingExpedient && (
-                    <>
-                        {" "}de{" "}
-                        <span className="font-semibold">
-                        {deletingExpedient.childName}
-                        </span>
-                    </>
-                    )}
-                    ?
-                </p>
-
-                <div className="mt-[28px] flex justify-end gap-[12px]">
-                    <button
-                    type="button"
-                    onClick={() => {
-                        setDeleteModalOpen(false);
-                        setEvaluationToDelete(null);
-                    }}
-                    className="rounded-full border border-neutral-300 px-[18px] py-[9px] font-body text-body-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
-                    >
-                    Cancelar
-                    </button>
-
-                    <button
-                    type="button"
-                    onClick={() => void confirmDelete()}
-                    className="rounded-full bg-red-500 px-[18px] py-[9px] font-body text-body-sm font-semibold text-white transition-colors hover:bg-red-600"
-                    >
-                    Eliminar
-                    </button>
-                </div>
-                </div>
-            </div>
+            {evaluationToDelete && (
+            <DeleteConfirmModal
+                title="Eliminar evaluación"
+                message={`¿Seguro que deseas eliminar la evaluación de "${evaluationToDelete.evaluationDate}"${deletingExpedient ? ` de ${deletingExpedient.childName}` : ''}? Esta acción no se puede deshacer.`}
+                onConfirm={confirmDelete}
+                onClose={() => setEvaluationToDelete(null)}
+            />
             )}
         </AdminLayout>
     );

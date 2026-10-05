@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PlusIcon, Trash2Icon } from '@animateicons/react/lucide'
 import CreateVacancyModal from './CreateVacancyModal.tsx'
+import DeleteConfirmModal from './ui/DeleteConfirmModal.tsx'
 import Skeleton from './ui/Skeleton.tsx'
 import Pagination from './ui/Pagination.tsx'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
@@ -32,7 +33,7 @@ interface VacancyManagementSectionProps {
   onCreate: (data: VacancyInput) => Promise<void>
   onSetOpen: (id: string, isOpen: boolean) => void
   onRelease: (id: string) => void
-  onDelete: (id: string) => void
+  onDelete: (id: string) => Promise<void>
 }
 
 function statusDotClass(vacancy: Vacancy) {
@@ -43,6 +44,7 @@ function statusDotClass(vacancy: Vacancy) {
 function VacancyManagementSection({ vacancies, loading, error, applicantNameById, onCreate, onSetOpen, onRelease, onDelete,}: Readonly<VacancyManagementSectionProps>) {
   const { t } = useTranslation()
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [vacancyToDelete, setVacancyToDelete] = useState<Vacancy | null>(null)
   const { currentPage, setPage, totalPages, pageItems: pagedVacancies } = useClientPagination(vacancies)
 
   const openStateLabel = (isOpen: boolean) =>
@@ -86,7 +88,7 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
 
                   <button
                     type="button"
-                    onClick={() => onDelete(vacancy.id)}
+                    onClick={() => setVacancyToDelete(vacancy)}
                     aria-label={t('admin.delete')}
                     title={t('admin.delete')}
                     className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
@@ -138,6 +140,15 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
 
       {showCreateModal && (
         <CreateVacancyModal onCreate={onCreate} onClose={() => setShowCreateModal(false)} />
+      )}
+
+      {vacancyToDelete && (
+        <DeleteConfirmModal
+          title={t('vacancies.deleteModalTitle')}
+          message={t('vacancies.deleteConfirmMessage', { title: vacancyToDelete.title })}
+          onConfirm={() => onDelete(vacancyToDelete.id)}
+          onClose={() => setVacancyToDelete(null)}
+        />
       )}
     </>
   )

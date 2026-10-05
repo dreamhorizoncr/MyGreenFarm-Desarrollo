@@ -68,7 +68,7 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
         if (event.key === 'Escape') onClose()
       }}
       aria-label={t('vacancies.publishModalTitle')}
-      className="m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+      className="fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
     >
       <div className="relative p-[28px_22px_30px]">
         <button
@@ -161,14 +161,14 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
           {saveError && <p className="text-left font-body text-body-sm text-danger">{saveError}</p>}
 
           <div className="mt-sm flex gap-md">
-            <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-full border-green-500 font-body text-button uppercase tracking-wide text-heading hover:bg-green-50">
+            <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50">
               {t('admin.cancel')}
             </Button>
             <Button
               variant="success"
               onClick={handleSubmit}
               loading={saving}
-              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-normal uppercase tracking-wide text-white hover:bg-orange-600"
+              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold uppercase tracking-wide text-white hover:bg-orange-600"
             >
               {saving ? t('common.loading') : t('vacancies.publish')}
             </Button>

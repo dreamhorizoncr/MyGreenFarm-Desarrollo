@@ -21,7 +21,7 @@ import type { Expedient } from "../types/expedient";
     ).toLocaleDateString();
 
     return (
-        <div className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
+        <div className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
         {/* Encabezado */}
         <div className="flex items-start justify-between gap-md">
             <div className="min-w-0">
