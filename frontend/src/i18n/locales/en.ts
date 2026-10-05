@@ -743,6 +743,7 @@ export default {
       includesLabel: "What's included",
       includesPlaceholder: "Describe the plan benefits...",
       chooseImage: "Choose image",
+      imageSelected: "Image selected",
       currentImage: "Current image",
       invalidFileType:
         '"{{name}}" is not a valid image. Only PNG, JPG, JPEG or SVG are allowed.',
