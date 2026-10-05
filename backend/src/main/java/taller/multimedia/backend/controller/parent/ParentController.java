@@ -5,6 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import taller.multimedia.backend.dto.parent.ParentRequest;
 import taller.multimedia.backend.model.parent.Parent;
 import taller.multimedia.backend.service.parent.ParentService;
@@ -36,8 +39,9 @@ public class ParentController {
     // Endpoint para listar todos los padres en el panel de administración
     @GetMapping
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
-    public ResponseEntity<List<Parent>> getAllParents() {
-        List<Parent> parents = parentService.getAllParents();
+    public ResponseEntity<Page<Parent>> getAllParents(
+            @PageableDefault(size = 10, sort = "lastName") Pageable pageable) {
+        Page<Parent> parents = parentService.getAllParents(pageable);
         return ResponseEntity.ok(parents);
     }
 

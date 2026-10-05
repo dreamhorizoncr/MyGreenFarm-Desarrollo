@@ -16,7 +16,6 @@ import { expedientService } from "../services/expedient";
 import { notify } from "../utils/notifications.ts";
 
 import { useExpedients } from "../hooks/useExpedients";
-import { useClientPagination } from "../hooks/useClientPagination.ts";
 
 import type { Expedient } from "../types/expedient";
 
@@ -52,7 +51,8 @@ function ExpedientCardSkeleton() {
 
 function AdminExpedientsPage() {
 
-  const { expedients, loading, error, fetchExpedients } = useExpedients();
+  const { expedients, loading, error, totalPages, fetchExpedients } = useExpedients();
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Guarda lo que escribe el usuario en el buscador
   const [searchTerm, setSearchTerm] = useState("");
@@ -69,15 +69,13 @@ function AdminExpedientsPage() {
 
   // Obtiene los expedientes cuando carga la página
   useEffect(() => {
-    void fetchExpedients();
-  }, []);
+    void fetchExpedients(currentPage - 1);
+  }, [currentPage]);
 
   // Filtra los expedientes por el nombre del niño o niña
   const filteredExpedients = expedients.filter((expedient) =>
     expedient.childName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
-
-  const { currentPage, setPage, totalPages, pageItems: pagedExpedients } = useClientPagination(filteredExpedients);
 
   // Elimina un expediente
   const handleDelete = async (expedient: Expedient) => {
@@ -163,7 +161,7 @@ function AdminExpedientsPage() {
         {!loading && !error && filteredExpedients.length > 0 && (
           <>
             <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {pagedExpedients.map((expedient) => (
+              {filteredExpedients.map((expedient) => (
                 <ExpedientCard
                   key={expedient.id}
                   expedient={expedient}
@@ -174,7 +172,7 @@ function AdminExpedientsPage() {
                 />
               ))}
             </div>
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
           </>
         )}
 

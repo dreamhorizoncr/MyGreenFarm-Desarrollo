@@ -1,11 +1,11 @@
-import { apiClient } from "./api.ts";
+import { apiClient, type PageResponse } from "./api.ts";
 
 import type { Parent, ParentRequest } from "../types/parent.ts";
 
 export const parentService = {
   // Obtiene todos los padres.
-    async getParents(): Promise<Parent[]> {
-        const response = await apiClient.get<Parent[]>("/parents");
+    async getParents(page = 0, size = 10): Promise<PageResponse<Parent>> {
+        const response = await apiClient.get<PageResponse<Parent>>("/parents", { params: { page, size } });
         return response.data;
     },
 

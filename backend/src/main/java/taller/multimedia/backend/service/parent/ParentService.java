@@ -1,6 +1,8 @@
 package taller.multimedia.backend.service.parent;
 
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import taller.multimedia.backend.dto.parent.ParentRequest;
 import taller.multimedia.backend.model.parent.Parent;
 import taller.multimedia.backend.repository.parent.ParentRepository;
@@ -37,8 +39,8 @@ public class ParentService {
         return parentRepository.save(parent);
     }
 
-    public List<Parent> getAllParents() {
-        return parentRepository.findAll();
+    public Page<Parent> getAllParents(Pageable pageable) {
+        return parentRepository.findAll(pageable);
     }
 
     private String resolverLangCode(String lang) {

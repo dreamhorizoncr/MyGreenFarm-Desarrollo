@@ -1,9 +1,9 @@
-import { apiClient } from './api.ts'
+import { apiClient, type PageResponse } from './api.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 
 export const adminService = {
-  async getUsers(): Promise<UserInfo[]> {
-    const response = await apiClient.get<UserInfo[]>('/users')
+  async getUsers(page = 0, size = 10): Promise<PageResponse<UserInfo>> {
+    const response = await apiClient.get<PageResponse<UserInfo>>('/users', { params: { page, size } })
     return response.data
   },
 
