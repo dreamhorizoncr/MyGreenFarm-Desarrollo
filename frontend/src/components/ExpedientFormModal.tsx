@@ -95,7 +95,7 @@ function ExpedientFormModal({
     if (expedient && childrenOptions.length > 0) {
       const match = childrenOptions.find((opt) => opt.studentId === expedient.studentId);
       if (match) {
-        setSearchTerm(`${match.studentId} - ${match.fullName ?? match.childName}`);
+        setSearchTerm(`${match.fullName ?? match.childName}`);
       }
     }
   }, [expedient, childrenOptions]);
@@ -256,7 +256,7 @@ function ExpedientFormModal({
 
               {/* Desplegable de resultados */}
               {isOpen && !isEditing && (
-                <ul className="absolute z-50 mt-1 max-h-56 w-full overflow-auto border border-gray-600 bg-white py-1 shadow-lg font-body text-body-sm">
+                <ul className="absolute z-50 mt-1 max-h-56 w-full overflow-auto border border-neutral-200 rounded-xl  bg-white py-2 shadow-lg font-body text-body-sm">
                   {filteredOptions.length > 0 ? (
                     filteredOptions.map((option) => (
                       <li
@@ -266,7 +266,7 @@ function ExpedientFormModal({
                           setSearchTerm(`${option.fullName ?? option.childName}`);
                           setIsOpen(false);
                         }}
-                        className="cursor-pointer px-4 py-2 hover:bg-gray-600 hover:text-white transition-colors"
+                        className="cursor-pointer px-4 py-2 hover:bg-orange-100 rounded-lg text-heading mx-2 transition-colors"
                       >
                         <span className="font-bold"></span>{option.fullName ?? option.childName}
                       </li>

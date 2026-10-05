@@ -129,11 +129,7 @@ public class ServicePlanService {
                 for (Map<String, Object> item : (List<Map<String, Object>>) priceRes.getBody().get("data")) {
                     Map<String, Object> prod = prodMap.getOrDefault(item.get("productId"), Collections.emptyMap());
 
-                    Boolean priceActive = (Boolean) item.get("isActive");
-                    Boolean prodActive = (Boolean) prod.get("isActive");
-
-                    // Si alguno está inactivo (false), se omite por completo
-                    if ((priceActive != null && !priceActive) || (prodActive != null && !prodActive)) {
+                    if (isArchivedOrInactive(item) || isArchivedOrInactive(prod)) {
                         continue;
                     }
 
@@ -183,6 +179,44 @@ public class ServicePlanService {
 
         return plansList;
     }
+
+    private boolean isArchivedOrInactive(Map<String, Object> resource) {
+        if (isFalse(resource.get("isActive")) || isFalse(resource.get("active"))
+                || isTrue(resource.get("archived")) || isTrue(resource.get("isArchived"))
+                || isTrue(resource.get("isDeleted"))) {
+            return true;
+        }
+
+        Object status = resource.get("status");
+        if (status == null) {
+            return false;
+        }
+        String normalizedStatus = status.toString().trim().toLowerCase(java.util.Locale.ROOT);
+        return normalizedStatus.equals("archived")
+                || normalizedStatus.equals("inactive")
+                || normalizedStatus.equals("deleted");
+    }
+
+    private boolean isTrue(Object value) {
+        if (value instanceof Boolean booleanValue) {
+            return booleanValue;
+        }
+        if (value instanceof Number numberValue) {
+            return numberValue.intValue() != 0;
+        }
+        return value != null && "true".equalsIgnoreCase(value.toString().trim());
+    }
+
+    private boolean isFalse(Object value) {
+        if (value instanceof Boolean booleanValue) {
+            return !booleanValue;
+        }
+        if (value instanceof Number numberValue) {
+            return numberValue.intValue() == 0;
+        }
+        return value != null && "false".equalsIgnoreCase(value.toString().trim());
+    }
+
 
     // Une lo que viene de OnvoPay con la imagen, horarios y detalles guardados en
     // Supabase.

@@ -122,7 +122,7 @@ function Select({
         />
       </button>
 
-      {open && position && createPortal(
+      {open && position && (
         <ul
           ref={menuRef}
           style={{ top: position.top, left: position.left, width: position.width }}
@@ -148,8 +148,7 @@ function Select({
               </button>
             </li>
           ))}
-        </ul>,
-        document.body,
+        </ul>
       )}
     </div>
   );
