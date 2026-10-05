@@ -392,7 +392,7 @@ function ExpedientFormModal({
             <button
               type="submit"
               disabled={saving}
-              className="h-11 rounded-full bg-orange-500 px-7 font-body font-bold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
+              className="h-11 rounded-full bg-green-500 px-7 font-body font-bold text-white transition-colors hover:bg-green-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {saving ? t("admin.expedients.saving") : idleSaveLabel}
             </button>
