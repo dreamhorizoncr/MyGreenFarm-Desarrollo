@@ -149,7 +149,7 @@ function Navbar() {
           </button>
         </div>
 
-        <nav className="flex flex-col items-center gap-6 px-6 pt-6 font-link">
+        {!isProtectedPage && <nav className="flex flex-col items-center gap-6 px-6 pt-6 font-link">
           {navLinks.map((link) => (
             <Link
               key={link.to}
@@ -201,7 +201,7 @@ function Navbar() {
       <LockIcon size={18} aria-hidden="true" />
     </Link>
   )}
-</nav>
+</nav>}
 
         {isAuthenticated && isProtectedPage && (
           <div className="px-6 pt-8">
