@@ -631,6 +631,8 @@ export default {
       clubs: "Clubs",
       expedientes: "Dossiers",
       parents: "Parents",
+      niños: "Enfants",
+      evaluaciones: "Évaluations",
       miPerfil: "Mon profil",
       servicios: "Services",
       disponibilidad: "Mes disponibilités",
@@ -913,6 +915,66 @@ export default {
       updateErrorToastTitle: "Le parent n'a pas pu être mis à jour",
       deleteSuccessToastTitle: "Parent supprimé",
       deleteErrorToastTitle: "Le parent n'a pas pu être supprimé",
+    },
+
+    children: {
+      title: 'Enfants',
+      description: 'Gérez les enfants enregistrés dans My Green Farm.',
+      searchPlaceholder: 'Rechercher un enfant...',
+      addChild: 'Inscrire un enfant',
+
+      studentId: 'ID étudiant',
+      parent: 'Parent ou tuteur',
+      birthDate: 'Date de naissance',
+      medicalNotes: 'Notes médicales',
+      noMedicalNotes: 'Aucune note médicale',
+      clubs: 'Clubs',
+
+      noChildren: 'Aucun enfant enregistré.',
+      noResults: 'Aucun enfant ne correspond à votre recherche.',
+
+      createTitle: 'Inscrire un enfant',
+      editTitle: 'Modifier un enfant',
+      firstName: 'Prénom',
+      lastName: 'Nom',
+      parentOrGuardian: 'Parent ou tuteur',
+      selectParent: 'Sélectionnez un parent ou un tuteur',
+      relationship: 'Lien de parenté',
+      birthDateLabel: 'Date de naissance',
+      medicalNotesLabel: 'Notes médicales',
+      medicalNotesPlaceholder:
+        'Allergies, médicaments, conditions médicales ou autres informations importantes...',
+      noClubs: 'Aucun club disponible.',
+      loadingOptions: 'Chargement des informations...',
+
+      relationships: {
+        father: 'Père',
+        mother: 'Mère',
+        grandfather: 'Grand-père',
+        grandmother: 'Grand-mère',
+        legalGuardian: 'Tuteur légal',
+        other: 'Autre',
+      },
+
+      cancel: 'Annuler',
+      register: 'Inscrire un enfant',
+      saveChanges: 'Enregistrer les modifications',
+      saving: 'Enregistrement...',
+
+      deleteTitle: 'Supprimer l’enfant',
+      deleteMessage: 'Êtes-vous sûr de vouloir supprimer',
+      delete: 'Supprimer',
+
+      loadError: 'Impossible de charger les enfants.',
+      optionsError: 'Impossible de charger les parents ou les clubs.',
+      createError: 'Impossible d’inscrire l’enfant.',
+      updateError: 'Impossible de modifier l’enfant.',
+      deleteError: 'Impossible de supprimer l’enfant.',
+      deleteSuccess: 'Enfant supprimé avec succès',
+
+      firstNamePlaceholder: 'Saisissez le prénom',
+      lastNamePlaceholder: 'Saisissez le nom',
+      birthDatePlaceholder: 'Sélectionnez la date de naissance',
     },
 
     availability: {

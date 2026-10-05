@@ -639,6 +639,8 @@ export default {
       clubs: "Clubs",
       expedientes: "Expedientes",
       padres: "Padres",
+      niños: "Niños",
+      evaluaciones: "Evaluaciones",
       miPerfil: "Mi perfil",
       servicios: "Servicios",
       disponibilidad: "Mi disponibilidad",
@@ -878,6 +880,67 @@ export default {
       deleteErrorToastTitle: "No se pudo eliminar al padre de familia",
 
     },
+
+    children: {
+      title: 'Niños',
+      description: 'Administra los niños registrados en My Green Farm.',
+      searchPlaceholder: 'Buscar niño...',
+      addChild: 'Registrar niño',
+
+      studentId: 'ID estudiantil',
+      parent: 'Padre o encargado',
+      birthDate: 'Fecha de nacimiento',
+      medicalNotes: 'Notas médicas',
+      noMedicalNotes: 'Sin notas médicas',
+      clubs: 'Clubes',
+
+      noChildren: 'No hay niños registrados.',
+      noResults: 'No se encontraron niños con esa búsqueda.',
+
+      createTitle: 'Registrar niño',
+      editTitle: 'Editar niño',
+      firstName: 'Nombre',
+      lastName: 'Apellido',
+      parentOrGuardian: 'Padre o tutor',
+      selectParent: 'Seleccione un padre o tutor',
+      relationship: 'Parentesco',
+      birthDateLabel: 'Fecha de nacimiento',
+      medicalNotesLabel: 'Notas médicas',
+      medicalNotesPlaceholder:
+        'Alergias, medicamentos, condiciones médicas u otra información importante...',
+      noClubs: 'No hay clubes disponibles.',
+      loadingOptions: 'Cargando información...',
+
+      relationships: {
+        father: 'Padre',
+        mother: 'Madre',
+        grandfather: 'Abuelo',
+        grandmother: 'Abuela',
+        legalGuardian: 'Tutor legal',
+        other: 'Otro',
+      },
+
+      cancel: 'Cancelar',
+      register: 'Registrar niño',
+      saveChanges: 'Guardar cambios',
+      saving: 'Guardando...',
+
+      deleteTitle: 'Eliminar niño',
+      deleteMessage: '¿Estás seguro de que deseas eliminar a',
+      delete: 'Eliminar',
+
+      loadError: 'No se pudieron cargar los niños.',
+      optionsError: 'No se pudieron cargar los padres o clubes.',
+      createError: 'No se pudo registrar el niño.',
+      updateError: 'No se pudo actualizar el niño.',
+      deleteError: 'No se pudo eliminar el niño.',
+      deleteSuccess: 'Niño eliminado correctamente',
+
+      firstNamePlaceholder: 'Ingresa el nombre del niño',
+      lastNamePlaceholder: 'Ingresa el apellido del niño',
+      birthDatePlaceholder: 'Selecciona la fecha de nacimiento',
+    },
+
     availability: {
       saveWeeklySuccessToastTitle: "Horario guardado",
       saveWeeklyErrorToastTitle: "No se pudo guardar el horario",
