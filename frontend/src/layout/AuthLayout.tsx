@@ -19,7 +19,6 @@ function AuthLayout({
   rightPanelClassName = "px-[15px] pb-[28px] pt-[65px] md:px-[70px] md:py-[55px]",
   contentClassName = "max-w-[430px]",
   containerClassName = "md:max-w-[900px]",
-  scrollable = false,
   closeTo = "/",
   children,
 }: Readonly<AuthLayoutProps>) {
