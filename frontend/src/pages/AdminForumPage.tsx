@@ -6,6 +6,7 @@ import BlogPostCard from '../components/forum/BlogPostCard.tsx'
 import BlogPostCardSkeleton from '../components/forum/BlogPostCardSkeleton.tsx'
 import BlogPostFormModal from '../components/forum/admin/BlogPostFormModal.tsx'
 import Button from '../components/ui/Button.tsx'
+import Pagination from '../components/ui/Pagination.tsx'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 import { notify } from '../utils/notifications.ts'
 import type { BlogPost, BlogPostInput } from '../types/forum.ts'
@@ -16,7 +17,6 @@ function AdminForumPage() {
   const { t } = useTranslation()
   const isTeacher = userStorage.getUser()?.role === 'TEACHER'
   const {
-    blogPosts,
     addBlogPost,
     updateBlogPost,
     removeBlogPost,
@@ -24,40 +24,42 @@ function AdminForumPage() {
     isLiked,
     getLikeCount,
     toggleLike,
-    isLoading,
-    error,
   } = useForumFeedContext()
 
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<BlogPost | null>(null)
   const [postToDelete, setPostToDelete] = useState<BlogPost | null>(null)
   const [deleteConfirmation, setDeleteConfirmation] = useState('')
-  const [teacherPosts, setTeacherPosts] = useState<BlogPost[]>([])
-  const [teacherPostsLoading, setTeacherPostsLoading] = useState(isTeacher)
-  const [teacherPostsError, setTeacherPostsError] = useState('')
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [posts, setPosts] = useState<BlogPost[]>([])
+  const [postsLoading, setPostsLoading] = useState(true)
+  const [postsError, setPostsError] = useState('')
 
-  const refreshTeacherPosts = useCallback(async () => {
-    if (!isTeacher) return
-
-    setTeacherPostsLoading(true)
+  const refreshPosts = useCallback(async (targetPage: number) => {
+    setPostsLoading(true)
     try {
-      const page = await forumService.getMyArticles()
-      setTeacherPosts(page.content)
-      setTeacherPostsError('')
+      const result = isTeacher
+        ? await forumService.getMyArticles(targetPage - 1, 10)
+        : await forumService.getArticles(targetPage - 1, 10)
+      setPosts(result.content)
+      setTotalPages(result.totalPages)
+      setPostsError('')
     } catch {
-      setTeacherPostsError('No se pudieron cargar tus publicaciones')
+      setPostsError(isTeacher ? 'No se pudieron cargar tus publicaciones' : 'No se pudieron cargar los artículos')
     } finally {
-      setTeacherPostsLoading(false)
+      setPostsLoading(false)
     }
   }, [isTeacher])
 
   useEffect(() => {
-    if (isTeacher) void refreshTeacherPosts()
-  }, [isTeacher, refreshTeacherPosts])
+    void refreshPosts(page)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isTeacher, page])
 
-  const visiblePosts = isTeacher ? teacherPosts : blogPosts
-  const visibleIsLoading = isLoading || (isTeacher && teacherPostsLoading)
-  const visibleError = isTeacher ? teacherPostsError : error
+  const visiblePosts = posts
+  const visibleIsLoading = postsLoading
+  const visibleError = postsError
 
   function openCreate() {
     setEditing(null)
@@ -78,14 +80,14 @@ function AdminForumPage() {
     try {
       if (editing) {
         await updateBlogPost(editing.id, input)
-        await refreshTeacherPosts()
+        await refreshPosts(page)
         notify.success({
           title: t('adminForum.updatedToastTitle'),
           description: t('adminForum.updatedToastDescription'),
         })
       } else {
         await addBlogPost(input)
-        await refreshTeacherPosts()
+        await refreshPosts(page)
         notify.success({
           title: t('adminForum.createdToastTitle'),
           description: t('adminForum.createdToastDescription'),
@@ -103,7 +105,7 @@ function AdminForumPage() {
 
     try {
       await removeBlogPost(postToDelete.id)
-      await refreshTeacherPosts()
+      await refreshPosts(page)
     } catch {
       notify.error('No se pudo eliminar el artículo')
       return
@@ -188,6 +190,10 @@ function AdminForumPage() {
       </div>
 
       {renderBlogPosts()}
+
+      {!visibleIsLoading && !visibleError && visiblePosts.length > 0 && (
+        <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+      )}
 
       {formOpen && (
         <BlogPostFormModal

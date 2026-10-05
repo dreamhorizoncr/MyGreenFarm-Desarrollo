@@ -7,7 +7,9 @@ import EditUserModal from '../components/EditUserModal.tsx'
 import DeleteUserModal from '../components/DeleteUserModal.tsx'
 import TeacherCard from '../components/TeacherCard.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
+import Pagination from '../components/ui/Pagination.tsx'
 import { useAdmin } from '../hooks/useAdmin.ts'
+import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { notify } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
@@ -57,6 +59,8 @@ function AdminUsersPage() {
   }, [users, searchTerm, roleFilter])
 
   const roleOptions = useMemo(() => ['ALL', ...Array.from(new Set(['OWNER', ...users.map((user) => user.role)]))], [users])
+
+  const { currentPage, setPage, totalPages, pageItems: pagedUsers } = useClientPagination(filteredUsers)
 
   const roleFilterClassName = (active: boolean) =>
     `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
@@ -144,17 +148,20 @@ function AdminUsersPage() {
               {searchTerm.trim() || roleFilter !== 'ALL' ? t('admin.noResults') : t('common.noUsers')}
             </p>
           ) : (
-            <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-              {filteredUsers.map((user) => (
-                <TeacherCard
-                  key={user.id}
-                  user={user}
-                  isSelf={user.id === currentUser?.id}
-                  onEdit={handleEdit(user)}
-                  onDelete={handleDelete(user)}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
+                {pagedUsers.map((user) => (
+                  <TeacherCard
+                    key={user.id}
+                    user={user}
+                    isSelf={user.id === currentUser?.id}
+                    onEdit={handleEdit(user)}
+                    onDelete={handleDelete(user)}
+                  />
+                ))}
+              </div>
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+            </>
           )
         )}
       </AdminLayout>

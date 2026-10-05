@@ -4,7 +4,9 @@ import { ChevronDownIcon, CopyIcon, PencilIcon, PlusIcon, Trash2Icon } from '@an
 import AdminLayout from '../layout/AdminLayout.tsx'
 import ScheduleExceptionModal from '../components/ScheduleExceptionModal.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
+import Pagination from '../components/ui/Pagination.tsx'
 import { useAvailability } from '../hooks/useAvailability.ts'
+import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { notify } from '../utils/notifications.ts'
 import type { ScheduleException, WeeklySchedule } from '../types/availability.ts'
 import { DEFAULT_END_TIME, DEFAULT_START_TIME, timeValue, toApiTime, WEEK_DAYS } from '../types/availability.ts'
@@ -90,6 +92,7 @@ function OwnerAvailabilityPage() {
   }
 
   const futureExceptions = exceptions.filter((item) => item.exceptionDate >= new Date().toISOString().slice(0, 10)).sort((a, b) => a.exceptionDate.localeCompare(b.exceptionDate))
+  const { currentPage, setPage, totalPages, pageItems: pagedExceptions } = useClientPagination(futureExceptions)
 
   const openException = (exception?: ScheduleException) => setExceptionModal(exception ?? null)
 
@@ -136,12 +139,12 @@ function OwnerAvailabilityPage() {
             <section className="mt-2xl" aria-labelledby="exceptions-title">
               <div className="flex flex-wrap items-end justify-between gap-md"><div><h2 id="exceptions-title" className="m-0 font-heading text-2xl font-bold text-heading">Días especiales</h2><p className="mt-xs m-0 font-body text-body-sm text-neutral-500">Estos días reemplazan tu horario semanal.</p></div><button type="button" onClick={() => openException()} className="inline-flex min-h-11 items-center justify-center gap-xs rounded-full bg-orange-500 px-lg font-body text-button font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link"><PlusIcon size={18} aria-hidden="true" /> Agregar día especial</button></div>
               {exceptionError && <p className="mt-md text-body-sm text-danger" role="alert">{exceptionError}</p>}
-              {futureExceptions.length === 0 ? <p className="mt-lg rounded-2xl border border-dashed border-neutral-300 p-xl text-center font-body text-body text-neutral-500">Aún no tienes días especiales</p> : <div className="mt-md grid grid-cols-1 gap-md lg:grid-cols-2">{futureExceptions.map((exception) => <article key={exception.id ?? exception.exceptionDate} className="rounded-2xl border border-neutral-200 bg-white p-lg transition hover:-translate-y-1 hover:shadow-lg"><div className="flex items-start justify-between gap-md"><div><h3 className="m-0 font-heading text-lg font-bold text-heading">{dateLabel(exception.exceptionDate)}</h3><p className="mt-sm m-0 font-body text-body font-semibold text-body-text">{exception.closed ? 'Cerrado todo el día' : `Atiende solo de ${timeValue(exception.startTime)} a ${timeValue(exception.endTime)}`}</p>{exception.reason && <p className="mt-xs m-0 font-body text-body-sm text-neutral-500">{exception.reason}</p>}</div><div className="flex gap-xs"><button type="button" onClick={() => openException(exception)} aria-label={`Editar ${dateLabel(exception.exceptionDate)}`} title="Editar" className="inline-flex size-11 items-center justify-center rounded-full text-link transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link"><PencilIcon size={18} /></button><button type="button" onClick={() => {
+              {futureExceptions.length === 0 ? <p className="mt-lg rounded-2xl border border-dashed border-neutral-300 p-xl text-center font-body text-body text-neutral-500">Aún no tienes días especiales</p> : <><div className="mt-md grid grid-cols-1 gap-md lg:grid-cols-2">{pagedExceptions.map((exception) => <article key={exception.id ?? exception.exceptionDate} className="rounded-2xl border border-neutral-200 bg-white p-lg transition hover:-translate-y-1 hover:shadow-lg"><div className="flex items-start justify-between gap-md"><div><h3 className="m-0 font-heading text-lg font-bold text-heading">{dateLabel(exception.exceptionDate)}</h3><p className="mt-sm m-0 font-body text-body font-semibold text-body-text">{exception.closed ? 'Cerrado todo el día' : `Atiende solo de ${timeValue(exception.startTime)} a ${timeValue(exception.endTime)}`}</p>{exception.reason && <p className="mt-xs m-0 font-body text-body-sm text-neutral-500">{exception.reason}</p>}</div><div className="flex gap-xs"><button type="button" onClick={() => openException(exception)} aria-label={`Editar ${dateLabel(exception.exceptionDate)}`} title="Editar" className="inline-flex size-11 items-center justify-center rounded-full text-link transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link"><PencilIcon size={18} /></button><button type="button" onClick={() => {
                     if (!exception.id || !window.confirm('¿Eliminar este día especial?')) return
                     deleteException(exception.id)
                       .then(() => notify.success(t('admin.availability.deleteExceptionSuccessToastTitle')))
                       .catch(() => notify.error(t('admin.availability.deleteExceptionErrorToastTitle')))
-                  }} aria-label={`Eliminar ${dateLabel(exception.exceptionDate)}`} title="Eliminar" className="inline-flex size-11 items-center justify-center rounded-full text-danger transition-colors hover:bg-danger-100 focus-visible:outline-2 focus-visible:outline-link"><Trash2Icon size={18} /></button></div></div></article>)}</div>}
+                  }} aria-label={`Eliminar ${dateLabel(exception.exceptionDate)}`} title="Eliminar" className="inline-flex size-11 items-center justify-center rounded-full text-danger transition-colors hover:bg-danger-100 focus-visible:outline-2 focus-visible:outline-link"><Trash2Icon size={18} /></button></div></div></article>)}</div><Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} /></>}
             </section>
           </>
         )}

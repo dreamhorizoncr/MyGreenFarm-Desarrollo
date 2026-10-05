@@ -34,20 +34,20 @@ public class AnnouncementSummaryAsyncService {
             Announcement announcement = announcementRepository.findById(announcementId)
                     .orElseThrow(() -> new RuntimeException("Anuncio no encontrado: " + announcementId));
 
-            String contenidoHash = HashUtils.sha256(announcement.getContent());
+            String contentHash = HashUtils.sha256(announcement.getContent());
 
-            if (!force && contenidoHash.equals(announcement.getAiSummaryContentHash())) {
+            if (!force && contentHash.equals(announcement.getAiSummaryContentHash())) {
                 return;
             }
 
-            String resumen = geminiResumenService.generarResumen(announcement.getContent());
-            if (resumen == null) {
+            String summary = geminiResumenService.generateSummary(announcement.getContent());
+            if (summary == null) {
                 log.error("No se pudo generar el resumen IA para el anuncio {}", announcementId);
                 return;
             }
 
-            announcement.setAiSummary(resumen);
-            announcement.setAiSummaryContentHash(contenidoHash);
+            announcement.setAiSummary(summary);
+            announcement.setAiSummaryContentHash(contentHash);
             announcementRepository.save(announcement);
 
             log.info("Resumen IA generado para el anuncio {}", announcementId);

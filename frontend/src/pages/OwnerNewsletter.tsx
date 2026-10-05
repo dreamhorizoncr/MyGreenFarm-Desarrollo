@@ -4,8 +4,10 @@ import { ChevronDownIcon, SearchIcon, SendIcon, XIcon } from '@animateicons/reac
 import AdminLayout from '../layout/AdminLayout.tsx'
 import ConfirmNewsletterUnsubscribeModal from '../components/ConfirmNewsletterUnsubscribeModal.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
+import Pagination from '../components/ui/Pagination.tsx'
 import useDismiss from '../hooks/useDismiss.ts'
 import { useNewsletter } from '../hooks/useNewsletter.ts'
+import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { notify } from '../utils/notifications.ts'
 import type { AudienceType, NewsletterRecipient } from '../types/newsletter.ts'
 
@@ -87,6 +89,8 @@ function AdminNewsletterPage() {
             return matchesAudience && matchesSearch
         })
     }, [subscribers, searchTerm, audienceFilter])
+
+    const { currentPage, setPage, totalPages, pageItems: pagedItems } = useClientPagination(filteredItems)
 
     const handleOpenBroadcast = (audience: AudienceType) => {
         setSelectedAudience(audience)
@@ -233,8 +237,9 @@ function AdminNewsletterPage() {
                             : t('admin.newsletter.noContacts')}
                     </p>
                 ) : (
+                    <>
                     <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-                        {filteredItems.map((item) => (
+                        {pagedItems.map((item) => (
                             <div key={item.id} className="rounded-xl border border-neutral-200 bg-white p-md shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
                                 <div className="flex items-center justify-between gap-md">
                                     <div className="min-w-0">
@@ -261,6 +266,8 @@ function AdminNewsletterPage() {
                             </div>
                         ))}
                     </div>
+                    <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+                    </>
                 )}
 
                 {isBroadcastModalOpen && (

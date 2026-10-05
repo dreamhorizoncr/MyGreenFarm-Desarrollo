@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { PlusIcon, Trash2Icon } from '@animateicons/react/lucide'
 import CreateVacancyModal from './CreateVacancyModal.tsx'
 import Skeleton from './ui/Skeleton.tsx'
+import Pagination from './ui/Pagination.tsx'
+import { useClientPagination } from '../hooks/useClientPagination.ts'
 import type { Vacancy, VacancyInput } from '../types/vacancy.ts'
 
 function VacancyCardSkeleton() {
@@ -41,6 +43,7 @@ function statusDotClass(vacancy: Vacancy) {
 function VacancyManagementSection({ vacancies, loading, error, applicantNameById, onCreate, onSetOpen, onRelease, onDelete,}: Readonly<VacancyManagementSectionProps>) {
   const { t } = useTranslation()
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const { currentPage, setPage, totalPages, pageItems: pagedVacancies } = useClientPagination(vacancies)
 
   const openStateLabel = (isOpen: boolean) =>
     isOpen ? t('vacancies.statusOpen') : t('vacancies.statusClosed')
@@ -72,8 +75,9 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
             {t('vacancies.noVacancies')}
           </p>
         ) : (
+          <>
           <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-            {vacancies.map((vacancy) => (
+            {pagedVacancies.map((vacancy) => (
               <article key={vacancy.id} className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
                 <div className="flex items-start justify-between gap-sm">
                   <h3 className="m-0 font-heading text-lg font-bold leading-snug text-heading">
@@ -127,6 +131,8 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
               </article>
             ))}
           </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+          </>
         )
       )}
 

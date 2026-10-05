@@ -5,7 +5,9 @@ import ChangeAppointmentStatusModal from './ChangeAppointmentStatusModal.tsx'
 import RescheduleAppointmentModal from './RescheduleAppointmentModal.tsx'
 import AppointmentDetailsModal from './AppointmentDetailsModal.tsx'
 import Skeleton from './ui/Skeleton.tsx'
+import Pagination from './ui/Pagination.tsx'
 import { useAppointments } from '../hooks/useAppointments.ts'
+import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { notify } from '../utils/notifications.ts'
 import type { Appointment, AppointmentStatus } from '../types/appointment.ts'
 
@@ -62,6 +64,8 @@ function AppointmentsSection() {
         .some((field) => field.toLowerCase().includes(term))
     })
   }, [appointments, statusFilter, searchTerm])
+
+  const { currentPage, setPage, totalPages, pageItems: pagedAppointments } = useClientPagination(filteredAppointments)
 
   const statusLabel = (filter: StatusFilter): string =>
     filter === 'ALL'
@@ -169,8 +173,9 @@ function AppointmentsSection() {
               : t('teacherAppointments.empty')}
           </p>
         ) : (
+          <>
           <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-            {filteredAppointments.map((appointment) => (
+            {pagedAppointments.map((appointment) => (
               <div
                 key={appointment.id}
                 className={`group relative flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${
@@ -233,6 +238,8 @@ function AppointmentsSection() {
               </div>
             ))}
           </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+          </>
         )
       )}
 

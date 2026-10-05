@@ -35,7 +35,7 @@ class GeminiResumenServiceTest {
     }
 
     @Test
-    void generarResumen_devuelveElTextoCuandoLaRespuestaEsExitosa() {
+    void generateSummary_returnsTextWhenResponseIsSuccessful() {
         String responseBody = """
                 {
                   "candidates": [
@@ -54,29 +54,29 @@ class GeminiResumenServiceTest {
                 .setBody(responseBody)
                 .addHeader("Content-Type", "application/json"));
 
-        String resumen = geminiResumenService.generarResumen("Contenido de la noticia de prueba.");
+        String summary = geminiResumenService.generateSummary("Contenido de la noticia de prueba.");
 
-        assertThat(resumen).isEqualTo("Resumen generado de prueba.");
+        assertThat(summary).isEqualTo("Resumen generado de prueba.");
     }
 
     @Test
-    void generarResumen_devuelveNullCuandoLaApiRespondeConError() {
+    void generateSummary_returnsNullWhenApiRespondsWithError() {
         mockWebServer.enqueue(new MockResponse().setResponseCode(500));
 
-        String resumen = geminiResumenService.generarResumen("Contenido de la noticia de prueba.");
+        String summary = geminiResumenService.generateSummary("Contenido de la noticia de prueba.");
 
-        assertThat(resumen).isNull();
+        assertThat(summary).isNull();
     }
 
     @Test
-    void generarResumen_devuelveNullCuandoLaRespuestaNoTraeTexto() {
+    void generateSummary_returnsNullWhenResponseHasNoText() {
         mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(200)
                 .setBody("{\"candidates\": []}")
                 .addHeader("Content-Type", "application/json"));
 
-        String resumen = geminiResumenService.generarResumen("Contenido de la noticia de prueba.");
+        String summary = geminiResumenService.generateSummary("Contenido de la noticia de prueba.");
 
-        assertThat(resumen).isNull();
+        assertThat(summary).isNull();
     }
 }
