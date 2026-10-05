@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ChevronDownIcon, XIcon } from '@animateicons/react/lucide'
+import { XIcon } from '@animateicons/react/lucide'
+import Select from './ui/Select.tsx'
 import type { ScheduleException } from '../types/availability.ts'
 import { DEFAULT_END_TIME, DEFAULT_START_TIME, toApiTime, timeValue } from '../types/availability.ts'
 
@@ -126,8 +127,8 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
 
           {!closed && (
             <div className="grid grid-cols-2 gap-md">
-              <label className="font-body text-body-sm font-semibold text-body-text">Desde<div className="relative mt-xs"><select value={startTime} onChange={(event) => setStartTime(event.target.value)} className="h-12 w-full appearance-none rounded-xl border border-neutral-200 bg-white px-md pr-xl font-normal text-body focus:border-green-500 focus:outline-none">{hours.slice(0, -1).map((hour) => <option key={hour}>{hour}</option>)}</select><ChevronDownIcon size={16} className="pointer-events-none absolute right-md top-1/2 -translate-y-1/2 text-neutral-500" aria-hidden="true" /></div></label>
-              <label className="font-body text-body-sm font-semibold text-body-text">Hasta<div className="relative mt-xs"><select value={endTime} onChange={(event) => setEndTime(event.target.value)} className="h-12 w-full appearance-none rounded-xl border border-neutral-200 bg-white px-md pr-xl font-normal text-body focus:border-green-500 focus:outline-none">{hours.slice(1).map((hour) => <option key={hour}>{hour}</option>)}</select><ChevronDownIcon size={16} className="pointer-events-none absolute right-md top-1/2 -translate-y-1/2 text-neutral-500" aria-hidden="true" /></div></label>
+              <label className="font-body text-body-sm font-semibold text-body-text">Desde<div className="mt-xs"><Select value={startTime} onChange={setStartTime} options={hours.slice(0, -1).map((hour) => ({ value: hour, label: hour }))} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md" aria-label="Desde" /></div></label>
+              <label className="font-body text-body-sm font-semibold text-body-text">Hasta<div className="mt-xs"><Select value={endTime} onChange={setEndTime} options={hours.slice(1).map((hour) => ({ value: hour, label: hour }))} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md" aria-label="Hasta" /></div></label>
             </div>
           )}
 

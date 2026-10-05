@@ -42,7 +42,7 @@ function AuthLayout({
         />
 
         <div className="absolute left-0 top-[18px] z-10 w-full text-center md:top-[9%]">
-          <h1 className="m-0 font-heading text-[20px] leading-none tracking-wide text-white md:text-h1">
+          <h1 className="m-0 font-heading text-[20px] leading-none tracking-wide text-heading md:text-h1">
             {overtitle}
           </h1>
         </div>
