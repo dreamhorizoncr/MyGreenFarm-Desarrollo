@@ -44,7 +44,10 @@ function ClubCardSkeleton() {
 }
 
 function OwnerClubsPage() {
-  const { t, i18n } = useTranslation();
+  const { t: translate, i18n } = useTranslation();
+  const translateKey = translate as (key: string) => string;
+  const t = (key: string): string =>
+    translateKey(key.startsWith("admin.") ? key : `admin.${key}`);
 
   const [clubs, setClubs] = useState<ClubResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,6 +66,7 @@ function OwnerClubsPage() {
 
   const coverInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
+  const editImagesClubIdRef = useRef<number | null>(null);
 
   const fetchClubs = async () => {
     try {
@@ -70,11 +74,9 @@ function OwnerClubsPage() {
       setError(null);
       const data = await clubService.getAll({ lang: i18n.language, size: 50 });
 
-      // Cargar o extraer la imagen de portada de cada club
       const clubsWithImages = await Promise.all(
         data.content.map(async (club) => {
           try {
-            // Si el backend ya incluye la lista de imágenes en la entidad
             let imgs = club.images;
             if (!imgs || imgs.length === 0) {
               imgs = await clubService.getImagesByClub(club.id);
@@ -83,7 +85,7 @@ function OwnerClubsPage() {
             return {
               ...club,
               images: imgs,
-              coverImageUrl: coverImg?.imageUrl ?? club.coverImageUrl,
+              coverImageUrl: coverImg?.fileUrl ?? club.coverImageUrl,
             };
           } catch {
             return club;
@@ -94,7 +96,7 @@ function OwnerClubsPage() {
       setClubs(clubsWithImages);
     } catch (err) {
       console.error(err);
-      setError(t("ownerClubs.loadError") ?? "Error al cargar los clubes.");
+      setError(t("admin.ownerClubs.loadError"));
     } finally {
       setLoading(false);
     }
@@ -105,6 +107,7 @@ function OwnerClubsPage() {
   }, [i18n.language]);
 
   const openCreate = () => {
+    editImagesClubIdRef.current = null;
     setEditing(null);
     setForm(emptyForm);
     setCover(null);
@@ -113,7 +116,8 @@ function OwnerClubsPage() {
     setFormOpen(true);
   };
 
-  const openEdit = async (club: ClubResponse) => {
+  const openEdit = (club: ClubResponse) => {
+    editImagesClubIdRef.current = club.id;
     setEditing(club);
     setForm({
       name: club.name,
@@ -123,21 +127,22 @@ function OwnerClubsPage() {
     });
     setCover(null);
     setGallery([]);
-
-    try {
-      const imgs = club.images?.length
-        ? club.images
-        : await clubService.getImagesByClub(club.id);
-      setExistingImages(imgs);
-    } catch (err) {
-      console.error(err);
-      setExistingImages([]);
-    }
-
+    setExistingImages(club.images ?? []);
     setFormOpen(true);
+
+    if (!club.images?.length) {
+      void clubService.getImagesByClub(club.id).then((images) => {
+        if (editImagesClubIdRef.current === club.id) {
+          setExistingImages(images);
+        }
+      }).catch((err: unknown) => {
+        console.error(err);
+      });
+    }
   };
 
   const closeForm = () => {
+    editImagesClubIdRef.current = null;
     setFormOpen(false);
     setEditing(null);
     setExistingImages([]);
@@ -175,11 +180,11 @@ function OwnerClubsPage() {
 
       notify.success({
         title: editing
-          ? (t("ownerClubs.updatedToastTitle") ?? "Club actualizado")
-          : (t("ownerClubs.createdToastTitle") ?? "Club creado"),
+          ? t("ownerClubs.updatedToastTitle")
+          : t("ownerClubs.createdToastTitle"),
         description: editing
-          ? (t("ownerClubs.updatedToastDescription") ?? "Los cambios se guardaron con éxito.")
-          : (t("ownerClubs.createdToastDescription") ?? "El nuevo club ha sido registrado."),
+          ? t("ownerClubs.updatedToastDescription")
+          : t("ownerClubs.createdToastDescription"),
       });
 
       closeForm();
@@ -187,8 +192,8 @@ function OwnerClubsPage() {
     } catch (err) {
       console.error(err);
       notify.error({
-        title: t("ownerClubs.saveErrorToastTitle") ?? "Error al guardar",
-        description: t("ownerClubs.saveErrorToastDescription") ?? "Ocurrió un error inesperado.",
+        title: t("ownerClubs.saveErrorToastTitle"),
+        description: t("ownerClubs.saveErrorToastDescription"),
       });
     }
   };
@@ -209,8 +214,8 @@ function OwnerClubsPage() {
       }
 
       notify.success({
-        title: t("ownerClubs.deletedToastTitle") ?? "Club eliminado",
-        description: t("ownerClubs.deletedToastDescription") ?? "El club ha sido eliminado correctamente.",
+        title: t("ownerClubs.deletedToastTitle"),
+        description: t("ownerClubs.deletedToastDescription"),
       });
 
       setDeleteModalOpen(false);
@@ -218,7 +223,7 @@ function OwnerClubsPage() {
       await fetchClubs();
     } catch (err) {
       console.error(err);
-      notify.error(t("ownerClubs.deleteErrorToastTitle") ?? "Error al eliminar el club");
+      notify.error(t("ownerClubs.deleteErrorToastTitle"));
     }
   };
 
@@ -226,12 +231,16 @@ function OwnerClubsPage() {
     try {
       await clubService.deleteImage(image.id);
       setExistingImages((current) => current.filter((item) => item.id !== image.id));
-      notify.success(t("ownerClubs.imageDeletedToastTitle") ?? "Imagen eliminada");
+      notify.success(t("ownerClubs.imageDeletedToastTitle"));
     } catch (err) {
       console.error(err);
-      notify.error(t("ownerClubs.imageDeleteErrorToastTitle") ?? "Error al eliminar la imagen");
+      notify.error(t("ownerClubs.imageDeleteErrorToastTitle"));
     }
   };
+
+  const idleSubmitLabel = editing
+    ? t("ownerClubs.saveChanges")
+    : t("ownerClubs.publish");
 
   return (
     <AdminLayout>
@@ -317,13 +326,13 @@ function OwnerClubsPage() {
                 <div className="my-1 border-t border-neutral-200" />
 
                 {/* Detalles: Horario y Capacidad */}
-                <div className="space-y-2.5 pt-xs text-left">
+                <div className="space-y-2xs pt-xs text-left">
                   {club.schedule && (
                     <div className="font-body text-body-sm leading-relaxed text-neutral-500">
                       <div className="flex items-center gap-2">
                         <ClockIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
                         <span className="font-semibold text-neutral-600">
-                          {t("ownerClubs.schedule") ?? "Horario"}
+                          {t("ownerClubs.schedule")}
                         </span>
                       </div>
                       <p className="m-0 mt-2xs px-1 text-left text-body-sm">{club.schedule}</p>
@@ -338,7 +347,9 @@ function OwnerClubsPage() {
                           {t("ownerClubs.maxCapacity")}
                         </span>
                       </div>
-                      <p className="m-0 mt-2xs px-1 text-left text-body-sm">{club.maxCapacity} alumnos</p>
+                      <p className="m-0 mt-2xs px-1 text-left text-body-sm">
+                        {club.maxCapacity} {t("ownerClubs.capacityUnit")}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -348,7 +359,7 @@ function OwnerClubsPage() {
                   <button
                     type="button"
                     onClick={() => void openEdit(club)}
-                    aria-label={t("ownerClubs.editClub") ?? "Editar club"}
+                    aria-label={t("ownerClubs.editClub")}
                     className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
                   >
                     <PencilIcon size={17} />
@@ -356,7 +367,7 @@ function OwnerClubsPage() {
                   <button
                     type="button"
                     onClick={() => handleDelete(club)}
-                    aria-label={t("ownerClubs.deleteModalTitle") ?? "Eliminar club"}
+                    aria-label={t("ownerClubs.deleteModalTitle")}
                     className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-red-500 transition hover:bg-red-50"
                   >
                     <Trash2Icon size={17} />
@@ -369,30 +380,30 @@ function OwnerClubsPage() {
 
       {!loading && clubs.length === 0 && (
         <p className="py-xl text-center font-body text-body-sm text-neutral-500">
-          {t("ownerClubs.noClubs") ?? "No hay clubes registrados actualmente."}
+          {t("ownerClubs.noClubs")}
         </p>
       )}
 
       {/* Modal Form */}
       {formOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]">
           <button
             type="button"
             tabIndex={-1}
-            aria-label={t("ownerClubs.cancel") ?? "Cancelar"}
+            aria-label={t("ownerClubs.cancel")}
             className="absolute inset-0 size-full cursor-default"
             onClick={closeForm}
           />
 
           <form
             onSubmit={handleSubmit}
-            className="relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
+            className="relative mx-auto max-h-[calc(100dvh-2rem)] w-full max-w-[820px] overflow-y-auto rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
           >
             <div className="flex items-center justify-between gap-md">
               <h2 className="m-0 font-heading text-2xl font-bold text-heading">
                 {editing
-                  ? (t("ownerClubs.editClub") ?? "Editar Club")
-                  : (t("ownerClubs.newClub") ?? "Nuevo Club")}
+                  ? t("ownerClubs.editClub")
+                  : t("ownerClubs.newClub")}
               </h2>
 
               <button
@@ -407,20 +418,20 @@ function OwnerClubsPage() {
 
             <div className="mt-lg grid gap-md md:grid-cols-2">
               <label className="font-body text-body-sm font-semibold text-heading">
-                {t("ownerClubs.clubName") ?? "Nombre del Club"}
+                {t("ownerClubs.clubName")}
                 <input
                   required
                   minLength={3}
                   maxLength={150}
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder="Ej: Club de Robótica"
+                  placeholder={t("ownerClubs.clubNamePlaceholder")}
                   className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                 />
               </label>
 
               <label className="font-body text-body-sm font-semibold text-heading">
-                {t("ownerClubs.maxCapacity") ?? "Capacidad Máxima"}
+                {t("ownerClubs.maxCapacity")}
                 <input
                   type="number"
                   min={1}
@@ -432,13 +443,13 @@ function OwnerClubsPage() {
                       maxCapacity: e.target.value ? Number(e.target.value) : undefined,
                     })
                   }
-                  placeholder="Ej: 20"
+                  placeholder={t("ownerClubs.capacityPlaceholder")}
                   className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                 />
               </label>
 
               <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
-                {t("ownerClubs.descriptionLabel") ?? "Descripción"}
+                {t("ownerClubs.descriptionLabel")}
                 <textarea
                   required
                   minLength={10}
@@ -446,23 +457,23 @@ function OwnerClubsPage() {
                   rows={5}
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="Detalles sobre las actividades del club..."
+                  placeholder={t("ownerClubs.descriptionPlaceholder")}
                   className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                 />
               </label>
 
               <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
-                {t("ownerClubs.schedule") ?? "Horario"}
+                {t("ownerClubs.schedule")}
                 <input
                   value={form.schedule ?? ""}
                   onChange={(e) => setForm({ ...form, schedule: e.target.value })}
-                  placeholder="Ej: Lunes y Miércoles 3:00 PM"
+                  placeholder={t("ownerClubs.schedulePlaceholder")}
                   className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                 />
               </label>
 
               <div className="font-body text-body-sm font-semibold text-heading">
-                <span className="block">{t("ownerClubs.coverImage") ?? "Imagen de Portada"}</span>
+                <span className="block">{t("ownerClubs.coverImage")}</span>
 
                 <input
                   ref={coverInputRef}
@@ -478,7 +489,7 @@ function OwnerClubsPage() {
                   className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-body-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
                 >
                   <FileImageIcon size={17} aria-hidden="true" />
-                  {t("ownerClubs.chooseCover") ?? "Seleccionar Portada"}
+                  {t("ownerClubs.chooseCover")}
                 </button>
 
                 {cover && (
@@ -489,7 +500,7 @@ function OwnerClubsPage() {
               </div>
 
               <div className="font-body text-body-sm font-semibold text-heading">
-                <span className="block">{t("ownerClubs.galleryImages") ?? "Imágenes de Galería"}</span>
+                <span className="block">{t("ownerClubs.galleryImages")}</span>
 
                 <input
                   ref={galleryInputRef}
@@ -508,7 +519,7 @@ function OwnerClubsPage() {
                   className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-body-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
                 >
                   <FileImageIcon size={17} aria-hidden="true" />
-                  {t("ownerClubs.chooseGallery") ?? "Seleccionar Galería"}
+                  {t("ownerClubs.chooseGallery")}
                 </button>
 
                 {gallery.length > 0 && (
@@ -522,7 +533,7 @@ function OwnerClubsPage() {
             {existingImages.length > 0 && (
               <div className="mt-lg">
                 <h3 className="font-body text-body-sm font-semibold text-heading">
-                  {t("ownerClubs.actualImages") ?? "Imágenes actuales"}
+                  {t("ownerClubs.actualImages")}
                 </h3>
 
                 <div className="mt-sm flex flex-wrap gap-md">
@@ -532,21 +543,21 @@ function OwnerClubsPage() {
                       className="flex items-center gap-sm rounded-xl border border-neutral-200 bg-white p-xs"
                     >
                       <img
-                        src={image.imageUrl}
+                        src={image.fileUrl}
                         alt=""
                         className="size-16 rounded-lg object-cover"
                       />
 
                       <span className="text-caption text-neutral-500">
                         {image.isCover
-                          ? (t("ownerClubs.coverTag") ?? "Portada")
-                          : (t("ownerClubs.galleryTag") ?? "Galería")}
+                          ? t("ownerClubs.coverTag")
+                          : t("ownerClubs.galleryTag")}
                       </span>
 
                       <button
                         type="button"
                         onClick={() => void handleDeleteImage(image)}
-                        aria-label="Eliminar imagen"
+                        aria-label={t("ownerClubs.deleteImage")}
                         className="rounded-full p-2xs text-red-500 transition-colors hover:bg-red-50"
                       >
                         <Trash2Icon size={16} />
@@ -563,16 +574,14 @@ function OwnerClubsPage() {
                 onClick={closeForm}
                 className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
               >
-                {t("ownerClubs.cancel") ?? "Cancelar"}
+                {t("ownerClubs.cancel")}
               </button>
 
               <button
                 type="submit"
                 className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
               >
-                {editing
-                  ? (t("ownerClubs.saveChanges") ?? "Guardar Cambios")
-                  : (t("ownerClubs.publish") ?? "Guardar Club")}
+                {idleSubmitLabel}
               </button>
             </div>
           </form>
@@ -584,11 +593,11 @@ function OwnerClubsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-[20px]">
           <div className="w-full max-w-[430px] rounded-[20px] bg-white p-[28px] shadow-lg">
             <h2 className="m-0 font-heading text-[24px] font-bold text-heading">
-              {t("ownerClubs.deleteModalTitle") ?? "Eliminar Club"}
+              {t("ownerClubs.deleteModalTitle")}
             </h2>
 
             <p className="mt-[12px] font-body text-body-sm text-neutral-600">
-              {t("ownerClubs.deleteModalMessage") ?? "¿Estás seguro de que deseas eliminar el club"}{" "}
+              {t("ownerClubs.deleteModalMessage")}{" "}
               <span className="font-semibold">"{clubToDelete.name}"</span>?
             </p>
 
@@ -601,7 +610,7 @@ function OwnerClubsPage() {
                 }}
                 className="rounded-full border border-neutral-300 px-[18px] py-[9px] font-body text-body-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
               >
-                {t("ownerClubs.deleteModalCancel") ?? "Cancelar"}
+                {t("ownerClubs.deleteModalCancel")}
               </button>
 
               <button
@@ -609,7 +618,7 @@ function OwnerClubsPage() {
                 onClick={() => void confirmDelete()}
                 className="rounded-full bg-red-500 px-[18px] py-[9px] font-body text-body-sm font-semibold text-white transition-colors hover:bg-red-600"
               >
-                {t("ownerClubs.deleteModalConfirm") ?? "Eliminar"}
+                {t("ownerClubs.deleteModalConfirm")}
               </button>
             </div>
           </div>

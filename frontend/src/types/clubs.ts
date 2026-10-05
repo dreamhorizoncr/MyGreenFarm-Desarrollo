@@ -8,7 +8,7 @@ export interface ClubRequest {
 export interface ClubImageResponse {
     id: number;
     clubId?: number;
-    imageUrl: string;
+    fileUrl: string;
     isCover: boolean;
     sortOrder?: number;
 }
