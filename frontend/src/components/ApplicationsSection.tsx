@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ChevronDownIcon, SearchIcon } from '@animateicons/react/lucide'
+import { SearchIcon } from '@animateicons/react/lucide'
 import CurriculumCard from './CurriculumCard.tsx'
 import ConfirmCurriculumDecisionModal from './ConfirmCurriculumDecisionModal.tsx'
 import DeleteCurriculumModal from './DeleteCurriculumModal.tsx'
 import Skeleton from './ui/Skeleton.tsx'
 import Pagination from './ui/Pagination.tsx'
+import Select from './ui/Select.tsx'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { ALL_VACANCIES, SPONTANEOUS_APPLICATIONS, useApplicationFilters } from '../hooks/useApplicationFilters.ts'
 import type { Curriculum } from '../types/curriculum.ts'
@@ -68,24 +69,17 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
           />
         </div>
 
-        <div className="relative">
-          <select
-            value={vacancyFilter}
-            onChange={(e) => setVacancyFilter(e.target.value)}
-            className="h-11 appearance-none rounded-full border border-neutral-200 bg-white py-sm pl-md pr-xl font-body text-body-sm text-body-text outline-none focus:border-green-500"
-          >
-            <option value={ALL_VACANCIES}>{t('admin.curriculums.allVacancies')}</option>
-            <option value={SPONTANEOUS_APPLICATIONS}>{t('admin.curriculums.spontaneousApplications')}</option>
-            {vacancies.map((v) => (
-              <option key={v.id} value={v.id}>{v.title}</option>
-            ))}
-          </select>
-          <ChevronDownIcon
-            size={16}
-            className="pointer-events-none absolute right-md top-1/2 -translate-y-1/2 text-neutral-500"
-            aria-hidden="true"
-          />
-        </div>
+        <Select
+          value={vacancyFilter}
+          onChange={setVacancyFilter}
+          options={[
+            { value: ALL_VACANCIES, label: t('admin.curriculums.allVacancies') },
+            { value: SPONTANEOUS_APPLICATIONS, label: t('admin.curriculums.spontaneousApplications') },
+            ...vacancies.map((v) => ({ value: v.id, label: v.title })),
+          ]}
+          className="w-auto min-w-[220px] rounded-full border border-neutral-200 bg-white py-sm pl-md pr-lg"
+          aria-label={t('admin.curriculums.allVacancies')}
+        />
       </div>
 
       {loading && (

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ChevronDownIcon,
   FileImageIcon,
   PencilIcon,
   PlusIcon,
@@ -11,6 +10,7 @@ import {
 import AdminLayout from "../layout/AdminLayout.tsx";
 import Skeleton from "../components/ui/Skeleton.tsx";
 import Pagination from "../components/ui/Pagination.tsx";
+import Select from "../components/ui/Select.tsx";
 import { useAnnouncements } from "../hooks/useAnnouncements.ts";
 import { notify } from "../utils/notifications.ts";
 import type {
@@ -296,27 +296,20 @@ function AnnouncementsPage() {
               <label className="font-body text-body-sm font-semibold text-heading">
                 {t("adminNews.newstype")}
 
-                <div className="relative mt-xs">
-                  <select
+                <div className="mt-xs">
+                  <Select
                     value={form.type}
-                    onChange={(e) =>
+                    onChange={(value) =>
                       setForm({
                         ...form,
-                        type: e.target.value as AnnouncementType,
+                        type: value as AnnouncementType,
                       })
                     }
-                    className="h-11 w-full appearance-none rounded-xl border border-neutral-200 bg-white px-md pr-xl font-normal outline-none focus:border-heading"
-                  >
-                    {Object.entries(typeLabels).map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {t(label)}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDownIcon
-                    size={16}
-                    className="pointer-events-none absolute right-md top-1/2 -translate-y-1/2 text-neutral-500"
-                    aria-hidden="true"
+                    options={Object.entries(typeLabels).map(([value, label]) => ({
+                      value,
+                      label: t(label),
+                    }))}
+                    aria-label={t("adminNews.newstype")}
                   />
                 </div>
               </label>
