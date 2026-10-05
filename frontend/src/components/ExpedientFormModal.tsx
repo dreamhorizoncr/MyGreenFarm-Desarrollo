@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronDownIcon, ImageIcon } from "@animateicons/react/lucide";
+import { ChevronDownIcon, ImageIcon, XIcon } from "@animateicons/react/lucide";
 import Select from "./ui/Select.tsx";
 
 import { expedientService } from "../services/expedient";
@@ -189,45 +189,42 @@ function ExpedientFormModal({
     : t("admin.expedients.save");
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4">
-      {/* Modal */}
-      <div className="max-h-[90vh] w-[min(90vw,700px)] overflow-y-auto rounded-3xl bg-white p-7 shadow-xl">
-        {/* Encabezado */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="font-heading text-2xl font-bold text-heading">
-              {isEditing
-                ? t("admin.expedients.editTitle")
-                : t("admin.expedients.addTitle")}
-            </h2>
+    <div className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]">
+      <button
+        type="button"
+        tabIndex={-1}
+        aria-label={t("admin.expedients.cancel")}
+        className="absolute inset-0 size-full cursor-default"
+        onClick={onClose}
+      />
 
-            <p className="mt-1 font-body text-body-sm text-body-text">
-              {isEditing
-                ? t("admin.expedients.editDescription")
-                : t("admin.expedients.addDescription")}
-            </p>
-          </div>
+      <form
+        onSubmit={handleSubmit}
+        className="relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
+      >
+        <div className="flex items-center justify-between gap-md">
+          <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+            {isEditing
+              ? t("admin.expedients.editTitle")
+              : t("admin.expedients.addTitle")}
+          </h2>
 
-          {/* Cerrar modal */}
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-2xl text-body-text transition hover:bg-gray-100"
-            aria-label="Cerrar"
+            aria-label={t("admin.expedients.cancel")}
+            className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-neutral-100"
           >
-            ×
+            <XIcon size={20} />
           </button>
         </div>
 
-        {/* Formulario */}
-        <form onSubmit={handleSubmit} className="mt-7 space-y-5">
+        <div className="mt-lg grid gap-md md:grid-cols-2">
           {/* Estudiante (Dropdown) */}
-          <div>
-            <label className="mb-2 block font-body font-bold text-heading">
-              {t("admin.expedients.childName")}
-            </label>
+          <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
+            {t("admin.expedients.childName")}
 
-            <div className="relative">
+            <div className="relative mt-xs">
               <input
                 type="text"
                 value={searchTerm}
@@ -245,7 +242,7 @@ function ExpedientFormModal({
                 }
                 disabled={isEditing || loadingOptions}
                 required
-                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 pr-11 font-body outline-none focus:border-heading disabled:bg-gray-100 disabled:cursor-not-allowed"
+                className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md pr-11 font-normal outline-none focus:border-heading disabled:cursor-not-allowed disabled:bg-neutral-100"
               />
 
               <ChevronDownIcon
@@ -256,7 +253,7 @@ function ExpedientFormModal({
 
               {/* Desplegable de resultados */}
               {isOpen && !isEditing && (
-                <ul className="absolute z-50 mt-1 max-h-56 w-full overflow-auto border border-neutral-200 rounded-xl  bg-white py-2 shadow-lg font-body text-body-sm">
+                <ul className="absolute z-50 mt-1 max-h-56 w-full overflow-auto rounded-xl border border-neutral-200 bg-white py-2 font-body text-body-sm shadow-lg">
                   {filteredOptions.length > 0 ? (
                     filteredOptions.map((option) => (
                       <li
@@ -266,42 +263,35 @@ function ExpedientFormModal({
                           setSearchTerm(`${option.fullName ?? option.childName}`);
                           setIsOpen(false);
                         }}
-                        className="cursor-pointer px-4 py-2 hover:bg-orange-100 rounded-lg text-heading mx-2 transition-colors"
+                        className="mx-2 cursor-pointer rounded-lg px-4 py-2 text-heading transition-colors hover:bg-orange-100"
                       >
-                        <span className="font-bold"></span>{option.fullName ?? option.childName}
+                        {option.fullName ?? option.childName}
                       </li>
                     ))
                   ) : (
-                    <li className="px-4 py-2 text-gray-400">Sin resultados</li>
+                    <li className="px-4 py-2 text-neutral-400">Sin resultados</li>
                   )}
                 </ul>
               )}
             </div>
           </div>
 
-          {/* Fecha y nivel */}
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-            {/* Fecha de admisión */}
-            <div>
-              <label className="mb-2 block font-body font-bold text-heading">
-                {t("admin.expedients.admisiondate")}
-              </label>
+          {/* Fecha de admisión */}
+          <label className="font-body text-body-sm font-semibold text-heading">
+            {t("admin.expedients.admisiondate")}
+            <input
+              type="date"
+              value={admisionDate}
+              onChange={(e) => setAdmisionDate(e.target.value)}
+              required
+              className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+            />
+          </label>
 
-              <input
-                type="date"
-                value={admisionDate}
-                onChange={(e) => setAdmisionDate(e.target.value)}
-                required
-                className="w-full rounded-xl border border-gray-300 px-4 py-3 font-body outline-none focus:border-heading"
-              />
-            </div>
-
-            {/* Nivel educativo */}
-            <div>
-              <label className="mb-2 block font-body font-bold text-heading">
-                {t("admin.expedients.grade")}
-              </label>
-
+          {/* Nivel educativo */}
+          <label className="font-body text-body-sm font-semibold text-heading">
+            {t("admin.expedients.grade")}
+            <div className="mt-xs">
               <Select
                 value={educationalLevel}
                 onChange={(value) =>
@@ -311,45 +301,37 @@ function ExpedientFormModal({
                   value: level,
                   label: t(`admin.expedients.levels.${educationalLevelKeys[level]}`),
                 }))}
-                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3"
+                className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
                 aria-label={t("admin.expedients.grade")}
               />
             </div>
-          </div>
+          </label>
 
           {/* Observaciones */}
-          <div>
-            <label className="mb-2 block font-body font-bold text-heading">
-              {t("admin.expedients.notes")}
-            </label>
-
+          <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
+            {t("admin.expedients.notes")}
             <textarea
               value={generalObservations}
               onChange={(e) => setGeneralObservations(e.target.value)}
               maxLength={600}
               rows={4}
               placeholder={t("admin.expedients.observationsPlaceholder")}
-              className="w-full resize-none rounded-xl border border-gray-300 px-4 py-3 font-body outline-none focus:border-heading"
+              className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
             />
 
-            <p className="mt-1 text-right font-body text-caption text-body-text">
+            <p className="mt-xs text-right font-body text-caption font-normal text-neutral-500">
               {generalObservations.length}/600
             </p>
-          </div>
+          </label>
 
           {/* Fotografía */}
-          {/* Fotografía */}
-          <div>
-            <label className="mb-2 block font-body font-bold text-emerald-600">
-              {t("admin.expedients.photo")}
-            </label>
+          <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
+            {t("admin.expedients.photo")}
 
-            <div className="flex items-center gap-3">
-              <label className="flex cursor-pointer items-center gap-2 rounded-full border border-gray-300 px-6 py-2.5 transition-colors hover:bg-gray-50 active:bg-gray-100">
-                <ImageIcon className="h-5 w-5 text-emerald-600" />
-                <span className="font-body font-semibold text-emerald-600">
-                  {t("admin.expedients.photo")}
-                </span>
+            <div className="mt-xs flex items-center gap-3">
+              <label className="flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-md font-normal text-heading transition-colors hover:border-heading">
+                <ImageIcon size={18} />
+                <span>{t("admin.expedients.photo")}</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -360,45 +342,45 @@ function ExpedientFormModal({
 
               {/* Muestra el nombre del archivo si ya se seleccionó uno */}
               {file && (
-                <span className="truncate font-body text-body-sm text-gray-600 max-w-[200px]">
+                <span className="max-w-[200px] truncate font-body text-body-sm font-normal text-neutral-500">
                   {file.name}
                 </span>
               )}
             </div>
 
-            <p className="mt-2 font-body text-caption text-gray-400">
+            <p className="mt-xs font-body text-caption font-normal text-neutral-500">
               {isEditing
                 ? t("admin.expedients.replacePhoto")
                 : t("admin.expedients.optionalPhoto")}
             </p>
           </div>
+        </div>
 
-          {/* Error */}
-          {error && <p className="font-body text-body-sm text-red-500">{error}</p>}
+        {error && (
+          <p className="mt-md rounded-xl bg-red-50 p-md font-body text-body-sm text-red-700">
+            {error}
+          </p>
+        )}
 
-          {/* Botones */}
-          <div className="flex justify-end gap-3 pt-2">
-            {/* Cancelar */}
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={saving}
-              className="h-11 rounded-full border border-green-500 px-6 font-body font-bold text-heading transition-colors hover:bg-green-50"
-            >
-              {t("admin.expedients.cancel")}
-            </button>
+        <div className="mt-lg flex flex-wrap justify-end gap-sm">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={saving}
+            className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 disabled:opacity-50"
+          >
+            {t("admin.expedients.cancel")}
+          </button>
 
-            {/* Guardar */}
-            <button
-              type="submit"
-              disabled={saving}
-              className="h-11 rounded-full bg-orange-500 px-7 font-body font-bold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {saving ? t("admin.expedients.saving") : idleSaveLabel}
-            </button>
-          </div>
-        </form>
-      </div>
+          <button
+            type="submit"
+            disabled={saving}
+            className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {saving ? t("admin.expedients.saving") : idleSaveLabel}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { ArrowRightIcon } from '@animateicons/react/lucide'
 import ninos2 from '../../assets/imgs/ninos2.svg'
 import nubeWhiteDown from '../../assets/imgs/nubeWhiteDown.svg'
 import Container from '../../components/home/Container.tsx'
@@ -37,9 +38,10 @@ function MultimediaSection() {
 
             <Link
               to="/multimedia"
-              className="whitespace-nowrap font-link text-body-sm uppercase tracking-wide text-white underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
+              className="inline-flex items-center gap-xs whitespace-nowrap font-link text-body-sm uppercase tracking-wide text-white underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
             >
               {t('home.multimedia.viewMore')}
+              <ArrowRightIcon size={16} aria-hidden="true" />
             </Link>
           </div>
         </Container>

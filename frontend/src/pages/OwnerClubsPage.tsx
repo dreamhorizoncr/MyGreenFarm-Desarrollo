@@ -27,20 +27,125 @@ const emptyForm: ClubRequest = {
   maxCapacity: undefined,
 };
 
-function ClubCardSkeleton() {
-  return (
-    <div className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm">
-      <Skeleton shape="rect" className="h-[180px] w-full" />
-      <div className="flex flex-1 flex-col gap-sm p-lg">
-        <Skeleton shape="line" className="h-6 w-3/4" />
-        <Skeleton shape="line" className="h-4 w-full" />
-        <Skeleton shape="line" className="h-4 w-2/3" />
-        <div className="mt-auto flex justify-end gap-sm pt-sm">
-          <Skeleton shape="circle" className="h-10 w-10" />
-          <Skeleton shape="circle" className="h-10 w-10" />
+interface ClubCardProps {
+  club?: ClubResponse
+  onEdit?: () => void
+  onDelete?: () => void
+  loading?: boolean
+}
+
+function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCardProps>) {
+  const { t: translate } = useTranslation();
+  const translateKey = translate as (key: string, options?: Record<string, unknown>) => string;
+  const t = (key: string, options?: Record<string, unknown>): string =>
+    translateKey(key.startsWith("admin.") ? key : `admin.${key}`, options);
+
+  if (loading) {
+    return (
+      <div className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm">
+        <Skeleton shape="rect" className="h-[180px] w-full" />
+        <div className="flex flex-1 flex-col gap-sm p-lg">
+          <Skeleton shape="line" className="h-6 w-3/4" />
+          <Skeleton shape="line" className="h-4 w-full" />
+          <Skeleton shape="line" className="h-4 w-2/3" />
+          <div className="mt-auto flex justify-end gap-sm pt-sm">
+            <Skeleton shape="circle" className="size-10" />
+            <Skeleton shape="circle" className="size-10" />
+          </div>
         </div>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white transition hover:-translate-y-1 shadow-sm">
+      {/* Imagen de portada */}
+      <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
+        {club!.coverImageUrl ? (
+          <img
+            src={club!.coverImageUrl}
+            alt={club!.name}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <span className="font-body text-body-sm text-neutral-400">
+              {t("ownerClubs.coverImage")}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Contenido */}
+      <div className="flex flex-1 flex-col gap-sm px-lg pb-lg pt-md">
+        <div className="flex items-start justify-between gap-sm">
+          <h3 className="m-0 min-w-0 flex-1 text-left font-heading text-h4 font-bold text-green-500 line-clamp-2">
+            {club!.name}
+          </h3>
+          {club!.maxCapacity && (
+            <span className="w-fit shrink-0 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white flex items-center gap-1">
+              <UsersIcon size={12} />
+              {club!.maxCapacity} {t("ownerClubs.capacityLabel")}
+            </span>
+          )}
+        </div>
+
+        <p className="m-0 min-h-[48px] text-left font-body text-body-sm leading-relaxed text-neutral-600 line-clamp-2">
+          {club!.description}
+        </p>
+
+        <div className="my-1 border-t border-neutral-200" />
+
+        {/* Detalles: Horario y Capacidad */}
+        <div className="space-y-2xs pt-xs text-left">
+          {club!.schedule && (
+            <div className="font-body text-body-sm leading-relaxed text-neutral-500">
+              <div className="flex items-center gap-2">
+                <ClockIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
+                <span className="font-semibold text-neutral-600">
+                  {t("ownerClubs.schedule")}
+                </span>
+              </div>
+              <p className="m-0 mt-2xs px-1 text-left text-body-sm">{club!.schedule}</p>
+            </div>
+          )}
+
+          {club!.maxCapacity && (
+            <div className="font-body text-body-sm leading-relaxed text-neutral-500">
+              <div className="flex items-center gap-2">
+                <UsersIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
+                <span className="font-semibold text-neutral-600">
+                  {t("ownerClubs.maxCapacity")}
+                </span>
+              </div>
+              <p className="m-0 mt-2xs px-1 text-left text-body-sm">
+                {club!.maxCapacity} {t("ownerClubs.capacityUnit")}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Botones de Acción */}
+        <div className="mt-auto flex justify-end gap-sm pt-sm">
+          <button
+            type="button"
+            onClick={onEdit}
+            aria-label={t("ownerClubs.editClub")}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
+          >
+            <PencilIcon size={17} />
+          </button>
+          <button
+            type="button"
+            onClick={onDelete}
+            aria-label={t("ownerClubs.deleteModalTitle")}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-red-500 transition hover:bg-red-50"
+          >
+            <Trash2Icon size={17} />
+          </button>
+        </div>
+      </div>
+    </article>
   );
 }
 
@@ -313,105 +418,20 @@ function OwnerClubsPage() {
       <section className="mt-xl grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
         {loading && !formOpen && (
           <output className="contents">
-            <ClubCardSkeleton />
-            <ClubCardSkeleton />
-            <ClubCardSkeleton />
+            <ClubCard loading />
+            <ClubCard loading />
+            <ClubCard loading />
           </output>
         )}
 
         {!loading &&
           clubs.map((club) => (
-            <article
+            <ClubCard
               key={club.id}
-              className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white transition hover:-translate-y-1 shadow-sm"
-            >
-              {/* Cover Image */}
-              <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
-                {club.coverImageUrl ? (
-                  <img
-                    src={club.coverImageUrl}
-                    alt={club.name}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center">
-                    <span className="font-body text-body-sm text-neutral-400">
-                      {t("ownerClubs.coverImage")}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Card Body */}
-              <div className="flex flex-1 flex-col gap-sm px-lg pb-lg pt-md">
-                <div className="flex items-start justify-between gap-sm">
-                  <h3 className="m-0 min-w-0 flex-1 text-left font-heading text-h4 font-bold text-green-500 line-clamp-2">
-                    {club.name}
-                  </h3>
-                  {club.maxCapacity && (
-                    <span className="w-fit shrink-0 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white flex items-center gap-1">
-                      <UsersIcon size={12} />
-                      {club.maxCapacity} {t("ownerClubs.capacityLabel")}
-                    </span>
-                  )}
-                </div>
-
-                <p className="m-0 min-h-[48px] text-left font-body text-body-sm leading-relaxed text-neutral-600 line-clamp-2">
-                  {club.description}
-                </p>
-
-                <div className="my-1 border-t border-neutral-200" />
-
-                {/* Detalles: Horario y Capacidad */}
-                <div className="space-y-2xs pt-xs text-left">
-                  {club.schedule && (
-                    <div className="font-body text-body-sm leading-relaxed text-neutral-500">
-                      <div className="flex items-center gap-2">
-                        <ClockIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
-                        <span className="font-semibold text-neutral-600">
-                          {t("ownerClubs.schedule")}
-                        </span>
-                      </div>
-                      <p className="m-0 mt-2xs px-1 text-left text-body-sm">{club.schedule}</p>
-                    </div>
-                  )}
-
-                  {club.maxCapacity && (
-                    <div className="font-body text-body-sm leading-relaxed text-neutral-500">
-                      <div className="flex items-center gap-2">
-                        <UsersIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
-                        <span className="font-semibold text-neutral-600">
-                          {t("ownerClubs.maxCapacity")}
-                        </span>
-                      </div>
-                      <p className="m-0 mt-2xs px-1 text-left text-body-sm">
-                        {club.maxCapacity} {t("ownerClubs.capacityUnit")}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Botones de Acción */}
-                <div className="mt-auto flex justify-end gap-sm pt-sm">
-                  <button
-                    type="button"
-                    onClick={() => void openEdit(club)}
-                    aria-label={t("ownerClubs.editClub")}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
-                  >
-                    <PencilIcon size={17} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(club)}
-                    aria-label={t("ownerClubs.deleteModalTitle")}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-red-500 transition hover:bg-red-50"
-                  >
-                    <Trash2Icon size={17} />
-                  </button>
-                </div>
-              </div>
-            </article>
+              club={club}
+              onEdit={() => void openEdit(club)}
+              onDelete={() => handleDelete(club)}
+            />
           ))}
       </section>
 

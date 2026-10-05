@@ -110,7 +110,7 @@ function CommunityPostPage() {
         </div>
       </section>
       <div className="mt-md flex flex-col items-center">
-        <button type="button" onClick={() => setFormOpen((open) => !open)} aria-expanded={formOpen} className="w-full rounded-full bg-green-500 px-lg py-sm font-body text-body-sm font-semibold text-white">
+        <button type="button" onClick={() => setFormOpen((open) => !open)} aria-expanded={formOpen} className="w-full rounded-full bg-orange-500 px-lg py-sm font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600">
           {formOpen ? t('forum.community.cancel') : t('forum.community.addComment')}
         </button>
         {formOpen && <form onSubmit={submitComment} className="mt-md flex w-full flex-col gap-md rounded-2xl border border-neutral-200 bg-white p-lg">

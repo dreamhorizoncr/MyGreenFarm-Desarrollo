@@ -38,26 +38,144 @@ function formatDate(iso: string | null | undefined, lang: string): string {
   });
 }
 
-function NewsCardSkeleton({ big }: Readonly<{ big: boolean }>) {
+interface NewsCardProps {
+  big: boolean
+  announcement?: Announcement
+  typeLabel?: string
+  formattedDate?: string
+  coverImage?: string
+  onReadMore?: () => void
+  loading?: boolean
+}
+
+function NewsCard({ big, announcement, typeLabel, formattedDate, coverImage, onReadMore, loading = false }: Readonly<NewsCardProps>) {
+  const { t } = useTranslation()
+
+  if (loading) {
+    return (
+      <article
+        className={`relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow md:h-[340px] ${
+          big ? "md:col-span-8" : "md:col-span-4"
+        }`}
+      >
+        <div className="relative h-[240px] md:absolute md:inset-y-0 md:left-0 md:h-auto md:w-1/2">
+          <Skeleton shape="rect" className="h-full w-full rounded-none" />
+        </div>
+
+        <div className="relative flex flex-col gap-sm p-[22px] text-left md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2 md:justify-center">
+          <Skeleton shape="line" className="h-3 w-1/3" />
+          <Skeleton shape="line" className="h-6 w-4/5" />
+          <Skeleton shape="line" className="h-4 w-full" />
+          <Skeleton shape="line" className="h-4 w-2/3" />
+          <Skeleton shape="pill" className="h-8 w-28" />
+        </div>
+      </article>
+    );
+  }
+
+  if (big) {
+    return (
+      <article className="relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-8 md:h-[340px]">
+        {/* Imagen */}
+        <div className="relative h-[240px] md:absolute md:inset-y-0 md:left-0 md:h-auto md:w-1/2">
+          {coverImage ? (
+            <img
+              src={coverImage}
+              alt={announcement!.title}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-bg-page">
+              <img
+                src={LowCortisol}
+                alt=""
+                className="h-[75%] w-[75%] object-contain"
+              />
+            </div>
+          )}
+
+          <span className="absolute left-[14px] top-[14px] rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
+            {typeLabel}
+          </span>
+        </div>
+
+        {/* Contenido */}
+        <div className="relative flex flex-col items-start p-[22px] text-left md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2 md:pb-[60px]">
+          <span className="font-body text-caption text-neutral-500">
+            {formattedDate}
+          </span>
+
+          <h2 className="mt-[10px] line-clamp-2 font-heading text-[28px] font-bold text-heading">
+            {announcement!.title}
+          </h2>
+
+          <p className="mt-[14px] line-clamp-3 font-body text-body-sm leading-[1.6] text-body-text">
+            {announcement!.content}
+          </p>
+
+          <div className="mt-md md:absolute md:bottom-[22px] md:left-[22px]">
+            <BlobButton
+              onClick={onReadMore}
+              className="h-11 w-fit px-lg font-body text-caption uppercase"
+            >
+              {t("newspage.readMore")}
+            </BlobButton>
+          </div>
+        </div>
+      </article>
+    )
+  }
+
   return (
-    <article
-      className={`relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow md:h-[340px] ${
-        big ? "md:col-span-8" : "md:col-span-4"
-      }`}
-    >
-      <div className="relative h-[240px] md:absolute md:inset-y-0 md:left-0 md:h-auto md:w-1/2">
-        <Skeleton shape="rect" className="h-full w-full rounded-none" />
+    <article className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-4 md:h-[340px]">
+      {/* Imagen */}
+      <div className="relative h-[200px] md:absolute md:inset-x-0 md:top-0 md:h-[125px]">
+        {coverImage ? (
+          <img
+            src={coverImage}
+            alt={announcement!.title}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-bg-page">
+            <img
+              src={LowCortisol}
+              alt=""
+              className="h-[75%] w-[75%] object-contain"
+            />
+          </div>
+        )}
+
+        <span className="absolute left-[14px] top-[14px] rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
+          {typeLabel}
+        </span>
       </div>
 
-      <div className="relative flex flex-col gap-sm p-[22px] text-left md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2 md:justify-center">
-        <Skeleton shape="line" className="h-3 w-1/3" />
-        <Skeleton shape="line" className="h-6 w-4/5" />
-        <Skeleton shape="line" className="h-4 w-full" />
-        <Skeleton shape="line" className="h-4 w-2/3" />
-        <Skeleton shape="pill" className="h-8 w-28" />
+      {/* Contenido */}
+      <div className="relative flex flex-col items-start p-[20px] text-left md:absolute md:inset-x-0 md:bottom-0 md:top-[125px] md:pb-[56px]">
+        <span className="font-body text-caption text-neutral-500">
+          {formattedDate}
+        </span>
+
+        <h2 className="mt-[8px] line-clamp-1 font-heading text-[28px] font-bold text-heading">
+          {announcement!.title}
+        </h2>
+
+        <p className="mt-[2px] line-clamp-1 font-body text-caption leading-[1.55] text-body-text">
+          {announcement!.content}
+        </p>
+
+        <div className="mt-sm md:absolute md:bottom-[20px] md:left-[20px]">
+          <BlobButton
+            onClick={onReadMore}
+            className="h-11 w-fit px-lg font-body text-caption uppercase"
+          >
+            {t("newspage.readMore")}
+          </BlobButton>
+        </div>
       </div>
     </article>
-  );
+  )
 }
 
 function NewsPage() {
@@ -185,8 +303,8 @@ const cards = announcements.filter(
             <div className="flex flex-col gap-[18px]">
               {[0, 1].map((rowIndex) => (
                 <div key={rowIndex} className="grid grid-cols-1 gap-[18px] md:grid-cols-12">
-                  <NewsCardSkeleton big={rowIndex % 2 === 0} />
-                  <NewsCardSkeleton big={rowIndex % 2 !== 0} />
+                  <NewsCard big={rowIndex % 2 === 0} loading />
+                  <NewsCard big={rowIndex % 2 !== 0} loading />
                 </div>
               ))}
             </div>
@@ -211,112 +329,16 @@ const cards = announcements.filter(
                         row.length === 1 ||
                         (rowIndex % 2 === 0 ? colIndex === 0 : colIndex === 1);
 
-                      return isBig ? (
-                        // Tarjeta grande
-                        <article
+                      return (
+                        <NewsCard
                           key={a.id}
-                          className="relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-8 md:h-[340px]"
-                        >
-                          {/* Imagen */}
-                          <div className="relative h-[240px] md:absolute md:inset-y-0 md:left-0 md:h-auto md:w-1/2">
-                            {getCoverImage(a.id) ? (
-                              <img
-                                src={getCoverImage(a.id)}
-                                alt={a.title}
-                                className="h-full w-full object-cover"
-                              />
-                            ) : (
-                              <div className="flex h-full w-full items-center justify-center bg-bg-page">
-                                <img
-                                  src={LowCortisol}
-                                  alt=""
-                                  className="h-[75%] w-[75%] object-contain"
-                                />
-                              </div>
-                            )}
-
-                            <span className="absolute left-[14px] top-[14px] rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
-                              {t(TYPE_LABEL_KEY[a.type])}
-                            </span>
-                          </div>
-
-                          {/* Contenido */}
-                          <div className="relative flex flex-col items-start p-[22px] text-left md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2 md:pb-[60px]">
-                            <span className="font-body text-caption text-neutral-500">
-                              {formatDate(a.eventDate, i18n.language)}
-                            </span>
-
-                            <h2 className="mt-[10px] line-clamp-2 font-heading text-[28px] font-bold text-heading">
-                              {a.title}
-                            </h2>
-
-                            <p className="mt-[14px] line-clamp-3 font-body text-body-sm leading-[1.6] text-body-text">
-                              {a.content}
-                            </p>
-
-                            <div className="mt-md md:absolute md:bottom-[22px] md:left-[22px]">
-                              <BlobButton
-                                onClick={() => setSelectedAnnouncement(a)}
-                                className="h-11 w-fit px-lg font-body text-caption uppercase"
-                              >
-                                {t("newspage.readMore")}
-                              </BlobButton>
-                            </div>
-                          </div>
-                        </article>
-                      ) : (
-                        // Tarjeta pequeña
-                        <article
-                          key={a.id}
-                          className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-4 md:h-[340px]"
-                        >
-                          {/* Imagen */}
-                          <div className="relative h-[200px] md:absolute md:inset-x-0 md:top-0 md:h-[125px]">
-                            {getCoverImage(a.id) ? (
-                              <img
-                                src={getCoverImage(a.id)}
-                                alt={a.title}
-                                className="h-full w-full object-cover"
-                              />
-                            ) : (
-                              <div className="flex h-full w-full items-center justify-center bg-bg-page">
-                                <img
-                                  src={LowCortisol}
-                                  alt=""
-                                  className="h-[75%] w-[75%] object-contain"
-                                />
-                              </div>
-                            )}
-
-                            <span className="absolute left-[14px] top-[14px] rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
-                              {t(TYPE_LABEL_KEY[a.type])}
-                            </span>
-                          </div>
-
-                          {/* Contenido */}
-                          <div className="relative flex flex-col items-start p-[20px] text-left md:absolute md:inset-x-0 md:bottom-0 md:top-[125px] md:pb-[56px]">
-                            <span className="font-body text-caption text-neutral-500">
-                              {formatDate(a.eventDate, i18n.language)}
-                            </span>
-
-                            <h2 className="mt-[8px] line-clamp-1 font-heading text-[28px] font-bold text-heading">
-                              {a.title}
-                            </h2>
-
-                            <p className="mt-[2px] line-clamp-1 font-body text-caption leading-[1.55] text-body-text">
-                              {a.content}
-                            </p>
-
-                            <div className="mt-sm md:absolute md:bottom-[20px] md:left-[20px]">
-                              <BlobButton
-                                onClick={() => setSelectedAnnouncement(a)}
-                                className="h-11 w-fit px-lg font-body text-caption uppercase"
-                              >
-                                {t("newspage.readMore")}
-                              </BlobButton>
-                            </div>
-                          </div>
-                        </article>
+                          big={isBig}
+                          announcement={a}
+                          typeLabel={t(TYPE_LABEL_KEY[a.type])}
+                          formattedDate={formatDate(a.eventDate, i18n.language)}
+                          coverImage={getCoverImage(a.id)}
+                          onReadMore={() => setSelectedAnnouncement(a)}
+                        />
                       );
                     })}
                   </div>

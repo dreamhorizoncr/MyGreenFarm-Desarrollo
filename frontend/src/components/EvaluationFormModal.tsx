@@ -126,44 +126,45 @@ import { notify } from "../utils/notifications";
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-[20px] py-[30px]">
-        <div className="max-h-[90vh] w-full max-w-[820px] overflow-y-auto rounded-[20px] bg-white shadow-lg">
-            {/* Header */}
-            <div className="flex items-start justify-between border-b border-neutral-100 px-[28px] py-[22px]">
-            <div>
-                <h2 className="m-0 font-heading text-[26px] font-bold text-heading">
-                {evaluation ? "Editar evaluación" : "Registrar evaluación"}
-                </h2>
+        <div className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]">
+        <button
+            type="button"
+            tabIndex={-1}
+            aria-label="Cerrar"
+            className="absolute inset-0 size-full cursor-default"
+            onClick={onClose}
+        />
 
-                <p className="mt-[5px] font-body text-body-sm text-neutral-500">
-                Registra el progreso y las observaciones del niño.
-                </p>
-            </div>
+        <form
+            onSubmit={handleSubmit}
+            className="relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
+        >
+            <div className="flex items-center justify-between gap-md">
+            <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+                {evaluation ? "Editar evaluación" : "Registrar evaluación"}
+            </h2>
 
             <button
                 type="button"
                 onClick={onClose}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-neutral-100"
                 aria-label="Cerrar"
+                className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-neutral-100"
             >
                 <XIcon size={20} />
             </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-[28px]">
             {error && (
-                <div className="mb-[20px] rounded-[12px] border border-red-200 bg-red-50 p-[14px] font-body text-body-sm text-red-600">
+            <p className="mt-md rounded-xl bg-red-50 p-md font-body text-body-sm text-red-700">
                 {error}
-                </div>
+            </p>
             )}
 
+            <div className="mt-lg grid gap-md md:grid-cols-2">
             {/* Expediente + fecha */}
-            <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2">
-                <div>
-                <label className="mb-[7px] block font-body text-body-sm font-semibold text-green-700">
-                    Niño / Expediente
-                </label>
-
+            <label className="font-body text-body-sm font-semibold text-heading">
+                Niño / Expediente
+                <div className="mt-xs">
                 <Select
                     value={form.expedientId}
                     onChange={(value) => handleChange("expedientId", value)}
@@ -173,126 +174,103 @@ import { notify } from "../utils/notifications";
                         value: expedient.id,
                         label: `${expedient.childName} — ${expedient.studentId}`,
                     }))}
-                    className="h-11 w-full rounded-[12px] border border-neutral-300 bg-white px-[14px]"
+                    className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
                     aria-label="Niño / Expediente"
                 />
                 </div>
+            </label>
 
-                <div>
-                <label className="mb-[7px] block font-body text-body-sm font-semibold text-green-700">
-                    Fecha de evaluación
-                </label>
-
+            <label className="font-body text-body-sm font-semibold text-heading">
+                Fecha de evaluación
                 <input
-                    type="date"
-                    value={form.evaluationDate}
-                    onChange={(event) =>
+                type="date"
+                value={form.evaluationDate}
+                onChange={(event) =>
                     handleChange("evaluationDate", event.target.value)
-                    }
-                    required
-                    className="w-full rounded-[12px] border border-neutral-300 bg-white px-[14px] py-[10px] font-body text-body-sm text-heading outline-none transition-colors focus:border-green-500"
+                }
+                required
+                className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                 />
-                </div>
-            </div>
+            </label>
 
             {/* Áreas de progreso */}
-            <div className="mt-[26px]">
-                <h3 className="m-0 font-heading text-[20px] font-bold text-heading">
+            <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
                 Áreas de progreso
-                </h3>
-
-                <p className="mt-[4px] font-body text-body-sm text-neutral-500">
+                <p className="mt-2xs font-normal text-neutral-500">
                 Describe el avance observado en cada área.
                 </p>
             </div>
 
-            <div className="mt-[18px] grid grid-cols-1 gap-[20px] md:grid-cols-2">
-                {/* Comunicación */}
-                <div>
-                <label className="mb-[7px] block font-body text-body-sm font-semibold text-green-700">
-                    Comunicación
-                </label>
-
+            {/* Comunicación */}
+            <label className="font-body text-body-sm font-semibold text-heading">
+                Comunicación
                 <textarea
-                    value={form.communicationProgress}
-                    onChange={(event) =>
+                value={form.communicationProgress}
+                onChange={(event) =>
                     handleChange(
                         "communicationProgress",
                         event.target.value,
                     )
-                    }
-                    required
-                    maxLength={2000}
-                    rows={5}
-                    placeholder="Describe el progreso en comunicación..."
-                    className="w-full resize-none rounded-[12px] border border-neutral-300 bg-white px-[14px] py-[11px] font-body text-body-sm text-heading outline-none transition-colors focus:border-green-500"
+                }
+                required
+                maxLength={2000}
+                rows={5}
+                placeholder="Describe el progreso en comunicación..."
+                className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                 />
-                </div>
+            </label>
 
-                {/* Lenguaje */}
-                <div>
-                <label className="mb-[7px] block font-body text-body-sm font-semibold text-green-700">
-                    Lenguaje
-                </label>
-
+            {/* Lenguaje */}
+            <label className="font-body text-body-sm font-semibold text-heading">
+                Lenguaje
                 <textarea
-                    value={form.languageProgress}
-                    onChange={(event) =>
+                value={form.languageProgress}
+                onChange={(event) =>
                     handleChange("languageProgress", event.target.value)
-                    }
-                    required
-                    maxLength={2000}
-                    rows={5}
-                    placeholder="Describe el progreso en lenguaje..."
-                    className="w-full resize-none rounded-[12px] border border-neutral-300 bg-white px-[14px] py-[11px] font-body text-body-sm text-heading outline-none transition-colors focus:border-green-500"
+                }
+                required
+                maxLength={2000}
+                rows={5}
+                placeholder="Describe el progreso en lenguaje..."
+                className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                 />
-                </div>
+            </label>
 
-                {/* Lectura */}
-                <div>
-                <label className="mb-[7px] block font-body text-body-sm font-semibold text-green-700">
-                    Lectura
-                </label>
-
+            {/* Lectura */}
+            <label className="font-body text-body-sm font-semibold text-heading">
+                Lectura
                 <textarea
-                    value={form.readingProgress}
-                    onChange={(event) =>
+                value={form.readingProgress}
+                onChange={(event) =>
                     handleChange("readingProgress", event.target.value)
-                    }
-                    required
-                    maxLength={2000}
-                    rows={5}
-                    placeholder="Describe el progreso en lectura..."
-                    className="w-full resize-none rounded-[12px] border border-neutral-300 bg-white px-[14px] py-[11px] font-body text-body-sm text-heading outline-none transition-colors focus:border-green-500"
+                }
+                required
+                maxLength={2000}
+                rows={5}
+                placeholder="Describe el progreso en lectura..."
+                className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                 />
-                </div>
+            </label>
 
-                {/* Desarrollo motor */}
-                <div>
-                <label className="mb-[7px] block font-body text-body-sm font-semibold text-green-700">
-                    Desarrollo motor
-                </label>
-
+            {/* Desarrollo motor */}
+            <label className="font-body text-body-sm font-semibold text-heading">
+                Desarrollo motor
                 <textarea
-                    value={form.motorProgress}
-                    onChange={(event) =>
+                value={form.motorProgress}
+                onChange={(event) =>
                     handleChange("motorProgress", event.target.value)
-                    }
-                    required
-                    maxLength={2000}
-                    rows={5}
-                    placeholder="Describe el progreso motor..."
-                    className="w-full resize-none rounded-[12px] border border-neutral-300 bg-white px-[14px] py-[11px] font-body text-body-sm text-heading outline-none transition-colors focus:border-green-500"
+                }
+                required
+                maxLength={2000}
+                rows={5}
+                placeholder="Describe el progreso motor..."
+                className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                 />
-                </div>
-            </div>
+            </label>
 
             {/* Observación */}
-            <div className="mt-[20px]">
-                <label className="mb-[7px] block font-body text-body-sm font-semibold text-green-700">
+            <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
                 Observación del profesor
-                </label>
-
                 <textarea
                 value={form.teacherObservation}
                 onChange={(event) =>
@@ -302,35 +280,35 @@ import { notify } from "../utils/notifications";
                 maxLength={3000}
                 rows={5}
                 placeholder="Agrega observaciones generales sobre el desempeño del niño..."
-                className="w-full resize-none rounded-[12px] border border-neutral-300 bg-white px-[14px] py-[11px] font-body text-body-sm text-heading outline-none transition-colors focus:border-green-500"
+                className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                 />
+            </label>
             </div>
 
             {/* Botones */}
-            <div className="mt-[28px] flex justify-end gap-[12px] border-t border-neutral-100 pt-[22px]">
-                <button
+            <div className="mt-lg flex flex-wrap justify-end gap-sm">
+            <button
                 type="button"
                 onClick={onClose}
                 disabled={saving}
-                className="rounded-full border border-green-600 bg-white px-[22px] py-[10px] font-body text-body-sm font-semibold text-green-700 transition-colors hover:bg-green-50 disabled:opacity-50"
-                >
+                className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 disabled:opacity-50"
+            >
                 Cancelar
-                </button>
+            </button>
 
-                <button
+            <button
                 type="submit"
                 disabled={saving || loadingOptions}
-                className="rounded-full bg-orange-500 px-[22px] py-[10px] font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
-                >
+                className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+            >
                 {saving
-                    ? "Guardando..."
-                    : evaluation
-                    ? "Guardar cambios"
-                    : "Registrar evaluación"}
-                </button>
+                ? "Guardando..."
+                : evaluation
+                ? "Guardar cambios"
+                : "Agregar"}
+            </button>
             </div>
-            </form>
-        </div>
+        </form>
         </div>
     );
 }

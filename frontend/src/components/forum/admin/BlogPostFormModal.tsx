@@ -313,19 +313,19 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
           </label>
         </div>
 
-        <div className="mt-xl flex flex-col-reverse gap-md sm:flex-row sm:justify-end">
+        <div className="mt-xl flex flex-wrap justify-end gap-sm">
           <Button
             type="button"
             variant="secondary"
             onClick={onClose}
-            className="h-11 rounded-full border-green-500 font-body text-button font-bold text-heading hover:bg-green-50"
+            className="h-11 w-auto rounded-full border-green-500 px-lg font-body text-body-sm font-semibold text-heading hover:bg-green-50"
           >
             {t('adminForum.cancel')}
           </Button>
 
           <Button
             type="submit"
-            className="h-11 rounded-full bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
+            className="h-11 w-auto rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
           >
             {post ? t('adminForum.saveChanges') : t('adminForum.publish')}
           </Button>

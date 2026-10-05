@@ -10,8 +10,6 @@ import ForumSidebar from '../components/forum/ForumSidebar.tsx'
 import ForumTabs from '../components/forum/ForumTabs.tsx'
 import type { ForumTab } from '../components/forum/ForumTabs.tsx'
 import PublishExperienceModal from '../components/forum/PublishExperienceModal.tsx'
-import BlogPostCardSkeleton from '../components/forum/BlogPostCardSkeleton.tsx'
-import CommunityPostCardSkeleton from '../components/forum/CommunityPostCardSkeleton.tsx'
 import PublishButtonCard from '../components/forum/PublishButtonCard.tsx'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 
@@ -101,9 +99,9 @@ function ForumPage() {
               >
                 {isLoading && (
                   <>
-                    <BlogPostCardSkeleton />
-                    <BlogPostCardSkeleton />
-                    <BlogPostCardSkeleton />
+                    <BlogPostCard loading />
+                    <BlogPostCard loading />
+                    <BlogPostCard loading />
                   </>
                 )}
 
@@ -146,9 +144,9 @@ function ForumPage() {
               >
                 {isLoading && (
                   <>
-                    <CommunityPostCardSkeleton />
-                    <CommunityPostCardSkeleton />
-                    <CommunityPostCardSkeleton />
+                    <CommunityPostCard loading />
+                    <CommunityPostCard loading />
+                    <CommunityPostCard loading />
                   </>
                 )}
 

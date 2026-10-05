@@ -52,16 +52,82 @@ type AdminNewsCategory =
   | "GENERAL"
   | "TRANSPORT";
 
-function NewsRowSkeleton() {
-  return (
-    <div className="border-t border-neutral-200 px-md py-lg">
-      <Skeleton shape="line" className="h-3 w-24" />
-      <Skeleton shape="line" className="mt-xs h-6 w-2/3" />
-      <div className="mt-xs flex flex-col gap-2xs">
-        <Skeleton shape="line" className="h-4 w-full" />
-        <Skeleton shape="line" className="h-4 w-1/2" />
+interface AnnouncementRowProps {
+  announcement?: Announcement
+  typeLabel?: string
+  onEdit?: () => void
+  onDelete?: () => void
+  loading?: boolean
+}
+
+function AnnouncementRow({ announcement, typeLabel, onEdit, onDelete, loading = false }: Readonly<AnnouncementRowProps>) {
+  const { t } = useTranslation()
+
+  if (loading) {
+    return (
+      <div className="border-t border-neutral-200 px-md py-lg">
+        <Skeleton shape="line" className="h-3 w-24" />
+        <Skeleton shape="line" className="mt-xs h-6 w-2/3" />
+        <div className="mt-xs flex flex-col gap-2xs">
+          <Skeleton shape="line" className="h-4 w-full" />
+          <Skeleton shape="line" className="h-4 w-1/2" />
+        </div>
       </div>
-    </div>
+    )
+  }
+
+  return (
+    <article className="border-t border-neutral-200 px-md py-lg transition-colors hover:bg-neutral-50">
+      <div className="flex flex-col gap-md">
+        <div>
+          <span className="inline-flex rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
+            {typeLabel}
+          </span>
+
+          <h2 className="mt-xs font-heading text-xl font-bold text-heading">
+            {announcement!.title}
+          </h2>
+
+          <p className="mt-xs whitespace-pre-line text-body-sm text-neutral-600">
+            {announcement!.content}
+          </p>
+
+          {(announcement!.location || announcement!.eventDate) && (
+            <p className="mt-sm text-caption text-neutral-500">
+              {announcement!.location}
+
+              {announcement!.location && announcement!.eventDate
+                ? " · "
+                : ""}
+
+              {announcement!.eventDate
+                ? new Date(announcement!.eventDate).toLocaleString()
+                : ""}
+            </p>
+          )}
+        </div>
+
+        <div className="flex items-center justify-end gap-2">
+          <button
+            type="button"
+            onClick={onEdit}
+            aria-label={t("adminNews.editButton")}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition"
+          >
+            <PencilIcon size={17} />
+          </button>
+
+          <button
+            type="button"
+            onClick={onDelete}
+            aria-label={t("adminNews.deleteButton")}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition"
+          >
+            <Trash2Icon size={17} />
+          </button>
+        </div>
+      </div>
+    </article>
   )
 }
 
@@ -560,67 +626,20 @@ function AnnouncementsPage() {
       <section className="mt-xl grid gap-md">
         {loading && !formOpen && (
           <output className="contents" aria-label={t("adminNews.newsload")}>
-            <NewsRowSkeleton />
-            <NewsRowSkeleton />
-            <NewsRowSkeleton />
+            <AnnouncementRow loading />
+            <AnnouncementRow loading />
+            <AnnouncementRow loading />
           </output>
         )}
 
         {filteredAnnouncements.map((announcement) => (
-          <article
+          <AnnouncementRow
             key={announcement.id}
-            className="border-t border-neutral-200 px-md py-lg transition-colors hover:bg-neutral-50"
-          >
-            <div className="flex flex-col gap-md">
-              <div>
-                <span className="inline-flex rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
-                  {t(typeLabels[announcement.type])}
-                </span>
-
-                <h2 className="mt-xs font-heading text-xl font-bold text-heading">
-                  {announcement.title}
-                </h2>
-
-                <p className="mt-xs whitespace-pre-line text-body-sm text-neutral-600">
-                  {announcement.content}
-                </p>
-
-                {(announcement.location || announcement.eventDate) && (
-                  <p className="mt-sm text-caption text-neutral-500">
-                    {announcement.location}
-
-                    {announcement.location && announcement.eventDate
-                      ? " · "
-                      : ""}
-
-                    {announcement.eventDate
-                      ? new Date(announcement.eventDate).toLocaleString()
-                      : ""}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => void openEdit(announcement)}
-                  aria-label={t("adminNews.editButton")}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition"
-                >
-                  <PencilIcon size={17} />
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => handleDelete(announcement)}
-                  aria-label={t("adminNews.deleteButton")}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition"
-                >
-                  <Trash2Icon size={17} />
-                </button>
-              </div>
-            </div>
-          </article>
+            announcement={announcement}
+            typeLabel={t(typeLabels[announcement.type])}
+            onEdit={() => void openEdit(announcement)}
+            onDelete={() => handleDelete(announcement)}
+          />
         ))}
 
         {!loading && announcements.length === 0 && (

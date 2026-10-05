@@ -5,6 +5,7 @@ import Select from "./ui/Select.tsx";
 import { childService } from "../services/child";
 import { parentService } from "../services/parent";
 import { clubService } from "../services/clubs";
+import { notify } from "../utils/notifications.ts";
 
 import type { Child, ChildRequest, Relationship } from "../types/child";
 import type { Parent } from "../types/parent";
@@ -127,14 +128,27 @@ import { useTranslation } from "react-i18next";
             await childService.create(form);
         }
 
+        notify.success(
+            child
+            ? t("admin.children.updateSuccessToastTitle")
+            : t("admin.children.createSuccessToastTitle"),
+        );
+
         onSaved();
         onClose();
         } catch {
-        setError(
-            child
-            ? `${t("admin.children.updateError")}`
-            : `${t("admin.children.createError")}`,
-        );
+        const errorMessage = child
+            ? t("admin.children.updateError")
+            : t("admin.children.createError");
+
+        setError(errorMessage);
+
+        notify.error({
+            title: child
+            ? t("admin.children.updateErrorToastTitle")
+            : t("admin.children.createErrorToastTitle"),
+            description: errorMessage,
+        });
         } finally {
         setSaving(false);
         }
@@ -313,7 +327,7 @@ import { useTranslation } from "react-i18next";
                 type="button"
                 onClick={onClose}
                 disabled={saving}
-                className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-bold text-heading transition-colors hover:bg-green-50 disabled:opacity-50"
+                className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 disabled:opacity-50"
             >
                 {t("admin.children.cancel")}
             </button>
@@ -321,7 +335,7 @@ import { useTranslation } from "react-i18next";
             <button
                 type="submit"
                 disabled={saving || loadingOptions}
-                className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-bold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+                className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
             >
                 {saving
                 ? t("admin.children.saving")

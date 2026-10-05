@@ -97,13 +97,16 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
       className="m-0 mt-auto max-h-[92vh] w-full max-w-none scrollbar-none overflow-y-auto rounded-t-3xl bg-bg-card p-xl backdrop:bg-scrim md:m-auto md:w-[min(560px,92vw)] md:rounded-2xl"
     >
       <div className="relative p-xl">
-        <button type="button" onClick={onClose} aria-label="Cerrar" className="absolute right-md top-md inline-flex size-11 items-center justify-center rounded-full text-body-text focus-visible:outline-2 focus-visible:outline-link">
-          <XIcon size={20} />
-        </button>
-        <h2 id="exception-modal-title" className="m-0 pr-12 font-heading text-2xl font-bold text-heading">
-          {exception ? 'Editar día especial' : 'Agregar día especial'}
-        </h2>
-        <p className="mt-2 font-body text-body-sm text-neutral-500">Este día reemplaza tu horario normal.</p>
+        <div className="flex items-center justify-between gap-md">
+          <h2 id="exception-modal-title" className="m-0 font-heading text-2xl font-bold text-heading">
+            {exception ? 'Editar día especial' : 'Agregar día especial'}
+          </h2>
+
+          <button type="button" onClick={onClose} aria-label="Cerrar" className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-neutral-100">
+            <XIcon size={20} />
+          </button>
+        </div>
+        <p className="mt-xs font-body text-body-sm text-neutral-500">Este día reemplaza tu horario normal.</p>
 
         <div className="mt-lg flex flex-col gap-md">
           <div>
@@ -138,11 +141,11 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
           </div>
 
           {formError && <p className="m-0 text-body-sm text-danger" role="alert">{formError}</p>}
-          <div className="flex flex-col-reverse gap-xl sm:flex-row sm:justify-between">
-            <button type="button" onClick={onClose} className="h-11 rounded-full border border-green-500 px-xl font-body text-button font-bold text-heading hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link">Cancelar</button>
-            <button type="button" onClick={() => void handleSubmit()} disabled={saving} className="inline-flex h-11 items-center justify-center gap-sm rounded-full bg-orange-500 px-xl font-body text-button font-bold text-white hover:bg-orange-600 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-link">
+          <div className="flex flex-wrap justify-end gap-sm">
+            <button type="button" onClick={onClose} className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link">Cancelar</button>
+            <button type="button" onClick={() => void handleSubmit()} disabled={saving} className="inline-flex h-11 items-center justify-center gap-sm rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-link">
               {saving && <span className="size-4 animate-spin rounded-full border-2 border-white border-r-transparent" aria-hidden="true" />}
-              Guardar día especial
+              {exception ? 'Guardar cambios' : 'Agregar'}
             </button>
           </div>
         </div>
