@@ -168,21 +168,6 @@ docker build -t mygreenfarm .
 docker run -p 8080:8080 --env-file backend/.env mygreenfarm
 ```
 
-## Soporte
-
-Para reportar un error o pedir ayuda, abrí un issue en el repositorio con el detalle del problema (pasos para reproducirlo, módulo afectado y, si aplica, logs del backend o la consola del navegador).
-
-## Contribución
-
-1. Creá una rama para tu cambio (por convención: `fix/...` o `feature/...`).
-2. Realizá tus modificaciones.
-3. Validá localmente (`npm run build` y `npm run lint` en `frontend/`; `./mvnw test` en `backend/`).
-4. Abrí un pull request con contexto claro.
-
-## Licencia
-
-Proyecto de uso interno / privado. No tiene una licencia de código abierto definida.
-
 ## Estado del proyecto
 
 En desarrollo activo. El proyecto ya cuenta con:
