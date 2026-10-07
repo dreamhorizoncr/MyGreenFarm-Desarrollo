@@ -20,6 +20,7 @@ import type {
   AnnouncementRequest,
   AnnouncementType,
 } from "../types/announcement.ts";
+import NewsDetailModal from "../components/NewsDetailModal.tsx";
 
 const emptyForm: AnnouncementRequest = {
   title: "",
@@ -55,12 +56,13 @@ type AdminNewsCategory =
 interface AnnouncementRowProps {
   announcement?: Announcement
   typeLabel?: string
+  onPreview?:() => void
   onEdit?: () => void
   onDelete?: () => void
   loading?: boolean
 }
 
-function AnnouncementRow({ announcement, typeLabel, onEdit, onDelete, loading = false }: Readonly<AnnouncementRowProps>) {
+function AnnouncementRow({ announcement, typeLabel, onPreview, onEdit, onDelete, loading = false }: Readonly<AnnouncementRowProps>) {
   const { t } = useTranslation()
 
   if (loading) {
@@ -89,7 +91,9 @@ function AnnouncementRow({ announcement, typeLabel, onEdit, onDelete, loading = 
           </h2>
 
           <p className="mt-xs whitespace-pre-line text-body-sm text-neutral-600">
-            {announcement!.content}
+            {announcement!.content.length > 180
+              ? `${announcement!.content.slice(0, 180).trim()}...`
+              : announcement!.content}
           </p>
 
           {(announcement!.location || announcement!.eventDate) && (
@@ -107,24 +111,35 @@ function AnnouncementRow({ announcement, typeLabel, onEdit, onDelete, loading = 
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-2">
+            {/* Acciones */}
+        <div className="flex flex-wrap items-center justify-between gap-sm">
           <button
             type="button"
-            onClick={onEdit}
-            aria-label={t("adminNews.editButton")}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition"
+            onClick={onPreview}
+            className="font-body text-body-sm font-semibold text-green-500 transition-opacity hover:opacity-70"
           >
-            <PencilIcon size={17} />
+            {t("adminNews.preview")}
           </button>
 
-          <button
-            type="button"
-            onClick={onDelete}
-            aria-label={t("adminNews.deleteButton")}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition"
-          >
-            <Trash2Icon size={17} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onEdit}
+              aria-label={t("adminNews.editButton")}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition"
+            >
+              <PencilIcon size={17} />
+            </button>
+
+            <button
+              type="button"
+              onClick={onDelete}
+              aria-label={t("adminNews.deleteButton")}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition"
+            >
+              <Trash2Icon size={17} />
+            </button>
+          </div>
         </div>
       </div>
     </article>
@@ -147,6 +162,7 @@ function AnnouncementsPage() {
   } = useAnnouncements();
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Announcement | null>(null);
+  const [previewing, setPreviewing] = useState<Announcement | null>(null);
   const [form, setForm] = useState<AnnouncementRequest>(emptyForm);
   const [activeCategory, setActiveCategory] =
     useState<AdminNewsCategory>("All");
@@ -637,6 +653,7 @@ function AnnouncementsPage() {
             key={announcement.id}
             announcement={announcement}
             typeLabel={t(typeLabels[announcement.type])}
+            onPreview={()=> setPreviewing(announcement)}
             onEdit={() => void openEdit(announcement)}
             onDelete={() => handleDelete(announcement)}
           />
@@ -654,6 +671,14 @@ function AnnouncementsPage() {
         totalPages={totalPages}
         onPageChange={setCurrentPage}
       />
+
+        {/* Vista previa */}
+      {previewing && (
+        <NewsDetailModal
+          announcement={previewing}
+          onClose={() => setPreviewing(null)}
+        />
+      )}
 
       {announcementToDelete && (
         <DeleteConfirmModal
