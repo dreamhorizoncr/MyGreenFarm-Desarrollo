@@ -137,6 +137,10 @@ export const forumService = {
     return response.data
   },
 
+  async deleteComment(articleId: string, commentId: string): Promise<void> {
+    await apiClient.delete(`/forum/articles/${articleId}/comments/${commentId}`)
+  },
+
   async getCommunityPosts(page = 0, size = 10): Promise<ForumCommunityPage> {
     const response = await apiClient.get<Omit<ForumCommunityPage, 'content'> & { content: ForumCommunityPostResponse[] }>('/forum/community', {
       params: { page, size },
