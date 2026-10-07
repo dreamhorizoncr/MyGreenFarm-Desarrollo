@@ -44,6 +44,7 @@ public class ForumCommentService {
         ForumArticle article = findArticle(articleId);
 
         String alias = Sanitizer.requireClean("alias", request.getAlias());
+        moderationService.assertAppropriateName("alias", alias);
         String content = Sanitizer.requireCleanPreserveLineBreaks("content", request.getContent());
         content = moderationService.assertCommentRelevant(article.getTopic(), article.getTitle(), content);
 

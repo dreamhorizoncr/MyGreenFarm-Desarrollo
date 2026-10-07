@@ -30,6 +30,8 @@ public class ForumModerationService {
 
     private static final String REJECTED_MESSAGE =
             "No pudimos publicar el contenido porque no cumple con las normas del foro.";
+    private static final String NAME_REJECTED_MESSAGE =
+            "Ese nombre no cumple con las normas del foro. Elegí otro para continuar.";
     private static final String UNAVAILABLE_MESSAGE =
             "No se pudo verificar el contenido en este momento. Intenta de nuevo en unos segundos.";
 
@@ -46,7 +48,9 @@ public class ForumModerationService {
                     + "con este formato exacto:\n"
                     + "{\"appropriate\": true|false, \"correctedContent\": \"...\"}\n\n"
                     + "\"appropriate\" es false si el mensaje contiene lenguaje vulgar, ofensivo, sexual, violento, "
-                    + "spam, publicidad o cualquier contenido inapropiado para un entorno escolar con niños.\n"
+                    + "spam, publicidad; contenido político o religioso ofensivo, proselitista o burlón; "
+                    + "o que suplanta/parodia a una figura pública o religiosa real; "
+                    + "o cualquier otro contenido inapropiado para un entorno escolar con niños.\n"
                     + SPELLING_INSTRUCTION;
 
     private static final String COMMENT_PROMPT =
@@ -60,10 +64,25 @@ public class ForumModerationService {
                     + "con este formato exacto:\n"
                     + "{\"appropriate\": true|false, \"onTopic\": true|false, \"correctedContent\": \"...\"}\n\n"
                     + "- \"appropriate\" es false si el comentario contiene lenguaje vulgar, ofensivo, sexual, "
-                    + "violento, spam o cualquier contenido inapropiado para un entorno escolar con niños.\n"
+                    + "violento, spam; contenido político o religioso ofensivo, proselitista o burlón; "
+                    + "o que suplanta/parodia a una figura pública o religiosa real; "
+                    + "o cualquier otro contenido inapropiado para un entorno escolar con niños.\n"
                     + "- \"onTopic\" es false si el comentario no guarda ninguna relación razonable con el tema o "
                     + "el título del artículo (por ejemplo, habla de algo completamente distinto).\n"
                     + SPELLING_INSTRUCTION;
+
+    private static final String NAME_PROMPT =
+            "Eres un moderador de contenido para el foro de un centro educativo infantil "
+                    + "(familias con niños de 0 a 12 años). Evalúa el siguiente nombre o alias que una persona "
+                    + "eligió para publicar en el foro.\n\n"
+                    + "Nombre a evaluar:\n\"%s\"\n\n"
+                    + "Responde ÚNICAMENTE con un JSON de una línea, sin texto adicional ni bloques de código, "
+                    + "con este formato exacto:\n"
+                    + "{\"appropriate\": true|false}\n\n"
+                    + "\"appropriate\" es false si el nombre contiene lenguaje vulgar, sexual u ofensivo, un doble "
+                    + "sentido o juego de palabras de mal gusto, una burla o referencia a política o religión, "
+                    + "o suplanta a una figura pública o religiosa real. Un nombre común y corriente (real, "
+                    + "inventado o un apodo normal) es \"appropriate\": true.";
 
     private final ObjectMapper objectMapper;
 
@@ -84,7 +103,7 @@ public class ForumModerationService {
     // Used for the community wall and its replies: content just has to be appropriate.
     // Returns the content with spelling/accents/punctuation corrected by Gemini.
     public String assertAppropriate(String content) {
-        JsonNode result = callGemini(APPROPRIATE_PROMPT.formatted(content));
+        JsonNode result = callGemini("content", APPROPRIATE_PROMPT.formatted(content));
         boolean appropriate = result != null && result.path("appropriate").asBoolean(false);
 
         if (!appropriate) {
@@ -97,7 +116,7 @@ public class ForumModerationService {
     // Used for replies to blog articles: content has to be appropriate AND relevant
     // to the article it responds to. Returns the spelling-corrected content.
     public String assertCommentRelevant(String articleTopic, String articleTitle, String commentContent) {
-        JsonNode result = callGemini(COMMENT_PROMPT.formatted(articleTopic, articleTitle, commentContent));
+        JsonNode result = callGemini("content", COMMENT_PROMPT.formatted(articleTopic, articleTitle, commentContent));
         boolean appropriate = result != null && result.path("appropriate").asBoolean(false);
         boolean onTopic = result != null && result.path("onTopic").asBoolean(false);
 
@@ -108,6 +127,17 @@ public class ForumModerationService {
         return correctedContent(result, commentContent);
     }
 
+    // Used for the display name/alias people choose when posting: blocks vulgar, political,
+    // religious or mocking names (e.g. puns impersonating public figures), independent of content.
+    public void assertAppropriateName(String fieldName, String name) {
+        JsonNode result = callGemini(fieldName, NAME_PROMPT.formatted(name));
+        boolean appropriate = result != null && result.path("appropriate").asBoolean(false);
+
+        if (!appropriate) {
+            throw new InvalidFieldException(fieldName, NAME_REJECTED_MESSAGE);
+        }
+    }
+
     // Falls back to the original content if Gemini didn't return a usable correction,
     // so a missing/blank field never erases what the user wrote.
     private String correctedContent(JsonNode result, String original) {
@@ -115,7 +145,7 @@ public class ForumModerationService {
         return corrected == null || corrected.isBlank() ? original : corrected;
     }
 
-    private JsonNode callGemini(String prompt) {
+    private JsonNode callGemini(String fieldName, String prompt) {
         try {
             String url = baseUrl + "/models/" + model + ":generateContent";
 
@@ -139,13 +169,13 @@ public class ForumModerationService {
             try (Response response = httpClient.newCall(request).execute()) {
                 if (!response.isSuccessful()) {
                     log.error("Error llamando a Gemini API para moderación: status={}", response.code());
-                    throw new InvalidFieldException("content", UNAVAILABLE_MESSAGE);
+                    throw new InvalidFieldException(fieldName, UNAVAILABLE_MESSAGE);
                 }
 
                 String responseBody = response.body() != null ? response.body().string() : null;
                 if (responseBody == null || responseBody.isBlank()) {
                     log.error("Gemini API devolvió una respuesta vacía para moderación");
-                    throw new InvalidFieldException("content", UNAVAILABLE_MESSAGE);
+                    throw new InvalidFieldException(fieldName, UNAVAILABLE_MESSAGE);
                 }
 
                 JsonNode root = objectMapper.readTree(responseBody);
@@ -154,7 +184,7 @@ public class ForumModerationService {
                 // treat that as a rejection, since it is itself evidence the content is unsafe.
                 if (root.path("candidates").isEmpty()) {
                     log.warn("Gemini bloqueó el contenido a moderar: {}", root.path("promptFeedback"));
-                    throw new InvalidFieldException("content", REJECTED_MESSAGE);
+                    throw new InvalidFieldException(fieldName, REJECTED_MESSAGE);
                 }
 
                 String text = root
@@ -164,7 +194,7 @@ public class ForumModerationService {
 
                 if (text == null || text.isBlank()) {
                     log.error("Gemini API no devolvió texto en la respuesta de moderación");
-                    throw new InvalidFieldException("content", UNAVAILABLE_MESSAGE);
+                    throw new InvalidFieldException(fieldName, UNAVAILABLE_MESSAGE);
                 }
 
                 return objectMapper.readTree(extractJson(text));
@@ -174,7 +204,7 @@ public class ForumModerationService {
         } catch (Exception e) {
             log.error("Error moderando contenido con Gemini API: {}", e.getMessage());
             // Fail closed: if we can't verify the content, we don't publish it.
-            throw new InvalidFieldException("content", UNAVAILABLE_MESSAGE);
+            throw new InvalidFieldException(fieldName, UNAVAILABLE_MESSAGE);
         }
     }
 
