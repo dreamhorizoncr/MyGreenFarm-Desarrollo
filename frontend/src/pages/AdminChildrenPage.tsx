@@ -92,7 +92,7 @@ function AdminChildrenPage() {
               </span>
             </button>
 
-            <div className="flex h-11 w-full items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 md:w-[360px]">
+            <div className="flex h-11 min-w-0 flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 md:w-[360px] md:flex-none">
               <SearchIcon
                 size={18}
                 className="shrink-0 text-neutral-500"

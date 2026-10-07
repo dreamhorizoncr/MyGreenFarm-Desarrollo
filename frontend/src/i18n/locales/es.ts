@@ -335,6 +335,7 @@ export default {
     imageDeleteErrorToastTitle: "No se pudo eliminar la imagen",
     deleteImageModalTitle: "Eliminar imagen",
     deleteImageModalMessage: "¿Seguro que deseas eliminar esta imagen? Esta acción no se puede deshacer.",
+    preview: "Vista Previa",
   },
   adminForum: {
     title: "Blog del foro",

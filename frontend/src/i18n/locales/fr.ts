@@ -331,6 +331,7 @@ export default {
     imageDeleteErrorToastTitle: "Impossible de supprimer l'image",
     deleteImageModalTitle: "Supprimer l'image",
     deleteImageModalMessage: "Voulez-vous vraiment supprimer cette image ? Cette action est irréversible.",
+    preview: "Aperçu",
   },
   adminForum: {
     title: "Blog du forum",

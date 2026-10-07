@@ -1,6 +1,6 @@
 # My Green Farm
 
-Sitio web y panel administrativo de My Green Farm, un centro educativo acreditado por el MEP con programas de guardería y preescolar para niños desde los 3 meses hasta los 12 años.
+Sistema Web y panel administrativo de My Green Farm, un centro educativo acreditado por el MEP con programas de guardería y preescolar para niños desde los 3 meses hasta los 12 años.
 
 ## Descripción
 
