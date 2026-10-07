@@ -2,6 +2,8 @@ package taller.multimedia.backend.controller.forum;
 
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,6 +17,8 @@ import taller.multimedia.backend.exception.InvalidFieldException;
 
 @RestControllerAdvice(basePackageClasses = ForumArticleController.class)
 public class ForumExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(ForumExceptionHandler.class);
 
     @ExceptionHandler(InvalidFieldException.class)
     public ResponseEntity<MessageResponse> handleInvalidField(InvalidFieldException exception) {
@@ -42,6 +46,7 @@ public class ForumExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<MessageResponse> handleUnexpectedException(Exception exception) {
+        log.error("Error inesperado en el foro", exception);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new MessageResponse("Ocurrió un error inesperado"));
     }

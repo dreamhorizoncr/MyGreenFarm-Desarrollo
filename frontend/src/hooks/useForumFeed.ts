@@ -220,6 +220,18 @@ function useForumFeed() {
     setCommentsByPost((previous) => ({ ...previous, [postId]: page.content }))
   }, [])
 
+  const removeComment = useCallback(async (postId: string, commentId: string) => {
+    await forumService.deleteComment(postId, commentId)
+    const dropComment = (comments: BlogComment[]) => comments.filter((comment) => comment.id !== commentId)
+    setSourceCommentsByPost((previous) => ({ ...previous, [postId]: dropComment(previous[postId] ?? []) }))
+    setCommentsByPost((previous) => ({ ...previous, [postId]: dropComment(previous[postId] ?? []) }))
+    const dropCount = (postsList: BlogPost[]) => postsList.map((post) =>
+      post.id === postId ? { ...post, commentCount: Math.max(0, post.commentCount - 1) } : post,
+    )
+    setSourceBlogPosts(dropCount)
+    setBlogPosts(dropCount)
+  }, [])
+
   const loadArticle = useCallback(async (postId: string) => {
     const article = await forumService.getArticle(postId)
     setSourceBlogPosts((previous) => {
@@ -269,6 +281,7 @@ function useForumFeed() {
     getComments,
     addComment,
     loadComments,
+    removeComment,
     loadArticle,
     isLiked,
     getLikeCount,

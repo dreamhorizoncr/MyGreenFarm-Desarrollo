@@ -77,6 +77,7 @@ public class ForumCommunityPostController {
         var post = postRepository.findById(postId).orElse(null);
         if (post == null) return ResponseEntity.notFound().build();
         String alias = Sanitizer.requireClean("alias", request.getAlias());
+        moderationService.assertAppropriateName("alias", alias);
         String content = Sanitizer.requireCleanPreserveLineBreaks("content", request.getContent());
         content = moderationService.assertAppropriate(content);
 
