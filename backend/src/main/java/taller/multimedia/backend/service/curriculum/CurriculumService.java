@@ -22,7 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +41,11 @@ public class CurriculumService {
 
     @Value("${supabase.s3.buckets.curriculums}")
     private String curriculumsBucket;
+
+    // In-memory send guards (reset on restart, by design): just stop a duplicate
+    // click/request within the same running instance from emailing twice.
+    private final Set<UUID> receivedEmailSent = ConcurrentHashMap.newKeySet();
+    private final Set<UUID> hiredEmailSent = ConcurrentHashMap.newKeySet();
 
     @Transactional
     public ApplicationResponse submitApplication(ApplicationRequest request, MultipartFile file, List<MultipartFile> certificates) {
@@ -76,8 +83,10 @@ public class CurriculumService {
 
         Curriculum saved = curriculumRepository.save(curriculum);
 
-        Locale locale = Locale.forLanguageTag(saved.getLanguage());
-        emailService.sendApplicationReceivedEmail(saved, resolveVacancyTitle(saved.getVacancyId()), locale);
+        if (receivedEmailSent.add(saved.getId())) {
+            Locale locale = Locale.forLanguageTag(saved.getLanguage());
+            emailService.sendApplicationReceivedEmail(saved, resolveVacancyTitle(saved.getVacancyId()), locale);
+        }
 
         return mapToResponse(saved);
     }
@@ -97,7 +106,7 @@ public class CurriculumService {
 
         Curriculum saved = curriculumRepository.save(curriculum);
 
-        if (previousStatus != status && status == CurriculumStatus.APPROVED) {
+        if (previousStatus != status && status == CurriculumStatus.APPROVED && hiredEmailSent.add(id)) {
             String languageCode = saved.getLanguage() != null ? saved.getLanguage() : resolverLangCode(lang);
             Locale locale = Locale.forLanguageTag(languageCode);
             emailService.sendApplicationHiredEmail(saved, resolveVacancyTitle(saved.getVacancyId()), locale);
