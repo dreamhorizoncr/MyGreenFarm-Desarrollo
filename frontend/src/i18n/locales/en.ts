@@ -332,6 +332,7 @@ export default {
     imageDeleteErrorToastTitle: "Couldn't delete the image",
     deleteImageModalTitle: "Delete image",
     deleteImageModalMessage: "Are you sure you want to delete this image? This action cannot be undone.",
+    preview: "Preview",
   },
   adminForum: {
     title: "Forum blog",

@@ -100,12 +100,12 @@ function NewsCard({ big, announcement, typeLabel, formattedDate, coverImage, onR
         </div>
 
         {/* Contenido */}
-        <div className="relative flex flex-col items-start p-[22px] text-left md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2 md:pb-[60px]">
+        <div className="relative flex flex-col items-start p-[22px] text-left md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2 md:items-start md:justify-center md:-translate-y-5 md:text-left">
           <span className="font-body text-caption text-neutral-500">
             {formattedDate}
           </span>
 
-          <h2 className="mt-[10px] line-clamp-2 font-heading text-[28px] font-bold text-heading">
+          <h2 className="mt-[10px] line-clamp-2 font-heading text-[24px] font-bold text-heading">
             {announcement!.title}
           </h2>
 
@@ -157,11 +157,11 @@ function NewsCard({ big, announcement, typeLabel, formattedDate, coverImage, onR
           {formattedDate}
         </span>
 
-        <h2 className="mt-[8px] line-clamp-1 font-heading text-[28px] font-bold text-heading">
+        <h2 className="mt-[8px] line-clamp-1 font-heading text-[24px] font-bold text-heading">
           {announcement!.title}
         </h2>
 
-        <p className="mt-[2px] line-clamp-1 font-body text-caption leading-[1.55] text-body-text">
+        <p className="mt-[1px] line-clamp-2 font-body text-body-sm leading-[1.6] text-body-text">
           {announcement!.content}
         </p>
 
