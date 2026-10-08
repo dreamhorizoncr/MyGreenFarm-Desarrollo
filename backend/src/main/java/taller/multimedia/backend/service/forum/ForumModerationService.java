@@ -57,7 +57,10 @@ public class ForumModerationService {
                     + "\"appropriate\" es false si el mensaje contiene lenguaje vulgar, ofensivo, sexual, violento, "
                     + "spam, publicidad; contenido político o religioso ofensivo, proselitista o burlón; "
                     + "o que suplanta/parodia a una figura pública o religiosa real; "
-                    + "o cualquier otro contenido inapropiado para un entorno escolar con niños.\n"
+                    + "o cualquier otro contenido inapropiado para un entorno escolar con niños. "
+                    + "Esto incluye insultos y groserías coloquiales en español latinoamericano (por ejemplo, "
+                    + "pero no limitado a: \"malparido\", \"hijueputa\"/\"hijueputas\", \"carepicha\"/\"carepichas\", "
+                    + "\"mierda\", \"pendejo\", \"gonorrea\"), aunque estén mal escritas o disimuladas.\n"
                     + SPELLING_INSTRUCTION;
 
     private static final String COMMENT_PROMPT =
@@ -73,7 +76,10 @@ public class ForumModerationService {
                     + "- \"appropriate\" es false si el comentario contiene lenguaje vulgar, ofensivo, sexual, "
                     + "violento, spam; contenido político o religioso ofensivo, proselitista o burlón; "
                     + "o que suplanta/parodia a una figura pública o religiosa real; "
-                    + "o cualquier otro contenido inapropiado para un entorno escolar con niños.\n"
+                    + "o cualquier otro contenido inapropiado para un entorno escolar con niños. "
+                    + "Esto incluye insultos y groserías coloquiales en español latinoamericano (por ejemplo, "
+                    + "pero no limitado a: \"malparido\", \"hijueputa\"/\"hijueputas\", \"carepicha\"/\"carepichas\", "
+                    + "\"mierda\", \"pendejo\", \"gonorrea\"), aunque estén mal escritas o disimuladas.\n"
                     + "- \"onTopic\" es false si el comentario no guarda ninguna relación razonable con el tema o "
                     + "el título del artículo (por ejemplo, habla de algo completamente distinto).\n"
                     + SPELLING_INSTRUCTION;
