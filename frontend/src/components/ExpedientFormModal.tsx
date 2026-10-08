@@ -88,6 +88,9 @@ function ExpedientFormModal({
 
   const [error, setError] = useState<string | null>(null);
 
+  const [studentError, setStudentError] = useState<string | null>(null);
+  const [dateError, setDateError] = useState<string | null>(null);
+
   const [searchTerm, setSearchTerm] = useState("");
 
   const [isOpen, setIsOpen] = useState(false);
@@ -132,10 +135,15 @@ function ExpedientFormModal({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!studentId) {
-      notify.error(t("admin.expedients.selectStudentError") ?? "Debe seleccionar un estudiante");
-      return;
-    }
+    const studentErrorMessage = studentId
+      ? null
+      : t("admin.expedients.selectStudentError");
+    const dateErrorMessage = validateRequired(admisionDate, t("admin.expedients.admisiondate"), t);
+
+    setStudentError(studentErrorMessage);
+    setDateError(dateErrorMessage);
+
+    if (studentErrorMessage || dateErrorMessage) return;
 
     setSaving(true);
     setError(null);
@@ -234,16 +242,16 @@ function ExpedientFormModal({
                   setSearchTerm(e.target.value);
                   setStudentId(""); // Resetea ID hasta que elija una opción válida
                   setIsOpen(true);
+                  if (studentError) setStudentError(null);
                 }}
                 onFocus={() => setIsOpen(true)}
                 onBlur={() => setTimeout(() => setIsOpen(false), 200)} // Delay para permitir click en opciones
                 placeholder={
                   loadingOptions
-                    ? "Cargando estudiantes..."
+                    ? t("admin.expedients.loadingStudents")
                     : t("admin.expedients.childNamePlaceholder") ?? "Buscar estudiante..."
                 }
                 disabled={isEditing || loadingOptions}
-                required
                 className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md pr-11 font-normal outline-none focus:border-heading disabled:cursor-not-allowed disabled:bg-neutral-100"
               />
 
@@ -264,6 +272,7 @@ function ExpedientFormModal({
                           setStudentId(option.studentId);
                           setSearchTerm(`${option.fullName ?? option.childName}`);
                           setIsOpen(false);
+                          setStudentError(null);
                         }}
                         className="mx-2 cursor-pointer rounded-lg px-4 py-2 text-heading transition-colors hover:bg-orange-100"
                       >
@@ -271,11 +280,14 @@ function ExpedientFormModal({
                       </li>
                     ))
                   ) : (
-                    <li className="px-4 py-2 text-neutral-400">Sin resultados</li>
+                    <li className="px-4 py-2 text-neutral-400">{t("admin.expedients.noResults")}</li>
                   )}
                 </ul>
               )}
             </div>
+            {studentError && (
+              <span className="mt-xs block font-body text-body-sm font-normal text-danger">{studentError}</span>
+            )}
           </div>
 
           {/* Fecha de admisión */}
@@ -284,10 +296,15 @@ function ExpedientFormModal({
             <input
               type="date"
               value={admisionDate}
-              onChange={(e) => setAdmisionDate(e.target.value)}
-              required
+              onChange={(e) => {
+                setAdmisionDate(e.target.value);
+                if (dateError) setDateError(null);
+              }}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            {dateError && (
+              <span className="mt-xs block font-body text-body-sm font-normal text-danger">{dateError}</span>
+            )}
           </label>
 
           {/* Nivel educativo */}

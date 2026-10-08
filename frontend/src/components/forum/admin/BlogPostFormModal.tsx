@@ -5,6 +5,7 @@ import Button from '../../ui/Button.tsx'
 import { useModalExit } from '../../../hooks/useModalExit.ts'
 import type { BlogPost, BlogPostInput } from '../../../types/forum.ts'
 import { userStorage } from '../../../utils/userStorage.ts'
+import { validateRequired } from '../../../utils/validators.ts'
 
 const ALLOWED_IMAGE_TYPES = new Set([
   'image/png',
@@ -61,8 +62,16 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
   const [image, setImage] = useState<SelectedImage | null>(null)
   const [imageError, setImageError] = useState('')
   const [altError, setAltError] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string | null>>({})
   const [pendingChanges, setPendingChanges] = useState<BlogPostInput | null>(null)
   const [confirmationText, setConfirmationText] = useState('')
+
+  const clearFieldError = (field: string) => {
+    setFieldErrors((current) => {
+      if (!current[field]) return current
+      return { ...current, [field]: null }
+    })
+  }
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
@@ -107,6 +116,18 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+
+    const errors: Record<string, string | null> = {
+      title: validateRequired(form.title, t('adminForum.postTitle'), t),
+      topic: validateRequired(form.topic, t('adminForum.postTopic'), t),
+      authorName: validateRequired(form.authorName ?? '', t('adminForum.authorName'), t),
+      authorRole: validateRequired(form.authorRole ?? '', t('adminForum.authorRole'), t),
+      content: validateRequired(form.content, t('adminForum.postContent'), t),
+    }
+
+    setFieldErrors(errors)
+
+    if (Object.values(errors).some((message) => message !== null)) return
 
     if ((image || form.imageUrl) && !form.imageAlt?.trim()) {
       setAltError(t('adminForum.imageAltRequired'))
@@ -169,68 +190,87 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
             {t('adminForum.postTitle')}
 
             <input
-              required
               maxLength={MAX_TITLE}
               value={form.title}
-              onChange={(event) =>
+              onChange={(event) => {
                 setForm({ ...form, title: event.target.value })
-              }
+                clearFieldError('title')
+              }}
               placeholder={t('adminForum.postTitlePlaceholder')}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            {fieldErrors.title && (
+              <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.title}</span>
+            )}
           </label>
 
           <label className="font-body text-body-sm font-semibold text-heading">
             {t('adminForum.postTopic')}
 
             <input
-              required
               maxLength={MAX_TOPIC}
               value={form.topic}
-              onChange={(event) =>
+              onChange={(event) => {
                 setForm({ ...form, topic: event.target.value })
-              }
+                clearFieldError('topic')
+              }}
               placeholder={t('adminForum.postTopicPlaceholder')}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            {fieldErrors.topic && (
+              <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.topic}</span>
+            )}
           </label>
 
           <label className="font-body text-body-sm font-semibold text-heading">
             {t('adminForum.authorName')}
             <input
-              required
               maxLength={120}
               value={form.authorName ?? ''}
-              onChange={(event) => setForm({ ...form, authorName: event.target.value })}
+              onChange={(event) => {
+                setForm({ ...form, authorName: event.target.value })
+                clearFieldError('authorName')
+              }}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            {fieldErrors.authorName && (
+              <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.authorName}</span>
+            )}
           </label>
 
           <label className="font-body text-body-sm font-semibold text-heading">
             {t('adminForum.authorRole')}
             <input
-              required
               maxLength={40}
               value={form.authorRole ?? ''}
-              onChange={(event) => setForm({ ...form, authorRole: event.target.value })}
+              onChange={(event) => {
+                setForm({ ...form, authorRole: event.target.value })
+                clearFieldError('authorRole')
+              }}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            {fieldErrors.authorRole && (
+              <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.authorRole}</span>
+            )}
           </label>
 
           <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
             {t('adminForum.postContent')}
 
             <textarea
-              required
               maxLength={MAX_CONTENT}
               rows={10}
               value={form.content}
-              onChange={(event) =>
+              onChange={(event) => {
                 setForm({ ...form, content: event.target.value })
-              }
+                clearFieldError('content')
+              }}
               placeholder={t('adminForum.postContentPlaceholder')}
               className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
             />
+            {fieldErrors.content && (
+              <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.content}</span>
+            )}
 
             <span className="mt-xs block text-right text-caption font-normal text-neutral-500">
               {form.content.length}/{MAX_CONTENT}
