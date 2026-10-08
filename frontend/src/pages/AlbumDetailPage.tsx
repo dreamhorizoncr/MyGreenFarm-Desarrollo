@@ -5,6 +5,7 @@ import { HeartIcon } from '@animateicons/react/lucide'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import PhotoLightbox from '../components/PhotoLightbox.tsx'
+import Skeleton from '../components/ui/Skeleton.tsx'
 import { useGallery } from '../hooks/useGallery.ts'
 import type { Gallery } from '../types/gallery.ts'
 import { galleryService } from '../services/gallery.ts'
@@ -47,7 +48,7 @@ function LikeBadge({ albumTitle, liked, totalLikes, loading, onToggle }: Readonl
 function AlbumDetailPage() {
   const { t, i18n } = useTranslation()
   const { id } = useParams<{ id: string }>()
-  const { categories, galleriesByCategory, fetchGallery } = useGallery()
+  const { categories, galleriesByCategory, fetchGallery, loading, error } = useGallery()
   const { imageLikes, initializeLikes, toggleReaction } = useImageLikes()
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
@@ -126,9 +127,31 @@ function AlbumDetailPage() {
       {/* Fotos del álbum */}
       <main>
         <Container className="py-[60px] md:py-[80px]">
-          {/* ... loading / error / notFound sin cambios ... */}
+          {loading && (
+            <div className="grid grid-cols-2 gap-[12px] md:grid-cols-4 md:gap-[14px]">
+              {Array.from({ length: 8 }, (_, index) => (
+                <Skeleton
+                  key={index}
+                  shape="rect"
+                  className={`aspect-square w-full ${index === 0 ? 'col-span-2 row-span-2' : ''}`}
+                />
+              ))}
+            </div>
+          )}
 
-          {album && album.galleryImages.length > 0 && (
+          {!loading && error && (
+            <p className="m-0 p-xl text-center font-body text-body text-danger">
+              {error}
+            </p>
+          )}
+
+          {!loading && !error && !album && (
+            <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
+              {t('home.galeria.notFoundAlbum')}
+            </p>
+          )}
+
+          {!loading && !error && album && album.galleryImages.length > 0 && (
             <div className="grid grid-cols-2 gap-[12px] md:grid-cols-4 md:gap-[14px]">
               {album.galleryImages.map((image, index) => {
                 const likeState = imageLikes[image.id]
