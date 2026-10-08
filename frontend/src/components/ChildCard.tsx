@@ -37,7 +37,7 @@ function ChildCard({ child, onEdit, onDelete, loading = false }: Readonly<ChildC
               </h2>
 
               <p className="mt-1 font-body text-body-sm text-body-text">
-                ID estudiantil: {child!.studentId}
+                {t("admin.children.studentId")}: {child!.studentId}
               </p>
             </>
           )}

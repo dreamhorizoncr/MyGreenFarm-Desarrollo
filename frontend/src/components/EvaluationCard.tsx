@@ -1,4 +1,5 @@
 import { PencilIcon, Trash2Icon } from "@animateicons/react/lucide";
+import { useTranslation } from "react-i18next";
 
 import type { Evaluation } from "../types/evaluation";
 import type { Expedient } from "../types/expedient";
@@ -19,15 +20,16 @@ import Skeleton from "./ui/Skeleton.tsx";
     onDelete,
     loading = false,
     }: Readonly<EvaluationCardProps>) {
+    const { t } = useTranslation();
     const formattedDate = evaluation
         ? new Date(`${evaluation.evaluationDate}T00:00:00`).toLocaleDateString()
         : ""
 
     const progressFields = [
-        { label: "Comunicación", value: evaluation?.communicationProgress },
-        { label: "Lenguaje", value: evaluation?.languageProgress },
-        { label: "Lectura", value: evaluation?.readingProgress },
-        { label: "Desarrollo motor", value: evaluation?.motorProgress },
+        { label: t("admin.evaluations.cardCommunication"), value: evaluation?.communicationProgress },
+        { label: t("admin.evaluations.cardLanguage"), value: evaluation?.languageProgress },
+        { label: t("admin.evaluations.cardReading"), value: evaluation?.readingProgress },
+        { label: t("admin.evaluations.cardMotor"), value: evaluation?.motorProgress },
     ]
 
     return (
@@ -43,7 +45,7 @@ import Skeleton from "./ui/Skeleton.tsx";
             ) : (
               <div className="min-w-0">
                 <h3 className="m-0 font-heading text-h4 font-bold text-heading">
-                    {expedient?.childName ?? "Expediente"}
+                    {expedient?.childName ?? t("admin.evaluations.cardDefaultExpedient")}
                 </h3>
 
                 <p className="mt-1 font-body text-body-sm text-neutral-500">
@@ -69,8 +71,8 @@ import Skeleton from "./ui/Skeleton.tsx";
                       type="button"
                       onClick={() => onEdit!(evaluation!)}
                       className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 bg-white text-green-600 transition-all duration-200 hover:bg-green-50"
-                      aria-label="Editar evaluación"
-                      title="Editar"
+                      aria-label={t("admin.evaluations.cardEditAriaLabel")}
+                      title={t("admin.evaluations.cardEditTitle")}
                   >
                       <PencilIcon size={17} />
                   </button>
@@ -79,8 +81,8 @@ import Skeleton from "./ui/Skeleton.tsx";
                       type="button"
                       onClick={() => onDelete!(evaluation!)}
                       className="flex h-10 w-10 items-center justify-center rounded-full border border-red-400 bg-white text-red-500 transition-all duration-200 hover:bg-red-50"
-                      aria-label="Eliminar evaluación"
-                      title="Eliminar"
+                      aria-label={t("admin.evaluations.cardDeleteAriaLabel")}
+                      title={t("admin.evaluations.cardDeleteTitle")}
                   >
                       <Trash2Icon size={17} />
                   </button>
@@ -125,7 +127,7 @@ import Skeleton from "./ui/Skeleton.tsx";
             ) : (
               <>
                 <p className="m-0 font-body text-body-sm font-semibold text-heading">
-                Observación del profesor
+                {t("admin.evaluations.cardTeacherObservation")}
                 </p>
                 <p className="mt-1 line-clamp-4 font-body text-body-sm text-neutral-600">
                 {evaluation!.teacherObservation}

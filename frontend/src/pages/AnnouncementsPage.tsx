@@ -14,6 +14,7 @@ import Select from "../components/ui/Select.tsx";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 import { useAnnouncements } from "../hooks/useAnnouncements.ts";
 import { notify } from "../utils/notifications.ts";
+import { validateMinLength, validateRequired } from "../utils/validators.ts";
 import type {
   Announcement,
   AnnouncementImageResponse,
@@ -28,6 +29,9 @@ const emptyForm: AnnouncementRequest = {
   eventDate: "",
   location: "",
 };
+
+const TITLE_MIN_LENGTH = 5;
+const CONTENT_MIN_LENGTH = 20;
 
 const typeLabels: Record<
   AnnouncementType,
@@ -148,6 +152,8 @@ function AnnouncementsPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Announcement | null>(null);
   const [form, setForm] = useState<AnnouncementRequest>(emptyForm);
+  const [titleError, setTitleError] = useState<string | null>(null);
+  const [contentError, setContentError] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] =
     useState<AdminNewsCategory>("All");
   const [currentPage, setCurrentPage] = useState(1);
@@ -170,6 +176,8 @@ function AnnouncementsPage() {
   const openCreate = () => {
     setEditing(null);
     setForm(emptyForm);
+    setTitleError(null);
+    setContentError(null);
     setCover(null);
     setGallery([]);
     setImages([]);
@@ -188,17 +196,34 @@ function AnnouncementsPage() {
     setCover(null);
     setGallery([]);
     setImages(await getImages(announcement.id));
+    setTitleError(null);
+    setContentError(null);
     setFormOpen(true);
   };
 
   const closeForm = () => {
     setFormOpen(false);
     setEditing(null);
+    setTitleError(null);
+    setContentError(null);
     setImages([]);
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const titleErrorMessage =
+      validateRequired(form.title, t("adminNews.newsTitle"), t) ??
+      validateMinLength(form.title, TITLE_MIN_LENGTH, t);
+    const contentErrorMessage =
+      validateRequired(form.content, t("adminNews.newscontent"), t) ??
+      validateMinLength(form.content, CONTENT_MIN_LENGTH, t);
+
+    setTitleError(titleErrorMessage);
+    setContentError(contentErrorMessage);
+
+    if (titleErrorMessage || contentErrorMessage) return;
+
     const data: AnnouncementRequest = {
       ...form,
       eventDate: form.eventDate || undefined,
@@ -325,6 +350,7 @@ function AnnouncementsPage() {
 
           <form
             onSubmit={handleSubmit}
+            noValidate
             className="relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
           >
             <div className="flex items-center justify-between gap-md">
@@ -347,18 +373,20 @@ function AnnouncementsPage() {
                 {t("adminNews.newsTitle")}
 
                 <input
-                  required
-                  minLength={5}
-                  maxLength={70}
                   value={form.title}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setForm({
                       ...form,
                       title: e.target.value,
-                    })
-                  }
+                    });
+                    if (titleError) setTitleError(null);
+                  }}
+                  maxLength={70}
                   className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                 />
+                {titleError && (
+                  <span className="mt-xs block font-body text-body-sm font-normal text-danger">{titleError}</span>
+                )}
               </label>
 
               <label className="font-body text-body-sm font-semibold text-heading">
@@ -386,19 +414,21 @@ function AnnouncementsPage() {
                 {t("adminNews.newscontent")}
 
                 <textarea
-                  required
-                  minLength={20}
-                  maxLength={4000}
                   rows={6}
                   value={form.content}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setForm({
                       ...form,
                       content: e.target.value,
-                    })
-                  }
+                    });
+                    if (contentError) setContentError(null);
+                  }}
+                  maxLength={4000}
                   className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                 />
+                {contentError && (
+                  <span className="mt-xs block font-body text-body-sm font-normal text-danger">{contentError}</span>
+                )}
               </label>
 
               <label className="font-body text-body-sm font-semibold text-heading">

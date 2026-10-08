@@ -47,3 +47,8 @@ export function validateRequired(value: string, fieldName: string, t: TFunction)
   if (!value.trim()) return t('validation.fieldRequired', { field: fieldName })
   return null
 }
+
+export function validateMinLength(value: string, min: number, t: TFunction): string | null {
+  if (value.trim().length < min) return t('validation.minLength', { min })
+  return null
+}
