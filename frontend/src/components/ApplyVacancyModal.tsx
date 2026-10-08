@@ -7,6 +7,7 @@ import Button from './ui/Button.tsx'
 import TextField from './ui/TextField.tsx'
 import { useVacancyApplicationForm } from '../hooks/useVacancyApplicationForm.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
 
@@ -36,6 +37,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
   const form = useVacancyApplicationForm({ vacancyId, requiredFields }, onSubmit)
   const heading = vacancyId === null ? title : t('vacancies.applyModalTitle')
   const { closing, requestClose } = useModalExit(onClose)
+  useBodyScrollLock()
 
   useEffect(() => {
     dialogRef.current?.showModal()
