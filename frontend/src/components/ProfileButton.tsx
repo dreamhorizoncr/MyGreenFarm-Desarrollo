@@ -14,9 +14,6 @@ function ProfileButton() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
-  // Referencia estable: igual que en LanguageSwitcher, si se recrea en cada
-  // render, releaseExclusiveOpen nunca encuentra el mismo closeMenu y
-  // activeClose se queda atascado, impidiendo reabrir este menu despues.
   const closeMenu = useCallback(() => setMenuOpen(false), [])
 
   const user = userStorage.getUser()

@@ -10,9 +10,6 @@ function LanguageSwitcher() {
   const { t, i18n } = useTranslation()
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
-  // Referencia estable: si se recrea en cada render, releaseExclusiveOpen nunca
-  // encuentra el mismo closeMenu que se guardo al abrir y activeClose se queda
-  // "atascado", impidiendo volver a abrir este menu despues.
   const closeMenu = useCallback(() => setOpen(false), [])
 
   useDismiss({ ref: rootRef, isOpen: open, onClose: () => { releaseExclusiveOpen(closeMenu); closeMenu() } })
