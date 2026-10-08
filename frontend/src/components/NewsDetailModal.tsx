@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { CalendarDaysIcon, MapPinIcon, SparklesIcon, XIcon } from '@animateicons/react/lucide';
 import { useTranslation } from 'react-i18next';
 import { useAnnouncementImages } from '../hooks/useAnnouncementImages.ts';
+import { useModalExit } from '../hooks/useModalExit.ts';
 
 import type { Announcement, AnnouncementType } from '../types/announcement.ts';
 
@@ -44,6 +45,8 @@ function NewsDetailModal({
 }: Readonly<NewsDetailModalProps>) {
     const { t, i18n } = useTranslation();
 
+    const { closing, requestClose } = useModalExit(onClose);
+
     const {
         images,
         loading,
@@ -60,7 +63,7 @@ function NewsDetailModal({
     useEffect(() => {
         const handleEscape = (event: KeyboardEvent) => {
         if (event.key === "Escape") {
-            onClose();
+            requestClose();
         }
     };
 
@@ -73,7 +76,7 @@ function NewsDetailModal({
         document.removeEventListener("keydown", handleEscape);
         document.body.style.overflow = previousOverflow;
         };
-    }, [onClose]);
+    }, [requestClose]);
 
     const announcementImages = images[announcement.id] ?? [];
 
@@ -98,15 +101,15 @@ function NewsDetailModal({
             tabIndex={-1}
             aria-label={t('admin.cancel')}
             className="absolute inset-0 size-full cursor-default"
-            onClick={onClose}
+            onClick={requestClose}
         />
 
         <article
-            className="relative mx-auto w-full max-w-[1100px] rounded-3xl bg-bg-page"
+            className={`relative mx-auto w-full max-w-[1100px] rounded-3xl bg-bg-page ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         >
             <button
                 type="button"
-                onClick={onClose}
+                onClick={requestClose}
                 aria-label="Cerrar noticia"
                 className="absolute right-[18px] top-[18px] z-20 flex size-[42px] items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
                 >

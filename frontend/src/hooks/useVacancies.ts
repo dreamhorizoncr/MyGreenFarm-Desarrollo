@@ -16,22 +16,27 @@ export function useVacancies() {
     setError(null)
     try {
       const data = await vacancyService.getVacancies()
+      // Se muestran de una vez sin traducir: así, si la traducción falla, el
+      // contenido original sigue visible en vez de quedar en blanco.
+      setVacancies(data)
 
-      let result = data
-      if (lang !== SOURCE_LANG) {
+      // No asumimos que el admin siempre escribe en español: aunque se esté
+      // viendo en "es", se pide la traducción igual (como hace el foro), para
+      // que una vacante redactada en otro idioma también se traduzca.
+      try {
         const items = data.flatMap((v) => [
           { entityId: v.id, fieldName: 'title', originalText: v.title },
           { entityId: v.id, fieldName: 'description', originalText: v.description },
         ])
         const translated = await vacancyService.translateBatch(ENTITY_TYPE, lang, items)
-        result = data.map((v) => ({
+        setVacancies(data.map((v) => ({
           ...v,
           title: translated[`${v.id}:title`] ?? v.title,
           description: translated[`${v.id}:description`] ?? v.description,
-        }))
+        })))
+      } catch {
+        // Se deja el contenido original visible si la traducción no está disponible.
       }
-
-      setVacancies(result)
     } catch (err) {
       setError(getErrorMessage(err))
     } finally {

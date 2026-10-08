@@ -105,7 +105,7 @@ function NewsCard({ big, announcement, typeLabel, formattedDate, coverImage, onR
             {formattedDate}
           </span>
 
-          <h2 className="mt-[10px] line-clamp-2 font-heading text-[28px] font-bold text-heading">
+          <h2 className="mt-[10px] line-clamp-2 font-heading text-[24px] font-bold text-heading">
             {announcement!.title}
           </h2>
 
@@ -157,11 +157,11 @@ function NewsCard({ big, announcement, typeLabel, formattedDate, coverImage, onR
           {formattedDate}
         </span>
 
-        <h2 className="mt-[8px] line-clamp-1 font-heading text-[28px] font-bold text-heading">
+        <h2 className="mt-[8px] line-clamp-1 font-heading text-[24px] font-bold text-heading">
           {announcement!.title}
         </h2>
 
-        <p className="mt-[2px] line-clamp-1 font-body text-caption leading-[1.55] text-body-text">
+        <p className="mt-[1px] line-clamp-2 font-body text-body-sm leading-[1.6] text-body-text">
           {announcement!.content}
         </p>
 

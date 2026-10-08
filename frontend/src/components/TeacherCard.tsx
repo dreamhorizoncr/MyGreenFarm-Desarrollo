@@ -13,6 +13,11 @@ interface TeacherCardProps {
 
 function TeacherCard({ user, isSelf, onEdit, onDelete, loading = false }: Readonly<TeacherCardProps>) {
   const { t, i18n } = useTranslation()
+  const roleLabels: Record<string, string> = {
+    OWNER: t('admin.roles.OWNER'),
+    TEACHER: t('admin.roles.TEACHER'),
+    ADMIN: t('admin.roles.ADMIN'),
+  }
   const formattedBirthday = user?.birthday
     ? new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(
         new Date(`${user.birthday}T00:00:00`),
@@ -33,7 +38,7 @@ function TeacherCard({ user, isSelf, onEdit, onDelete, loading = false }: Readon
               {user!.firstName} {user!.lastName}
             </h3>
             <p className="m-0 mt-2xs font-body text-body-sm text-neutral-500">
-              {user!.role}
+              {roleLabels[user!.role] ?? user!.role}
             </p>
           </div>
         )}

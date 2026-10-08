@@ -12,9 +12,11 @@ import { notify } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 
+const PAGE_SIZE = 10
+
 function AdminUsersPage() {
   const { t } = useTranslation()
-  const { users, loading, error, totalPages, fetchUsers, updateUser, deleteUser } = useAdmin()
+  const { users, loading, error, fetchUsers, updateUser, deleteUser } = useAdmin()
 
   const currentUser = userStorage.getUser()
   const [userToEdit, setUserToEdit] = useState<UserInfo | null>(null)
@@ -24,8 +26,9 @@ function AdminUsersPage() {
   const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
-    void fetchUsers(currentPage - 1)
-  }, [currentPage])
+    void fetchUsers()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const filteredUsers = useMemo(() => {
     const term = searchTerm.trim().toLowerCase()
@@ -38,7 +41,21 @@ function AdminUsersPage() {
     })
   }, [users, searchTerm, roleFilter])
 
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / PAGE_SIZE))
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchTerm, roleFilter])
+
+  const pagedUsers = filteredUsers.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+
   const roleOptions = useMemo(() => ['ALL', ...Array.from(new Set(['OWNER', ...users.map((user) => user.role)]))], [users])
+
+  const roleLabels: Record<string, string> = {
+    OWNER: t('admin.roles.OWNER'),
+    TEACHER: t('admin.roles.TEACHER'),
+    ADMIN: t('admin.roles.ADMIN'),
+  }
 
   const roleFilterClassName = (active: boolean) =>
     `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
@@ -104,7 +121,7 @@ function AdminUsersPage() {
               onClick={() => setRoleFilter(role)}
               className={roleFilterClassName(roleFilter === role)}
             >
-              {role === 'ALL' ? t('admin.allRoles') : role}
+              {role === 'ALL' ? t('admin.allRoles') : roleLabels[role] ?? role}
             </button>
           ))}
         </div>
@@ -128,7 +145,7 @@ function AdminUsersPage() {
           ) : (
             <>
               <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-                {filteredUsers.map((user) => (
+                {pagedUsers.map((user) => (
                   <TeacherCard
                     key={user.id}
                     user={user}

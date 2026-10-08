@@ -116,11 +116,11 @@ import type { Expedient } from "../types/expedient";
             {/* Header */}
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                 <div>
-                <h1 className="font-heading text-3xl font-bold text-heading">
+                <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
                     Evaluaciones
                 </h1>
 
-                <p className="mt-2 font-body text-body-text">
+                <p className="mt-2 font-body text-body text-neutral-500">
                     Registra, consulta y administra el progreso de los niños.
                 </p>
                 </div>
@@ -142,7 +142,7 @@ import type { Expedient } from "../types/expedient";
                     </span>
                 </button>
 
-                <div className="flex h-11 w-full items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 md:w-[360px]">
+                <div className="flex h-11 min-w-0 flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 md:w-[360px] md:flex-none">
                     <SearchIcon
                     size={18}
                     className="shrink-0 text-neutral-500"

@@ -102,7 +102,7 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
             {exception ? 'Editar día especial' : 'Agregar día especial'}
           </h2>
 
-          <button type="button" onClick={onClose} aria-label="Cerrar" className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-neutral-100">
+          <button type="button" onClick={onClose} aria-label="Cerrar" className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100">
             <XIcon size={20} />
           </button>
         </div>
