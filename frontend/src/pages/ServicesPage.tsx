@@ -331,7 +331,7 @@ function ServicesPage() {
     <div className="min-h-screen bg-bg-page">
       <Navbar />
 
-      <section className="flex min-h-[220px] items-center bg-white px-[30px] py-[32px] text-center md:min-h-[250px]">
+      <section className="flex min-h-[280px] items-center bg-white px-[30px] py-[40px] text-center md:min-h-[320px]">
         <div className="mx-auto w-full max-w-[700px]">
           <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-green-500 md:text-h1">
             {t('services.title')}

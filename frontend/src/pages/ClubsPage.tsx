@@ -11,7 +11,7 @@ function ClubsPage() {
             <Navbar />
 
             {/* Header Banner */}
-            <section className="flex min-h-[220px] items-center bg-green-500 px-7.5 py-10 text-center text-white md:min-h-[260px]">
+            <section className="flex min-h-[280px] items-center bg-green-500 px-7.5 py-10 text-center text-white md:min-h-[320px]">
                 <div className="mx-auto w-full max-w-175">
                     <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
                         {t('clubs.title')}
