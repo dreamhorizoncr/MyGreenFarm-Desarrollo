@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CheckIcon, ChevronDownIcon, GlobeIcon } from '@animateicons/react/lucide'
 import useDismiss from '../hooks/useDismiss.ts'
@@ -10,9 +10,12 @@ function LanguageSwitcher() {
   const { t, i18n } = useTranslation()
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
-  const closeMenu = () => setOpen(false)
+  // Referencia estable: si se recrea en cada render, releaseExclusiveOpen nunca
+  // encuentra el mismo closeMenu que se guardo al abrir y activeClose se queda
+  // "atascado", impidiendo volver a abrir este menu despues.
+  const closeMenu = useCallback(() => setOpen(false), [])
 
-  useDismiss({ ref: rootRef, isOpen: open, onClose: () => { releaseExclusiveOpen(closeMenu); setOpen(false) } })
+  useDismiss({ ref: rootRef, isOpen: open, onClose: () => { releaseExclusiveOpen(closeMenu); closeMenu() } })
 
   const currentLanguage = i18n.resolvedLanguage ?? i18n.language
   const currentLanguageLabel =
@@ -21,7 +24,7 @@ function LanguageSwitcher() {
 
   const selectLanguage = (code: string) => {
     releaseExclusiveOpen(closeMenu)
-    setOpen(false)
+    closeMenu()
     if (code === currentLanguage) return
 
     const translate = i18n.getFixedT(code)
@@ -38,12 +41,12 @@ function LanguageSwitcher() {
       <button
         type="button"
         className="inline-flex min-w-0 items-center justify-center gap-xs rounded-2xl border border-neutral-200 bg-white p-xs font-body text-body-sm text-heading transition-colors duration-200 hover:border-link focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:min-w-[160px] md:px-md md:py-sm"
-        onClick={() => setOpen((current) => {
-          const next = !current
+        onClick={() => {
+          const next = !open
+          setOpen(next)
           if (next) claimExclusiveOpen(closeMenu)
           else releaseExclusiveOpen(closeMenu)
-          return next
-        })}
+        }}
         aria-label={t('languageSwitcher.label')}
         aria-haspopup="menu"
         aria-expanded={open}
