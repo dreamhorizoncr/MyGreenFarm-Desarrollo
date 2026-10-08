@@ -7,6 +7,7 @@ import ApplyVacancyModal from '../components/ApplyVacancyModal.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import { useVacancies } from '../hooks/useVacancies.ts'
 import { useCurriculums } from '../hooks/useCurriculums.ts'
+import { useModalExit } from '../hooks/useModalExit.ts'
 import { notify } from '../utils/notifications.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
@@ -81,6 +82,7 @@ function VacanciesPage() {
 
   const [applyTarget, setApplyTarget] = useState<ApplyTarget | null>(null)
   const [applicationSent, setApplicationSent] = useState(false)
+  const { closing: sentClosing, requestClose: requestCloseSent } = useModalExit(() => setApplicationSent(false))
 
   useEffect(() => {
     void fetchVacancies(i18n.language)
@@ -190,22 +192,22 @@ function VacanciesPage() {
           ref={(el) => {
             if (el && !el.open) el.showModal()
           }}
-          onClose={() => setApplicationSent(false)}
+          onClose={requestCloseSent}
           onClick={(event) => {
-            if (event.target === event.currentTarget) setApplicationSent(false)
+            if (event.target === event.currentTarget) requestCloseSent()
           }}
           onKeyDown={(event) => {
-            if (event.key === 'Escape') setApplicationSent(false)
+            if (event.key === 'Escape') requestCloseSent()
           }}
           aria-label={t('vacancies.applicationSentTitle')}
-          className="fixed inset-0 m-auto w-[min(420px,92vw)] max-w-none rounded-2xl bg-bg-card text-center backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+          className={`fixed inset-0 m-auto w-[min(420px,92vw)] max-w-none rounded-2xl bg-bg-card text-center backdrop:bg-scrim ${sentClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         >
           <div className="p-xl">
             <h2 className="m-0 font-heading text-2xl font-bold text-heading">{t('vacancies.applicationSentTitle')}</h2>
             <p className="mt-sm font-body text-body-sm text-body-text">{t('vacancies.applicationSentMessage')}</p>
             <button
               type="button"
-              onClick={() => setApplicationSent(false)}
+              onClick={requestCloseSent}
               className="mt-lg inline-flex h-11 w-full items-center justify-center rounded-full bg-green-500 font-body text-body-sm font-semibold uppercase tracking-wide text-white"
             >
               {t('vacancies.gotIt')}

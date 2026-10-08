@@ -76,11 +76,11 @@ function AdminExpedientsPage() {
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           {/* Título y descripción */}
           <div>
-            <h1 className="font-heading text-3xl font-bold text-heading">
+            <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
               {t('admin.expedients.title')}
             </h1>
 
-            <p className="mt-2 font-body text-body-text">
+            <p className="mt-2 font-body text-body text-neutral-500">
               {t('admin.expedients.description')}
             </p>
           </div>

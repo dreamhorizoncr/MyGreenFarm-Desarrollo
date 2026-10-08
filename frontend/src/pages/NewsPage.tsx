@@ -100,7 +100,7 @@ function NewsCard({ big, announcement, typeLabel, formattedDate, coverImage, onR
         </div>
 
         {/* Contenido */}
-        <div className="relative flex flex-col items-start p-[22px] text-left md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2 md:items-start md:justify-center md:-translate-y-5 md:text-left">
+        <div className="relative flex flex-col items-start p-[22px] text-left md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2 md:pb-[60px]">
           <span className="font-body text-caption text-neutral-500">
             {formattedDate}
           </span>

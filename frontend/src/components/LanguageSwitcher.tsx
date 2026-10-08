@@ -4,13 +4,15 @@ import { CheckIcon, ChevronDownIcon, GlobeIcon } from '@animateicons/react/lucid
 import useDismiss from '../hooks/useDismiss.ts'
 import { notify } from '../utils/notifications.ts'
 import { SUPPORTED_LANGUAGES } from '../i18n/index.ts'
+import { claimExclusiveOpen, releaseExclusiveOpen } from '../utils/exclusiveMenu.ts'
 
 function LanguageSwitcher() {
   const { t, i18n } = useTranslation()
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
+  const closeMenu = () => setOpen(false)
 
-  useDismiss({ ref: rootRef, isOpen: open, onClose: () => setOpen(false) })
+  useDismiss({ ref: rootRef, isOpen: open, onClose: () => { releaseExclusiveOpen(closeMenu); setOpen(false) } })
 
   const currentLanguage = i18n.resolvedLanguage ?? i18n.language
   const currentLanguageLabel =
@@ -18,6 +20,7 @@ function LanguageSwitcher() {
       ?.label ?? currentLanguage
 
   const selectLanguage = (code: string) => {
+    releaseExclusiveOpen(closeMenu)
     setOpen(false)
     if (code === currentLanguage) return
 
@@ -35,7 +38,12 @@ function LanguageSwitcher() {
       <button
         type="button"
         className="inline-flex min-w-0 items-center justify-center gap-xs rounded-2xl border border-neutral-200 bg-white p-xs font-body text-body-sm text-heading transition-colors duration-200 hover:border-link focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:min-w-[160px] md:px-md md:py-sm"
-        onClick={() => setOpen((open) => !open)}
+        onClick={() => setOpen((current) => {
+          const next = !current
+          if (next) claimExclusiveOpen(closeMenu)
+          else releaseExclusiveOpen(closeMenu)
+          return next
+        })}
         aria-label={t('languageSwitcher.label')}
         aria-haspopup="menu"
         aria-expanded={open}

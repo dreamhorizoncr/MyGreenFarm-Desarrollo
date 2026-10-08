@@ -6,6 +6,7 @@ import 'react-phone-number-input/style.css'
 import Button from './ui/Button.tsx'
 import TextField from './ui/TextField.tsx'
 import { useVacancyApplicationForm } from '../hooks/useVacancyApplicationForm.ts'
+import { useModalExit } from '../hooks/useModalExit.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
 
@@ -34,6 +35,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
 
   const form = useVacancyApplicationForm({ vacancyId, requiredFields }, onSubmit)
   const heading = vacancyId === null ? title : t('vacancies.applyModalTitle')
+  const { closing, requestClose } = useModalExit(onClose)
 
   useEffect(() => {
     dialogRef.current?.showModal()
@@ -41,27 +43,27 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
 
   const handleSubmitClick = async () => {
     const succeeded = await form.handleSubmit()
-    if (succeeded) onClose()
+    if (succeeded) requestClose()
   }
 
   return (
     <dialog
       ref={dialogRef}
-      onClose={onClose}
+      onClose={requestClose}
       onClick={(event) => {
-        if (event.target === dialogRef.current) onClose()
+        if (event.target === dialogRef.current) requestClose()
       }}
       onKeyDown={(event) => {
-        if (event.key === 'Escape') onClose()
+        if (event.key === 'Escape') requestClose()
       }}
       aria-label={heading}
-      className="fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="relative p-[28px_22px_30px]">
         <button
           type="button"
           className="absolute right-3 top-6.5 z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity duration-150 hover:opacity-65 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-          onClick={onClose}
+          onClick={requestClose}
           aria-label={t('admin.cancel')}
         >
           <XIcon size={20} />
@@ -210,7 +212,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
           <div className="mt-sm flex gap-md">
             <Button
               variant="secondary"
-              onClick={onClose}
+              onClick={requestClose}
               className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50"
             >
               {t('admin.cancel')}

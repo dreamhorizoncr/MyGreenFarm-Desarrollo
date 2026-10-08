@@ -585,6 +585,11 @@ export default {
     searchPlaceholder: "Rechercher par nom, prénom, e-mail ou rôle",
     addDocente: "Ajouter un utilisateur",
     allRoles: "Tous",
+    roles: {
+      OWNER: "Propriétaire",
+      TEACHER: "Enseignant",
+      ADMIN: "Administrateur",
+    },
     actions: "Actions",
     noResults: "Aucun utilisateur trouvé",
     firstName: "Prénom",

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import { getErrorMessage } from '../utils/error.ts'
+import { useModalExit } from '../hooks/useModalExit.ts'
 import type { Curriculum } from '../types/curriculum.ts'
 
 interface ConfirmCurriculumDecisionModalProps {
@@ -15,6 +16,7 @@ interface ConfirmCurriculumDecisionModalProps {
 function ConfirmCurriculumDecisionModal({ application, action, onConfirm, onClose }: Readonly<ConfirmCurriculumDecisionModalProps>) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const { closing, requestClose } = useModalExit(onClose)
 
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -35,7 +37,7 @@ function ConfirmCurriculumDecisionModal({ application, action, onConfirm, onClos
     setSubmitError(null)
     try {
       await onConfirm(application)
-      onClose()
+      requestClose()
     } catch (err) {
       setSubmitError(getErrorMessage(err))
     } finally {
@@ -46,21 +48,21 @@ function ConfirmCurriculumDecisionModal({ application, action, onConfirm, onClos
   return (
     <dialog
       ref={dialogRef}
-      onClose={onClose}
+      onClose={requestClose}
       onClick={(event) => {
-        if (event.target === dialogRef.current) onClose()
+        if (event.target === dialogRef.current) requestClose()
       }}
       onKeyDown={(event) => {
-        if (event.key === 'Escape') onClose()
+        if (event.key === 'Escape') requestClose()
       }}
       aria-label={title}
-      className="fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="relative p-[28px_22px_30px]">
         <button
           type="button"
-          className="absolute right-3 top-6.5 z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity duration-150 hover:opacity-65 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-          onClick={onClose}
+          className="absolute right-3 top-6.5 z-10 inline-flex size-10 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+          onClick={requestClose}
           aria-label={t('admin.cancel')}
         >
           <XIcon size={20} />
@@ -82,7 +84,7 @@ function ConfirmCurriculumDecisionModal({ application, action, onConfirm, onClos
           )}
 
           <div className="flex gap-md mt-sm">
-            <Button variant="secondary" onClick={onClose} className="h-11 flex-1 rounded-xl border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50">
+            <Button variant="secondary" onClick={requestClose} className="h-11 flex-1 rounded-xl border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50">
               {t('admin.cancel')}
             </Button>
             <Button

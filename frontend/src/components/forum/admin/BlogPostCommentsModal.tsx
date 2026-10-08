@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { Trash2Icon, XIcon } from '@animateicons/react/lucide'
+import { useModalExit } from '../../../hooks/useModalExit.ts'
 import type { BlogComment, BlogPost } from '../../../types/forum.ts'
 
 interface BlogPostCommentsModalProps {
@@ -22,6 +23,7 @@ function BlogPostCommentsModal({
   onClose,
 }: Readonly<BlogPostCommentsModalProps>) {
   const { t } = useTranslation()
+  const { closing, requestClose } = useModalExit(onClose)
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]">
@@ -30,10 +32,10 @@ function BlogPostCommentsModal({
         tabIndex={-1}
         aria-label={t('adminForum.close')}
         className="absolute inset-0 size-full cursor-default"
-        onClick={onClose}
+        onClick={requestClose}
       />
 
-      <div className="relative mx-auto w-full max-w-[680px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl">
+      <div className={`relative mx-auto w-full max-w-[680px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}>
         <div className="flex items-center justify-between gap-md">
           <div className="min-w-0">
             <h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -46,9 +48,9 @@ function BlogPostCommentsModal({
 
           <button
             type="button"
-            onClick={onClose}
+            onClick={requestClose}
             aria-label={t('adminForum.close')}
-            className="shrink-0 rounded-full p-2xs text-neutral-500 transition-colors hover:bg-neutral-100"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
           >
             <XIcon size={20} />
           </button>

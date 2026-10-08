@@ -7,11 +7,23 @@ interface PaginationProps {
 function Pagination({ currentPage, totalPages, onPageChange }: Readonly<PaginationProps>) {
   if (totalPages <= 1) return null
 
+  // The dashboard scrolls its own container (#admin-scroll-container), not the
+  // window, so changing page has to scroll that element back to the top.
+  const goToPage = (page: number) => {
+    onPageChange(page)
+    const container = document.getElementById('admin-scroll-container')
+    if (container) {
+      container.scrollTo({ top: 0, behavior: 'smooth' })
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
+
   return (
     <div className="mt-lg flex items-center justify-center gap-[8px]">
       <button
         type="button"
-        onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
+        onClick={() => goToPage(Math.max(currentPage - 1, 1))}
         disabled={currentPage === 1}
         aria-label="Página anterior"
         className="flex size-[38px] items-center justify-center rounded-full border border-neutral-200 bg-white font-body text-[18px] text-heading transition hover:border-green-500 disabled:cursor-not-allowed disabled:opacity-40"
@@ -26,7 +38,7 @@ function Pagination({ currentPage, totalPages, onPageChange }: Readonly<Paginati
           <button
             key={page}
             type="button"
-            onClick={() => onPageChange(page)}
+            onClick={() => goToPage(page)}
             aria-current={currentPage === page ? 'page' : undefined}
             className={`flex size-[38px] items-center justify-center rounded-full font-body text-body-sm transition ${
               currentPage === page
@@ -41,7 +53,7 @@ function Pagination({ currentPage, totalPages, onPageChange }: Readonly<Paginati
 
       <button
         type="button"
-        onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
+        onClick={() => goToPage(Math.min(currentPage + 1, totalPages))}
         disabled={currentPage === totalPages}
         aria-label="Página siguiente"
         className="flex size-[38px] items-center justify-center rounded-full border border-neutral-200 bg-white font-body text-[18px] text-heading transition hover:border-green-500 disabled:cursor-not-allowed disabled:opacity-40"

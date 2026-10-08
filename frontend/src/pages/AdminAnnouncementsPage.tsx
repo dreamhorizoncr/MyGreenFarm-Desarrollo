@@ -13,6 +13,7 @@ import Pagination from "../components/ui/Pagination.tsx";
 import Select from "../components/ui/Select.tsx";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 import { useAnnouncements } from "../hooks/useAnnouncements.ts";
+import { useModalExit } from "../hooks/useModalExit.ts";
 import { notify } from "../utils/notifications.ts";
 import type {
   Announcement,
@@ -116,7 +117,7 @@ function AnnouncementRow({ announcement, typeLabel, onPreview, onEdit, onDelete,
           <button
             type="button"
             onClick={onPreview}
-            className="font-body text-body-sm font-semibold text-green-500 transition-opacity hover:opacity-70"
+            className="font-body text-body-sm font-semibold text-green-500 underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
           >
             {t("adminNews.preview")}
           </button>
@@ -213,6 +214,8 @@ function AnnouncementsPage() {
     setImages([]);
   };
 
+  const { closing: formClosing, requestClose } = useModalExit(closeForm);
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data: AnnouncementRequest = {
@@ -238,7 +241,7 @@ function AnnouncementsPage() {
           : t("adminNews.createdToastDescription"),
       });
 
-      closeForm();
+      requestClose();
     } catch {
       notify.error({
         title: t("adminNews.saveErrorToastTitle"),
@@ -258,7 +261,7 @@ function AnnouncementsPage() {
       await deleteAnnouncement(announcementToDelete.id);
 
       if (editing?.id === announcementToDelete.id) {
-        closeForm();
+        requestClose();
       }
 
       notify.success({
@@ -336,12 +339,12 @@ function AnnouncementsPage() {
             tabIndex={-1}
             aria-label={t("adminNews.newscancel")}
             className="absolute inset-0 size-full cursor-default"
-            onClick={closeForm}
+            onClick={requestClose}
           />
 
           <form
             onSubmit={handleSubmit}
-            className="relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
+            className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
           >
             <div className="flex items-center justify-between gap-md">
               <h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -350,9 +353,9 @@ function AnnouncementsPage() {
 
               <button
                 type="button"
-                onClick={closeForm}
+                onClick={requestClose}
                 aria-label="Cerrar formulario"
-                className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-(--grey-100)"
+                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
               >
                 <XIcon size={20} />
               </button>
@@ -547,7 +550,7 @@ function AnnouncementsPage() {
             <div className="mt-lg flex flex-wrap justify-end gap-sm">
               <button
                 type="button"
-                onClick={closeForm}
+                onClick={requestClose}
                 className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
               >
                 {t("adminNews.newscancel")}

@@ -8,6 +8,7 @@ import Pagination from '../components/ui/Pagination.tsx'
 import useDismiss from '../hooks/useDismiss.ts'
 import { useNewsletter } from '../hooks/useNewsletter.ts'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
+import { useModalExit } from '../hooks/useModalExit.ts'
 import { notify } from '../utils/notifications.ts'
 import type { AudienceType, NewsletterRecipient } from '../types/newsletter.ts'
 
@@ -74,6 +75,7 @@ function AdminNewsletterPage() {
     const [audienceFilter, setAudienceFilter] = useState<'SUBSCRIBERS' | 'PARENTS'>('SUBSCRIBERS')
 
     const [isBroadcastModalOpen, setIsBroadcastModalOpen] = useState(false)
+    const { closing: broadcastClosing, requestClose: closeBroadcastModal } = useModalExit(() => setIsBroadcastModalOpen(false))
     const [recipientToUnsubscribe, setRecipientToUnsubscribe] = useState<NewsletterRecipient | null>(null)
     const [selectedAudience, setSelectedAudience] = useState<AudienceType>('BOTH')
     const [subject, setSubject] = useState('')
@@ -157,7 +159,7 @@ function AdminNewsletterPage() {
         try {
             await sendBroadcast({ audienceType: selectedAudience, subject, message })
             notify.success(t('admin.newsletter.sent'))
-            setIsBroadcastModalOpen(false)
+            closeBroadcastModal()
             setSubject('')
             setMessage('')
         } catch {
@@ -296,15 +298,15 @@ function AdminNewsletterPage() {
                             broadcastDialogRef.current = el
                             if (el && !el.open) el.showModal()
                         }}
-                        onClose={() => setIsBroadcastModalOpen(false)}
+                        onClose={closeBroadcastModal}
                         onClick={(event) => {
-                            if (event.target === broadcastDialogRef.current) setIsBroadcastModalOpen(false)
+                            if (event.target === broadcastDialogRef.current) closeBroadcastModal()
                         }}
                         onKeyDown={(event) => {
-                            if (event.key === 'Escape') setIsBroadcastModalOpen(false)
+                            if (event.key === 'Escape') closeBroadcastModal()
                         }}
                         aria-labelledby="newsletter-broadcast-title"
-                        className="fixed inset-0 m-auto w-[min(620px,92vw)] max-w-none rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl"
+                        className={`fixed inset-0 m-auto w-[min(620px,92vw)] max-w-none rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${broadcastClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
                     >
                             <div className="flex items-center justify-between gap-md">
                                 <h2 id="newsletter-broadcast-title" className="m-0 font-heading text-2xl font-bold text-heading">
@@ -313,9 +315,9 @@ function AdminNewsletterPage() {
 
                                 <button
                                     type="button"
-                                    onClick={() => setIsBroadcastModalOpen(false)}
+                                    onClick={closeBroadcastModal}
                                     aria-label={t('admin.cancel')}
-                                    className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-neutral-100"
+                                    className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
                                 >
                                     <XIcon size={20} aria-hidden="true" />
                                 </button>
@@ -344,7 +346,7 @@ function AdminNewsletterPage() {
                                 <div className="mt-sm flex flex-wrap justify-end gap-sm">
                                     <button
                                         type="button"
-                                        onClick={() => setIsBroadcastModalOpen(false)}
+                                        onClick={closeBroadcastModal}
                                         className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
                                     >
                                         {t('admin.cancel')}
