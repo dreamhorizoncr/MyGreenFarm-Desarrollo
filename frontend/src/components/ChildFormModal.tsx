@@ -12,6 +12,7 @@ import type { Child, ChildRequest, Relationship } from "../types/child";
 import type { Parent } from "../types/parent";
 import type { ClubResponse } from "../types/clubs";
 import { useTranslation } from "react-i18next";
+import { validateRequired } from "../utils/validators.ts";
 
     interface ChildFormModalProps {
     isOpen: boolean;
