@@ -41,7 +41,7 @@ function AdminVacancyCard({ vacancy, applicantNameById, onDelete, onRelease, onS
   }
 
   return (
-    <article className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+    <article className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:shadow-lg">
       <div className="flex items-start justify-between gap-sm">
         <h3 className="m-0 font-heading text-lg font-bold leading-snug text-heading">
           {vacancy!.title}

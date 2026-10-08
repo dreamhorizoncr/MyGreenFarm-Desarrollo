@@ -27,7 +27,7 @@ function ParentCard({
 }: Readonly<ParentCardProps>) {
   const { t } = useTranslation();
     return (
-        <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+        <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:shadow-lg">
         {/* Nombre y acciones */}
         <div className="flex items-start justify-between gap-4">
         {/* Nombre completo */}

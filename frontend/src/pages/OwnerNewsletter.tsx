@@ -37,7 +37,7 @@ function SubscriberRow({ item, onUnsubscribe, disabled, loading = false }: Reado
     }
 
     return (
-        <div className="rounded-xl border border-neutral-200 bg-white p-md shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+        <div className="rounded-xl border border-neutral-200 bg-white p-md shadow-sm transition hover:shadow-lg">
             <div className="flex items-center justify-between gap-md">
                 <div className="min-w-0">
                     <p className="break-all font-body font-semibold text-heading">{item!.email}</p>

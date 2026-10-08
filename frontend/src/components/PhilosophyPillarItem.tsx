@@ -9,7 +9,7 @@ interface PhilosophyPillarItemProps {
 
 function PhilosophyPillarItem({ icon, tag, title, body }: Readonly<PhilosophyPillarItemProps>) {
   return (
-    <div className="flex flex-col gap-xs rounded-2xl border border-neutral-200 bg-white p-md transition hover:-translate-y-1 hover:shadow-lg">
+    <div className="flex flex-col gap-xs rounded-2xl border border-neutral-200 bg-white p-md transition hover:shadow-lg">
       <div className="flex items-center gap-sm">
         <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-(--pink-50) text-[var(--pink-400)]">
           {icon}

@@ -33,7 +33,7 @@ import Skeleton from "./ui/Skeleton.tsx";
     ]
 
     return (
-        <div className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+        <div className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:shadow-lg">
         {/* Encabezado */}
         <div className="flex items-start justify-between gap-md">
             {loading ? (

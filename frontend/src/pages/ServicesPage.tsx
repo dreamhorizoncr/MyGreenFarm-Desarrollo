@@ -80,7 +80,7 @@ function PlanCard({
   }
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white transition hover:-translate-y-1 hover:shadow-lg">
+    <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white transition hover:shadow-lg">
       <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
         {plan!.imageUrl ? (
           <img

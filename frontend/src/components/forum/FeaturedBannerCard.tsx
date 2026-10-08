@@ -4,7 +4,7 @@ function FeaturedBannerCard() {
   return (
     <a
       href="#forum-feed"
-      className="block overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:-translate-y-1"
+      className="block overflow-hidden rounded-2xl border border-neutral-200 bg-white transition hover:shadow-lg"
     >
       <img
         src={featuredBanner.imageUrl}

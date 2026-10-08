@@ -36,7 +36,7 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
   const { t } = useTranslation()
 
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:shadow-lg">
       <div className="flex items-center justify-between gap-sm">
         {loading ? (
           <div className="flex min-w-0 flex-1 items-center gap-sm">

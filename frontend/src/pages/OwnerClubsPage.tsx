@@ -59,7 +59,7 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
   }
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white transition hover:-translate-y-1 shadow-sm">
+    <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm transition hover:shadow-lg">
       {/* Imagen de portada */}
       <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
         {club!.coverImageUrl ? (

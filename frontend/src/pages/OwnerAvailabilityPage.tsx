@@ -72,7 +72,7 @@ function ExceptionCard({ exception, onEdit, onDelete, loading = false }: Readonl
   }
 
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-lg transition hover:-translate-y-1 hover:shadow-lg">
+    <article className="rounded-2xl border border-neutral-200 bg-white p-lg transition hover:shadow-lg">
       <div className="flex items-start justify-between gap-md">
         <div>
           <h3 className="m-0 font-heading text-lg font-bold text-heading">{dateLabel(exception!.exceptionDate)}</h3>

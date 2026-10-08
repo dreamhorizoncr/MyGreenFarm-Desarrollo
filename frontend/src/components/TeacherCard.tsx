@@ -25,7 +25,7 @@ function TeacherCard({ user, isSelf, onEdit, onDelete, loading = false }: Readon
     : t('admin.notAvailable')
 
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:shadow-lg">
       <header className="flex items-start justify-between gap-sm">
         {loading ? (
           <div className="min-w-0 flex-1">

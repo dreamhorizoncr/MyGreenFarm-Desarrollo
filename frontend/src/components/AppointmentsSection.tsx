@@ -59,7 +59,7 @@ function AppointmentCard({
 
   return (
     <div
-      className={`group relative flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${
+      className={`group relative flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:shadow-lg ${
         disabled ? 'opacity-60' : ''
       }`}
     >

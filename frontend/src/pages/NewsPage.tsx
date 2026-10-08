@@ -75,7 +75,7 @@ function NewsCard({ big, announcement, typeLabel, formattedDate, coverImage, onR
 
   if (big) {
     return (
-      <article className="relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-8 md:h-[340px]">
+      <article className="relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow transition hover:shadow-lg md:col-span-8 md:h-[340px]">
         {/* Imagen */}
         <div className="relative h-[240px] md:absolute md:inset-y-0 md:left-0 md:h-auto md:w-1/2">
           {coverImage ? (
@@ -127,7 +127,7 @@ function NewsCard({ big, announcement, typeLabel, formattedDate, coverImage, onR
   }
 
   return (
-    <article className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-4 md:h-[340px]">
+    <article className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow transition hover:shadow-lg md:col-span-4 md:h-[340px]">
       {/* Imagen */}
       <div className="relative h-[200px] md:absolute md:inset-x-0 md:top-0 md:h-[125px]">
         {coverImage ? (

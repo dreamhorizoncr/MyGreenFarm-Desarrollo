@@ -47,7 +47,7 @@ function VacancyCard({ title, description, onApply, loading = false }: Readonly<
   }
 
   return (
-    <article className="group flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow transition hover:-translate-y-1 hover:shadow-lg">
+    <article className="group flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow transition hover:shadow-lg">
       <h2 className="m-0 font-heading text-xl font-bold leading-snug text-heading">
         {title}
       </h2>
