@@ -428,7 +428,7 @@ function ConfirmPublishDialog({ confirmationText, onConfirmationTextChange, onCa
                 value={confirmationText}
                 onChange={(event) => onConfirmationTextChange(event.target.value)}
                 aria-label={t('adminForum.confirmWord')}
-                className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500"
+                className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body-sm text-body-text outline-none transition-colors focus:border-heading"
               />
               <div className="mt-sm flex gap-md">
                 <Button

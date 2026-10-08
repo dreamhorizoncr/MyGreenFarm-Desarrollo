@@ -129,7 +129,7 @@ function LoginPage() {
                 setPasswordValidationError(null);
               }
             }}
-            className="h-9.5 w-full border-b border-neutral-300 bg-transparent px-0 font-body text-body-sm text-body-text outline-none transition focus:border-green-500 md:text-body-sm"
+            className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body-sm text-body-text outline-none transition focus:border-green-500 md:text-body-sm"
             showAriaLabel={t("passwordInput.showPassword")}
             hideAriaLabel={t("passwordInput.hidePassword")}
           />

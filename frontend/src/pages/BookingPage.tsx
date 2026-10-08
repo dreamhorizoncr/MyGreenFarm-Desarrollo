@@ -21,7 +21,7 @@ function BookingPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="h-[38px] w-full border-b border-neutral-300 bg-transparent pl-2 font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
+      className="h-full w-full bg-transparent pl-2 font-body text-body-sm text-body-text outline-none"
     />
   )
 }
@@ -493,7 +493,7 @@ function BookingPage() {
             if (reasonError) setReasonError(false)
           }}
           rows={3}
-          className="w-full resize-none border-b border-neutral-300 bg-transparent px-0 font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
+          className="w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
         />
       </TextField>
       <div className="flex flex-col gap-sm">
@@ -516,7 +516,7 @@ function BookingPage() {
             }
           }}
           aria-invalid={referralSourceError}
-          className="h-[38px] w-full border-b border-neutral-300 bg-transparent px-0 font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
+          className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
         >
           <option value="">{t('booking.referral.placeholder')}</option>
           {REFERRAL_SOURCES.map((source) => (
@@ -617,7 +617,7 @@ function BookingPage() {
       >
         <PhoneInput
           id="booking-phone"
-          className="h-[38px]"
+          className="h-11 rounded-xl border border-neutral-200 bg-white px-md"
           value={phone}
           onChange={handlePhoneChange}
           onCountryChange={handleCountryChange}

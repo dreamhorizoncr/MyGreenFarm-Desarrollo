@@ -15,7 +15,7 @@ function VacancyPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="h-[38px] w-full border-b border-neutral-300 bg-transparent pl-2 font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
+      className="h-full w-full bg-transparent pl-2 font-body text-body-sm text-body-text outline-none"
     />
   )
 }
@@ -106,7 +106,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
             >
               <PhoneInput
                 id="apply-phone"
-                className="h-[38px]"
+                className="h-11 rounded-xl border border-neutral-200 bg-white px-md"
                 value={form.phone}
                 onChange={form.handlePhoneChange}
                 onCountryChange={form.handleCountryChange}

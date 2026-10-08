@@ -156,7 +156,7 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
                       if (saveError) setSaveError(null)
                     }}
                     placeholder={t('teacherAppointments.rejectNotePlaceholder')}
-                    className="w-full resize-none border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500 placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
+                    className="w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-body text-body-sm text-body-text outline-none transition-colors focus:border-heading placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
                   />
                   {conclusionError && (
                     <p className="mt-2xs text-left font-body text-body-sm text-danger">{conclusionError}</p>
