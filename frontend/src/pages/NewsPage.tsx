@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import NewsDetailModal from "../components/NewsDetailModal.tsx";
 import BlobButton from "../components/ui/BlobButton.tsx";
 import Skeleton from "../components/ui/Skeleton.tsx";
+import Pagination from "../components/ui/Pagination.tsx";
 
 import { useAnnouncements } from "../hooks/useAnnouncements";
 import { useAnnouncementImages } from "../hooks/useAnnouncementImages";
@@ -346,50 +347,11 @@ const cards = announcements.filter(
               </div>
 
               {/* Paginación */}
-              {totalPages > 1 && (
-                <div className="mt-[45px] flex items-center justify-center gap-[8px]">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setCurrentPage((page) => Math.max(page - 1, 1))
-                    }
-                    disabled={currentPage === 1}
-                    className="flex size-[38px] items-center justify-center rounded-full border border-neutral-200 bg-white font-body text-[18px] text-heading transition hover:border-green-500 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    ‹
-                  </button>
-
-                  {Array.from({ length: totalPages }, (_, index) => {
-                    const page = index + 1;
-
-                    return (
-                      <button
-                        key={page}
-                        type="button"
-                        onClick={() => setCurrentPage(page)}
-                        className={`flex size-[38px] items-center justify-center rounded-full font-body text-body-sm transition ${
-                          currentPage === page
-                            ? "bg-green-500 text-white"
-                            : "border border-neutral-200 bg-white text-heading hover:border-green-500"
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    );
-                  })}
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setCurrentPage((page) => Math.min(page + 1, totalPages))
-                    }
-                    disabled={currentPage === totalPages}
-                    className="flex size-[38px] items-center justify-center rounded-full border border-neutral-200 bg-white font-body text-[18px] text-heading transition hover:border-green-500 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    ›
-                  </button>
-                </div>
-              )}
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
             </>
           )}
         </Container>
