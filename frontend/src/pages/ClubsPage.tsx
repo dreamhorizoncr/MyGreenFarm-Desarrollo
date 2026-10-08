@@ -24,7 +24,7 @@ function ClubsPage() {
 
             {/* Main Content - Coming Soon */}
             <main className="flex flex-1 items-center justify-center">
-                <Container className="py-12 md:py-20">
+                <Container className="py-10 md:py-12">
                     <div className="mx-auto max-w-140 rounded-3xl border border-neutral-200 bg-white p-xl text-center shadow-md md:p-2xl">
                         {/* Ícono Grande con efecto sutil y Badge circular perfecto */}
                         <div className="relative mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-orange-50 text-orange-500">

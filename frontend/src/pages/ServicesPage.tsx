@@ -342,7 +342,7 @@ function ServicesPage() {
         </div>
       </section>
 
-      <section className="relative w-full bg-bg-page py-[36px] md:py-[48px]">
+      <section className="relative w-full bg-bg-page py-10 md:py-12">
         <Container className="mb-[36px] flex justify-start md:mb-[48px]">
           <ExchangeRateWidget
             data={exchangeRate}

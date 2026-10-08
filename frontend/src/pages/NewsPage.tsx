@@ -298,7 +298,7 @@ const cards = announcements.filter(
 
       {/* Sección de Noticias */}
       <main>
-        <Container className="py-[45px] md:py-[55px]">
+        <Container className="py-10 md:py-12">
           {(loading || imagesLoading) && (
             <div className="flex flex-col gap-[18px]">
               {[0, 1].map((rowIndex) => (

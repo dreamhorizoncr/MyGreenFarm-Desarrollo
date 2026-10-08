@@ -90,7 +90,7 @@ function GalleryPage() {
       </section>
 
       {/* Sección de Álbumes */}
-      <section data-scroll-bg="green" className="relative w-full bg-green-500 py-[36px] md:py-[48px]">
+      <section data-scroll-bg="green" className="relative w-full bg-green-500 py-10 md:py-12">
         <div className="flex w-full flex-col gap-[24px]">
           <Container className="flex flex-col items-start gap-[16px] text-left">
             <h2 className="m-0 font-heading text-h2 font-bold text-white">
