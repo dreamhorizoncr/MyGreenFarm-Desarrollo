@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { FileImageIcon, XIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import Button from '../../ui/Button.tsx'
+import { useModalExit } from '../../../hooks/useModalExit.ts'
 import type { BlogPost, BlogPostInput } from '../../../types/forum.ts'
 import { userStorage } from '../../../utils/userStorage.ts'
 import { validateRequired } from '../../../utils/validators.ts'
@@ -34,6 +35,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
   const fileInputRef = useRef<HTMLInputElement>(null)
   const currentUser = userStorage.getUser()
   const isTeacher = currentUser?.role === 'TEACHER'
+  const { closing, requestClose } = useModalExit(onClose)
 
   const [form, setForm] = useState<BlogPostInput>(() => {
     if (post) {
@@ -73,7 +75,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
+      if (event.key === 'Escape') requestClose()
     }
 
     document.addEventListener('keydown', handleEscape)
@@ -86,7 +88,8 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
       document.body.style.overflow = previousOverflow
       if (image) URL.revokeObjectURL(image.previewUrl)
     }
-  }, [onClose, image])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [image])
 
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
@@ -160,13 +163,12 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
         tabIndex={-1}
         aria-label={t('adminForum.close')}
         className="absolute inset-0 size-full cursor-default"
-        onClick={onClose}
+        onClick={requestClose}
       />
 
       <form
         onSubmit={handleSubmit}
-        noValidate
-        className="relative mx-auto my-[20px] w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg md:my-[40px] md:p-xl"
+        className={`relative mx-auto my-[20px] w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg md:my-[40px] md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
       >
         <div className="flex items-center justify-between gap-md">
           <h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -175,9 +177,9 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
 
           <button
             type="button"
-            onClick={onClose}
+            onClick={requestClose}
             aria-label={t('adminForum.close')}
-            className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-(--grey-100)"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
           >
             <XIcon size={20} />
           </button>
@@ -358,7 +360,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
           <Button
             type="button"
             variant="secondary"
-            onClick={onClose}
+            onClick={requestClose}
             className="h-11 w-auto rounded-full border-green-500 px-lg font-body text-body-sm font-semibold text-heading hover:bg-green-50"
           >
             {t('adminForum.cancel')}
@@ -374,19 +376,42 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
       </form>
 
       {pendingChanges && (
+        <ConfirmPublishDialog
+          confirmationText={confirmationText}
+          onConfirmationTextChange={setConfirmationText}
+          onCancel={() => { setPendingChanges(null); setConfirmationText('') }}
+          onConfirm={() => onSubmit(pendingChanges)}
+        />
+      )}
+    </div>
+  )
+}
+
+interface ConfirmPublishDialogProps {
+  confirmationText: string
+  onConfirmationTextChange: (value: string) => void
+  onCancel: () => void
+  onConfirm: () => void
+}
+
+function ConfirmPublishDialog({ confirmationText, onConfirmationTextChange, onCancel, onConfirm }: Readonly<ConfirmPublishDialogProps>) {
+  const { t } = useTranslation()
+  const { closing, requestClose } = useModalExit(onCancel)
+
+  return (
         <dialog
           ref={(el) => {
             if (el && !el.open) el.showModal()
           }}
-          onClose={() => { setPendingChanges(null); setConfirmationText('') }}
+          onClose={requestClose}
           aria-label={t('adminForum.confirmChangesTitle')}
-          className="fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+          className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         >
           <div className="relative p-[28px_22px_30px]">
             <button
               type="button"
-              className="absolute right-3 top-[26px] z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity hover:opacity-65"
-              onClick={() => { setPendingChanges(null); setConfirmationText('') }}
+              className="absolute right-3 top-[26px] z-10 inline-flex size-10 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
+              onClick={requestClose}
               aria-label={t('adminForum.close')}
             >
               <XIcon size={20} />
@@ -401,7 +426,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
               <input
                 autoFocus
                 value={confirmationText}
-                onChange={(event) => setConfirmationText(event.target.value)}
+                onChange={(event) => onConfirmationTextChange(event.target.value)}
                 aria-label={t('adminForum.confirmWord')}
                 className="h-[38px] w-full border-b border-neutral-300 bg-transparent font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500"
               />
@@ -409,7 +434,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
                 <Button
                   type="button"
                   variant="secondary"
-                  onClick={() => { setPendingChanges(null); setConfirmationText('') }}
+                  onClick={requestClose}
                   className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50"
                 >
                   {t('adminForum.cancel')}
@@ -417,7 +442,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
                 <Button
                   type="button"
                   disabled={confirmationText.trim().toLocaleUpperCase() !== t('adminForum.confirmWord').toLocaleUpperCase()}
-                  onClick={() => onSubmit(pendingChanges)}
+                  onClick={onConfirm}
                   className="h-11 flex-1 rounded-full font-body text-button font-bold uppercase tracking-wide text-white disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {t('adminForum.confirmChanges')}
@@ -426,8 +451,6 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
             </div>
           </div>
         </dialog>
-      )}
-    </div>
   )
 }
 

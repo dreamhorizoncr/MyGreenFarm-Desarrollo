@@ -6,7 +6,7 @@ import { childService } from "../services/child";
 import { parentService } from "../services/parent";
 import { clubService } from "../services/clubs";
 import { notify } from "../utils/notifications.ts";
-import { validateRequired } from "../utils/validators.ts";
+import { useModalVisibility } from "../hooks/useModalExit.ts";
 
 import type { Child, ChildRequest, Relationship } from "../types/child";
 import type { Parent } from "../types/parent";
@@ -174,7 +174,8 @@ import { useTranslation } from "react-i18next";
         }
     };
 
-    if (!isOpen) return null;
+    const { shouldRender, closing } = useModalVisibility(isOpen);
+    if (!shouldRender) return null;
 
     return (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-[16px] md:p-[30px]">
@@ -188,8 +189,7 @@ import { useTranslation } from "react-i18next";
 
         <form
             onSubmit={handleSubmit}
-            noValidate
-            className="relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
+            className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         >
             <div className="flex items-center justify-between gap-md">
             <h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -202,7 +202,7 @@ import { useTranslation } from "react-i18next";
                 type="button"
                 onClick={onClose}
                 aria-label={t("admin.children.cancel")}
-                className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-neutral-100"
+                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
             >
                 <XIcon size={20} />
             </button>

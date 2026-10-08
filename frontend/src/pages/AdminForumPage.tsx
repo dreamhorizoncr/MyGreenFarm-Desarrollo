@@ -4,21 +4,26 @@ import { useTranslation } from 'react-i18next'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import BlogPostCard from '../components/forum/BlogPostCard.tsx'
 import BlogPostFormModal from '../components/forum/admin/BlogPostFormModal.tsx'
+import BlogPostCommentsModal from '../components/forum/admin/BlogPostCommentsModal.tsx'
 import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 import { notify } from '../utils/notifications.ts'
-import type { BlogPost, BlogPostInput } from '../types/forum.ts'
+import type { BlogComment, BlogPost, BlogPostInput } from '../types/forum.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import { forumService } from '../services/forum.ts'
 
 function AdminForumPage() {
   const { t } = useTranslation()
   const isTeacher = userStorage.getUser()?.role === 'TEACHER'
+  const isOwner = userStorage.getUser()?.role === 'OWNER'
   const {
     addBlogPost,
     updateBlogPost,
     removeBlogPost,
+    getComments,
+    loadComments,
+    removeComment,
     getCommentCount,
     isLiked,
     getLikeCount,
@@ -28,6 +33,10 @@ function AdminForumPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<BlogPost | null>(null)
   const [postToDelete, setPostToDelete] = useState<BlogPost | null>(null)
+  const [commentsPost, setCommentsPost] = useState<BlogPost | null>(null)
+  const [commentsLoading, setCommentsLoading] = useState(false)
+  const [commentsError, setCommentsError] = useState('')
+  const [commentToDelete, setCommentToDelete] = useState<BlogComment | null>(null)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [posts, setPosts] = useState<BlogPost[]>([])
@@ -98,6 +107,41 @@ function AdminForumPage() {
     }
   }
 
+  async function openComments(postId: string) {
+    const post = visiblePosts.find((item) => item.id === postId)
+    if (!post) return
+
+    setCommentsPost(post)
+    setCommentsLoading(true)
+    setCommentsError('')
+    try {
+      await loadComments(postId)
+    } catch {
+      setCommentsError(t('adminForum.loadCommentsError'))
+    } finally {
+      setCommentsLoading(false)
+    }
+  }
+
+  function closeComments() {
+    setCommentsPost(null)
+    setCommentsError('')
+  }
+
+  async function confirmDeleteComment() {
+    if (!commentsPost || !commentToDelete) return
+
+    try {
+      await removeComment(commentsPost.id, commentToDelete.id)
+      notify.success({
+        title: t('adminForum.commentDeletedToastTitle'),
+      })
+    } catch (err) {
+      notify.error(t('adminForum.commentDeleteErrorToastTitle'))
+      throw err
+    }
+  }
+
   async function confirmDelete() {
     if (!postToDelete) return
 
@@ -153,6 +197,7 @@ function AdminForumPage() {
               isLiked={isLiked(post.id)}
               likeCount={getLikeCount(post.id)}
               onToggleLike={toggleLike}
+              onOpenComments={openComments}
               onEdit={() => openEdit(post)}
               onDelete={() => setPostToDelete(post)}
             />
@@ -166,11 +211,11 @@ function AdminForumPage() {
     <AdminLayout>
       <div className="flex flex-wrap items-center justify-between gap-md">
         <div>
-          <h1 className="m-0 font-heading text-3xl font-bold text-heading">
+          <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
             {t('adminForum.title')}
           </h1>
 
-          <p className="m-0 mt-2 text-body text-neutral-500">
+          <p className="mt-2 font-body text-body text-neutral-500">
             {t('adminForum.description')}
           </p>
         </div>
@@ -205,6 +250,27 @@ function AdminForumPage() {
           message={t('adminForum.deleteDescription', { title: postToDelete.title })}
           onConfirm={confirmDelete}
           onClose={() => setPostToDelete(null)}
+        />
+      )}
+
+      {commentsPost && (
+        <BlogPostCommentsModal
+          post={commentsPost}
+          comments={getComments(commentsPost.id)}
+          loading={commentsLoading}
+          error={commentsError}
+          canDelete={isOwner}
+          onDeleteRequest={setCommentToDelete}
+          onClose={closeComments}
+        />
+      )}
+
+      {commentToDelete && (
+        <DeleteConfirmModal
+          title={t('adminForum.deleteCommentTitle')}
+          message={t('adminForum.deleteCommentDescription', { alias: commentToDelete.alias })}
+          onConfirm={confirmDeleteComment}
+          onClose={() => setCommentToDelete(null)}
         />
       )}
     </AdminLayout>

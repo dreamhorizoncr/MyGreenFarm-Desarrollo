@@ -4,6 +4,7 @@ import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import { validateRequired } from '../utils/validators.ts'
 import { getErrorMessage } from '../utils/error.ts'
+import { useModalExit } from '../hooks/useModalExit.ts'
 import type { OptionalApplicationField, VacancyInput } from '../types/vacancy.ts'
 
 interface CreateVacancyModalProps {
@@ -16,6 +17,7 @@ const ALL_OPTIONAL_FIELDS: OptionalApplicationField[] = ['applicantPhone', 'file
 function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalProps>) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const { closing, requestClose } = useModalExit(onClose)
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -48,7 +50,7 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
     setSaveError(null)
     try {
       await onCreate({ title: title.trim(), description: description.trim(), requiredFields })
-      onClose()
+      requestClose()
     } catch (err) {
       setSaveError(getErrorMessage(err))
     } finally {
@@ -59,15 +61,15 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
   return (
     <dialog
       ref={dialogRef}
-      onClose={onClose}
+      onClose={requestClose}
       onClick={(event) => {
-        if (event.target === dialogRef.current) onClose()
+        if (event.target === dialogRef.current) requestClose()
       }}
       onKeyDown={(event) => {
-        if (event.key === 'Escape') onClose()
+        if (event.key === 'Escape') requestClose()
       }}
       aria-label={t('vacancies.publishModalTitle')}
-      className="fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim animate-[modal-in_0.2s_ease-out] md:p-xl"
+      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="flex items-center justify-between gap-md">
         <h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -76,9 +78,9 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
 
         <button
           type="button"
-          onClick={onClose}
+          onClick={requestClose}
           aria-label={t('admin.cancel')}
-          className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-neutral-100"
+          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
         >
           <XIcon size={20} />
         </button>
@@ -168,7 +170,7 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
       <div className="mt-lg flex flex-wrap justify-end gap-sm">
         <Button
           variant="secondary"
-          onClick={onClose}
+          onClick={requestClose}
           className="h-11 w-auto rounded-full border-green-500 px-lg font-body text-body-sm font-semibold text-heading hover:bg-green-50"
         >
           {t('admin.cancel')}

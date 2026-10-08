@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { XIcon } from '@animateicons/react/lucide'
 import Button from './Button.tsx'
 import { getErrorMessage } from '../../utils/error.ts'
+import { useModalExit } from '../../hooks/useModalExit.ts'
 
 interface DeleteConfirmModalProps {
   title: string
@@ -21,6 +22,7 @@ function DeleteConfirmModal({
 }: Readonly<DeleteConfirmModalProps>) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const { closing, requestClose } = useModalExit(onClose)
 
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
@@ -34,7 +36,7 @@ function DeleteConfirmModal({
     setDeleteError(null)
     try {
       await onConfirm()
-      onClose()
+      requestClose()
     } catch (err) {
       setDeleteError(getErrorMessage(err))
     } finally {
@@ -45,45 +47,45 @@ function DeleteConfirmModal({
   return (
     <dialog
       ref={dialogRef}
-      onClose={onClose}
+      onClose={requestClose}
       onClick={(event) => {
-        if (event.target === dialogRef.current) onClose()
+        if (event.target === dialogRef.current) requestClose()
       }}
       onKeyDown={(event) => {
-        if (event.key === 'Escape') onClose()
+        if (event.key === 'Escape') requestClose()
       }}
       aria-label={title}
-      className="fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="relative p-[28px_22px_30px]">
-        <button
-          type="button"
-          className="absolute right-3 top-[26px] z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity duration-150 hover:opacity-65 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-          onClick={onClose}
-          aria-label={t('admin.cancel')}
-        >
-          <XIcon size={20} />
-        </button>
-
-        <div className="relative mb-lg px-12 text-center">
-          <h2 className="m-0 font-heading text-h1 font-bold leading-none text-heading">
+        <div className="flex items-center justify-between gap-md">
+          <h2 className="m-0 font-heading text-2xl font-bold text-heading">
             {title}
           </h2>
+
+          <button
+            type="button"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+            onClick={requestClose}
+            aria-label={t('admin.cancel')}
+          >
+            <XIcon size={20} />
+          </button>
         </div>
 
-        <div className="flex flex-col gap-md px-[28px] pb-[32px]">
-          <p className="mt-2xs text-left font-body text-body-sm text-neutral-500">
+        <div className="mt-lg flex flex-col gap-md">
+          <p className="m-0 text-left font-body text-body-sm text-neutral-500">
             {message}
           </p>
 
           {deleteError && (
-            <p className="mt-2xs text-left font-body text-body-sm text-danger">{deleteError}</p>
+            <p className="m-0 text-left font-body text-body-sm text-danger">{deleteError}</p>
           )}
 
           <div className="mt-sm flex gap-md">
             <Button
               variant="secondary"
-              onClick={onClose}
+              onClick={requestClose}
               className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50"
             >
               {t('admin.cancel')}

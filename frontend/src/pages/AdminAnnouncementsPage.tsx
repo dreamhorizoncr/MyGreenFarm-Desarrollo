@@ -13,6 +13,7 @@ import Pagination from "../components/ui/Pagination.tsx";
 import Select from "../components/ui/Select.tsx";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 import { useAnnouncements } from "../hooks/useAnnouncements.ts";
+import { useModalExit } from "../hooks/useModalExit.ts";
 import { notify } from "../utils/notifications.ts";
 import { validateMinLength, validateRequired } from "../utils/validators.ts";
 import type {
@@ -21,6 +22,7 @@ import type {
   AnnouncementRequest,
   AnnouncementType,
 } from "../types/announcement.ts";
+import NewsDetailModal from "../components/NewsDetailModal.tsx";
 
 const emptyForm: AnnouncementRequest = {
   title: "",
@@ -59,12 +61,13 @@ type AdminNewsCategory =
 interface AnnouncementRowProps {
   announcement?: Announcement
   typeLabel?: string
+  onPreview?:() => void
   onEdit?: () => void
   onDelete?: () => void
   loading?: boolean
 }
 
-function AnnouncementRow({ announcement, typeLabel, onEdit, onDelete, loading = false }: Readonly<AnnouncementRowProps>) {
+function AnnouncementRow({ announcement, typeLabel, onPreview, onEdit, onDelete, loading = false }: Readonly<AnnouncementRowProps>) {
   const { t } = useTranslation()
 
   if (loading) {
@@ -93,7 +96,9 @@ function AnnouncementRow({ announcement, typeLabel, onEdit, onDelete, loading = 
           </h2>
 
           <p className="mt-xs whitespace-pre-line text-body-sm text-neutral-600">
-            {announcement!.content}
+            {announcement!.content.length > 180
+              ? `${announcement!.content.slice(0, 180).trim()}...`
+              : announcement!.content}
           </p>
 
           {(announcement!.location || announcement!.eventDate) && (
@@ -111,24 +116,35 @@ function AnnouncementRow({ announcement, typeLabel, onEdit, onDelete, loading = 
           )}
         </div>
 
-        <div className="flex items-center justify-end gap-2">
+            {/* Acciones */}
+        <div className="flex flex-wrap items-center justify-between gap-sm">
           <button
             type="button"
-            onClick={onEdit}
-            aria-label={t("adminNews.editButton")}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition"
+            onClick={onPreview}
+            className="font-body text-body-sm font-semibold text-green-500 underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
           >
-            <PencilIcon size={17} />
+            {t("adminNews.preview")}
           </button>
 
-          <button
-            type="button"
-            onClick={onDelete}
-            aria-label={t("adminNews.deleteButton")}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition"
-          >
-            <Trash2Icon size={17} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onEdit}
+              aria-label={t("adminNews.editButton")}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition"
+            >
+              <PencilIcon size={17} />
+            </button>
+
+            <button
+              type="button"
+              onClick={onDelete}
+              aria-label={t("adminNews.deleteButton")}
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition"
+            >
+              <Trash2Icon size={17} />
+            </button>
+          </div>
         </div>
       </div>
     </article>
@@ -151,6 +167,7 @@ function AnnouncementsPage() {
   } = useAnnouncements();
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Announcement | null>(null);
+  const [previewing, setPreviewing] = useState<Announcement | null>(null);
   const [form, setForm] = useState<AnnouncementRequest>(emptyForm);
   const [titleError, setTitleError] = useState<string | null>(null);
   const [contentError, setContentError] = useState<string | null>(null);
@@ -209,6 +226,8 @@ function AnnouncementsPage() {
     setImages([]);
   };
 
+  const { closing: formClosing, requestClose } = useModalExit(closeForm);
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -247,7 +266,7 @@ function AnnouncementsPage() {
           : t("adminNews.createdToastDescription"),
       });
 
-      closeForm();
+      requestClose();
     } catch {
       notify.error({
         title: t("adminNews.saveErrorToastTitle"),
@@ -267,7 +286,7 @@ function AnnouncementsPage() {
       await deleteAnnouncement(announcementToDelete.id);
 
       if (editing?.id === announcementToDelete.id) {
-        closeForm();
+        requestClose();
       }
 
       notify.success({
@@ -345,13 +364,12 @@ function AnnouncementsPage() {
             tabIndex={-1}
             aria-label={t("adminNews.newscancel")}
             className="absolute inset-0 size-full cursor-default"
-            onClick={closeForm}
+            onClick={requestClose}
           />
 
           <form
             onSubmit={handleSubmit}
-            noValidate
-            className="relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
+            className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
           >
             <div className="flex items-center justify-between gap-md">
               <h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -360,9 +378,9 @@ function AnnouncementsPage() {
 
               <button
                 type="button"
-                onClick={closeForm}
+                onClick={requestClose}
                 aria-label="Cerrar formulario"
-                className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-(--grey-100)"
+                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
               >
                 <XIcon size={20} />
               </button>
@@ -561,7 +579,7 @@ function AnnouncementsPage() {
             <div className="mt-lg flex flex-wrap justify-end gap-sm">
               <button
                 type="button"
-                onClick={closeForm}
+                onClick={requestClose}
                 className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
               >
                 {t("adminNews.newscancel")}
@@ -667,6 +685,7 @@ function AnnouncementsPage() {
             key={announcement.id}
             announcement={announcement}
             typeLabel={t(typeLabels[announcement.type])}
+            onPreview={()=> setPreviewing(announcement)}
             onEdit={() => void openEdit(announcement)}
             onDelete={() => handleDelete(announcement)}
           />
@@ -684,6 +703,14 @@ function AnnouncementsPage() {
         totalPages={totalPages}
         onPageChange={setCurrentPage}
       />
+
+        {/* Vista previa */}
+      {previewing && (
+        <NewsDetailModal
+          announcement={previewing}
+          onClose={() => setPreviewing(null)}
+        />
+      )}
 
       {announcementToDelete && (
         <DeleteConfirmModal

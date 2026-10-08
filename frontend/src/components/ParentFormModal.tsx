@@ -5,6 +5,7 @@ import Select from "./ui/Select.tsx";
 
 import { parentService } from "../services/parent";
 import { notify } from "../utils/notifications.ts";
+import { useModalExit } from "../hooks/useModalExit.ts";
 import { validateEmail, validateRequired } from "../utils/validators.ts";
 
 import type { Parent, ParentLanguage, ParentRequest } from "../types/parent";
@@ -24,6 +25,7 @@ function ParentFormModal({
   parent,
 }: Readonly<ParentFormModalProps>) {
   const { t } = useTranslation();
+  const { closing, requestClose } = useModalExit(onClose);
 
   // Si existe un padre, el modal está en modo edición
   const isEditing = Boolean(parent);
@@ -102,7 +104,7 @@ function ParentFormModal({
       );
 
       // Cierra el modal
-      onClose();
+      requestClose();
     } catch (error) {
       console.error("Error al guardar el padre:", error);
 
@@ -134,11 +136,12 @@ function ParentFormModal({
         tabIndex={-1}
         aria-label={t("admin.parents.cancel")}
         className="absolute inset-0 size-full cursor-default"
-        onClick={onClose}
+        onClick={requestClose}
       />
 
       <form
         onSubmit={handleSubmit}
+        className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         noValidate
         className="relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
       >
@@ -151,9 +154,9 @@ function ParentFormModal({
 
           <button
             type="button"
-            onClick={onClose}
+            onClick={requestClose}
             aria-label={t("admin.parents.cancel")}
-            className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-neutral-100"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
           >
             <XIcon size={20} />
           </button>
@@ -270,7 +273,7 @@ function ParentFormModal({
         <div className="mt-lg flex flex-wrap justify-end gap-sm">
           <button
             type="button"
-            onClick={onClose}
+            onClick={requestClose}
             disabled={saving}
             className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 disabled:opacity-50"
           >

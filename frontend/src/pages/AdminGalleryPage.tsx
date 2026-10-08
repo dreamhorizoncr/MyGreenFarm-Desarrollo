@@ -4,7 +4,6 @@ import {
 	ChevronDownIcon,
 	ChevronLeftIcon,
 	ChevronRightIcon,
-	EllipsisVerticalIcon,
 	FileImageIcon,
 	PencilIcon,
 	PlusIcon,
@@ -20,6 +19,7 @@ import DeleteAlbumModal from '../components/DeleteAlbumModal.tsx'
 import DeleteYearModal from '../components/DeleteYearModal.tsx'
 import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
 import { useGalleryAdmin } from '../hooks/useGalleryAdmin.ts'
+import { useModalExit } from '../hooks/useModalExit.ts'
 import { notify } from '../utils/notifications.ts'
 import { validateMinLength, validateRequired } from '../utils/validators.ts'
 import type { Gallery, GalleryCategory, GalleryImage, GalleryRequest } from '../types/gallery.ts'
@@ -36,69 +36,6 @@ interface SelectedImage {
 
 function releasePreviews(list: SelectedImage[]) {
 	list.forEach(({ previewUrl }) => URL.revokeObjectURL(previewUrl))
-}
-
-interface AlbumMenuProps {
-	onEdit: () => void
-	onDelete: () => void
-}
-
-function AlbumMenu({ onEdit, onDelete }: Readonly<AlbumMenuProps>) {
-	const { t } = useTranslation()
-	const [open, setOpen] = useState(false)
-
-	useEffect(() => {
-		if (!open) return
-		const handleKey = (event: globalThis.KeyboardEvent) => {
-			if (event.key === 'Escape') setOpen(false)
-		}
-		document.addEventListener('keydown', handleKey)
-		return () => document.removeEventListener('keydown', handleKey)
-	}, [open])
-
-	return (
-		<div className="relative">
-			<button
-				type="button"
-				onClick={() => setOpen((prev) => !prev)}
-				aria-label={t('admin.gallery.actions')}
-				aria-expanded={open}
-				className="flex size-[34px] items-center justify-center rounded-full bg-white text-heading shadow transition hover:bg-neutral-50"
-			>
-				<EllipsisVerticalIcon size={18} />
-			</button>
-
-			{open && (
-				<>
-					<div className="fixed inset-0 z-10" onClick={() => setOpen(false)} aria-hidden="true" />
-					<div className="absolute right-0 top-[calc(100%+8px)] z-20 w-max min-w-[150px] overflow-hidden rounded-xl border border-neutral-200 bg-white py-sm shadow-lg">
-						<button
-							type="button"
-							onClick={() => {
-								setOpen(false)
-								onEdit()
-							}}
-							className="flex w-full items-center gap-sm px-md py-sm text-body-sm text-heading transition hover:bg-neutral-50"
-						>
-							<PencilIcon size={15} />
-							{t('admin.edit')}
-						</button>
-						<button
-							type="button"
-							onClick={() => {
-								setOpen(false)
-								onDelete()
-							}}
-							className="flex w-full items-center gap-sm px-md py-sm text-body-sm text-danger transition hover:bg-red-50"
-						>
-							<Trash2Icon size={15} />
-							{t('admin.delete')}
-						</button>
-					</div>
-				</>
-			)}
-		</div>
-	)
 }
 
 interface YearDropdownProps {
@@ -290,6 +227,10 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading =
 					<Skeleton shape="line" className="h-5 w-4/5" />
 					<Skeleton shape="line" className="h-4 w-full" />
 					<Skeleton shape="line" className="h-4 w-2/3" />
+					<div className="mt-sm flex items-center justify-end gap-xs">
+						<Skeleton shape="circle" className="size-10" />
+						<Skeleton shape="circle" className="size-10" />
+					</div>
 				</div>
 			</article>
 		)
@@ -320,10 +261,6 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading =
 				</button>
 			</div>
 
-			<div className="absolute right-[20px] top-[20px]">
-				<AlbumMenu onEdit={onEdit!} onDelete={onDelete!} />
-			</div>
-
 			<div className="overflow-hidden px-lg pb-lg text-left">
 				<h3 className="m-0 line-clamp-2 min-h-[2.8em] font-heading text-h5 font-bold text-heading">
 					{gallery!.title}
@@ -331,6 +268,25 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading =
 				<p className="-mt-sm line-clamp-5 min-h-[7.5em] font-body text-body-sm font-normal leading-[1.5] text-body-text-dark">
 					{gallery!.description}
 				</p>
+
+				<div className="mt-sm flex items-center justify-end gap-xs">
+					<button
+						type="button"
+						onClick={onEdit}
+						aria-label={t('admin.edit')}
+						className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
+					>
+						<PencilIcon size={17} />
+					</button>
+					<button
+						type="button"
+						onClick={onDelete}
+						aria-label={t('admin.delete')}
+						className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50"
+					>
+						<Trash2Icon size={17} />
+					</button>
+				</div>
 			</div>
 		</article>
 	)
@@ -531,6 +487,8 @@ function AdminGalleryPage() {
 		setImages([])
 	}
 
+	const { closing: formClosing, requestClose } = useModalExit(closeForm)
+
 	const resetSelectedFiles = () => {
 		releasePreviews(files)
 		setFiles([])
@@ -611,7 +569,7 @@ function AdminGalleryPage() {
 					: t('admin.gallery.albumCreatedDescription'),
 			})
 
-			closeForm()
+			requestClose()
 			void fetchAll(language)
 		} catch {
 			notify.error({
@@ -639,7 +597,7 @@ function AdminGalleryPage() {
 	const handleDeleteGallery = async (gallery: Gallery) => {
 		try {
 			await deleteGallery(gallery.id)
-			if (editing?.id === gallery.id) closeForm()
+			if (editing?.id === gallery.id) requestClose()
 			notify.success({
 				title: t('admin.gallery.albumDeletedTitle'),
 				description: t('admin.gallery.albumDeletedDescription'),
@@ -729,19 +687,19 @@ function AdminGalleryPage() {
 						tabIndex={-1}
 						aria-label={t('admin.gallery.close')}
 						className="absolute inset-0 size-full cursor-default"
-						onClick={closeForm}
+						onClick={requestClose}
 					/>
 
-					<form onSubmit={handleSubmit} noValidate className="relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl">
+					<form onSubmit={handleSubmit} className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}>
 					<div className="flex items-center justify-between gap-md">
 						<h2 className="m-0 font-heading text-2xl font-bold text-heading">
 							{editing ? t('admin.gallery.editAlbum') : t('admin.gallery.newAlbum')}
 						</h2>
 						<button
 							type="button"
-							onClick={closeForm}
+							onClick={requestClose}
 							aria-label={t('admin.gallery.close')}
-							className="text-neutral-500"
+							className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
 						>
 							<XIcon size={20} />
 						</button>
@@ -901,7 +859,7 @@ onCreateYear={handleCreateYear}
 					<div className="mt-lg flex flex-wrap justify-end gap-sm">
 						<button
 							type="button"
-							onClick={closeForm}
+							onClick={requestClose}
 							className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
 						>
 							{t('admin.cancel')}

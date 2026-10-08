@@ -32,6 +32,7 @@ public class ForumCommunityPostService {
     @Transactional
     public ForumCommunityPostResponse create(ForumCommunityPostRequest request) {
         String name = Sanitizer.requireClean("name", request.getName());
+        moderationService.assertAppropriateName("name", name);
         String content = Sanitizer.requireCleanPreserveLineBreaks("content", request.getContent());
         content = moderationService.assertAppropriate(content);
 
