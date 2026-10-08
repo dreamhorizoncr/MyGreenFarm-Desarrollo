@@ -95,26 +95,25 @@
                                 Recibes este correo porque estás suscrito a nuestro boletín o eres un padre de familia
                                 con un hijo matriculado en My Green Farm.
                             </p>
+
+                            <table role="presentation" style="margin:0 auto 18px; padding-top: 14px; border-spacing:0">
+                                <tr>
+                                    <td style="padding:0; background-color:#019F62; border-radius:24px">
+                                        <a th:href="${socialLink}" target="_blank" rel="noopener noreferrer"
+                                            th:text="#{email.footer.social}"
+                                            style="display:inline-block; padding:12px 24px; color:#FFFFFF; text-decoration:none; font-size:13px; letter-spacing:0.3px;">
+                                            Contáctanos en redes sociales
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="color:#8A9686; font-size:12.5px; margin:0;">
+                                <span th:text="#{email.footer.help}">¿Necesitas ayuda? Escríbenos a</span>
+                                <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}"
+                                    style="color:#019F62; text-decoration:none; border-bottom:1px solid #019F62;"></a>
+                            </p>
                         </td>
                     </tr>
-                    <td style="padding: 8px 40px 8px; text-align:center;">
-                        <table role="presentation" style="margin:0 auto 18px; border-spacing:0">
-                            <tr>
-                                <td style="padding:0; background-color:#019F62; border-radius:24px">
-                                    <a th:href="${socialLink}" target="_blank" rel="noopener noreferrer"
-                                        th:text="#{email.footer.social}"
-                                        style="display:inline-block; padding:12px 24px; color:#FFFFFF; text-decoration:none; font-size:13px; letter-spacing:0.3px;">
-                                        Contáctanos en redes sociales
-                                    </a>
-                                </td>
-                            </tr>
-                        </table>
-                        <p style="color:#8A9686; font-size:12.5px; margin:0;">
-                            <span th:text="#{email.footer.help}">¿Necesitas ayuda? Escríbenos a</span>
-                            <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}"
-                                style="color:#019F62; text-decoration:none; border-bottom:1px solid #019F62;"></a>
-                        </p>
-                    </td>
 
                     <!-- Franja de cierre institucional -->
                     <tr>
