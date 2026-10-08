@@ -6,6 +6,7 @@ import Select from "./ui/Select.tsx";
 import { expedientService } from "../services/expedient";
 import { notify } from "../utils/notifications.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
+import { validateRequired } from "../utils/validators.ts";
 
 import type {
   EducationalLevel,

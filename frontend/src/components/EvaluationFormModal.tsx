@@ -7,6 +7,7 @@ import { evaluationService } from "../services/evaluation";
 import { expedientService } from "../services/expedient";
 import { notify } from "../utils/notifications";
 import { useModalVisibility } from "../hooks/useModalExit.ts";
+import { validateRequired } from "../utils/validators.ts";
 
     import type {
     Evaluation,
