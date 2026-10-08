@@ -81,7 +81,7 @@ function AlbumDetailPage() {
       <Navbar />
 
       {/* Encabezado del álbum */}
-      <section className="bg-white px-[30px] py-[50px] md:py-[70px]">
+      <section className="bg-white py-[50px] md:py-[70px]">
         <Container>
           <nav
             aria-label="breadcrumb"
