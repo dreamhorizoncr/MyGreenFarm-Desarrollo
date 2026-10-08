@@ -119,8 +119,7 @@
   .testimonial-card, .testimonial-carousel__arrow { transition: none; }
 }
 
-/* Oculta el ojo nativo de Edge/IE para mostrar contraseña: PasswordInput ya
-   trae el suyo propio, y si no se oculta este quedan los dos duplicados. */
+/* Oculta el ojo nativo de Edge, PasswordInput ya trae el suyo */
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
