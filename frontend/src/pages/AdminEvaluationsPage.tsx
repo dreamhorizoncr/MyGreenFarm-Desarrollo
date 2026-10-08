@@ -122,6 +122,7 @@ import type { Expedient } from "../types/expedient";
 
                 <p className="mt-2 font-body text-body text-neutral-500">
                     Registra, consulta y administra el progreso de los niños.
+                </p>
                 <p className="mt-2 font-body text-body-text">
                     {t("admin.evaluations.description")}
                 </p>
