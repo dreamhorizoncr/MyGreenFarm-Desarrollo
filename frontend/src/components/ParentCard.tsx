@@ -1,6 +1,7 @@
 import type { Parent } from "../types/parent.ts";
 import { Pencil, Trash2 } from "@animateicons/react/lucide";
 import Skeleton from "./ui/Skeleton.tsx";
+import { useTranslation } from "react-i18next";
 
 interface ParentCardProps {
     parent?: Parent;
@@ -24,6 +25,7 @@ function ParentCard({
     onDelete,
     loading = false,
 }: Readonly<ParentCardProps>) {
+  const { t } = useTranslation();
     return (
         <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
         {/* Nombre y acciones */}
@@ -76,12 +78,12 @@ function ParentCard({
             ) : (
               <>
                 <p>
-                <span className="font-bold">Identificación: </span>
+                <span className="font-bold">{t("admin.parents.identification")}: </span>
                 {parent!.identification}
                 </p>
 
                 <p>
-                <span className="font-bold">Idioma: </span>
+                <span className="font-bold">{t("admin.parents.language")}: </span>
                 {getLanguageLabel(parent!.language)}
                 </p>
               </>
@@ -100,7 +102,7 @@ function ParentCard({
             ) : (
               <>
                 <h3 className="font-body text-body font-bold text-heading">
-                    Correo electrónico
+                    {t("admin.parents.email")}
                 </h3>
 
                 <p className="mt-2 break-words font-body text-body-sm leading-relaxed text-body-text">
@@ -121,16 +123,16 @@ function ParentCard({
             ) : (
               <>
                 <h3 className="font-body text-body font-bold text-heading">
-                    Contacto
+                    {t("admin.parents.contact")}
                 </h3>
 
                 <p className="mt-2 break-words font-body text-body-sm leading-relaxed text-body-text">
-                    <span className="font-bold">Teléfono: </span>
+                    <span className="font-bold">{t("admin.parents.phoneNumber")}: </span>
                     {parent!.phoneNumber}
                 </p>
 
                 <p className="mt-2 break-words font-body text-body-sm leading-relaxed text-body-text">
-                    <span className="font-bold">Dirección: </span>
+                    <span className="font-bold">{t("admin.parents.address")}: </span>
                     {parent!.address}
                 </p>
               </>

@@ -21,10 +21,13 @@ import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
 import { useGalleryAdmin } from '../hooks/useGalleryAdmin.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { notify } from '../utils/notifications.ts'
+import { validateMinLength, validateRequired } from '../utils/validators.ts'
 import type { Gallery, GalleryCategory, GalleryImage, GalleryRequest } from '../types/gallery.ts'
 import ninos2 from '../assets/imgs/ninos2.svg'
 
 const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'])
+const TITLE_MIN_LENGTH = 5
+const DESCRIPTION_MIN_LENGTH = 20
 
 interface SelectedImage {
 	file: File
@@ -419,6 +422,8 @@ function AdminGalleryPage() {
 	const [imageToDelete, setImageToDelete] = useState<string | null>(null)
 	const [form, setForm] = useState<GalleryRequest>(emptyForm)
 	const [formError, setFormError] = useState<string | null>(null)
+	const [titleError, setTitleError] = useState<string | null>(null)
+	const [descriptionError, setDescriptionError] = useState<string | null>(null)
 	const [files, setFiles] = useState<SelectedImage[]>([])
 	const [fileError, setFileError] = useState<string | null>(null)
 	const [images, setImages] = useState<GalleryImage[]>([])
@@ -445,6 +450,8 @@ function AdminGalleryPage() {
 		setEditing(null)
 		setForm({ ...emptyForm, categoryId: categories[0]?.id ?? '' })
 		setFormError(null)
+		setTitleError(null)
+		setDescriptionError(null)
 		resetSelectedFiles()
 		setImages([])
 		setFormOpen(true)
@@ -463,6 +470,8 @@ function AdminGalleryPage() {
 			featured: gallery.featured,
 		})
 		setFormError(null)
+		setTitleError(null)
+		setDescriptionError(null)
 		resetSelectedFiles()
 		setImages([...gallery.galleryImages])
 		setFormOpen(true)
@@ -472,6 +481,8 @@ function AdminGalleryPage() {
 		setFormOpen(false)
 		setEditing(null)
 		setFormError(null)
+		setTitleError(null)
+		setDescriptionError(null)
 		resetSelectedFiles()
 		setImages([])
 	}
@@ -522,6 +533,18 @@ function AdminGalleryPage() {
 			setFormError(t('admin.gallery.requiredYear'))
 			return
 		}
+
+		const titleErrorMessage =
+			validateRequired(form.title, t('admin.gallery.albumTitle'), t) ??
+			validateMinLength(form.title, TITLE_MIN_LENGTH, t)
+		const descriptionErrorMessage =
+			validateRequired(form.description, t('admin.gallery.albumDescription'), t) ??
+			validateMinLength(form.description, DESCRIPTION_MIN_LENGTH, t)
+
+		setTitleError(titleErrorMessage)
+		setDescriptionError(descriptionErrorMessage)
+
+		if (titleErrorMessage || descriptionErrorMessage) return
 
 		const data: GalleryRequest = {
 			categoryId: form.categoryId,
@@ -686,13 +709,17 @@ function AdminGalleryPage() {
 						<label className="font-body text-body-sm font-semibold text-heading">
 							{t('admin.gallery.albumTitle')}
 							<input
-								required
-								minLength={5}
 								maxLength={70}
 								value={form.title}
-								onChange={(e) => setForm({ ...form, title: e.target.value })}
+								onChange={(e) => {
+									setForm({ ...form, title: e.target.value })
+									if (titleError) setTitleError(null)
+								}}
 								className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
 							/>
+							{titleError && (
+								<p className="mt-xs block font-body text-body-sm font-normal text-danger">{titleError}</p>
+							)}
 						</label>
 
 						<label className="font-body text-body-sm font-semibold text-heading">
@@ -708,21 +735,25 @@ onCreateYear={handleCreateYear}
 							onDeleteYear={(category) => setDeleteYearTarget(category)}
 						/>
 							{formError && (
-								<p className="mt-xs text-caption font-normal text-red-700">{formError}</p>
+								<p className="mt-xs block font-body text-body-sm font-normal text-danger">{formError}</p>
 							)}
 						</label>
 
 						<label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
 							{t('admin.gallery.albumDescription')}
 							<textarea
-								required
-								minLength={20}
 								maxLength={200}
 								rows={4}
 								value={form.description}
-								onChange={(e) => setForm({ ...form, description: e.target.value })}
+								onChange={(e) => {
+									setForm({ ...form, description: e.target.value })
+									if (descriptionError) setDescriptionError(null)
+								}}
 								className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
 							/>
+							{descriptionError && (
+								<p className="mt-xs block font-body text-body-sm font-normal text-danger">{descriptionError}</p>
+							)}
 						</label>
 
 						<label className="flex items-center gap-sm font-body text-body-sm font-semibold text-heading md:col-span-2">
@@ -760,7 +791,7 @@ onCreateYear={handleCreateYear}
 							</p>
 
 							{fileError && (
-								<p className="mt-xs text-caption font-normal text-red-700">{fileError}</p>
+								<p className="mt-xs block font-body text-body-sm font-normal text-danger">{fileError}</p>
 							)}
 
 							{files.length > 0 && (

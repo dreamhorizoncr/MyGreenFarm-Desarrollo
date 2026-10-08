@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { SearchIcon } from "@animateicons/react/lucide";
 
 import AdminLayout from "../layout/AdminLayout";
@@ -16,6 +17,7 @@ import type { Expedient } from "../types/expedient";
 
 
     function AdminEvaluationsPage() {
+    const { t } = useTranslation();
     const {
         evaluations,
         loading,
@@ -43,11 +45,9 @@ import type { Expedient } from "../types/expedient";
             setLoadingExpedients(true);
 
             const data = await expedientService.getExpedients(0, 100);
-            console.log("EXPEDIENTES:", data);
-            console.log("EVALUACIONES:", evaluations);
             setExpedients(data.content);
         } catch {
-            notify.error("No se pudieron cargar los expedientes");
+            notify.error(t("admin.evaluations.loadExpedientsError"));
         } finally {
             setLoadingExpedients(false);
         }
@@ -97,9 +97,9 @@ import type { Expedient } from "../types/expedient";
 
         await fetchEvaluations();
 
-        notify.success("Evaluación eliminada correctamente");
+        notify.success(t("admin.evaluations.deleteSuccess"));
         } catch (err) {
-        notify.error("No se pudo eliminar la evaluación");
+        notify.error(t("admin.evaluations.deleteError"));
         throw err;
         }
     };
@@ -117,11 +117,13 @@ import type { Expedient } from "../types/expedient";
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                 <div>
                 <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
-                    Evaluaciones
+                    {t("admin.evaluations.title")}
                 </h1>
 
                 <p className="mt-2 font-body text-body text-neutral-500">
                     Registra, consulta y administra el progreso de los niños.
+                <p className="mt-2 font-body text-body-text">
+                    {t("admin.evaluations.description")}
                 </p>
                 </div>
 
@@ -134,8 +136,8 @@ import type { Expedient } from "../types/expedient";
                     setIsFormOpen(true);
                     }}
                     className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-all duration-300 hover:scale-105 hover:bg-orange-600"
-                    aria-label="Registrar evaluación"
-                    title="Registrar evaluación"
+                    aria-label={t("admin.evaluations.registerEvaluation")}
+                    title={t("admin.evaluations.registerEvaluation")}
                 >
                     <span className="text-3xl font-light leading-none transition-transform duration-300 group-hover:rotate-90">
                     +
@@ -151,10 +153,10 @@ import type { Expedient } from "../types/expedient";
 
                     <input
                     type="search"
-                    placeholder="Buscar evaluación..."
+                    placeholder={t("admin.evaluations.searchPlaceholder")}
                     value={searchTerm}
                     onChange={(event) => setSearchTerm(event.target.value)}
-                    aria-label="Buscar evaluación"
+                    aria-label={t("admin.evaluations.searchAriaLabel")}
                     className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
                     />
                 </div>
@@ -201,7 +203,7 @@ import type { Expedient } from "../types/expedient";
                 evaluations.length === 0 && (
                 <div className="mt-8 rounded-2xl border border-dashed border-neutral-200 bg-white px-6 py-16 text-center">
                     <p className="font-body text-body text-body-text">
-                    No hay evaluaciones registradas.
+                    {t("admin.evaluations.noEvaluations")}
                     </p>
                 </div>
                 )}
@@ -213,7 +215,7 @@ import type { Expedient } from "../types/expedient";
                 filteredEvaluations.length === 0 && (
                 <div className="mt-8 rounded-2xl border border-dashed border-neutral-200 bg-white px-6 py-16 text-center">
                     <p className="font-body text-body text-body-text">
-                    No se encontraron evaluaciones con esa búsqueda.
+                    {t("admin.evaluations.noResults")}
                     </p>
                 </div>
                 )}
@@ -235,8 +237,17 @@ import type { Expedient } from "../types/expedient";
             {/* Eliminar */}
             {evaluationToDelete && (
             <DeleteConfirmModal
-                title="Eliminar evaluación"
-                message={`¿Seguro que deseas eliminar la evaluación de "${evaluationToDelete.evaluationDate}"${deletingExpedient ? ` de ${deletingExpedient.childName}` : ''}? Esta acción no se puede deshacer.`}
+                title={t("admin.evaluations.deleteTitle")}
+                message={
+                    deletingExpedient
+                        ? t("admin.evaluations.deleteMessageWithChild", {
+                            date: evaluationToDelete.evaluationDate,
+                            childName: deletingExpedient.childName,
+                        })
+                        : t("admin.evaluations.deleteMessageWithoutChild", {
+                            date: evaluationToDelete.evaluationDate,
+                        })
+                }
                 onConfirm={confirmDelete}
                 onClose={() => setEvaluationToDelete(null)}
             />
