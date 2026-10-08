@@ -3,6 +3,7 @@ package taller.multimedia.backend.service.forum;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,12 @@ public class ForumModerationService {
             "Ese nombre no cumple con las normas del foro. Elegí otro para continuar.";
     private static final String UNAVAILABLE_MESSAGE =
             "No se pudo verificar el contenido en este momento. Intenta de nuevo en unos segundos.";
+    private static final String EMOJI_REJECTED_MESSAGE =
+            "No se permiten emojis en el foro. Quítalos e intenta de nuevo.";
+
+    // Detecta emojis sin depender de Gemini.
+    private static final Pattern EMOJI_PATTERN = Pattern.compile(
+            "[\\x{1F300}-\\x{1FAFF}\\x{2600}-\\x{27BF}\\x{1F1E6}-\\x{1F1FF}\\x{2B00}-\\x{2BFF}\\x{FE0F}\\x{200D}]");
 
     private static final String SPELLING_INSTRUCTION =
             "- \"correctedContent\" es el mismo mensaje con la ortografía, tildes y puntuación corregidas. "
@@ -103,6 +110,7 @@ public class ForumModerationService {
     // Used for the community wall and its replies: content just has to be appropriate.
     // Returns the content with spelling/accents/punctuation corrected by Gemini.
     public String assertAppropriate(String content) {
+        rejectIfEmoji("content", content);
         JsonNode result = callGemini("content", APPROPRIATE_PROMPT.formatted(content));
         boolean appropriate = result != null && result.path("appropriate").asBoolean(false);
 
@@ -116,6 +124,7 @@ public class ForumModerationService {
     // Used for replies to blog articles: content has to be appropriate AND relevant
     // to the article it responds to. Returns the spelling-corrected content.
     public String assertCommentRelevant(String articleTopic, String articleTitle, String commentContent) {
+        rejectIfEmoji("content", commentContent);
         JsonNode result = callGemini("content", COMMENT_PROMPT.formatted(articleTopic, articleTitle, commentContent));
         boolean appropriate = result != null && result.path("appropriate").asBoolean(false);
         boolean onTopic = result != null && result.path("onTopic").asBoolean(false);
@@ -130,11 +139,18 @@ public class ForumModerationService {
     // Used for the display name/alias people choose when posting: blocks vulgar, political,
     // religious or mocking names (e.g. puns impersonating public figures), independent of content.
     public void assertAppropriateName(String fieldName, String name) {
+        rejectIfEmoji(fieldName, name);
         JsonNode result = callGemini(fieldName, NAME_PROMPT.formatted(name));
         boolean appropriate = result != null && result.path("appropriate").asBoolean(false);
 
         if (!appropriate) {
             throw new InvalidFieldException(fieldName, NAME_REJECTED_MESSAGE);
+        }
+    }
+
+    private void rejectIfEmoji(String fieldName, String text) {
+        if (text != null && EMOJI_PATTERN.matcher(text).find()) {
+            throw new InvalidFieldException(fieldName, EMOJI_REJECTED_MESSAGE);
         }
     }
 
