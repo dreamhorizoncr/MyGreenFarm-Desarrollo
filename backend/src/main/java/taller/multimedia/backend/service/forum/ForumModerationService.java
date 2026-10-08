@@ -1,5 +1,6 @@
 package taller.multimedia.backend.service.forum;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -89,12 +90,16 @@ public class ForumModerationService {
                     + "(familias con niños de 0 a 12 años). Evalúa el siguiente nombre o alias que una persona "
                     + "eligió para publicar en el foro.\n\n"
                     + "Nombre a evaluar:\n\"%s\"\n\n"
+                    + "Antes de responder, usa la búsqueda para comprobar si ese nombre completo corresponde a "
+                    + "una persona real con un cargo público (presidente, diputado, alcalde, síndico, regidor, "
+                    + "líder religioso, etc.), aunque sea una figura local o poco conocida a nivel nacional. "
+                    + "No asumas que no es real solo porque no la reconoces de memoria.\n\n"
                     + "Responde ÚNICAMENTE con un JSON de una línea, sin texto adicional ni bloques de código, "
                     + "con este formato exacto:\n"
                     + "{\"appropriate\": true|false}\n\n"
                     + "\"appropriate\" es false si el nombre contiene lenguaje vulgar, sexual u ofensivo, un doble "
                     + "sentido o juego de palabras de mal gusto, una burla o referencia a política o religión, "
-                    + "o suplanta a una figura pública o religiosa real. Un nombre común y corriente (real, "
+                    + "o suplanta a una figura pública o religiosa real (nacional o local). Un nombre común y corriente (real, "
                     + "inventado o un apodo normal) es \"appropriate\": true.";
 
     private final ObjectMapper objectMapper;
@@ -117,7 +122,7 @@ public class ForumModerationService {
     // Returns the content with spelling/accents/punctuation corrected by Gemini.
     public String assertAppropriate(String content) {
         rejectIfEmoji("content", content);
-        JsonNode result = callGemini("content", APPROPRIATE_PROMPT.formatted(content));
+        JsonNode result = callGemini("content", APPROPRIATE_PROMPT.formatted(content), false);
         boolean appropriate = result != null && result.path("appropriate").asBoolean(false);
 
         if (!appropriate) {
@@ -131,7 +136,7 @@ public class ForumModerationService {
     // to the article it responds to. Returns the spelling-corrected content.
     public String assertCommentRelevant(String articleTopic, String articleTitle, String commentContent) {
         rejectIfEmoji("content", commentContent);
-        JsonNode result = callGemini("content", COMMENT_PROMPT.formatted(articleTopic, articleTitle, commentContent));
+        JsonNode result = callGemini("content", COMMENT_PROMPT.formatted(articleTopic, articleTitle, commentContent), false);
         boolean appropriate = result != null && result.path("appropriate").asBoolean(false);
         boolean onTopic = result != null && result.path("onTopic").asBoolean(false);
 
@@ -146,7 +151,7 @@ public class ForumModerationService {
     // religious or mocking names (e.g. puns impersonating public figures), independent of content.
     public void assertAppropriateName(String fieldName, String name) {
         rejectIfEmoji(fieldName, name);
-        JsonNode result = callGemini(fieldName, NAME_PROMPT.formatted(name));
+        JsonNode result = callGemini(fieldName, NAME_PROMPT.formatted(name), true);
         boolean appropriate = result != null && result.path("appropriate").asBoolean(false);
 
         if (!appropriate) {
@@ -167,7 +172,11 @@ public class ForumModerationService {
         return corrected == null || corrected.isBlank() ? original : corrected;
     }
 
-    private JsonNode callGemini(String fieldName, String prompt) {
+    // withSearchGrounding le da a Gemini la herramienta de Búsqueda de Google para que
+    // verifique si el nombre corresponde a una persona real (política, religiosa, etc.)
+    // en vez de depender solo de lo que recuerde de su entrenamiento, que no cubre bien
+    // a figuras poco conocidas (ej. alcaldes o síndicos locales).
+    private JsonNode callGemini(String fieldName, String prompt, boolean withSearchGrounding) {
         try {
             String url = baseUrl + "/models/" + model + ":generateContent";
 
@@ -175,10 +184,13 @@ public class ForumModerationService {
             Map<String, Object> content = Map.of("parts", List.of(part));
             Map<String, Object> generationConfig = Map.of(
                     "temperature", 0.0,
-                    "maxOutputTokens", 50);
-            Map<String, Object> body = Map.of(
+                    "maxOutputTokens", withSearchGrounding ? 300 : 50);
+            Map<String, Object> body = new HashMap<>(Map.of(
                     "contents", List.of(content),
-                    "generationConfig", generationConfig);
+                    "generationConfig", generationConfig));
+            if (withSearchGrounding) {
+                body.put("tools", List.of(Map.of("google_search", Map.of())));
+            }
 
             String jsonBody = objectMapper.writeValueAsString(body);
 
