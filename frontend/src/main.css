@@ -63,3 +63,47 @@
     background-position: -200% 0;
   }
 }
+
+.testimonial-carousel {
+  height: 410px;
+  perspective: 1000px;
+  touch-action: pan-y;
+}
+
+.testimonial-card {
+  width: min(680px, calc(100% - 4rem));
+  height: 340px;
+  border-color: var(--testimonial-accent);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  transform-origin: center center;
+  transition: all 0.5s ease;
+  backface-visibility: hidden;
+}
+
+.testimonial-card[data-position="active"] { z-index: 3; opacity: 1; transform: translateX(-50%) scale(1) rotateY(0deg); }
+.testimonial-card[data-position="left"] { z-index: 2; opacity: 0.6; transform: translateX(calc(-50% - 60px)) scale(0.92) rotateY(5deg); }
+.testimonial-card[data-position="right"] { z-index: 2; opacity: 0.6; transform: translateX(calc(-50% + 60px)) scale(0.92) rotateY(-5deg); }
+
+.testimonial-card:hover { box-shadow: var(--shadow); }
+
+.testimonial-card__quote-mark { display: block; height: 22px; color: var(--testimonial-accent); font-family: Georgia, serif; font-size: 48px; line-height: 0.8; }
+.testimonial-card__quote { display: flex; flex: 1; align-items: center; color: var(--grey-700); font-size: 20px; line-height: 1.6; }
+
+.testimonial-carousel__arrow { position: absolute; top: 149px; z-index: 4; display: inline-flex; width: 42px; height: 42px; align-items: center; justify-content: center; border-radius: 999px; background: var(--white); color: var(--green-500); box-shadow: 0 5px 18px rgba(0, 0, 0, 0.12); cursor: pointer; }
+.testimonial-carousel__arrow--left { left: max(1rem, calc(50% - 470px)); }
+.testimonial-carousel__arrow--right { right: max(1rem, calc(50% - 470px)); }
+
+@media (max-width: 767px) {
+  .testimonial-carousel { height: 430px; }
+  .testimonial-card { width: calc(100% - 2rem); height: 360px; padding: 24px; }
+  .testimonial-card__quote { font-size: 18px; }
+  .testimonial-card[data-position="left"] { transform: translateX(calc(-50% - 20px)) scale(0.92) rotateY(5deg); }
+  .testimonial-card[data-position="right"] { transform: translateX(calc(-50% + 20px)) scale(0.92) rotateY(-5deg); }
+  .testimonial-carousel__arrow { top: auto; bottom: 0; }
+  .testimonial-carousel__arrow--left { left: calc(50% - 52px); }
+  .testimonial-carousel__arrow--right { right: calc(50% - 52px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .testimonial-card, .testimonial-carousel__arrow { transition: none; }
+}
