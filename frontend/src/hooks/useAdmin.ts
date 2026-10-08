@@ -8,14 +8,15 @@ export function useAdmin() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const [totalPages, setTotalPages] = useState(0)
-  const fetchUsers = async (page = 0) => {
+  // Fetched in one page-sized-to-fit-all request so the dashboard can filter
+  // (by role, by search) and paginate the result client-side, instead of
+  // paginating the unfiltered list and losing track of how many matches there are.
+  const fetchUsers = async () => {
     setLoading(true)
     setError(null)
     try {
-      const data = await adminService.getUsers(page)
+      const data = await adminService.getUsers(0, 500)
       setUsers(data.content)
-      setTotalPages(data.totalPages)
     } catch (err) {
       setError(getErrorMessage(err))
     } finally {
@@ -53,5 +54,5 @@ export function useAdmin() {
     }
   }
 
-  return { users, loading, error, totalPages, fetchUsers, updateUser, deleteUser }
+  return { users, loading, error, fetchUsers, updateUser, deleteUser }
 }
