@@ -33,30 +33,32 @@ export function useAnnouncements() {
         size,
       );
 
-      // Los anuncios vienen dentro de content
-      let result = data.content;
+      // Guarda de una vez las noticias sin traducir, para que se vean aunque
+      // la traducción falle o tarde
+      setAnnouncements(data.content);
+      setTotalPages(data.totalPages);
+      setTotalElements(data.totalElements);
 
-      // Si el idioma no es español, traduce los anuncios de la página actual
-      if (lang !== SOURCE_LANG) {
+      try {
         const items = data.content.flatMap((a) => [
-  {
-    entityId: a.id,
-    fieldName: "title",
-    originalText: a.title,
-  },
-  {
-    entityId: a.id,
-    fieldName: "content",
-    originalText: a.content,
-  },
-  ...(a.aiSummary
-    ? [{
-        entityId: a.id,
-        fieldName: "aiSummary",
-        originalText: a.aiSummary,
-      }]
-    : []),
-]);
+          {
+            entityId: a.id,
+            fieldName: "title",
+            originalText: a.title,
+          },
+          {
+            entityId: a.id,
+            fieldName: "content",
+            originalText: a.content,
+          },
+          ...(a.aiSummary
+            ? [{
+                entityId: a.id,
+                fieldName: "aiSummary",
+                originalText: a.aiSummary,
+              }]
+            : []),
+        ]);
 
         const translated = await announcementService.translateBatch(
           ENTITY_TYPE,
@@ -64,22 +66,17 @@ export function useAnnouncements() {
           items,
         );
 
-        result = data.content.map((a) => ({
-  ...a,
-  title: translated[`${a.id}:title`] ?? a.title,
-  content: translated[`${a.id}:content`] ?? a.content,
-  aiSummary: a.aiSummary
-    ? translated[`${a.id}:aiSummary`] ?? a.aiSummary
-    : a.aiSummary,
-}));
+        setAnnouncements(data.content.map((a) => ({
+          ...a,
+          title: translated[`${a.id}:title`] ?? a.title,
+          content: translated[`${a.id}:content`] ?? a.content,
+          aiSummary: a.aiSummary
+            ? translated[`${a.id}:aiSummary`] ?? a.aiSummary
+            : a.aiSummary,
+        })));
+      } catch {
+        // Se deja el contenido original visible si la traducción no está disponible.
       }
-
-      // Guarda únicamente las noticias de la página actual
-      setAnnouncements(result);
-
-      // Guarda la información de paginación que manda el backend
-      setTotalPages(data.totalPages);
-      setTotalElements(data.totalElements);
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {

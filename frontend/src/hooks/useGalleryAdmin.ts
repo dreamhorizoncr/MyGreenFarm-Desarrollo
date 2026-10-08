@@ -9,8 +9,6 @@ import type {
 	GalleryRequest,
 } from '../types/gallery.ts'
 
-const SOURCE_LANG = 'es'
-
 export function useGalleryAdmin() {
 	const [categories, setCategories] = useState<GalleryCategory[]>([])
 	const [galleriesByCategory, setGalleriesByCategory] = useState<
@@ -37,10 +35,12 @@ export function useGalleryAdmin() {
             }),
         )
 
-        let translatedCategories = sortedCategories
-        let translatedEntries = entries
+        // Se muestra de una vez sin traducir, para que no quede en blanco si
+        // la traducción falla o tarda
+        setCategories(sortedCategories)
+        setGalleriesByCategory(Object.fromEntries(entries))
 
-        if (lang !== SOURCE_LANG) {
+        try {
             const uniqueImages = new Map<string, GalleryImage>()
             const uniqueGalleries = new Map<string, Gallery>()
 
@@ -110,19 +110,18 @@ export function useGalleryAdmin() {
                 })),
             })
 
-            translatedCategories = sortedCategories.map((category) => ({
+            setCategories(sortedCategories.map((category) => ({
                 ...category,
                 title: translations[`${category.id}:title`] ?? category.title,
-            }))
+            })))
 
-            translatedEntries = entries.map(([categoryId, galleries]) => [
+            setGalleriesByCategory(Object.fromEntries(entries.map(([categoryId, galleries]) => [
                 categoryId,
                 galleries.map(translateGallery),
-            ] as const)
+            ] as const)))
+        } catch {
+            // Se deja el contenido original visible si la traducción no está disponible.
         }
-
-        setCategories(translatedCategories)
-        setGalleriesByCategory(Object.fromEntries(translatedEntries))
     } catch (err) {
         setError(getErrorMessage(err))
     } finally {

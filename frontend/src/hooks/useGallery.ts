@@ -3,8 +3,6 @@ import { galleryService } from '../services/gallery.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { Gallery, GalleryCategory, GalleryImage } from '../types/gallery.ts'
 
-const SOURCE_LANG = 'es'
-
 export function useGallery() {
 	const [categories, setCategories] = useState<GalleryCategory[]>([])
 	const [galleriesByCategory, setGalleriesByCategory] = useState<
@@ -33,11 +31,13 @@ export function useGallery() {
 				galleryService.getGalleries(),
 			])
 
-			let translatedCategories = sortedCategories
-			let translatedGalleries = galleries
-			let translatedEntries = entries
+			// Se muestra de una vez sin traducir, para que no quede en blanco si
+			// la traducción falla o tarda
+			setCategories(sortedCategories)
+			setGalleriesByCategory(Object.fromEntries(entries))
+			setAllGalleries(galleries)
 
-			if (lang !== SOURCE_LANG) {
+			try {
 				const uniqueImages = new Map<string, GalleryImage>()
 				const uniqueGalleries = new Map<string, Gallery>()
 				const collect = (galleryList: Gallery[]) => {
@@ -92,20 +92,18 @@ export function useGallery() {
 					})),
 				})
 
-				translatedCategories = sortedCategories.map((category) => ({
+				setCategories(sortedCategories.map((category) => ({
 					...category,
 					title: translated[`${category.id}:title`] ?? category.title,
-				}))
-				translatedGalleries = galleries.map(translateGallery)
-				translatedEntries = entries.map(([categoryId, galleryList]) => [
+				})))
+				setAllGalleries(galleries.map(translateGallery))
+				setGalleriesByCategory(Object.fromEntries(entries.map(([categoryId, galleryList]) => [
 					categoryId,
 					galleryList.map(translateGallery),
-				] as const)
+				] as const)))
+			} catch {
+				// Se deja el contenido original visible si la traducción no está disponible.
 			}
-
-			setCategories(translatedCategories)
-			setGalleriesByCategory(Object.fromEntries(translatedEntries))
-			setAllGalleries(translatedGalleries)
 		} catch (err) {
 			setError(getErrorMessage(err))
 		} finally {
