@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CopyIcon, PencilIcon, PlusIcon, Trash2Icon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
@@ -104,11 +104,16 @@ function dateLabel(date: string) {
 }
 
 function OwnerAvailabilityPage() {
-  const { t } = useTranslation()
-  const { weekly, exceptions, loading, error, weeklySaving, weeklyError, exceptionError, weeklySuccess, saveWeekly, saveException, deleteException } = useAvailability()
+  const { t, i18n } = useTranslation()
+  const { weekly, exceptions, loading, error, weeklySaving, weeklyError, exceptionError, weeklySuccess, saveWeekly, saveException, deleteException, reload } = useAvailability()
   const [draft, setDraft] = useState<WeeklySchedule[] | null>(null)
   const [exceptionModal, setExceptionModal] = useState<ScheduleException | null | undefined>(undefined)
   const [exceptionToDelete, setExceptionToDelete] = useState<ScheduleException | null>(null)
+
+  useEffect(() => {
+    void reload(i18n.language)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i18n.language])
 
   const confirmDeleteException = async () => {
     if (!exceptionToDelete?.id) return

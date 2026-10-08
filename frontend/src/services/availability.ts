@@ -1,5 +1,6 @@
 import { apiClient } from './api.ts'
 import type { ScheduleException, WeeklySchedule } from '../types/availability.ts'
+import type { TranslationItem } from './announcement.ts'
 
 export const availabilityService = {
   async getWeekly(): Promise<WeeklySchedule[]> {
@@ -24,5 +25,14 @@ export const availabilityService = {
 
   async deleteException(id: number): Promise<void> {
     await apiClient.delete(`/admin/schedule/exceptions/${id}`)
+  },
+
+  async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {
+    const response = await apiClient.post<Record<string, string>>('/translations/batch', {
+      entityType,
+      targetLanguage: targetLanguage.split('-')[0] || 'es',
+      items,
+    })
+    return response.data
   },
 }

@@ -1,7 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { availabilityService } from '../services/availability.ts'
 import type { ScheduleException, WeeklySchedule } from '../types/availability.ts'
 import { getErrorMessage } from '../utils/error.ts'
+
+const SOURCE_LANG = 'es'
+const EXCEPTION_ENTITY_TYPE = 'schedule_exception'
 
 export function useAvailability() {
   const [weekly, setWeekly] = useState<WeeklySchedule[]>([])
@@ -13,7 +16,7 @@ export function useAvailability() {
   const [exceptionError, setExceptionError] = useState<string | null>(null)
   const [weeklySuccess, setWeeklySuccess] = useState(false)
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (lang: string = SOURCE_LANG) => {
     setLoading(true)
     setError(null)
     try {
@@ -23,17 +26,29 @@ export function useAvailability() {
       ])
       setWeekly(weeklyData)
       setExceptions(exceptionData)
+
+      try {
+        const items = exceptionData
+          .filter((exception) => exception.reason)
+          .map((exception) => ({
+            entityId: String(exception.id),
+            fieldName: 'reason',
+            originalText: exception.reason as string,
+          }))
+        const translated = await availabilityService.translateBatch(EXCEPTION_ENTITY_TYPE, lang, items)
+        setExceptions(exceptionData.map((exception) => ({
+          ...exception,
+          reason: translated[`${exception.id}:reason`] ?? exception.reason,
+        })))
+      } catch {
+        // Se deja el contenido original visible si la traducción no está disponible.
+      }
     } catch (err) {
       setError(getErrorMessage(err))
     } finally {
       setLoading(false)
     }
   }, [])
-
-  useEffect(() => {
-    const loadTask = window.setTimeout(() => void load(), 0)
-    return () => window.clearTimeout(loadTask)
-  }, [load])
 
   const saveWeekly = useCallback(async (schedules: WeeklySchedule[]) => {
     setWeeklySaving(true)
