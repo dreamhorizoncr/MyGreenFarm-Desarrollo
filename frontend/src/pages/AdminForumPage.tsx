@@ -211,11 +211,11 @@ function AdminForumPage() {
     <AdminLayout>
       <div className="flex flex-wrap items-center justify-between gap-md">
         <div>
-          <h1 className="m-0 font-heading text-3xl font-bold text-heading">
+          <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
             {t('adminForum.title')}
           </h1>
 
-          <p className="m-0 mt-2 text-body text-neutral-500">
+          <p className="mt-2 font-body text-body text-neutral-500">
             {t('adminForum.description')}
           </p>
         </div>

@@ -583,6 +583,11 @@ export default {
     searchPlaceholder: "Search by name, last name, email or role",
     addDocente: "Add User",
     allRoles: "All",
+    roles: {
+      OWNER: "Owner",
+      TEACHER: "Teacher",
+      ADMIN: "Admin",
+    },
     actions: "Actions",
     noResults: "No users found",
     firstName: "First name",

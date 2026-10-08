@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { GlobeIcon, HeartIcon, ShieldCheckIcon, SunIcon, XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import PhilosophyPillarItem from './PhilosophyPillarItem.tsx'
+import { useModalExit } from '../hooks/useModalExit.ts'
 import nino from '../assets/imgs/nino.svg'
 
 interface PhilosophyModalProps {
@@ -14,6 +15,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const { closing, requestClose } = useModalExit(onClose)
 
   useEffect(() => {
     dialogRef.current?.showModal()
@@ -55,28 +57,28 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
   ]
 
   const handleCtaClick = () => {
-    onClose()
+    requestClose()
     navigate('/services')
   }
 
   return (
     <dialog
       ref={dialogRef}
-      onClose={onClose}
+      onClose={requestClose}
       onClick={(event) => {
-        if (event.target === dialogRef.current) onClose()
+        if (event.target === dialogRef.current) requestClose()
       }}
       onKeyDown={(event) => {
-        if (event.key === 'Escape') onClose()
+        if (event.key === 'Escape') requestClose()
       }}
       aria-label={t('home.philosophy.title')}
-      className="fixed inset-0 m-auto max-h-[90vh] w-[min(760px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(760px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="relative">
         <button
           type="button"
           className="absolute right-3 top-3 z-10 inline-flex size-10 items-center justify-center rounded-full bg-white text-heading shadow-sm transition-opacity duration-150 hover:opacity-70 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-          onClick={onClose}
+          onClick={requestClose}
           aria-label={t('home.philosophy.modalClose')}
         >
           <XIcon size={20} />

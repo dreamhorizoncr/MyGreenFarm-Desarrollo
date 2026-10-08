@@ -14,6 +14,7 @@ import Skeleton from "../components/ui/Skeleton.tsx";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 import { clubService, type TranslationItem } from "../services/clubs.ts";
 import { notify } from "../utils/notifications.ts";
+import { useModalExit } from "../hooks/useModalExit.ts";
 import type {
   ClubRequest,
   ClubResponse,
@@ -288,6 +289,7 @@ function OwnerClubsPage() {
     setEditing(null);
     setExistingImages([]);
   };
+  const { closing: formClosing, requestClose } = useModalExit(closeForm);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -328,7 +330,7 @@ function OwnerClubsPage() {
           : t("ownerClubs.createdToastDescription"),
       });
 
-      closeForm();
+      requestClose();
       await fetchClubs();
     } catch (err) {
       console.error(err);
@@ -350,7 +352,7 @@ function OwnerClubsPage() {
       await clubService.delete(clubToDelete.id);
 
       if (editing?.id === clubToDelete.id) {
-        closeForm();
+        requestClose();
       }
 
       notify.success({
@@ -449,12 +451,12 @@ function OwnerClubsPage() {
             tabIndex={-1}
             aria-label={t("ownerClubs.cancel")}
             className="absolute inset-0 size-full cursor-default"
-            onClick={closeForm}
+            onClick={requestClose}
           />
 
           <form
             onSubmit={handleSubmit}
-            className="relative mx-auto max-h-[calc(100dvh-2rem)] w-full max-w-[820px] overflow-y-auto rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
+            className={`relative mx-auto max-h-[calc(100dvh-2rem)] w-full max-w-[820px] overflow-y-auto rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
           >
             <div className="flex items-center justify-between gap-md">
               <h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -465,9 +467,9 @@ function OwnerClubsPage() {
 
               <button
                 type="button"
-                onClick={closeForm}
+                onClick={requestClose}
                 aria-label="Cerrar formulario"
-                className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-neutral-100"
+                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
               >
                 <XIcon size={20} />
               </button>
@@ -628,7 +630,7 @@ function OwnerClubsPage() {
             <div className="mt-lg flex flex-wrap justify-end gap-sm">
               <button
                 type="button"
-                onClick={closeForm}
+                onClick={requestClose}
                 className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
               >
                 {t("ownerClubs.cancel")}
