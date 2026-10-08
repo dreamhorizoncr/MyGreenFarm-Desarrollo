@@ -5,6 +5,8 @@ import Select from "./ui/Select.tsx";
 
 import { parentService } from "../services/parent";
 import { notify } from "../utils/notifications.ts";
+import { useModalExit } from "../hooks/useModalExit.ts";
+import { validateEmail, validateRequired } from "../utils/validators.ts";
 
 import type { Parent, ParentLanguage, ParentRequest } from "../types/parent";
 
@@ -23,6 +25,7 @@ function ParentFormModal({
   parent,
 }: Readonly<ParentFormModalProps>) {
   const { t } = useTranslation();
+  const { closing, requestClose } = useModalExit(onClose);
 
   // Si existe un padre, el modal está en modo edición
   const isEditing = Boolean(parent);
@@ -43,10 +46,31 @@ function ParentFormModal({
   // Estado del formulario
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string | null>>({});
+
+  const clearFieldError = (field: string) => {
+    setFieldErrors((current) => {
+      if (!current[field]) return current;
+      return { ...current, [field]: null };
+    });
+  };
 
   // Guarda o actualiza el padre
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const errors: Record<string, string | null> = {
+      firstName: validateRequired(firstName, t("admin.parents.firstName"), t),
+      lastName: validateRequired(lastName, t("admin.parents.lastName"), t),
+      identification: validateRequired(identification, t("admin.parents.identification"), t),
+      phoneNumber: validateRequired(phoneNumber, t("admin.parents.phoneNumber"), t),
+      email: validateRequired(email, t("admin.parents.email"), t) ?? validateEmail(email, t),
+      address: validateRequired(address, t("admin.parents.address"), t),
+    };
+
+    setFieldErrors(errors);
+
+    if (Object.values(errors).some((message) => message !== null)) return;
 
     setSaving(true);
     setError(null);
@@ -80,7 +104,7 @@ function ParentFormModal({
       );
 
       // Cierra el modal
-      onClose();
+      requestClose();
     } catch (error) {
       console.error("Error al guardar el padre:", error);
 
@@ -112,12 +136,13 @@ function ParentFormModal({
         tabIndex={-1}
         aria-label={t("admin.parents.cancel")}
         className="absolute inset-0 size-full cursor-default"
-        onClick={onClose}
+        onClick={requestClose}
       />
 
       <form
         onSubmit={handleSubmit}
-        className="relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
+        className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+        noValidate
       >
         <div className="flex items-center justify-between gap-md">
           <h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -128,9 +153,9 @@ function ParentFormModal({
 
           <button
             type="button"
-            onClick={onClose}
+            onClick={requestClose}
             aria-label={t("admin.parents.cancel")}
-            className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-neutral-100"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
           >
             <XIcon size={20} />
           </button>
@@ -142,11 +167,13 @@ function ParentFormModal({
             <input
               type="text"
               value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              required
+              onChange={(e) => { setFirstName(e.target.value); clearFieldError("firstName"); }}
               placeholder={t("admin.parents.firstNamePlaceholder")}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            {fieldErrors.firstName && (
+              <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.firstName}</span>
+            )}
           </label>
 
           <label className="font-body text-body-sm font-semibold text-heading">
@@ -154,11 +181,13 @@ function ParentFormModal({
             <input
               type="text"
               value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              required
+              onChange={(e) => { setLastName(e.target.value); clearFieldError("lastName"); }}
               placeholder={t("admin.parents.lastNamePlaceholder")}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            {fieldErrors.lastName && (
+              <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.lastName}</span>
+            )}
           </label>
 
           <label className="font-body text-body-sm font-semibold text-heading">
@@ -166,11 +195,13 @@ function ParentFormModal({
             <input
               type="text"
               value={identification}
-              onChange={(e) => setIdentification(e.target.value)}
-              required
+              onChange={(e) => { setIdentification(e.target.value); clearFieldError("identification"); }}
               placeholder={t("admin.parents.identificationPlaceholder")}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            {fieldErrors.identification && (
+              <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.identification}</span>
+            )}
           </label>
 
           <label className="font-body text-body-sm font-semibold text-heading">
@@ -178,11 +209,13 @@ function ParentFormModal({
             <input
               type="tel"
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              required
+              onChange={(e) => { setPhoneNumber(e.target.value); clearFieldError("phoneNumber"); }}
               placeholder={t("admin.parents.phonePlaceholder")}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            {fieldErrors.phoneNumber && (
+              <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.phoneNumber}</span>
+            )}
           </label>
 
           <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
@@ -190,23 +223,27 @@ function ParentFormModal({
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+              onChange={(e) => { setEmail(e.target.value); clearFieldError("email"); }}
               placeholder={t("admin.parents.emailPlaceholder")}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            {fieldErrors.email && (
+              <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.email}</span>
+            )}
           </label>
 
           <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
             {t("admin.parents.address")}
             <textarea
               value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              required
+              onChange={(e) => { setAddress(e.target.value); clearFieldError("address"); }}
               rows={3}
               placeholder={t("admin.parents.addressPlaceholder")}
               className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
             />
+            {fieldErrors.address && (
+              <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.address}</span>
+            )}
           </label>
 
           <label className="font-body text-body-sm font-semibold text-heading">
@@ -235,7 +272,7 @@ function ParentFormModal({
         <div className="mt-lg flex flex-wrap justify-end gap-sm">
           <button
             type="button"
-            onClick={onClose}
+            onClick={requestClose}
             disabled={saving}
             className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 disabled:opacity-50"
           >

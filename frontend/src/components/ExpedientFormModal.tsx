@@ -5,6 +5,8 @@ import Select from "./ui/Select.tsx";
 
 import { expedientService } from "../services/expedient";
 import { notify } from "../utils/notifications.ts";
+import { useModalExit } from "../hooks/useModalExit.ts";
+import { validateRequired } from "../utils/validators.ts";
 
 import type {
   EducationalLevel,
@@ -55,6 +57,7 @@ function ExpedientFormModal({
   expedient,
 }: Readonly<ExpedientFormModalProps>) {
   const { t } = useTranslation();
+  const { closing, requestClose } = useModalExit(onClose);
 
   // Si existe un expediente, el modal está en modo edición
   const isEditing = Boolean(expedient);
@@ -85,6 +88,9 @@ function ExpedientFormModal({
   const [saving, setSaving] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
+
+  const [studentError, setStudentError] = useState<string | null>(null);
+  const [dateError, setDateError] = useState<string | null>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -130,10 +136,15 @@ function ExpedientFormModal({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!studentId) {
-      notify.error(t("admin.expedients.selectStudentError") ?? "Debe seleccionar un estudiante");
-      return;
-    }
+    const studentErrorMessage = studentId
+      ? null
+      : t("admin.expedients.selectStudentError");
+    const dateErrorMessage = validateRequired(admisionDate, t("admin.expedients.admisiondate"), t);
+
+    setStudentError(studentErrorMessage);
+    setDateError(dateErrorMessage);
+
+    if (studentErrorMessage || dateErrorMessage) return;
 
     setSaving(true);
     setError(null);
@@ -164,7 +175,7 @@ function ExpedientFormModal({
       );
 
       // Cierra el modal
-      onClose();
+      requestClose();
     } catch (error) {
       console.error("Error al guardar el expediente:", error);
 
@@ -195,12 +206,12 @@ function ExpedientFormModal({
         tabIndex={-1}
         aria-label={t("admin.expedients.cancel")}
         className="absolute inset-0 size-full cursor-default"
-        onClick={onClose}
+        onClick={requestClose}
       />
 
       <form
         onSubmit={handleSubmit}
-        className="relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
+        className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
       >
         <div className="flex items-center justify-between gap-md">
           <h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -211,9 +222,9 @@ function ExpedientFormModal({
 
           <button
             type="button"
-            onClick={onClose}
+            onClick={requestClose}
             aria-label={t("admin.expedients.cancel")}
-            className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-neutral-100"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
           >
             <XIcon size={20} />
           </button>
@@ -232,16 +243,16 @@ function ExpedientFormModal({
                   setSearchTerm(e.target.value);
                   setStudentId(""); // Resetea ID hasta que elija una opción válida
                   setIsOpen(true);
+                  if (studentError) setStudentError(null);
                 }}
                 onFocus={() => setIsOpen(true)}
                 onBlur={() => setTimeout(() => setIsOpen(false), 200)} // Delay para permitir click en opciones
                 placeholder={
                   loadingOptions
-                    ? "Cargando estudiantes..."
+                    ? t("admin.expedients.loadingStudents")
                     : t("admin.expedients.childNamePlaceholder") ?? "Buscar estudiante..."
                 }
                 disabled={isEditing || loadingOptions}
-                required
                 className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md pr-11 font-normal outline-none focus:border-heading disabled:cursor-not-allowed disabled:bg-neutral-100"
               />
 
@@ -262,6 +273,7 @@ function ExpedientFormModal({
                           setStudentId(option.studentId);
                           setSearchTerm(`${option.fullName ?? option.childName}`);
                           setIsOpen(false);
+                          setStudentError(null);
                         }}
                         className="mx-2 cursor-pointer rounded-lg px-4 py-2 text-heading transition-colors hover:bg-orange-100"
                       >
@@ -269,11 +281,14 @@ function ExpedientFormModal({
                       </li>
                     ))
                   ) : (
-                    <li className="px-4 py-2 text-neutral-400">Sin resultados</li>
+                    <li className="px-4 py-2 text-neutral-400">{t("admin.expedients.noResults")}</li>
                   )}
                 </ul>
               )}
             </div>
+            {studentError && (
+              <span className="mt-xs block font-body text-body-sm font-normal text-danger">{studentError}</span>
+            )}
           </div>
 
           {/* Fecha de admisión */}
@@ -282,10 +297,15 @@ function ExpedientFormModal({
             <input
               type="date"
               value={admisionDate}
-              onChange={(e) => setAdmisionDate(e.target.value)}
-              required
+              onChange={(e) => {
+                setAdmisionDate(e.target.value);
+                if (dateError) setDateError(null);
+              }}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            {dateError && (
+              <span className="mt-xs block font-body text-body-sm font-normal text-danger">{dateError}</span>
+            )}
           </label>
 
           {/* Nivel educativo */}
@@ -365,7 +385,7 @@ function ExpedientFormModal({
         <div className="mt-lg flex flex-wrap justify-end gap-sm">
           <button
             type="button"
-            onClick={onClose}
+            onClick={requestClose}
             disabled={saving}
             className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 disabled:opacity-50"
           >

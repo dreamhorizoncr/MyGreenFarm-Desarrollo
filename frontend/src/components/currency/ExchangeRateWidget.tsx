@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { BanknoteIcon, XIcon } from '@animateicons/react/lucide'
 import type { ExchangeRate } from '../../types/exchangeRate.ts'
 import { formatCurrency } from '../../utils/currency.ts'
+import { useModalExit } from '../../hooks/useModalExit.ts'
 
 interface ExchangeRateWidgetProps {
   data: ExchangeRate | null
@@ -16,7 +17,7 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
   const locale = i18n.language
   const [isOpen, setIsOpen] = useState(false)
   const dialogRef = useRef<HTMLDialogElement>(null)
-  const handleClose = () => setIsOpen(false)
+  const { closing, requestClose: handleClose } = useModalExit(() => setIsOpen(false))
 
   const lastUpdated = data
     ? new Intl.DateTimeFormat(locale, {
@@ -88,7 +89,7 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
             if (event.key === 'Escape') handleClose()
           }}
           aria-labelledby="exchange-rate-title"
-          className="fixed inset-0 m-auto w-[min(520px,94vw)] max-w-none rounded-3xl border border-neutral-200 bg-white p-lg shadow-xl backdrop:bg-scrim animate-[modal-in_0.2s_ease-out]"
+          className={`fixed inset-0 m-auto w-[min(520px,94vw)] max-w-none rounded-3xl border border-neutral-200 bg-white p-lg shadow-xl backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         >
           <button
             type="button"

@@ -48,7 +48,7 @@ function ProfilePage() {
   return (
     <>
     <AdminLayout>
-      <h1 className="m-0 font-heading text-[30px] font-bold leading-[1.15] text-heading">
+      <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
         {t('profile.title')}
       </h1>
       <p className="mt-2 font-body text-body text-neutral-500">
@@ -115,7 +115,7 @@ function ProfilePage() {
           <button
             type="button"
             onClick={() => setShowResetPasswordModal(true)}
-            className="flex h-11 w-full items-center justify-center rounded-full border border-heading px-5 font-body text-body-sm font-semibold text-heading transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 sm:w-auto"
+            className="flex h-11 w-full items-center justify-center rounded-full border border-green-500 px-5 font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 sm:w-auto"
           >
             {t('profile.resetPassword')}
           </button>

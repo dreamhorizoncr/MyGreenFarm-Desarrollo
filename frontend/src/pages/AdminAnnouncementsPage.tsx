@@ -13,7 +13,9 @@ import Pagination from "../components/ui/Pagination.tsx";
 import Select from "../components/ui/Select.tsx";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 import { useAnnouncements } from "../hooks/useAnnouncements.ts";
+import { useModalExit } from "../hooks/useModalExit.ts";
 import { notify } from "../utils/notifications.ts";
+import { validateMinLength, validateRequired } from "../utils/validators.ts";
 import type {
   Announcement,
   AnnouncementImageResponse,
@@ -29,6 +31,9 @@ const emptyForm: AnnouncementRequest = {
   eventDate: "",
   location: "",
 };
+
+const TITLE_MIN_LENGTH = 5;
+const CONTENT_MIN_LENGTH = 20;
 
 const typeLabels: Record<
   AnnouncementType,
@@ -116,7 +121,7 @@ function AnnouncementRow({ announcement, typeLabel, onPreview, onEdit, onDelete,
           <button
             type="button"
             onClick={onPreview}
-            className="font-body text-body-sm font-semibold text-green-500 transition-opacity hover:opacity-70"
+            className="font-body text-body-sm font-semibold text-green-500 underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
           >
             {t("adminNews.preview")}
           </button>
@@ -164,6 +169,8 @@ function AnnouncementsPage() {
   const [editing, setEditing] = useState<Announcement | null>(null);
   const [previewing, setPreviewing] = useState<Announcement | null>(null);
   const [form, setForm] = useState<AnnouncementRequest>(emptyForm);
+  const [titleError, setTitleError] = useState<string | null>(null);
+  const [contentError, setContentError] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] =
     useState<AdminNewsCategory>("All");
   const [currentPage, setCurrentPage] = useState(1);
@@ -186,6 +193,8 @@ function AnnouncementsPage() {
   const openCreate = () => {
     setEditing(null);
     setForm(emptyForm);
+    setTitleError(null);
+    setContentError(null);
     setCover(null);
     setGallery([]);
     setImages([]);
@@ -204,17 +213,36 @@ function AnnouncementsPage() {
     setCover(null);
     setGallery([]);
     setImages(await getImages(announcement.id));
+    setTitleError(null);
+    setContentError(null);
     setFormOpen(true);
   };
 
   const closeForm = () => {
     setFormOpen(false);
     setEditing(null);
+    setTitleError(null);
+    setContentError(null);
     setImages([]);
   };
 
+  const { closing: formClosing, requestClose } = useModalExit(closeForm);
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const titleErrorMessage =
+      validateRequired(form.title, t("adminNews.newsTitle"), t) ??
+      validateMinLength(form.title, TITLE_MIN_LENGTH, t);
+    const contentErrorMessage =
+      validateRequired(form.content, t("adminNews.newscontent"), t) ??
+      validateMinLength(form.content, CONTENT_MIN_LENGTH, t);
+
+    setTitleError(titleErrorMessage);
+    setContentError(contentErrorMessage);
+
+    if (titleErrorMessage || contentErrorMessage) return;
+
     const data: AnnouncementRequest = {
       ...form,
       eventDate: form.eventDate || undefined,
@@ -238,7 +266,7 @@ function AnnouncementsPage() {
           : t("adminNews.createdToastDescription"),
       });
 
-      closeForm();
+      requestClose();
     } catch {
       notify.error({
         title: t("adminNews.saveErrorToastTitle"),
@@ -258,7 +286,7 @@ function AnnouncementsPage() {
       await deleteAnnouncement(announcementToDelete.id);
 
       if (editing?.id === announcementToDelete.id) {
-        closeForm();
+        requestClose();
       }
 
       notify.success({
@@ -336,12 +364,12 @@ function AnnouncementsPage() {
             tabIndex={-1}
             aria-label={t("adminNews.newscancel")}
             className="absolute inset-0 size-full cursor-default"
-            onClick={closeForm}
+            onClick={requestClose}
           />
 
           <form
             onSubmit={handleSubmit}
-            className="relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl"
+            className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
           >
             <div className="flex items-center justify-between gap-md">
               <h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -350,9 +378,9 @@ function AnnouncementsPage() {
 
               <button
                 type="button"
-                onClick={closeForm}
+                onClick={requestClose}
                 aria-label="Cerrar formulario"
-                className="rounded-full p-2xs text-neutral-500 transition-colors hover:bg-(--grey-100)"
+                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
               >
                 <XIcon size={20} />
               </button>
@@ -363,18 +391,20 @@ function AnnouncementsPage() {
                 {t("adminNews.newsTitle")}
 
                 <input
-                  required
-                  minLength={5}
-                  maxLength={70}
                   value={form.title}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setForm({
                       ...form,
                       title: e.target.value,
-                    })
-                  }
+                    });
+                    if (titleError) setTitleError(null);
+                  }}
+                  maxLength={70}
                   className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                 />
+                {titleError && (
+                  <span className="mt-xs block font-body text-body-sm font-normal text-danger">{titleError}</span>
+                )}
               </label>
 
               <label className="font-body text-body-sm font-semibold text-heading">
@@ -402,19 +432,21 @@ function AnnouncementsPage() {
                 {t("adminNews.newscontent")}
 
                 <textarea
-                  required
-                  minLength={20}
-                  maxLength={4000}
                   rows={6}
                   value={form.content}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setForm({
                       ...form,
                       content: e.target.value,
-                    })
-                  }
+                    });
+                    if (contentError) setContentError(null);
+                  }}
+                  maxLength={4000}
                   className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                 />
+                {contentError && (
+                  <span className="mt-xs block font-body text-body-sm font-normal text-danger">{contentError}</span>
+                )}
               </label>
 
               <label className="font-body text-body-sm font-semibold text-heading">
@@ -547,7 +579,7 @@ function AnnouncementsPage() {
             <div className="mt-lg flex flex-wrap justify-end gap-sm">
               <button
                 type="button"
-                onClick={closeForm}
+                onClick={requestClose}
                 className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
               >
                 {t("adminNews.newscancel")}
