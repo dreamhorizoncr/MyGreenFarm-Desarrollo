@@ -181,7 +181,7 @@ function AdminPlanCard({
 
 function AdminServicePlansPage() {
   const { t, i18n } = useTranslation()
-  const { plans, onvoPlans, loading, error, fetchAll, createPlan, updatePlan, deletePlan } = useServicePlanAdmin()
+  const { plans, sourcePlans, onvoPlans, loading, error, fetchAll, createPlan, updatePlan, deletePlan } = useServicePlanAdmin()
   const { data: exchangeRate } = useExchangeRate()
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [editingPlan, setEditingPlan] = useState<ServicePlan | null>(null)
@@ -189,8 +189,11 @@ function AdminServicePlansPage() {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
   useEffect(() => {
-    void fetchAll()
-  }, [fetchAll])
+    void fetchAll(i18n.language)
+  }, [fetchAll, i18n.language])
+
+  // El modal siempre edita el texto original, aunque la card muestre traducido
+  const getSourcePlan = (id: string) => sourcePlans.find(p => p.id === id) ?? plans.find(p => p.id === id) ?? null
 
   const handleDelete = async (id: string) => {
     setDeletingId(id)
@@ -265,7 +268,7 @@ console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
                   exchangeRate={exchangeRate}
                   language={i18n.language}
                   deleting={deletingId === plan.id}
-                  onEdit={() => setEditingPlan(plan)}
+                  onEdit={() => setEditingPlan(getSourcePlan(plan.id))}
                   onDelete={() => setConfirmDeleteId(plan.id)}
                 />
               ))}
@@ -278,11 +281,12 @@ console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
       {(showCreateModal || editingPlan) && (
         <CreateServicePlanModal
           onvoPlans={onvoPlans}
-          existingPlans={plans}
+          existingPlans={sourcePlans}
           planToEdit={editingPlan}
           onSave={async (data, file) => {
             try {
               await createPlan(data, file)
+              await fetchAll(i18n.language)
               notify.success({
                 title: t('admin.servicios.createdToastTitle'),
                 description: t('admin.servicios.createdToastDescription'),
@@ -298,6 +302,7 @@ console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
           onUpdate={async (id, data, file) => {
             try {
               await updatePlan(id, data, file)
+              await fetchAll(i18n.language)
               notify.success({
                 title: t('admin.servicios.updatedToastTitle'),
                 description: t('admin.servicios.updatedToastDescription'),

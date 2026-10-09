@@ -162,7 +162,7 @@ function ChildCard({ child, onEdit, onDelete, loading = false }: Readonly<ChildC
                 </p>
 
                 <p className="font-body text-body-sm text-body-text">
-                  {child!.medicalNotes || "Sin notas médicas"}
+                  {child!.medicalNotes || t('admin.children.noMedicalNotes')}
                 </p>
               </>
             )}

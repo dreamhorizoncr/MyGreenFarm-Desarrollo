@@ -23,7 +23,7 @@ import { useTranslation } from "react-i18next";
 
 function AdminExpedientsPage() {
 
-  const { expedients, loading, error, totalPages, fetchExpedients } = useExpedients();
+  const { expedients, sourceExpedients, loading, error, totalPages, fetchExpedients } = useExpedients();
   const [currentPage, setCurrentPage] = useState(1);
 
   // Guarda lo que escribe el usuario en el buscador
@@ -39,17 +39,24 @@ function AdminExpedientsPage() {
 
   const [expedientToDelete, setExpedientToDelete] = useState<Expedient | null>(null);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
-  // Obtiene los expedientes cuando carga la página
+  // Obtiene los expedientes cuando carga la página o cambia el idioma (traduce generalObservations)
   useEffect(() => {
-    void fetchExpedients(currentPage - 1);
-  }, [currentPage]);
+    void fetchExpedients(currentPage - 1, i18n.language);
+  }, [currentPage, i18n.language]);
 
-  // Filtra los expedientes por el nombre del niño o niña
-  const filteredExpedients = expedients.filter((expedient) =>
-    expedient.childName.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  // Filtra por nombre propio (no se traduce) y por observaciones en original Y traducido
+  const filteredExpedients = expedients.filter((expedient, index) => {
+    const search = searchTerm.trim().toLowerCase();
+    if (!search) return true;
+    const source = sourceExpedients[index] ?? sourceExpedients.find((item) => item.id === expedient.id);
+    return (
+      expedient.childName.toLowerCase().includes(search) ||
+      (expedient.generalObservations ?? '').toLowerCase().includes(search) ||
+      (source?.generalObservations ?? '').toLowerCase().includes(search)
+    );
+  });
 
   const confirmDeleteExpedient = async () => {
     if (!expedientToDelete) return;
@@ -58,7 +65,7 @@ function AdminExpedientsPage() {
       await expedientService.delete(expedientToDelete.id);
 
       // Actualiza la lista después de eliminar
-      await fetchExpedients();
+      await fetchExpedients(currentPage - 1, i18n.language);
 
       notify.success(t("admin.expedients.deleteSuccessToastTitle"));
     } catch (error) {
@@ -170,7 +177,7 @@ function AdminExpedientsPage() {
         {isCreateModalOpen && (
           <ExpedientFormModal
             onClose={() => setIsCreateModalOpen(false)}
-            onCreated={fetchExpedients}
+            onCreated={() => { void fetchExpedients(currentPage - 1, i18n.language); }}
           />
         )}
 
@@ -179,7 +186,7 @@ function AdminExpedientsPage() {
           <ExpedientFormModal
             expedient={editingExpedient}
             onClose={() => setEditingExpedient(null)}
-            onCreated={fetchExpedients}
+            onCreated={() => { void fetchExpedients(currentPage - 1, i18n.language); }}
           />
         )}
 
