@@ -15,14 +15,14 @@ import { useTranslation } from "react-i18next";
 import { validateRequired } from "../utils/validators.ts";
 import i18n from "../i18n/index.ts";
 
-    interface ChildFormModalProps {
+interface ChildFormModalProps {
     isOpen: boolean;
     child?: Child | null;
     onClose: () => void;
     onSaved: () => void;
-    }
+}
 
-    const emptyForm: ChildRequest = {
+const emptyForm: ChildRequest = {
     parentIdentification: "",
     relationship: "FATHER",
     firstName: "",
@@ -30,27 +30,26 @@ import i18n from "../i18n/index.ts";
     birthDate: "",
     medicalNotes: "",
     clubIds: [],
-    };
+};
 
-    function ChildFormModal({
+function ChildFormModal({
     isOpen,
     child,
     onClose,
     onSaved,
-    }: ChildFormModalProps) {
-
+}: ChildFormModalProps) {
     const { t } = useTranslation();
 
     const relationshipOptions: {
-    value: Relationship;
-    label: string;
+        value: Relationship;
+        label: string;
     }[] = [
-    { value: "FATHER", label: t("admin.children.relationships.father") },
-    { value: "MOTHER", label: t("admin.children.relationships.mother") },
-    { value: "GRANDFATHER", label: t("admin.children.relationships.grandfather") },
-    { value: "GRANDMOTHER", label: t("admin.children.relationships.grandmother") },
-    { value: "LEGAL_GUARDIAN", label: t("admin.children.relationships.legalGuardian") },
-    { value: "OTHER", label: t("admin.children.relationships.other") },
+        { value: "FATHER", label: t("admin.children.relationships.father") },
+        { value: "MOTHER", label: t("admin.children.relationships.mother") },
+        { value: "GRANDFATHER", label: t("admin.children.relationships.grandfather") },
+        { value: "GRANDMOTHER", label: t("admin.children.relationships.grandmother") },
+        { value: "LEGAL_GUARDIAN", label: t("admin.children.relationships.legalGuardian") },
+        { value: "OTHER", label: t("admin.children.relationships.other") },
     ];
 
     const [form, setForm] = useState<ChildRequest>(emptyForm);
@@ -69,63 +68,75 @@ import i18n from "../i18n/index.ts";
     };
 
     useEffect(() => {
-    if (!isOpen) return;
-
-    const loadOptions = async () => {
-        try {
-            setLoadingOptions(true);
-            setError(null);
-
-            const languageCode = (i18n.resolvedLanguage ?? i18n.language ?? "es").split("-")[0];
-
-            const [parentsData, clubsData] = await Promise.all([
-                parentService.getParents(),
-                clubService.getAll({ lang: languageCode, size: 50 }),
-            ]);
-
-            setParents(parentsData.content ?? []);
-            setClubs(clubsData.content ?? []);
-        } catch {
-            setError(t("admin.children.optionsError"));
-        } finally {
-            setLoadingOptions(false);
-        }
-    };
-
-    void loadOptions();
-}, [isOpen, t, i18n.language]);
-
-    useEffect(() => {
         if (!isOpen) return;
 
-        if (child) {
-        const selectedClubIds = clubs
-            .filter((club) => child.clubNames.includes(club.name))
-            .map((club) => club.id);
+        let isMounted = true;
 
-        setForm({
-            parentIdentification: child.parentIdentification,
-            relationship: child.relationship,
-            firstName: child.firstName,
-            lastName: child.lastName,
-            birthDate: child.birthDate,
-            medicalNotes: child.medicalNotes ?? "",
-            clubIds: selectedClubIds,
-        });
+        // 1. Mostrar de inmediato los datos que ya tenemos del niño
+        if (child) {
+            setForm({
+                parentIdentification: child.parentIdentification ?? "",
+                relationship: child.relationship ?? "FATHER",
+                firstName: child.firstName ?? "",
+                lastName: child.lastName ?? "",
+                birthDate: child.birthDate ?? "",
+                medicalNotes: child.medicalNotes ?? "",
+                clubIds: [],
+            });
         } else {
-        setForm(emptyForm);
+            setForm(emptyForm);
         }
 
         setError(null);
-        setFieldErrors({});
-    }, [child, isOpen, clubs]);
+
+        // 2. Cargar padres y clubes en paralelo sin bloquear la renderización del formulario
+        const loadOptions = async () => {
+            try {
+                if (isMounted) setLoadingOptions(true);
+
+                const languageCode = (i18n.resolvedLanguage ?? i18n.language ?? "es").split("-")[0];
+
+                const [parentsData, clubsData] = await Promise.all([
+                    parentService.getParents(),
+                    clubService.getAll({ lang: languageCode, size: 100 }),
+                ]);
+
+                if (!isMounted) return;
+
+                const loadedParents = parentsData.content ?? [];
+                const loadedClubs = clubsData.content ?? [];
+
+                setParents(loadedParents);
+                setClubs(loadedClubs);
+
+                // Mapear los clubIds en cuanto tengamos la lista de clubes disponibles
+                if (child && child.clubNames) {
+                    const selectedIds = loadedClubs
+                        .filter((club) => child.clubNames.includes(club.name))
+                        .map((club) => club.id);
+
+                    setForm((prev) => ({ ...prev, clubIds: selectedIds }));
+                }
+            } catch {
+                if (isMounted) setError(t("admin.children.optionsError"));
+            } finally {
+                if (isMounted) setLoadingOptions(false);
+            }
+        };
+
+        void loadOptions();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [isOpen, child]); // 👈 Únicamente depender de isOpen y child
 
     const handleClubChange = (clubId: number) => {
         setForm((current) => ({
-        ...current,
-        clubIds: current.clubIds.includes(clubId)
-            ? current.clubIds.filter((id) => id !== clubId)
-            : [...current.clubIds, clubId],
+            ...current,
+            clubIds: current.clubIds.includes(clubId)
+                ? current.clubIds.filter((id) => id !== clubId)
+                : [...current.clubIds, clubId],
         }));
     };
 
@@ -143,38 +154,38 @@ import i18n from "../i18n/index.ts";
         if (Object.values(errors).some((message) => message !== null)) return;
 
         try {
-        setSaving(true);
-        setError(null);
+            setSaving(true);
+            setError(null);
 
-        if (child) {
-            await childService.update(child.id, form);
-        } else {
-            await childService.create(form);
-        }
+            if (child) {
+                await childService.update(child.id, form);
+            } else {
+                await childService.create(form);
+            }
 
-        notify.success(
-            child
-            ? t("admin.children.updateSuccessToastTitle")
-            : t("admin.children.createSuccessToastTitle"),
-        );
+            notify.success(
+                child
+                    ? t("admin.children.updateSuccessToastTitle")
+                    : t("admin.children.createSuccessToastTitle"),
+            );
 
-        onSaved();
-        onClose();
+            onSaved();
+            onClose();
         } catch {
-        const errorMessage = child
-            ? t("admin.children.updateError")
-            : t("admin.children.createError");
+            const errorMessage = child
+                ? t("admin.children.updateError")
+                : t("admin.children.createError");
 
-        setError(errorMessage);
+            setError(errorMessage);
 
-        notify.error({
-            title: child
-            ? t("admin.children.updateErrorToastTitle")
-            : t("admin.children.createErrorToastTitle"),
-            description: errorMessage,
-        });
+            notify.error({
+                title: child
+                    ? t("admin.children.updateErrorToastTitle")
+                    : t("admin.children.createErrorToastTitle"),
+                description: errorMessage,
+            });
         } finally {
-        setSaving(false);
+            setSaving(false);
         }
     };
 
@@ -183,206 +194,213 @@ import i18n from "../i18n/index.ts";
 
     return (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-[16px] md:p-[30px]">
-        <button
-            type="button"
-            tabIndex={-1}
-            aria-label={t("admin.children.cancel")}
-            className="absolute inset-0 size-full cursor-default"
-            onClick={onClose}
-        />
-
-        <form
-            onSubmit={handleSubmit}
-            className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
-        >
-            <div className="flex items-center justify-between gap-md">
-            <h2 className="m-0 font-heading text-2xl font-bold text-heading">
-                {child
-                ? `${t("admin.children.editTitle")}`
-                : `${t("admin.children.createTitle")}`}
-            </h2>
-
             <button
                 type="button"
-                onClick={onClose}
+                tabIndex={-1}
                 aria-label={t("admin.children.cancel")}
-                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-            >
-                <XIcon size={20} />
-            </button>
-            </div>
-
-            {error && (
-            <p className="mt-md rounded-xl bg-red-50 p-md font-body text-body-sm text-red-700">
-                {error}
-            </p>
-            )}
-
-            {loadingOptions ? (
-            <p className="mt-lg font-body text-body-sm text-neutral-500">
-                {t("admin.children.loadingOptions")}
-            </p>
-            ) : (
-            <div className="mt-lg grid gap-md md:grid-cols-2">
-                <label className="font-body text-body-sm font-semibold text-heading">
-                {t("admin.children.firstName")}
-                <input
-                    maxLength={100}
-                    value={form.firstName}
-                    onChange={(e) => {
-                    setForm({ ...form, firstName: e.target.value });
-                    clearFieldError("firstName");
-                    }}
-                    placeholder={t("admin.children.firstNamePlaceholder")}
-                    className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
-                />
-                {fieldErrors.firstName && (
-                    <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.firstName}</span>
-                )}
-                </label>
-
-                <label className="font-body text-body-sm font-semibold text-heading">
-                {t("admin.children.lastName")}
-                <input
-                    maxLength={100}
-                    value={form.lastName}
-                    onChange={(e) => {
-                    setForm({ ...form, lastName: e.target.value });
-                    clearFieldError("lastName");
-                    }}
-                    placeholder={t("admin.children.lastNamePlaceholder")}
-                    className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
-                />
-                {fieldErrors.lastName && (
-                    <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.lastName}</span>
-                )}
-                </label>
-
-                <label className="font-body text-body-sm font-semibold text-heading">
-                {t("admin.children.parent")}
-                <div className="mt-xs">
-                    <Select
-                        value={form.parentIdentification}
-                        onChange={(value) => {
-                            setForm({
-                                ...form,
-                                parentIdentification: value,
-                            });
-                            clearFieldError("parentIdentification");
-                        }
-                        }
-                        options={parents.map((parent) => ({
-                            value: parent.identification,
-                            label: `${parent.firstName} ${parent.lastName}`,
-                        }))}
-                        placeholder={t("admin.children.selectParent")}
-                        className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
-                        aria-label={t("admin.children.parent")}
-                    />
-                </div>
-                {fieldErrors.parentIdentification && (
-                    <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.parentIdentification}</span>
-                )}
-                </label>
-
-                <label className="font-body text-body-sm font-semibold text-heading">
-                {t("admin.children.relationship")}
-                <div className="mt-xs">
-                    <Select
-                        value={form.relationship}
-                        onChange={(value) =>
-                            setForm({
-                                ...form,
-                                relationship: value as Relationship,
-                            })
-                        }
-                        options={relationshipOptions}
-                        className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
-                        aria-label={t("admin.children.relationship")}
-                    />
-                </div>
-                </label>
-
-                <label className="font-body text-body-sm font-semibold text-heading">
-                {t("admin.children.birthDate")}
-                <input
-                    type="date"
-                    value={form.birthDate}
-                    max={new Date().toISOString().split("T")[0]}
-                    onChange={(e) =>
-                    setForm({ ...form, birthDate: e.target.value })
-                    }
-                    className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
-                />
-                </label>
-
-                <div className="font-body text-body-sm font-semibold text-heading">
-                {t("admin.children.clubs")}
-                <div className="mt-xs rounded-xl border border-neutral-200 p-md">
-                    {clubs.length === 0 ? (
-                    <p className="font-normal text-neutral-500">
-                        {t("admin.children.noClubs")}
-                    </p>
-                    ) : (
-                    <div className="flex flex-col gap-3">
-                        {clubs.map((club) => (
-                        <label
-                            key={club.id}
-                            className="flex cursor-pointer items-center gap-2 font-normal text-body-text"
-                        >
-                            <input
-                            type="checkbox"
-                            checked={form.clubIds.includes(club.id)}
-                            onChange={() => handleClubChange(club.id)}
-                            className="size-4 accent-green-500"
-                            />
-
-                            {club.name}
-                        </label>
-                        ))}
-                    </div>
-                    )}
-                </div>
-                </div>
-
-                <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
-                {t("admin.children.medicalNotes")}
-                <textarea
-                    rows={4}
-                    value={form.medicalNotes}
-                    onChange={(e) =>
-                    setForm({ ...form, medicalNotes: e.target.value })
-                    }
-                    placeholder={t("admin.children.medicalNotesPlaceholder")}
-                    className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
-                />
-                </label>
-            </div>
-            )}
-
-            <div className="mt-lg flex flex-wrap justify-end gap-sm">
-            <button
-                type="button"
+                className="absolute inset-0 size-full cursor-default"
                 onClick={onClose}
-                disabled={saving}
-                className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 disabled:opacity-50"
-            >
-                {t("admin.children.cancel")}
-            </button>
+            />
 
-            <button
-                type="submit"
-                disabled={saving || loadingOptions}
-                className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+            <form
+                onSubmit={handleSubmit}
+                className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
             >
-                {saving
-                ? t("admin.children.saving")
-                : child
-                    ? t("admin.children.saveChanges")
-                    : t("admin.children.register")}
-            </button>
-            </div>
-        </form>
+                <div className="flex items-center justify-between gap-md">
+                    <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+                        {child
+                            ? `${t("admin.children.editTitle")}`
+                            : `${t("admin.children.createTitle")}`}
+                    </h2>
+
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        aria-label={t("admin.children.cancel")}
+                        className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
+                    >
+                        <XIcon size={20} />
+                    </button>
+                </div>
+
+                {error && (
+                    <p className="mt-md rounded-xl bg-red-50 p-md font-body text-body-sm text-red-700">
+                        {error}
+                    </p>
+                )}
+
+                <div className="mt-lg grid gap-md md:grid-cols-2">
+                    {/* Nombre */}
+                    <label className="font-body text-body-sm font-semibold text-heading">
+                        {t("admin.children.firstName")}
+                        <input
+                            maxLength={100}
+                            value={form.firstName}
+                            onChange={(e) => {
+                                setForm({ ...form, firstName: e.target.value });
+                                clearFieldError("firstName");
+                            }}
+                            placeholder={t("admin.children.firstNamePlaceholder")}
+                            className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+                        />
+                        {fieldErrors.firstName && (
+                            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.firstName}</span>
+                        )}
+                    </label>
+
+                    {/* Apellidos */}
+                    <label className="font-body text-body-sm font-semibold text-heading">
+                        {t("admin.children.lastName")}
+                        <input
+                            maxLength={100}
+                            value={form.lastName}
+                            onChange={(e) => {
+                                setForm({ ...form, lastName: e.target.value });
+                                clearFieldError("lastName");
+                            }}
+                            placeholder={t("admin.children.lastNamePlaceholder")}
+                            className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+                        />
+                        {fieldErrors.lastName && (
+                            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.lastName}</span>
+                        )}
+                    </label>
+
+                    {/* Padre/Tutor */}
+                    <label className="font-body text-body-sm font-semibold text-heading">
+                        {t("admin.children.parent")}
+                        <div className="mt-xs">
+                            <Select
+                                value={form.parentIdentification}
+                                onChange={(value) => {
+                                    setForm({
+                                        ...form,
+                                        parentIdentification: value,
+                                    });
+                                    clearFieldError("parentIdentification");
+                                }}
+                                options={parents.map((parent) => ({
+                                    value: parent.identification,
+                                    label: `${parent.firstName} ${parent.lastName}`,
+                                }))}
+                                placeholder={
+                                    loadingOptions
+                                        ? t("admin.children.loadingOptions")
+                                        : t("admin.children.selectParent")
+                                }
+                                className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
+                                aria-label={t("admin.children.parent")}
+                            />
+                        </div>
+                        {fieldErrors.parentIdentification && (
+                            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.parentIdentification}</span>
+                        )}
+                    </label>
+
+                    {/* Parentesco */}
+                    <label className="font-body text-body-sm font-semibold text-heading">
+                        {t("admin.children.relationship")}
+                        <div className="mt-xs">
+                            <Select
+                                value={form.relationship}
+                                onChange={(value) =>
+                                    setForm({
+                                        ...form,
+                                        relationship: value as Relationship,
+                                    })
+                                }
+                                options={relationshipOptions}
+                                className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
+                                aria-label={t("admin.children.relationship")}
+                            />
+                        </div>
+                    </label>
+
+                    {/* Fecha de Nacimiento */}
+                    <label className="font-body text-body-sm font-semibold text-heading">
+                        {t("admin.children.birthDate")}
+                        <input
+                            type="date"
+                            value={form.birthDate}
+                            max={new Date().toISOString().split("T")[0]}
+                            onChange={(e) =>
+                                setForm({ ...form, birthDate: e.target.value })
+                            }
+                            className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+                        />
+                    </label>
+
+                    {/* Clubes */}
+                    <div className="font-body text-body-sm font-semibold text-heading">
+                        {t("admin.children.clubs")}
+                        <div className="mt-xs rounded-xl border border-neutral-200 p-md">
+                            {loadingOptions ? (
+                                <p className="font-normal text-neutral-400 animate-pulse">
+                                    {t("admin.children.loadingOptions")}
+                                </p>
+                            ) : clubs.length === 0 ? (
+                                <p className="font-normal text-neutral-500">
+                                    {t("admin.children.noClubs")}
+                                </p>
+                            ) : (
+                                <div className="flex flex-col gap-3">
+                                    {clubs.map((club) => (
+                                        <label
+                                            key={club.id}
+                                            className="flex cursor-pointer items-center gap-2 font-normal text-body-text"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={form.clubIds.includes(club.id)}
+                                                onChange={() => handleClubChange(club.id)}
+                                                className="size-4 accent-green-500"
+                                            />
+                                            {club.name}
+                                        </label>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Notas Médicas */}
+                    <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
+                        {t("admin.children.medicalNotes")}
+                        <textarea
+                            rows={4}
+                            value={form.medicalNotes}
+                            onChange={(e) =>
+                                setForm({ ...form, medicalNotes: e.target.value })
+                            }
+                            placeholder={t("admin.children.medicalNotesPlaceholder")}
+                            className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
+                        />
+                    </label>
+                </div>
+
+                <div className="mt-lg flex flex-wrap justify-end gap-sm">
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        disabled={saving}
+                        className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 disabled:opacity-50"
+                    >
+                        {t("admin.children.cancel")}
+                    </button>
+
+                    <button
+                        type="submit"
+                        disabled={saving}
+                        className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        {saving
+                            ? t("admin.children.saving")
+                            : child
+                                ? t("admin.children.saveChanges")
+                                : t("admin.children.register")}
+                    </button>
+                </div>
+            </form>
         </div>
     );
 }
