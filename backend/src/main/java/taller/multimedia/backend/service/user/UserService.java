@@ -1,6 +1,7 @@
 package taller.multimedia.backend.service.user;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -79,6 +80,7 @@ public class UserService {
         }
 
         applyBirthday(targetUser, request.getBirthday());
+        applyPhotoUrl(targetUser, request.getPhotoUrl());
 
         return toResponse(targetUser);
     }
@@ -93,26 +95,44 @@ public class UserService {
         user.setEmail(newEmail);
     }
 
-   private void applyBirthday(User user, LocalDate birthday) {
-    if (birthday == null) return;
-    if (user.getRole() != Role.TEACHER) {
-        throw new RuntimeException("Only teachers can set a birthday");
-    }
-    if (birthday.equals(user.getBirthday())) return;
-
-    user.setBirthday(birthday);
-    scheduleBirthdaySync(user.getId());
-}
-
-private void scheduleBirthdaySync(UUID userId) {
-    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-        @Override
-        public void afterCommit() {
-            calendarSyncAsyncService.syncBirthdayAsync(userId);
+    private void applyBirthday(User user, LocalDate birthday) {
+        if (birthday == null)
+            return;
+        if (user.getRole() != Role.TEACHER) {
+            throw new RuntimeException("Only teachers can set a birthday");
         }
-    });
+        if (birthday.equals(user.getBirthday()))
+            return;
 
-}
+        user.setBirthday(birthday);
+        scheduleBirthdaySync(user.getId());
+    }
+
+    private void applyPhotoUrl(User user, String rawPhotoUrl) {
+        if (rawPhotoUrl == null || rawPhotoUrl.isBlank()) {
+            if (user.getRole() == Role.TEACHER) {
+                user.setPhotoUrl(null);
+            }
+            return;
+        }
+
+        if (user.getRole() != Role.TEACHER) {
+            throw new RuntimeException("Only teachers can set a profile photo");
+        }
+
+        String cleanPhotoUrl = Sanitizer.requireClean("photoUrl", rawPhotoUrl);
+        user.setPhotoUrl(cleanPhotoUrl);
+    }
+
+    private void scheduleBirthdaySync(UUID userId) {
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                calendarSyncAsyncService.syncBirthdayAsync(userId);
+            }
+        });
+
+    }
 
     public void deleteUser(UUID targetId, String currentEmail) {
         User currentUser = userRepository.findByEmail(currentEmail)
@@ -170,5 +190,12 @@ private void scheduleBirthdaySync(UUID userId) {
         }
 
         return false;
+    }
+
+    public List<UserInfoResponse> getTeachers() {
+        return userRepository.findByRole(Role.TEACHER)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 }
