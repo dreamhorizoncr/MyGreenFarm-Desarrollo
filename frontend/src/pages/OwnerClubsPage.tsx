@@ -2,6 +2,8 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ClockIcon,
+  EyeIcon,
+  EyeOffIcon,
   FileImageIcon,
   PencilIcon,
   PlusIcon,
@@ -26,13 +28,14 @@ const emptyForm: ClubRequest = {
   description: "",
   schedule: "",
   maxCapacity: undefined,
+  isPublished: false,
 };
 
 interface ClubCardProps {
-  club?: ClubResponse
-  onEdit?: () => void
-  onDelete?: () => void
-  loading?: boolean
+  club?: ClubResponse;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  loading?: boolean;
 }
 
 function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCardProps>) {
@@ -44,7 +47,7 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
   if (loading) {
     return (
       <div className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm">
-        <Skeleton shape="rect" className="h-[180px] w-full" />
+        <Skeleton shape="rect" className="h-[180px] w-full rounded-none" />
         <div className="flex flex-1 flex-col gap-sm p-lg">
           <Skeleton shape="line" className="h-6 w-3/4" />
           <Skeleton shape="line" className="h-4 w-full" />
@@ -58,14 +61,31 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
     );
   }
 
+  const available = club?.availableSpots ?? club?.maxCapacity ?? 0;
+  const maxCap = club?.maxCapacity ?? 0;
+  const isFull = available <= 0;
+
+  // Soporta tanto isPublished como published provenientes de la API
+  const isPublishedValue = club?.isPublished ?? (club as unknown as { published?: boolean })?.published ?? false;
+
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white transition hover:-translate-y-1 shadow-sm">
+    <article className="relative flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white transition hover:-translate-y-1 shadow-sm">
+      <div className="absolute top-3 left-3 z-10">
+        <span
+          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-body text-caption font-semibold text-white backdrop-blur-md shadow-sm ${isPublishedValue ? "bg-green-600/90" : "bg-neutral-600/90"
+            }`}
+        >
+          {isPublishedValue ? <EyeIcon size={13} /> : <EyeOffIcon size={13} />}
+          {isPublishedValue ? t("ownerClubs.published") : t("ownerClubs.draft")}
+        </span>
+      </div>
+
       {/* Imagen de portada */}
       <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
-        {club!.coverImageUrl ? (
+        {club?.coverImageUrl ? (
           <img
-            src={club!.coverImageUrl}
-            alt={club!.name}
+            src={club.coverImageUrl}
+            alt={club.name}
             className="h-full w-full object-cover"
           />
         ) : (
@@ -77,29 +97,28 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
         )}
       </div>
 
-      {/* Contenido */}
       <div className="flex flex-1 flex-col gap-sm px-lg pb-lg pt-md">
         <div className="flex items-start justify-between gap-sm">
           <h3 className="m-0 min-w-0 flex-1 text-left font-heading text-h4 font-bold text-green-500 line-clamp-2">
-            {club!.name}
+            {club?.name}
           </h3>
-          {club!.maxCapacity && (
+          {club?.maxCapacity !== undefined && (
             <span className="w-fit shrink-0 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white flex items-center gap-1">
               <UsersIcon size={12} />
-              {club!.maxCapacity} {t("ownerClubs.capacityLabel")}
+              {available} {t("ownerClubs.capacityLabel")}
             </span>
           )}
         </div>
 
         <p className="m-0 min-h-[48px] text-left font-body text-body-sm leading-relaxed text-neutral-600 line-clamp-2">
-          {club!.description}
+          {club?.description}
         </p>
 
         <div className="my-1 border-t border-neutral-200" />
 
-        {/* Detalles: Horario y Capacidad */}
-        <div className="space-y-2xs pt-xs text-left">
-          {club!.schedule && (
+        {/* Detalles: Horario y Cupos Disponibles */}
+        <div className="space-y-2.5 pt-xs text-left">
+          {club?.schedule && (
             <div className="font-body text-body-sm leading-relaxed text-neutral-500">
               <div className="flex items-center gap-2">
                 <ClockIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
@@ -107,23 +126,29 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
                   {t("ownerClubs.schedule")}
                 </span>
               </div>
-              <p className="m-0 mt-2xs px-1 text-left text-body-sm">{club!.schedule}</p>
+              <p className="m-0 mt-2xs px-1 text-left text-body-sm">{club.schedule}</p>
             </div>
           )}
 
-          {club!.maxCapacity && (
-            <div className="font-body text-body-sm leading-relaxed text-neutral-500">
-              <div className="flex items-center gap-2">
-                <UsersIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
-                <span className="font-semibold text-neutral-600">
-                  {t("ownerClubs.maxCapacity")}
-                </span>
-              </div>
-              <p className="m-0 mt-2xs px-1 text-left text-body-sm">
-                {club!.maxCapacity} {t("ownerClubs.capacityUnit")}
-              </p>
+          <div className="font-body text-body-sm leading-relaxed text-neutral-500">
+            <div className="flex items-center gap-2">
+              <UsersIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
+              <span className="font-semibold text-neutral-600">
+                {t("ownerClubs.availableSpots")}
+              </span>
             </div>
-          )}
+            <p className="m-0 mt-2xs px-1 text-left text-body-sm">
+              {isFull ? (
+                <span className="font-bold text-red-500">
+                  {t("ownerClubs.noSpotsAvailable")}
+                </span>
+              ) : (
+                <>
+                  <p>{maxCap}{" "}{t("ownerClubs.capacityUnit")}</p>
+                </>
+              )}
+            </p>
+          </div>
         </div>
 
         {/* Botones de Acción */}
@@ -180,7 +205,8 @@ function OwnerClubsPage() {
     try {
       setLoading(true);
       setError(null);
-      const data = await clubService.getAll({ lang: i18n.language, size: 50 });
+      const languageCode = (i18n.resolvedLanguage ?? i18n.language ?? 'es').split('-')[0];
+      const data = await clubService.getAll({ lang: languageCode, size: 50 });
 
       let clubsWithImages = await Promise.all(
         data.content.map(async (club) => {
@@ -237,7 +263,7 @@ function OwnerClubsPage() {
       setClubs(clubsWithImages);
     } catch (err) {
       console.error(err);
-      setError(t("admin.ownerClubs.loadError"));
+      setError(t("ownerClubs.loadError"));
     } finally {
       setLoading(false);
     }
@@ -261,11 +287,16 @@ function OwnerClubsPage() {
     const sourceClub = sourceClubsRef.current.get(club.id) ?? club;
     editImagesClubIdRef.current = club.id;
     setEditing(club);
+
+    // Leer isPublished soportando ambos nombres del backend
+    const currentIsPublished = club.isPublished ?? (club as unknown as { published?: boolean }).published ?? false;
+
     setForm({
       name: sourceClub.name,
       description: sourceClub.description,
       schedule: sourceClub.schedule ?? "",
       maxCapacity: club.maxCapacity,
+      isPublished: currentIsPublished,
     });
     setCover(null);
     setGallery([]);
@@ -294,11 +325,16 @@ function OwnerClubsPage() {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const dataToSend: ClubRequest = {
+    const publishedBool = Boolean(form.isPublished);
+
+    // Mandamos tanto isPublished como published para asegurar que Spring Boot/Jackson lo mapee en el backend
+    const dataToSend: ClubRequest & { published?: boolean } = {
       name: form.name,
       description: form.description,
       schedule: form.schedule?.trim() || undefined,
       maxCapacity: form.maxCapacity ? Number(form.maxCapacity) : undefined,
+      isPublished: publishedBool,
+      published: publishedBool,
     };
 
     try {
@@ -321,23 +357,17 @@ function OwnerClubsPage() {
         );
       }
 
-      notify.success({
-        title: editing
+      notify.success(
+        editing
           ? t("ownerClubs.updatedToastTitle")
-          : t("ownerClubs.createdToastTitle"),
-        description: editing
-          ? t("ownerClubs.updatedToastDescription")
-          : t("ownerClubs.createdToastDescription"),
-      });
+          : t("ownerClubs.createdToastTitle")
+      );
 
       requestClose();
       await fetchClubs();
     } catch (err) {
       console.error(err);
-      notify.error({
-        title: t("ownerClubs.saveErrorToastTitle"),
-        description: t("ownerClubs.saveErrorToastDescription"),
-      });
+      notify.error(t("ownerClubs.saveErrorToastTitle"));
     }
   };
 
@@ -355,11 +385,7 @@ function OwnerClubsPage() {
         requestClose();
       }
 
-      notify.success({
-        title: t("ownerClubs.deletedToastTitle"),
-        description: t("ownerClubs.deletedToastDescription"),
-      });
-
+      notify.success(t("ownerClubs.deletedToastTitle"));
       await fetchClubs();
     } catch (err) {
       console.error(err);
@@ -530,6 +556,27 @@ function OwnerClubsPage() {
                   className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                 />
               </label>
+
+              {/* Opción de Publicar / Visibilidad */}
+              <div className="md:col-span-2 flex items-center gap-md rounded-xl border border-neutral-200 bg-neutral-50 p-md">
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.isPublished ?? false}
+                    onChange={(e) => setForm({ ...form, isPublished: e.target.checked })}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-neutral-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                </label>
+                <div>
+                  <span className="block font-body text-body-sm font-semibold text-heading">
+                    {t("ownerClubs.publishClubLabel")}
+                  </span>
+                  <span className="text-caption text-neutral-500">
+                    {t("ownerClubs.publishClubDescription")}
+                  </span>
+                </div>
+              </div>
 
               <div className="font-body text-body-sm font-semibold text-heading">
                 <span className="block">{t("ownerClubs.coverImage")}</span>
