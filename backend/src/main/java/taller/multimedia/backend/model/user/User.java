@@ -46,6 +46,9 @@ public class User {
     @Column(nullable = false)
     private boolean isActive;
 
+    @Column(name = "photo_url")
+    private String photoUrl;
+
     @Column(name = "birthday", nullable = true)
     private LocalDate birthday;
 
