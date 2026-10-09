@@ -13,11 +13,12 @@ import { getErrorMessage } from '../utils/error.ts'
 import { notify } from '../utils/notifications.ts'
 
 function CommunityPostPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { id } = useParams()
   const { communityPosts, isLoading: feedLoading } = useForumFeedContext()
   const post = communityPosts.find((item) => item.id === id) ?? null
   const [comments, setComments] = useState<CommunityComment[]>([])
+  const [sourceComments, setSourceComments] = useState<CommunityComment[]>([])
   const [name, setName] = useState('')
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(true)
@@ -36,12 +37,40 @@ function CommunityPostPage() {
     forumService.getCommunityComments(id)
       .then((loadedComments) => {
         if (!active) return
+        setSourceComments(loadedComments)
         setComments(loadedComments)
       })
       .catch(() => { if (active) setError('No se pudo cargar la publicación') })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
   }, [id])
+
+  // Traducción dinámica de los comentarios (cualquier idioma origen vía Cloud Translation).
+  // El alias es nombre propio y nunca se traduce.
+  useEffect(() => {
+    if (sourceComments.length === 0) return
+    const language = (i18n.resolvedLanguage ?? i18n.language).split('-')[0]
+    let active = true
+    async function translateComments() {
+      try {
+        const items = sourceComments.map((comment) => ({
+          entityId: comment.id,
+          fieldName: 'content',
+          originalText: comment.content,
+        }))
+        const translated = await forumService.translateBatch('FORUM_COMMUNITY_COMMENT', language, items)
+        if (!active) return
+        setComments(sourceComments.map((comment) => ({
+          ...comment,
+          content: translated[`${comment.id}:content`] ?? comment.content,
+        })))
+      } catch {
+        // Si falla se muestra el original
+      }
+    }
+    void translateComments()
+    return () => { active = false }
+  }, [i18n.language, i18n.resolvedLanguage, sourceComments])
 
   useEffect(() => {
     if (!loading && window.location.hash === '#comments') {
@@ -66,6 +95,7 @@ function CommunityPostPage() {
 
     forumService.createCommunityComment(id, payload)
       .then((comment) => {
+        setSourceComments((current) => [...current, comment])
         setComments((current) => [...current, comment])
         notify.success({
           title: t('forum.community.commentToastTitle'),

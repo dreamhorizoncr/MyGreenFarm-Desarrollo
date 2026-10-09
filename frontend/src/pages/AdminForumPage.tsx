@@ -14,7 +14,7 @@ import { userStorage } from '../utils/userStorage.ts'
 import { forumService } from '../services/forum.ts'
 
 function AdminForumPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const isTeacher = userStorage.getUser()?.role === 'TEACHER'
   const isOwner = userStorage.getUser()?.role === 'OWNER'
   const {
@@ -40,29 +40,75 @@ function AdminForumPage() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [posts, setPosts] = useState<BlogPost[]>([])
+  const [sourcePosts, setSourcePosts] = useState<BlogPost[]>([])
   const [postsLoading, setPostsLoading] = useState(true)
   const [postsError, setPostsError] = useState('')
 
-  const refreshPosts = useCallback(async (targetPage: number) => {
+  const refreshPosts = useCallback(async (targetPage: number, lang?: string) => {
     setPostsLoading(true)
     try {
       const result = isTeacher
         ? await forumService.getMyArticles(targetPage - 1, 10)
         : await forumService.getArticles(targetPage - 1, 10)
-      setPosts(result.content)
+      setSourcePosts(result.content)
       setTotalPages(result.totalPages)
       setPostsError('')
+
+      // Traducción dinámica (Cloud Translation, cualquier idioma origen).
+      // El form de crear/editar usa el original (sourcePosts); la lista muestra traducido.
+      const targetLang = (lang ?? i18n.language).split('-')[0]
+      const items = result.content.flatMap((post) => [
+        { entityId: post.id, fieldName: 'title', originalText: post.title },
+        { entityId: post.id, fieldName: 'topic', originalText: post.topic },
+        { entityId: post.id, fieldName: 'content', originalText: post.content },
+        ...(post.aiSummary
+          ? [{ entityId: post.id, fieldName: 'aiSummary', originalText: post.aiSummary }]
+          : []),
+        ...(post.authorRole
+          ? [{ entityId: post.id, fieldName: 'authorRole', originalText: post.authorRole }]
+          : []),
+        ...(post.imageAlt
+          ? [{ entityId: post.id, fieldName: 'imageAlt', originalText: post.imageAlt }]
+          : []),
+      ])
+      if (items.length > 0) {
+        try {
+          const translated = await forumService.translateBatch('FORUM_ARTICLE', targetLang, items)
+          setPosts(result.content.map((post) => ({
+            ...post,
+            title: translated[`${post.id}:title`] ?? post.title,
+            topic: translated[`${post.id}:topic`] ?? post.topic,
+            content: translated[`${post.id}:content`] ?? post.content,
+            aiSummary: post.aiSummary
+              ? translated[`${post.id}:aiSummary`] ?? post.aiSummary
+              : post.aiSummary,
+            authorRole: post.authorRole
+              ? translated[`${post.id}:authorRole`] ?? post.authorRole
+              : post.authorRole,
+            imageAlt: post.imageAlt
+              ? translated[`${post.id}:imageAlt`] ?? post.imageAlt
+              : post.imageAlt,
+          })))
+        } catch {
+          setPosts(result.content)
+        }
+      } else {
+        setPosts(result.content)
+      }
     } catch {
       setPostsError(isTeacher ? 'No se pudieron cargar tus publicaciones' : 'No se pudieron cargar los artículos')
     } finally {
       setPostsLoading(false)
     }
-  }, [isTeacher])
+  }, [isTeacher, i18n.language])
 
   useEffect(() => {
-    void refreshPosts(page)
+    void refreshPosts(page, i18n.language)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isTeacher, page])
+  }, [isTeacher, page, i18n.language])
+
+  // El modal de crear/editar siempre trabaja con el texto original
+  const getSourcePost = (id: string) => sourcePosts.find((item) => item.id === id) ?? posts.find((item) => item.id === id) ?? null
 
   const visiblePosts = posts
   const visibleIsLoading = postsLoading
@@ -74,7 +120,7 @@ function AdminForumPage() {
   }
 
   function openEdit(post: BlogPost) {
-    setEditing(post)
+    setEditing(getSourcePost(post.id))
     setFormOpen(true)
   }
 
@@ -87,14 +133,14 @@ function AdminForumPage() {
     try {
       if (editing) {
         await updateBlogPost(editing.id, input)
-        await refreshPosts(page)
+        await refreshPosts(page, i18n.language)
         notify.success({
           title: t('adminForum.updatedToastTitle'),
           description: t('adminForum.updatedToastDescription'),
         })
       } else {
         await addBlogPost(input)
-        await refreshPosts(page)
+        await refreshPosts(page, i18n.language)
         notify.success({
           title: t('adminForum.createdToastTitle'),
           description: t('adminForum.createdToastDescription'),
@@ -147,7 +193,7 @@ function AdminForumPage() {
 
     try {
       await removeBlogPost(postToDelete.id)
-      await refreshPosts(page)
+      await refreshPosts(page, i18n.language)
     } catch (err) {
       notify.error('No se pudo eliminar el artículo')
       throw err
