@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { UsersIcon, SparklesIcon, ClockIcon, CircleCheckIcon } from '@animateicons/react/lucide'
+import { UsersIcon, SparklesIcon, ClockIcon } from '@animateicons/react/lucide'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import ClubDetailModal from '../components/ClubDetailModal.tsx'
