@@ -14,32 +14,41 @@ import type { Child } from "../types/child";
 import { useTranslation } from "react-i18next";
 
 function AdminChildrenPage() {
-  const { children, loading, error, fetchChildren } = useChildren();
+  const { children, sourceChildren, loading, error, fetchChildren } = useChildren();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [selectedChild, setSelectedChild] = useState<Child | null>(null)
   const [childToDelete, setChildToDelete] = useState<Child | null>(null)
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    void fetchChildren();
-  }, []);
+    void fetchChildren(i18n.language);
+  }, [i18n.language]);
 
-  const filteredChildren = children.filter((child) => {
+  const filteredChildren = children.filter((child, index) => {
     const fullName = `${child.firstName} ${child.lastName}`.toLowerCase();
-    const search = searchTerm.toLowerCase();
+    const search = searchTerm.trim().toLowerCase();
+    if (!search) return true;
+
+    // Búsqueda dual: nombres (nunca se traducen) + notas en original Y traducido
+    const source = sourceChildren[index] ?? sourceChildren.find((item) => item.id === child.id);
 
     return (
       fullName.includes(search) ||
       child.studentId.toLowerCase().includes(search) ||
-      child.parentName.toLowerCase().includes(search)
+      child.parentName.toLowerCase().includes(search) ||
+      (child.medicalNotes ?? '').toLowerCase().includes(search) ||
+      (source?.medicalNotes ?? '').toLowerCase().includes(search)
     );
   });
 
+  // El modal siempre edita el texto original, aunque la card muestre traducido
+  const getSourceChild = (id: number) => sourceChildren.find((item) => item.id === id) ?? children.find((item) => item.id === id) ?? null
+
   const handleEdit = (child: Child) => {
-    setSelectedChild(child)
+    setSelectedChild(getSourceChild(child.id))
     setIsFormOpen(true)
   }
 
@@ -53,7 +62,7 @@ function AdminChildrenPage() {
     try {
       await childService.delete(childToDelete.id)
 
-      await fetchChildren()
+      await fetchChildren(i18n.language)
 
       notify.success('Niño eliminado correctamente')
     } catch (err) {
@@ -164,7 +173,7 @@ function AdminChildrenPage() {
             setIsFormOpen(false)
             setSelectedChild(null)
           }}
-            onSaved={() => {void fetchChildren()}}
+            onSaved={() => {void fetchChildren(i18n.language)}}
       />
 
       {childToDelete && (

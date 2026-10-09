@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { XIcon } from '@animateicons/react/lucide'
 import Select from './ui/Select.tsx'
 import type { ScheduleException } from '../types/availability.ts'
@@ -19,6 +20,7 @@ function todayIso() {
 }
 
 function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Readonly<ScheduleExceptionModalProps>) {
+  const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const [date, setDate] = useState(exception?.exceptionDate ?? '')
   const [closed, setClosed] = useState(exception?.closed ?? true)
@@ -50,17 +52,17 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
 
   const handleSubmit = async () => {
     if (!date) {
-      setFormError('Selecciona una fecha.')
+      setFormError(t('admin.availability.modal.errSelectDate'))
       return
     }
     const selectedDate = new Date(`${date}T00:00:00`)
     const day = selectedDate.getDay()
     if (date < todayIso() || day === 0 || day === 6) {
-      setFormError('Selecciona una fecha futura de lunes a viernes.')
+      setFormError(t('admin.availability.modal.errWeekdayFuture'))
       return
     }
     if (!closed && endTime <= startTime) {
-      setFormError('La hora Hasta debe ser mayor que la hora Desde.')
+      setFormError(t('admin.availability.modal.errInvalidRange'))
       return
     }
 
@@ -77,7 +79,7 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
       })
       onClose()
     } catch {
-      setFormError('No se pudo guardar el día especial. Inténtalo de nuevo.')
+      setFormError(t('admin.availability.modal.errSave'))
     } finally {
       setSaving(false)
     }
@@ -99,53 +101,53 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
       <div className="relative p-xl">
         <div className="flex items-center justify-between gap-md">
           <h2 id="exception-modal-title" className="m-0 font-heading text-2xl font-bold text-heading">
-            {exception ? 'Editar día especial' : 'Agregar día especial'}
+            {exception ? t('admin.availability.modal.editTitle') : t('admin.availability.modal.addTitle')}
           </h2>
 
-          <button type="button" onClick={onClose} aria-label="Cerrar" className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100">
+          <button type="button" onClick={onClose} aria-label={t('admin.availability.modal.close')} className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100">
             <XIcon size={20} />
           </button>
         </div>
-        <p className="mt-xs font-body text-body-sm text-neutral-500">Este día reemplaza tu horario normal.</p>
+        <p className="mt-xs font-body text-body-sm text-neutral-500">{t('admin.availability.modal.hint')}</p>
 
         <div className="mt-lg flex flex-col gap-md">
           <div>
-            <label htmlFor="exception-date" className="mb-xs block font-body text-body-sm font-semibold text-body-text">Fecha</label>
+            <label htmlFor="exception-date" className="mb-xs block font-body text-body-sm font-semibold text-body-text">{t('admin.availability.modal.dateLabel')}</label>
             <input id="exception-date" type="date" min={todayIso()} value={date} onChange={(event) => { handleDateChange(event.target.value); setFormError(null) }} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body text-body-text focus:border-green-500 focus:outline-none" />
-            {date && new Date(`${date}T00:00:00`).getDay() % 6 === 0 && <p className="mt-xs text-body-sm text-danger">Los fines de semana no están disponibles.</p>}
-            {existing && <p className="mt-xs text-body-sm text-link">Ya existe una excepción para esta fecha; se actualizará.</p>}
+            {date && new Date(`${date}T00:00:00`).getDay() % 6 === 0 && <p className="mt-xs text-body-sm text-danger">{t('admin.availability.modal.weekendNotAvailable')}</p>}
+            {existing && <p className="mt-xs text-body-sm text-link">{t('admin.availability.modal.alreadyExists')}</p>}
           </div>
 
           <fieldset className="flex flex-col gap-sm">
-            <legend className="mb-xs font-body text-body-sm font-semibold text-body-text">¿Cómo será ese día?</legend>
+            <legend className="mb-xs font-body text-body-sm font-semibold text-body-text">{t('admin.availability.modal.howLabel')}</legend>
             <label className="flex min-h-12 cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md font-body text-body text-body-text">
               <input type="radio" name="exception-mode" checked={closed} onChange={() => setClosed(true)} className="size-5 accent-green-500" />
-              <span>Cerrado todo el día</span>
+              <span>{t('admin.availability.modal.closedOption')}</span>
             </label>
             <label className="flex min-h-12 cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md font-body text-body text-body-text">
               <input type="radio" name="exception-mode" checked={!closed} onChange={() => setClosed(false)} className="size-5 accent-green-500" />
-              <span>Atiende solo en un horario</span>
+              <span>{t('admin.availability.modal.customOption')}</span>
             </label>
           </fieldset>
 
           {!closed && (
             <div className="grid grid-cols-2 gap-md">
-              <label className="font-body text-body-sm font-semibold text-body-text">Desde<div className="mt-xs"><Select value={startTime} onChange={setStartTime} options={hours.slice(0, -1).map((hour) => ({ value: hour, label: hour }))} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md" aria-label="Desde" /></div></label>
-              <label className="font-body text-body-sm font-semibold text-body-text">Hasta<div className="mt-xs"><Select value={endTime} onChange={setEndTime} options={hours.slice(1).map((hour) => ({ value: hour, label: hour }))} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md" aria-label="Hasta" /></div></label>
+              <label className="font-body text-body-sm font-semibold text-body-text">{t('admin.availability.from')}<div className="mt-xs"><Select value={startTime} onChange={setStartTime} options={hours.slice(0, -1).map((hour) => ({ value: hour, label: hour }))} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md" aria-label={t('admin.availability.from')} /></div></label>
+              <label className="font-body text-body-sm font-semibold text-body-text">{t('admin.availability.to')}<div className="mt-xs"><Select value={endTime} onChange={setEndTime} options={hours.slice(1).map((hour) => ({ value: hour, label: hour }))} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md" aria-label={t('admin.availability.to')} /></div></label>
             </div>
           )}
 
           <div>
-            <label htmlFor="exception-reason" className="mb-xs block font-body text-body-sm font-semibold text-body-text">Motivo <span className="font-normal text-neutral-500">(opcional)</span></label>
-            <input id="exception-reason" value={reason} maxLength={1000} onChange={(event) => setReason(event.target.value)} placeholder="Ej. Cita médica o feriado" className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body focus:border-green-500 focus:outline-none" />
+            <label htmlFor="exception-reason" className="mb-xs block font-body text-body-sm font-semibold text-body-text">{t('admin.availability.modal.reasonLabel')} <span className="font-normal text-neutral-500">{t('admin.availability.modal.reasonOptional')}</span></label>
+            <input id="exception-reason" value={reason} maxLength={1000} onChange={(event) => setReason(event.target.value)} placeholder={t('admin.availability.modal.reasonPlaceholder')} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body focus:border-green-500 focus:outline-none" />
           </div>
 
           {formError && <p className="m-0 text-body-sm text-danger" role="alert">{formError}</p>}
           <div className="flex flex-wrap justify-end gap-sm">
-            <button type="button" onClick={onClose} className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link">Cancelar</button>
+            <button type="button" onClick={onClose} className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link">{t('admin.availability.modal.cancel')}</button>
             <button type="button" onClick={() => void handleSubmit()} disabled={saving} className="inline-flex h-11 items-center justify-center gap-sm rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-link">
               {saving && <span className="size-4 animate-spin rounded-full border-2 border-white border-r-transparent" aria-hidden="true" />}
-              {exception ? 'Guardar cambios' : 'Agregar'}
+              {exception ? t('admin.availability.modal.saveChanges') : t('admin.availability.modal.add')}
             </button>
           </div>
         </div>

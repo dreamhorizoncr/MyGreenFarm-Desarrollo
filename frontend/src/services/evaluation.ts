@@ -3,6 +3,7 @@ import type {
     Evaluation,
     EvaluationRequest,
 } from "../types/evaluation";
+import type { TranslationItem } from "./expedient";
 
 export const evaluationService = {
     async getAll(): Promise<Evaluation[]> {
@@ -51,6 +52,20 @@ export const evaluationService = {
     async sendSemiannualSummaries(): Promise<string> {
         const response = await apiClient.post<string>(
         "/evaluations/send-semiannual-summaries"
+        );
+
+        return response.data;
+    },
+
+    async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {
+        if (items.length === 0) return {}
+        const response = await apiClient.post<Record<string, string>>(
+        "/translations/batch",
+        {
+            entityType,
+            targetLanguage: targetLanguage?.split('-')[0] || 'es',
+            items,
+        }
         );
 
         return response.data;
