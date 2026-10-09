@@ -13,6 +13,7 @@ import type { Parent } from "../types/parent";
 import type { ClubResponse } from "../types/clubs";
 import { useTranslation } from "react-i18next";
 import { validateRequired } from "../utils/validators.ts";
+import i18n from "../i18n/index.ts";
 
     interface ChildFormModalProps {
     isOpen: boolean;
@@ -68,29 +69,31 @@ import { validateRequired } from "../utils/validators.ts";
     };
 
     useEffect(() => {
-        if (!isOpen) return;
+    if (!isOpen) return;
 
-        const loadOptions = async () => {
+    const loadOptions = async () => {
         try {
             setLoadingOptions(true);
             setError(null);
 
+            const languageCode = (i18n.resolvedLanguage ?? i18n.language ?? "es").split("-")[0];
+
             const [parentsData, clubsData] = await Promise.all([
-            parentService.getParents(),
-            clubService.getAll({ size: 50 }),
+                parentService.getParents(),
+                clubService.getAll({ lang: languageCode, size: 50 }),
             ]);
 
-            setParents(parentsData.content);
-            setClubs(clubsData.content);
+            setParents(parentsData.content ?? []);
+            setClubs(clubsData.content ?? []);
         } catch {
             setError(t("admin.children.optionsError"));
         } finally {
             setLoadingOptions(false);
         }
-        };
+    };
 
-        void loadOptions();
-    }, [isOpen, t]);
+    void loadOptions();
+}, [isOpen, t, i18n.language]);
 
     useEffect(() => {
         if (!isOpen) return;
