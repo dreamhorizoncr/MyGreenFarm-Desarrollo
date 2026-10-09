@@ -24,5 +24,7 @@ public class UpdateUserRequest {
     )
     private String email;
 
+    private String photoUrl;
+
     private LocalDate birthday;
 }
