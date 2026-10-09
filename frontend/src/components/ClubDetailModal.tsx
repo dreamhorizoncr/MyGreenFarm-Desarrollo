@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { ClockIcon, UsersIcon, XIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
-import { clubService } from '../services/clubs.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import type { ClubResponse } from '../types/clubs.ts'
 
