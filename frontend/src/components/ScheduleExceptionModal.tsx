@@ -139,7 +139,7 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
 
           <div>
             <label htmlFor="exception-reason" className="mb-xs block font-body text-body-sm font-semibold text-body-text">{t('admin.availability.modal.reasonLabel')} <span className="font-normal text-neutral-500">{t('admin.availability.modal.reasonOptional')}</span></label>
-            <input id="exception-reason" value={reason} maxLength={1000} onChange={(event) => setReason(event.target.value)} placeholder={t('admin.availability.modal.reasonPlaceholder')} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body focus:border-green-500 focus:outline-none" />
+            <input id="exception-reason" value={reason} maxLength={1000} onChange={(event) => setReason(event.target.value)} placeholder={t('admin.availability.modal.reasonPlaceholder')} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-green-500 text-body focus:border-green-500 focus:outline-none" />
           </div>
 
           {formError && <p className="m-0 text-body-sm text-danger" role="alert">{formError}</p>}

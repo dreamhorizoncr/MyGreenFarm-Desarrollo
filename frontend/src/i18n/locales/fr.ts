@@ -1268,6 +1268,16 @@ export default {
     rescheduledToastTitle: "Rendez-vous reprogrammé",
     rescheduledToastDescription: "Le parent ou le tuteur a été notifié.",
     rescheduleErrorToastTitle: "Impossible de reprogrammer le rendez-vous",
+    byDate: "Par Jour",
+    calendar: {
+      today: "Aujourd'hui",
+      week: "Semaine",
+      month: "Mois",
+      ariaLabel: "Date de l'événement",
+      clear: "Effacer",
+      appointmentsForDay: "Rendez-vous pour la journée",
+      noAppointmentsForDay: "Aucun rendez-vous prévu pour ce jour."
+    }
   },
   moneda: {
     convertTo: "Afficher le prix en",

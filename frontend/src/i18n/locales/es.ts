@@ -1276,6 +1276,16 @@ export default {
     rescheduledToastTitle: "Cita reprogramada",
     rescheduledToastDescription: "Se envió la notificación al padre o encargado.",
     rescheduleErrorToastTitle: "No se pudo reprogramar la cita",
+    byDate: "Por Día",
+    calendar: {
+      today: "Hoy",
+      week: "Semana",
+      month: "Mes",
+      ariaLabel: "Fecha de evento",
+      clear: "Limpiar",
+      appointmentsForDay: "Citas para el día",
+      noAppointmentsForDay: "No hay citas programadas para este día."
+    },
   },
   moneda: {
     title: "Conversor de moneda",
