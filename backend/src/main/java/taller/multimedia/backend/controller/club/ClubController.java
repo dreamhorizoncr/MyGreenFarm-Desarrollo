@@ -43,7 +43,6 @@ public class ClubController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<Page<ClubResponse>> getAll(
             @RequestParam(defaultValue = "es") String lang,
             @PageableDefault(size = 10, sort = "name") Pageable pageable) {

@@ -1261,6 +1261,16 @@ export default {
     rescheduledToastTitle: "Appointment rescheduled",
     rescheduledToastDescription: "The parent or guardian was notified.",
     rescheduleErrorToastTitle: "Couldn't reschedule the appointment",
+    byDate: "By Day",
+    calendar: {
+      today: "Today",
+      week: "Week",
+      month: "Month",
+      ariaLabel: "Event date",
+      clear: "Clear",
+      appointmentsForDay: "Appointments for the day",
+      noAppointmentsForDay: "No appointments scheduled for this day."
+    }
   },
   moneda: {
     convertTo: "Show price in",
