@@ -161,7 +161,8 @@ public class UserService {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getRole().name(),
-                user.getBirthday());
+                user.getBirthday(),
+                user.getPhotoUrl());
     }
 
     private boolean canManageUsers(Role role) {
@@ -195,6 +196,7 @@ public class UserService {
     public List<UserInfoResponse> getTeachers() {
         return userRepository.findByRole(Role.TEACHER)
                 .stream()
+                .filter(user -> Boolean.TRUE.equals(user.getIsActive()))
                 .map(this::toResponse)
                 .toList();
     }
