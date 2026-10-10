@@ -64,8 +64,9 @@ function AppointmentCard({
 
   return (
     <div
-      className={`group relative flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${disabled ? 'opacity-60' : ''
-        }`}
+      className={`group relative flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${
+        disabled ? 'opacity-60' : ''
+      }`}
     >
       <button
         type="button"
@@ -188,9 +189,10 @@ function AppointmentsSection() {
   }
 
   const filterClassName = (active: boolean) =>
-    `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${active
-      ? 'border-green-500 bg-green-500 text-white'
-      : 'border-green-500 bg-white text-heading hover:bg-green-50'
+    `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
+      active
+        ? 'border-green-500 bg-green-500 text-white'
+        : 'border-green-500 bg-white text-heading hover:bg-green-50'
     }`
 
   const badgeClassName = (status: AppointmentStatus) => {
@@ -270,9 +272,9 @@ function AppointmentsSection() {
       )}
 
       {statusFilter === 'BY_DATE' ? (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-xl items-start">
-          {/* Columna Izquierda: Calendario con mejor espacio y presencia */}
-          <div className="lg:col-span-5 rounded-2xl border border-neutral-200 bg-white p-xl shadow-sm flex flex-col items-center gap-6">
+        <div className="grid grid-cols-1 gap-xl lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] items-start">
+          {/* El calendario conserva su ancho máximo y las citas usan el espacio restante. */}
+          <div className="w-full max-w-[420px] rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm flex flex-col items-center gap-6">
             <ButtonGroup
               fullWidth
               size="sm"
@@ -311,7 +313,6 @@ function AppointmentsSection() {
               </Button>
             </ButtonGroup>
 
-
             <I18nProvider locale={i18n.resolvedLanguage ?? i18n.language ?? 'es'}>
               <Calendar
                 aria-label={t('teacherAppointments.calendar.ariaLabel')}
@@ -341,7 +342,7 @@ function AppointmentsSection() {
                         <Calendar.Cell
                           date={date}
                           className={({ isOutsideMonth, isSelected }) =>
-                            `relative flex items-center justify-center w-15 h-15 rounded-full transition-colors text-lg font-medium mx-auto 
+                            `relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors text-md font-medium mx-auto m-1 
                             ${isOutsideMonth ? 'text-neutral-300 opacity-60' : 'text-heading'} 
                             ${isSelected ? 'bg-orange-500 shadow-md text-white' : 'hover:bg-neutral-100'} 
                             ${isSpecial && !isSelected ? 'after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:size-1.5 after:rounded-full after:bg-orange-500' : ''}`
@@ -367,7 +368,7 @@ function AppointmentsSection() {
           </div>
 
           {/* Columna Derecha: Tarjetas de citas con mejor espaciado */}
-          <div className="lg:col-span-7 flex flex-col gap-md">
+          <div className="flex flex-col gap-md">
             <h2 className="m-0 font-heading text-xl font-bold text-heading">
               {t('teacherAppointments.calendar.appointmentsForDay')}: <span className="text-green-600">{selectedDate?.toString()}</span>
             </h2>

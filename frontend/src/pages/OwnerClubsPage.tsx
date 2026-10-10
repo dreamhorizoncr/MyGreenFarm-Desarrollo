@@ -139,7 +139,7 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
             </div>
             <p className="m-0 mt-2xs px-1 text-left text-body-sm">
               {isFull ? (
-                <span className="font-bold text-red-500">
+                <span className="text-red-500">
                   {t("ownerClubs.noSpotsAvailable")}
                 </span>
               ) : (
