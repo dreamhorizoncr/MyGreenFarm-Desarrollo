@@ -1,6 +1,5 @@
 package taller.multimedia.backend.service.user;
 
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -50,50 +49,50 @@ public class AuthService {
         this.calendarSyncAsyncService = calendarSyncAsyncService;
     }
 
-   @Transactional
-public void registerUser(SignupRequest request) {
-    String email = Sanitizer.requireClean("email", request.getEmail());
-    String firstName = Sanitizer.requireClean("firstName", request.getFirstName());
-    String lastName = Sanitizer.requireClean("lastName", request.getLastName());
-    LocalDate birthday = request.getBirthday();
+    @Transactional
+    public void registerUser(SignupRequest request) {
+        String email = Sanitizer.requireClean("email", request.getEmail());
+        String firstName = Sanitizer.requireClean("firstName", request.getFirstName());
+        String lastName = Sanitizer.requireClean("lastName", request.getLastName());
+        LocalDate birthday = request.getBirthday();
 
-    if (userRepository.existsByEmail(email)) {
-        throw new RuntimeException("Error: Email is already in use!");
-    }
-
-    Role role = resolveRole(request.getRole()); // defaults to USER if not provided
-
-    // Birthday is optional, but only teachers can have one
-    if (birthday != null && role != Role.TEACHER) {
-        throw new RuntimeException("Error: Birthday is only allowed for TEACHER role!");
-    }
-
-    User user = new User(
-            email,
-            encoder.encode(request.getPassword()),
-            firstName,
-            lastName,
-            role,
-            true
-    );
-    user.setBirthday(birthday);
-
-    User saved = userRepository.save(user);
-
-    if (saved != null && saved.getBirthday() != null && saved.getId() != null) {
-        scheduleBirthdaySync(saved.getId());
-    }
-}
-
-// Sincroniza con Google Calendar solo después de que se confirme el guardado en la BD
-private void scheduleBirthdaySync(UUID userId) {
-    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-        @Override
-        public void afterCommit() {
-            calendarSyncAsyncService.syncBirthdayAsync(userId);
+        if (userRepository.existsByEmail(email)) {
+            throw new RuntimeException("Error: Email is already in use!");
         }
-    });
-}
+
+        Role role = resolveRole(request.getRole()); // defaults to USER if not provided
+
+        // Birthday is optional, but only teachers can have one
+        if (birthday != null && role != Role.TEACHER) {
+            throw new RuntimeException("Error: Birthday is only allowed for TEACHER role!");
+        }
+
+        User user = new User(
+                email,
+                encoder.encode(request.getPassword()),
+                firstName,
+                lastName,
+                role,
+                true);
+        user.setBirthday(birthday);
+
+        User saved = userRepository.save(user);
+
+        if (saved != null && saved.getBirthday() != null && saved.getId() != null) {
+            scheduleBirthdaySync(saved.getId());
+        }
+    }
+
+    // Sincroniza con Google Calendar solo después de que se confirme el guardado en
+    // la BD
+    private void scheduleBirthdaySync(UUID userId) {
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                calendarSyncAsyncService.syncBirthdayAsync(userId);
+            }
+        });
+    }
 
     // Authenticate user and return user info
     public AuthResult authenticateUser(LoginRequest request) {
@@ -111,8 +110,7 @@ private void scheduleBirthdaySync(UUID userId) {
                 userDetails.getFirstName(),
                 userDetails.getLastName(),
                 userDetails.getRole(),
-                userDetails.getBirthday()
-            );
+                userDetails.getBirthday());
 
         return new AuthResult(userInfo, userDetails);
     }
@@ -129,28 +127,28 @@ private void scheduleBirthdaySync(UUID userId) {
 
     // Resolve role from string, default to TEACHER if not provided or invalid
     private Role resolveRole(String strRole) {
-    if (strRole == null) {
-        return Role.TEACHER;
-    }
-
-    try {
-        Role role = Role.valueOf(strRole.toUpperCase());
-
-        if (role == Role.OWNER) {
-            throw new RuntimeException("The OWNER role cannot be assigned");
+        if (strRole == null) {
+            return Role.TEACHER;
         }
 
-        return role;
-    } catch (IllegalArgumentException e) {
-        return Role.TEACHER;
+        try {
+            Role role = Role.valueOf(strRole.toUpperCase());
+
+            if (role == Role.OWNER) {
+                throw new RuntimeException("The OWNER role cannot be assigned");
+            }
+
+            return role;
+        } catch (IllegalArgumentException e) {
+            return Role.TEACHER;
+        }
     }
-}
 
     public void forgotPassword(String email) {
         String cleanEmail = Sanitizer.requireClean("email", email);
         User user = userRepository.findByEmail(cleanEmail)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
+
         String token = UUID.randomUUID().toString();
         user.setResetPasswordToken(token);
         user.setTokenExpirationDate(LocalDateTime.now().plusMinutes(15));
