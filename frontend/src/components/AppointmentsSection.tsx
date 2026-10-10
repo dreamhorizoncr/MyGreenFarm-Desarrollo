@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CalendarClockIcon, PencilIcon, SearchIcon } from '@animateicons/react/lucide'
+import { Calendar, Button, ButtonGroup } from '@heroui/react'
+import { today, getLocalTimeZone, startOfWeek, startOfMonth } from '@internationalized/date'
+import { I18nProvider } from 'react-aria-components'
+import type { CalendarDate } from '@internationalized/date'
 import ChangeAppointmentStatusModal from './ChangeAppointmentStatusModal.tsx'
 import RescheduleAppointmentModal from './RescheduleAppointmentModal.tsx'
 import AppointmentDetailsModal from './AppointmentDetailsModal.tsx'
@@ -10,10 +14,11 @@ import { useAppointments } from '../hooks/useAppointments.ts'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { notify } from '../utils/notifications.ts'
 import type { Appointment, AppointmentStatus } from '../types/appointment.ts'
+import { useAvailability } from '../hooks/useAvailability.ts'
 
-type StatusFilter = 'ALL' | AppointmentStatus
+type StatusFilter = 'ALL' | 'BY_DATE' | AppointmentStatus
 
-const STATUS_FILTERS: StatusFilter[] = ['ALL', 'PENDING', 'CONFIRMED', 'CANCELLED']
+const STATUS_FILTERS: StatusFilter[] = ['ALL', 'BY_DATE', 'PENDING', 'CONFIRMED', 'CANCELLED']
 
 interface AppointmentCardProps {
   appointment?: Appointment
@@ -59,9 +64,8 @@ function AppointmentCard({
 
   return (
     <div
-      className={`group relative flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${
-        disabled ? 'opacity-60' : ''
-      }`}
+      className={`group relative flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg ${disabled ? 'opacity-60' : ''
+        }`}
     >
       <button
         type="button"
@@ -133,11 +137,19 @@ function AppointmentsSection() {
     rescheduleAppointment,
   } = useAppointments()
 
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('PENDING')
+  const { exceptions } = useAvailability()
+
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('BY_DATE')
+  const [selectedDate, setValue] = useState<CalendarDate | null>(today(getLocalTimeZone()))
+  const [focusedDate, setFocusedDate] = useState<CalendarDate>(today(getLocalTimeZone()))
   const [searchTerm, setSearchTerm] = useState('')
   const [appointmentToEdit, setAppointmentToEdit] = useState<Appointment | null>(null)
   const [appointmentToReschedule, setAppointmentToReschedule] = useState<Appointment | null>(null)
   const [appointmentToView, setAppointmentToView] = useState<Appointment | null>(null)
+
+  const specialScheduleDates = useMemo(() => {
+    return new Set(exceptions.map((item) => item.exceptionDate))
+  }, [exceptions])
 
   useEffect(() => {
     fetchAppointments()
@@ -146,25 +158,39 @@ function AppointmentsSection() {
   const filteredAppointments = useMemo(() => {
     const term = searchTerm.trim().toLowerCase()
     return appointments.filter((appointment) => {
-      if (statusFilter !== 'ALL' && appointment.status !== statusFilter) return false
+      if (statusFilter === 'BY_DATE') {
+        if (!selectedDate) return false
+        const appDate = new Date(appointment.appointmentDate)
+        if (
+          appDate.getFullYear() !== selectedDate.year ||
+          appDate.getMonth() + 1 !== selectedDate.month ||
+          appDate.getDate() !== selectedDate.day
+        ) {
+          return false
+        }
+      } else if (statusFilter !== 'ALL' && appointment.status !== statusFilter) {
+        return false
+      }
+
       if (!term) return true
       return [appointment.childName, appointment.parentName, appointment.parentEmail, appointment.parentPhone]
         .some((field) => field.toLowerCase().includes(term))
     })
-  }, [appointments, statusFilter, searchTerm])
+  }, [appointments, statusFilter, selectedDate, searchTerm])
 
   const { currentPage, setPage, totalPages, pageItems: pagedAppointments } = useClientPagination(filteredAppointments)
 
-  const statusLabel = (filter: StatusFilter): string =>
-    filter === 'ALL'
+  const statusLabel = (filter: StatusFilter): string => {
+    if (filter === 'BY_DATE') return t('teacherAppointments.byDate')
+    return filter === 'ALL'
       ? t('teacherAppointments.all')
       : t(`teacherAppointments.status.${filter.toLowerCase()}` as 'teacherAppointments.status.pending')
+  }
 
   const filterClassName = (active: boolean) =>
-    `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
-      active
-        ? 'border-green-500 bg-green-500 text-white'
-        : 'border-green-500 bg-white text-heading hover:bg-green-50'
+    `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${active
+      ? 'border-green-500 bg-green-500 text-white'
+      : 'border-green-500 bg-white text-heading hover:bg-green-50'
     }`
 
   const badgeClassName = (status: AppointmentStatus) => {
@@ -210,6 +236,7 @@ function AppointmentsSection() {
         {t('teacherAppointments.subtitle')}
       </p>
 
+      {/* Barra superior de búsqueda y filtros */}
       <div className="mb-[var(--spacing-lg)] mt-[var(--spacing-xl)] flex flex-wrap items-center justify-between gap-md">
         <div className="flex h-11 min-w-[240px] max-w-[420px] flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
           <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
@@ -223,7 +250,7 @@ function AppointmentsSection() {
           />
         </div>
 
-        <div className="flex flex-wrap gap-sm">
+        <div className="flex flex-wrap items-center gap-sm">
           {STATUS_FILTERS.map((filter) => (
             <button
               key={filter}
@@ -242,44 +269,191 @@ function AppointmentsSection() {
         <p className="m-0 mb-md text-left font-body text-body-sm text-danger">{actionError}</p>
       )}
 
-      {loading && (
-        <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-          <AppointmentCard loading />
-          <AppointmentCard loading />
-          <AppointmentCard loading />
-          <AppointmentCard loading />
-        </div>
-      )}
+      {statusFilter === 'BY_DATE' ? (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-xl items-start">
+          {/* Columna Izquierda: Calendario con mejor espacio y presencia */}
+          <div className="lg:col-span-5 rounded-2xl border border-neutral-200 bg-white p-xl shadow-sm flex flex-col items-center gap-6">
+            <ButtonGroup
+              fullWidth
+              size="sm"
+              variant="tertiary"
+              className="bg-green-500 text-white rounded-2xl p-1.5 shadow-inner flex justify-between w-full"
+            >
+              <Button
+                className="rounded-2xl text-white font-medium hover:bg-green-400/40 transition-colors data-[pressed=true]:scale-95 px-8 py-2"
+                onPress={() => {
+                  const todayDate = today(getLocalTimeZone())
+                  setValue(todayDate)
+                  setFocusedDate(todayDate)
+                }}
+              >
+                {t('teacherAppointments.calendar.today')}
+              </Button>
+              <Button
+                className="rounded-2xl text-white font-medium hover:bg-green-400/40 transition-colors data-[pressed=true]:scale-95 px-8 py-2"
+                onPress={() => {
+                  const nextWeekStart = startOfWeek(today(getLocalTimeZone()), i18n.language)
+                  setValue(nextWeekStart)
+                  setFocusedDate(nextWeekStart)
+                }}
+              >
+                {t('teacherAppointments.calendar.week')}
+              </Button>
+              <Button
+                className="rounded-2xl text-white font-medium hover:bg-green-400/40 transition-colors data-[pressed=true]:scale-95 px-8 py-2"
+                onPress={() => {
+                  const nextMonthStart = startOfMonth(today(getLocalTimeZone()))
+                  setValue(nextMonthStart)
+                  setFocusedDate(nextMonthStart)
+                }}
+              >
+                {t('teacherAppointments.calendar.month')}
+              </Button>
+            </ButtonGroup>
 
-      {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
 
-      {!loading && !error && (
-        filteredAppointments.length === 0 ? (
-          <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
-            {searchTerm.trim() || statusFilter !== 'ALL'
-              ? t('teacherAppointments.noResults')
-              : t('teacherAppointments.empty')}
-          </p>
-        ) : (
-          <>
-          <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-            {pagedAppointments.map((appointment) => (
-              <AppointmentCard
-                key={appointment.id}
-                appointment={appointment}
-                statusLabel={statusLabel(appointment.status)}
-                badgeClassName={badgeClassName(appointment.status)}
-                formattedDate={formatDate(appointment.appointmentDate)}
-                disabled={actionId === appointment.id}
-                onView={() => setAppointmentToView(appointment)}
-                onReschedule={() => setAppointmentToReschedule(appointment)}
-                onChangeStatus={() => setAppointmentToEdit(appointment)}
-              />
-            ))}
+            <I18nProvider locale={i18n.resolvedLanguage ?? i18n.language ?? 'es'}>
+              <Calendar
+                aria-label={t('teacherAppointments.calendar.ariaLabel')}
+                focusedValue={focusedDate}
+                value={selectedDate}
+                onChange={setValue}
+                onFocusChange={setFocusedDate}
+                className="flex flex-col items-center w-full"
+              >
+                <Calendar.Header className="w-full flex justify-between items-center px-2 pb-4">
+                  <Calendar.Heading className="font-heading font-bold text-xl capitalize text-heading" />
+                  <div className="flex gap-2">
+                    <Calendar.NavButton slot="previous" />
+                    <Calendar.NavButton slot="next" />
+                  </div>
+                </Calendar.Header>
+                <Calendar.Grid className="w-full border-collapse">
+                  <Calendar.GridHeader className="mb-3">
+                    {(day) => <Calendar.HeaderCell className="w-10 h-10 text-center font-semibold text-md text-neutral-500">{day}</Calendar.HeaderCell>}
+                  </Calendar.GridHeader>
+                  <Calendar.GridBody>
+                    {(date) => {
+                      const dateString = date.toString()
+                      const isSpecial = specialScheduleDates.has(dateString)
+
+                      return (
+                        <Calendar.Cell
+                          date={date}
+                          className={({ isOutsideMonth, isSelected }) =>
+                            `relative flex items-center justify-center w-15 h-15 rounded-full transition-colors text-lg font-medium mx-auto 
+                            ${isOutsideMonth ? 'text-neutral-300 opacity-60' : 'text-heading'} 
+                            ${isSelected ? 'bg-orange-500 shadow-md text-white' : 'hover:bg-neutral-100'} 
+                            ${isSpecial && !isSelected ? 'after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:size-1.5 after:rounded-full after:bg-orange-500' : ''}`
+                          }
+                        />
+                      )
+                    }}
+                  </Calendar.GridBody>
+                </Calendar.Grid>
+              </Calendar>
+            </I18nProvider>
+
+            <div className="flex flex-wrap justify-center gap-2 w-full pt-6 border-t border-neutral-100">
+              <Button
+                size="sm"
+                variant="tertiary"
+                onPress={() => setValue(null)}
+                className="border-green-500 bg-white text-heading hover:bg-green-50 px-6 py-2 rounded-full border items-center justify-center font-body text-sm font-semibold transition-colors"
+              >
+                {t('teacherAppointments.calendar.clear')}
+              </Button>
+            </div>
           </div>
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
-          </>
-        )
+
+          {/* Columna Derecha: Tarjetas de citas con mejor espaciado */}
+          <div className="lg:col-span-7 flex flex-col gap-md">
+            <h2 className="m-0 font-heading text-xl font-bold text-heading">
+              {t('teacherAppointments.calendar.appointmentsForDay')}: <span className="text-green-600">{selectedDate?.toString()}</span>
+            </h2>
+
+            {loading && (
+              <div className="grid grid-cols-1 gap-md">
+                <AppointmentCard loading />
+                <AppointmentCard loading />
+              </div>
+            )}
+
+            {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
+
+            {!loading && !error && (
+              filteredAppointments.length === 0 ? (
+                <div className="rounded-2xl border border-neutral-200 bg-white p-2xl text-center shadow-sm">
+                  <p className="m-0 font-body text-body text-neutral-500">
+                    {t('teacherAppointments.calendar.noAppointmentsForDay')}
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 gap-md">
+                    {pagedAppointments.map((appointment) => (
+                      <AppointmentCard
+                        key={appointment.id}
+                        appointment={appointment}
+                        statusLabel={statusLabel(appointment.status)}
+                        badgeClassName={badgeClassName(appointment.status)}
+                        formattedDate={formatDate(appointment.appointmentDate)}
+                        disabled={actionId === appointment.id}
+                        onView={() => setAppointmentToView(appointment)}
+                        onReschedule={() => setAppointmentToReschedule(appointment)}
+                        onChangeStatus={() => setAppointmentToEdit(appointment)}
+                      />
+                    ))}
+                  </div>
+                  <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+                </>
+              )
+            )}
+          </div>
+        </div>
+      ) : (
+        /* Vista de Estados (Todas, Pendiente, Confirmada, Cancelada) */
+        <>
+          {loading && (
+            <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
+              <AppointmentCard loading />
+              <AppointmentCard loading />
+              <AppointmentCard loading />
+              <AppointmentCard loading />
+            </div>
+          )}
+
+          {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
+
+          {!loading && !error && (
+            filteredAppointments.length === 0 ? (
+              <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
+                {searchTerm.trim() || statusFilter !== 'ALL'
+                  ? t('teacherAppointments.noResults')
+                  : t('teacherAppointments.empty')}
+              </p>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
+                  {pagedAppointments.map((appointment) => (
+                    <AppointmentCard
+                      key={appointment.id}
+                      appointment={appointment}
+                      statusLabel={statusLabel(appointment.status)}
+                      badgeClassName={badgeClassName(appointment.status)}
+                      formattedDate={formatDate(appointment.appointmentDate)}
+                      disabled={actionId === appointment.id}
+                      onView={() => setAppointmentToView(appointment)}
+                      onReschedule={() => setAppointmentToReschedule(appointment)}
+                      onChangeStatus={() => setAppointmentToEdit(appointment)}
+                    />
+                  ))}
+                </div>
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+              </>
+            )
+          )}
+        </>
       )}
 
       {appointmentToEdit && (
