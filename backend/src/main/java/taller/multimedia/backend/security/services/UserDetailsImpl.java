@@ -29,12 +29,13 @@ public class UserDetailsImpl implements UserDetails {
     private String lastName;
     private String role;
     private boolean isActive;
+    private String photoUrl;
 
     private Collection<? extends GrantedAuthority> authorities;
     private LocalDate birthday;
 
     public UserDetailsImpl(UUID id, String email, String password, String firstName, String lastName,
-            String role, boolean isActive, LocalDate birthday,
+            String role, boolean isActive, String photoUrl, LocalDate birthday,
             Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.email = email;
@@ -43,6 +44,7 @@ public class UserDetailsImpl implements UserDetails {
         this.lastName = lastName;
         this.role = role;
         this.isActive = isActive;
+        this.photoUrl = photoUrl;
         this.birthday = birthday;
         this.authorities = authorities;
     }
@@ -58,7 +60,8 @@ public class UserDetailsImpl implements UserDetails {
                 user.getFirstName(),
                 user.getLastName(),
                 user.getRole().name(),
-                user.isActive(),
+                user.getIsActive(),
+                user.getPhotoUrl(),
                 user.getBirthday(),
                 authorities);
     }
@@ -94,6 +97,10 @@ public class UserDetailsImpl implements UserDetails {
 
     public boolean isActive() {
         return isActive;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
     }
 
     public LocalDate getBirthday() {
