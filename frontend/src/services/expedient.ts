@@ -3,6 +3,12 @@ import { sanitizeFileName } from "../utils/sanitizeFileName.ts";
 
 import type { Expedient, ExpedientRequest } from "../types/expedient.ts";
 
+export interface TranslationItem {
+  entityId: string
+  fieldName: string
+  originalText: string
+}
+
 export const expedientService = {
   //Obtiene todos los expedientes.
   async getExpedients(page = 0, size = 10): Promise<PageResponse<Expedient>> {
@@ -75,5 +81,15 @@ export const expedientService = {
   //Elimina el expediente
   async delete(id: string): Promise<void> {
     await apiClient.delete(`/expedients/${id}`);
+  },
+
+  async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {
+    if (items.length === 0) return {}
+    const response = await apiClient.post<Record<string, string>>('/translations/batch', {
+      entityType,
+      targetLanguage: targetLanguage?.split('-')[0] || 'es',
+      items,
+    })
+    return response.data
   },
 };

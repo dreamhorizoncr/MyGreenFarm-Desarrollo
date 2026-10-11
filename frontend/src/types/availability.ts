@@ -21,12 +21,12 @@ export interface WeeklyScheduleDraft extends WeeklySchedule {
   dirty?: boolean
 }
 
-export const WEEK_DAYS: Array<{ value: DayOfWeek; label: string }> = [
-  { value: 'MONDAY', label: 'Lunes' },
-  { value: 'TUESDAY', label: 'Martes' },
-  { value: 'WEDNESDAY', label: 'Miércoles' },
-  { value: 'THURSDAY', label: 'Jueves' },
-  { value: 'FRIDAY', label: 'Viernes' },
+export const WEEK_DAYS: Array<{ value: DayOfWeek }> = [
+  { value: 'MONDAY' },
+  { value: 'TUESDAY' },
+  { value: 'WEDNESDAY' },
+  { value: 'THURSDAY' },
+  { value: 'FRIDAY' },
 ]
 
 export const DEFAULT_START_TIME = '06:00:00'

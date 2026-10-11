@@ -1,7 +1,9 @@
 package taller.multimedia.backend.model.child;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -17,7 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -64,14 +66,7 @@ public class Child {
     @Column(name = "medical_notes", columnDefinition = "TEXT")
     private String medicalNotes;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "child_clubs",
-        joinColumns = @JoinColumn(name = "child_id"),
-        inverseJoinColumns = @JoinColumn(name = "club_id")
-    )
-    @Builder.Default
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private Set<Club> clubs = new HashSet<>();
+    @OneToMany(mappedBy = "child", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ChildClub> childClubs = new ArrayList<>();
+
 }

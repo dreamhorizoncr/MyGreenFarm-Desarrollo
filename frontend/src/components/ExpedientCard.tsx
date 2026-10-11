@@ -1,7 +1,8 @@
-import type { EducationalLevel, Expedient } from "../types/expedient.ts";
+import type { Expedient } from "../types/expedient.ts";
 import { useTranslation } from "react-i18next";
 import { Pencil, Trash2 } from "@animateicons/react/lucide";
 import Skeleton from "./ui/Skeleton.tsx";
+import { educationalLevelKeys } from "../utils/educationalLevels.ts";
 
 interface ExpedientCardProps {
   expedient?: Expedient;
@@ -9,21 +10,6 @@ interface ExpedientCardProps {
   onDelete?: (expedient: Expedient) => void;
   loading?: boolean;
 }
-
-// Convierte el nivel educativo a un texto más fácil de leer
-const educationalLevelLabels: Record<EducationalLevel, string> = {
-  LACTANTES: "Lactantes",
-  MATERNAL: "Maternal",
-  INTERACTIVO: "Interactivo",
-  MATERNO: "Materno",
-  KINDER: "Kinder",
-  PRIMER_GRADO: "Primer grado",
-  SEGUNDO_GRADO: "Segundo grado",
-  TERCER_GRADO: "Tercer grado",
-  CUARTO_GRADO: "Cuarto grado",
-  QUINTO_GRADO: "Quinto grado",
-  SEXTO_GRADO: "Sexto grado",
-};
 
 // Convierte YYYY-MM-DD a DD/MM/YYYY
 function formatDate(date: string) {
@@ -92,7 +78,7 @@ function ExpedientCard({ expedient, onEdit, onDelete, loading = false }: Readonl
 
             <p>
               <span className="font-bold">{t('admin.expedients.grade')} </span>
-              {educationalLevelLabels[expedient!.educationalLevel]}
+              {t(`admin.expedients.levels.${educationalLevelKeys[expedient!.educationalLevel]}`)}
             </p>
           </>
         )}
@@ -108,12 +94,12 @@ function ExpedientCard({ expedient, onEdit, onDelete, loading = false }: Readonl
             {expedient!.photoUrl ? (
               <img
                 src={expedient!.photoUrl}
-                alt={`Fotografía de ${expedient!.childName}`}
+                alt={t('admin.expedients.photoAlt', { name: expedient!.childName })}
                 className="h-full w-full object-cover"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center px-4 text-center">
-                <p className="font-body text-body-sm text-body-text">Sin fotografía</p>
+                <p className="font-body text-body-sm text-body-text">{t('admin.expedients.noPhoto')}</p>
               </div>
             )}
           </div>
@@ -134,7 +120,7 @@ function ExpedientCard({ expedient, onEdit, onDelete, loading = false }: Readonl
               </h3>
 
               <p className="mt-2 break-words font-body text-body-sm leading-relaxed text-body-text">
-                {expedient!.generalObservations || "Sin observaciones."}
+                {expedient!.generalObservations || t('admin.expedients.noObservations')}
               </p>
             </>
           )}

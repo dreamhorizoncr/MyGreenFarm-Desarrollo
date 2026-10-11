@@ -30,8 +30,6 @@ import taller.multimedia.backend.util.Sanitizer;
 @Service
 public class AppointmentService {
 
-    private static final Set<String> IDIOMAS_VALIDOS = Set.of("es", "en", "fr");
-
     private final CalendarSyncAsyncService calendarSyncAsyncService;
 
     @Autowired

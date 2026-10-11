@@ -2,6 +2,7 @@ package taller.multimedia.backend.dto.club;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,9 @@ public class ClubRequest {
 
     @Min(value = 1, message = "La capacidad máxima debe ser al menos 1")
     private Integer maxCapacity;
+
+    @NotNull (message = "El estado de publicación no puede ser nulo")
+    private Boolean isPublished;
 
     private List<ClubImageRequest> images;
 }

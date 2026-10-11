@@ -45,6 +45,9 @@ public class EmailService {
 
     @Value("${daycare.mail.admin}")
     private String correoAdmin;
+    
+    @Value("${social.link:https://linktr.ee/dreamhorizoncr}")
+    private String socialLink;
 
     public EmailService(TemplateEngine templateEngine,
             MessageSource messageSource,
@@ -58,12 +61,24 @@ public class EmailService {
         this.translationService = translationService;
     }
 
+    private Context createBaseContext(Locale locale) {
+        Context context = (locale != null) ? new Context(locale) : new Context();
+        context.setVariable("supportEmail", supportEmail);
+        context.setVariable("frontendUrl", frontendUrl);
+        context.setVariable("socialLink", socialLink);
+        return context;
+    }
+
+    private Context createBaseContext() {
+        return createBaseContext(null);
+    }
+
     @Async
     public void sendPasswordResetEmail(String toEmail, String resetToken) {
         String resetLink = frontendUrl.replaceAll("/+$", "")
                 + "/reset-password?token=" + resetToken;
 
-        Context context = new Context();
+        Context context = createBaseContext();
         context.setVariable("resetLink", resetLink);
         context.setVariable("supportEmail", supportEmail);
 
@@ -86,7 +101,7 @@ public class EmailService {
 
     @Async
     public void sendAppointmentPendingEmail(Appointment appointment, Locale locale) {
-        Context context = new Context(locale);
+        Context context = createBaseContext(locale);
         context.setVariable("supportEmail", supportEmail);
         context.setVariable("childName", appointment.getChildName());
 
@@ -101,7 +116,7 @@ public class EmailService {
 
     @Async
     public void sendAppointmentStatusUpdateEmail(Appointment appointment, Locale locale) {
-        Context context = new Context(locale);
+        Context context = createBaseContext(locale);
         context.setVariable("supportEmail", supportEmail);
         context.setVariable("childName", appointment.getChildName());
         context.setVariable("status", appointment.getStatus().name());
@@ -147,7 +162,7 @@ public class EmailService {
     @Async
     public void sendRescheduleEmail(Appointment appointment, Locale locale) {
         try {
-            Context context = new Context(locale);
+            Context context = createBaseContext(locale);
             context.setVariable("supportEmail", supportEmail);
             context.setVariable("childName", appointment.getChildName());
 
@@ -169,7 +184,7 @@ public class EmailService {
 
     @Async
     public void sendApplicationReceivedEmail(Curriculum curriculum, String vacancyTitle, Locale locale) {
-        Context context = new Context(locale);
+        Context context = createBaseContext(locale);
         context.setVariable("supportEmail", supportEmail);
         context.setVariable("applicantName", curriculum.getApplicantName());
         context.setVariable("vacancyTitle", vacancyTitle);
@@ -182,7 +197,7 @@ public class EmailService {
 
     @Async
     public void sendApplicationHiredEmail(Curriculum curriculum, String vacancyTitle, Locale locale) {
-        Context context = new Context(locale);
+        Context context = createBaseContext(locale);
         context.setVariable("supportEmail", supportEmail);
         context.setVariable("vacancyTitle", vacancyTitle);
 
@@ -194,7 +209,7 @@ public class EmailService {
 
     public void sendAppointmentReminderEmail(Appointment appointment, Locale locale) {
         try {
-            Context context = new Context(locale);
+            Context context = createBaseContext(locale);
             context.setVariable("parentName", appointment.getParentName());
             context.setVariable("childName", appointment.getChildName());
 
@@ -228,7 +243,7 @@ public class EmailService {
 
     @Async
     public void sendBirthdayReminderEmail(List<User> teachers, LocalDate birthdayDate, Locale locale) {
-        Context context = new Context(locale);
+        Context context = createBaseContext(locale);
         context.setVariable("supportEmail", supportEmail);
         context.setVariable("birthdayDate", birthdayDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         context.setVariable("teacherNames", teachers.stream()
@@ -243,7 +258,7 @@ public class EmailService {
 
     @Async
     public void sendBirthdayGreetingEmail(User teacher, LocalDate birthdayDate, Locale locale) {
-        Context context = new Context(locale);
+        Context context = createBaseContext(locale);
         context.setVariable("supportEmail", supportEmail);
         context.setVariable("teacherName", teacher.getFirstName());
         context.setVariable("birthdayDate", birthdayDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
@@ -296,7 +311,7 @@ public class EmailService {
                     translatedContentByLanguage.put(targetLanguage, translatedContent);
                 }
 
-                Context context = new Context(locale);
+                Context context = createBaseContext(locale);
                 context.setVariable("supportEmail", supportEmail);
                 context.setVariable("frontendUrl", frontendUrl);
                 context.setVariable("broadcastMessage", translatedContent.get(1));
@@ -323,7 +338,7 @@ public class EmailService {
             Locale locale = Locale.forLanguageTag(lang);
 
             // Pasar la Locale al contexto de Thymeleaf para soporte i18n
-            Context context = new Context(locale);
+            Context context = createBaseContext(locale);
             context.setVariable("childName", childName);
             context.setVariable("summaryText", summaryText);
             context.setVariable("period", period);

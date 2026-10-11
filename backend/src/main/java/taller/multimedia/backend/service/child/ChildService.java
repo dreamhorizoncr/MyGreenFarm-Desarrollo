@@ -6,8 +6,10 @@ import taller.multimedia.backend.dto.child.ChildOptionResponse;
 import taller.multimedia.backend.dto.child.ChildRequest;
 import taller.multimedia.backend.dto.child.ChildResponse;
 import taller.multimedia.backend.model.child.Child;
+import taller.multimedia.backend.model.child.ChildClub;
 import taller.multimedia.backend.model.club.Club;
 import taller.multimedia.backend.model.parent.Parent;
+import taller.multimedia.backend.repository.child.ChildClubRepository;
 import taller.multimedia.backend.repository.child.ChildRepository;
 import taller.multimedia.backend.repository.club.ClubRepository;
 import taller.multimedia.backend.repository.parent.ParentRepository;
@@ -18,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +33,7 @@ public class ChildService {
     private final ChildRepository childRepository;
     private final ParentRepository parentRepository;
     private final ClubRepository clubRepository;
+    private final ChildClubRepository childClubRepository;
     private final StudentIdGeneratorService studentIdGeneratorService;
 
     @Transactional
@@ -37,18 +41,15 @@ public class ChildService {
         String parentIdentification = Sanitizer.requireClean("parentIdentification", dto.getParentIdentification());
 
         Parent parent = parentRepository.findByIdentification(parentIdentification)
-                .orElseThrow(() -> new EntityNotFoundException("Padre/Tutor no encontrado con la cédula: " + parentIdentification));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Padre/Tutor no encontrado con la cédula: " + parentIdentification));
 
         String firstName = Sanitizer.requireClean("firstName", dto.getFirstName());
         String lastName = Sanitizer.requireClean("lastName", dto.getLastName());
-        String medicalNotes = dto.getMedicalNotes() == null ? null : Sanitizer.requireCleanPreserveLineBreaks("medicalNotes", dto.getMedicalNotes());
+        String medicalNotes = dto.getMedicalNotes() == null ? null
+                : Sanitizer.requireCleanPreserveLineBreaks("medicalNotes", dto.getMedicalNotes());
 
         String studentId = studentIdGeneratorService.generateNextStudentId();
-
-        Set<Club> clubs = new HashSet<>();
-        if (dto.getClubIds() != null && !dto.getClubIds().isEmpty()) {
-            clubs = new HashSet<>(clubRepository.findAllById(dto.getClubIds()));
-        }
 
         Child child = Child.builder()
                 .studentId(studentId)
@@ -58,10 +59,32 @@ public class ChildService {
                 .lastName(lastName)
                 .birthDate(dto.getBirthDate())
                 .medicalNotes(medicalNotes)
-                .clubs(clubs)
+                .childClubs(new ArrayList<>())
                 .build();
 
+        Set<Long> affectedClubIds = new HashSet<>();
+
+        if (dto.getClubIds() != null && !dto.getClubIds().isEmpty()) {
+            List<Club> clubs = clubRepository.findAllById(dto.getClubIds());
+            for (Club club : clubs) {
+                long enrolled = childClubRepository.countByClubId(club.getId());
+                if (club.getMaxCapacity() != null && enrolled >= club.getMaxCapacity()) {
+                    throw new IllegalArgumentException(
+                            "El club '" + club.getName() + "' ya no tiene cupos disponibles.");
+                }
+
+                ChildClub childClub = new ChildClub();
+                childClub.setChild(child);
+                childClub.setClub(club);
+                child.getChildClubs().add(childClub);
+
+                affectedClubIds.add(club.getId());
+            }
+        }
+
         Child saved = childRepository.save(child);
+        updateClubsAvailableSpots(affectedClubIds);
+
         return mapToResponse(saved);
     }
 
@@ -88,15 +111,63 @@ public class ChildService {
                 .orElseThrow(() -> new EntityNotFoundException("Registro de niño no encontrado con ID: " + id));
 
         Parent parent = parentRepository.findByIdentification(dto.getParentIdentification())
-                .orElseThrow(() -> new EntityNotFoundException("Padre/Tutor no encontrado con ID: " + dto.getParentIdentification()));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Padre/Tutor no encontrado con la cédula: " + dto.getParentIdentification()));
 
         String firstName = Sanitizer.requireClean("firstName", dto.getFirstName());
         String lastName = Sanitizer.requireClean("lastName", dto.getLastName());
-        String medicalNotes = dto.getMedicalNotes() == null ? null : Sanitizer.requireCleanPreserveLineBreaks("medicalNotes", dto.getMedicalNotes());
+        String medicalNotes = dto.getMedicalNotes() == null ? null
+                : Sanitizer.requireCleanPreserveLineBreaks("medicalNotes", dto.getMedicalNotes());
 
-        Set<Club> clubs = new HashSet<>();
-        if (dto.getClubIds() != null && !dto.getClubIds().isEmpty()) {
-            clubs = new HashSet<>(clubRepository.findAllById(dto.getClubIds()));
+        Set<Long> affectedClubIds = new HashSet<>();
+
+        Set<Long> targetClubIds = dto.getClubIds() != null ? new HashSet<>(dto.getClubIds()) : new HashSet<>();
+
+        List<ChildClub> currentChildClubs = childClubRepository.findByChildId(child.getId());
+
+        // Mapear los IDs de los clubes que el niño tiene actualmente
+        Set<Long> existingClubIds = currentChildClubs.stream()
+                .map(cc -> cc.getClub().getId())
+                .collect(Collectors.toSet());
+
+        affectedClubIds.addAll(existingClubIds);
+
+        // 4. ELIMINAR solo las relaciones que el usuario desmarcó
+        List<ChildClub> toRemove = currentChildClubs.stream()
+                .filter(cc -> !targetClubIds.contains(cc.getClub().getId()))
+                .toList();
+
+        if (!toRemove.isEmpty()) {
+            childClubRepository.deleteAll(toRemove);
+            childClubRepository.flush(); // Se fuerza la eliminación inmediata en Postgres
+        }
+
+        // 5. INSERTAR solo los clubes verdaderamente NUEVOS
+        Set<Long> newClubIds = targetClubIds.stream()
+                .filter(clubId -> !existingClubIds.contains(clubId))
+                .collect(Collectors.toSet());
+
+        if (!newClubIds.isEmpty()) {
+            List<Club> newClubs = clubRepository.findAllById(newClubIds);
+            List<ChildClub> newChildClubs = new ArrayList<>();
+
+            for (Club club : newClubs) {
+                // Validar si hay cupo en el club nuevo
+                long enrolled = childClubRepository.countByClubId(club.getId());
+                if (club.getMaxCapacity() != null && enrolled >= club.getMaxCapacity()) {
+                    throw new IllegalArgumentException(
+                            "El club '" + club.getName() + "' ya no tiene cupos disponibles.");
+                }
+
+                ChildClub cc = new ChildClub();
+                cc.setChild(child);
+                cc.setClub(club);
+                newChildClubs.add(cc);
+
+                affectedClubIds.add(club.getId());
+            }
+
+            childClubRepository.saveAll(newChildClubs);
         }
 
         child.setParent(parent);
@@ -105,9 +176,10 @@ public class ChildService {
         child.setLastName(lastName);
         child.setBirthDate(dto.getBirthDate());
         child.setMedicalNotes(medicalNotes);
-        child.setClubs(clubs);
 
         Child updated = childRepository.save(child);
+        updateClubsAvailableSpots(affectedClubIds);
+
         return mapToResponse(updated);
     }
 
@@ -115,7 +187,15 @@ public class ChildService {
     public void delete(Long id) {
         Child child = childRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Registro de niño no encontrado con ID: " + id));
+        Set<Long> affectedClubIds = new HashSet<>();
+        if (child.getChildClubs() != null) {
+            child.getChildClubs().forEach(cc -> affectedClubIds.add(cc.getClub().getId()));
+        }
+
         childRepository.delete(child);
+
+        // Recalcular los cupos disponibles tras eliminar al niño
+        updateClubsAvailableSpots(affectedClubIds);
     }
 
     @Transactional(readOnly = true)
@@ -125,17 +205,18 @@ public class ChildService {
                 .map(child -> new ChildOptionResponse(
                         child.getId(),
                         child.getStudentId(),
-                        child.getStudentId() + " - " + child.getFirstName() + " " + child.getLastName()
-                ))
+                        child.getStudentId() + " - " + child.getFirstName() + " " + child.getLastName()))
                 .toList();
     }
 
     private ChildResponse mapToResponse(Child child) {
-        Set<String> clubNames = child.getClubs().stream()
-                .map(Club::getName)
-                .collect(Collectors.toSet());
+        Set<String> clubNames = child.getChildClubs() != null
+                ? child.getChildClubs().stream()
+                        .map(cc -> cc.getClub().getName())
+                        .collect(Collectors.toSet())
+                : Set.of();
 
-        String parentFullName = child.getParent() != null 
+        String parentFullName = child.getParent() != null
                 ? child.getParent().getFirstName() + " " + child.getParent().getLastName()
                 : null;
 
@@ -152,5 +233,20 @@ public class ChildService {
         response.setClubNames(clubNames);
 
         return response;
+    }
+
+    private void updateClubsAvailableSpots(Set<Long> clubIds) {
+        if (clubIds == null || clubIds.isEmpty())
+            return;
+
+        List<Club> clubs = clubRepository.findAllById(clubIds);
+        for (Club club : clubs) {
+            if (club.getMaxCapacity() != null) {
+                long enrolled = childClubRepository.countByClubId(club.getId());
+                int available = (int) Math.max(0, club.getMaxCapacity() - enrolled);
+                club.setAvailableSpots(available);
+            }
+        }
+        clubRepository.saveAll(clubs);
     }
 }
