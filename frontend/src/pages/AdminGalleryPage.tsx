@@ -748,9 +748,6 @@ onCreateYear={handleCreateYear}
 								onSelect={handleFilesSelected}
 							/>
 
-							<p className="mt-xs text-caption font-normal text-neutral-500">
-								{t('admin.gallery.addPhotosHelp')}
-							</p>
 
 							{fileError && (
 								<p className="mt-xs block font-body text-body-sm font-normal text-danger">{fileError}</p>
@@ -778,6 +775,7 @@ onCreateYear={handleCreateYear}
 								<ImageThumb
 									key={image.id}
 									src={image.fileUrl}
+									label={t('admin.gallery.photoTag')}
 									onDelete={() => setImageToDelete(image.id)}
 									deleteLabel={t('admin.delete')}
 								/>

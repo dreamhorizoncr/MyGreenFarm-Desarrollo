@@ -18,6 +18,7 @@ import { childService, type ChildOption } from "../services/child.ts";
 import { educationalLevelKeys } from "../utils/educationalLevels.ts";
 import ImagePickerButton from "./ui/ImagePickerButton.tsx";
 import ImageThumb, { ImageThumbList } from "./ui/ImageThumb.tsx";
+import DeleteConfirmModal from "./ui/DeleteConfirmModal.tsx";
 
 interface ExpedientFormModalProps {
   onClose: () => void;
@@ -72,6 +73,8 @@ function ExpedientFormModal({
 
   // Fotografía seleccionada
   const [file, setFile] = useState<File | undefined>();
+  const [currentPhotoUrl, setCurrentPhotoUrl] = useState(expedient?.photoUrl ?? null);
+  const [confirmPhotoDelete, setConfirmPhotoDelete] = useState(false);
 
   // Estado del formulario
   const [saving, setSaving] = useState(false);
@@ -338,6 +341,7 @@ function ExpedientFormModal({
 
             <ImagePickerButton
               label={t("admin.expedients.choosePhoto")}
+              replacesCurrent={Boolean(currentPhotoUrl)}
               accept="image/*"
               onSelect={(files) => setFile(files[0])}
             />
@@ -348,17 +352,16 @@ function ExpedientFormModal({
               </ImageThumbList>
             )}
 
-            {!file && expedient?.photoUrl && (
+            {!file && currentPhotoUrl && (
               <ImageThumbList title={t("admin.expedients.currentPhoto")} className="mt-sm">
-                <ImageThumb src={expedient.photoUrl} />
+                <ImageThumb
+                  src={currentPhotoUrl}
+                  label={t("admin.expedients.photo")}
+                  onDelete={() => setConfirmPhotoDelete(true)}
+                  deleteLabel={t("common.deleteImageTitle")}
+                />
               </ImageThumbList>
             )}
-
-            <p className="mt-xs font-body text-caption font-normal text-neutral-500">
-              {isEditing
-                ? t("admin.expedients.replacePhoto")
-                : t("admin.expedients.optionalPhoto")}
-            </p>
           </div>
         </div>
 
@@ -387,6 +390,25 @@ function ExpedientFormModal({
           </button>
         </div>
       </form>
+
+      {confirmPhotoDelete && expedient && (
+        <DeleteConfirmModal
+          title={t("common.deleteImageTitle")}
+          message={t("common.deleteImageMessage")}
+          onConfirm={async () => {
+            try {
+              await expedientService.deletePhoto(expedient.id);
+            } catch (err) {
+              notify.error(t("common.imageDeleteErrorToast"));
+              throw err;
+            }
+            setCurrentPhotoUrl(null);
+            notify.success(t("common.imageDeletedToast"));
+            await onCreated();
+          }}
+          onClose={() => setConfirmPhotoDelete(false)}
+        />
+      )}
     </div>
   );
 }

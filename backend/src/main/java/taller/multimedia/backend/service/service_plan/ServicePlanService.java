@@ -94,6 +94,11 @@ public class ServicePlanService {
     }
 
     @Transactional
+    public ServicePlan deleteImage(UUID id) {
+        return servicePlanImagesService.deleteImage(id);
+    }
+
+    @Transactional
     public void deletePlan(UUID id) {
         servicePlanImagesService.deletePlan(id);
     }
