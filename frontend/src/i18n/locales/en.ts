@@ -335,9 +335,9 @@ export default {
     preview: "Preview",
   },
   adminForum: {
-    title: "Forum blog",
+    title: "Forum",
     description:
-      "Publish research so families can read it in the forum's blog tab.",
+      "Publish research for the blog and moderate community comments.",
     noPersistenceNotice:
       "There is no server connection yet: anything you publish here shows up in the forum until you reload the page.",
     addPost: "Add research",
@@ -393,6 +393,20 @@ export default {
     deleteCommentDescription: 'The comment from "{{alias}}" will be deleted.',
     commentDeletedToastTitle: "Comment deleted",
     commentDeleteErrorToastTitle: "The comment could not be deleted",
+    tabs: {
+      label: "Forum sections",
+      posts: "Posts",
+      community: "Community",
+    },
+    community: {
+      empty: "There are no community posts yet.",
+      loadError: "Community posts could not be loaded.",
+      deleteLabel: "Delete {{name}}'s post",
+      deleteTitle: "Delete post",
+      deleteDescription: "The post by \"{{name}}\" will be deleted along with its comments and likes.",
+      deletedToastTitle: "Post deleted",
+      deleteErrorToastTitle: "The post could not be deleted",
+    },
   },
   booking: {
     title: "Book an appointment",

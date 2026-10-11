@@ -3,15 +3,18 @@ import { HeartIcon, MessageCircleIcon } from '@animateicons/react/lucide'
 import type { CommunityPost } from '../../types/forum.ts'
 import PostAvatar from './PostAvatar.tsx'
 import Skeleton from '../ui/Skeleton.tsx'
+import CardActionButton from '../ui/CardActionButton.tsx'
 
 interface CommunityPostCardProps {
   post?: CommunityPost
   onToggleLike?: (postId: string) => void
   onOpenComments?: (postId: string) => void
+  // Solo en el admin: muestra el botón de eliminar la publicación.
+  onDelete?: (postId: string) => void
   loading?: boolean
 }
 
-function CommunityPostCard({ post, onToggleLike, onOpenComments, loading = false }: Readonly<CommunityPostCardProps>) {
+function CommunityPostCard({ post, onToggleLike, onOpenComments, onDelete, loading = false }: Readonly<CommunityPostCardProps>) {
   const { t } = useTranslation()
 
   if (loading) {
@@ -41,15 +44,32 @@ function CommunityPostCard({ post, onToggleLike, onOpenComments, loading = false
         <p className="m-0 min-w-0 truncate font-heading text-h6 font-bold text-heading">
           {post!.name}
         </p>
+
+        {onDelete && (
+          <CardActionButton
+            action="delete"
+            size="sm"
+            label={t('adminForum.community.deleteLabel', { name: post!.name })}
+            onClick={() => onDelete(post!.id)}
+            className="ml-auto"
+          />
+        )}
       </header>
 
       <p className="m-0 mt-md whitespace-pre-line break-words font-body text-body-sm leading-[1.6] text-body-text">
         {post!.content}
       </p>
       <div className="mt-md flex items-center gap-lg border-t border-neutral-100 pt-md">
-        <button type="button" onClick={() => onToggleLike!(post!.id)} aria-pressed={post!.reacted} aria-label={t('forum.likes.label')} className={`flex items-center gap-xs font-body text-body-sm ${post!.reacted ? 'text-danger' : 'text-neutral-500 hover:text-danger'}`}>
-          <HeartIcon size={18} className={post!.reacted ? 'fill-current' : ''} /><span>{post!.likeCount}</span>
-        </button>
+        {/* Sin onToggleLike (vista del admin) el contador de likes es solo informativo. */}
+        {onToggleLike ? (
+          <button type="button" onClick={() => onToggleLike(post!.id)} aria-pressed={post!.reacted} aria-label={t('forum.likes.label')} className={`flex items-center gap-xs font-body text-body-sm ${post!.reacted ? 'text-danger' : 'text-neutral-500 hover:text-danger'}`}>
+            <HeartIcon size={18} className={post!.reacted ? 'fill-current' : ''} /><span>{post!.likeCount}</span>
+          </button>
+        ) : (
+          <span aria-label={t('forum.likes.label')} className="flex items-center gap-xs font-body text-body-sm text-neutral-500">
+            <HeartIcon size={18} /><span>{post!.likeCount}</span>
+          </span>
+        )}
         <button type="button" onClick={() => onOpenComments!(post!.id)} aria-label={t('forum.blog.commentsTitle')} className="flex items-center gap-xs font-body text-body-sm text-neutral-500 hover:text-heading">
           <MessageCircleIcon size={18} /><span>{post!.commentCount}</span>
         </button>
