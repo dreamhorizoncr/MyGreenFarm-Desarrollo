@@ -334,9 +334,9 @@ export default {
     preview: "Aperçu",
   },
   adminForum: {
-    title: "Blog du forum",
+    title: "Forum",
     description:
-      "Publiez des recherches pour que les familles les lisent dans l'onglet Blog du forum.",
+      "Publiez des recherches pour le blog et modérez les commentaires de la communauté.",
     noPersistenceNotice:
       "Il n'y a pas encore de connexion au serveur : ce que vous publiez ici apparaît dans le forum jusqu'à ce que vous rechargiez la page.",
     addPost: "Ajouter une recherche",
@@ -387,6 +387,20 @@ export default {
     deleteCommentDescription: 'Le commentaire de "{{alias}}" va être supprimé.',
     commentDeletedToastTitle: "Commentaire supprimé",
     commentDeleteErrorToastTitle: "Le commentaire n'a pas pu être supprimé",
+    tabs: {
+      label: "Sections du forum",
+      posts: "Publications",
+      community: "Communauté",
+    },
+    community: {
+      empty: "Il n'y a pas encore de publications dans la communauté.",
+      loadError: "Les publications de la communauté n'ont pas pu être chargées.",
+      deleteLabel: "Supprimer la publication de {{name}}",
+      deleteTitle: "Supprimer la publication",
+      deleteDescription: "La publication de « {{name}} » sera supprimée avec ses commentaires et ses mentions j'aime.",
+      deletedToastTitle: "Publication supprimée",
+      deleteErrorToastTitle: "La publication n'a pas pu être supprimée",
+    },
   },
   booking: {
     title: "Réserver un rendez-vous",

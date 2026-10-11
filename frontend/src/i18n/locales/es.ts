@@ -338,9 +338,9 @@ export default {
     preview: "Vista previa",
   },
   adminForum: {
-    title: "Blog del foro",
+    title: "Foro",
     description:
-      "Publicá investigaciones para que las familias las lean en la pestaña Blog del foro.",
+      "Publicá investigaciones para el Blog y moderá los comentarios de la comunidad.",
     noPersistenceNotice:
       "Todavía no hay conexión con el servidor: lo que publiques acá se ve en el foro mientras no recargues la página.",
     addPost: "Agregar investigación",
@@ -396,6 +396,20 @@ export default {
     deleteCommentDescription: 'Se va a eliminar el comentario de "{{alias}}".',
     commentDeletedToastTitle: "Comentario eliminado",
     commentDeleteErrorToastTitle: "No se pudo eliminar el comentario",
+    tabs: {
+      label: "Secciones del foro",
+      posts: "Publicaciones",
+      community: "Comunidad",
+    },
+    community: {
+      empty: "Todavía no hay publicaciones en la comunidad.",
+      loadError: "No se pudieron cargar las publicaciones de la comunidad.",
+      deleteLabel: "Eliminar la publicación de {{name}}",
+      deleteTitle: "Eliminar publicación",
+      deleteDescription: "Se va a eliminar la publicación de \"{{name}}\" junto con sus comentarios y me gusta.",
+      deletedToastTitle: "Publicación eliminada",
+      deleteErrorToastTitle: "No se pudo eliminar la publicación",
+    },
   },
   booking: {
     title: "Reservar cita",

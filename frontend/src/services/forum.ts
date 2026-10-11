@@ -174,6 +174,12 @@ export const forumService = {
     const response = await apiClient.post<CommunityComment>(`/forum/community/${id}/comments`, input)
     return response.data
   },
+  async deleteCommunityComment(postId: string, commentId: string): Promise<void> {
+    await apiClient.delete(`/forum/community/${postId}/comments/${commentId}`)
+  },
+  async deleteCommunityPost(postId: string): Promise<void> {
+    await apiClient.delete(`/forum/community/${postId}`)
+  },
 
   async translateBatch(
     entityType: string,
