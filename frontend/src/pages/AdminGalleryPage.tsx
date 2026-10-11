@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import {
 	CheckIcon,
 	ChevronDownIcon,
 	ChevronLeftIcon,
 	ChevronRightIcon,
-	FileImageIcon,
 	PlusIcon,
 	StarIcon,
 	Trash2Icon,
@@ -24,6 +23,8 @@ import { validateMinLength, validateRequired } from '../utils/validators.ts'
 import type { Gallery, GalleryCategory, GalleryImage, GalleryRequest } from '../types/gallery.ts'
 import ninos2 from '../assets/imgs/ninos2.svg'
 import CardActionButton from '../components/ui/CardActionButton.tsx'
+import ImagePickerButton from '../components/ui/ImagePickerButton.tsx'
+import ImageThumb, { ImageThumbList } from '../components/ui/ImageThumb.tsx'
 
 const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'])
 const TITLE_MIN_LENGTH = 5
@@ -414,7 +415,6 @@ function AdminGalleryPage() {
 	const [fileError, setFileError] = useState<string | null>(null)
 	const [images, setImages] = useState<GalleryImage[]>([])
 	const [submitting, setSubmitting] = useState(false)
-	const imagesInputRef = useRef<HTMLInputElement>(null)
 	const filesRef = useRef<SelectedImage[]>([])
 
 	useEffect(() => {
@@ -481,14 +481,13 @@ function AdminGalleryPage() {
 		setFileError(null)
 	}
 
-	const handleFilesSelected = (event: ChangeEvent<HTMLInputElement>) => {
-		const selected = event.target.files
-		if (!selected || selected.length === 0) return
+	const handleFilesSelected = (selected: File[]) => {
+		if (selected.length === 0) return
 
 		const valid: File[] = []
 		const rejected: string[] = []
 
-		Array.from(selected).forEach((file) => {
+		selected.forEach((file) => {
 			if (ALLOWED_IMAGE_TYPES.has(file.type)) valid.push(file)
 			else rejected.push(file.name)
 		})
@@ -503,8 +502,6 @@ function AdminGalleryPage() {
 			...prev,
 			...valid.map((file) => ({ file, previewUrl: URL.createObjectURL(file) })),
 		])
-
-		event.target.value = ''
 	}
 
 	const removeSelectedFile = (index: number) => {
@@ -754,23 +751,13 @@ onCreateYear={handleCreateYear}
 						</label>
 
 						<div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
-							<span className="block">{t('admin.gallery.chooseImages')}</span>
-							<input
-								ref={imagesInputRef}
-								type="file"
-								multiple
+							<span className="block">{t('admin.gallery.photos')}</span>
+							<ImagePickerButton
+								label={t('admin.gallery.chooseImages')}
 								accept="image/png,image/jpg,image/jpeg,image/svg+xml"
-								onChange={handleFilesSelected}
-								className="hidden"
+								multiple
+								onSelect={handleFilesSelected}
 							/>
-							<button
-								type="button"
-								onClick={() => imagesInputRef.current?.click()}
-								className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-body-sm font-semibold text-heading"
-							>
-								<FileImageIcon size={17} aria-hidden="true" />
-								{t('admin.gallery.chooseImages')}
-							</button>
 
 							<p className="mt-xs text-caption font-normal text-neutral-500">
 								{t('admin.gallery.addPhotosHelp')}
@@ -781,65 +768,32 @@ onCreateYear={handleCreateYear}
 							)}
 
 							{files.length > 0 && (
-								<div className="mt-md">
-									<h3 className="font-body text-body-sm font-semibold text-heading">
-										{t('admin.gallery.newPhotos')}
-									</h3>
-									<div className="mt-sm grid grid-cols-3 gap-sm sm:grid-cols-4 md:grid-cols-6">
-										{files.map((selected, index) => (
-											<div key={selected.previewUrl} className="relative">
-												<img
-													src={selected.previewUrl}
-													alt={selected.file.name}
-													className="aspect-square w-full rounded-lg border border-neutral-200 object-cover"
-												/>
-												<button
-													type="button"
-													onClick={() => removeSelectedFile(index)}
-													aria-label={`${t('admin.delete')}: ${selected.file.name}`}
-													className="absolute -right-sm -top-sm flex size-[26px] items-center justify-center rounded-full bg-red-600 text-white shadow transition hover:bg-red-700"
-												>
-													<XIcon size={14} />
-												</button>
-											</div>
-										))}
-									</div>
-									<p className="mt-sm text-caption font-normal text-neutral-500">
-										{files.length} {files.length === 1 ? t('admin.gallery.file') : t('admin.gallery.files')}
-									</p>
-								</div>
+								<ImageThumbList className="mt-sm">
+									{files.map((selected, index) => (
+										<ImageThumb
+											key={selected.previewUrl}
+											src={selected.previewUrl}
+											label={selected.file.name}
+											onDelete={() => removeSelectedFile(index)}
+											deleteLabel={`${t('admin.delete')}: ${selected.file.name}`}
+										/>
+									))}
+								</ImageThumbList>
 							)}
 						</div>
 					</div>
 
 					{images.length > 0 && (
-						<div className="mt-lg">
-							<h3 className="font-body text-body-sm font-semibold text-heading">
-								{t('admin.gallery.currentImages')}
-							</h3>
-							<div className="mt-sm flex flex-wrap gap-md">
-								{images.map((image) => (
-									<div
-										key={image.id}
-										className="flex items-center gap-sm rounded-xl border border-neutral-200 bg-white p-xs"
-									>
-										<img
-											src={image.fileUrl}
-											alt=""
-											className="size-16 rounded-lg object-cover"
-										/>
-										<button
-											type="button"
-											onClick={() => setImageToDelete(image.id)}
-											aria-label={t('admin.delete')}
-											className="text-danger"
-										>
-											<Trash2Icon size={16} />
-										</button>
-									</div>
-								))}
-							</div>
-						</div>
+						<ImageThumbList title={t('admin.gallery.currentImages')}>
+							{images.map((image) => (
+								<ImageThumb
+									key={image.id}
+									src={image.fileUrl}
+									onDelete={() => setImageToDelete(image.id)}
+									deleteLabel={t('admin.delete')}
+								/>
+							))}
+						</ImageThumbList>
 					)}
 
 					<div className="mt-lg flex flex-wrap justify-end gap-sm">
