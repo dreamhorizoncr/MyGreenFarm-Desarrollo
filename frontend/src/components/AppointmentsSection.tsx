@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CalendarClockIcon, PencilIcon, SearchIcon } from '@animateicons/react/lucide'
+import { SearchIcon } from '@animateicons/react/lucide'
 import { today, getLocalTimeZone } from '@internationalized/date'
 import type { CalendarDate } from '@internationalized/date'
 import ChangeAppointmentStatusModal from './ChangeAppointmentStatusModal.tsx'
@@ -8,6 +8,7 @@ import RescheduleAppointmentModal from './RescheduleAppointmentModal.tsx'
 import AppointmentDetailsModal from './AppointmentDetailsModal.tsx'
 import Skeleton from './ui/Skeleton.tsx'
 import CalendarPanel from './ui/CalendarPanel.tsx'
+import CardActionButton from './ui/CardActionButton.tsx'
 import Pagination from './ui/Pagination.tsx'
 import { useAppointments } from '../hooks/useAppointments.ts'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
@@ -49,9 +50,9 @@ function AppointmentCard({
       <div className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
         <div className="flex items-center justify-between gap-sm">
           <Skeleton shape="pill" className="h-6 w-24" />
-          <div className="flex items-center gap-2xs">
-            <Skeleton shape="circle" className="h-[38px] w-[38px]" />
-            <Skeleton shape="circle" className="h-[38px] w-[38px]" />
+          <div className="flex items-center gap-xs">
+            <Skeleton shape="circle" className="size-10" />
+            <Skeleton shape="circle" className="size-10" />
           </div>
         </div>
         <Skeleton shape="line" className="mt-sm h-5 w-1/2" />
@@ -79,34 +80,28 @@ function AppointmentCard({
           {statusLabel}
         </span>
 
-        <div className="flex items-center gap-2xs">
-          <button
-            type="button"
-            className="inline-flex size-[38px] items-center justify-center rounded-full text-link transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        <div className="flex items-center gap-xs">
+          <CardActionButton
+            action="reschedule"
+            label={t('teacherAppointments.rescheduleTitle')}
+            title={t('teacherAppointments.rescheduleTitle')}
+            disabled={disabled || appointment!.status === 'CANCELLED'}
             onClick={(event) => {
               event.stopPropagation()
               onReschedule?.()
             }}
-            disabled={disabled || appointment!.status === 'CANCELLED'}
-            aria-label={t('teacherAppointments.rescheduleTitle')}
-            title={t('teacherAppointments.rescheduleTitle')}
-          >
-            <CalendarClockIcon size={18} />
-          </button>
+          />
 
-          <button
-            type="button"
-            className="inline-flex size-[38px] items-center justify-center rounded-full text-link transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          <CardActionButton
+            action="edit"
+            label={t('teacherAppointments.changeStatus')}
+            title={t('teacherAppointments.changeStatus')}
+            disabled={disabled}
             onClick={(event) => {
               event.stopPropagation()
               onChangeStatus?.()
             }}
-            disabled={disabled}
-            aria-label={t('teacherAppointments.changeStatus')}
-            title={t('teacherAppointments.changeStatus')}
-          >
-            <PencilIcon size={18} />
-          </button>
+          />
         </div>
       </header>
 

@@ -1,7 +1,7 @@
-/** Botón circular de editar / eliminar que usan las cards del admin */
+/** Botón circular de acción (editar, reprogramar, eliminar) que usan las cards del admin */
 
 import type { ButtonHTMLAttributes } from 'react'
-import { PencilIcon, Trash2Icon } from '@animateicons/react/lucide'
+import { CalendarClockIcon, PencilIcon, Trash2Icon } from '@animateicons/react/lucide'
 import { tv } from 'tailwind-variants'
 
 const cardActionButton = tv({
@@ -9,6 +9,7 @@ const cardActionButton = tv({
   variants: {
     action: {
       edit: 'border-green-500 text-green-500 hover:bg-green-50',
+      reschedule: 'border-green-500 text-green-500 hover:bg-green-50',
       delete: 'border-red-300 text-danger hover:bg-red-50',
     },
     size: {
@@ -21,9 +22,10 @@ const cardActionButton = tv({
   },
 })
 
+const ICONS = { edit: PencilIcon, reschedule: CalendarClockIcon, delete: Trash2Icon } as const
 const ICON_SIZE = { md: 17, sm: 16 } as const
 
-type CardAction = 'edit' | 'delete'
+type CardAction = keyof typeof ICONS
 type CardActionSize = keyof typeof ICON_SIZE
 
 interface CardActionButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'aria-label'> {
@@ -34,7 +36,7 @@ interface CardActionButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElem
 }
 
 function CardActionButton({ action, label, size = 'md', type = 'button', className, ...rest }: Readonly<CardActionButtonProps>) {
-  const Icon = action === 'edit' ? PencilIcon : Trash2Icon
+  const Icon = ICONS[action]
 
   return (
     <button type={type} aria-label={label} className={cardActionButton({ action, size, className })} {...rest}>
