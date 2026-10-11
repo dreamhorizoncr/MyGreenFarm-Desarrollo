@@ -5,7 +5,6 @@ import {
 	ChevronLeftIcon,
 	ChevronRightIcon,
 	FileImageIcon,
-	PencilIcon,
 	PlusIcon,
 	StarIcon,
 	Trash2Icon,
@@ -24,6 +23,7 @@ import { notify } from '../utils/notifications.ts'
 import { validateMinLength, validateRequired } from '../utils/validators.ts'
 import type { Gallery, GalleryCategory, GalleryImage, GalleryRequest } from '../types/gallery.ts'
 import ninos2 from '../assets/imgs/ninos2.svg'
+import CardActionButton from '../components/ui/CardActionButton.tsx'
 
 const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'])
 const TITLE_MIN_LENGTH = 5
@@ -270,22 +270,8 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading =
 				</p>
 
 				<div className="mt-sm flex items-center justify-end gap-xs">
-					<button
-						type="button"
-						onClick={onEdit}
-						aria-label={t('admin.edit')}
-						className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
-					>
-						<PencilIcon size={17} />
-					</button>
-					<button
-						type="button"
-						onClick={onDelete}
-						aria-label={t('admin.delete')}
-						className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50"
-					>
-						<Trash2Icon size={17} />
-					</button>
+					<CardActionButton action="edit" label={t('admin.edit')} onClick={onEdit} />
+					<CardActionButton action="delete" label={t('admin.delete')} onClick={onDelete} />
 				</div>
 			</div>
 		</article>

@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   FileImageIcon,
-  PencilIcon,
   PlusIcon,
   Trash2Icon,
   XIcon,
@@ -25,6 +24,7 @@ import type {
 import NewsDetailModal from "../components/NewsDetailModal.tsx";
 import DatePickerField from "../components/ui/DatePickerField.tsx";
 import TimePickerField from "../components/ui/TimePickerField.tsx";
+import CardActionButton from "../components/ui/CardActionButton.tsx";
 
 const emptyForm: AnnouncementRequest = {
   title: "",
@@ -129,23 +129,9 @@ function AnnouncementRow({ announcement, typeLabel, onPreview, onEdit, onDelete,
           </button>
 
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={onEdit}
-              aria-label={t("adminNews.editButton")}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition"
-            >
-              <PencilIcon size={17} />
-            </button>
+            <CardActionButton action="edit" label={t("adminNews.editButton")} onClick={onEdit} />
 
-            <button
-              type="button"
-              onClick={onDelete}
-              aria-label={t("adminNews.deleteButton")}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition"
-            >
-              <Trash2Icon size={17} />
-            </button>
+            <CardActionButton action="delete" label={t("adminNews.deleteButton")} onClick={onDelete} />
           </div>
         </div>
       </div>

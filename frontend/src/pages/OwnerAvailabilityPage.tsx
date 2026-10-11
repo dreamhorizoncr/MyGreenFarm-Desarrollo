@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CopyIcon, PencilIcon, PlusIcon, Trash2Icon } from '@animateicons/react/lucide'
+import { CopyIcon, PlusIcon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import ScheduleExceptionModal from '../components/ScheduleExceptionModal.tsx'
 import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
@@ -12,6 +12,7 @@ import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { notify } from '../utils/notifications.ts'
 import type { ScheduleException, WeeklySchedule } from '../types/availability.ts'
 import { DEFAULT_END_TIME, DEFAULT_START_TIME, timeValue, toApiTime, WEEK_DAYS } from '../types/availability.ts'
+import CardActionButton from '../components/ui/CardActionButton.tsx'
 
 const hours = Array.from({ length: 15 }, (_, index) => `${String(index + 6).padStart(2, '0')}:00`)
 
@@ -82,8 +83,18 @@ function ExceptionCard({ exception, onEdit, onDelete, loading = false }: Readonl
           {exception!.reason && <p className="mt-xs m-0 font-body text-body-sm text-neutral-500">{exception!.reason}</p>}
         </div>
         <div className="flex shrink-0 items-center gap-xs">
-          <button type="button" onClick={onEdit} aria-label={t('admin.availability.editDayLabel', { date: dateLabel(exception!.exceptionDate, i18n.language) })} title={t('admin.availability.editAction')} className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link"><PencilIcon size={17} /></button>
-          <button type="button" onClick={onDelete} aria-label={t('admin.availability.deleteDayLabel', { date: dateLabel(exception!.exceptionDate, i18n.language) })} title={t('admin.availability.deleteAction')} className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-link"><Trash2Icon size={17} /></button>
+          <CardActionButton
+            action="edit"
+            label={t('admin.availability.editDayLabel', { date: dateLabel(exception!.exceptionDate, i18n.language) })}
+            title={t('admin.availability.editAction')}
+            onClick={onEdit}
+          />
+          <CardActionButton
+            action="delete"
+            label={t('admin.availability.deleteDayLabel', { date: dateLabel(exception!.exceptionDate, i18n.language) })}
+            title={t('admin.availability.deleteAction')}
+            onClick={onDelete}
+          />
         </div>
       </div>
     </article>

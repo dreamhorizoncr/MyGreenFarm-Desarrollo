@@ -5,7 +5,6 @@ import {
   EyeIcon,
   EyeOffIcon,
   FileImageIcon,
-  PencilIcon,
   PlusIcon,
   Trash2Icon,
   UsersIcon,
@@ -22,6 +21,7 @@ import type {
   ClubResponse,
   ClubImageResponse,
 } from "../types/clubs.ts";
+import CardActionButton from "../components/ui/CardActionButton.tsx";
 
 const emptyForm: ClubRequest = {
   name: "",
@@ -153,22 +153,8 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
 
         {/* Botones de Acción */}
         <div className="mt-auto flex justify-end gap-sm pt-sm">
-          <button
-            type="button"
-            onClick={onEdit}
-            aria-label={t("ownerClubs.editClub")}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
-          >
-            <PencilIcon size={17} />
-          </button>
-          <button
-            type="button"
-            onClick={onDelete}
-            aria-label={t("ownerClubs.deleteModalTitle")}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-red-500 transition hover:bg-red-50"
-          >
-            <Trash2Icon size={17} />
-          </button>
+          <CardActionButton action="edit" label={t("ownerClubs.editClub")} onClick={onEdit} />
+          <CardActionButton action="delete" label={t("ownerClubs.deleteModalTitle")} onClick={onDelete} />
         </div>
       </div>
     </article>

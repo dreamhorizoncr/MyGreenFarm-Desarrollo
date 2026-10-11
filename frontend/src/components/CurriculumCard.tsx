@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next'
-import { ChevronDownIcon, Trash2Icon } from '@animateicons/react/lucide'
+import { ChevronDownIcon } from '@animateicons/react/lucide'
 import CertificatesCarousel from './CertificatesCarousel.tsx'
 import Skeleton from './ui/Skeleton.tsx'
 import type { Curriculum } from '../types/curriculum.ts'
+import CardActionButton from './ui/CardActionButton.tsx'
 
 interface CurriculumCardProps {
   application?: Curriculum
@@ -73,15 +74,7 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
           </>
         ) : (
           <>
-            <button
-              type="button"
-              onClick={onDelete}
-              aria-label={t('admin.delete')}
-              title={t('admin.delete')}
-              className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-            >
-              <Trash2Icon size={16} aria-hidden="true" />
-            </button>
+            <CardActionButton action="delete" size="sm" label={t('admin.delete')} title={t('admin.delete')} onClick={onDelete} />
 
             <button
               type="button"
