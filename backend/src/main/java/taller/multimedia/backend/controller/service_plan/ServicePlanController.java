@@ -91,6 +91,13 @@ public class ServicePlanController {
         return ResponseEntity.ok(updated);
     }
 
+    // Quitar solo la imagen del plan (el plan se conserva)
+    @DeleteMapping("/{id}/image")
+    @PreAuthorize("hasAnyRole('OWNER')")
+    public ResponseEntity<ServicePlan> deleteImage(@PathVariable UUID id) {
+        return ResponseEntity.ok(servicePlanService.deleteImage(id));
+    }
+
     // Eliminar un plan y su imagen asociada del bucket
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('OWNER')")

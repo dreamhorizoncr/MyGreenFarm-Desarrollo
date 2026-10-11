@@ -488,6 +488,7 @@ function AnnouncementsPage() {
 
                 <ImagePickerButton
                   label={t("adminNews.chooseCover")}
+                  replacesCurrent={images.some((image) => image.isCover)}
                   accept="image/png,image/jpg,image/jpeg,image/svg+xml"
                   onSelect={(files) => setCover(files[0] ?? null)}
                 />
@@ -504,6 +505,7 @@ function AnnouncementsPage() {
 
                 <ImagePickerButton
                   label={t("adminNews.newschooseimages")}
+                  limit={4}
                   accept="image/png,image/jpg,image/jpeg,image/svg+xml"
                   multiple
                   onSelect={(files) => setGallery(files.slice(0, 4))}

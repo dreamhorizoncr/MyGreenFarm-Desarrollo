@@ -7,6 +7,9 @@ import { useModalExit } from '../hooks/useModalExit.ts'
 import type { OnvoRawPlan, ServicePlan } from '../types/servicePlan.ts'
 import ImagePickerButton from './ui/ImagePickerButton.tsx'
 import ImageThumb, { ImageThumbList } from './ui/ImageThumb.tsx'
+import DeleteConfirmModal from './ui/DeleteConfirmModal.tsx'
+import { servicePlanService } from '../services/servicePlan.ts'
+import { notify } from '../utils/notifications.ts'
 
 const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']
 
@@ -26,9 +29,11 @@ interface CreateServicePlanModalProps {
   onSave: (data: { schedule: string; includes: string; gatewayPriceId: string }, file: File) => Promise<unknown>
   onUpdate?: (id: string, data: { schedule: string; includes: string; gatewayPriceId: string }, file?: File) => Promise<unknown>
   onClose: () => void
+  // Se llama al borrar la imagen actual del plan, para refrescar la lista.
+  onImageDeleted?: () => void | Promise<void>
 }
 
-function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, onUpdate, onClose }: Readonly<CreateServicePlanModalProps>) {
+function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, onUpdate, onClose, onImageDeleted }: Readonly<CreateServicePlanModalProps>) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
@@ -40,6 +45,8 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
   const [includes, setIncludes] = useState(planToEdit?.includes ?? '')
   const [selectedImage, setSelectedImage] = useState<SelectedImage | null>(null)
   const [saving, setSaving] = useState(false)
+  const [currentImageUrl, setCurrentImageUrl] = useState(planToEdit?.imageUrl ?? null)
+  const [confirmImageDelete, setConfirmImageDelete] = useState(false)
 
   const [scheduleError, setScheduleError] = useState<string | null>(null)
   const [includesError, setIncludesError] = useState<string | null>(null)
@@ -226,6 +233,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
           <span className="block">{t('admin.servicios.image')}</span>
           <ImagePickerButton
             label={t('admin.servicios.chooseImage')}
+            replacesCurrent={Boolean(currentImageUrl)}
             accept={ALLOWED_IMAGE_TYPES.join(',')}
             onSelect={(files) => handleFileChange(files[0])}
           />
@@ -242,9 +250,14 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
               />
             </ImageThumbList>
           )}
-          {!selectedImage && isEditing && planToEdit?.imageUrl && (
+          {!selectedImage && isEditing && currentImageUrl && (
             <ImageThumbList title={t('admin.servicios.currentImage')} className="mt-sm">
-              <ImageThumb src={planToEdit.imageUrl} />
+              <ImageThumb
+                src={currentImageUrl}
+                label={t('admin.servicios.image')}
+                onDelete={() => setConfirmImageDelete(true)}
+                deleteLabel={t('common.deleteImageTitle')}
+              />
             </ImageThumbList>
           )}
           {imageError && (
@@ -271,6 +284,25 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
           </Button>
         </div>
       </form>
+
+      {confirmImageDelete && planToEdit && (
+        <DeleteConfirmModal
+          title={t('common.deleteImageTitle')}
+          message={t('common.deleteImageMessage')}
+          onConfirm={async () => {
+            try {
+              await servicePlanService.deleteImage(planToEdit.id)
+            } catch (err) {
+              notify.error(t('common.imageDeleteErrorToast'))
+              throw err
+            }
+            setCurrentImageUrl(null)
+            notify.success(t('common.imageDeletedToast'))
+            await onImageDeleted?.()
+          }}
+          onClose={() => setConfirmImageDelete(false)}
+        />
+      )}
     </dialog>
   )
 }

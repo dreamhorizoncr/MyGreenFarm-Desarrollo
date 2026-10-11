@@ -269,6 +269,7 @@ console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
           onvoPlans={onvoPlans}
           existingPlans={sourcePlans}
           planToEdit={editingPlan}
+          onImageDeleted={() => fetchAll(i18n.language)}
           onSave={async (data, file) => {
             try {
               await createPlan(data, file)

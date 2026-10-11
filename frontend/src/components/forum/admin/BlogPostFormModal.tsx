@@ -289,6 +289,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
 
             <ImagePickerButton
               label={t('adminForum.chooseImage')}
+              replacesCurrent={Boolean(form.imageUrl)}
               accept="image/png,image/jpg,image/jpeg,image/svg+xml"
               onSelect={(files) => handleFileChange(files[0])}
             />
@@ -306,7 +307,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
 
             {!image && form.imageUrl && (
               <ImageThumbList title={t('adminForum.currentImage')} className="mt-sm">
-                <ImageThumb src={form.imageUrl} onDelete={removeImage} deleteLabel={t('adminForum.removeImage')} />
+                <ImageThumb src={form.imageUrl} label={t('adminForum.postImage')} onDelete={removeImage} deleteLabel={t('adminForum.removeImage')} />
               </ImageThumbList>
             )}
 
