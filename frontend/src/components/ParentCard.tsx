@@ -1,6 +1,6 @@
 import type { Parent } from "../types/parent.ts";
-import { Pencil, Trash2 } from "@animateicons/react/lucide";
 import Skeleton from "./ui/Skeleton.tsx";
+import CardActionButton from "./ui/CardActionButton.tsx";
 import { useTranslation } from "react-i18next";
 
 interface ParentCardProps {
@@ -48,21 +48,9 @@ function ParentCard({
               </>
             ) : (
               <>
-                <button
-                    type="button"
-                    onClick={() => onEdit!(parent!)}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
-                >
-                <Pencil size={16} />
-                </button>
+                <CardActionButton action="edit" label={t("admin.edit")} onClick={() => onEdit!(parent!)} />
 
-                <button
-                    type="button"
-                    onClick={() => onDelete!(parent!)}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50"
-                >
-                    <Trash2 size={16} />
-                </button>
+                <CardActionButton action="delete" label={t("admin.delete")} onClick={() => onDelete!(parent!)} />
               </>
             )}
         </div>
