@@ -20,10 +20,20 @@ interface SelectProps {
 }
 
 interface MenuPosition {
-  top: number
+  // Se usa top al abrir hacia abajo y bottom al abrir hacia arriba.
+  top?: number
+  bottom?: number
   left: number
   width: number
+  maxHeight: number
 }
+
+const MENU_GAP = 4
+const VIEWPORT_MARGIN = 8
+const MENU_MAX_HEIGHT = 240
+// Alto aproximado de cada opción (py-sm + texto) más el padding de la lista.
+const OPTION_HEIGHT = 40
+const MENU_PADDING = 8
 
 function Select({
   value,
@@ -65,10 +75,31 @@ function Select({
   useLayoutEffect(() => {
     if (!open) return
 
+    // El menú es fixed (para no quedar recortado por el modal), así que no agranda el área de scroll.
+    // Por eso se abre hacia donde quepa: primero dentro del panel del modal (form/dialog) y si no, dentro
+    // de la pantalla; y su alto se limita al espacio visible para que nunca quede cortado.
     const updatePosition = () => {
-      const rect = triggerRef.current?.getBoundingClientRect()
-      if (!rect) return
-      setPosition({ top: rect.bottom + 4, left: rect.left, width: rect.width })
+      const trigger = triggerRef.current
+      const rect = trigger?.getBoundingClientRect()
+      if (!trigger || !rect) return
+      const desiredHeight = Math.min(MENU_MAX_HEIGHT, options.length * OPTION_HEIGHT + MENU_PADDING)
+      const spaceBelow = window.innerHeight - rect.bottom - MENU_GAP - VIEWPORT_MARGIN
+      const spaceAbove = rect.top - MENU_GAP - VIEWPORT_MARGIN
+
+      const panel = trigger.closest('form, dialog')?.getBoundingClientRect()
+      const panelBottom = panel ? Math.min(panel.bottom, window.innerHeight - VIEWPORT_MARGIN) : null
+      const panelTop = panel ? Math.max(panel.top, VIEWPORT_MARGIN) : null
+      const fitsBelowInPanel = panelBottom !== null && panelBottom - rect.bottom - MENU_GAP >= desiredHeight
+      const fitsAboveInPanel = panelTop !== null && rect.top - MENU_GAP - panelTop >= desiredHeight
+
+      let openUp: boolean
+      if (fitsBelowInPanel) openUp = false
+      else if (fitsAboveInPanel) openUp = true
+      else openUp = spaceBelow < desiredHeight && spaceAbove > spaceBelow
+      const maxHeight = Math.min(MENU_MAX_HEIGHT, Math.max(openUp ? spaceAbove : spaceBelow, OPTION_HEIGHT))
+      setPosition(openUp
+        ? { bottom: window.innerHeight - rect.top + MENU_GAP, left: rect.left, width: rect.width, maxHeight }
+        : { top: rect.bottom + MENU_GAP, left: rect.left, width: rect.width, maxHeight })
     }
 
     updatePosition()
@@ -78,7 +109,7 @@ function Select({
       window.removeEventListener('scroll', updatePosition, true)
       window.removeEventListener('resize', updatePosition)
     }
-  }, [open])
+  }, [open, options.length])
 
   useEffect(() => {
     if (!open) setPosition(null)
@@ -112,8 +143,8 @@ function Select({
       {open && position && (
         <ul
           ref={menuRef}
-          style={{ top: position.top, left: position.left, width: position.width }}
-          className={`fixed z-[10000] m-0 max-h-[240px] list-none overflow-y-auto rounded-xl border border-neutral-200 bg-white p-xs shadow-lg animate-[language-switcher-in_0.15s_ease-out] ${menuClassName}`}
+          style={{ top: position.top, bottom: position.bottom, left: position.left, width: position.width, maxHeight: position.maxHeight }}
+          className={`fixed z-[10000] m-0 list-none overflow-y-auto rounded-xl border border-neutral-200 bg-white p-xs shadow-lg animate-[language-switcher-in_0.15s_ease-out] ${menuClassName}`}
           role="listbox"
         >
           {options.map((option) => (
