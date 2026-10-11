@@ -186,12 +186,12 @@ function ClubsPage() {
             <Navbar />
 
             {/* Header Banner */}
-            <section className="flex min-h-[280px] items-center bg-green-500 px-7.5 py-10 text-center text-white md:min-h-[320px]">
+            <section className="flex min-h-[280px] items-start bg-green-500 px-[30px] pt-[48px] pb-[40px] text-center text-white md:min-h-[320px] md:pt-[72px]">
                 <div className="mx-auto w-full max-w-175">
                     <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
                         {t('clubs.title')}
                     </h1>
-                    <p className="mx-auto mt-4 max-w-140 font-body text-body-sm leading-[1.6] text-white">
+                    <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-white md:text-body-sm">
                         {t('clubs.subtitle')}
                     </p>
                 </div>
