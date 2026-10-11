@@ -1,14 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CalendarClockIcon, PencilIcon, SearchIcon } from '@animateicons/react/lucide'
-import { Calendar, Button, ButtonGroup } from '@heroui/react'
-import { today, getLocalTimeZone, startOfWeek, startOfMonth } from '@internationalized/date'
-import { I18nProvider } from 'react-aria-components'
+import { today, getLocalTimeZone } from '@internationalized/date'
 import type { CalendarDate } from '@internationalized/date'
 import ChangeAppointmentStatusModal from './ChangeAppointmentStatusModal.tsx'
 import RescheduleAppointmentModal from './RescheduleAppointmentModal.tsx'
 import AppointmentDetailsModal from './AppointmentDetailsModal.tsx'
 import Skeleton from './ui/Skeleton.tsx'
+import CalendarPanel from './ui/CalendarPanel.tsx'
 import Pagination from './ui/Pagination.tsx'
 import { useAppointments } from '../hooks/useAppointments.ts'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
@@ -142,7 +141,6 @@ function AppointmentsSection() {
 
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('BY_DATE')
   const [selectedDate, setValue] = useState<CalendarDate | null>(today(getLocalTimeZone()))
-  const [focusedDate, setFocusedDate] = useState<CalendarDate>(today(getLocalTimeZone()))
   const [searchTerm, setSearchTerm] = useState('')
   const [appointmentToEdit, setAppointmentToEdit] = useState<Appointment | null>(null)
   const [appointmentToReschedule, setAppointmentToReschedule] = useState<Appointment | null>(null)
@@ -274,98 +272,7 @@ function AppointmentsSection() {
       {statusFilter === 'BY_DATE' ? (
         <div className="grid grid-cols-1 gap-xl lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] items-start">
           {/* El calendario conserva su ancho máximo y las citas usan el espacio restante. */}
-          <div className="w-full max-w-[420px] rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm flex flex-col items-center gap-6">
-            <ButtonGroup
-              fullWidth
-              size="sm"
-              variant="tertiary"
-              className="bg-green-500 text-white rounded-2xl p-1.5 shadow-inner flex justify-between w-full"
-            >
-              <Button
-                className="rounded-2xl text-white font-medium hover:bg-green-400/40 transition-colors data-[pressed=true]:scale-95 px-8 py-2"
-                onPress={() => {
-                  const todayDate = today(getLocalTimeZone())
-                  setValue(todayDate)
-                  setFocusedDate(todayDate)
-                }}
-              >
-                {t('teacherAppointments.calendar.today')}
-              </Button>
-              <Button
-                className="rounded-2xl text-white font-medium hover:bg-green-400/40 transition-colors data-[pressed=true]:scale-95 px-8 py-2"
-                onPress={() => {
-                  const nextWeekStart = startOfWeek(today(getLocalTimeZone()), i18n.language)
-                  setValue(nextWeekStart)
-                  setFocusedDate(nextWeekStart)
-                }}
-              >
-                {t('teacherAppointments.calendar.week')}
-              </Button>
-              <Button
-                className="rounded-2xl text-white font-medium hover:bg-green-400/40 transition-colors data-[pressed=true]:scale-95 px-8 py-2"
-                onPress={() => {
-                  const nextMonthStart = startOfMonth(today(getLocalTimeZone()))
-                  setValue(nextMonthStart)
-                  setFocusedDate(nextMonthStart)
-                }}
-              >
-                {t('teacherAppointments.calendar.month')}
-              </Button>
-            </ButtonGroup>
-
-            <I18nProvider locale={i18n.resolvedLanguage ?? i18n.language ?? 'es'}>
-              <Calendar
-                aria-label={t('teacherAppointments.calendar.ariaLabel')}
-                focusedValue={focusedDate}
-                value={selectedDate}
-                onChange={setValue}
-                onFocusChange={setFocusedDate}
-                className="flex flex-col items-center w-full"
-              >
-                <Calendar.Header className="w-full flex justify-between items-center px-2 pb-4">
-                  <Calendar.Heading className="font-heading font-bold text-xl capitalize text-heading" />
-                  <div className="flex gap-2">
-                    <Calendar.NavButton slot="previous" />
-                    <Calendar.NavButton slot="next" />
-                  </div>
-                </Calendar.Header>
-                <Calendar.Grid className="w-full border-collapse">
-                  <Calendar.GridHeader className="mb-3">
-                    {(day) => <Calendar.HeaderCell className="w-10 h-10 text-center font-semibold text-md text-neutral-500">{day}</Calendar.HeaderCell>}
-                  </Calendar.GridHeader>
-                  <Calendar.GridBody>
-                    {(date) => {
-                      const dateString = date.toString()
-                      const isSpecial = specialScheduleDates.has(dateString)
-
-                      return (
-                        <Calendar.Cell
-                          date={date}
-                          className={({ isOutsideMonth, isSelected }) =>
-                            `relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors text-md font-medium mx-auto m-1 
-                            ${isOutsideMonth ? 'text-neutral-300 opacity-60' : 'text-heading'} 
-                            ${isSelected ? 'bg-orange-500 shadow-md text-white' : 'hover:bg-neutral-100'} 
-                            ${isSpecial && !isSelected ? 'after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:size-1.5 after:rounded-full after:bg-orange-500' : ''}`
-                          }
-                        />
-                      )
-                    }}
-                  </Calendar.GridBody>
-                </Calendar.Grid>
-              </Calendar>
-            </I18nProvider>
-
-            <div className="flex flex-wrap justify-center gap-2 w-full pt-6 border-t border-neutral-100">
-              <Button
-                size="sm"
-                variant="tertiary"
-                onPress={() => setValue(null)}
-                className="border-green-500 bg-white text-heading hover:bg-green-50 px-6 py-2 rounded-full border items-center justify-center font-body text-sm font-semibold transition-colors"
-              >
-                {t('teacherAppointments.calendar.clear')}
-              </Button>
-            </div>
-          </div>
+          <CalendarPanel value={selectedDate} onChange={setValue} markedDates={specialScheduleDates} />
 
           {/* Columna Derecha: Tarjetas de citas con mejor espaciado */}
           <div className="flex flex-col gap-md">

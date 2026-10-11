@@ -5,6 +5,7 @@ import Button from './ui/Button.tsx'
 import { getErrorMessage } from '../utils/error.ts'
 import { validateEmail, validateRequired } from '../utils/validators.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import DatePickerField from './ui/DatePickerField.tsx'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 
 interface EditUserModalProps {
@@ -145,15 +146,10 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
           )}
         </label>
 
-        <label className="font-body text-body-sm font-semibold text-heading">
+        <div className="font-body text-body-sm font-semibold text-heading">
           {t('admin.birthday')}
-          <input
-            type="date"
-            value={birthday}
-            onChange={(e) => setBirthday(e.target.value)}
-            className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
-          />
-        </label>
+          <DatePickerField value={birthday} onChange={setBirthday} ariaLabel={t('admin.birthday')} />
+        </div>
       </div>
 
       {saveError && (

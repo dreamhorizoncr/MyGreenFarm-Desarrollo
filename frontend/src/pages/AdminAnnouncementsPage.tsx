@@ -23,6 +23,8 @@ import type {
   AnnouncementType,
 } from "../types/announcement.ts";
 import NewsDetailModal from "../components/NewsDetailModal.tsx";
+import DatePickerField from "../components/ui/DatePickerField.tsx";
+import TimePickerField from "../components/ui/TimePickerField.tsx";
 
 const emptyForm: AnnouncementRequest = {
   title: "",
@@ -464,21 +466,38 @@ function AnnouncementsPage() {
                 />
               </label>
 
-              <label className="font-body text-body-sm font-semibold text-heading">
+              <div className="font-body text-body-sm font-semibold text-heading">
                 {t("adminNews.newsdate")}
 
-                <input
-                  type="datetime-local"
-                  value={form.eventDate}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      eventDate: e.target.value,
-                    })
-                  }
-                  className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
-                />
-              </label>
+                {/* El calendario elige el día y el reloj de al lado la hora; se guarda como YYYY-MM-DDTHH:mm. */}
+                <div className="flex gap-sm">
+                  <div className="min-w-0 flex-1">
+                    <DatePickerField
+                      value={(form.eventDate ?? "").slice(0, 10)}
+                      onChange={(date) =>
+                        setForm({
+                          ...form,
+                          eventDate: date ? `${date}T${(form.eventDate ?? "").slice(11, 16) || "00:00"}` : "",
+                        })
+                      }
+                      ariaLabel={t("adminNews.newsdate")}
+                    />
+                  </div>
+                  <div className="w-[150px] shrink-0">
+                    <TimePickerField
+                      value={(form.eventDate ?? "").slice(11, 16)}
+                      disabled={!form.eventDate}
+                      onChange={(time) =>
+                        setForm({
+                          ...form,
+                          eventDate: `${(form.eventDate ?? "").slice(0, 10)}T${time}`,
+                        })
+                      }
+                      ariaLabel={t("adminNews.newsdate")}
+                    />
+                  </div>
+                </div>
+              </div>
 
               <div className="font-body text-body-sm font-semibold text-heading">
                 <span className="block">{t("adminNews.newscover")}</span>

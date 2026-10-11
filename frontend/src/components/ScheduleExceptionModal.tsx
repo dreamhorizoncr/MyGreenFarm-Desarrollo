@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { XIcon } from '@animateicons/react/lucide'
+import DatePickerField from './ui/DatePickerField.tsx'
 import Select from './ui/Select.tsx'
 import type { ScheduleException } from '../types/availability.ts'
 import { DEFAULT_END_TIME, DEFAULT_START_TIME, toApiTime, timeValue } from '../types/availability.ts'
@@ -113,7 +114,7 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
         <div className="mt-lg flex flex-col gap-md">
           <div>
             <label htmlFor="exception-date" className="mb-xs block font-body text-body-sm font-semibold text-body-text">{t('admin.availability.modal.dateLabel')}</label>
-            <input id="exception-date" type="date" min={todayIso()} value={date} onChange={(event) => { handleDateChange(event.target.value); setFormError(null) }} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body text-body-text focus:border-green-500 focus:outline-none" />
+            <DatePickerField id="exception-date" min={todayIso()} value={date} onChange={(value) => { handleDateChange(value); setFormError(null) }} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body text-body-text focus:border-green-500 focus:outline-none" />
             {date && new Date(`${date}T00:00:00`).getDay() % 6 === 0 && <p className="mt-xs text-body-sm text-danger">{t('admin.availability.modal.weekendNotAvailable')}</p>}
             {existing && <p className="mt-xs text-body-sm text-link">{t('admin.availability.modal.alreadyExists')}</p>}
           </div>

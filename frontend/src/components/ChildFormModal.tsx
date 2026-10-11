@@ -7,6 +7,7 @@ import { parentService } from "../services/parent";
 import { clubService } from "../services/clubs";
 import { notify } from "../utils/notifications.ts";
 import { useModalVisibility } from "../hooks/useModalExit.ts";
+import DatePickerField from "./ui/DatePickerField.tsx";
 
 import type { Child, ChildRequest, Relationship } from "../types/child";
 import type { Parent } from "../types/parent";
@@ -317,18 +318,17 @@ function ChildFormModal({
                     </label>
 
                     {/* Fecha de Nacimiento */}
-                    <label className="font-body text-body-sm font-semibold text-heading">
+                    <div className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.children.birthDate")}
-                        <input
-                            type="date"
+                        <DatePickerField
                             value={form.birthDate}
                             max={new Date().toISOString().split("T")[0]}
-                            onChange={(e) =>
-                                setForm({ ...form, birthDate: e.target.value })
+                            onChange={(value) =>
+                                setForm({ ...form, birthDate: value })
                             }
-                            className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+                            ariaLabel={t("admin.children.birthDate")}
                         />
-                    </label>
+                    </div>
 
                     {/* Clubes */}
                     <div className="font-body text-body-sm font-semibold text-heading">

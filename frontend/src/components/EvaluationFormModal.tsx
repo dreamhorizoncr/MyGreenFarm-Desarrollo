@@ -7,6 +7,7 @@ import { evaluationService } from "../services/evaluation";
 import { expedientService } from "../services/expedient";
 import { notify } from "../utils/notifications";
 import { useModalVisibility } from "../hooks/useModalExit.ts";
+import DatePickerField from "./ui/DatePickerField.tsx";
 import { validateRequired } from "../utils/validators.ts";
 
     import type {
@@ -210,20 +211,19 @@ import { validateRequired } from "../utils/validators.ts";
                 )}
             </label>
 
-            <label className="font-body text-body-sm font-semibold text-heading">
+            <div className="font-body text-body-sm font-semibold text-heading">
                 {t("admin.evaluations.formDateLabel")}
-                <input
-                type="date"
+                <DatePickerField
                 value={form.evaluationDate}
-                onChange={(event) =>
-                    handleChange("evaluationDate", event.target.value)
+                onChange={(value) =>
+                    handleChange("evaluationDate", value)
                 }
-                className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+                ariaLabel={t("admin.evaluations.formDateLabel")}
                 />
                 {fieldErrors.evaluationDate && (
                     <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.evaluationDate}</span>
                 )}
-            </label>
+            </div>
 
             {/* Áreas de progreso */}
             <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">

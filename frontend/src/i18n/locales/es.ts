@@ -551,6 +551,11 @@ export default {
     scrollToTop: "Volver arriba",
     sessionExpired: "Tu sesión ha expirado. Inicia sesión nuevamente.",
     unauthorized: "No autorizado",
+    selectDate: "Selecciona una fecha",
+    timePicker: {
+      hours: "Horas",
+      minutes: "Minutos",
+    },
   },
   validation: {
     emailRequired: "El correo electrónico es obligatorio",

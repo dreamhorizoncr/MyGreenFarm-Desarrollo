@@ -543,6 +543,11 @@ export default {
     scrollToTop: "Back to top",
     sessionExpired: "Your session has expired. Please log in again.",
     unauthorized: "Unauthorized",
+    selectDate: "Select a date",
+    timePicker: {
+      hours: "Hours",
+      minutes: "Minutes",
+    },
   },
   validation: {
     emailRequired: "Email is required",
