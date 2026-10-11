@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CircleCheckIcon, ClockIcon, PlusIcon, Trash2Icon, PencilIcon } from '@animateicons/react/lucide'
+import { CircleCheckIcon, ClockIcon, PlusIcon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import CreateServicePlanModal from '../components/CreateServicePlanModal.tsx'
@@ -15,6 +15,7 @@ import { useExchangeRate } from '../hooks/useExchangeRate.ts'
 import type { Currency, ExchangeRate } from '../types/exchangeRate.ts'
 import { convertCurrency, currencySymbol, formatCurrency } from '../utils/currency.ts'
 import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
+import CardActionButton from '../components/ui/CardActionButton.tsx'
 
 interface AdminPlanCardProps {
   plan?: ServicePlan
@@ -156,23 +157,8 @@ function AdminPlanCard({
         </div>
 
         <div className="mt-auto flex justify-end gap-sm pt-sm">
-          <button 
-            type="button" 
-            onClick={onEdit} 
-            aria-label={t('admin.edit')} 
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
-          >
-            <PencilIcon size={17} />
-          </button>
-          <button 
-            type="button" 
-            onClick={onDelete} 
-            disabled={deleting} 
-            aria-label={t('admin.delete')} 
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 disabled:opacity-50"
-          >
-            <Trash2Icon size={17} />
-          </button>
+          <CardActionButton action="edit" label={t('admin.edit')} onClick={onEdit} />
+          <CardActionButton action="delete" label={t('admin.delete')} disabled={deleting} onClick={onDelete} />
         </div>
       </div>
     </article>

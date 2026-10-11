@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next'
-import { Trash2Icon, XIcon } from '@animateicons/react/lucide'
+import { XIcon } from '@animateicons/react/lucide'
 import { useModalExit } from '../../../hooks/useModalExit.ts'
 import type { BlogComment, BlogPost } from '../../../types/forum.ts'
+import CardActionButton from '../../ui/CardActionButton.tsx'
 
 interface BlogPostCommentsModalProps {
   post: BlogPost
@@ -93,14 +94,12 @@ function BlogPostCommentsModal({
               </div>
 
               {canDelete && (
-                <button
-                  type="button"
+                <CardActionButton
+                  action="delete"
+                  size="sm"
+                  label={`${t('adminForum.deleteCommentTitle')} — ${comment.alias}`}
                   onClick={() => onDeleteRequest(comment)}
-                  aria-label={`${t('adminForum.deleteCommentTitle')} — ${comment.alias}`}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50"
-                >
-                  <Trash2Icon size={15} aria-hidden="true" />
-                </button>
+                />
               )}
             </div>
           ))}
