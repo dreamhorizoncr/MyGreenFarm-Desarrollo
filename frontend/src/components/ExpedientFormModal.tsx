@@ -6,6 +6,7 @@ import Select from "./ui/Select.tsx";
 import { expedientService } from "../services/expedient";
 import { notify } from "../utils/notifications.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
+import DatePickerField from "./ui/DatePickerField.tsx";
 import { validateRequired } from "../utils/validators.ts";
 
 import type {
@@ -278,21 +279,20 @@ function ExpedientFormModal({
           </div>
 
           {/* Fecha de admisión */}
-          <label className="font-body text-body-sm font-semibold text-heading">
+          <div className="font-body text-body-sm font-semibold text-heading">
             {t("admin.expedients.admisiondate")}
-            <input
-              type="date"
+            <DatePickerField
               value={admisionDate}
-              onChange={(e) => {
-                setAdmisionDate(e.target.value);
+              onChange={(value) => {
+                setAdmisionDate(value);
                 if (dateError) setDateError(null);
               }}
-              className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+              ariaLabel={t("admin.expedients.admisiondate")}
             />
             {dateError && (
               <span className="mt-xs block font-body text-body-sm font-normal text-danger">{dateError}</span>
             )}
-          </label>
+          </div>
 
           {/* Nivel educativo */}
           <label className="font-body text-body-sm font-semibold text-heading">
