@@ -4,9 +4,7 @@ import {
   ClockIcon,
   EyeIcon,
   EyeOffIcon,
-  FileImageIcon,
   PlusIcon,
-  Trash2Icon,
   UsersIcon,
   XIcon,
 } from "@animateicons/react/lucide";
@@ -22,6 +20,8 @@ import type {
   ClubImageResponse,
 } from "../types/clubs.ts";
 import CardActionButton from "../components/ui/CardActionButton.tsx";
+import ImagePickerButton from "../components/ui/ImagePickerButton.tsx";
+import ImageThumb, { ImageThumbList } from "../components/ui/ImageThumb.tsx";
 
 const emptyForm: ClubRequest = {
   name: "",
@@ -182,8 +182,6 @@ function OwnerClubsPage() {
   const [clubToDelete, setClubToDelete] = useState<ClubResponse | null>(null);
   const [imageToDelete, setImageToDelete] = useState<ClubImageResponse | null>(null);
 
-  const coverInputRef = useRef<HTMLInputElement>(null);
-  const galleryInputRef = useRef<HTMLInputElement>(null);
   const editImagesClubIdRef = useRef<number | null>(null);
   const sourceClubsRef = useRef(new Map<number, Pick<ClubResponse, "name" | "description" | "schedule">>());
 
@@ -567,97 +565,57 @@ function OwnerClubsPage() {
               <div className="font-body text-body-sm font-semibold text-heading">
                 <span className="block">{t("ownerClubs.coverImage")}</span>
 
-                <input
-                  ref={coverInputRef}
-                  type="file"
+                <ImagePickerButton
+                  label={t("ownerClubs.chooseCover")}
                   accept="image/png,image/jpg,image/jpeg,image/webp,image/svg+xml"
-                  onChange={(e) => setCover(e.target.files?.[0] ?? null)}
-                  className="hidden"
+                  onSelect={(files) => setCover(files[0] ?? null)}
                 />
 
-                <button
-                  type="button"
-                  onClick={() => coverInputRef.current?.click()}
-                  className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-body-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
-                >
-                  <FileImageIcon size={17} aria-hidden="true" />
-                  {t("ownerClubs.chooseCover")}
-                </button>
-
                 {cover && (
-                  <p className="mt-xs text-caption font-normal text-neutral-500">
-                    {cover.name}
-                  </p>
+                  <ImageThumbList className="mt-sm">
+                    <ImageThumb file={cover} label={cover.name} onDelete={() => setCover(null)} deleteLabel={t("ownerClubs.deleteImage")} />
+                  </ImageThumbList>
                 )}
               </div>
 
               <div className="font-body text-body-sm font-semibold text-heading">
                 <span className="block">{t("ownerClubs.galleryImages")}</span>
 
-                <input
-                  ref={galleryInputRef}
-                  type="file"
-                  multiple
+                <ImagePickerButton
+                  label={t("ownerClubs.chooseGallery")}
                   accept="image/png,image/jpg,image/jpeg,image/webp,image/svg+xml"
-                  onChange={(e) =>
-                    setGallery(Array.from(e.target.files ?? []).slice(0, 6))
-                  }
-                  className="hidden"
+                  multiple
+                  onSelect={(files) => setGallery(files.slice(0, 6))}
                 />
 
-                <button
-                  type="button"
-                  onClick={() => galleryInputRef.current?.click()}
-                  className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-body-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
-                >
-                  <FileImageIcon size={17} aria-hidden="true" />
-                  {t("ownerClubs.chooseGallery")}
-                </button>
-
                 {gallery.length > 0 && (
-                  <p className="mt-xs text-caption font-normal text-neutral-500">
-                    {gallery.length} archivo(s) seleccionado(s)
-                  </p>
+                  <ImageThumbList className="mt-sm">
+                    {gallery.map((file, index) => (
+                      <ImageThumb
+                        key={`${file.name}-${index}`}
+                        file={file}
+                        label={file.name}
+                        onDelete={() => setGallery((current) => current.filter((_, i) => i !== index))}
+                        deleteLabel={t("ownerClubs.deleteImage")}
+                      />
+                    ))}
+                  </ImageThumbList>
                 )}
               </div>
             </div>
 
             {existingImages.length > 0 && (
-              <div className="mt-lg">
-                <h3 className="font-body text-body-sm font-semibold text-heading">
-                  {t("ownerClubs.actualImages")}
-                </h3>
-
-                <div className="mt-sm flex flex-wrap gap-md">
-                  {existingImages.map((image) => (
-                    <div
-                      key={image.id}
-                      className="flex items-center gap-sm rounded-xl border border-neutral-200 bg-white p-xs"
-                    >
-                      <img
-                        src={image.fileUrl}
-                        alt=""
-                        className="size-16 rounded-lg object-cover"
-                      />
-
-                      <span className="text-caption text-neutral-500">
-                        {image.isCover
-                          ? t("ownerClubs.coverTag")
-                          : t("ownerClubs.galleryTag")}
-                      </span>
-
-                      <button
-                        type="button"
-                        onClick={() => setImageToDelete(image)}
-                        aria-label={t("ownerClubs.deleteImage")}
-                        className="rounded-full p-2xs text-red-500 transition-colors hover:bg-red-50"
-                      >
-                        <Trash2Icon size={16} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <ImageThumbList title={t("ownerClubs.actualImages")}>
+                {existingImages.map((image) => (
+                  <ImageThumb
+                    key={image.id}
+                    src={image.fileUrl}
+                    label={image.isCover ? t("ownerClubs.coverTag") : t("ownerClubs.galleryTag")}
+                    onDelete={() => setImageToDelete(image)}
+                    deleteLabel={t("ownerClubs.deleteImage")}
+                  />
+                ))}
+              </ImageThumbList>
             )}
 
             <div className="mt-lg flex flex-wrap justify-end gap-sm">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronDownIcon, ImageIcon, XIcon } from "@animateicons/react/lucide";
+import { ChevronDownIcon, XIcon } from "@animateicons/react/lucide";
 import Select from "./ui/Select.tsx";
 
 import { expedientService } from "../services/expedient";
@@ -16,6 +16,8 @@ import type {
 } from "../types/expedient";
 import { childService, type ChildOption } from "../services/child.ts";
 import { educationalLevelKeys } from "../utils/educationalLevels.ts";
+import ImagePickerButton from "./ui/ImagePickerButton.tsx";
+import ImageThumb, { ImageThumbList } from "./ui/ImageThumb.tsx";
 
 interface ExpedientFormModalProps {
   onClose: () => void;
@@ -332,27 +334,25 @@ function ExpedientFormModal({
 
           {/* Fotografía */}
           <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
-            {t("admin.expedients.photo")}
+            <span className="block">{t("admin.expedients.photo")}</span>
 
-            <div className="mt-xs flex items-center gap-3">
-              <label className="flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-md font-normal text-heading transition-colors hover:border-heading">
-                <ImageIcon size={18} />
-                <span>{t("admin.expedients.photo")}</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setFile(e.target.files?.[0])}
-                  className="hidden"
-                />
-              </label>
+            <ImagePickerButton
+              label={t("admin.expedients.choosePhoto")}
+              accept="image/*"
+              onSelect={(files) => setFile(files[0])}
+            />
 
-              {/* Muestra el nombre del archivo si ya se seleccionó uno */}
-              {file && (
-                <span className="max-w-[200px] truncate font-body text-body-sm font-normal text-neutral-500">
-                  {file.name}
-                </span>
-              )}
-            </div>
+            {file && (
+              <ImageThumbList className="mt-sm">
+                <ImageThumb file={file} label={file.name} onDelete={() => setFile(undefined)} deleteLabel={t("admin.delete")} />
+              </ImageThumbList>
+            )}
+
+            {!file && expedient?.photoUrl && (
+              <ImageThumbList title={t("admin.expedients.currentPhoto")} className="mt-sm">
+                <ImageThumb src={expedient.photoUrl} />
+              </ImageThumbList>
+            )}
 
             <p className="mt-xs font-body text-caption font-normal text-neutral-500">
               {isEditing

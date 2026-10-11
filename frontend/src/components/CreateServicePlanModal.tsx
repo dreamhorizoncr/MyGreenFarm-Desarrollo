@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FileImageIcon, XIcon } from '@animateicons/react/lucide'
+import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import Select from './ui/Select.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import type { OnvoRawPlan, ServicePlan } from '../types/servicePlan.ts'
+import ImagePickerButton from './ui/ImagePickerButton.tsx'
+import ImageThumb, { ImageThumbList } from './ui/ImageThumb.tsx'
 
 const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']
 
@@ -29,7 +31,6 @@ interface CreateServicePlanModalProps {
 function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, onUpdate, onClose }: Readonly<CreateServicePlanModalProps>) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
 
   const isEditing = !!planToEdit
@@ -59,8 +60,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
     ? onvoPlans
     : onvoPlans.filter(sp => !existingPlans.some(p => p.gatewayPriceId === sp.gatewayPriceId))
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+  const handleFileChange = (file: File | undefined) => {
     if (!file) return
 
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
@@ -71,7 +71,6 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
     if (selectedImage) releasePreview(selectedImage)
     setSelectedImage({ file, previewUrl: URL.createObjectURL(file) })
     setImageError(null)
-    event.target.value = ''
   }
 
   const handleSubmit = async (event: FormEvent) => {
@@ -224,55 +223,29 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
         </label>
 
         <div className="font-body text-body-sm font-semibold text-heading">
-          {t('admin.servicios.chooseImage')}
-          <input
-            ref={fileInputRef}
-            type="file"
+          <span className="block">{t('admin.servicios.image')}</span>
+          <ImagePickerButton
+            label={t('admin.servicios.chooseImage')}
             accept={ALLOWED_IMAGE_TYPES.join(',')}
-            onChange={handleFileChange}
-            className="hidden"
+            onSelect={(files) => handleFileChange(files[0])}
           />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="mt-xs flex h-11 min-w-0 items-center justify-center gap-sm overflow-hidden rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-md font-body text-body-sm font-normal text-heading transition-colors hover:border-heading"
-          >
-            <FileImageIcon size={18} />
-            <span className="truncate">
-              {selectedImage ? t('admin.servicios.imageSelected') : t('admin.servicios.chooseImage')}
-            </span>
-          </button>
           {selectedImage && (
-            <div className="relative mt-xs inline-block w-[120px]">
-              <img
+            <ImageThumbList className="mt-sm">
+              <ImageThumb
                 src={selectedImage.previewUrl}
-                alt={t('admin.servicios.currentImage')}
-                className="h-[80px] w-[120px] rounded-xl object-cover"
-              />
-              <button
-                type="button"
-                onClick={() => {
+                label={selectedImage.file.name}
+                onDelete={() => {
                   releasePreview(selectedImage)
                   setSelectedImage(null)
                 }}
-                className="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-danger text-white transition-colors hover:opacity-90"
-                aria-label={t('admin.cancel')}
-              >
-                <XIcon size={12} />
-              </button>
-            </div>
+                deleteLabel={t('admin.cancel')}
+              />
+            </ImageThumbList>
           )}
           {!selectedImage && isEditing && planToEdit?.imageUrl && (
-            <div className="relative mt-xs inline-block w-[120px]">
-              <img
-                src={planToEdit.imageUrl}
-                alt={t('admin.servicios.currentImage')}
-                className="h-[80px] w-[120px] rounded-xl object-cover"
-              />
-              <span className="absolute bottom-1 left-1 rounded bg-black/50 px-1 py-0.5 font-body text-caption text-white">
-                {t('admin.servicios.currentImage')}
-              </span>
-            </div>
+            <ImageThumbList title={t('admin.servicios.currentImage')} className="mt-sm">
+              <ImageThumb src={planToEdit.imageUrl} />
+            </ImageThumbList>
           )}
           {imageError && (
             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{imageError}</span>
