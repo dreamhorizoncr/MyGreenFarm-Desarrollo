@@ -98,6 +98,7 @@ function TimePickerField({
   }
 
   const finishSelection = () => {
+    if (!dragging) return
     setDragging(false)
     if (view === 'hours') setView('minutes')
     else setOpen(false)
@@ -170,8 +171,9 @@ function TimePickerField({
           <div className="flex justify-center p-lg">
             <div
               ref={clockRef}
-              className="relative shrink-0 touch-none select-none rounded-full bg-neutral-100"
+              className={`relative shrink-0 touch-none select-none rounded-full bg-neutral-100 ${dragging ? 'cursor-grabbing' : 'cursor-grab'}`}
               style={{ width: CLOCK_SIZE, height: CLOCK_SIZE }}
+              // La esfera recibe todo el puntero: se agarra la aguja desde cualquier punto y sigue al arrastrar.
               onPointerDown={(event) => {
                 event.currentTarget.setPointerCapture(event.pointerId)
                 setDragging(true)
@@ -181,6 +183,7 @@ function TimePickerField({
                 if (dragging) selectFromPointer(event)
               }}
               onPointerUp={finishSelection}
+              onPointerCancel={() => setDragging(false)}
             >
               <svg width={CLOCK_SIZE} height={CLOCK_SIZE} className="pointer-events-none absolute inset-0" aria-hidden="true">
                 <line x1={CENTER} y1={CENTER} x2={handPoint.x} y2={handPoint.y} className="stroke-orange-500" strokeWidth={2} />
@@ -199,9 +202,7 @@ function TimePickerField({
                     tabIndex={0}
                     aria-label={view === 'hours' ? `${number}` : pad(number)}
                     aria-pressed={selected}
-                    // Los números manejan su propio click; si el puntero llega a la esfera, cambia la vista y el botón se desmonta antes del click.
-                    onPointerDown={(event) => event.stopPropagation()}
-                    onPointerUp={(event) => event.stopPropagation()}
+                    // Con mouse/touch los maneja la esfera (pointer-events-none); el click queda para teclado.
                     onClick={() => {
                       if (view === 'hours') {
                         setHour12(number)
@@ -211,8 +212,8 @@ function TimePickerField({
                         setOpen(false)
                       }
                     }}
-                    className={`absolute flex size-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full font-body text-body-sm font-semibold transition-colors ${
-                      selected ? 'text-white' : 'text-heading hover:bg-neutral-200'
+                    className={`pointer-events-none absolute flex size-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full font-body text-body-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-link ${
+                      selected ? 'text-white' : 'text-heading'
                     }`}
                     style={{ left: point.x, top: point.y }}
                   >
