@@ -2,12 +2,13 @@ import { Blobatar } from '@blobatar/react'
 import 'blobatar/motion.css'
 import { Link, useNavigate } from 'react-router-dom';
 import { userStorage } from '../utils/userStorage.ts'
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { UserIcon, LogOutIcon } from '@animateicons/react/lucide';
 import { useTranslation } from 'react-i18next';
 import { authService } from '../services/auth.ts';
 import { tokenStorage } from '../utils/token.ts'
 import { claimExclusiveOpen, releaseExclusiveOpen } from '../utils/exclusiveMenu.ts'
+import useDismiss from '../hooks/useDismiss.ts'
 
 function ProfileButton() {
 
@@ -15,6 +16,12 @@ function ProfileButton() {
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
   const closeMenu = useCallback(() => setMenuOpen(false), [])
+  const rootRef = useRef<HTMLDivElement>(null)
+  const dismissMenu = useCallback(() => {
+    releaseExclusiveOpen(closeMenu)
+    closeMenu()
+  }, [closeMenu])
+  useDismiss({ ref: rootRef, isOpen: menuOpen, onClose: dismissMenu })
 
   const user = userStorage.getUser()
   if (!user) return null
@@ -30,7 +37,7 @@ function ProfileButton() {
 
   return (
 
-  <div className="relative inline-flex size-10 shrink-0 items-center justify-center">
+  <div ref={rootRef} className="relative inline-flex size-10 shrink-0 items-center justify-center">
     <button
       type="button"
       onClick={() => {

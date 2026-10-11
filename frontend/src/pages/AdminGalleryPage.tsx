@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import {
 	CheckIcon,
 	ChevronDownIcon,
@@ -10,6 +10,7 @@ import {
 	XIcon,
 } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
+import useDismiss from '../hooks/useDismiss.ts'
 import useEmblaCarousel from 'embla-carousel-react'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
@@ -65,17 +66,13 @@ function YearDropdown({
 
 	const selected = categories.find((category) => category.id === value)
 
-	useEffect(() => {
-		if (!open) return
-		const handleKey = (event: globalThis.KeyboardEvent) => {
-			if (event.key === 'Escape') {
-				setOpen(false)
-				setAdding(false)
-			}
-		}
-		document.addEventListener('keydown', handleKey)
-		return () => document.removeEventListener('keydown', handleKey)
-	}, [open])
+	// Se cierra al tocar afuera o con Escape (antes era una capa fixed que dentro del modal no cubría la pantalla).
+	const rootRef = useRef<HTMLDivElement>(null)
+	const closeDropdown = useCallback(() => {
+		setOpen(false)
+		setAdding(false)
+	}, [])
+	useDismiss({ ref: rootRef, isOpen: open, onClose: closeDropdown })
 
 	const handleAdd = async () => {
 		const title = newYear.trim()
@@ -87,7 +84,7 @@ function YearDropdown({
 	}
 
 	return (
-		<div className="relative mt-xs">
+		<div ref={rootRef} className="relative mt-xs">
 			<button
 				type="button"
 				onClick={() => setOpen((prev) => !prev)}
@@ -105,14 +102,6 @@ function YearDropdown({
 
 			{open && (
 				<>
-					<div
-						className="fixed inset-0 z-10"
-						onClick={() => {
-							setOpen(false)
-							setAdding(false)
-						}}
-						aria-hidden="true"
-					/>
 					<div className="absolute left-0 right-0 top-[calc(100%+6px)] z-20 overflow-hidden rounded-xl border border-neutral-200 bg-white p-xs shadow-lg">
 						{categories.map((category) => (
 							<div
