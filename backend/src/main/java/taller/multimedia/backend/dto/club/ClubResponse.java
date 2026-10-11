@@ -18,5 +18,7 @@ public class ClubResponse {
     private String description;
     private String schedule;
     private Integer maxCapacity;
+    private Integer availableSpots;
+    private boolean isPublished;
     private List<ClubImageResponse> images;
 }

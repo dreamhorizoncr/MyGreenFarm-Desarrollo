@@ -2,6 +2,7 @@ package taller.multimedia.backend.repository.user;
 
 import org.springframework.stereotype.Repository;
 
+import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.model.user.User;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,4 +31,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
                   AND EXTRACT(DAY FROM u.birthday) = :day
             """)
     List<User> findTeachersWithBirthdayOn(@Param("month") int month, @Param("day") int day);
+
+    List<User> findByRole(Role role);
 }

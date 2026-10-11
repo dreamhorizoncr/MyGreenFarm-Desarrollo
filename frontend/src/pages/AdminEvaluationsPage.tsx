@@ -17,9 +17,10 @@ import type { Expedient } from "../types/expedient";
 
 
     function AdminEvaluationsPage() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const {
         evaluations,
+        sourceEvaluations,
         loading,
         error,
         fetchEvaluations,
@@ -38,7 +39,7 @@ import type { Expedient } from "../types/expedient";
         useState<Evaluation | null>(null);
 
     useEffect(() => {
-        void fetchEvaluations();
+        void fetchEvaluations(i18n.language);
 
         const loadExpedients = async () => {
         try {
@@ -54,7 +55,7 @@ import type { Expedient } from "../types/expedient";
         };
 
         void loadExpedients();
-    }, []);
+    }, [i18n.language]);
 
     const getExpedient = (expedientId: string) => {
         return expedients.find(
@@ -62,11 +63,13 @@ import type { Expedient } from "../types/expedient";
         );
     };
 
-    const filteredEvaluations = evaluations.filter((evaluation) => {
+    const filteredEvaluations = evaluations.filter((evaluation, index) => {
         const search = searchTerm.trim().toLowerCase();
         if (!search) return true;
 
         const expedient = getExpedient(evaluation.expedientId);
+        // Búsqueda dual: coincide si el término está en el original O en el traducido
+        const source = sourceEvaluations[index] ?? sourceEvaluations.find((item) => item.id === evaluation.id);
 
         return (
         expedient?.childName.toLowerCase().includes(search) ||
@@ -76,7 +79,12 @@ import type { Expedient } from "../types/expedient";
         evaluation.languageProgress.toLowerCase().includes(search) ||
         evaluation.readingProgress.toLowerCase().includes(search) ||
         evaluation.motorProgress.toLowerCase().includes(search) ||
-        evaluation.teacherObservation.toLowerCase().includes(search)
+        evaluation.teacherObservation.toLowerCase().includes(search) ||
+        (source?.communicationProgress ?? '').toLowerCase().includes(search) ||
+        (source?.languageProgress ?? '').toLowerCase().includes(search) ||
+        (source?.readingProgress ?? '').toLowerCase().includes(search) ||
+        (source?.motorProgress ?? '').toLowerCase().includes(search) ||
+        (source?.teacherObservation ?? '').toLowerCase().includes(search)
         );
     });
 
@@ -95,7 +103,7 @@ import type { Expedient } from "../types/expedient";
         try {
         await evaluationService.delete(evaluationToDelete.id);
 
-        await fetchEvaluations();
+        await fetchEvaluations(i18n.language);
 
         notify.success(t("admin.evaluations.deleteSuccess"));
         } catch (err) {
@@ -120,9 +128,6 @@ import type { Expedient } from "../types/expedient";
                     {t("admin.evaluations.title")}
                 </h1>
 
-                <p className="mt-2 font-body text-body text-neutral-500">
-                    Registra, consulta y administra el progreso de los niños.
-                </p>
                 <p className="mt-2 font-body text-body-text">
                     {t("admin.evaluations.description")}
                 </p>
@@ -231,7 +236,7 @@ import type { Expedient } from "../types/expedient";
                 setSelectedEvaluation(null);
             }}
             onSaved={() => {
-                void fetchEvaluations();
+                void fetchEvaluations(i18n.language);
             }}
             />
 

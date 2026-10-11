@@ -3,6 +3,7 @@ export interface ClubRequest {
     description: string;
     schedule?: string;
     maxCapacity?: number;
+    isPublished?: boolean;
 }
 
 export interface ClubImageResponse {
@@ -19,6 +20,8 @@ export interface ClubResponse {
     description: string;
     schedule?: string;
     maxCapacity?: number;
+    availableSpots?: number;
+    isPublished: boolean;
     coverImageUrl?: string;
     images?: ClubImageResponse[];
 }

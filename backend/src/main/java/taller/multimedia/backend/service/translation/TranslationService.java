@@ -205,7 +205,7 @@ public class TranslationService {
             return UUID.fromString(entityId);
         } catch (IllegalArgumentException exception) {
             if (entityId.matches("\\d+")) {
-                return UUID.nameUUIDFromBytes((entityType + ":" + entityId).getBytes(StandardCharsets.UTF_8));
+                return UUID.nameUUIDFromBytes((entityType.toLowerCase() + ":" + entityId).getBytes(StandardCharsets.UTF_8));
             }
             throw exception;
         }

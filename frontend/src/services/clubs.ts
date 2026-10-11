@@ -14,11 +14,13 @@ export interface TranslationItem {
     originalText: string
 }
 
+const normalizeLanguageCode = (lang?: string): string => (lang ?? 'es').split('-')[0] || 'es'
+
 export const clubService = {
     async getAll(params?: PageableParams): Promise<PageResponse<ClubResponse>> {
         const response = await apiClient.get<PageResponse<ClubResponse>>('/clubs', {
             params: {
-                lang: params?.lang ?? 'es',
+                lang: normalizeLanguageCode(params?.lang),
                 page: params?.page ?? 0,
                 size: params?.size ?? 50,
                 sort: params?.sort ?? 'name',
@@ -29,7 +31,7 @@ export const clubService = {
 
     async getById(id: number, lang = 'es'): Promise<ClubResponse> {
         const response = await apiClient.get<ClubResponse>(`/clubs/${id}`, {
-            params: { lang },
+            params: { lang: normalizeLanguageCode(lang) },
         })
         return response.data
     },

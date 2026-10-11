@@ -14,6 +14,7 @@ import type {
   ExpedientRequest,
 } from "../types/expedient";
 import { childService, type ChildOption } from "../services/child.ts";
+import { educationalLevelKeys } from "../utils/educationalLevels.ts";
 
 interface ExpedientFormModalProps {
   onClose: () => void;
@@ -35,21 +36,6 @@ const educationalLevels: EducationalLevel[] = [
   "QUINTO_GRADO",
   "SEXTO_GRADO",
 ];
-
-// Relaciona los niveles del backend con las traducciones
-const educationalLevelKeys = {
-  LACTANTES: "lactantes",
-  MATERNAL: "maternal",
-  INTERACTIVO: "interactivo",
-  MATERNO: "materno",
-  KINDER: "kinder",
-  PRIMER_GRADO: "primerGrado",
-  SEGUNDO_GRADO: "segundoGrado",
-  TERCER_GRADO: "tercerGrado",
-  CUARTO_GRADO: "cuartoGrado",
-  QUINTO_GRADO: "quintoGrado",
-  SEXTO_GRADO: "sextoGrado",
-} as const satisfies Record<EducationalLevel, string>;
 
 function ExpedientFormModal({
   onClose,

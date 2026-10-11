@@ -16,10 +16,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-//User entity class representing
 @Entity
 @Table(name = "users")
-@Data // Lombok annotation to generate getters, setters, and other utility methods
+@Data 
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -45,6 +44,9 @@ public class User {
 
     @Column(nullable = false)
     private boolean isActive;
+
+    @Column(name = "photo_url")
+    private String photoUrl;
 
     @Column(name = "birthday", nullable = true)
     private LocalDate birthday;
@@ -84,6 +86,10 @@ public class User {
 
     public void setResetPasswordToken(String resetPasswordToken) {
         this.resetPasswordToken = resetPasswordToken;
+    }
+
+    public boolean getIsActive() {
+        return isActive;
     }
 
     public LocalDateTime getTokenExpirationDate() {
