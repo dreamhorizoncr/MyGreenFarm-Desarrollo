@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import type { CSSProperties } from 'react'
 import { XIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import { Swiper, SwiperSlide } from 'swiper/react'
-import { Keyboard, Pagination, Zoom } from 'swiper/modules'
+import { Keyboard, Zoom } from 'swiper/modules'
 import type { Swiper as SwiperInstance } from 'swiper'
 import 'swiper/css'
 import 'swiper/css/zoom'
-import 'swiper/css/pagination'
+import CarouselDots from './ui/CarouselDots.tsx'
 import type { GalleryImage } from '../types/gallery.ts'
 
 interface PhotoLightboxProps {
@@ -16,13 +15,6 @@ interface PhotoLightboxProps {
   alt?: string
   onClose: () => void
 }
-
-// Colores de Swiper (puntos de paginación) para el fondo oscuro del visor.
-const swiperColors = {
-  '--swiper-pagination-color': '#fff',
-  '--swiper-pagination-bullet-inactive-color': '#fff',
-  '--swiper-pagination-bullet-inactive-opacity': '0.4',
-} as CSSProperties
 
 // Las flechas van a los lados de la foto activa (no del carrusel), a esta distancia de su borde.
 const ARROW_GAP = 12
@@ -36,7 +28,7 @@ function ArrowIcon({ flip = false }: Readonly<{ flip?: boolean }>) {
 }
 
 const arrowClassName =
-  'absolute top-1/2 z-10 flex size-[36px] -translate-y-1/2 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-[left,right,scale,opacity] duration-300 hover:scale-105 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 md:size-[44px]'
+  'absolute top-1/2 z-10 flex size-[36px] -translate-y-1/2 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-[left,right,scale,opacity] duration-300 enabled:hover:scale-105 enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 md:size-[44px]'
 
 // Visor de fotos con carrusel (Swiper): las fotos se deslizan al cambiar, se pueden
 // arrastrar o deslizar con el dedo, y hacer zoom con doble click o pellizco.
@@ -68,6 +60,9 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
 
   const arrowOffset = `calc(50% + ${photoHalfWidth + ARROW_GAP}px)`
   const image = images[index]
+  // Sin vuelta: en la primera foto se bloquea "anterior" y en la última "siguiente".
+  const isFirst = index === 0
+  const isLast = index === total - 1
 
   return (
     <dialog
@@ -80,7 +75,6 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
         if (event.key === 'Escape') onClose()
       }}
       aria-label={image?.title || alt}
-      style={swiperColors}
       className="inset-0 m-0 flex h-full w-full max-h-none max-w-none items-center justify-center bg-transparent p-[16px] backdrop:bg-black/90 md:p-[30px]"
     >
       <button
@@ -99,6 +93,7 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
             <button
               type="button"
               onClick={() => swiper?.slidePrev()}
+              disabled={isFirst}
               aria-label={t('home.galeria.prevPhoto')}
               className={arrowClassName}
               style={{ right: arrowOffset }}
@@ -108,15 +103,12 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
           )}
 
           <Swiper
-            modules={[Zoom, Keyboard, Pagination]}
+            modules={[Zoom, Keyboard]}
             initialSlide={initialIndex}
             spaceBetween={24}
-            // Al pasar la última vuelve a la primera (y al revés), como antes.
-            rewind
             grabCursor
             zoom={{ maxRatio: 3 }}
             keyboard={{ enabled: true }}
-            pagination={{ el: '.photo-lightbox-pagination', clickable: true }}
             onSwiper={(current) => {
               setSwiper(current)
               measurePhoto(current)
@@ -145,6 +137,7 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
             <button
               type="button"
               onClick={() => swiper?.slideNext()}
+              disabled={isLast}
               aria-label={t('home.galeria.nextPhoto')}
               className={arrowClassName}
               style={{ left: arrowOffset }}
@@ -154,7 +147,15 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
           )}
         </div>
 
-        {total > 1 && <div className="photo-lightbox-pagination text-center" />}
+        {total > 1 && (
+          <CarouselDots
+            count={total}
+            activeIndex={index}
+            onSelect={(target) => swiper?.slideTo(target)}
+            ariaLabel={t('home.galeria.photoNavigation')}
+            getItemLabel={(target) => t('home.galeria.goToPhoto', { number: target + 1 })}
+          />
+        )}
       </figure>
     </dialog>
   )

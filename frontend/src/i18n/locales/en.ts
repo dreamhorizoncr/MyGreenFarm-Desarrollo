@@ -112,6 +112,8 @@ export default {
       closePhoto: "Close photo",
       prevPhoto: "Previous photo",
       nextPhoto: "Next photo",
+      photoNavigation: "Photo navigation",
+      goToPhoto: "Go to photo {{number}}",
       likes: "{{count}} likes",
       like: "Like a photo",
       unlike: "Unlike a photo",

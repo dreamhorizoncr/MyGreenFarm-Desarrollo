@@ -4,6 +4,7 @@ import { Blobatar } from '@blobatar/react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import nubesDown from '../../assets/imgs/nubesDown.svg'
 import Container from '../../components/home/Container.tsx'
+import CarouselDots from '../../components/ui/CarouselDots.tsx'
 
 const testimonialStyles = [
   { accent: '#F37B25', initials: 'MJA' },
@@ -113,11 +114,13 @@ function TestimonialsSection() {
                 <ChevronRight size={22} aria-hidden="true" />
               </button>
             </div>
-            <div className="flex items-center gap-2" aria-label="Navegación de testimonios">
-              {testimonials.map((testimonial, index) => (
-                <button key={testimonial.author} type="button" aria-label={`Ir al testimonio ${index + 1}`} aria-current={index === activeIndex ? 'true' : undefined} onClick={() => setActiveIndex(index)} className={`size-2 rounded-full transition-transform focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--green-500)] ${index === activeIndex ? 'scale-125 bg-[var(--green-500)]' : 'bg-[var(--grey-300)]'}`} />
-              ))}
-            </div>
+            <CarouselDots
+              count={testimonials.length}
+              activeIndex={activeIndex}
+              onSelect={setActiveIndex}
+              ariaLabel="Navegación de testimonios"
+              getItemLabel={(index) => `Ir al testimonio ${index + 1}`}
+            />
           </div>
         </Container>
       </div>

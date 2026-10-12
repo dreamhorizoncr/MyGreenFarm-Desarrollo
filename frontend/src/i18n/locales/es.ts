@@ -115,6 +115,8 @@ export default {
       closePhoto: "Cerrar foto",
       prevPhoto: "Foto anterior",
       nextPhoto: "Siguiente foto",
+      photoNavigation: "Navegación de fotos",
+      goToPhoto: "Ir a la foto {{number}}",
       likes: "{{count}} me gusta",
       like: "Dar me gusta",
       unlike: "Quitar me gusta",
