@@ -5,8 +5,10 @@
 
 const SELECTOR = '.modal-scroll'
 // Separación de la barra con los bordes del modal, para que no choque con el redondeado.
-const EDGE_GAP = 14
-const MIN_THUMB = 36
+const EDGE_GAP = 20
+// La barra es apenas una señal de que hay más contenido: corta y de tamaño acotado.
+const MIN_THUMB = 24
+const MAX_THUMB = 56
 
 // Modales con barra instalada y la función que la reacomoda.
 const updaters = new Map<HTMLElement, () => void>()
@@ -39,7 +41,7 @@ function enhance(container: HTMLElement) {
     }
     track.hidden = false
     trackHeight = clientHeight - EDGE_GAP * 2
-    thumbHeight = Math.max(MIN_THUMB, (trackHeight * clientHeight) / scrollHeight)
+    thumbHeight = Math.min(MAX_THUMB, Math.max(MIN_THUMB, (trackHeight * clientHeight) / scrollHeight))
     // El track es absolute dentro del contenedor que hace scroll: se compensa el scrollTop para que quede quieto.
     track.style.top = `${scrollTop + EDGE_GAP}px`
     track.style.height = `${trackHeight}px`
