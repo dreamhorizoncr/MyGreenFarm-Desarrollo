@@ -1382,4 +1382,8 @@ export default {
     description: "Le paiement n'a pas pu être traité. Vous pouvez réessayer.",
     retry: "Réessayer",
   },
+  reactions: {
+    errorTitle: "Votre réaction n'a pas pu être enregistrée",
+    loggedIn: "Les réactions sont réservées aux visiteurs et vous êtes connecté. Déconnectez-vous pour réagir.",
+  },
 };

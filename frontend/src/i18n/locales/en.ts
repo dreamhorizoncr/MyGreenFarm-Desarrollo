@@ -1375,4 +1375,8 @@ export default {
     description: "The payment could not be processed. You can try again.",
     retry: "Retry",
   },
+  reactions: {
+    errorTitle: "Your reaction could not be saved",
+    loggedIn: "Reactions are only for visitors and you are logged in. Log out to react.",
+  },
 };

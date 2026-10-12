@@ -1390,4 +1390,8 @@ export default {
     description: "El pago no pudo ser procesado. Podés intentarlo de nuevo.",
     retry: "Reintentar",
   },
+  reactions: {
+    errorTitle: "No se pudo registrar tu reacción",
+    loggedIn: "Las reacciones son solo para visitantes y tenés la sesión iniciada. Cerrá sesión para poder reaccionar.",
+  },
 };
