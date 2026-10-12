@@ -143,7 +143,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
         if (event.key === 'Escape') requestClose()
       }}
       aria-label={isEditing ? t('admin.servicios.editPlan') : t('admin.servicios.newPlan')}
-      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+      className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="flex items-center justify-between gap-md">
         <h2 className="m-0 font-heading text-2xl font-bold text-heading">

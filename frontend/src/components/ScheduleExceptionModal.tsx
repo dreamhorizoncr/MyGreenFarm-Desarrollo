@@ -97,7 +97,7 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
         if (event.key === 'Escape') onClose()
       }}
       aria-labelledby="exception-modal-title"
-      className="m-0 mt-auto max-h-[92vh] w-full max-w-none scrollbar-none overflow-y-auto rounded-t-3xl bg-bg-card p-xl backdrop:bg-scrim md:m-auto md:w-[min(560px,92vw)] md:rounded-2xl"
+      className="text-left m-0 mt-auto max-h-[92vh] w-full max-w-none scrollbar-none overflow-y-auto rounded-t-3xl bg-bg-card p-xl backdrop:bg-scrim md:m-auto md:w-[min(560px,92vw)] md:rounded-2xl"
     >
       <div className="relative p-xl">
         <div className="flex items-center justify-between gap-md">
