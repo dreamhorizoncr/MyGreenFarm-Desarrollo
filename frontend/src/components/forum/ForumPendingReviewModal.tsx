@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { XIcon } from '@animateicons/react/lucide'
 import Button from '../ui/Button.tsx'
 import { useModalExit } from '../../hooks/useModalExit.ts'
+import ModalCloseButton from '../ui/ModalCloseButton.tsx'
 
 interface ForumPendingReviewModalProps {
   title: string
@@ -36,14 +36,11 @@ function ForumPendingReviewModal({ title, description, onClose }: Readonly<Forum
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,calc(100vw-48px))] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="relative p-[28px_22px_30px]">
-        <button
-          type="button"
-          className="absolute right-3 top-[26px] z-10 inline-flex size-10 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+        <ModalCloseButton
           onClick={requestClose}
           aria-label={t('admin.cancel')}
-        >
-          <XIcon size={20} />
-        </button>
+          className="absolute right-3 top-[26px] z-20"
+        />
 
         <div className="flex flex-col items-center gap-md px-[28px] pb-[32px] pt-[30px]">
           <h2 className="m-0 text-center font-heading text-h1 font-bold leading-none text-heading">

@@ -1,9 +1,10 @@
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BanknoteIcon, XIcon } from '@animateicons/react/lucide'
+import { BanknoteIcon } from '@animateicons/react/lucide'
 import type { ExchangeRate } from '../../types/exchangeRate.ts'
 import { formatCurrency } from '../../utils/currency.ts'
 import { useModalExit } from '../../hooks/useModalExit.ts'
+import ModalCloseButton from '../ui/ModalCloseButton.tsx'
 
 interface ExchangeRateWidgetProps {
   data: ExchangeRate | null
@@ -91,14 +92,11 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
           aria-labelledby="exchange-rate-title"
           className={`fixed inset-0 m-auto max-h-[90vh] w-[min(520px,94vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg shadow-xl backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         >
-          <button
-            type="button"
+          <ModalCloseButton
             onClick={handleClose}
             aria-label={t('legalModal.close')}
-            className="absolute right-md top-md inline-flex size-10 items-center justify-center rounded-full bg-transparent text-green-700 transition hover:bg-transparent hover:opacity-70 focus-visible:outline-2 focus-visible:outline-green-500"
-          >
-            <XIcon size={20} />
-          </button>
+            className="absolute right-3 top-[26px] z-20"
+          />
 
           <div className="mb-lg text-center">
             <h2 id="exchange-rate-title" className="m-0 font-heading text-h4 font-bold text-green-500">

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import PasswordInput from './ui/PasswordInput.tsx'
 import DatePickerField from './ui/DatePickerField.tsx'
@@ -8,6 +7,7 @@ import { useModalExit } from '../hooks/useModalExit.ts'
 import { useRegister } from '../hooks/useRegister.ts'
 import { notify } from '../utils/notifications.ts'
 import { validateEmail, validatePassword, validateRequired } from '../utils/validators.ts'
+import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface CreateUserModalProps {
   // Se llama después de crear el usuario, para refrescar la lista.
@@ -99,14 +99,10 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
       <div className="flex items-center justify-between gap-md">
         <h2 className="m-0 font-heading text-2xl font-bold text-heading">{t('admin.addDocente')}</h2>
 
-        <button
-          type="button"
+        <ModalCloseButton
           onClick={requestClose}
           aria-label={t('admin.cancel')}
-          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-        >
-          <XIcon size={20} />
-        </button>
+        />
       </div>
 
       <div className="mt-lg grid gap-md md:grid-cols-2">

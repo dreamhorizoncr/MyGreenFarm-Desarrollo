@@ -1,5 +1,4 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { XIcon } from "@animateicons/react/lucide";
 
 import Select from "./ui/Select.tsx";
 import { childService } from "../services/child";
@@ -15,6 +14,7 @@ import type { ClubResponse } from "../types/clubs";
 import { useTranslation } from "react-i18next";
 import { validateRequired } from "../utils/validators.ts";
 import i18n from "../i18n/index.ts";
+import ModalCloseButton from "./ui/ModalCloseButton.tsx";
 
 interface ChildFormModalProps {
     isOpen: boolean;
@@ -214,14 +214,10 @@ function ChildFormModal({
                             : `${t("admin.children.createTitle")}`}
                     </h2>
 
-                    <button
-                        type="button"
+                    <ModalCloseButton
                         onClick={onClose}
                         aria-label={t("admin.children.cancel")}
-                        className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-                    >
-                        <XIcon size={20} />
-                    </button>
+                    />
                 </div>
 
                 {error && (

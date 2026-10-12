@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import { validateRequired } from '../utils/validators.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import type { OptionalApplicationField, VacancyInput } from '../types/vacancy.ts'
 import CheckboxField from './ui/CheckboxField.tsx'
+import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface CreateVacancyModalProps {
   onCreate: (data: VacancyInput) => Promise<void>
@@ -77,14 +77,10 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
           {t('vacancies.publishModalTitle')}
         </h2>
 
-        <button
-          type="button"
+        <ModalCloseButton
           onClick={requestClose}
           aria-label={t('admin.cancel')}
-          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-        >
-          <XIcon size={20} />
-        </button>
+        />
       </div>
 
       <div className="mt-lg grid gap-md">

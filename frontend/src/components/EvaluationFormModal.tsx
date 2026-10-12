@@ -1,6 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { XIcon } from "@animateicons/react/lucide";
 
 import Select from "./ui/Select.tsx";
 import { evaluationService } from "../services/evaluation";
@@ -9,6 +8,7 @@ import { notify } from "../utils/notifications";
 import { useModalVisibility } from "../hooks/useModalExit.ts";
 import DatePickerField from "./ui/DatePickerField.tsx";
 import { validateRequired } from "../utils/validators.ts";
+import ModalCloseButton from "./ui/ModalCloseButton.tsx";
 
     import type {
     Evaluation,
@@ -172,14 +172,10 @@ import { validateRequired } from "../utils/validators.ts";
                 {evaluation ? t("admin.evaluations.formEditTitle") : t("admin.evaluations.registerEvaluation")}
             </h2>
 
-            <button
-                type="button"
+            <ModalCloseButton
                 onClick={onClose}
                 aria-label="Cerrar"
-                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-            >
-                <XIcon size={20} />
-            </button>
+            />
             </div>
 
             {error && (

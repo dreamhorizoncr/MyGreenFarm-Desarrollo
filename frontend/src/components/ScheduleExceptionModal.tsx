@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { XIcon } from '@animateicons/react/lucide'
 import DatePickerField from './ui/DatePickerField.tsx'
 import Select from './ui/Select.tsx'
 import type { ScheduleException } from '../types/availability.ts'
 import { DEFAULT_END_TIME, DEFAULT_START_TIME, toApiTime, timeValue } from '../types/availability.ts'
+import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface ScheduleExceptionModalProps {
   exception?: ScheduleException | null
@@ -105,9 +105,7 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
             {exception ? t('admin.availability.modal.editTitle') : t('admin.availability.modal.addTitle')}
           </h2>
 
-          <button type="button" onClick={onClose} aria-label={t('admin.availability.modal.close')} className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100">
-            <XIcon size={20} />
-          </button>
+          <ModalCloseButton onClick={onClose} aria-label={t('admin.availability.modal.close')} />
         </div>
         <p className="mt-xs font-body text-body-sm text-neutral-500">{t('admin.availability.modal.hint')}</p>
 

@@ -2,7 +2,6 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   PlusIcon,
-  XIcon,
 } from "@animateicons/react/lucide";
 import AdminLayout from "../layout/AdminLayout.tsx";
 import Skeleton from "../components/ui/Skeleton.tsx";
@@ -25,6 +24,7 @@ import TimePickerField from "../components/ui/TimePickerField.tsx";
 import CardActionButton from "../components/ui/CardActionButton.tsx";
 import ImagePickerButton from "../components/ui/ImagePickerButton.tsx";
 import ImageThumb, { ImageThumbList } from "../components/ui/ImageThumb.tsx";
+import ModalCloseButton from "../components/ui/ModalCloseButton.tsx";
 
 const emptyForm: AnnouncementRequest = {
   title: "",
@@ -362,14 +362,10 @@ function AnnouncementsPage() {
                 {editing ? t("adminNews.editNews") : t("adminNews.newnews")}
               </h2>
 
-              <button
-                type="button"
+              <ModalCloseButton
                 onClick={requestClose}
                 aria-label="Cerrar formulario"
-                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-              >
-                <XIcon size={20} />
-              </button>
+              />
             </div>
 
             <div className="mt-lg grid gap-md md:grid-cols-2">

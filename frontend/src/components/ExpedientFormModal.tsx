@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronDownIcon, XIcon } from "@animateicons/react/lucide";
+import { ChevronDownIcon } from "@animateicons/react/lucide";
 import Select from "./ui/Select.tsx";
 
 import { expedientService } from "../services/expedient";
@@ -19,6 +19,7 @@ import { educationalLevelKeys } from "../utils/educationalLevels.ts";
 import ImagePickerButton from "./ui/ImagePickerButton.tsx";
 import ImageThumb, { ImageThumbList } from "./ui/ImageThumb.tsx";
 import DeleteConfirmModal from "./ui/DeleteConfirmModal.tsx";
+import ModalCloseButton from "./ui/ModalCloseButton.tsx";
 
 interface ExpedientFormModalProps {
   onClose: () => void;
@@ -212,14 +213,10 @@ function ExpedientFormModal({
               : t("admin.expedients.addTitle")}
           </h2>
 
-          <button
-            type="button"
+          <ModalCloseButton
             onClick={requestClose}
             aria-label={t("admin.expedients.cancel")}
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-          >
-            <XIcon size={20} />
-          </button>
+          />
         </div>
 
         <div className="mt-lg grid gap-md md:grid-cols-2">

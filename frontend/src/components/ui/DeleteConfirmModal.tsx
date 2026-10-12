@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { XIcon } from '@animateicons/react/lucide'
 import Button from './Button.tsx'
 import { getErrorMessage } from '../../utils/error.ts'
 import { useModalExit } from '../../hooks/useModalExit.ts'
+import ModalCloseButton from './ModalCloseButton.tsx'
 
 interface DeleteConfirmModalProps {
   title: string
@@ -63,14 +63,10 @@ function DeleteConfirmModal({
             {title}
           </h2>
 
-          <button
-            type="button"
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+          <ModalCloseButton
             onClick={requestClose}
             aria-label={t('admin.cancel')}
-          >
-            <XIcon size={20} />
-          </button>
+          />
         </div>
 
         <div className="mt-lg flex flex-col gap-md">

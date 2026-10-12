@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
-import { XIcon } from '@animateicons/react/lucide'
 import { useModalExit } from '../../../hooks/useModalExit.ts'
 import CardActionButton from '../../ui/CardActionButton.tsx'
+import ModalCloseButton from '../../ui/ModalCloseButton.tsx'
 
 // Lo mínimo que comparten los comentarios del Blog y de la Comunidad.
 export interface ForumCommentItem {
@@ -55,14 +55,10 @@ function ForumCommentsModal<T extends ForumCommentItem>({
             </p>
           </div>
 
-          <button
-            type="button"
+          <ModalCloseButton
             onClick={requestClose}
             aria-label={t('adminForum.close')}
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-          >
-            <XIcon size={20} />
-          </button>
+          />
         </div>
 
         <div className="mt-lg max-h-[60vh] overflow-y-auto">

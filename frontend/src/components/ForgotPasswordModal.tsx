@@ -1,10 +1,11 @@
 import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CircleCheck, XIcon } from '@animateicons/react/lucide'
+import { CircleCheck } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import { useForgotPassword } from '../hooks/useForgotPassword.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { notify } from '../utils/notifications.ts'
+import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface ForgotPasswordModalProps {
   email: string
@@ -70,14 +71,10 @@ function ForgotPasswordModal({ email, onClose }: Readonly<ForgotPasswordModalPro
                 {t('profile.resetPassword')}
               </h2>
 
-              <button
-                type="button"
+              <ModalCloseButton
                 onClick={requestClose}
                 aria-label={t('admin.cancel')}
-                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-              >
-                <XIcon size={20} />
-              </button>
+              />
             </div>
 
             <div className="mt-lg flex flex-col gap-md">

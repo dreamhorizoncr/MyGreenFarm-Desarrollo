@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import WizardSteps from './ui/WizardSteps.tsx'
 import { getErrorMessage } from '../utils/error.ts'
 import { validateRequired } from '../utils/validators.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import type { Appointment, AppointmentStatus } from '../types/appointment.ts'
+import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 const STATUS_OPTIONS: AppointmentStatus[] = ['PENDING', 'CONFIRMED', 'CANCELLED']
 
@@ -91,14 +91,10 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
             {t('teacherAppointments.changeStatus')}
           </h2>
 
-          <button
-            type="button"
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+          <ModalCloseButton
             onClick={requestClose}
             aria-label={t('admin.cancel')}
-          >
-            <XIcon size={20} />
-          </button>
+          />
         </div>
 
         <div className="mt-lg mb-lg px-[28px]">

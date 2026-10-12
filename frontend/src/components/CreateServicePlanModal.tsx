@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import Select from './ui/Select.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
@@ -10,6 +9,7 @@ import ImageThumb, { ImageThumbList } from './ui/ImageThumb.tsx'
 import DeleteConfirmModal from './ui/DeleteConfirmModal.tsx'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { notify } from '../utils/notifications.ts'
+import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']
 
@@ -150,14 +150,10 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
           {isEditing ? t('admin.servicios.editPlan') : t('admin.servicios.newPlan')}
         </h2>
 
-        <button
-          type="button"
+        <ModalCloseButton
           onClick={requestClose}
           aria-label={t('admin.cancel')}
-          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-        >
-          <XIcon size={20} />
-        </button>
+        />
       </div>
 
       <form onSubmit={handleSubmit} className="mt-lg grid gap-md">

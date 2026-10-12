@@ -27,6 +27,7 @@ import CardActionButton from '../components/ui/CardActionButton.tsx'
 import CheckboxField from '../components/ui/CheckboxField.tsx'
 import ImagePickerButton from '../components/ui/ImagePickerButton.tsx'
 import ImageThumb, { ImageThumbList } from '../components/ui/ImageThumb.tsx'
+import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
 
 const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'])
 const TITLE_MIN_LENGTH = 5
@@ -664,14 +665,10 @@ function AdminGalleryPage() {
 						<h2 className="m-0 font-heading text-2xl font-bold text-heading">
 							{editing ? t('admin.gallery.editAlbum') : t('admin.gallery.newAlbum')}
 						</h2>
-						<button
-							type="button"
+						<ModalCloseButton
 							onClick={requestClose}
 							aria-label={t('admin.gallery.close')}
-							className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-						>
-							<XIcon size={20} />
-						</button>
+						/>
 					</div>
 
 					<div className="mt-lg grid gap-md md:grid-cols-2">

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { XIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import Button from '../ui/Button.tsx'
 import ForumPendingReviewModal from './ForumPendingReviewModal.tsx'
 import { notify } from '../../utils/notifications.ts'
 import { getErrorMessage } from '../../utils/error.ts'
+import ModalCloseButton from '../ui/ModalCloseButton.tsx'
 
 const MAX_CONTENT = 4000
 
@@ -101,14 +101,11 @@ function PublishExperienceModal({
       <article
         className="relative mx-auto max-h-full modal-scroll w-full max-w-[640px] rounded-[20px] bg-white"
       >
-        <button
-          type="button"
+        <ModalCloseButton
           onClick={onClose}
           aria-label={t('forum.community.cancel')}
-          className="absolute right-[18px] top-[18px] flex size-[42px] items-center justify-center rounded-full bg-white text-heading transition"
-        >
-          <XIcon size={20} />
-        </button>
+          className="absolute right-3 top-[26px] z-20"
+        />
 
         <div className="px-[22px] pb-[30px] pt-[34px] md:px-[40px] md:pb-[36px] md:pt-[40px]">
           <h2 className="m-0 pr-[50px] font-heading text-[24px] font-bold text-heading md:text-[28px]">

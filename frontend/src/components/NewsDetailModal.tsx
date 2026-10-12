@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
-import { CalendarDaysIcon, MapPinIcon, SparklesIcon, XIcon } from '@animateicons/react/lucide';
+import { CalendarDaysIcon, MapPinIcon, SparklesIcon } from '@animateicons/react/lucide'
+;
 import { useTranslation } from 'react-i18next';
 import { useAnnouncementImages } from '../hooks/useAnnouncementImages.ts';
 import { useModalExit } from '../hooks/useModalExit.ts';
 
 import type { Announcement, AnnouncementType } from '../types/announcement.ts';
+import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface NewsDetailModalProps{
     announcement: Announcement;
@@ -107,14 +109,11 @@ function NewsDetailModal({
         <article
             className={`relative mx-auto max-h-full modal-scroll w-full max-w-[1100px] rounded-[20px] bg-bg-page ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         >
-            <button
-                type="button"
+            <ModalCloseButton
                 onClick={requestClose}
                 aria-label="Cerrar noticia"
-                className="absolute right-[18px] top-[18px] z-20 flex size-[42px] items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-                >
-                <XIcon size={20} />
-            </button>
+              className="absolute right-3 top-[26px] z-20"
+            />
 
         <div className="px-[22px] pb-[45px] pt-[40px] md:px-[55px] md:pb-[60px] md:pt-[55px]">
 

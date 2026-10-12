@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ChevronDownIcon, SearchIcon, SendIcon, XIcon } from '@animateicons/react/lucide'
+import { ChevronDownIcon, SearchIcon, SendIcon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import ConfirmNewsletterUnsubscribeModal from '../components/ConfirmNewsletterUnsubscribeModal.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
@@ -11,6 +11,7 @@ import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { notify } from '../utils/notifications.ts'
 import type { AudienceType, NewsletterRecipient } from '../types/newsletter.ts'
+import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
 
 interface SubscriberRowProps {
     item?: NewsletterRecipient
@@ -313,14 +314,10 @@ function AdminNewsletterPage() {
                                     {broadcastModalTitle}
                                 </h2>
 
-                                <button
-                                    type="button"
+                                <ModalCloseButton
                                     onClick={closeBroadcastModal}
                                     aria-label={t('admin.cancel')}
-                                    className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-                                >
-                                    <XIcon size={20} aria-hidden="true" />
-                                </button>
+                                />
                             </div>
 
                             <form className="mt-lg grid gap-md" onSubmit={handleBroadcastSubmit}>

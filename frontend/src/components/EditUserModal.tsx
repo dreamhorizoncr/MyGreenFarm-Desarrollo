@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import { getErrorMessage } from '../utils/error.ts'
 import { validateEmail, validateRequired } from '../utils/validators.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import DatePickerField from './ui/DatePickerField.tsx'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
+import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface EditUserModalProps {
   userToEdit: UserInfo
@@ -83,14 +83,10 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
           {t('admin.edit')}
         </h2>
 
-        <button
-          type="button"
+        <ModalCloseButton
           onClick={requestClose}
           aria-label={t('admin.cancel')}
-          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-        >
-          <XIcon size={20} />
-        </button>
+        />
       </div>
 
       <div className="mt-lg grid gap-md md:grid-cols-2">
