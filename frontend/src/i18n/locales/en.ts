@@ -574,6 +574,10 @@ export default {
     deleteImageMessage: "Are you sure you want to delete this image? This action cannot be undone.",
     imageDeletedToast: "Image deleted",
     imageDeleteErrorToast: "The image could not be deleted",
+    countrySearch: {
+      placeholder: "Search country or code",
+      empty: "No countries found.",
+    },
   },
   validation: {
     emailRequired: "Email is required",

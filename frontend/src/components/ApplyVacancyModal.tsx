@@ -5,6 +5,8 @@ import PhoneInput from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import Button from './ui/Button.tsx'
 import TextField from './ui/TextField.tsx'
+import CountrySelect from './ui/CountrySelect.tsx'
+import { phoneLabels } from '../utils/phoneLabels.ts'
 import { useVacancyApplicationForm } from '../hooks/useVacancyApplicationForm.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock.ts'
@@ -29,7 +31,7 @@ interface ApplyVacancyModalProps {
 }
 
 function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose }: Readonly<ApplyVacancyModalProps>) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const certificatesInputRef = useRef<HTMLInputElement>(null)
@@ -112,6 +114,8 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
                 onCountryChange={form.handleCountryChange}
                 onBlur={form.handlePhoneBlur}
                 inputComponent={VacancyPhoneInput}
+                countrySelectComponent={CountrySelect}
+                labels={phoneLabels(i18n.language)}
               />
             </TextField>
           )}
