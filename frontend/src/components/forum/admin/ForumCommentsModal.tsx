@@ -1,27 +1,36 @@
 import { useTranslation } from 'react-i18next'
-import { Trash2Icon, XIcon } from '@animateicons/react/lucide'
+import { XIcon } from '@animateicons/react/lucide'
 import { useModalExit } from '../../../hooks/useModalExit.ts'
-import type { BlogComment, BlogPost } from '../../../types/forum.ts'
+import CardActionButton from '../../ui/CardActionButton.tsx'
 
-interface BlogPostCommentsModalProps {
-  post: BlogPost
-  comments: BlogComment[]
+// Lo mínimo que comparten los comentarios del Blog y de la Comunidad.
+export interface ForumCommentItem {
+  id: string
+  alias: string
+  content: string
+  createdAt: string
+}
+
+interface ForumCommentsModalProps<T extends ForumCommentItem> {
+  // Texto bajo el título: el título del artículo o el autor de la publicación.
+  subtitle: string
+  comments: T[]
   loading: boolean
   error: string
   canDelete: boolean
-  onDeleteRequest: (comment: BlogComment) => void
+  onDeleteRequest: (comment: T) => void
   onClose: () => void
 }
 
-function BlogPostCommentsModal({
-  post,
+function ForumCommentsModal<T extends ForumCommentItem>({
+  subtitle,
   comments,
   loading,
   error,
   canDelete,
   onDeleteRequest,
   onClose,
-}: Readonly<BlogPostCommentsModalProps>) {
+}: Readonly<ForumCommentsModalProps<T>>) {
   const { t } = useTranslation()
   const { closing, requestClose } = useModalExit(onClose)
 
@@ -42,7 +51,7 @@ function BlogPostCommentsModal({
               {t('adminForum.commentsModalTitle')}
             </h2>
             <p className="m-0 mt-2xs truncate font-body text-body-sm text-neutral-500">
-              {post.title}
+              {subtitle}
             </p>
           </div>
 
@@ -93,14 +102,12 @@ function BlogPostCommentsModal({
               </div>
 
               {canDelete && (
-                <button
-                  type="button"
+                <CardActionButton
+                  action="delete"
+                  size="sm"
+                  label={`${t('adminForum.deleteCommentTitle')} — ${comment.alias}`}
                   onClick={() => onDeleteRequest(comment)}
-                  aria-label={`${t('adminForum.deleteCommentTitle')} — ${comment.alias}`}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50"
-                >
-                  <Trash2Icon size={15} aria-hidden="true" />
-                </button>
+                />
               )}
             </div>
           ))}
@@ -110,4 +117,4 @@ function BlogPostCommentsModal({
   )
 }
 
-export default BlogPostCommentsModal
+export default ForumCommentsModal

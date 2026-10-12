@@ -24,7 +24,7 @@ function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
     const isFull = available <= 0
 
     return (
-        <article className="relative flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+        <article className="relative flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm card-hover">
             {/* Imagen de portada */}
             <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
                 {club.coverImageUrl ? (
@@ -186,12 +186,12 @@ function ClubsPage() {
             <Navbar />
 
             {/* Header Banner */}
-            <section className="flex min-h-[220px] items-center bg-green-500 px-7.5 py-10 text-center text-white md:min-h-[260px]">
+            <section className="flex min-h-[280px] items-start bg-green-500 px-[30px] pt-[48px] pb-[40px] text-center text-white md:min-h-[320px] md:pt-[72px]">
                 <div className="mx-auto w-full max-w-175">
                     <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
                         {t('clubs.title')}
                     </h1>
-                    <p className="mx-auto mt-4 max-w-140 font-body text-body-sm leading-[1.6] text-white">
+                    <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-white md:text-body-sm">
                         {t('clubs.subtitle')}
                     </p>
                 </div>
@@ -199,7 +199,7 @@ function ClubsPage() {
 
             {/* Main Content */}
             <main className="flex flex-1 items-center justify-center">
-                <Container className="py-12 md:py-20">
+                <Container className="py-10 md:py-12">
                     {loading ? (
                         <div className="grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
                             {Array.from({ length: 3 }).map((_, index) => (

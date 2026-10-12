@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
-import { PencilIcon, Trash2Icon } from '@animateicons/react/lucide'
 import type { UserInfo } from '../types/auth.ts'
 import Skeleton from './ui/Skeleton.tsx'
+import CardActionButton from './ui/CardActionButton.tsx'
 
 interface TeacherCardProps {
   user?: UserInfo
@@ -25,7 +25,7 @@ function TeacherCard({ user, isSelf, onEdit, onDelete, loading = false }: Readon
     : t('admin.notAvailable')
 
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm card-hover">
       <header className="flex items-start justify-between gap-sm">
         {loading ? (
           <div className="min-w-0 flex-1">
@@ -51,25 +51,15 @@ function TeacherCard({ user, isSelf, onEdit, onDelete, loading = false }: Readon
             </>
           ) : (
             <>
-              <button
-                type="button"
-                onClick={onEdit}
-                aria-label={t('admin.edit')}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
-              >
-                <PencilIcon size={17} />
-              </button>
+              <CardActionButton action="edit" label={t('admin.edit')} onClick={onEdit} />
 
-              <button
-                type="button"
-                onClick={onDelete}
-                disabled={isSelf}
+              <CardActionButton
+                action="delete"
+                label={t('admin.delete')}
                 title={isSelf ? t('admin.selfDeleteNotAllowed') : undefined}
-                aria-label={t('admin.delete')}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <Trash2Icon size={17} />
-              </button>
+                disabled={isSelf}
+                onClick={onDelete}
+              />
             </>
           )}
         </div>

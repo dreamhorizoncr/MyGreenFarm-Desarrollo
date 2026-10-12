@@ -1,14 +1,13 @@
 import {
   CalendarDaysIcon,
   FileTextIcon,
-  PencilIcon,
-  Trash2Icon,
   UserIcon,
 } from "@animateicons/react/lucide";
 
 import type { Child } from "../types/child";
 import { useTranslation } from "react-i18next";
 import Skeleton from "./ui/Skeleton.tsx";
+import CardActionButton from "./ui/CardActionButton.tsx";
 
 interface ChildCardProps {
   child?: Child;
@@ -22,7 +21,7 @@ function ChildCard({ child, onEdit, onDelete, loading = false }: Readonly<ChildC
   const { t } = useTranslation();
 
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm card-hover">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           {loading ? (
@@ -51,25 +50,19 @@ function ChildCard({ child, onEdit, onDelete, loading = false }: Readonly<ChildC
             </>
           ) : (
             <>
-              <button
-                type="button"
-                onClick={() => onEdit!(child!)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 bg-white text-green-600 transition-all duration-200 hover:bg-green-50"
-                aria-label={`${t("admin.children.editTitle")} ${fullName}`}
+              <CardActionButton
+                action="edit"
+                label={`${t("admin.children.editTitle")} ${fullName}`}
                 title={t("admin.children.editTitle")}
-              >
-                <PencilIcon size={17} />
-              </button>
+                onClick={() => onEdit!(child!)}
+              />
 
-              <button
-                type="button"
-                onClick={() => onDelete!(child!)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-red-400 bg-white text-red-500 transition-all duration-200 hover:bg-red-50"
-                aria-label={`${t("admin.children.deleteTitle")} ${fullName}`}
+              <CardActionButton
+                action="delete"
+                label={`${t("admin.children.deleteTitle")} ${fullName}`}
                 title={t("admin.children.deleteTitle")}
-              >
-                <Trash2Icon size={17} />
-              </button>
+                onClick={() => onDelete!(child!)}
+              />
             </>
           )}
         </div>

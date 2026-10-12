@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -88,5 +89,22 @@ public class ForumCommunityPostController {
         var saved = commentRepository.save(comment);
         return ResponseEntity.status(HttpStatus.CREATED).body(ForumCommunityCommentResponse.builder().id(saved.getId())
                 .communityPostId(postId).alias(saved.getAlias()).content(saved.getContent()).createdAt(saved.getCreatedAt()).build());
+    }
+
+    // Solo el OWNER puede borrar publicaciones de la comunidad.
+    @DeleteMapping("/{postId}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Void> delete(@PathVariable java.util.UUID postId) {
+        return communityPostService.delete(postId) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    }
+
+    // Solo el OWNER modera los comentarios de la comunidad.
+    @DeleteMapping("/{postId}/comments/{commentId}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<Void> deleteComment(@PathVariable java.util.UUID postId, @PathVariable java.util.UUID commentId) {
+        var comment = commentRepository.findById(commentId).orElse(null);
+        if (comment == null || !comment.getCommunityPost().getId().equals(postId)) return ResponseEntity.notFound().build();
+        commentRepository.delete(comment);
+        return ResponseEntity.noContent().build();
     }
 }

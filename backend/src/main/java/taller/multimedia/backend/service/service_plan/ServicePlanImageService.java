@@ -124,6 +124,27 @@ public class ServicePlanImageService {
         servicePlanRepository.delete(plan);
     }
 
+    // Quita la imagen del plan (y su archivo del bucket) sin borrar el plan.
+    @Transactional
+    public ServicePlan deleteImage(UUID id) {
+        ServicePlan plan = servicePlanRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Configuración de plan no encontrada con ID: " + id));
+
+        if (plan.getImageUrl() != null && !plan.getImageUrl().isEmpty()) {
+            String filePath = extractPathFromUrl(plan.getImageUrl(), servicePlansBucket);
+            if (filePath != null && !filePath.isEmpty()) {
+                try {
+                    storageService.deleteFile(servicePlansBucket, filePath);
+                } catch (Exception e) {
+                    log.warn("No se pudo borrar la imagen del plan en el bucket: {}", e.getMessage());
+                }
+            }
+            plan.setImageUrl(null);
+        }
+
+        return servicePlanRepository.save(plan);
+    }
+
     private boolean isValidImageFormat(String contentType) {
         return contentType.equals("image/png") ||
                 contentType.equals("image/jpg") ||

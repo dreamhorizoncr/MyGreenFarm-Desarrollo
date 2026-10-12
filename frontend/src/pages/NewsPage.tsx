@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import NewsDetailModal from "../components/NewsDetailModal.tsx";
 import BlobButton from "../components/ui/BlobButton.tsx";
 import Skeleton from "../components/ui/Skeleton.tsx";
+import Pagination from "../components/ui/Pagination.tsx";
 
 import { useAnnouncements } from "../hooks/useAnnouncements";
 import { useAnnouncementImages } from "../hooks/useAnnouncementImages";
@@ -75,7 +76,7 @@ function NewsCard({ big, announcement, typeLabel, formattedDate, coverImage, onR
 
   if (big) {
     return (
-      <article className="relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-8 md:h-[340px]">
+      <article className="relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow card-hover md:col-span-8 md:h-[340px]">
         {/* Imagen */}
         <div className="relative h-[240px] md:absolute md:inset-y-0 md:left-0 md:h-auto md:w-1/2">
           {coverImage ? (
@@ -127,7 +128,7 @@ function NewsCard({ big, announcement, typeLabel, formattedDate, coverImage, onR
   }
 
   return (
-    <article className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow transition hover:-translate-y-1 hover:shadow-lg md:col-span-4 md:h-[340px]">
+    <article className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow card-hover md:col-span-4 md:h-[340px]">
       {/* Imagen */}
       <div className="relative h-[200px] md:absolute md:inset-x-0 md:top-0 md:h-[125px]">
         {coverImage ? (
@@ -221,7 +222,7 @@ const cards = announcements.filter(
       <Navbar />
 
       {/* Hero de Noticias */}
-      <section data-scroll-bg="green" className="flex min-h-[280px] items-center bg-green-500 px-[30px] py-[40px] text-center text-white md:min-h-[320px]">
+      <section data-scroll-bg="green" className="flex min-h-[280px] items-start bg-green-500 px-[30px] pt-[48px] pb-[40px] text-center text-white md:min-h-[320px] md:pt-[72px]">
         <div className="mx-auto w-full max-w-[700px]">
           <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
             {t("newspage.title")}
@@ -298,7 +299,7 @@ const cards = announcements.filter(
 
       {/* Sección de Noticias */}
       <main>
-        <Container className="py-[45px] md:py-[55px]">
+        <Container className="py-10 md:py-12">
           {(loading || imagesLoading) && (
             <div className="flex flex-col gap-[18px]">
               {[0, 1].map((rowIndex) => (
@@ -346,50 +347,11 @@ const cards = announcements.filter(
               </div>
 
               {/* Paginación */}
-              {totalPages > 1 && (
-                <div className="mt-[45px] flex items-center justify-center gap-[8px]">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setCurrentPage((page) => Math.max(page - 1, 1))
-                    }
-                    disabled={currentPage === 1}
-                    className="flex size-[38px] items-center justify-center rounded-full border border-neutral-200 bg-white font-body text-[18px] text-heading transition hover:border-green-500 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    ‹
-                  </button>
-
-                  {Array.from({ length: totalPages }, (_, index) => {
-                    const page = index + 1;
-
-                    return (
-                      <button
-                        key={page}
-                        type="button"
-                        onClick={() => setCurrentPage(page)}
-                        className={`flex size-[38px] items-center justify-center rounded-full font-body text-body-sm transition ${
-                          currentPage === page
-                            ? "bg-green-500 text-white"
-                            : "border border-neutral-200 bg-white text-heading hover:border-green-500"
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    );
-                  })}
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setCurrentPage((page) => Math.min(page + 1, totalPages))
-                    }
-                    disabled={currentPage === totalPages}
-                    className="flex size-[38px] items-center justify-center rounded-full border border-neutral-200 bg-white font-body text-[18px] text-heading transition hover:border-green-500 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    ›
-                  </button>
-                </div>
-              )}
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
             </>
           )}
         </Container>

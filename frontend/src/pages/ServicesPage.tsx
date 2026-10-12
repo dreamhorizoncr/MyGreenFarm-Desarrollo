@@ -15,6 +15,7 @@ import type { ExchangeRate, Currency } from '../types/exchangeRate.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 import { convertCurrency, formatCurrency, currencySymbol } from '../utils/currency.ts'
 import { CircleCheckIcon, ClockIcon } from '@animateicons/react/lucide'
+import CurrencyToggle from '../components/currency/CurrencyToggle.tsx'
 
 function PlanCard({
   plan,
@@ -80,7 +81,7 @@ function PlanCard({
   }
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white transition hover:-translate-y-1 hover:shadow-lg">
+    <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white card-hover">
       <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
         {plan!.imageUrl ? (
           <img
@@ -113,21 +114,7 @@ function PlanCard({
         <div className="my-1 border-t border-neutral-100" />
 
         <div className="flex flex-col items-start gap-2xs">
-          <div className="flex w-full flex-wrap justify-end gap-1" aria-label={t('moneda.convertTo')}>
-            {(['USD', 'CRC', 'EUR'] as Currency[]).map(option => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setCurrency(option)}
-                aria-pressed={currency === option}
-                disabled={!exchangeRate && option !== 'USD'}
-                className={`rounded-full border px-sm py-2xs font-body text-caption transition disabled:cursor-not-allowed disabled:opacity-40 ${currency === option ? 'border-green-500 bg-green-500 text-white' : 'border-neutral-200 text-neutral-600 hover:border-green-500'
-                  }`}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
+          <CurrencyToggle value={currency} onChange={setCurrency} hasExchangeRate={Boolean(exchangeRate)} />
           <span className="text-left font-heading text-h2 font-bold text-green-500">
             <AnimatedNumber
               value={price}
@@ -331,7 +318,7 @@ function ServicesPage() {
     <div className="min-h-screen bg-bg-page">
       <Navbar />
 
-      <section className="flex min-h-[220px] items-center bg-white px-[30px] py-[32px] text-center md:min-h-[250px]">
+      <section className="flex min-h-[280px] items-start bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
         <div className="mx-auto w-full max-w-[700px]">
           <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-green-500 md:text-h1">
             {t('services.title')}
@@ -342,7 +329,7 @@ function ServicesPage() {
         </div>
       </section>
 
-      <section className="relative w-full bg-bg-page py-[36px] md:py-[48px]">
+      <section className="relative w-full bg-bg-page py-10 md:py-12">
         <Container className="mb-[36px] flex justify-start md:mb-[48px]">
           <ExchangeRateWidget
             data={exchangeRate}

@@ -44,6 +44,11 @@ export const servicePlanService = {
     return response.data
   },
 
+  async deleteImage(id: string): Promise<ServicePlan> {
+    const response = await apiClient.delete<ServicePlan>(`/service-plans/${id}/image`)
+    return response.data
+  },
+
   async deletePlan(id: string): Promise<void> {
     await apiClient.delete(`/service-plans/${id}`)
   },

@@ -19,7 +19,7 @@ function TextField({ label, error, id, children, ...rest }: Readonly<TextFieldPr
       {children ?? (
         <input
           id={id}
-          className="h-[38px] w-full border-b border-neutral-300 bg-transparent px-0 font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
+          className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
           {...rest}
         />
       )}

@@ -1,0 +1,145 @@
+/** Selector de país para react-phone-number-input (prop countrySelectComponent), con el estilo del Select */
+
+import { useEffect, useMemo, useRef, useState, type ElementType } from 'react'
+import { useTranslation } from 'react-i18next'
+import { CheckIcon, ChevronDownIcon, SearchIcon } from '@animateicons/react/lucide'
+import { getCountryCallingCode, type Country } from 'react-phone-number-input'
+import useDismiss from '../../hooks/useDismiss.ts'
+import { useMenuPosition } from '../../hooks/useMenuPosition.ts'
+
+interface CountryOption {
+  value?: Country
+  label: string
+  divider?: boolean
+}
+
+interface CountrySelectProps {
+  value?: Country
+  onChange: (value?: Country) => void
+  options: CountryOption[]
+  iconComponent: ElementType<{ country?: Country; label: string }>
+  disabled?: boolean
+  readOnly?: boolean
+  'aria-label'?: string
+}
+
+const MENU_MAX_HEIGHT = 320
+const MENU_MIN_WIDTH = 300
+
+// Para buscar sin importar tildes ni mayúsculas.
+const normalize = (text: string) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+
+const callingCode = (country?: Country) => (country ? `+${getCountryCallingCode(country)}` : '')
+
+function CountrySelect({
+  value,
+  onChange,
+  options,
+  iconComponent: Flag,
+  disabled = false,
+  readOnly = false,
+  'aria-label': ariaLabel,
+}: Readonly<CountrySelectProps>) {
+  const { t } = useTranslation()
+  const [open, setOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const rootRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const listRef = useRef<HTMLUListElement>(null)
+
+  const close = () => {
+    setOpen(false)
+    setQuery('')
+  }
+  useDismiss({ ref: rootRef, isOpen: open, onClose: close })
+
+  const position = useMenuPosition({ triggerRef, open, desiredHeight: MENU_MAX_HEIGHT, maxHeight: MENU_MAX_HEIGHT, minWidth: MENU_MIN_WIDTH })
+
+  const filtered = useMemo(() => {
+    const term = normalize(query.trim())
+    if (!term) return options
+    return options.filter((option) => !option.divider && (
+      normalize(option.label).includes(term) || callingCode(option.value).includes(term) || option.value?.toLowerCase() === term
+    ))
+  }, [options, query])
+
+  // Al abrir, deja visible el país elegido.
+  useEffect(() => {
+    if (open && position) listRef.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' })
+  }, [open, position])
+
+  const selectedLabel = options.find((option) => option.value === value)?.label ?? ''
+
+  return (
+    <div ref={rootRef} className="relative mr-xs flex items-center self-stretch">
+      <button
+        ref={triggerRef}
+        type="button"
+        disabled={disabled || readOnly}
+        onClick={() => (open ? close() : setOpen(true))}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-label={ariaLabel}
+        className="flex h-full items-center gap-2xs rounded-lg px-2xs outline-none transition-colors hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-link disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        <span className="flex w-6 shrink-0 items-center">
+          <Flag country={value} label={selectedLabel} />
+        </span>
+        <ChevronDownIcon size={14} aria-hidden="true" className={`shrink-0 text-neutral-500 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && position && (
+        <div
+          style={{ top: position.top, bottom: position.bottom, left: position.left, width: position.width, maxHeight: position.maxHeight }}
+          className="fixed z-[10000] flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg animate-[language-switcher-in_0.15s_ease-out]"
+        >
+          <div className="flex shrink-0 items-center gap-xs border-b border-neutral-100 px-md py-xs">
+            <SearchIcon size={16} aria-hidden="true" className="shrink-0 text-neutral-400" />
+            <input
+              type="search"
+              autoFocus
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={t('common.countrySearch.placeholder')}
+              aria-label={t('common.countrySearch.placeholder')}
+              className="h-9 min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
+            />
+          </div>
+
+          <ul ref={listRef} role="listbox" aria-label={ariaLabel} className="m-0 min-h-0 flex-1 list-none overflow-y-auto p-xs">
+            {filtered.length === 0 && (
+              <li className="px-md py-sm font-body text-body-sm text-neutral-500">{t('common.countrySearch.empty')}</li>
+            )}
+            {filtered.map((option, index) => option.divider ? (
+              <li key={`divider-${index}`} role="separator" className="mx-md my-xs border-t border-neutral-200" />
+            ) : (
+              <li key={option.value ?? 'international'} role="none">
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={option.value === value}
+                  onClick={() => {
+                    onChange(option.value)
+                    close()
+                  }}
+                  className={`flex w-full items-center gap-sm rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100 ${
+                    option.value === value ? 'font-semibold text-link' : ''
+                  }`}
+                >
+                  <span className="flex w-6 shrink-0 items-center">
+                    <Flag country={option.value} label={option.label} />
+                  </span>
+                  <span className="min-w-0 flex-1 truncate">{option.label}</span>
+                  <span className="shrink-0 text-neutral-500">{callingCode(option.value)}</span>
+                  {option.value === value && <CheckIcon size={16} className="shrink-0" />}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default CountrySelect
