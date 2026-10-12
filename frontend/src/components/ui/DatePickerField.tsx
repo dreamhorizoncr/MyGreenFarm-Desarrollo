@@ -4,7 +4,7 @@ import { CalendarDaysIcon } from '@animateicons/react/lucide'
 import { parseDate } from '@internationalized/date'
 import type { CalendarDate } from '@internationalized/date'
 import CalendarPanel from './CalendarPanel.tsx'
-import { placementClassName, placementFor, type PopoverPlacement } from '../../utils/popoverPlacement.ts'
+import { usePopoverPosition } from '../../hooks/usePopoverPosition.ts'
 
 interface DatePickerFieldProps {
   // Fecha en formato YYYY-MM-DD, o '' si no hay fecha.
@@ -27,14 +27,16 @@ const toCalendarDate = (value?: string): CalendarDate | undefined => {
   }
 }
 
-// Alto aproximado del calendario compacto, para decidir si se abre hacia arriba.
+// Tamaño aproximado del calendario compacto, para decidir hacia dónde abrirlo.
+const PANEL_WIDTH = 300
 const PANEL_HEIGHT = 290
 
 const defaultTriggerClassName =
   'mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading'
 
 // Reemplaza al input type="date" nativo: abre el mismo calendario que se usa en Citas.
-// El panel se renderiza en linea (sin portal) para que funcione dentro de <dialog> con showModal().
+// El panel se renderiza en linea (sin portal) para que funcione dentro de <dialog> con showModal(),
+// pero con posición fixed para que el modal no lo recorte aunque sea bajo o tenga scroll.
 function DatePickerField({
   value,
   onChange,
@@ -47,8 +49,9 @@ function DatePickerField({
 }: Readonly<DatePickerFieldProps>) {
   const { t, i18n } = useTranslation()
   const [open, setOpen] = useState(false)
-  const [placement, setPlacement] = useState<PopoverPlacement>('bottom')
   const containerRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const position = usePopoverPosition({ triggerRef, open, width: PANEL_WIDTH, height: PANEL_HEIGHT })
   const selected = toCalendarDate(value) ?? null
 
   useEffect(() => {
@@ -85,24 +88,27 @@ function DatePickerField({
       }}
     >
       <button
+        ref={triggerRef}
         type="button"
         id={id}
         disabled={disabled}
         aria-label={ariaLabel}
         aria-haspopup="dialog"
         aria-expanded={open}
-        onClick={(event) => {
-          if (!open) setPlacement(placementFor(event.currentTarget, PANEL_HEIGHT))
-          setOpen((current) => !current)
-        }}
+        onClick={() => setOpen((current) => !current)}
         className={`flex items-center justify-between gap-sm text-left disabled:cursor-not-allowed disabled:bg-neutral-100 ${className}`}
       >
         <span className={`truncate ${selected ? 'text-body-text' : 'text-neutral-400'}`}>{label}</span>
         <CalendarDaysIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
       </button>
 
-      {open && (
-        <div role="dialog" aria-label={ariaLabel} className={`absolute left-0 z-30 w-[300px] max-w-[calc(100vw-2rem)] ${placementClassName(placement)}`}>
+      {open && position && (
+        <div
+          role="dialog"
+          aria-label={ariaLabel}
+          style={{ top: position.top, bottom: position.bottom, left: position.left, width: PANEL_WIDTH }}
+          className="fixed z-[9000] max-w-[calc(100vw-1rem)]"
+        >
           <CalendarPanel
             value={selected}
             onChange={handleChange}
