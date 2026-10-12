@@ -21,6 +21,7 @@ export default {
   },
   navbar: {
     home: "Home",
+    aboutUs: "About Us",
     news: "News",
     multimedia: "Gallery",
     forum: "Forum",
@@ -193,6 +194,51 @@ export default {
     privacy4Title: "Your Rights",
     privacy4Body:
       "You can request access to, correction of, or deletion of the information we hold about your family at any time by writing to mygreenfarmcr@gmail.com.",
+  },
+  aboutUsPage: {
+    hero: {
+      title: 'About Us',
+      description:
+        'At My Green Farm, we believe in creating meaningful learning experiences through exploration, creativity, and a connection with nature.',
+    },
+    benefits: {
+      title: 'Why Choose Us?',
+      description:
+        'At My Green Farm, we provide a welcoming environment where children can learn, discover, and grow through experiences inspired by nature.',
+      nature: {
+        title: 'Learning Through Nature',
+        description:
+          'Children discover and explore the world through meaningful experiences connected with nature.',
+      },
+      creativity: {
+        title: 'Creative Learning',
+        description:
+          'We encourage curiosity, imagination, and creativity through engaging educational activities.',
+      },
+      educators: {
+        title: 'Caring Educators',
+        description:
+          'Our educators guide and support each child in a welcoming and nurturing environment.',
+      },
+      growth: {
+        title: 'Growing Together',
+        description:
+          'Every child has the opportunity to develop confidence, friendships, and new abilities.',
+      },
+    },
+    team: {
+      title: 'Meet Our Team',
+      description:
+        'Meet the educators who make My Green Farm a special place to learn, explore, and grow.',
+      placeholderTitle: 'Our Team',
+      placeholderDescription:
+        'Our educators will appear here when we connect this section to the teacher management system.',
+    },
+    roles: {
+      TEACHER: 'Teacher',
+      ADMIN: 'Administrator',
+      OWNER: 'Owner',
+    },
   },
   newspage: {
     title: "News",
@@ -693,6 +739,7 @@ export default {
     sidebar: {
       dashboard: "Dashboard",
       docentes: "Users",
+      profesores: "Teacher Management",
       noticias: "News",
       galeria: "Gallery",
       citas: "Appointments",
