@@ -105,7 +105,7 @@ function NewsDetailModal({
         />
 
         <article
-            className={`relative mx-auto max-h-full modal-scroll w-full max-w-[1100px] rounded-3xl bg-bg-page ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+            className={`relative mx-auto max-h-full modal-scroll w-full max-w-[1100px] rounded-[20px] bg-bg-page ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         >
             <button
                 type="button"

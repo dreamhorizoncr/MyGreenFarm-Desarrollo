@@ -99,7 +99,7 @@ function PublishExperienceModal({
       />
 
       <article
-        className="relative mx-auto max-h-full modal-scroll w-full max-w-[640px] rounded-3xl bg-white"
+        className="relative mx-auto max-h-full modal-scroll w-full max-w-[640px] rounded-[20px] bg-white"
       >
         <button
           type="button"

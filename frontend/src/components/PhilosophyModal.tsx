@@ -72,7 +72,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
         if (event.key === 'Escape') requestClose()
       }}
       aria-label={t('home.philosophy.title')}
-      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(760px,92vw)] max-w-none modal-scroll rounded-2xl bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(760px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="relative">
         <button
@@ -89,7 +89,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
           alt=""
           aria-hidden="true"
           data-scroll-bg="green"
-          className="h-64 w-full rounded-t-2xl object-cover md:h-80"
+          className="h-64 w-full rounded-t-[20px] object-cover md:h-80"
         />
 
         <div className="p-[22px_22px_30px] md:p-[26px_28px_32px]">
