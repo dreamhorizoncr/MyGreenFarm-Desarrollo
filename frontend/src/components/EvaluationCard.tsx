@@ -1,9 +1,9 @@
-import { PencilIcon, Trash2Icon } from "@animateicons/react/lucide";
 import { useTranslation } from "react-i18next";
 
 import type { Evaluation } from "../types/evaluation";
 import type { Expedient } from "../types/expedient";
 import Skeleton from "./ui/Skeleton.tsx";
+import CardActionButton from "./ui/CardActionButton.tsx";
 
     interface EvaluationCardProps {
     evaluation?: Evaluation;
@@ -33,7 +33,7 @@ import Skeleton from "./ui/Skeleton.tsx";
     ]
 
     return (
-        <div className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+        <div className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm card-hover">
         {/* Encabezado */}
         <div className="flex items-start justify-between gap-md">
             {loading ? (
@@ -67,25 +67,19 @@ import Skeleton from "./ui/Skeleton.tsx";
                 </>
               ) : (
                 <>
-                  <button
-                      type="button"
-                      onClick={() => onEdit!(evaluation!)}
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 bg-white text-green-600 transition-all duration-200 hover:bg-green-50"
-                      aria-label={t("admin.evaluations.cardEditAriaLabel")}
-                      title={t("admin.evaluations.cardEditTitle")}
-                  >
-                      <PencilIcon size={17} />
-                  </button>
+                  <CardActionButton
+                    action="edit"
+                    label={t("admin.evaluations.cardEditAriaLabel")}
+                    title={t("admin.evaluations.cardEditTitle")}
+                    onClick={() => onEdit!(evaluation!)}
+                  />
 
-                  <button
-                      type="button"
-                      onClick={() => onDelete!(evaluation!)}
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-red-400 bg-white text-red-500 transition-all duration-200 hover:bg-red-50"
-                      aria-label={t("admin.evaluations.cardDeleteAriaLabel")}
-                      title={t("admin.evaluations.cardDeleteTitle")}
-                  >
-                      <Trash2Icon size={17} />
-                  </button>
+                  <CardActionButton
+                    action="delete"
+                    label={t("admin.evaluations.cardDeleteAriaLabel")}
+                    title={t("admin.evaluations.cardDeleteTitle")}
+                    onClick={() => onDelete!(evaluation!)}
+                  />
                 </>
               )}
             </div>

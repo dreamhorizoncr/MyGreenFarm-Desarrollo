@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CheckIcon, ChevronDownIcon } from '@animateicons/react/lucide'
+import { useMenuPosition } from '../../hooks/useMenuPosition.ts'
 
 export interface SelectOption {
   value: string
@@ -19,11 +20,10 @@ interface SelectProps {
   'aria-labelledby'?: string
 }
 
-interface MenuPosition {
-  top: number
-  left: number
-  width: number
-}
+const MENU_MAX_HEIGHT = 240
+// Alto aproximado de cada opción (py-sm + texto) más el padding de la lista.
+const OPTION_HEIGHT = 40
+const MENU_PADDING = 8
 
 function Select({
   value,
@@ -37,7 +37,6 @@ function Select({
   ...aria
 }: Readonly<SelectProps>) {
   const [open, setOpen] = useState(false)
-  const [position, setPosition] = useState<MenuPosition | null>(null)
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLUListElement>(null)
@@ -62,27 +61,12 @@ function Select({
     }
   }, [open])
 
-  useLayoutEffect(() => {
-    if (!open) return
-
-    const updatePosition = () => {
-      const rect = triggerRef.current?.getBoundingClientRect()
-      if (!rect) return
-      setPosition({ top: rect.bottom + 4, left: rect.left, width: rect.width })
-    }
-
-    updatePosition()
-    window.addEventListener('scroll', updatePosition, true)
-    window.addEventListener('resize', updatePosition)
-    return () => {
-      window.removeEventListener('scroll', updatePosition, true)
-      window.removeEventListener('resize', updatePosition)
-    }
-  }, [open])
-
-  useEffect(() => {
-    if (!open) setPosition(null)
-  }, [open])
+  const position = useMenuPosition({
+    triggerRef,
+    open,
+    desiredHeight: Math.min(MENU_MAX_HEIGHT, options.length * OPTION_HEIGHT + MENU_PADDING),
+    maxHeight: MENU_MAX_HEIGHT,
+  })
 
   const selected = options.find((option) => option.value === value)
 
@@ -112,8 +96,8 @@ function Select({
       {open && position && (
         <ul
           ref={menuRef}
-          style={{ top: position.top, left: position.left, width: position.width }}
-          className={`fixed z-[10000] m-0 max-h-[240px] list-none overflow-y-auto rounded-xl border border-neutral-200 bg-white p-xs shadow-lg animate-[language-switcher-in_0.15s_ease-out] ${menuClassName}`}
+          style={{ top: position.top, bottom: position.bottom, left: position.left, width: position.width, maxHeight: position.maxHeight }}
+          className={`fixed z-[10000] m-0 list-none overflow-y-auto rounded-xl border border-neutral-200 bg-white p-xs shadow-lg animate-[language-switcher-in_0.15s_ease-out] ${menuClassName}`}
           role="listbox"
         >
           {options.map((option) => (

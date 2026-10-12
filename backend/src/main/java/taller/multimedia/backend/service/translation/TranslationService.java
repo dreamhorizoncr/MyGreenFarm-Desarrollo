@@ -204,7 +204,7 @@ public class TranslationService {
         try {
             return UUID.fromString(entityId);
         } catch (IllegalArgumentException exception) {
-            if (("club".equalsIgnoreCase(entityType) || "child".equalsIgnoreCase(entityType)) && entityId.matches("\\d+")) {
+            if (entityId.matches("\\d+")) {
                 return UUID.nameUUIDFromBytes((entityType.toLowerCase() + ":" + entityId).getBytes(StandardCharsets.UTF_8));
             }
             throw exception;

@@ -5,6 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.forum.ForumCommunityPostRequest;
 import taller.multimedia.backend.dto.forum.ForumCommunityPostResponse;
@@ -40,6 +42,16 @@ public class ForumCommunityPostService {
         post.setName(name);
         post.setContent(content);
         return toResponse(communityPostRepository.save(post));
+    }
+
+    // Borra la publicación junto con sus likes y comentarios; false si no existe.
+    @Transactional
+    public boolean delete(UUID id) {
+        if (!communityPostRepository.existsById(id)) return false;
+        postLikeRepository.deleteByCommunityPost_Id(id);
+        commentRepository.deleteByCommunityPost_Id(id);
+        communityPostRepository.deleteById(id);
+        return true;
     }
 
     private ForumCommunityPostResponse toResponse(ForumCommunityPost post) {

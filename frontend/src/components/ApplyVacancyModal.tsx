@@ -5,8 +5,11 @@ import PhoneInput from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import Button from './ui/Button.tsx'
 import TextField from './ui/TextField.tsx'
+import CountrySelect from './ui/CountrySelect.tsx'
+import { phoneLabels } from '../utils/phoneLabels.ts'
 import { useVacancyApplicationForm } from '../hooks/useVacancyApplicationForm.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
 
@@ -14,7 +17,7 @@ function VacancyPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="h-[38px] w-full border-b border-neutral-300 bg-transparent pl-2 font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
+      className="h-full w-full bg-transparent pl-2 font-body text-body-sm text-body-text outline-none"
     />
   )
 }
@@ -28,7 +31,7 @@ interface ApplyVacancyModalProps {
 }
 
 function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose }: Readonly<ApplyVacancyModalProps>) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const certificatesInputRef = useRef<HTMLInputElement>(null)
@@ -36,6 +39,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
   const form = useVacancyApplicationForm({ vacancyId, requiredFields }, onSubmit)
   const heading = vacancyId === null ? title : t('vacancies.applyModalTitle')
   const { closing, requestClose } = useModalExit(onClose)
+  useBodyScrollLock()
 
   useEffect(() => {
     dialogRef.current?.showModal()
@@ -104,12 +108,14 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
             >
               <PhoneInput
                 id="apply-phone"
-                className="h-[38px]"
+                className="h-11 rounded-xl border border-neutral-200 bg-white px-md"
                 value={form.phone}
                 onChange={form.handlePhoneChange}
                 onCountryChange={form.handleCountryChange}
                 onBlur={form.handlePhoneBlur}
                 inputComponent={VacancyPhoneInput}
+                countrySelectComponent={CountrySelect}
+                labels={phoneLabels(i18n.language)}
               />
             </TextField>
           )}

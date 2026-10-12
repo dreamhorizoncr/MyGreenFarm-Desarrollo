@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import BlogPostCard from '../components/forum/BlogPostCard.tsx'
 import BlogPostFormModal from '../components/forum/admin/BlogPostFormModal.tsx'
-import BlogPostCommentsModal from '../components/forum/admin/BlogPostCommentsModal.tsx'
+import ForumCommentsModal from '../components/forum/admin/ForumCommentsModal.tsx'
+import AdminCommunitySection from '../components/forum/admin/AdminCommunitySection.tsx'
 import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
@@ -12,6 +13,15 @@ import { notify } from '../utils/notifications.ts'
 import type { BlogComment, BlogPost, BlogPostInput } from '../types/forum.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import { forumService } from '../services/forum.ts'
+
+type ForumAdminTab = 'posts' | 'community'
+
+const FORUM_ADMIN_TABS: ForumAdminTab[] = ['posts', 'community']
+
+const tabClassName = (active: boolean) =>
+  `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
+    active ? 'border-green-500 bg-green-500 text-white' : 'border-green-500 bg-white text-heading hover:bg-green-50'
+  }`
 
 function AdminForumPage() {
   const { t, i18n } = useTranslation()
@@ -30,6 +40,7 @@ function AdminForumPage() {
     toggleLike,
   } = useForumFeedContext()
 
+  const [activeTab, setActiveTab] = useState<ForumAdminTab>('posts')
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<BlogPost | null>(null)
   const [postToDelete, setPostToDelete] = useState<BlogPost | null>(null)
@@ -266,20 +277,43 @@ function AdminForumPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={openCreate}
-          className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
-        >
-          <PlusIcon size={18} aria-hidden="true" />
-          {t('adminForum.addPost')}
-        </button>
+        {activeTab === 'posts' && (
+          <button
+            type="button"
+            onClick={openCreate}
+            className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
+          >
+            <PlusIcon size={18} aria-hidden="true" />
+            {t('adminForum.addPost')}
+          </button>
+        )}
       </div>
 
-      {renderBlogPosts()}
+      <div role="tablist" aria-label={t('adminForum.tabs.label')} className="mt-xl flex flex-wrap gap-sm">
+        {FORUM_ADMIN_TABS.map((tab) => (
+          <button
+            key={tab}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === tab}
+            onClick={() => setActiveTab(tab)}
+            className={tabClassName(activeTab === tab)}
+          >
+            {t(`adminForum.tabs.${tab}`)}
+          </button>
+        ))}
+      </div>
 
-      {!visibleIsLoading && !visibleError && visiblePosts.length > 0 && (
-        <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+      {activeTab === 'posts' ? (
+        <>
+          {renderBlogPosts()}
+
+          {!visibleIsLoading && !visibleError && visiblePosts.length > 0 && (
+            <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+          )}
+        </>
+      ) : (
+        <AdminCommunitySection canDelete={isOwner} />
       )}
 
       {formOpen && (
@@ -300,8 +334,8 @@ function AdminForumPage() {
       )}
 
       {commentsPost && (
-        <BlogPostCommentsModal
-          post={commentsPost}
+        <ForumCommentsModal
+          subtitle={commentsPost.title}
           comments={getComments(commentsPost.id)}
           loading={commentsLoading}
           error={commentsError}

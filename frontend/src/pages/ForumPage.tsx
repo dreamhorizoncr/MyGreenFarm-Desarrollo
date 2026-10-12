@@ -56,7 +56,7 @@ function ForumPage() {
     <div id="forum-page" className="min-h-screen bg-bg-page">
       <Navbar />
 
-      <section data-scroll-bg="green" className="flex min-h-[280px] items-center bg-green-500 px-[30px] py-[40px] text-center text-white xs:min-h-[320px]">
+      <section data-scroll-bg="green" className="flex min-h-[280px] items-start bg-green-500 px-[30px] pt-[48px] pb-[40px] text-center text-white md:min-h-[320px] md:pt-[72px]">
         <div className="mx-auto w-full max-w-[700px]">
           <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
             {t('forum.title')}
@@ -71,7 +71,7 @@ function ForumPage() {
       </section>
 
       <main>
-        <Container className="py-10 xs:py-12">
+        <Container className="py-10 md:py-12">
           <div className="grid grid-cols-1 items-start gap-md lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-xl">
             {activeTab === 'blog' && (
               <label className="flex h-12 items-center gap-sm rounded-xl border border-neutral-200 bg-white px-md text-neutral-500 focus-within:border-heading lg:hidden">

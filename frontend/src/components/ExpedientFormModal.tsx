@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronDownIcon, ImageIcon, XIcon } from "@animateicons/react/lucide";
+import { ChevronDownIcon, XIcon } from "@animateicons/react/lucide";
 import Select from "./ui/Select.tsx";
 
 import { expedientService } from "../services/expedient";
 import { notify } from "../utils/notifications.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
+import DatePickerField from "./ui/DatePickerField.tsx";
 import { validateRequired } from "../utils/validators.ts";
 
 import type {
@@ -15,6 +16,9 @@ import type {
 } from "../types/expedient";
 import { childService, type ChildOption } from "../services/child.ts";
 import { educationalLevelKeys } from "../utils/educationalLevels.ts";
+import ImagePickerButton from "./ui/ImagePickerButton.tsx";
+import ImageThumb, { ImageThumbList } from "./ui/ImageThumb.tsx";
+import DeleteConfirmModal from "./ui/DeleteConfirmModal.tsx";
 
 interface ExpedientFormModalProps {
   onClose: () => void;
@@ -69,6 +73,8 @@ function ExpedientFormModal({
 
   // Fotografía seleccionada
   const [file, setFile] = useState<File | undefined>();
+  const [currentPhotoUrl, setCurrentPhotoUrl] = useState(expedient?.photoUrl ?? null);
+  const [confirmPhotoDelete, setConfirmPhotoDelete] = useState(false);
 
   // Estado del formulario
   const [saving, setSaving] = useState(false);
@@ -278,21 +284,20 @@ function ExpedientFormModal({
           </div>
 
           {/* Fecha de admisión */}
-          <label className="font-body text-body-sm font-semibold text-heading">
+          <div className="font-body text-body-sm font-semibold text-heading">
             {t("admin.expedients.admisiondate")}
-            <input
-              type="date"
+            <DatePickerField
               value={admisionDate}
-              onChange={(e) => {
-                setAdmisionDate(e.target.value);
+              onChange={(value) => {
+                setAdmisionDate(value);
                 if (dateError) setDateError(null);
               }}
-              className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+              ariaLabel={t("admin.expedients.admisiondate")}
             />
             {dateError && (
               <span className="mt-xs block font-body text-body-sm font-normal text-danger">{dateError}</span>
             )}
-          </label>
+          </div>
 
           {/* Nivel educativo */}
           <label className="font-body text-body-sm font-semibold text-heading">
@@ -332,33 +337,31 @@ function ExpedientFormModal({
 
           {/* Fotografía */}
           <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
-            {t("admin.expedients.photo")}
+            <span className="block">{t("admin.expedients.photo")}</span>
 
-            <div className="mt-xs flex items-center gap-3">
-              <label className="flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-md font-normal text-heading transition-colors hover:border-heading">
-                <ImageIcon size={18} />
-                <span>{t("admin.expedients.photo")}</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setFile(e.target.files?.[0])}
-                  className="hidden"
+            <ImagePickerButton
+              label={t("admin.expedients.choosePhoto")}
+              replacesCurrent={Boolean(currentPhotoUrl)}
+              accept="image/*"
+              onSelect={(files) => setFile(files[0])}
+            />
+
+            {file && (
+              <ImageThumbList className="mt-sm">
+                <ImageThumb file={file} label={file.name} onDelete={() => setFile(undefined)} deleteLabel={t("admin.delete")} />
+              </ImageThumbList>
+            )}
+
+            {!file && currentPhotoUrl && (
+              <ImageThumbList title={t("admin.expedients.currentPhoto")} className="mt-sm">
+                <ImageThumb
+                  src={currentPhotoUrl}
+                  label={t("admin.expedients.photo")}
+                  onDelete={() => setConfirmPhotoDelete(true)}
+                  deleteLabel={t("common.deleteImageTitle")}
                 />
-              </label>
-
-              {/* Muestra el nombre del archivo si ya se seleccionó uno */}
-              {file && (
-                <span className="max-w-[200px] truncate font-body text-body-sm font-normal text-neutral-500">
-                  {file.name}
-                </span>
-              )}
-            </div>
-
-            <p className="mt-xs font-body text-caption font-normal text-neutral-500">
-              {isEditing
-                ? t("admin.expedients.replacePhoto")
-                : t("admin.expedients.optionalPhoto")}
-            </p>
+              </ImageThumbList>
+            )}
           </div>
         </div>
 
@@ -387,6 +390,25 @@ function ExpedientFormModal({
           </button>
         </div>
       </form>
+
+      {confirmPhotoDelete && expedient && (
+        <DeleteConfirmModal
+          title={t("common.deleteImageTitle")}
+          message={t("common.deleteImageMessage")}
+          onConfirm={async () => {
+            try {
+              await expedientService.deletePhoto(expedient.id);
+            } catch (err) {
+              notify.error(t("common.imageDeleteErrorToast"));
+              throw err;
+            }
+            setCurrentPhotoUrl(null);
+            notify.success(t("common.imageDeletedToast"));
+            await onCreated();
+          }}
+          onClose={() => setConfirmPhotoDelete(false)}
+        />
+      )}
     </div>
   );
 }
