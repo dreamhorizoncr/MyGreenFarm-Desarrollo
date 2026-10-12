@@ -4,7 +4,6 @@ import { Toaster } from 'sileo'
 import HomePage from './pages/HomePage.tsx'
 import BookingPage from './pages/BookingPage.tsx'
 import LoginPage from './pages/LoginPage.tsx'
-import SignUpPage from './pages/SignUpPage.tsx'
 import ForgotPasswordPage from './pages/ForgotPasswordPage.tsx'
 import ResetPasswordPage from './pages/ResetPasswordPage.tsx'
 import AdminUsersPage from './pages/AdminUsersPage.tsx'
@@ -102,7 +101,6 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/booking" element={<BookingPage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/news" element={<NewsPage />} />
@@ -118,6 +116,8 @@ function App() {
         <Route path="/clubs" element={<ClubsPage />} />
         {/* <Route path="/news/:id" element={<NewsDetailPage />} /> */}
         {/* Redirigir cualquier ruta no definida a la página de inicio */}
+        {/* El alta de usuarios ahora es un modal en Usuarios; se redirige el enlace viejo. */}
+        <Route path="/signup" element={<Navigate to="/admin/users" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
             </ForumFeedProvider>

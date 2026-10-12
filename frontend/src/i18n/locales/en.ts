@@ -47,7 +47,7 @@ export default {
         paragraph1: "At My Green Farm, we believe that childhood is learned by living it. That is why we offer quality education where every child has the opportunity to explore, discover, create, play, and learn through meaningful experiences.",
         paragraph2: "Our proposal combines learning inside and outside the classroom with contact with nature and our educational farm, where children can interact with animals such as our horse, sheep, goats, chickens, and rabbits. These experiences are complemented by daily English, French, Music, Art, Physical Education, Values, and stimulation activities, creating learning opportunities from different areas.",
         paragraph3: "We work with specially selected materials, sensory experiences, and activities that awaken curiosity, creativity, autonomy, and the desire to learn. Our proposal draws on active methodologies and contributions from currents such as Montessori, Reggio Emilia, Waldorf, and constructivism, adapting them to the needs and characteristics of our children.",
-        paragraph4: "More than teaching content, we seek to offer a childhood full of experiences, accompanied by teachers who respect each child's individual pace and ensure they feel safe, loved, heard, and happy while learning. My Green Farm: education, values, nature, languages, and experiences that leave a mark. 💚",
+        paragraph4: "More than teaching content, we seek to offer a childhood full of experiences, accompanied by teachers who respect each child's individual pace and ensure they feel safe, loved, heard, and happy while learning. My Green Farm: education, values, nature, languages, and experiences that leave a mark.",
       },
       item: "A test sentence only testing is a test one",
       cta: "Read more",
@@ -112,6 +112,8 @@ export default {
       closePhoto: "Close photo",
       prevPhoto: "Previous photo",
       nextPhoto: "Next photo",
+      photoNavigation: "Photo navigation",
+      goToPhoto: "Go to photo {{number}}",
       likes: "{{count}} likes",
       like: "Like a photo",
       unlike: "Unlike a photo",
@@ -578,6 +580,10 @@ export default {
     countrySearch: {
       placeholder: "Search country or code",
       empty: "No countries found.",
+    },
+    calendar: {
+      month: "Month",
+      year: "Year",
     },
   },
   validation: {
@@ -1375,5 +1381,9 @@ export default {
     title: "Payment not completed",
     description: "The payment could not be processed. You can try again.",
     retry: "Retry",
+  },
+  reactions: {
+    errorTitle: "Your reaction could not be saved",
+    loggedIn: "Reactions are only for visitors and you are logged in. Log out to react.",
   },
 };

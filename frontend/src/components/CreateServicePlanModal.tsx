@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import Select from './ui/Select.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
@@ -11,6 +10,7 @@ import DeleteConfirmModal from './ui/DeleteConfirmModal.tsx'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { notify } from '../utils/notifications.ts'
 import { validateSafeText } from '../utils/validators.ts'
+import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']
 
@@ -142,21 +142,17 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
         if (event.key === 'Escape') requestClose()
       }}
       aria-label={isEditing ? t('admin.servicios.editPlan') : t('admin.servicios.newPlan')}
-      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+      className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="flex items-center justify-between gap-md">
         <h2 className="m-0 font-heading text-2xl font-bold text-heading">
           {isEditing ? t('admin.servicios.editPlan') : t('admin.servicios.newPlan')}
         </h2>
 
-        <button
-          type="button"
+        <ModalCloseButton
           onClick={requestClose}
           aria-label={t('admin.cancel')}
-          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-        >
-          <XIcon size={20} />
-        </button>
+        />
       </div>
 
       <form onSubmit={handleSubmit} className="mt-lg grid gap-md">

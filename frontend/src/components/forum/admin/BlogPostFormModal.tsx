@@ -1,5 +1,4 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { XIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import Button from '../../ui/Button.tsx'
 import { useModalExit } from '../../../hooks/useModalExit.ts'
@@ -8,6 +7,7 @@ import { userStorage } from '../../../utils/userStorage.ts'
 import { validateRequired, validateSafeText } from '../../../utils/validators.ts'
 import ImagePickerButton from '../../ui/ImagePickerButton.tsx'
 import ImageThumb, { ImageThumbList } from '../../ui/ImageThumb.tsx'
+import ModalCloseButton from '../../ui/ModalCloseButton.tsx'
 
 const ALLOWED_IMAGE_TYPES = new Set([
   'image/png',
@@ -165,7 +165,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]"
+      className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]"
     >
       <button
         type="button"
@@ -177,21 +177,17 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
 
       <form
         onSubmit={handleSubmit}
-        className={`relative mx-auto my-[20px] w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg md:my-[40px] md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+        className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
       >
         <div className="flex items-center justify-between gap-md">
           <h2 className="m-0 font-heading text-2xl font-bold text-heading">
             {post ? t('adminForum.editPost') : t('adminForum.newPost')}
           </h2>
 
-          <button
-            type="button"
+          <ModalCloseButton
             onClick={requestClose}
             aria-label={t('adminForum.close')}
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-          >
-            <XIcon size={20} />
-          </button>
+          />
         </div>
 
         <div className="mt-lg grid gap-md md:grid-cols-2">
@@ -395,17 +391,14 @@ function ConfirmPublishDialog({ confirmationText, onConfirmationTextChange, onCa
           }}
           onClose={requestClose}
           aria-label={t('adminForum.confirmChangesTitle')}
-          className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+          className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         >
           <div className="relative p-[28px_22px_30px]">
-            <button
-              type="button"
-              className="absolute right-3 top-[26px] z-10 inline-flex size-10 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
+            <ModalCloseButton
               onClick={requestClose}
               aria-label={t('adminForum.close')}
-            >
-              <XIcon size={20} />
-            </button>
+              className="absolute right-3 top-[26px] z-20"
+            />
             <h3 className="m-0 text-center font-heading text-h1 font-bold leading-none text-heading">
               {t('adminForum.confirmChangesTitle')}
             </h3>

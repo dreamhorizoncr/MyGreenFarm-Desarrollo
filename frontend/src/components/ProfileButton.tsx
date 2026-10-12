@@ -58,22 +58,23 @@ function ProfileButton() {
       />
     </button>
       {menuOpen && (
-        <div className="absolute right-0 top-[56px] z-50 w-[190px] rounded-xl border border-neutral-200 bg-white p-2 shadow-lg">
+        <div className="absolute right-0 top-[calc(100%+var(--spacing-xs))] z-50 min-w-[190px] rounded-xl border border-neutral-200 bg-white p-xs shadow-lg animate-[language-switcher-in_0.15s_ease-out]">
           <Link
             to="/profile"
             onClick={() => { releaseExclusiveOpen(closeMenu); closeMenu() }}
-            className="flex items-center gap-3 rounded-lg px-3 py-2 font-body text-body-sm text-body-text-dark transition-colors hover:bg-neutral-100"
+            className="flex w-full items-center gap-2 rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100"
           >
-          <UserIcon size={18} className="text-green-500" />
+          <UserIcon size={18} className="shrink-0" />
             {t('profile.viewProfile')}
           </Link>
 
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 font-body text-body-sm text-danger transition-colors hover:bg-danger-100"
+            // Acción destructiva: mismo formato que las demás opciones, pero en rojo.
+            className="flex w-full items-center gap-2 rounded-lg px-md py-sm text-left font-body text-body-sm text-danger transition-colors duration-150 hover:bg-danger-100"
           >
-            <LogOutIcon size={18} />
+            <LogOutIcon size={18} className="shrink-0" />
               {t('profile.logout')}
           </button>
   </div>

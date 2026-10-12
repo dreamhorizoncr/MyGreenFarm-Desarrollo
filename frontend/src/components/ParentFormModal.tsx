@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { XIcon } from "@animateicons/react/lucide";
 import Select from "./ui/Select.tsx";
 
 import { parentService } from "../services/parent";
@@ -9,6 +8,7 @@ import { useModalExit } from "../hooks/useModalExit.ts";
 import { validateEmail, validateRequired, validateSafeText } from "../utils/validators.ts";
 
 import type { Parent, ParentLanguage, ParentRequest } from "../types/parent";
+import ModalCloseButton from "./ui/ModalCloseButton.tsx";
 
 interface ParentFormModalProps {
   onClose: () => void;
@@ -130,7 +130,7 @@ function ParentFormModal({
     : t("admin.parents.save");
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]">
+    <div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
       <button
         type="button"
         tabIndex={-1}
@@ -141,7 +141,7 @@ function ParentFormModal({
 
       <form
         onSubmit={handleSubmit}
-        className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+        className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         noValidate
       >
         <div className="flex items-center justify-between gap-md">
@@ -151,14 +151,10 @@ function ParentFormModal({
               : t("admin.parents.addTitle")}
           </h2>
 
-          <button
-            type="button"
+          <ModalCloseButton
             onClick={requestClose}
             aria-label={t("admin.parents.cancel")}
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-          >
-            <XIcon size={20} />
-          </button>
+          />
         </div>
 
         <div className="mt-lg grid gap-md md:grid-cols-2">

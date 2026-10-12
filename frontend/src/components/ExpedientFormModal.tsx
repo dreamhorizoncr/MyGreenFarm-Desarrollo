@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronDownIcon, XIcon } from "@animateicons/react/lucide";
+import { ChevronDownIcon } from "@animateicons/react/lucide";
 import Select from "./ui/Select.tsx";
 
 import { expedientService } from "../services/expedient";
@@ -19,6 +19,7 @@ import { educationalLevelKeys } from "../utils/educationalLevels.ts";
 import ImagePickerButton from "./ui/ImagePickerButton.tsx";
 import ImageThumb, { ImageThumbList } from "./ui/ImageThumb.tsx";
 import DeleteConfirmModal from "./ui/DeleteConfirmModal.tsx";
+import ModalCloseButton from "./ui/ModalCloseButton.tsx";
 
 interface ExpedientFormModalProps {
   onClose: () => void;
@@ -196,7 +197,7 @@ function ExpedientFormModal({
     : t("admin.expedients.save");
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]">
+    <div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
       <button
         type="button"
         tabIndex={-1}
@@ -207,7 +208,7 @@ function ExpedientFormModal({
 
       <form
         onSubmit={handleSubmit}
-        className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+        className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
       >
         <div className="flex items-center justify-between gap-md">
           <h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -216,14 +217,10 @@ function ExpedientFormModal({
               : t("admin.expedients.addTitle")}
           </h2>
 
-          <button
-            type="button"
+          <ModalCloseButton
             onClick={requestClose}
             aria-label={t("admin.expedients.cancel")}
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-          >
-            <XIcon size={20} />
-          </button>
+          />
         </div>
 
         <div className="mt-lg grid gap-md md:grid-cols-2">
