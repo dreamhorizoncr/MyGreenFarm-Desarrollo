@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.forum.ForumArticleRequest;
 import taller.multimedia.backend.dto.forum.ForumArticleResponse;
 import taller.multimedia.backend.service.forum.ForumArticleService;
-import taller.multimedia.backend.service.forum.ForumArticleSummaryAsyncService;
+import taller.multimedia.backend.service.spelling.SpellingCorrectionAsyncService;
 
 @Validated
 @RestController
@@ -40,7 +40,7 @@ import taller.multimedia.backend.service.forum.ForumArticleSummaryAsyncService;
 public class ForumArticleController {
 
     private final ForumArticleService articleService;
-    private final ForumArticleSummaryAsyncService articleSummaryAsyncService;
+    private final SpellingCorrectionAsyncService spellingCorrectionAsyncService;
 
     @GetMapping
     @PreAuthorize("permitAll()")
@@ -80,7 +80,7 @@ public class ForumArticleController {
             @CurrentSecurityContext SecurityContext context,
             @CookieValue(name = "anon_id", required = false) String anonId) {
         ForumArticleResponse created = articleService.create(request, image, currentEmail(context), anonId);
-        articleSummaryAsyncService.generateSummaryAsync(created.getId(), false);
+        spellingCorrectionAsyncService.correctArticle(created.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -94,7 +94,7 @@ public class ForumArticleController {
             @CookieValue(name = "anon_id", required = false) String anonId) {
         ForumArticleResponse updated = articleService.update(
                 id, request, image, currentEmail(context), anonId);
-        articleSummaryAsyncService.generateSummaryAsync(updated.getId(), false);
+        spellingCorrectionAsyncService.correctArticle(updated.getId());
         return ResponseEntity.ok(updated);
     }
 
