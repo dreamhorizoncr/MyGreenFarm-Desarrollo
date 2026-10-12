@@ -4,6 +4,7 @@ import { CalendarDaysIcon } from '@animateicons/react/lucide'
 import { parseDate } from '@internationalized/date'
 import type { CalendarDate } from '@internationalized/date'
 import CalendarPanel from './CalendarPanel.tsx'
+import { placementClassName, placementFor, type PopoverPlacement } from '../../utils/popoverPlacement.ts'
 
 interface DatePickerFieldProps {
   // Fecha en formato YYYY-MM-DD, o '' si no hay fecha.
@@ -26,6 +27,9 @@ const toCalendarDate = (value?: string): CalendarDate | undefined => {
   }
 }
 
+// Alto aproximado del calendario compacto, para decidir si se abre hacia arriba.
+const PANEL_HEIGHT = 270
+
 const defaultTriggerClassName =
   'mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading'
 
@@ -43,6 +47,7 @@ function DatePickerField({
 }: Readonly<DatePickerFieldProps>) {
   const { t, i18n } = useTranslation()
   const [open, setOpen] = useState(false)
+  const [placement, setPlacement] = useState<PopoverPlacement>('bottom')
   const containerRef = useRef<HTMLDivElement>(null)
   const selected = toCalendarDate(value) ?? null
 
@@ -86,7 +91,10 @@ function DatePickerField({
         aria-label={ariaLabel}
         aria-haspopup="dialog"
         aria-expanded={open}
-        onClick={() => setOpen((current) => !current)}
+        onClick={(event) => {
+          if (!open) setPlacement(placementFor(event.currentTarget, PANEL_HEIGHT))
+          setOpen((current) => !current)
+        }}
         className={`flex items-center justify-between gap-sm text-left disabled:cursor-not-allowed disabled:bg-neutral-100 ${className}`}
       >
         <span className={`truncate ${selected ? 'text-body-text' : 'text-neutral-400'}`}>{label}</span>
@@ -94,7 +102,7 @@ function DatePickerField({
       </button>
 
       {open && (
-        <div role="dialog" aria-label={ariaLabel} className="absolute left-0 top-full z-30 mt-xs w-[360px] max-w-[calc(100vw-2rem)]">
+        <div role="dialog" aria-label={ariaLabel} className={`absolute left-0 z-30 w-[300px] max-w-[calc(100vw-2rem)] ${placementClassName(placement)}`}>
           <CalendarPanel
             value={selected}
             onChange={handleChange}
@@ -102,6 +110,7 @@ function DatePickerField({
             maxValue={toCalendarDate(max)}
             ariaLabel={ariaLabel}
             showShortcuts={false}
+            compact
             className="shadow-lg"
           />
         </div>

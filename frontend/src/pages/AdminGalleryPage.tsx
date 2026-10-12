@@ -650,7 +650,7 @@ function AdminGalleryPage() {
 
 			{/* Formulario de álbum */}
 			{formOpen && (
-				<div className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]">
+				<div className="text-left fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]">
 					<button
 						type="button"
 						tabIndex={-1}

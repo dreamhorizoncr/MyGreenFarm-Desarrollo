@@ -306,7 +306,7 @@ function AdminNewsletterPage() {
                             if (event.key === 'Escape') closeBroadcastModal()
                         }}
                         aria-labelledby="newsletter-broadcast-title"
-                        className={`fixed inset-0 m-auto w-[min(620px,92vw)] max-w-none rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${broadcastClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+                        className={`text-left fixed inset-0 m-auto w-[min(620px,92vw)] max-w-none rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${broadcastClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
                     >
                             <div className="flex items-center justify-between gap-md">
                                 <h2 id="newsletter-broadcast-title" className="m-0 font-heading text-2xl font-bold text-heading">
