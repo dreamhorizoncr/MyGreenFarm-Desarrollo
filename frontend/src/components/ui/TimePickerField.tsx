@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ClockIcon } from '@animateicons/react/lucide'
+import { placementClassName, placementFor, type PopoverPlacement } from '../../utils/popoverPlacement.ts'
 
 interface TimePickerFieldProps {
   // Hora en formato HH:mm (24 h), o '' si no hay hora.
@@ -15,9 +16,11 @@ interface TimePickerFieldProps {
 
 type View = 'hours' | 'minutes'
 
-const CLOCK_SIZE = 240
+const CLOCK_SIZE = 200
 const CENTER = CLOCK_SIZE / 2
-const NUMBER_RADIUS = 92
+// Alto aproximado del panel (cabecera + esfera), para decidir si se abre hacia arriba.
+const PANEL_HEIGHT = 290
+const NUMBER_RADIUS = 76
 const HOUR_LABELS = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 const MINUTE_LABELS = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]
 
@@ -52,6 +55,7 @@ function TimePickerField({
   const [open, setOpen] = useState(false)
   const [view, setView] = useState<View>('hours')
   const [dragging, setDragging] = useState(false)
+  const [placement, setPlacement] = useState<PopoverPlacement>('bottom')
   const containerRef = useRef<HTMLDivElement>(null)
   const clockRef = useRef<HTMLDivElement>(null)
 
@@ -76,8 +80,9 @@ function TimePickerField({
     if (pm !== isPm) emit((hours + 12) % 24, minutes)
   }
 
-  const openPanel = () => {
+  const openPanel = (trigger: HTMLElement) => {
     setView('hours')
+    if (!open) setPlacement(placementFor(trigger, PANEL_HEIGHT))
     setOpen((current) => !current)
     if (!value) emit(12, 0)
   }
@@ -114,7 +119,7 @@ function TimePickerField({
     : '--:--'
 
   const headerSegmentClassName = (active: boolean) =>
-    `rounded-lg px-1 font-heading text-5xl font-bold leading-none transition-colors ${active ? 'text-white' : 'text-white/60 hover:text-white/80'}`
+    `rounded-lg px-1 font-heading text-4xl font-bold leading-none transition-colors ${active ? 'text-white' : 'text-white/60 hover:text-white/80'}`
 
   const periodClassName = (active: boolean) =>
     `rounded-lg px-2 py-0.5 font-body text-body-sm font-semibold transition-colors ${active ? 'bg-white text-green-600' : 'text-white/70 hover:text-white'}`
@@ -139,7 +144,7 @@ function TimePickerField({
         aria-label={ariaLabel}
         aria-haspopup="dialog"
         aria-expanded={open}
-        onClick={openPanel}
+        onClick={(event) => openPanel(event.currentTarget)}
         className={`flex items-center justify-between gap-sm text-left disabled:cursor-not-allowed disabled:bg-neutral-100 ${className}`}
       >
         <span className={`truncate ${value ? 'text-body-text' : 'text-neutral-400'}`}>{label}</span>
@@ -150,14 +155,14 @@ function TimePickerField({
         <div
           role="dialog"
           aria-label={ariaLabel}
-          className="absolute right-0 top-full z-30 mt-xs w-[300px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-lg"
+          className={`absolute right-0 z-30 w-[260px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-lg ${placementClassName(placement)}`}
         >
-          <div className="flex items-center justify-center gap-md bg-green-500 px-lg py-md">
+          <div className="flex items-center justify-center gap-md bg-green-500 px-md py-sm">
             <div className="flex items-center text-white">
               <button type="button" onClick={() => setView('hours')} className={headerSegmentClassName(view === 'hours')} aria-label={t('common.timePicker.hours')}>
                 {pad(hours12)}
               </button>
-              <span className="font-heading text-5xl font-bold leading-none text-white/60">:</span>
+              <span className="font-heading text-4xl font-bold leading-none text-white/60">:</span>
               <button type="button" onClick={() => setView('minutes')} className={headerSegmentClassName(view === 'minutes')} aria-label={t('common.timePicker.minutes')}>
                 {pad(minutes)}
               </button>
@@ -168,7 +173,7 @@ function TimePickerField({
             </div>
           </div>
 
-          <div className="flex justify-center p-lg">
+          <div className="flex justify-center p-md">
             <div
               ref={clockRef}
               className={`relative shrink-0 touch-none select-none rounded-full bg-neutral-100 ${dragging ? 'cursor-grabbing' : 'cursor-grab'}`}
@@ -188,7 +193,7 @@ function TimePickerField({
               <svg width={CLOCK_SIZE} height={CLOCK_SIZE} className="pointer-events-none absolute inset-0" aria-hidden="true">
                 <line x1={CENTER} y1={CENTER} x2={handPoint.x} y2={handPoint.y} className="stroke-orange-500" strokeWidth={2} />
                 <circle cx={CENTER} cy={CENTER} r={4} className="fill-orange-500" />
-                <circle cx={handPoint.x} cy={handPoint.y} r={18} className="fill-orange-500" />
+                <circle cx={handPoint.x} cy={handPoint.y} r={15} className="fill-orange-500" />
                 {!handOnLabel && <circle cx={handPoint.x} cy={handPoint.y} r={3} className="fill-white" />}
               </svg>
 
@@ -212,7 +217,7 @@ function TimePickerField({
                         setOpen(false)
                       }
                     }}
-                    className={`pointer-events-none absolute flex size-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full font-body text-body-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-link ${
+                    className={`pointer-events-none absolute flex size-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full font-body text-body-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-link ${
                       selected ? 'text-white' : 'text-heading'
                     }`}
                     style={{ left: point.x, top: point.y }}

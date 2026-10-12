@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react'
-import { ClockIcon, UsersIcon, XIcon } from '@animateicons/react/lucide'
+import { ClockIcon, UsersIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import type { ClubResponse } from '../types/clubs.ts'
+import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface ClubDetailModalProps {
     club: ClubResponse
@@ -45,19 +46,16 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                 if (event.key === 'Escape') requestClose()
             }}
             aria-label={club.name}
-            className={`fixed inset-0 m-auto max-h-[90vh] w-[min(1100px,92vw)] max-w-none overflow-y-auto scrollbar-none rounded-3xl bg-bg-page backdrop:bg-black/50 ${
+            className={`fixed inset-0 m-auto max-h-[90vh] w-[min(1100px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-page backdrop:bg-black/50 ${
                 closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'
             }`}
         >
             <div className="relative px-[22px] pb-[45px] pt-[40px] md:px-[55px] md:pb-[60px] md:pt-[55px]">
-                <button
-                    type="button"
+                <ModalCloseButton
                     onClick={requestClose}
                     aria-label={t('ownerClubs.closeClubDetails')}
-                    className="absolute right-[18px] top-[18px] z-20 flex size-[42px] items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-                >
-                    <XIcon size={20} />
-                </button>
+                  className="absolute right-3 top-[26px] z-20"
+                />
 
                 <header className="mx-auto max-w-[850px] text-center">
                     <h2 className="mt-[16px] font-heading text-[32px] font-bold leading-[1.15] text-heading md:text-h1">

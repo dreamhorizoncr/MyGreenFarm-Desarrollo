@@ -24,8 +24,10 @@ import { validateMinLength, validateRequired, validateSafeText } from '../utils/
 import type { Gallery, GalleryCategory, GalleryImage, GalleryRequest } from '../types/gallery.ts'
 import ninos2 from '../assets/imgs/ninos2.svg'
 import CardActionButton from '../components/ui/CardActionButton.tsx'
+import CheckboxField from '../components/ui/CheckboxField.tsx'
 import ImagePickerButton from '../components/ui/ImagePickerButton.tsx'
 import ImageThumb, { ImageThumbList } from '../components/ui/ImageThumb.tsx'
+import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
 
 const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'])
 const TITLE_MIN_LENGTH = 5
@@ -250,18 +252,14 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading =
 				<span className="absolute bottom-sm left-sm rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
 					{t('home.galeria.photoCount', { count: gallery!.galleryImages.length })}
 				</span>
-				<button
-					type="button"
+				<CardActionButton
+					action="feature"
+					pressed={gallery!.featured}
+					label={t('admin.gallery.toggleFeatured')}
+					title={t('admin.gallery.toggleFeatured')}
 					onClick={onToggleFeatured}
-					aria-label={t('admin.gallery.toggleFeatured')}
-					className={`absolute left-sm top-sm flex size-[34px] items-center justify-center rounded-full shadow transition ${
-						gallery!.featured
-							? 'bg-yellow-400 text-white hover:bg-yellow-500'
-							: 'bg-white/80 text-neutral-400 hover:bg-white hover:text-yellow-500'
-					}`}
-				>
-					<StarIcon size={18} />
-				</button>
+					className="absolute left-sm top-sm shadow"
+				/>
 			</div>
 
 			<div className="overflow-hidden px-lg pb-lg text-left">
@@ -668,7 +666,7 @@ function AdminGalleryPage() {
 
 			{/* Formulario de álbum */}
 			{formOpen && (
-				<div className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]">
+				<div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
 					<button
 						type="button"
 						tabIndex={-1}
@@ -677,19 +675,15 @@ function AdminGalleryPage() {
 						onClick={requestClose}
 					/>
 
-					<form onSubmit={handleSubmit} className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}>
+					<form onSubmit={handleSubmit} className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}>
 					<div className="flex items-center justify-between gap-md">
 						<h2 className="m-0 font-heading text-2xl font-bold text-heading">
 							{editing ? t('admin.gallery.editAlbum') : t('admin.gallery.newAlbum')}
 						</h2>
-						<button
-							type="button"
+						<ModalCloseButton
 							onClick={requestClose}
 							aria-label={t('admin.gallery.close')}
-							className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-						>
-							<XIcon size={20} />
-						</button>
+						/>
 					</div>
 
 					<div className="mt-lg grid gap-md md:grid-cols-2">
@@ -743,16 +737,14 @@ onCreateYear={handleCreateYear}
 							)}
 						</label>
 
-						<label className="flex items-center gap-sm font-body text-body-sm font-semibold text-heading md:col-span-2">
-							<input
-								type="checkbox"
-								checked={form.featured}
-								onChange={(e) => setForm({ ...form, featured: e.target.checked })}
-								className="size-4 accent-yellow-500"
-							/>
-							<StarIcon size={16} className={form.featured ? 'text-yellow-500' : 'text-neutral-400'} />
+						<CheckboxField
+							checked={form.featured}
+							onChange={(featured) => setForm({ ...form, featured })}
+							className="md:col-span-2"
+						>
+							<StarIcon size={16} aria-hidden="true" className={form.featured ? 'text-yellow-500' : 'text-neutral-400'} />
 							{t('admin.gallery.featured')}
-						</label>
+						</CheckboxField>
 
 						<div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
 							<span className="block">{t('admin.gallery.photos')}</span>

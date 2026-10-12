@@ -168,3 +168,52 @@ input[type="password"]::-ms-clear {
     }
   }
 }
+
+/* =============================================================================
+   MODAL SCROLL — Contenido de modales que no cabe en pantalla
+   =============================================================================
+   El modal nunca pasa del alto de la pantalla: su contenido hace scroll por
+   dentro. La barra nativa queda oculta (base.css) porque ocupa su propio carril
+   y ensancha el modal; en su lugar utils/modalScrollbars.ts dibuja una barra
+   flotante (.modal-scrollbar) encima del contenido, sin ocupar espacio.
+   ============================================================================= */
+.modal-scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.modal-scrollbar {
+  position: absolute;
+  right: 4px;
+  z-index: 40;
+  width: 4px;
+  transition: width 150ms ease-out;
+}
+
+.modal-scrollbar[hidden] {
+  display: none;
+}
+
+.modal-scrollbar-thumb {
+  width: 100%;
+  border-radius: 9999px;
+  background-color: var(--green-500);
+  cursor: grab;
+  touch-action: none;
+  opacity: 0.3;
+  transition: opacity 150ms ease-out;
+}
+
+.modal-scrollbar:hover,
+.modal-scrollbar.is-dragging {
+  width: 6px;
+}
+
+.modal-scrollbar:hover .modal-scrollbar-thumb,
+.modal-scrollbar.is-dragging .modal-scrollbar-thumb {
+  opacity: 0.6;
+}
+
+.modal-scrollbar.is-dragging .modal-scrollbar-thumb {
+  cursor: grabbing;
+}

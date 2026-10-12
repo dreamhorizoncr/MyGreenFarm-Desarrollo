@@ -50,7 +50,7 @@ export default {
         paragraph1: "En My Green Farm creemos que la infancia se aprende viviéndola. Por eso, ofrecemos una educación de calidad donde cada niño tiene la oportunidad de explorar, descubrir, crear, jugar y aprender a través de experiencias significativas.",
         paragraph2: "Nuestra propuesta combina el aprendizaje dentro y fuera del aula con el contacto con la naturaleza y nuestra granja educativa, donde los niños pueden interactuar con animales como nuestro caballo, ovejas, cabras, gallinas y conejos. Estas experiencias se complementan con inglés diario, francés, Música, Arte, Educación Física, Valores y actividades de estimulación, creando oportunidades de aprendizaje desde diferentes áreas.",
         paragraph3: "Trabajamos con materiales especialmente seleccionados, experiencias sensoriales y actividades que despiertan la curiosidad, la creatividad, la autonomía y el deseo de aprender. Nuestra propuesta se nutre de metodologías activas y de aportes de corrientes como Montessori, Reggio Emilia, Waldorf y el constructivismo, adaptándolos a las necesidades y características de nuestros niños.",
-        paragraph4: "Más que enseñar contenidos, buscamos ofrecer una infancia llena de experiencias, acompañada por docentes que respetan el ritmo individual de cada niño y procuran que se sienta seguro, querido, escuchado y feliz mientras aprende. My Green Farm: educación, valores, naturaleza, idiomas y experiencias que dejan huella. 💚",
+        paragraph4: "Más que enseñar contenidos, buscamos ofrecer una infancia llena de experiencias, acompañada por docentes que respetan el ritmo individual de cada niño y procuran que se sienta seguro, querido, escuchado y feliz mientras aprende. My Green Farm: educación, valores, naturaleza, idiomas y experiencias que dejan huella.",
       },
       item: "Educación, valores, naturaleza, idiomas y experiencias que dejan huella.",
       cta: "Leer más",
@@ -115,6 +115,8 @@ export default {
       closePhoto: "Cerrar foto",
       prevPhoto: "Foto anterior",
       nextPhoto: "Siguiente foto",
+      photoNavigation: "Navegación de fotos",
+      goToPhoto: "Ir a la foto {{number}}",
       likes: "{{count}} me gusta",
       like: "Dar me gusta",
       unlike: "Quitar me gusta",
@@ -586,6 +588,10 @@ export default {
     countrySearch: {
       placeholder: "Buscar país o código",
       empty: "No se encontraron países.",
+    },
+    calendar: {
+      month: "Mes",
+      year: "Año",
     },
   },
   validation: {
@@ -1390,5 +1396,9 @@ export default {
     title: "Pago no completado",
     description: "El pago no pudo ser procesado. Podés intentarlo de nuevo.",
     retry: "Reintentar",
+  },
+  reactions: {
+    errorTitle: "No se pudo registrar tu reacción",
+    loggedIn: "Las reacciones son solo para visitantes y tenés la sesión iniciada. Cerrá sesión para poder reaccionar.",
   },
 };

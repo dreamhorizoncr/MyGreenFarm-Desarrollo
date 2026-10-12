@@ -64,18 +64,11 @@ function AppointmentCard({
 
   return (
     <div
-      className={`group relative flex cursor-pointer flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm card-hover ${
+      className={`flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm card-hover ${
         disabled ? 'opacity-60' : ''
       }`}
     >
-      <button
-        type="button"
-        onClick={onView}
-        aria-label={t('teacherAppointments.viewDetails')}
-        className="absolute inset-0 z-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-      />
-
-      <header className="relative z-10 flex items-center justify-between gap-sm">
+      <header className="flex items-center justify-between gap-sm">
         <span className={`inline-flex rounded-full px-sm py-2xs font-body text-caption font-semibold ${badgeClassName}`}>
           {statusLabel}
         </span>
@@ -86,10 +79,7 @@ function AppointmentCard({
             label={t('teacherAppointments.rescheduleTitle')}
             title={t('teacherAppointments.rescheduleTitle')}
             disabled={disabled || appointment!.status === 'CANCELLED'}
-            onClick={(event) => {
-              event.stopPropagation()
-              onReschedule?.()
-            }}
+            onClick={() => onReschedule?.()}
           />
 
           <CardActionButton
@@ -97,10 +87,7 @@ function AppointmentCard({
             label={t('teacherAppointments.changeStatus')}
             title={t('teacherAppointments.changeStatus')}
             disabled={disabled}
-            onClick={(event) => {
-              event.stopPropagation()
-              onChangeStatus?.()
-            }}
+            onClick={() => onChangeStatus?.()}
           />
         </div>
       </header>
@@ -112,9 +99,14 @@ function AppointmentCard({
         {formattedDate}
       </p>
 
-      <p className="m-0 mt-md font-body text-body-sm font-semibold text-link underline-offset-2 transition-colors group-hover:underline">
+      {/* Solo el enlace abre el detalle; antes toda la card era clickeable y lo activaba. */}
+      <button
+        type="button"
+        onClick={onView}
+        className="mt-md self-start rounded font-body text-body-sm font-semibold text-link underline-offset-2 transition-colors hover:underline focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+      >
         {t('teacherAppointments.viewDetails')}
-      </p>
+      </button>
     </div>
   )
 }

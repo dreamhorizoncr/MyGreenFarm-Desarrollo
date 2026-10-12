@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
 import { PlusIcon, SearchIcon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import EditUserModal from '../components/EditUserModal.tsx'
+import CreateUserModal from '../components/CreateUserModal.tsx'
 import DeleteUserModal from '../components/DeleteUserModal.tsx'
 import TeacherCard from '../components/TeacherCard.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
@@ -19,6 +19,7 @@ function AdminUsersPage() {
   const { users, loading, error, fetchUsers, updateUser, deleteUser } = useAdmin()
 
   const currentUser = userStorage.getUser()
+  const [showCreateModal, setShowCreateModal] = useState(false)
   const [userToEdit, setUserToEdit] = useState<UserInfo | null>(null)
   const [userToDelete, setUserToDelete] = useState<UserInfo | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -103,13 +104,14 @@ function AdminUsersPage() {
             />
           </div>
 
-          <Link
-            to="/signup"
-            className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-[var(--scale-600)] font-body text-body-sm font-semibold text-white no-underline transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+          <button
+            type="button"
+            onClick={() => setShowCreateModal(true)}
+            className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-[var(--scale-600)] font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
           >
             <PlusIcon size={18} aria-hidden="true" />
             <span>{t('admin.addDocente')}</span>
-          </Link>
+          </button>
         </div>
 
         <div className="-mt-sm mb-lg flex flex-wrap gap-sm">
@@ -160,6 +162,10 @@ function AdminUsersPage() {
           )
         )}
       </AdminLayout>
+
+      {showCreateModal && (
+        <CreateUserModal onCreated={() => fetchUsers()} onClose={() => setShowCreateModal(false)} />
+      )}
 
       {userToEdit && currentUser && (
         <EditUserModal

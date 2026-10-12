@@ -16,6 +16,8 @@ interface SelectProps {
   disabled?: boolean
   className?: string
   menuClassName?: string
+  // Versión baja (h-8) para espacios chicos, como la cabecera del calendario.
+  compact?: boolean
   'aria-label'?: string
   'aria-labelledby'?: string
 }
@@ -34,6 +36,7 @@ function Select({
   disabled = false,
   className = 'w-full rounded-xl border border-neutral-200 bg-white px-md',
   menuClassName = '',
+  compact = false,
   ...aria
 }: Readonly<SelectProps>) {
   const [open, setOpen] = useState(false)
@@ -81,7 +84,7 @@ function Select({
         aria-haspopup="listbox"
         aria-expanded={open}
         {...aria}
-        className={`flex h-11 items-center justify-between gap-xs text-left font-body text-body-sm text-body-text outline-none transition-colors focus:border-heading disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
+        className={`flex items-center justify-between gap-xs text-left font-body text-body-text ${compact ? 'h-8 text-caption' : 'h-11 text-body-sm'} outline-none transition-colors focus:border-heading disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
       >
         <span className={`truncate ${selected ? '' : 'text-neutral-400'}`}>
           {selected?.label ?? placeholder ?? ''}
@@ -106,7 +109,7 @@ function Select({
                 type="button"
                 role="option"
                 aria-selected={option.value === value}
-                className={`flex w-full items-center justify-between gap-2 rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100 ${
+                className={`flex w-full items-center justify-between gap-2 rounded-lg text-left font-body text-heading ${compact ? 'px-sm py-xs text-caption' : 'px-md py-sm text-body-sm'} transition-colors duration-150 hover:bg-orange-100 ${
                   option.value === value ? 'font-semibold text-link' : ''
                 }`}
                 onClick={() => {
