@@ -3,6 +3,7 @@ import { SearchIcon } from '@animateicons/react/lucide'
 import AboutWallCard from './AboutWallCard.tsx'
 import PopularTopicsCard from './PopularTopicsCard.tsx'
 import FeaturedBannerCard from './FeaturedBannerCard.tsx'
+import LatestPostsCard from './LatestPostsCard.tsx'
 import PublishButtonCard from './PublishButtonCard.tsx'
 import type { BlogPost } from '../../types/forum.ts'
 
@@ -14,6 +15,7 @@ interface ForumSidebarProps {
   blogSearch?: string
   onBlogSearchChange?: (value: string) => void
   blogPosts?: BlogPost[]
+  onOpenPost?: (postId: string) => void
   showPopularTopics?: boolean
 }
 
@@ -25,6 +27,7 @@ function ForumSidebar({
   blogSearch = '',
   onBlogSearchChange,
   blogPosts = [],
+  onOpenPost,
   showPopularTopics = true,
 }: Readonly<ForumSidebarProps>) {
   const { t } = useTranslation()
@@ -55,6 +58,12 @@ function ForumSidebar({
       {showDetails && (
         <>
           <AboutWallCard community={showPublish} />
+          {onOpenPost && (
+            <LatestPostsCard
+              blogPosts={blogPosts}
+              onOpen={onOpenPost}
+            />
+          )}
           {showPopularTopics && <PopularTopicsCard blogPosts={blogPosts} />}
           <FeaturedBannerCard />
         </>

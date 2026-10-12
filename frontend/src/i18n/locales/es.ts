@@ -280,6 +280,11 @@ export default {
     popular: {
       title: "Temas populares",
     },
+    latest: {
+      title: "Últimas publicaciones",
+      blog: "Blog",
+      community: "Comunidad",
+    },
   },
   adminNews: {
     title: "Noticias",

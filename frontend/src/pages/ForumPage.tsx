@@ -74,17 +74,30 @@ function ForumPage() {
         <Container className="py-10 xs:py-12">
           <div className="grid grid-cols-1 items-start gap-md lg:grid-cols-[minmax(0,1fr)_320px] lg:gap-xl">
             {activeTab === 'blog' && (
-              <label className="flex h-12 items-center gap-sm rounded-xl border border-neutral-200 bg-white px-md text-neutral-500 focus-within:border-heading lg:hidden">
-                <SearchIcon size={20} aria-hidden="true" />
-                <input
-                  type="search"
-                  value={blogSearch}
-                  onChange={(event) => setBlogSearch(event.target.value)}
-                  placeholder={t('forum.blog.searchPlaceholder')}
-                  aria-label={t('forum.blog.searchLabel')}
-                  className="h-full min-w-0 flex-1 bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
-                />
-              </label>
+              <div className="lg:contents">
+                <label className="flex h-12 items-center gap-sm rounded-xl border border-neutral-200 bg-white px-md text-neutral-500 focus-within:border-heading lg:hidden">
+                  <SearchIcon size={20} aria-hidden="true" />
+                  <input
+                    type="search"
+                    value={blogSearch}
+                    onChange={(event) => setBlogSearch(event.target.value)}
+                    placeholder={t('forum.blog.searchPlaceholder')}
+                    aria-label={t('forum.blog.searchLabel')}
+                    className="h-full min-w-0 flex-1 bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
+                  />
+                </label>
+                <nav aria-label={t('forum.sidebarLabel')} className="mt-sm flex gap-xs lg:hidden">
+                  <a href="#forum-about" className="min-w-0 flex-1 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-1 py-2xs text-center font-body text-[10px] font-semibold text-neutral-500 transition-colors sm:px-sm sm:text-caption">
+                    {t('forum.about.title')}
+                  </a>
+                  <a href="#forum-latest" className="min-w-0 flex-1 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-1 py-2xs text-center font-body text-[10px] font-semibold text-neutral-500 transition-colors sm:px-sm sm:text-caption">
+                    {t('forum.latest.title')}
+                  </a>
+                  <a href="#forum-popular" className="min-w-0 flex-1 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-1 py-2xs text-center font-body text-[10px] font-semibold text-neutral-500 transition-colors sm:px-sm sm:text-caption">
+                    {t('forum.popular.title')}
+                  </a>
+                </nav>
+              </div>
             )}
             {activeTab === 'community' && (
               <div className="lg:hidden">
@@ -180,6 +193,7 @@ function ForumPage() {
               blogSearch={blogSearch}
               onBlogSearchChange={setBlogSearch}
               blogPosts={blogPosts}
+              onOpenPost={(postId) => navigate(`/forum/blog/${postId}`)}
               showPopularTopics={activeTab === 'blog'}
             />
           </div>

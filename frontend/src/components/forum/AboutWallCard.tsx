@@ -9,7 +9,7 @@ function AboutWallCard({ community = false }: Readonly<AboutWallCardProps>) {
   const { t } = useTranslation()
 
   return (
-    <section className="flex flex-col items-start rounded-2xl border border-neutral-200 bg-white p-lg text-left">
+    <section id="forum-about" className="flex flex-col items-start rounded-2xl border border-neutral-200 bg-white p-lg text-left">
       <span className="flex size-[56px] items-center justify-center rounded-full bg-[var(--orange-100)] text-[var(--orange-500)]">
         <UsersIcon size={24} aria-hidden="true" />
       </span>

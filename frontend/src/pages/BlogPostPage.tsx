@@ -118,7 +118,7 @@ function BlogPostPage() {
     <div className="min-h-screen bg-bg-page">
       <Navbar />
 
-      <main className="mx-auto w-full max-w-[1120px] px-[14px] py-10 xs:px-[20px] xs:py-12">
+      <main className="mx-auto w-full max-w-[1120px] px-[20px] py-10 xs:py-12">
         <Link
           to="/forum"
           className="flex w-fit items-center gap-xs text-left font-body text-body-sm font-semibold text-heading"
