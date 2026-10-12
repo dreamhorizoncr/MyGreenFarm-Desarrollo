@@ -76,55 +76,56 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
       <figure
         className="relative flex max-h-full max-w-full flex-col items-center gap-md"
       >
-        <div className="relative">
+        {/* Flechas a los lados de la foto, no encima: la foto deja espacio para ellas */}
+        <div className="flex items-center gap-sm md:gap-md">
+          {total > 1 && (
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation()
+                goPrev()
+              }}
+              aria-label={t('home.galeria.prevPhoto')}
+              className="flex size-[36px] shrink-0 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition hover:scale-105 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 md:size-[44px]"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" className="size-[40%] rotate-180">
+                <polygon
+                  points="7,4 20,12 7,20"
+                  fill="currentColor"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          )}
+
           <img
             src={image?.fileUrl}
             alt={image?.title || alt || ''}
-            className="max-h-[80vh] max-w-full rounded-2xl object-contain"
+            className="max-h-[80vh] max-w-[calc(100vw-120px)] rounded-2xl object-contain md:max-w-[calc(100vw-180px)]"
           />
 
           {total > 1 && (
-            <>
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation()
-                  goPrev()
-                }}
-                aria-label={t('home.galeria.prevPhoto')}
-                className="absolute left-[12px] top-1/2 flex size-[36px] -translate-y-1/2 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition hover:scale-105 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 md:size-[44px]"
-              >
-                <svg viewBox="0 0 24 24" aria-hidden="true" className="size-[40%] rotate-180">
-                  <polygon
-                    points="7,4 20,12 7,20"
-                    fill="currentColor"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation()
-                  goNext()
-                }}
-                aria-label={t('home.galeria.nextPhoto')}
-                className="absolute right-[12px] top-1/2 flex size-[36px] -translate-y-1/2 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition hover:scale-105 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 md:size-[44px]"
-              >
-                <svg viewBox="0 0 24 24" aria-hidden="true" className="size-[40%]">
-                  <polygon
-                    points="7,4 20,12 7,20"
-                    fill="currentColor"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </button>
-            </>
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation()
+                goNext()
+              }}
+              aria-label={t('home.galeria.nextPhoto')}
+              className="flex size-[36px] shrink-0 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition hover:scale-105 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 md:size-[44px]"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true" className="size-[40%]">
+                <polygon
+                  points="7,4 20,12 7,20"
+                  fill="currentColor"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
           )}
         </div>
 
