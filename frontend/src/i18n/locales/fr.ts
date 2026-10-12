@@ -580,6 +580,10 @@ export default {
       placeholder: "Rechercher un pays ou un indicatif",
       empty: "Aucun pays trouvé.",
     },
+    calendar: {
+      month: "Mois",
+      year: "Année",
+    },
   },
   validation: {
     emailRequired: "L'e-mail est obligatoire",

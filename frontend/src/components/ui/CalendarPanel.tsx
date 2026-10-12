@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Calendar, Button, ButtonGroup } from '@heroui/react'
 import { today, getLocalTimeZone, startOfWeek, startOfMonth } from '@internationalized/date'
 import { I18nProvider } from 'react-aria-components'
 import type { CalendarDate } from '@internationalized/date'
+import Select from './Select.tsx'
 
 interface CalendarPanelProps {
   value: CalendarDate | null
@@ -24,7 +25,6 @@ const SIZES = {
   regular: {
     card: 'max-w-[420px] p-lg gap-6',
     header: 'pb-4',
-    heading: 'text-xl',
     gridHeader: 'mb-3',
     headCell: 'w-10 h-10 text-md',
     cell: 'h-9 w-9 text-md m-1',
@@ -34,7 +34,6 @@ const SIZES = {
   compact: {
     card: 'p-sm gap-1',
     header: 'pb-1',
-    heading: 'text-base',
     gridHeader: '',
     headCell: 'w-8 h-6 text-xs',
     cell: 'h-7 w-7 text-sm my-px',
@@ -42,6 +41,10 @@ const SIZES = {
     clear: '',
   },
 } as const
+
+// Rango de años del selector cuando el campo no tiene mínimo o máximo.
+const YEARS_BACK = 100
+const YEARS_AHEAD = 10
 
 const shortcutClassName =
   'rounded-2xl text-white font-medium hover:bg-green-400/40 transition-colors data-[pressed=true]:scale-95 px-8 py-2 disabled:opacity-50'
@@ -61,6 +64,28 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
   }
 
   const todayDate = today(getLocalTimeZone())
+  const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
+
+  // Selectores de mes y año para saltar directo a fechas lejanas (p. ej. fechas de nacimiento)
+  // sin tener que avanzar mes a mes con las flechas.
+  const monthOptions = useMemo(() => {
+    const format = new Intl.DateTimeFormat(locale, { month: 'long' })
+    return Array.from({ length: 12 }, (_, index) => {
+      const label = format.format(new Date(2000, index, 1))
+      return { value: String(index + 1), label: label.charAt(0).toUpperCase() + label.slice(1) }
+    })
+  }, [locale])
+  const firstYear = minValue?.year ?? todayDate.year - YEARS_BACK
+  const lastYear = maxValue?.year ?? todayDate.year + YEARS_AHEAD
+  const yearOptions = useMemo(
+    () => Array.from({ length: lastYear - firstYear + 1 }, (_, index) => String(lastYear - index)).map((year) => ({ value: year, label: year })),
+    [firstYear, lastYear],
+  )
+  const moveTo = (date: CalendarDate) => {
+    if (minValue && date.compare(minValue) < 0) setFocusedDate(minValue)
+    else if (maxValue && date.compare(maxValue) > 0) setFocusedDate(maxValue)
+    else setFocusedDate(date)
+  }
   const weekStart = startOfWeek(todayDate, i18n.language)
   const monthStart = startOfMonth(todayDate)
 
@@ -96,19 +121,31 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
           maxValue={maxValue}
           className="flex flex-col items-center w-full"
         >
-          <Calendar.Header className={`w-full flex justify-between items-center px-2 ${size.header}`}>
-            <Calendar.Heading className={`font-heading font-bold capitalize text-heading ${size.heading}`} />
-            <div className="flex items-center gap-2">
-              {/* En compacto, "Limpiar" va en la cabecera para ahorrar alto. */}
-              {compact && (
-                <button
-                  type="button"
-                  onClick={() => onChange(null)}
-                  className="mr-xs rounded font-body text-caption font-semibold text-link underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-link"
-                >
-                  {t('teacherAppointments.calendar.clear')}
-                </button>
-              )}
+          <Calendar.Header className={`w-full flex justify-between items-center gap-xs ${compact ? '' : 'px-2'} ${size.header}`}>
+            <Calendar.Heading className="sr-only" />
+            <div className="flex items-center gap-xs">
+              <div className={compact ? 'w-[116px]' : 'w-[140px]'}>
+                <Select
+                  compact
+                  value={String(focusedDate.month)}
+                  onChange={(month) => moveTo(focusedDate.set({ month: Number(month) }))}
+                  options={monthOptions}
+                  aria-label={t('common.calendar.month')}
+                  className="w-full rounded-lg border border-neutral-200 bg-white px-sm font-semibold text-heading"
+                />
+              </div>
+              <div className={compact ? 'w-[90px]' : 'w-[96px]'}>
+                <Select
+                  compact
+                  value={String(focusedDate.year)}
+                  onChange={(year) => moveTo(focusedDate.set({ year: Number(year) }))}
+                  options={yearOptions}
+                  aria-label={t('common.calendar.year')}
+                  className="w-full rounded-lg border border-neutral-200 bg-white px-sm font-semibold text-heading"
+                />
+              </div>
+            </div>
+            <div className="flex items-center gap-1">
               <Calendar.NavButton slot="previous" />
               <Calendar.NavButton slot="next" />
             </div>
@@ -137,6 +174,18 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
           </Calendar.Grid>
         </Calendar>
       </I18nProvider>
+
+      {compact && (
+        <div className="flex w-full justify-end">
+          <button
+            type="button"
+            onClick={() => onChange(null)}
+            className="rounded font-body text-caption font-semibold text-link underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-link"
+          >
+            {t('teacherAppointments.calendar.clear')}
+          </button>
+        </div>
+      )}
 
       {!compact && (
         <div className={`flex flex-wrap justify-center gap-2 w-full border-t border-neutral-100 ${size.footer}`}>

@@ -579,6 +579,10 @@ export default {
       placeholder: "Search country or code",
       empty: "No countries found.",
     },
+    calendar: {
+      month: "Month",
+      year: "Year",
+    },
   },
   validation: {
     emailRequired: "Email is required",

@@ -587,6 +587,10 @@ export default {
       placeholder: "Buscar país o código",
       empty: "No se encontraron países.",
     },
+    calendar: {
+      month: "Mes",
+      year: "Año",
+    },
   },
   validation: {
     emailRequired: "El correo electrónico es obligatorio",

@@ -28,7 +28,7 @@ const toCalendarDate = (value?: string): CalendarDate | undefined => {
 }
 
 // Alto aproximado del calendario compacto, para decidir si se abre hacia arriba.
-const PANEL_HEIGHT = 270
+const PANEL_HEIGHT = 290
 
 const defaultTriggerClassName =
   'mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading'
