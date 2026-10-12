@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { formatPhoneNumberIntl } from 'react-phone-number-input'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { appointmentService } from '../services/appointment.ts'
 import type { Appointment } from '../types/appointment.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
@@ -28,6 +29,7 @@ function AppointmentDetailsModal({ appointment, onClose }: Readonly<AppointmentD
   const { t, i18n } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
   const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
   const [translations, setTranslations] = useState<Record<string, string>>({})
 
@@ -74,12 +76,6 @@ function AppointmentDetailsModal({ appointment, onClose }: Readonly<AppointmentD
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') requestClose()
-      }}
       aria-labelledby="appointment-details-title"
       className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(720px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >

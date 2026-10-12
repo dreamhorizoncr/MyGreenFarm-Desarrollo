@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { FileTextIcon, LockIcon } from '@animateicons/react/lucide'
 import TermsSection from './TermsSection.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 type LegalTab = 'terms' | 'privacy'
@@ -15,6 +16,7 @@ function TermsModal({ onClose }: Readonly<TermsModalProps>) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
   const [activeTab, setActiveTab] = useState<LegalTab>('terms')
 
   useEffect(() => {
@@ -52,12 +54,6 @@ function TermsModal({ onClose }: Readonly<TermsModalProps>) {
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') requestClose()
-      }}
       aria-label={t('legalModal.title')}
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(680px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >

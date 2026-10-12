@@ -4,6 +4,7 @@ import { CircleCheck } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import { useForgotPassword } from '../hooks/useForgotPassword.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { notify } from '../utils/notifications.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
@@ -16,6 +17,7 @@ function ForgotPasswordModal({ email, onClose }: Readonly<ForgotPasswordModalPro
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
   const { submitForgotPassword, loading, error, success } = useForgotPassword()
 
   useEffect(() => {
@@ -44,12 +46,6 @@ function ForgotPasswordModal({ email, onClose }: Readonly<ForgotPasswordModalPro
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') requestClose()
-      }}
       aria-label={t('profile.resetPassword')}
       className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(480px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white shadow-lg backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >

@@ -8,6 +8,7 @@ import 'swiper/css'
 import 'swiper/css/zoom'
 import CarouselDots from './ui/CarouselDots.tsx'
 import type { GalleryImage } from '../types/gallery.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 
 interface PhotoLightboxProps {
   images: GalleryImage[]
@@ -35,6 +36,7 @@ const arrowClassName =
 function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLightboxProps>) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
+  useDialogDismiss(dialogRef, onClose)
   const [swiper, setSwiper] = useState<SwiperInstance | null>(null)
   const [index, setIndex] = useState(initialIndex)
   // Mitad del ancho de la foto activa, para ubicar las flechas junto a ella.
@@ -68,12 +70,6 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
     <dialog
       ref={dialogRef}
       onClose={onClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) onClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') onClose()
-      }}
       aria-label={image?.title || alt}
       className="inset-0 m-0 flex h-full w-full max-h-none max-w-none items-center justify-center bg-transparent p-[16px] backdrop:bg-black/90 md:p-[30px]"
     >

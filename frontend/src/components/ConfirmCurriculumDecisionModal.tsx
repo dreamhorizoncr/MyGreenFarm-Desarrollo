@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import Button from './ui/Button.tsx'
 import { getErrorMessage } from '../utils/error.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import type { Curriculum } from '../types/curriculum.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
@@ -17,6 +18,7 @@ function ConfirmCurriculumDecisionModal({ application, action, onConfirm, onClos
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
 
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
@@ -49,12 +51,6 @@ function ConfirmCurriculumDecisionModal({ application, action, onConfirm, onClos
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') requestClose()
-      }}
       aria-label={title}
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >

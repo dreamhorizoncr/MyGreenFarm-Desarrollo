@@ -1,26 +1,22 @@
-import { useEffect, useRef, type RefObject } from 'react'
+import { useEffect, type RefObject } from 'react'
 
 // Cierra un <dialog> modal con un clic en el fondo (backdrop) o con Escape, usando los eventos
 // nativos del dialog en lugar de onClick/onKeyDown en el JSX (el dialog no es un elemento interactivo).
-// Escape se intercepta en el evento "cancel" para que corra la animación de salida (requestClose)
+// Escape se intercepta en el evento "cancel" para que corra la animación de salida (onDismiss)
 // en vez de que el navegador cierre el dialog de golpe. Con enabled=false (p. ej. mientras guarda) no cierra.
+// Los listeners se conectan en cada render: así siempre usan el onDismiss actual y también funcionan
+// con dialogs que se montan más tarde (renderizado condicional) o que React vuelve a montar.
 export function useDialogDismiss(dialogRef: RefObject<HTMLDialogElement | null>, onDismiss: () => void, enabled = true) {
-  // Siempre la versión más reciente, sin volver a registrar los listeners en cada render.
-  const latest = useRef({ onDismiss, enabled })
-  useEffect(() => {
-    latest.current = { onDismiss, enabled }
-  })
-
   useEffect(() => {
     const dialog = dialogRef.current
     if (!dialog) return
 
     const handleCancel = (event: Event) => {
       event.preventDefault()
-      if (latest.current.enabled) latest.current.onDismiss()
+      if (enabled) onDismiss()
     }
     const handleClick = (event: MouseEvent) => {
-      if (event.target === dialog && latest.current.enabled) latest.current.onDismiss()
+      if (event.target === dialog && enabled) onDismiss()
     }
 
     dialog.addEventListener('cancel', handleCancel)
@@ -29,5 +25,5 @@ export function useDialogDismiss(dialogRef: RefObject<HTMLDialogElement | null>,
       dialog.removeEventListener('cancel', handleCancel)
       dialog.removeEventListener('click', handleClick)
     }
-  }, [dialogRef])
+  })
 }
