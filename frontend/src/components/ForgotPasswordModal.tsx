@@ -50,7 +50,7 @@ function ForgotPasswordModal({ email, onClose }: Readonly<ForgotPasswordModalPro
         if (event.key === 'Escape') requestClose()
       }}
       aria-label={t('profile.resetPassword')}
-      className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(480px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-[20px] border border-neutral-200 bg-white shadow-lg backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+      className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(480px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white shadow-lg backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="relative p-lg md:p-xl">
         {success ? (

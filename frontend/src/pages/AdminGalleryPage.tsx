@@ -650,7 +650,7 @@ function AdminGalleryPage() {
 
 			{/* Formulario de álbum */}
 			{formOpen && (
-				<div className="text-left fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]">
+				<div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
 					<button
 						type="button"
 						tabIndex={-1}
@@ -659,7 +659,7 @@ function AdminGalleryPage() {
 						onClick={requestClose}
 					/>
 
-					<form onSubmit={handleSubmit} className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}>
+					<form onSubmit={handleSubmit} className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}>
 					<div className="flex items-center justify-between gap-md">
 						<h2 className="m-0 font-heading text-2xl font-bold text-heading">
 							{editing ? t('admin.gallery.editAlbum') : t('admin.gallery.newAlbum')}

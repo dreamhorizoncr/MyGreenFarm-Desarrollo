@@ -81,7 +81,7 @@ function AppointmentDetailsModal({ appointment, onClose }: Readonly<AppointmentD
         if (event.key === 'Escape') requestClose()
       }}
       aria-labelledby="appointment-details-title"
-      className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(720px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+      className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(720px,92vw)] max-w-none modal-scroll rounded-2xl bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="relative p-[28px_22px_30px]">
         <button

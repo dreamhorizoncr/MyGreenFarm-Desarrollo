@@ -89,7 +89,7 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
             if (event.key === 'Escape') handleClose()
           }}
           aria-labelledby="exchange-rate-title"
-          className={`fixed inset-0 m-auto w-[min(520px,94vw)] max-w-none rounded-3xl border border-neutral-200 bg-white p-lg shadow-xl backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+          className={`fixed inset-0 m-auto max-h-[90vh] w-[min(520px,94vw)] max-w-none modal-scroll rounded-3xl border border-neutral-200 bg-white p-lg shadow-xl backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         >
           <button
             type="button"

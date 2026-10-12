@@ -168,3 +168,33 @@ input[type="password"]::-ms-clear {
     }
   }
 }
+
+/* =============================================================================
+   MODAL SCROLL — Contenido de modales que no cabe en pantalla
+   =============================================================================
+   El modal nunca pasa del alto de la pantalla: su contenido hace scroll por
+   dentro y se muestra una barra fina para que el usuario sepa que hay más.
+   Va como clase normal (sin @utility) porque base.css oculta las barras con
+   una regla sin capa (*), que le ganaría a cualquier utilidad de Tailwind.
+   ============================================================================= */
+.modal-scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--green-300) transparent;
+}
+
+.modal-scroll::-webkit-scrollbar {
+  display: block;
+  width: 8px;
+}
+
+.modal-scroll::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background-color: var(--green-300);
+}
+
+.modal-scroll::-webkit-scrollbar-track {
+  margin-block: 16px;
+  background-color: transparent;
+}

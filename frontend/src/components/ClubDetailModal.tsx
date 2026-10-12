@@ -45,7 +45,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                 if (event.key === 'Escape') requestClose()
             }}
             aria-label={club.name}
-            className={`fixed inset-0 m-auto max-h-[90vh] w-[min(1100px,92vw)] max-w-none overflow-y-auto scrollbar-none rounded-3xl bg-bg-page backdrop:bg-black/50 ${
+            className={`fixed inset-0 m-auto max-h-[90vh] w-[min(1100px,92vw)] max-w-none modal-scroll rounded-3xl bg-bg-page backdrop:bg-black/50 ${
                 closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'
             }`}
         >

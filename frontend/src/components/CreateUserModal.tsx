@@ -94,7 +94,7 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
         if (event.key === 'Escape') requestClose()
       }}
       aria-label={t('admin.addDocente')}
-      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-[20px] border border-neutral-200 bg-white p-lg text-left backdrop:bg-scrim md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg text-left backdrop:bg-scrim md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="flex items-center justify-between gap-md">
         <h2 className="m-0 font-heading text-2xl font-bold text-heading">{t('admin.addDocente')}</h2>

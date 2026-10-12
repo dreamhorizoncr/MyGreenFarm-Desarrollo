@@ -88,7 +88,7 @@ function PublishExperienceModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]"
     >
       <button
         type="button"
@@ -99,7 +99,7 @@ function PublishExperienceModal({
       />
 
       <article
-        className="relative mx-auto my-[20px] w-full max-w-[640px] rounded-3xl bg-white"
+        className="relative mx-auto max-h-full modal-scroll w-full max-w-[640px] rounded-3xl bg-white"
       >
         <button
           type="button"
