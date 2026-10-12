@@ -11,6 +11,7 @@ import taller.multimedia.backend.dto.service_plan.ServicePlanRequest;
 import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.model.service_plans.ServicePlan;
 import taller.multimedia.backend.service.service_plan.ServicePlanService;
+import taller.multimedia.backend.service.spelling.SpellingCorrectionAsyncService;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
@@ -25,6 +26,7 @@ import java.util.UUID;
 public class ServicePlanController {
 
     private final ServicePlanService servicePlanService;
+    private final SpellingCorrectionAsyncService spellingCorrectionAsyncService;
     private final ObjectMapper objectMapper;
 
     // Catálogo público: cualquier visitante puede ver los planes activos o todos
@@ -63,6 +65,7 @@ public class ServicePlanController {
             ServicePlanRequest dto = objectMapper.readValue(requestJson, ServicePlanRequest.class);
 
             ServicePlan created = servicePlanService.createPlan(dto, file);
+            spellingCorrectionAsyncService.correctServicePlan(created.getId());
             return ResponseEntity.ok(created);
         } catch (InvalidFieldException e) {
             throw e;
@@ -88,6 +91,7 @@ public class ServicePlanController {
             @RequestParam(value = "file", required = false) MultipartFile file) {
 
         ServicePlan updated = servicePlanService.updatePlan(id, dto, file);
+        spellingCorrectionAsyncService.correctServicePlan(updated.getId());
         return ResponseEntity.ok(updated);
     }
 
