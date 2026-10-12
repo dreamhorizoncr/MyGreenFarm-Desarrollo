@@ -596,6 +596,7 @@ export default {
       "L'identification étrangère doit contenir entre 6 et 20 caractères (lettres, chiffres ou tirets)",
     countryRequired: "Sélectionnez le pays (drapeau) du numéro de téléphone",
     phoneInvalid: "Saisissez un numéro de téléphone valide",
+    unsafeText: "Les balises HTML et les caractères comme « < » suivis de lettres ne sont pas autorisés.",
   },
   profile: {
     title: "Mon profil",

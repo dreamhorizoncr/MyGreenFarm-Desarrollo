@@ -7,7 +7,7 @@ import { expedientService } from "../services/expedient";
 import { notify } from "../utils/notifications.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
 import DatePickerField from "./ui/DatePickerField.tsx";
-import { validateRequired } from "../utils/validators.ts";
+import { validateRequired, validateSafeText } from "../utils/validators.ts";
 
 import type {
   EducationalLevel,
@@ -83,6 +83,7 @@ function ExpedientFormModal({
 
   const [studentError, setStudentError] = useState<string | null>(null);
   const [dateError, setDateError] = useState<string | null>(null);
+  const [observationsError, setObservationsError] = useState<string | null>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -133,10 +134,13 @@ function ExpedientFormModal({
       : t("admin.expedients.selectStudentError");
     const dateErrorMessage = validateRequired(admisionDate, t("admin.expedients.admisiondate"), t);
 
+    const observationsErrorMessage = validateSafeText(generalObservations, t);
+
     setStudentError(studentErrorMessage);
     setDateError(dateErrorMessage);
+    setObservationsError(observationsErrorMessage);
 
-    if (studentErrorMessage || dateErrorMessage) return;
+    if (studentErrorMessage || dateErrorMessage || observationsErrorMessage) return;
 
     setSaving(true);
     setError(null);
@@ -323,7 +327,10 @@ function ExpedientFormModal({
             {t("admin.expedients.notes")}
             <textarea
               value={generalObservations}
-              onChange={(e) => setGeneralObservations(e.target.value)}
+              onChange={(e) => {
+                setGeneralObservations(e.target.value);
+                if (observationsError) setObservationsError(null);
+              }}
               maxLength={600}
               rows={4}
               placeholder={t("admin.expedients.observationsPlaceholder")}
@@ -333,6 +340,9 @@ function ExpedientFormModal({
             <p className="mt-xs text-right font-body text-caption font-normal text-neutral-500">
               {generalObservations.length}/600
             </p>
+            {observationsError && (
+              <span className="block font-body text-body-sm font-normal text-danger">{observationsError}</span>
+            )}
           </label>
 
           {/* Fotografía */}

@@ -10,6 +10,7 @@ import ImageThumb, { ImageThumbList } from './ui/ImageThumb.tsx'
 import DeleteConfirmModal from './ui/DeleteConfirmModal.tsx'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { notify } from '../utils/notifications.ts'
+import { validateSafeText } from '../utils/validators.ts'
 
 const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']
 
@@ -92,19 +93,17 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
       setOnvoError(null)
     }
 
-    if (!schedule.trim()) {
-      setScheduleError(t('validation.fieldRequired', { field: t('admin.servicios.scheduleLabel') }))
-      hasError = true
-    } else {
-      setScheduleError(null)
-    }
+    const scheduleMessage = schedule.trim()
+      ? validateSafeText(schedule, t)
+      : t('validation.fieldRequired', { field: t('admin.servicios.scheduleLabel') })
+    setScheduleError(scheduleMessage)
+    if (scheduleMessage) hasError = true
 
-    if (!includes.trim()) {
-      setIncludesError(t('validation.fieldRequired', { field: t('admin.servicios.includesLabel') }))
-      hasError = true
-    } else {
-      setIncludesError(null)
-    }
+    const includesMessage = includes.trim()
+      ? validateSafeText(includes, t)
+      : t('validation.fieldRequired', { field: t('admin.servicios.includesLabel') })
+    setIncludesError(includesMessage)
+    if (includesMessage) hasError = true
 
     if (!isEditing && !selectedImage) {
       setImageError(t('validation.fieldRequired', { field: t('admin.servicios.chooseImage') }))
