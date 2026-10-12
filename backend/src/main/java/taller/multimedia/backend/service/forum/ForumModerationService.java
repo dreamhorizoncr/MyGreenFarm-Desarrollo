@@ -1,8 +1,10 @@
 package taller.multimedia.backend.service.forum;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,12 @@ public class ForumModerationService {
             "Ese nombre no cumple con las normas del foro. Elegí otro para continuar.";
     private static final String UNAVAILABLE_MESSAGE =
             "No se pudo verificar el contenido en este momento. Intenta de nuevo en unos segundos.";
+    private static final String EMOJI_REJECTED_MESSAGE =
+            "No se permiten emojis en el foro. Quítalos e intenta de nuevo.";
+
+    // Detecta emojis sin depender de Gemini.
+    private static final Pattern EMOJI_PATTERN = Pattern.compile(
+            "[\\x{1F300}-\\x{1FAFF}\\x{2600}-\\x{27BF}\\x{1F1E6}-\\x{1F1FF}\\x{2B00}-\\x{2BFF}\\x{FE0F}\\x{200D}]");
 
     private static final String SPELLING_INSTRUCTION =
             "- \"correctedContent\" es el mismo mensaje con la ortografía, tildes y puntuación corregidas. "
@@ -50,7 +58,10 @@ public class ForumModerationService {
                     + "\"appropriate\" es false si el mensaje contiene lenguaje vulgar, ofensivo, sexual, violento, "
                     + "spam, publicidad; contenido político o religioso ofensivo, proselitista o burlón; "
                     + "o que suplanta/parodia a una figura pública o religiosa real; "
-                    + "o cualquier otro contenido inapropiado para un entorno escolar con niños.\n"
+                    + "o cualquier otro contenido inapropiado para un entorno escolar con niños. "
+                    + "Esto incluye insultos y groserías coloquiales en español latinoamericano (por ejemplo, "
+                    + "pero no limitado a: \"malparido\", \"hijueputa\"/\"hijueputas\", \"carepicha\"/\"carepichas\", "
+                    + "\"mierda\", \"pendejo\", \"gonorrea\"), aunque estén mal escritas o disimuladas.\n"
                     + SPELLING_INSTRUCTION;
 
     private static final String COMMENT_PROMPT =
@@ -66,7 +77,10 @@ public class ForumModerationService {
                     + "- \"appropriate\" es false si el comentario contiene lenguaje vulgar, ofensivo, sexual, "
                     + "violento, spam; contenido político o religioso ofensivo, proselitista o burlón; "
                     + "o que suplanta/parodia a una figura pública o religiosa real; "
-                    + "o cualquier otro contenido inapropiado para un entorno escolar con niños.\n"
+                    + "o cualquier otro contenido inapropiado para un entorno escolar con niños. "
+                    + "Esto incluye insultos y groserías coloquiales en español latinoamericano (por ejemplo, "
+                    + "pero no limitado a: \"malparido\", \"hijueputa\"/\"hijueputas\", \"carepicha\"/\"carepichas\", "
+                    + "\"mierda\", \"pendejo\", \"gonorrea\"), aunque estén mal escritas o disimuladas.\n"
                     + "- \"onTopic\" es false si el comentario no guarda ninguna relación razonable con el tema o "
                     + "el título del artículo (por ejemplo, habla de algo completamente distinto).\n"
                     + SPELLING_INSTRUCTION;
@@ -76,12 +90,16 @@ public class ForumModerationService {
                     + "(familias con niños de 0 a 12 años). Evalúa el siguiente nombre o alias que una persona "
                     + "eligió para publicar en el foro.\n\n"
                     + "Nombre a evaluar:\n\"%s\"\n\n"
+                    + "Antes de responder, usa la búsqueda para comprobar si ese nombre completo corresponde a "
+                    + "una persona real con un cargo público (presidente, diputado, alcalde, síndico, regidor, "
+                    + "líder religioso, etc.), aunque sea una figura local o poco conocida a nivel nacional. "
+                    + "No asumas que no es real solo porque no la reconoces de memoria.\n\n"
                     + "Responde ÚNICAMENTE con un JSON de una línea, sin texto adicional ni bloques de código, "
                     + "con este formato exacto:\n"
                     + "{\"appropriate\": true|false}\n\n"
                     + "\"appropriate\" es false si el nombre contiene lenguaje vulgar, sexual u ofensivo, un doble "
                     + "sentido o juego de palabras de mal gusto, una burla o referencia a política o religión, "
-                    + "o suplanta a una figura pública o religiosa real. Un nombre común y corriente (real, "
+                    + "o suplanta a una figura pública o religiosa real (nacional o local). Un nombre común y corriente (real, "
                     + "inventado o un apodo normal) es \"appropriate\": true.";
 
     private final ObjectMapper objectMapper;
@@ -103,7 +121,8 @@ public class ForumModerationService {
     // Used for the community wall and its replies: content just has to be appropriate.
     // Returns the content with spelling/accents/punctuation corrected by Gemini.
     public String assertAppropriate(String content) {
-        JsonNode result = callGemini("content", APPROPRIATE_PROMPT.formatted(content));
+        rejectIfEmoji("content", content);
+        JsonNode result = callGemini("content", APPROPRIATE_PROMPT.formatted(content), false);
         boolean appropriate = result != null && result.path("appropriate").asBoolean(false);
 
         if (!appropriate) {
@@ -116,7 +135,8 @@ public class ForumModerationService {
     // Used for replies to blog articles: content has to be appropriate AND relevant
     // to the article it responds to. Returns the spelling-corrected content.
     public String assertCommentRelevant(String articleTopic, String articleTitle, String commentContent) {
-        JsonNode result = callGemini("content", COMMENT_PROMPT.formatted(articleTopic, articleTitle, commentContent));
+        rejectIfEmoji("content", commentContent);
+        JsonNode result = callGemini("content", COMMENT_PROMPT.formatted(articleTopic, articleTitle, commentContent), false);
         boolean appropriate = result != null && result.path("appropriate").asBoolean(false);
         boolean onTopic = result != null && result.path("onTopic").asBoolean(false);
 
@@ -130,11 +150,18 @@ public class ForumModerationService {
     // Used for the display name/alias people choose when posting: blocks vulgar, political,
     // religious or mocking names (e.g. puns impersonating public figures), independent of content.
     public void assertAppropriateName(String fieldName, String name) {
-        JsonNode result = callGemini(fieldName, NAME_PROMPT.formatted(name));
+        rejectIfEmoji(fieldName, name);
+        JsonNode result = callGemini(fieldName, NAME_PROMPT.formatted(name), true);
         boolean appropriate = result != null && result.path("appropriate").asBoolean(false);
 
         if (!appropriate) {
             throw new InvalidFieldException(fieldName, NAME_REJECTED_MESSAGE);
+        }
+    }
+
+    private void rejectIfEmoji(String fieldName, String text) {
+        if (text != null && EMOJI_PATTERN.matcher(text).find()) {
+            throw new InvalidFieldException(fieldName, EMOJI_REJECTED_MESSAGE);
         }
     }
 
@@ -145,7 +172,11 @@ public class ForumModerationService {
         return corrected == null || corrected.isBlank() ? original : corrected;
     }
 
-    private JsonNode callGemini(String fieldName, String prompt) {
+    // withSearchGrounding le da a Gemini la herramienta de Búsqueda de Google para que
+    // verifique si el nombre corresponde a una persona real (política, religiosa, etc.)
+    // en vez de depender solo de lo que recuerde de su entrenamiento, que no cubre bien
+    // a figuras poco conocidas (ej. alcaldes o síndicos locales).
+    private JsonNode callGemini(String fieldName, String prompt, boolean withSearchGrounding) {
         try {
             String url = baseUrl + "/models/" + model + ":generateContent";
 
@@ -153,10 +184,13 @@ public class ForumModerationService {
             Map<String, Object> content = Map.of("parts", List.of(part));
             Map<String, Object> generationConfig = Map.of(
                     "temperature", 0.0,
-                    "maxOutputTokens", 50);
-            Map<String, Object> body = Map.of(
+                    "maxOutputTokens", withSearchGrounding ? 300 : 50);
+            Map<String, Object> body = new HashMap<>(Map.of(
                     "contents", List.of(content),
-                    "generationConfig", generationConfig);
+                    "generationConfig", generationConfig));
+            if (withSearchGrounding) {
+                body.put("tools", List.of(Map.of("google_search", Map.of())));
+            }
 
             String jsonBody = objectMapper.writeValueAsString(body);
 

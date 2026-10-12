@@ -1,8 +1,9 @@
 import { useTranslation } from 'react-i18next'
-import { HeartIcon, MessageCircleIcon, PencilIcon, Trash2Icon } from '@animateicons/react/lucide'
+import { HeartIcon, MessageCircleIcon } from '@animateicons/react/lucide'
 import type { BlogPost } from '../../types/forum.ts'
 import PostAvatar from './PostAvatar.tsx'
 import Skeleton from '../ui/Skeleton.tsx'
+import CardActionButton from '../ui/CardActionButton.tsx'
 
 interface BlogPostCardProps {
   post?: BlogPost
@@ -147,7 +148,7 @@ function BlogPostCard({
 
   return (
     <article
-      className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white text-left transition hover:-translate-y-1 hover:shadow-lg ${
+      className={`relative flex h-full flex-col rounded-2xl border border-neutral-200 bg-white text-left card-hover ${
         isInteractive ? 'cursor-pointer' : ''
       }`}
     >
@@ -160,7 +161,8 @@ function BlogPostCard({
         />
       )}
 
-      <div className="h-[160px] shrink-0 bg-neutral-100 xs:h-[220px]">
+      {/* La imagen se redondea sola (sin overflow-hidden en la card) para que card-hover no tiemble. */}
+      <div className="h-[160px] shrink-0 overflow-hidden rounded-t-[15px] bg-neutral-100 xs:h-[220px]">
         {post!.imageUrl && (
           <img
             src={post!.imageUrl}
@@ -219,31 +221,27 @@ function BlogPostCard({
         {(onEdit || onDelete) && (
           <div className="ml-auto flex items-center gap-xs">
             {onEdit && (
-              <button
-                type="button"
+              <CardActionButton
+                action="edit"
+                size="sm"
+                label={`${t('adminForum.edit')} — ${post!.title}`}
                 onClick={(event) => {
                   event.stopPropagation()
                   onEdit(post!.id)
                 }}
-                aria-label={`${t('adminForum.edit')} — ${post!.title}`}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
-              >
-                <PencilIcon size={15} aria-hidden="true" />
-              </button>
+              />
             )}
 
             {onDelete && (
-              <button
-                type="button"
+              <CardActionButton
+                action="delete"
+                size="sm"
+                label={`${t('adminForum.delete')} — ${post!.title}`}
                 onClick={(event) => {
                   event.stopPropagation()
                   onDelete(post!.id)
                 }}
-                aria-label={`${t('adminForum.delete')} — ${post!.title}`}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50"
-              >
-                <Trash2Icon size={15} aria-hidden="true" />
-              </button>
+              />
             )}
           </div>
         )}

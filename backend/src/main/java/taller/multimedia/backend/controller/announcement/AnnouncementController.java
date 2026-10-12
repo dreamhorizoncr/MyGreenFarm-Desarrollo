@@ -18,6 +18,7 @@ import taller.multimedia.backend.dto.announcement.AnnouncementRequest;
 import taller.multimedia.backend.dto.announcement.AnnouncementResponse;
 import taller.multimedia.backend.service.announcement.AnnouncementService;
 import taller.multimedia.backend.service.announcement.AnnouncementSummaryAsyncService;
+import taller.multimedia.backend.service.spelling.SpellingCorrectionAsyncService;
 
 import java.util.UUID;
 
@@ -29,13 +30,14 @@ public class AnnouncementController {
 
     private final AnnouncementService announcementService;
     private final AnnouncementSummaryAsyncService announcementSummaryAsyncService;
+    private final SpellingCorrectionAsyncService spellingCorrectionAsyncService;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<AnnouncementResponse> create(@RequestBody @Valid AnnouncementRequest dto) {
 
         AnnouncementResponse created = announcementService.create(dto);
-        announcementSummaryAsyncService.generateSummaryAsync(created.getId(), false);
+        spellingCorrectionAsyncService.correctAnnouncement(created.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -54,7 +56,7 @@ public class AnnouncementController {
     public ResponseEntity<AnnouncementResponse> update( @PathVariable UUID id, @RequestBody @Valid AnnouncementRequest dto) 
     {
         AnnouncementResponse updated = announcementService.update(id, dto);
-        announcementSummaryAsyncService.generateSummaryAsync(updated.getId(), false);
+        spellingCorrectionAsyncService.correctAnnouncement(updated.getId());
         return ResponseEntity.ok(updated);
     }
 

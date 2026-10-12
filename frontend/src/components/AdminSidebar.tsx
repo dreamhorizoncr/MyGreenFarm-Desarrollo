@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ComponentType } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
@@ -21,6 +21,7 @@ import {
   ClipboardIcon
 } from '@animateicons/react/lucide'
 import { useLogin } from '../hooks/useLogin.ts'
+import useDismiss from '../hooks/useDismiss.ts'
 import { useProfileAvatar } from '../contexts/ProfileAvatarContext.tsx'
 import { notify } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
@@ -58,6 +59,9 @@ function AdminSidebar() {
   const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
   const asideRef = useRef<HTMLElement>(null)
+  const mobileMenuRef = useRef<HTMLDivElement>(null)
+  const closeMobileMenu = useCallback(() => setOpen(false), [])
+  useDismiss({ ref: mobileMenuRef, isOpen: open, onClose: closeMobileMenu })
 
   const [filled, setFilled] = useState(false)
   useEffect(() => {
@@ -152,7 +156,7 @@ function AdminSidebar() {
       className="w-full shrink-0 bg-bg-page p-md md:sticky md:top-0 md:flex md:max-h-[calc(100svh-4rem)] md:w-[260px] md:flex-col md:gap-sm md:self-start md:overflow-y-auto md:py-lg"
     >
       {/*Menu Exclusivo de Admin*/}
-      <div className="md:hidden">
+      <div ref={mobileMenuRef} className="md:hidden">
         <button
           type="button"
           onClick={() => setOpen((prev) => !prev)}

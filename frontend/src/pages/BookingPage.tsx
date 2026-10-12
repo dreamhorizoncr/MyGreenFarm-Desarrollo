@@ -7,13 +7,18 @@ import 'react-phone-number-input/style.css'
 import BookingSuccessModal from '../components/BookingSuccessModal.tsx'
 import Navbar from '../components/Navbar.tsx'
 import TextField from '../components/ui/TextField.tsx'
+import Select from '../components/ui/Select.tsx'
+import CountrySelect from '../components/ui/CountrySelect.tsx'
+import { phoneLabels } from '../utils/phoneLabels.ts'
 import { useBooking } from '../hooks/useBooking.ts'
+import { appointmentService } from '../services/appointment.ts'
 import { notify } from '../utils/notifications.ts'
 import {
   validateEmail,
   validateIdNumber,
   validatePhoneNumber,
   validateRequired,
+  validateSafeText,
 } from '../utils/validators.ts'
 import type { ReferralSource } from '../types/appointment.ts'
 
@@ -21,7 +26,7 @@ function BookingPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="h-[38px] w-full border-b border-neutral-300 bg-transparent pl-2 font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
+      className="h-full w-full bg-transparent pl-2 font-body text-body-sm text-body-text outline-none"
     />
   )
 }
@@ -162,6 +167,31 @@ function BookingPage() {
     time ??
     (effectiveDay ? availability[effectiveDay]?.slots[0]?.slice(0, 5) ?? null : null)
   const selectedDay = effectiveDay ? availability[effectiveDay] : null
+
+  // Nombre de los días especiales traducido al idioma activo. La disponibilidad no trae el id de la
+  // excepción, así que se usa la fecha (solo dígitos) como identificador de la traducción.
+  const [eventNames, setEventNames] = useState<Record<string, string>>({})
+  useEffect(() => {
+    const items = Object.entries(availability).flatMap(([date, day]) =>
+      day.eventName ? [{ entityId: date.replaceAll('-', ''), fieldName: 'eventName', originalText: day.eventName }] : [],
+    )
+    if (items.length === 0) return
+    let cancelled = false
+    appointmentService.translateBatch('AVAILABILITY_EVENT', i18n.language.split('-')[0], items)
+      .then((result) => {
+        if (cancelled) return
+        setEventNames(Object.fromEntries(Object.keys(availability).flatMap((date) => {
+          const value = result[`${date.replaceAll('-', '')}:eventName`]
+          return value ? [[date, value]] : []
+        })))
+      })
+      .catch(() => {
+        // Si falla la traducción se muestra el nombre original.
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [availability, i18n.language])
   const selectedDaySlots = selectedDay?.slots ?? []
   const morningSlots = parseSlots(selectedDaySlots.filter((slot) => Number(slot.slice(0, 2)) < 12))
   const afternoonSlots = parseSlots(selectedDaySlots.filter((slot) => Number(slot.slice(0, 2)) >= 12))
@@ -193,10 +223,10 @@ function BookingPage() {
   const validateScheduleStep = () => effectiveDay !== null && effectiveTime !== null
 
   const validateChildStep = () => {
-    const childNameValid = validateRequired(childName, t('booking.childName'), t) === null
-    const reasonValid = validateRequired(reason, t('booking.reason'), t) === null
+    const childNameValid = validateRequired(childName, t('booking.childName'), t) === null && validateSafeText(childName, t) === null
+    const reasonValid = validateRequired(reason, t('booking.reason'), t) === null && validateSafeText(reason, t) === null
     const referralSourceValid = referralSource !== ''
-    const referralOtherDetailValid = referralSource !== 'OTHER' || validateRequired(referralOtherDetail, t('booking.referral.otherDetail'), t) === null
+    const referralOtherDetailValid = referralSource !== 'OTHER' || (validateRequired(referralOtherDetail, t('booking.referral.otherDetail'), t) === null && validateSafeText(referralOtherDetail, t) === null)
     if (!childNameValid) setChildNameError(true)
     if (!reasonValid) setReasonError(true)
     if (!referralSourceValid) setReferralSourceError(true)
@@ -205,7 +235,7 @@ function BookingPage() {
   }
 
   const validateIdentityStep = () => {
-    const fullNameValid = validateRequired(fullName, t('booking.fullName'), t) === null
+    const fullNameValid = validateRequired(fullName, t('booking.fullName'), t) === null && validateSafeText(fullName, t) === null
     const idNumberValid = validateRequired(idNumber, t('booking.idNumber'), t) === null && validateIdNumber(idNumber, idType, t) === null
     if (!fullNameValid) setFullNameError(true)
     if (!idNumberValid) setIdNumberError(true)
@@ -217,7 +247,7 @@ function BookingPage() {
     const phoneValid = phoneCountry
       ? validateRequired(phone, t('booking.phone'), t) === null && validatePhoneNumber(phone, t) === null
       : false
-    const occupationValid = validateRequired(occupation, t('booking.occupation'), t) === null
+    const occupationValid = validateRequired(occupation, t('booking.occupation'), t) === null && validateSafeText(occupation, t) === null
     if (!emailValid) setEmailError(true)
     if (!phoneValid) setPhoneError(true)
     if (!occupationValid) setOccupationError(true)
@@ -320,7 +350,7 @@ function BookingPage() {
   function computeStepErrorMessages() {
     return {
       fullNameErrorMessage: fullNameError
-        ? validateRequired(fullName, t('booking.fullName'), t)
+        ? validateRequired(fullName, t('booking.fullName'), t) ?? validateSafeText(fullName, t)
         : null,
       idNumberErrorMessage: idNumberError
         ? validateRequired(idNumber, t('booking.idNumber'), t) ?? validateIdNumber(idNumber, idType, t)
@@ -330,16 +360,16 @@ function BookingPage() {
         : null,
       phoneErrorMessage: computePhoneErrorMessage(),
       occupationErrorMessage: occupationError
-        ? validateRequired(occupation, t('booking.occupation'), t)
+        ? validateRequired(occupation, t('booking.occupation'), t) ?? validateSafeText(occupation, t)
         : null,
       childNameErrorMessage: childNameError
-        ? validateRequired(childName, t('booking.childName'), t)
+        ? validateRequired(childName, t('booking.childName'), t) ?? validateSafeText(childName, t)
         : null,
       reasonErrorMessage: reasonError
-        ? validateRequired(reason, t('booking.reason'), t)
+        ? validateRequired(reason, t('booking.reason'), t) ?? validateSafeText(reason, t)
         : null,
       referralOtherDetailErrorMessage: referralOtherDetailError
-        ? validateRequired(referralOtherDetail, t('booking.referral.otherDetail'), t)
+        ? validateRequired(referralOtherDetail, t('booking.referral.otherDetail'), t) ?? validateSafeText(referralOtherDetail, t)
         : null,
     }
   }
@@ -399,7 +429,7 @@ function BookingPage() {
 
       {selectedDay?.specialDay && (
         <p className="m-0 text-left font-body text-body-sm font-semibold text-link">
-          Horario especial{selectedDay.eventName ? `: ${selectedDay.eventName}` : ''}
+          {t('booking.specialSchedule')}{selectedDay.eventName ? `: ${eventNames[effectiveDay ?? ''] ?? selectedDay.eventName}` : ''}
         </p>
       )}
 
@@ -493,7 +523,7 @@ function BookingPage() {
             if (reasonError) setReasonError(false)
           }}
           rows={3}
-          className="w-full resize-none border-b border-neutral-300 bg-transparent px-0 font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
+          className="w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
         />
       </TextField>
       <div className="flex flex-col gap-sm">
@@ -503,11 +533,11 @@ function BookingPage() {
         <label htmlFor="booking-referral-source" className="sr-only">
           {t('booking.referral.title')}
         </label>
-        <select
+        <Select
           id="booking-referral-source"
           value={referralSource}
-          onChange={(event) => {
-            const source = event.target.value as ReferralSource | ''
+          onChange={(value) => {
+            const source = value as ReferralSource | ''
             setReferralSource(source)
             setReferralSourceError(false)
             if (source !== 'OTHER') {
@@ -515,14 +545,10 @@ function BookingPage() {
               setReferralOtherDetailError(false)
             }
           }}
-          aria-invalid={referralSourceError}
-          className="h-[38px] w-full border-b border-neutral-300 bg-transparent px-0 font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
-        >
-          <option value="">{t('booking.referral.placeholder')}</option>
-          {REFERRAL_SOURCES.map((source) => (
-            <option key={source} value={source}>{t(`booking.referral.options.${source}`)}</option>
-          ))}
-        </select>
+          placeholder={t('booking.referral.placeholder')}
+          options={REFERRAL_SOURCES.map((source) => ({ value: source, label: t(`booking.referral.options.${source}`) }))}
+          className={`w-full rounded-xl border bg-white px-md ${referralSourceError ? 'border-danger' : 'border-neutral-200'}`}
+        />
         {referralSourceError && <p className="m-0 text-left font-body text-body-sm text-danger" role="alert">{t('booking.referral.required')}</p>}
       </div>
       {referralSource === 'OTHER' && (
@@ -617,12 +643,14 @@ function BookingPage() {
       >
         <PhoneInput
           id="booking-phone"
-          className="h-[38px]"
+          className="h-11 rounded-xl border border-neutral-200 bg-white px-md"
           value={phone}
           onChange={handlePhoneChange}
           onCountryChange={handleCountryChange}
           onBlur={handlePhoneBlur}
           inputComponent={BookingPhoneInput}
+          countrySelectComponent={CountrySelect}
+          labels={phoneLabels(i18n.language)}
         />
       </TextField>
       <TextField

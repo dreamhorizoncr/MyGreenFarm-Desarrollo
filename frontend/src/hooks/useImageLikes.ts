@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { galleryService } from '../services/gallery.ts'
-import { getErrorMessage } from '../utils/error'
+import { canReact, notifyReactionError } from '../utils/reactions.ts'
 import type { GalleryImage } from '../types/gallery.ts'
 
 interface ImageLikeState {
@@ -11,7 +11,6 @@ interface ImageLikeState {
 
 export function useImageLikes() {
     const [imageLikes, setImageLikes] = useState<Record<string, ImageLikeState>>({})
-    const [error, setError] = useState<string | null>(null)
 
     const initializeLikes = useCallback((images: GalleryImage[], likedImageIds: string[]) => {
         const likedSet = new Set(likedImageIds)
@@ -32,10 +31,9 @@ export function useImageLikes() {
     }, [])
 
     const toggleReaction = useCallback(async (imageId: string) => {
-        setError(null)
         const current = imageLikes[imageId]
         if (!current || current.loading) return
-        console.log('current antes del toggle:', current)
+        if (!canReact()) return
         const { liked, totalLikes } = current
 
         setImageLikes((prev) => ({
@@ -62,9 +60,9 @@ export function useImageLikes() {
                 ...prev,
                 [imageId]: { liked, totalLikes, loading: false },
             }))
-            setError(getErrorMessage(err))
+            notifyReactionError(err)
         }
     }, [imageLikes])
 
-    return { imageLikes, initializeLikes, toggleReaction, error }
+    return { imageLikes, initializeLikes, toggleReaction }
 }

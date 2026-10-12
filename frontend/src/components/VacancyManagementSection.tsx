@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { PlusIcon, Trash2Icon } from '@animateicons/react/lucide'
+import { PlusIcon } from '@animateicons/react/lucide'
 import CreateVacancyModal from './CreateVacancyModal.tsx'
 import DeleteConfirmModal from './ui/DeleteConfirmModal.tsx'
 import Skeleton from './ui/Skeleton.tsx'
 import Pagination from './ui/Pagination.tsx'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
 import type { Vacancy, VacancyInput } from '../types/vacancy.ts'
+import CardActionButton from './ui/CardActionButton.tsx'
 
 interface AdminVacancyCardProps {
   vacancy?: Vacancy
@@ -41,21 +42,13 @@ function AdminVacancyCard({ vacancy, applicantNameById, onDelete, onRelease, onS
   }
 
   return (
-    <article className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+    <article className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm card-hover">
       <div className="flex items-start justify-between gap-sm">
         <h3 className="m-0 font-heading text-lg font-bold leading-snug text-heading">
           {vacancy!.title}
         </h3>
 
-        <button
-          type="button"
-          onClick={onDelete}
-          aria-label={t('admin.delete')}
-          title={t('admin.delete')}
-          className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-        >
-          <Trash2Icon size={16} aria-hidden="true" />
-        </button>
+        <CardActionButton action="delete" size="sm" label={t('admin.delete')} title={t('admin.delete')} onClick={onDelete} />
       </div>
 
       <p className="mt-sm flex-1 font-body text-body-sm text-body-text">

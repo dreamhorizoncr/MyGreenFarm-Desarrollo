@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CopyIcon, PencilIcon, PlusIcon, Trash2Icon } from '@animateicons/react/lucide'
+import { CopyIcon, PlusIcon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import ScheduleExceptionModal from '../components/ScheduleExceptionModal.tsx'
 import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
@@ -12,6 +12,7 @@ import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { notify } from '../utils/notifications.ts'
 import type { ScheduleException, WeeklySchedule } from '../types/availability.ts'
 import { DEFAULT_END_TIME, DEFAULT_START_TIME, timeValue, toApiTime, WEEK_DAYS } from '../types/availability.ts'
+import CardActionButton from '../components/ui/CardActionButton.tsx'
 
 const hours = Array.from({ length: 15 }, (_, index) => `${String(index + 6).padStart(2, '0')}:00`)
 
@@ -58,15 +59,15 @@ function ExceptionCard({ exception, onEdit, onDelete, loading = false }: Readonl
   const { t, i18n } = useTranslation()
   if (loading) {
     return (
-      <article className="rounded-2xl border border-neutral-200 bg-white p-lg">
+      <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
         <div className="flex items-start justify-between gap-md">
           <div className="min-w-0 flex-1">
             <Skeleton shape="line" className="h-5 w-1/2" />
             <Skeleton shape="line" className="mt-sm h-4 w-2/3" />
           </div>
           <div className="flex gap-xs">
-            <Skeleton shape="circle" className="size-11" />
-            <Skeleton shape="circle" className="size-11" />
+            <Skeleton shape="circle" className="size-10" />
+            <Skeleton shape="circle" className="size-10" />
           </div>
         </div>
       </article>
@@ -74,16 +75,26 @@ function ExceptionCard({ exception, onEdit, onDelete, loading = false }: Readonl
   }
 
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-lg transition hover:-translate-y-1 hover:shadow-lg">
+    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:shadow-lg">
       <div className="flex items-start justify-between gap-md">
         <div>
           <h3 className="m-0 font-heading text-lg font-bold text-heading">{dateLabel(exception!.exceptionDate, i18n.language)}</h3>
           <p className="mt-sm m-0 font-body text-body font-semibold text-body-text">{exception!.closed ? t('admin.availability.closedAllDay') : t('admin.availability.openOnly', { from: timeValue(exception!.startTime), to: timeValue(exception!.endTime) })}</p>
           {exception!.reason && <p className="mt-xs m-0 font-body text-body-sm text-neutral-500">{exception!.reason}</p>}
         </div>
-        <div className="flex gap-xs">
-          <button type="button" onClick={onEdit} aria-label={t('admin.availability.editDayLabel', { date: dateLabel(exception!.exceptionDate, i18n.language) })} title={t('admin.availability.editAction')} className="inline-flex size-11 items-center justify-center rounded-full text-link transition-colors hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link"><PencilIcon size={18} /></button>
-          <button type="button" onClick={onDelete} aria-label={t('admin.availability.deleteDayLabel', { date: dateLabel(exception!.exceptionDate, i18n.language) })} title={t('admin.availability.deleteAction')} className="inline-flex size-11 items-center justify-center rounded-full text-danger transition-colors hover:bg-danger-100 focus-visible:outline-2 focus-visible:outline-link"><Trash2Icon size={18} /></button>
+        <div className="flex shrink-0 items-center gap-xs">
+          <CardActionButton
+            action="edit"
+            label={t('admin.availability.editDayLabel', { date: dateLabel(exception!.exceptionDate, i18n.language) })}
+            title={t('admin.availability.editAction')}
+            onClick={onEdit}
+          />
+          <CardActionButton
+            action="delete"
+            label={t('admin.availability.deleteDayLabel', { date: dateLabel(exception!.exceptionDate, i18n.language) })}
+            title={t('admin.availability.deleteAction')}
+            onClick={onDelete}
+          />
         </div>
       </div>
     </article>
@@ -107,10 +118,15 @@ function dateLabel(date: string, language: string) {
 
 function OwnerAvailabilityPage() {
   const { t, i18n } = useTranslation()
-  const { weekly, exceptions, loading, error, weeklySaving, weeklyError, exceptionError, weeklySuccess, saveWeekly, saveException, deleteException } = useAvailability()
+  const { weekly, exceptions, loading, error, weeklySaving, weeklyError, exceptionError, weeklySuccess, saveWeekly, saveException, deleteException, reload } = useAvailability()
   const [draft, setDraft] = useState<WeeklySchedule[] | null>(null)
   const [exceptionModal, setExceptionModal] = useState<ScheduleException | null | undefined>(undefined)
   const [exceptionToDelete, setExceptionToDelete] = useState<ScheduleException | null>(null)
+
+  useEffect(() => {
+    void reload(i18n.language)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i18n.language])
 
   const confirmDeleteException = async () => {
     if (!exceptionToDelete?.id) return

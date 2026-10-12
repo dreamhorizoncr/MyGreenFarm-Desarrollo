@@ -118,3 +118,102 @@
 @media (prefers-reduced-motion: reduce) {
   .testimonial-card, .testimonial-carousel__arrow { transition: none; }
 }
+
+/* Oculta el ojo nativo de Edge, PasswordInput ya trae el suyo */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+/* =============================================================================
+   CARD HOVER — La card se levanta al pasar el mouse (uso: className="card-hover")
+   =============================================================================
+   Antes era hover:-translate-y-1, pero si el cursor estaba en el borde inferior
+   la card subía, el cursor quedaba afuera, bajaba y se repetía en bucle (temblor).
+   Para evitarlo:
+   - Crece un 1% desde el borde superior (scale con origin top): en cards de
+     300px o más el borde inferior no sube aunque la card se levante 3px.
+   - Un puente invisible (::after) bajo la card cubre el hueco en las más bajas.
+     Como overflow-hidden lo recortaría, las cards bajas no deben usarlo
+     (que la imagen se redondee sola).
+   ============================================================================= */
+@utility card-hover {
+  position: relative;
+  transform-origin: center top;
+  transition-property: translate, scale, box-shadow;
+  transition-duration: 200ms;
+  transition-timing-function: ease-out;
+
+  @media (hover: hover) {
+    &:hover {
+      translate: 0 -3px;
+      scale: 1.01;
+      box-shadow: var(--shadow-lg);
+    }
+
+    &:hover::after {
+      content: "";
+      position: absolute;
+      inset: 100% 0 auto;
+      height: 8px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition-property: box-shadow;
+
+    &:hover {
+      translate: none;
+      scale: none;
+    }
+  }
+}
+
+/* =============================================================================
+   MODAL SCROLL — Contenido de modales que no cabe en pantalla
+   =============================================================================
+   El modal nunca pasa del alto de la pantalla: su contenido hace scroll por
+   dentro. La barra nativa queda oculta (base.css) porque ocupa su propio carril
+   y ensancha el modal; en su lugar utils/modalScrollbars.ts dibuja una barra
+   flotante (.modal-scrollbar) encima del contenido, sin ocupar espacio.
+   ============================================================================= */
+.modal-scroll {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.modal-scrollbar {
+  position: absolute;
+  right: 4px;
+  z-index: 40;
+  width: 4px;
+  transition: width 150ms ease-out;
+}
+
+.modal-scrollbar[hidden] {
+  display: none;
+}
+
+.modal-scrollbar-thumb {
+  width: 100%;
+  border-radius: 9999px;
+  background-color: var(--green-500);
+  cursor: grab;
+  touch-action: none;
+  opacity: 0.3;
+  transition: opacity 150ms ease-out;
+}
+
+.modal-scrollbar:hover,
+.modal-scrollbar.is-dragging {
+  width: 6px;
+}
+
+.modal-scrollbar:hover .modal-scrollbar-thumb,
+.modal-scrollbar.is-dragging .modal-scrollbar-thumb {
+  opacity: 0.6;
+}
+
+.modal-scrollbar.is-dragging .modal-scrollbar-thumb {
+  cursor: grabbing;
+}

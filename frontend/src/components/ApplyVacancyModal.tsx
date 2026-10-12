@@ -5,16 +5,20 @@ import PhoneInput from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import Button from './ui/Button.tsx'
 import TextField from './ui/TextField.tsx'
+import CountrySelect from './ui/CountrySelect.tsx'
+import { phoneLabels } from '../utils/phoneLabels.ts'
 import { useVacancyApplicationForm } from '../hooks/useVacancyApplicationForm.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
+import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 function VacancyPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="h-[38px] w-full border-b border-neutral-300 bg-transparent pl-2 font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
+      className="h-full w-full bg-transparent pl-2 font-body text-body-sm text-body-text outline-none"
     />
   )
 }
@@ -28,7 +32,7 @@ interface ApplyVacancyModalProps {
 }
 
 function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose }: Readonly<ApplyVacancyModalProps>) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const certificatesInputRef = useRef<HTMLInputElement>(null)
@@ -36,6 +40,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
   const form = useVacancyApplicationForm({ vacancyId, requiredFields }, onSubmit)
   const heading = vacancyId === null ? title : t('vacancies.applyModalTitle')
   const { closing, requestClose } = useModalExit(onClose)
+  useBodyScrollLock()
 
   useEffect(() => {
     dialogRef.current?.showModal()
@@ -57,17 +62,14 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
         if (event.key === 'Escape') requestClose()
       }}
       aria-label={heading}
-      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="relative p-[28px_22px_30px]">
-        <button
-          type="button"
-          className="absolute right-3 top-6.5 z-10 inline-flex size-10 items-center justify-center rounded-full bg-transparent text-body-text transition-opacity duration-150 hover:opacity-65 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+        <ModalCloseButton
           onClick={requestClose}
           aria-label={t('admin.cancel')}
-        >
-          <XIcon size={20} />
-        </button>
+          className="absolute right-3 top-[26px] z-20"
+        />
 
         <div className="relative mb-lg text-center">
           <h2 className="m-0 font-heading text-[30px] font-bold leading-tight text-heading">
@@ -104,12 +106,14 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
             >
               <PhoneInput
                 id="apply-phone"
-                className="h-[38px]"
+                className="h-11 rounded-xl border border-neutral-200 bg-white px-md"
                 value={form.phone}
                 onChange={form.handlePhoneChange}
                 onCountryChange={form.handleCountryChange}
                 onBlur={form.handlePhoneBlur}
                 inputComponent={VacancyPhoneInput}
+                countrySelectComponent={CountrySelect}
+                labels={phoneLabels(i18n.language)}
               />
             </TextField>
           )}

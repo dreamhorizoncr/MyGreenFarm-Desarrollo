@@ -1,5 +1,4 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { XIcon } from "@animateicons/react/lucide";
 
 import Select from "./ui/Select.tsx";
 import { childService } from "../services/child";
@@ -7,13 +6,15 @@ import { parentService } from "../services/parent";
 import { clubService } from "../services/clubs";
 import { notify } from "../utils/notifications.ts";
 import { useModalVisibility } from "../hooks/useModalExit.ts";
+import DatePickerField from "./ui/DatePickerField.tsx";
 
 import type { Child, ChildRequest, Relationship } from "../types/child";
 import type { Parent } from "../types/parent";
 import type { ClubResponse } from "../types/clubs";
 import { useTranslation } from "react-i18next";
-import { validateRequired } from "../utils/validators.ts";
+import { validateRequired, validateSafeText } from "../utils/validators.ts";
 import i18n from "../i18n/index.ts";
+import ModalCloseButton from "./ui/ModalCloseButton.tsx";
 
 interface ChildFormModalProps {
     isOpen: boolean;
@@ -144,9 +145,10 @@ function ChildFormModal({
         event.preventDefault();
 
         const errors: Record<string, string | null> = {
-            firstName: validateRequired(form.firstName, t("admin.children.firstName"), t),
-            lastName: validateRequired(form.lastName, t("admin.children.lastName"), t),
+            firstName: validateRequired(form.firstName, t("admin.children.firstName"), t) ?? validateSafeText(form.firstName, t),
+            lastName: validateRequired(form.lastName, t("admin.children.lastName"), t) ?? validateSafeText(form.lastName, t),
             parentIdentification: validateRequired(form.parentIdentification, t("admin.children.parent"), t),
+            medicalNotes: validateSafeText(form.medicalNotes, t),
         };
 
         setFieldErrors(errors);
@@ -193,7 +195,7 @@ function ChildFormModal({
     if (!shouldRender) return null;
 
     return (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 p-[16px] md:p-[30px]">
+        <div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
             <button
                 type="button"
                 tabIndex={-1}
@@ -204,7 +206,7 @@ function ChildFormModal({
 
             <form
                 onSubmit={handleSubmit}
-                className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+                className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
             >
                 <div className="flex items-center justify-between gap-md">
                     <h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -213,14 +215,10 @@ function ChildFormModal({
                             : `${t("admin.children.createTitle")}`}
                     </h2>
 
-                    <button
-                        type="button"
+                    <ModalCloseButton
                         onClick={onClose}
                         aria-label={t("admin.children.cancel")}
-                        className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-                    >
-                        <XIcon size={20} />
-                    </button>
+                    />
                 </div>
 
                 {error && (
@@ -317,18 +315,17 @@ function ChildFormModal({
                     </label>
 
                     {/* Fecha de Nacimiento */}
-                    <label className="font-body text-body-sm font-semibold text-heading">
+                    <div className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.children.birthDate")}
-                        <input
-                            type="date"
+                        <DatePickerField
                             value={form.birthDate}
                             max={new Date().toISOString().split("T")[0]}
-                            onChange={(e) =>
-                                setForm({ ...form, birthDate: e.target.value })
+                            onChange={(value) =>
+                                setForm({ ...form, birthDate: value })
                             }
-                            className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+                            ariaLabel={t("admin.children.birthDate")}
                         />
-                    </label>
+                    </div>
 
                     {/* Clubes */}
                     <div className="font-body text-body-sm font-semibold text-heading">
@@ -375,6 +372,9 @@ function ChildFormModal({
                             placeholder={t("admin.children.medicalNotesPlaceholder")}
                             className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                         />
+                        {fieldErrors.medicalNotes && (
+                            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.medicalNotes}</span>
+                        )}
                     </label>
                 </div>
 

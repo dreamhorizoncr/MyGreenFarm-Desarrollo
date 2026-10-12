@@ -12,7 +12,7 @@ function ForumTabs({ activeTab, onChange }: Readonly<ForumTabsProps>) {
 
   return (
     <fieldset
-      className="m-0 mt-[22px] flex flex-wrap justify-center gap-[10px] border-0 p-0"
+      className="m-0 mt-[24px] flex flex-wrap justify-center gap-[10px] border-0 p-0"
     >
       <legend className="sr-only">{t('forum.tabs.label')}</legend>
       {(['blog', 'community'] as const).map((tab) => {

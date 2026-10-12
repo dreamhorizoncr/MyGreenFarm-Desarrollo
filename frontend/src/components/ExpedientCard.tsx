@@ -1,7 +1,7 @@
 import type { Expedient } from "../types/expedient.ts";
 import { useTranslation } from "react-i18next";
-import { Pencil, Trash2 } from "@animateicons/react/lucide";
 import Skeleton from "./ui/Skeleton.tsx";
+import CardActionButton from "./ui/CardActionButton.tsx";
 import { educationalLevelKeys } from "../utils/educationalLevels.ts";
 
 interface ExpedientCardProps {
@@ -21,7 +21,7 @@ function ExpedientCard({ expedient, onEdit, onDelete, loading = false }: Readonl
   const { t } = useTranslation();
 
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm card-hover">
       {/* Nombre y acciones */}
       <div className="flex items-start justify-between gap-4">
         {/* Nombre */}
@@ -42,21 +42,9 @@ function ExpedientCard({ expedient, onEdit, onDelete, loading = false }: Readonl
             </>
           ) : (
             <>
-              <button
-                type="button"
-                onClick={() => onEdit!(expedient!)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
-              >
-                <Pencil size={16} />
-              </button>
+              <CardActionButton action="edit" label={t("admin.edit")} onClick={() => onEdit!(expedient!)} />
 
-              <button
-                type="button"
-                onClick={() => onDelete!(expedient!)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50"
-              >
-                <Trash2 size={16} />
-              </button>
+              <CardActionButton action="delete" label={t("admin.delete")} onClick={() => onDelete!(expedient!)} />
             </>
           )}
         </div>

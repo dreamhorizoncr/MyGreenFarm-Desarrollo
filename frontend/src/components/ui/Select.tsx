@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CheckIcon, ChevronDownIcon } from '@animateicons/react/lucide'
+import { useMenuPosition } from '../../hooks/useMenuPosition.ts'
 
 export interface SelectOption {
   value: string
@@ -15,15 +16,16 @@ interface SelectProps {
   disabled?: boolean
   className?: string
   menuClassName?: string
+  // Versión baja (h-8) para espacios chicos, como la cabecera del calendario.
+  compact?: boolean
   'aria-label'?: string
   'aria-labelledby'?: string
 }
 
-interface MenuPosition {
-  top: number
-  left: number
-  width: number
-}
+const MENU_MAX_HEIGHT = 240
+// Alto aproximado de cada opción (py-sm + texto) más el padding de la lista.
+const OPTION_HEIGHT = 40
+const MENU_PADDING = 8
 
 function Select({
   value,
@@ -34,10 +36,10 @@ function Select({
   disabled = false,
   className = 'w-full rounded-xl border border-neutral-200 bg-white px-md',
   menuClassName = '',
+  compact = false,
   ...aria
 }: Readonly<SelectProps>) {
   const [open, setOpen] = useState(false)
-  const [position, setPosition] = useState<MenuPosition | null>(null)
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLUListElement>(null)
@@ -62,27 +64,12 @@ function Select({
     }
   }, [open])
 
-  useLayoutEffect(() => {
-    if (!open) return
-
-    const updatePosition = () => {
-      const rect = triggerRef.current?.getBoundingClientRect()
-      if (!rect) return
-      setPosition({ top: rect.bottom + 4, left: rect.left, width: rect.width })
-    }
-
-    updatePosition()
-    window.addEventListener('scroll', updatePosition, true)
-    window.addEventListener('resize', updatePosition)
-    return () => {
-      window.removeEventListener('scroll', updatePosition, true)
-      window.removeEventListener('resize', updatePosition)
-    }
-  }, [open])
-
-  useEffect(() => {
-    if (!open) setPosition(null)
-  }, [open])
+  const position = useMenuPosition({
+    triggerRef,
+    open,
+    desiredHeight: Math.min(MENU_MAX_HEIGHT, options.length * OPTION_HEIGHT + MENU_PADDING),
+    maxHeight: MENU_MAX_HEIGHT,
+  })
 
   const selected = options.find((option) => option.value === value)
 
@@ -97,7 +84,7 @@ function Select({
         aria-haspopup="listbox"
         aria-expanded={open}
         {...aria}
-        className={`flex h-11 items-center justify-between gap-xs text-left font-body text-body-sm text-body-text outline-none transition-colors focus:border-heading disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
+        className={`flex items-center justify-between gap-xs text-left font-body text-body-text ${compact ? 'h-8 text-caption' : 'h-11 text-body-sm'} outline-none transition-colors focus:border-heading disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
       >
         <span className={`truncate ${selected ? '' : 'text-neutral-400'}`}>
           {selected?.label ?? placeholder ?? ''}
@@ -112,8 +99,8 @@ function Select({
       {open && position && (
         <ul
           ref={menuRef}
-          style={{ top: position.top, left: position.left, width: position.width }}
-          className={`fixed z-[10000] m-0 max-h-[240px] list-none overflow-y-auto rounded-xl border border-neutral-200 bg-white p-xs shadow-lg animate-[language-switcher-in_0.15s_ease-out] ${menuClassName}`}
+          style={{ top: position.top, bottom: position.bottom, left: position.left, width: position.width, maxHeight: position.maxHeight }}
+          className={`fixed z-[10000] m-0 list-none overflow-y-auto rounded-xl border border-neutral-200 bg-white p-xs shadow-lg animate-[language-switcher-in_0.15s_ease-out] ${menuClassName}`}
           role="listbox"
         >
           {options.map((option) => (
@@ -122,7 +109,7 @@ function Select({
                 type="button"
                 role="option"
                 aria-selected={option.value === value}
-                className={`flex w-full items-center justify-between gap-2 rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100 ${
+                className={`flex w-full items-center justify-between gap-2 rounded-lg text-left font-body text-heading ${compact ? 'px-sm py-xs text-caption' : 'px-md py-sm text-body-sm'} transition-colors duration-150 hover:bg-orange-100 ${
                   option.value === value ? 'font-semibold text-link' : ''
                 }`}
                 onClick={() => {

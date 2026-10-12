@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import ApplyVacancyModal from '../components/ApplyVacancyModal.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
+import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
 import { useVacancies } from '../hooks/useVacancies.ts'
 import { useCurriculums } from '../hooks/useCurriculums.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
@@ -47,7 +48,7 @@ function VacancyCard({ title, description, onApply, loading = false }: Readonly<
   }
 
   return (
-    <article className="group flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow transition hover:-translate-y-1 hover:shadow-lg">
+    <article className="group flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow card-hover">
       <h2 className="m-0 font-heading text-xl font-bold leading-snug text-heading">
         {title}
       </h2>
@@ -116,7 +117,7 @@ function VacanciesPage() {
     <div id="vacancies-page" className="min-h-screen bg-bg-page">
       <Navbar />
 
-      <section className="flex min-h-[280px] items-center bg-green-500 px-7.5 py-10 text-center text-white md:min-h-[320px]">
+      <section className="flex min-h-[280px] items-start bg-green-500 px-[30px] pt-[48px] pb-[40px] text-center text-white md:min-h-[320px] md:pt-[72px]">
         <div className="mx-auto w-full max-w-175">
           <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
             {t('vacancies.title')}
@@ -200,10 +201,11 @@ function VacanciesPage() {
             if (event.key === 'Escape') requestCloseSent()
           }}
           aria-label={t('vacancies.applicationSentTitle')}
-          className={`fixed inset-0 m-auto w-[min(420px,92vw)] max-w-none rounded-2xl bg-bg-card text-center backdrop:bg-scrim ${sentClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+          className={`fixed inset-0 m-auto max-h-[90vh] w-[min(420px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card text-center backdrop:bg-scrim ${sentClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         >
-          <div className="p-xl">
-            <h2 className="m-0 font-heading text-2xl font-bold text-heading">{t('vacancies.applicationSentTitle')}</h2>
+          <div className="relative p-xl">
+            <ModalCloseButton onClick={requestCloseSent} aria-label={t('legalModal.close')} className="absolute right-3 top-[26px] z-20" />
+            <h2 className="m-0 px-xl font-heading text-2xl font-bold text-heading">{t('vacancies.applicationSentTitle')}</h2>
             <p className="mt-sm font-body text-body-sm text-body-text">{t('vacancies.applicationSentMessage')}</p>
             <button
               type="button"

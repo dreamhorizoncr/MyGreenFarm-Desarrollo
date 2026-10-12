@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import WizardSteps from './ui/WizardSteps.tsx'
 import { appointmentService } from '../services/appointment.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import type { Appointment } from '../types/appointment.ts'
+import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface RescheduleAppointmentModalProps {
   appointment: Appointment
@@ -103,7 +103,7 @@ function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Readonl
         if (event.key === 'Escape') requestClose()
       }}
       aria-label={t('teacherAppointments.rescheduleTitle')}
-      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="relative p-[28px_22px_30px]">
         <div className="flex items-center justify-between gap-md">
@@ -111,14 +111,10 @@ function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Readonl
             {t('teacherAppointments.rescheduleTitle')}
           </h2>
 
-          <button
-            type="button"
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+          <ModalCloseButton
             onClick={requestClose}
             aria-label={t('admin.cancel')}
-          >
-            <XIcon size={20} />
-          </button>
+          />
         </div>
 
         <div className="mt-lg mb-lg px-[28px]">

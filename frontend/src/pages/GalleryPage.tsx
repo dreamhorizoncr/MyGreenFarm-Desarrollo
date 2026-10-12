@@ -45,7 +45,7 @@ function GalleryPage() {
       <Navbar />
 
       {/* Header de Galería */}
-      <section className="flex min-h-[280px] items-center bg-white px-[30px] py-[40px] text-center md:min-h-[320px]">
+      <section className="flex min-h-[280px] items-start bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
         <div className="mx-auto w-full max-w-[700px]">
           <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-green-500 md:text-h1">
             {t('home.galeria.title')}
@@ -90,7 +90,7 @@ function GalleryPage() {
       </section>
 
       {/* Sección de Álbumes */}
-      <section data-scroll-bg="green" className="relative w-full bg-green-500 py-[36px] md:py-[48px]">
+      <section data-scroll-bg="green" className="relative w-full bg-green-500 py-10 md:py-12">
         <div className="flex w-full flex-col gap-[24px]">
           <Container className="flex flex-col items-start gap-[16px] text-left">
             <h2 className="m-0 font-heading text-h2 font-bold text-white">

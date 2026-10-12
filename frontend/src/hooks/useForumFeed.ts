@@ -7,6 +7,7 @@ import type {
   BlogPostInput,
   CommunityPost,
 } from '../types/forum.ts'
+import { canReact, notifyReactionError } from '../utils/reactions.ts'
 
 interface NameContentInput {
   name: string
@@ -168,11 +169,16 @@ function useForumFeed() {
   }, [])
 
   const toggleCommunityLike = useCallback(async (postId: string) => {
-    const result = await forumService.toggleCommunityLike(postId)
-    const update = (posts: CommunityPost[]) => posts.map((post) => post.id === postId
-      ? { ...post, likeCount: result.totalLikes, reacted: result.liked } : post)
-    setSourceCommunityPosts(update)
-    setCommunityPosts(update)
+    if (!canReact()) return
+    try {
+      const result = await forumService.toggleCommunityLike(postId)
+      const update = (posts: CommunityPost[]) => posts.map((post) => post.id === postId
+        ? { ...post, likeCount: result.totalLikes, reacted: result.liked } : post)
+      setSourceCommunityPosts(update)
+      setCommunityPosts(update)
+    } catch (err) {
+      notifyReactionError(err)
+    }
   }, [])
 
   const addBlogPost = useCallback(async (input: BlogPostInput) => {
@@ -269,6 +275,7 @@ function useForumFeed() {
   )
 
   const toggleLike = useCallback(async (postId: string) => {
+    if (!canReact()) return
     try {
       const result = await forumService.toggleLike(postId)
       setLikesByPost((previous) => ({ ...previous, [postId]: result.liked }))
@@ -278,8 +285,8 @@ function useForumFeed() {
       setBlogPosts((previous) => previous.map((post) =>
         post.id === postId ? { ...post, likeCount: result.totalLikes, reacted: result.liked } : post,
       ))
-    } catch {
-      setError('No se pudo actualizar la reacción')
+    } catch (err) {
+      notifyReactionError(err)
     }
   }, [])
 

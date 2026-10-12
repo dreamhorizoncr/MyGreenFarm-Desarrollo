@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { XIcon } from '@animateicons/react/lucide'
 import Button from './Button.tsx'
 import { getErrorMessage } from '../../utils/error.ts'
 import { useModalExit } from '../../hooks/useModalExit.ts'
+import ModalCloseButton from './ModalCloseButton.tsx'
 
 interface DeleteConfirmModalProps {
   title: string
@@ -55,7 +55,7 @@ function DeleteConfirmModal({
         if (event.key === 'Escape') requestClose()
       }}
       aria-label={title}
-      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-2xl bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="relative p-[28px_22px_30px]">
         <div className="flex items-center justify-between gap-md">
@@ -63,14 +63,10 @@ function DeleteConfirmModal({
             {title}
           </h2>
 
-          <button
-            type="button"
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+          <ModalCloseButton
             onClick={requestClose}
             aria-label={t('admin.cancel')}
-          >
-            <XIcon size={20} />
-          </button>
+          />
         </div>
 
         <div className="mt-lg flex flex-col gap-md">
