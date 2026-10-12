@@ -237,18 +237,14 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading =
 				<span className="absolute bottom-sm left-sm rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
 					{t('home.galeria.photoCount', { count: gallery!.galleryImages.length })}
 				</span>
-				<button
-					type="button"
+				<CardActionButton
+					action="feature"
+					pressed={gallery!.featured}
+					label={t('admin.gallery.toggleFeatured')}
+					title={t('admin.gallery.toggleFeatured')}
 					onClick={onToggleFeatured}
-					aria-label={t('admin.gallery.toggleFeatured')}
-					className={`absolute left-sm top-sm flex size-[34px] items-center justify-center rounded-full shadow transition ${
-						gallery!.featured
-							? 'bg-yellow-400 text-white hover:bg-yellow-500'
-							: 'bg-white/80 text-neutral-400 hover:bg-white hover:text-yellow-500'
-					}`}
-				>
-					<StarIcon size={18} />
-				</button>
+					className="absolute left-sm top-sm shadow"
+				/>
 			</div>
 
 			<div className="overflow-hidden px-lg pb-lg text-left">
