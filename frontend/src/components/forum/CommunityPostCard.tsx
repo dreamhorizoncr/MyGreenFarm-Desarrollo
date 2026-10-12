@@ -37,7 +37,7 @@ function CommunityPostCard({ post, onToggleLike, onOpenComments, onDelete, loadi
   }
 
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-lg text-left transition hover:shadow-lg">
+    <article className="rounded-2xl border border-neutral-200 bg-white p-lg text-left card-hover">
       <header className="flex items-center gap-md">
         <PostAvatar name={post!.name} />
 

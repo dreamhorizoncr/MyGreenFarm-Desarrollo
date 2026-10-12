@@ -227,7 +227,7 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading =
 	}
 
 	return (
-		<article className="relative h-full rounded-3xl border border-neutral-100 bg-white shadow-sm transition hover:shadow-lg">
+		<article className="relative h-full rounded-3xl border border-neutral-100 bg-white shadow-sm card-hover">
 			<div className="relative m-sm overflow-hidden rounded-[20px]">
 				<img
 					src={gallery!.galleryImages[0]?.fileUrl ?? ninos2}

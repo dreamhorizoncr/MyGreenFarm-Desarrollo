@@ -33,7 +33,7 @@ import CardActionButton from "./ui/CardActionButton.tsx";
     ]
 
     return (
-        <div className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:shadow-lg">
+        <div className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm card-hover">
         {/* Encabezado */}
         <div className="flex items-start justify-between gap-md">
             {loading ? (
