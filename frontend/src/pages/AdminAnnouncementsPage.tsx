@@ -11,7 +11,7 @@ import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 import { useAnnouncements } from "../hooks/useAnnouncements.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
 import { notify } from "../utils/notifications.ts";
-import { validateMinLength, validateRequired } from "../utils/validators.ts";
+import { validateMinLength, validateRequired, validateSafeText } from "../utils/validators.ts";
 import type {
   Announcement,
   AnnouncementImageResponse,
@@ -158,6 +158,7 @@ function AnnouncementsPage() {
   const [previewing, setPreviewing] = useState<Announcement | null>(null);
   const [form, setForm] = useState<AnnouncementRequest>(emptyForm);
   const [titleError, setTitleError] = useState<string | null>(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
   const [contentError, setContentError] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] =
     useState<AdminNewsCategory>("All");
@@ -219,15 +220,19 @@ function AnnouncementsPage() {
 
     const titleErrorMessage =
       validateRequired(form.title, t("adminNews.newsTitle"), t) ??
-      validateMinLength(form.title, TITLE_MIN_LENGTH, t);
+      validateMinLength(form.title, TITLE_MIN_LENGTH, t) ??
+      validateSafeText(form.title, t);
     const contentErrorMessage =
       validateRequired(form.content, t("adminNews.newscontent"), t) ??
-      validateMinLength(form.content, CONTENT_MIN_LENGTH, t);
+      validateMinLength(form.content, CONTENT_MIN_LENGTH, t) ??
+      validateSafeText(form.content, t);
+    const locationErrorMessage = validateSafeText(form.location, t);
 
     setTitleError(titleErrorMessage);
     setContentError(contentErrorMessage);
+    setLocationError(locationErrorMessage);
 
-    if (titleErrorMessage || contentErrorMessage) return;
+    if (titleErrorMessage || contentErrorMessage || locationErrorMessage) return;
 
     const data: AnnouncementRequest = {
       ...form,
@@ -444,6 +449,9 @@ function AnnouncementsPage() {
                   }
                   className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                 />
+                {locationError && (
+                  <span className="mt-xs block font-body text-body-sm font-normal text-danger">{locationError}</span>
+                )}
               </label>
 
               <div className="font-body text-body-sm font-semibold text-heading">

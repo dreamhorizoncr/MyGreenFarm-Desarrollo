@@ -12,7 +12,7 @@ import type { Child, ChildRequest, Relationship } from "../types/child";
 import type { Parent } from "../types/parent";
 import type { ClubResponse } from "../types/clubs";
 import { useTranslation } from "react-i18next";
-import { validateRequired } from "../utils/validators.ts";
+import { validateRequired, validateSafeText } from "../utils/validators.ts";
 import i18n from "../i18n/index.ts";
 import ModalCloseButton from "./ui/ModalCloseButton.tsx";
 
@@ -145,9 +145,10 @@ function ChildFormModal({
         event.preventDefault();
 
         const errors: Record<string, string | null> = {
-            firstName: validateRequired(form.firstName, t("admin.children.firstName"), t),
-            lastName: validateRequired(form.lastName, t("admin.children.lastName"), t),
+            firstName: validateRequired(form.firstName, t("admin.children.firstName"), t) ?? validateSafeText(form.firstName, t),
+            lastName: validateRequired(form.lastName, t("admin.children.lastName"), t) ?? validateSafeText(form.lastName, t),
             parentIdentification: validateRequired(form.parentIdentification, t("admin.children.parent"), t),
+            medicalNotes: validateSafeText(form.medicalNotes, t),
         };
 
         setFieldErrors(errors);
@@ -371,6 +372,9 @@ function ChildFormModal({
                             placeholder={t("admin.children.medicalNotesPlaceholder")}
                             className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                         />
+                        {fieldErrors.medicalNotes && (
+                            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.medicalNotes}</span>
+                        )}
                     </label>
                 </div>
 

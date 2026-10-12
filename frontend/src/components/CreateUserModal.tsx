@@ -6,7 +6,7 @@ import DatePickerField from './ui/DatePickerField.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useRegister } from '../hooks/useRegister.ts'
 import { notify } from '../utils/notifications.ts'
-import { validateEmail, validatePassword, validateRequired } from '../utils/validators.ts'
+import { validateEmail, validatePassword, validateRequired, validateSafeText } from '../utils/validators.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface CreateUserModalProps {
@@ -51,8 +51,8 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
 
   const handleSave = () => {
     const nextErrors = {
-      firstName: validateRequired(firstName, t('signup.firstName'), t),
-      lastName: validateRequired(lastName, t('signup.lastName'), t),
+      firstName: validateRequired(firstName, t('signup.firstName'), t) ?? validateSafeText(firstName, t),
+      lastName: validateRequired(lastName, t('signup.lastName'), t) ?? validateSafeText(lastName, t),
       email: validateEmail(email, t),
       password: validatePassword(password, t),
       role: validateRequired(role, t('signup.role'), t),

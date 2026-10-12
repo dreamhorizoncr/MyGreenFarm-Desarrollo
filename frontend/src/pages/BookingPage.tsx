@@ -18,6 +18,7 @@ import {
   validateIdNumber,
   validatePhoneNumber,
   validateRequired,
+  validateSafeText,
 } from '../utils/validators.ts'
 import type { ReferralSource } from '../types/appointment.ts'
 
@@ -222,10 +223,10 @@ function BookingPage() {
   const validateScheduleStep = () => effectiveDay !== null && effectiveTime !== null
 
   const validateChildStep = () => {
-    const childNameValid = validateRequired(childName, t('booking.childName'), t) === null
-    const reasonValid = validateRequired(reason, t('booking.reason'), t) === null
+    const childNameValid = validateRequired(childName, t('booking.childName'), t) === null && validateSafeText(childName, t) === null
+    const reasonValid = validateRequired(reason, t('booking.reason'), t) === null && validateSafeText(reason, t) === null
     const referralSourceValid = referralSource !== ''
-    const referralOtherDetailValid = referralSource !== 'OTHER' || validateRequired(referralOtherDetail, t('booking.referral.otherDetail'), t) === null
+    const referralOtherDetailValid = referralSource !== 'OTHER' || (validateRequired(referralOtherDetail, t('booking.referral.otherDetail'), t) === null && validateSafeText(referralOtherDetail, t) === null)
     if (!childNameValid) setChildNameError(true)
     if (!reasonValid) setReasonError(true)
     if (!referralSourceValid) setReferralSourceError(true)
@@ -234,7 +235,7 @@ function BookingPage() {
   }
 
   const validateIdentityStep = () => {
-    const fullNameValid = validateRequired(fullName, t('booking.fullName'), t) === null
+    const fullNameValid = validateRequired(fullName, t('booking.fullName'), t) === null && validateSafeText(fullName, t) === null
     const idNumberValid = validateRequired(idNumber, t('booking.idNumber'), t) === null && validateIdNumber(idNumber, idType, t) === null
     if (!fullNameValid) setFullNameError(true)
     if (!idNumberValid) setIdNumberError(true)
@@ -246,7 +247,7 @@ function BookingPage() {
     const phoneValid = phoneCountry
       ? validateRequired(phone, t('booking.phone'), t) === null && validatePhoneNumber(phone, t) === null
       : false
-    const occupationValid = validateRequired(occupation, t('booking.occupation'), t) === null
+    const occupationValid = validateRequired(occupation, t('booking.occupation'), t) === null && validateSafeText(occupation, t) === null
     if (!emailValid) setEmailError(true)
     if (!phoneValid) setPhoneError(true)
     if (!occupationValid) setOccupationError(true)
@@ -349,7 +350,7 @@ function BookingPage() {
   function computeStepErrorMessages() {
     return {
       fullNameErrorMessage: fullNameError
-        ? validateRequired(fullName, t('booking.fullName'), t)
+        ? validateRequired(fullName, t('booking.fullName'), t) ?? validateSafeText(fullName, t)
         : null,
       idNumberErrorMessage: idNumberError
         ? validateRequired(idNumber, t('booking.idNumber'), t) ?? validateIdNumber(idNumber, idType, t)
@@ -359,16 +360,16 @@ function BookingPage() {
         : null,
       phoneErrorMessage: computePhoneErrorMessage(),
       occupationErrorMessage: occupationError
-        ? validateRequired(occupation, t('booking.occupation'), t)
+        ? validateRequired(occupation, t('booking.occupation'), t) ?? validateSafeText(occupation, t)
         : null,
       childNameErrorMessage: childNameError
-        ? validateRequired(childName, t('booking.childName'), t)
+        ? validateRequired(childName, t('booking.childName'), t) ?? validateSafeText(childName, t)
         : null,
       reasonErrorMessage: reasonError
-        ? validateRequired(reason, t('booking.reason'), t)
+        ? validateRequired(reason, t('booking.reason'), t) ?? validateSafeText(reason, t)
         : null,
       referralOtherDetailErrorMessage: referralOtherDetailError
-        ? validateRequired(referralOtherDetail, t('booking.referral.otherDetail'), t)
+        ? validateRequired(referralOtherDetail, t('booking.referral.otherDetail'), t) ?? validateSafeText(referralOtherDetail, t)
         : null,
     }
   }

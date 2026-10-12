@@ -4,6 +4,7 @@ import Button from '../ui/Button.tsx'
 import ForumPendingReviewModal from './ForumPendingReviewModal.tsx'
 import { notify } from '../../utils/notifications.ts'
 import { getErrorMessage } from '../../utils/error.ts'
+import { hasUnsafeText } from '../../utils/validators.ts'
 import ModalCloseButton from '../ui/ModalCloseButton.tsx'
 
 const MAX_CONTENT = 4000
@@ -56,6 +57,11 @@ function PublishExperienceModal({
             : 'forum.community.nameRequired',
         ),
       )
+      return
+    }
+
+    if (hasUnsafeText(trimmedName) || hasUnsafeText(trimmedContent)) {
+      notify.error(t('validation.unsafeText'))
       return
     }
 

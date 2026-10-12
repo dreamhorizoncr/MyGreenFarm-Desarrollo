@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Button from './ui/Button.tsx'
 import { getErrorMessage } from '../utils/error.ts'
-import { validateEmail, validateRequired } from '../utils/validators.ts'
+import { validateEmail, validateRequired, validateSafeText } from '../utils/validators.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import DatePickerField from './ui/DatePickerField.tsx'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
@@ -38,8 +38,8 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
   }, [])
 
   const handleSave = async () => {
-    const firstNameErrorMessage = validateRequired(firstName, t('admin.firstName'), t)
-    const lastNameErrorMessage = validateRequired(lastName, t('admin.lastName'), t)
+    const firstNameErrorMessage = validateRequired(firstName, t('admin.firstName'), t) ?? validateSafeText(firstName, t)
+    const lastNameErrorMessage = validateRequired(lastName, t('admin.lastName'), t) ?? validateSafeText(lastName, t)
     const emailErrorMessage = isEditingSelf ? validateEmail(email, t) : null
 
     setFirstNameValidationError(firstNameErrorMessage)

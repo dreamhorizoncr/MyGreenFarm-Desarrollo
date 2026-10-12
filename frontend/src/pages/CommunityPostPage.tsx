@@ -11,6 +11,7 @@ import type { CommunityComment } from '../types/forum.ts'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 import { getErrorMessage } from '../utils/error.ts'
 import { notify } from '../utils/notifications.ts'
+import { hasUnsafeText } from '../utils/validators.ts'
 
 function CommunityPostPage() {
   const { t, i18n } = useTranslation()
@@ -81,6 +82,10 @@ function CommunityPostPage() {
   function submitComment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!id || !name.trim() || !content.trim()) return
+    if (hasUnsafeText(name) || hasUnsafeText(content)) {
+      notify.error(t('validation.unsafeText'))
+      return
+    }
     if (isSubmittingRef.current) return
     isSubmittingRef.current = true
 

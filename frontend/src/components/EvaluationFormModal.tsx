@@ -7,7 +7,7 @@ import { expedientService } from "../services/expedient";
 import { notify } from "../utils/notifications";
 import { useModalVisibility } from "../hooks/useModalExit.ts";
 import DatePickerField from "./ui/DatePickerField.tsx";
-import { validateRequired } from "../utils/validators.ts";
+import { validateRequired, validateSafeText } from "../utils/validators.ts";
 import ModalCloseButton from "./ui/ModalCloseButton.tsx";
 
     import type {
@@ -114,11 +114,11 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
         const errors: Partial<Record<keyof EvaluationRequest, string | null>> = {
             expedientId: validateRequired(form.expedientId, t("admin.evaluations.formChildLabel"), t),
             evaluationDate: validateRequired(form.evaluationDate, t("admin.evaluations.formDateLabel"), t),
-            communicationProgress: validateRequired(form.communicationProgress, t("admin.evaluations.formCommunicationLabel"), t),
-            languageProgress: validateRequired(form.languageProgress, t("admin.evaluations.formLanguageLabel"), t),
-            readingProgress: validateRequired(form.readingProgress, t("admin.evaluations.formReadingLabel"), t),
-            motorProgress: validateRequired(form.motorProgress, t("admin.evaluations.formMotorLabel"), t),
-            teacherObservation: validateRequired(form.teacherObservation, t("admin.evaluations.formObservationLabel"), t),
+            communicationProgress: validateRequired(form.communicationProgress, t("admin.evaluations.formCommunicationLabel"), t) ?? validateSafeText(form.communicationProgress, t),
+            languageProgress: validateRequired(form.languageProgress, t("admin.evaluations.formLanguageLabel"), t) ?? validateSafeText(form.languageProgress, t),
+            readingProgress: validateRequired(form.readingProgress, t("admin.evaluations.formReadingLabel"), t) ?? validateSafeText(form.readingProgress, t),
+            motorProgress: validateRequired(form.motorProgress, t("admin.evaluations.formMotorLabel"), t) ?? validateSafeText(form.motorProgress, t),
+            teacherObservation: validateRequired(form.teacherObservation, t("admin.evaluations.formObservationLabel"), t) ?? validateSafeText(form.teacherObservation, t),
         };
 
         setFieldErrors(errors);
