@@ -9,6 +9,7 @@ import ResetPasswordPage from './pages/ResetPasswordPage.tsx'
 import AdminUsersPage from './pages/AdminUsersPage.tsx'
 import AdminDashboardPage from './pages/AdminDashboardPage.tsx'
 import AdminCitasPage from './pages/AdminCitasPage.tsx'
+import AdminTeachersPage from './pages/AdminTeachersPage.tsx'
 import ProfilePage from './pages/ProfilePage.tsx'
 import ProtectedRoute from './routes/ProtectedRoute.tsx'
 import AdminRoute from './routes/AdminRoute.tsx'
@@ -45,6 +46,7 @@ import { ErrorBoundary } from './components/ErrorBoundary.tsx'
 import BlobGooFilter from './components/ui/BlobGooFilter.tsx'
 import OwnerClubsPage from './pages/OwnerClubsPage.tsx'
 import ClubsPage from './pages/ClubsPage.tsx'
+import AboutUsPage from './pages/AboutUsPage.tsx'
 
 function SessionWatcher() {
   useSessionExpiredNotice()
@@ -82,6 +84,7 @@ function App() {
           <Route element={<AdminRoute />}>
             <Route path="/admin/citas" element={<AdminCitasPage />} />
             <Route path="/admin/users" element={<AdminUsersPage />} />
+            <Route path="/admin/teachers" element={<AdminTeachersPage />} />
             <Route path="/admin/announcements" element={<AnnouncementsPage />} />
             <Route path="/admin/gallery" element={<AdminGalleryPage />} />
             <Route path="/admin/curriculums" element={<AdminCurriculumsPage />} />
@@ -114,6 +117,7 @@ function App() {
         <Route path="/payment-failed" element={<PaymentFailedPage />} />
         <Route path="/vacantes" element={<VacanciesPage />} />
         <Route path="/clubs" element={<ClubsPage />} />
+        <Route path="/about-us" element={<AboutUsPage />} />
         {/* <Route path="/news/:id" element={<NewsDetailPage />} /> */}
         {/* Redirigir cualquier ruta no definida a la página de inicio */}
         {/* El alta de usuarios ahora es un modal en Usuarios; se redirige el enlace viejo. */}

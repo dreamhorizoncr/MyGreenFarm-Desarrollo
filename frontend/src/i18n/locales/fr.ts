@@ -20,6 +20,7 @@ export default {
   },
   navbar: {
     home: "Accueil",
+    aboutUs: "À propos de nous",
     news: "Actualités",
     multimedia: "Galerie",
     forum: "Forum",
@@ -192,6 +193,52 @@ export default {
     privacy4Title: "Vos Droits",
     privacy4Body:
       "Vous pouvez demander à tout moment l’accès, la correction ou la suppression des informations que nous détenons sur votre famille en écrivant à mygreenfarmcr@gmail.com.",
+  },
+    
+  aboutUsPage: {
+    hero: {
+      title: 'À propos de nous',
+      description:
+        'Chez My Green Farm, nous croyons en la création d’expériences d’apprentissage enrichissantes grâce à l’exploration, à la créativité et au contact avec la nature.',
+    },
+    benefits: {
+      title: 'Pourquoi nous choisir ?',
+      description:
+        'Chez My Green Farm, nous offrons un environnement accueillant où les enfants peuvent apprendre, découvrir et grandir grâce à des expériences inspirées de la nature.',
+      nature: {
+        title: 'Apprendre avec la nature',
+        description:
+          'Les enfants découvrent et explorent le monde à travers des expériences enrichissantes en lien avec la nature.',
+      },
+      creativity: {
+        title: 'Apprentissage créatif',
+        description:
+          'Nous encourageons la curiosité, l’imagination et la créativité grâce à des activités éducatives stimulantes.',
+      },
+      educators: {
+        title: 'Éducateurs bienveillants',
+        description:
+          'Nos éducateurs guident et accompagnent chaque enfant dans un environnement accueillant et chaleureux.',
+      },
+      growth: {
+        title: 'Grandir ensemble',
+        description:
+          'Chaque enfant a la possibilité de développer sa confiance, de nouer des amitiés et d’acquérir de nouvelles compétences.',
+      },
+    },
+    team: {
+      title: 'Rencontrez notre équipe',
+      description:
+        'Découvrez les éducateurs qui font de My Green Farm un lieu privilégié pour apprendre, explorer et grandir.',
+      placeholderTitle: 'Notre équipe',
+      placeholderDescription:
+        'Nos éducateurs apparaîtront ici lorsque cette section sera connectée au système de gestion des enseignants.',
+    },
+    roles: {
+      TEACHER: 'Enseignant',
+      ADMIN: 'Administrateur',
+      OWNER: 'Propriétaire',
+    },
   },
   newspage: {
     title: "Nouvelles",
@@ -690,6 +737,7 @@ export default {
     sidebar: {
       dashboard: "Tableau de bord",
       docentes: "Enseignants",
+      profesores: "Gestion des enseignants",
       noticias: "Actualités",
       galeria: "Galerie",
       citas: "Rendez-vous",
