@@ -741,8 +741,8 @@ export default {
     },
     sidebar: {
       dashboard: "Tableau de bord",
-      docentes: "Enseignants",
-      profesores: "Gestion des enseignants",
+      docentes: "Utilisateurs",
+      profesores: "Enseignants",
       noticias: "Actualités",
       galeria: "Galerie",
       citas: "Rendez-vous",

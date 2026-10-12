@@ -739,7 +739,7 @@ export default {
     sidebar: {
       dashboard: "Dashboard",
       docentes: "Users",
-      profesores: "Teacher Management",
+      profesores: "Teachers",
       noticias: "News",
       galeria: "Gallery",
       citas: "Appointments",

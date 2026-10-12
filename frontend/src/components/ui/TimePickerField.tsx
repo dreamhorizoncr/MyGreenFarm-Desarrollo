@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ClockIcon } from '@animateicons/react/lucide'
-import { placementClassName, placementFor, type PopoverPlacement } from '../../utils/popoverPlacement.ts'
+import { usePopoverPosition } from '../../hooks/usePopoverPosition.ts'
 
 interface TimePickerFieldProps {
   // Hora en formato HH:mm (24 h), o '' si no hay hora.
@@ -18,7 +18,8 @@ type View = 'hours' | 'minutes'
 
 const CLOCK_SIZE = 200
 const CENTER = CLOCK_SIZE / 2
-// Alto aproximado del panel (cabecera + esfera), para decidir si se abre hacia arriba.
+// Tamaño aproximado del panel (cabecera + esfera), para decidir hacia dónde abrirlo.
+const PANEL_WIDTH = 260
 const PANEL_HEIGHT = 290
 const NUMBER_RADIUS = 76
 const HOUR_LABELS = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
@@ -42,7 +43,7 @@ const defaultTriggerClassName =
   'mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading'
 
 // Reloj analógico para elegir la hora: primero la hora y después los minutos.
-// Igual que DatePickerField, el panel va en línea para funcionar dentro de modales.
+// Igual que DatePickerField, el panel va en línea (fixed) para funcionar dentro de modales sin que lo recorten.
 function TimePickerField({
   value,
   onChange,
@@ -55,8 +56,9 @@ function TimePickerField({
   const [open, setOpen] = useState(false)
   const [view, setView] = useState<View>('hours')
   const [dragging, setDragging] = useState(false)
-  const [placement, setPlacement] = useState<PopoverPlacement>('bottom')
   const containerRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const position = usePopoverPosition({ triggerRef, open, width: PANEL_WIDTH, height: PANEL_HEIGHT, align: 'end' })
   const clockRef = useRef<HTMLDivElement>(null)
 
   const { hours, minutes } = parseTime(value)
@@ -80,9 +82,8 @@ function TimePickerField({
     if (pm !== isPm) emit((hours + 12) % 24, minutes)
   }
 
-  const openPanel = (trigger: HTMLElement) => {
+  const openPanel = () => {
     setView('hours')
-    if (!open) setPlacement(placementFor(trigger, PANEL_HEIGHT))
     setOpen((current) => !current)
     if (!value) emit(12, 0)
   }
@@ -138,24 +139,26 @@ function TimePickerField({
       }}
     >
       <button
+        ref={triggerRef}
         type="button"
         id={id}
         disabled={disabled}
         aria-label={ariaLabel}
         aria-haspopup="dialog"
         aria-expanded={open}
-        onClick={(event) => openPanel(event.currentTarget)}
+        onClick={openPanel}
         className={`flex items-center justify-between gap-sm text-left disabled:cursor-not-allowed disabled:bg-neutral-100 ${className}`}
       >
         <span className={`truncate ${value ? 'text-body-text' : 'text-neutral-400'}`}>{label}</span>
         <ClockIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
       </button>
 
-      {open && (
+      {open && position && (
         <div
           role="dialog"
           aria-label={ariaLabel}
-          className={`absolute right-0 z-30 w-[260px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-lg ${placementClassName(placement)}`}
+          style={{ top: position.top, bottom: position.bottom, left: position.left, width: PANEL_WIDTH }}
+          className="fixed z-[9000] max-w-[calc(100vw-1rem)] overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-lg"
         >
           <div className="flex items-center justify-center gap-md bg-green-500 px-md py-sm">
             <div className="flex items-center text-white">
