@@ -6,6 +6,7 @@ import { validateRequired } from '../utils/validators.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import type { OptionalApplicationField, VacancyInput } from '../types/vacancy.ts'
+import CheckboxField from './ui/CheckboxField.tsx'
 
 interface CreateVacancyModalProps {
   onCreate: (data: VacancyInput) => Promise<void>
@@ -130,35 +131,17 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
           </p>
 
           <div className="flex flex-col gap-xs">
-            <label className="flex cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md py-sm font-body text-body-sm text-body-text">
-              <input
-                type="checkbox"
-                checked={requiredFields.includes('applicantPhone')}
-                onChange={() => toggleField('applicantPhone')}
-                className="size-4 accent-green-500"
-              />
+            <CheckboxField checked={requiredFields.includes('applicantPhone')} onChange={() => toggleField('applicantPhone')}>
               {t('vacancies.applicantPhone')}
-            </label>
+            </CheckboxField>
 
-            <label className="flex cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md py-sm font-body text-body-sm text-body-text">
-              <input
-                type="checkbox"
-                checked={requiredFields.includes('file')}
-                onChange={() => toggleField('file')}
-                className="size-4 accent-green-500"
-              />
+            <CheckboxField checked={requiredFields.includes('file')} onChange={() => toggleField('file')}>
               {t('vacancies.resumeLabel')}
-            </label>
+            </CheckboxField>
 
-            <label className="flex cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md py-sm font-body text-body-sm text-body-text">
-              <input
-                type="checkbox"
-                checked={requiredFields.includes('certificates')}
-                onChange={() => toggleField('certificates')}
-                className="size-4 accent-green-500"
-              />
+            <CheckboxField checked={requiredFields.includes('certificates')} onChange={() => toggleField('certificates')}>
               {t('vacancies.certificates')}
-            </label>
+            </CheckboxField>
           </div>
         </fieldset>
       </div>

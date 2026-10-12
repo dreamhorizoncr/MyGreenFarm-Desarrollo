@@ -24,6 +24,7 @@ import { validateMinLength, validateRequired } from '../utils/validators.ts'
 import type { Gallery, GalleryCategory, GalleryImage, GalleryRequest } from '../types/gallery.ts'
 import ninos2 from '../assets/imgs/ninos2.svg'
 import CardActionButton from '../components/ui/CardActionButton.tsx'
+import CheckboxField from '../components/ui/CheckboxField.tsx'
 import ImagePickerButton from '../components/ui/ImagePickerButton.tsx'
 import ImageThumb, { ImageThumbList } from '../components/ui/ImageThumb.tsx'
 
@@ -724,16 +725,14 @@ onCreateYear={handleCreateYear}
 							)}
 						</label>
 
-						<label className="flex items-center gap-sm font-body text-body-sm font-semibold text-heading md:col-span-2">
-							<input
-								type="checkbox"
-								checked={form.featured}
-								onChange={(e) => setForm({ ...form, featured: e.target.checked })}
-								className="size-4 accent-yellow-500"
-							/>
-							<StarIcon size={16} className={form.featured ? 'text-yellow-500' : 'text-neutral-400'} />
+						<CheckboxField
+							checked={form.featured}
+							onChange={(featured) => setForm({ ...form, featured })}
+							className="md:col-span-2"
+						>
+							<StarIcon size={16} aria-hidden="true" className={form.featured ? 'text-yellow-500' : 'text-neutral-400'} />
 							{t('admin.gallery.featured')}
-						</label>
+						</CheckboxField>
 
 						<div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
 							<span className="block">{t('admin.gallery.photos')}</span>
