@@ -137,21 +137,25 @@ input[type="password"]::-ms-clear {
      Como overflow-hidden lo recortaría, las cards bajas no deben usarlo
      (que la imagen se redondee sola).
    ============================================================================= */
-@utility card-hover {
-  position: relative;
-  transform-origin: center top;
-  transition-property: translate, scale, box-shadow;
-  transition-duration: 200ms;
-  transition-timing-function: ease-out;
+/* Selectores planos (sin & anidado dentro de @media) para que cualquier analizador de CSS
+   los entienda; en la capa utilities, igual que una utilidad de Tailwind. */
+@layer utilities {
+  .card-hover {
+    position: relative;
+    transform-origin: center top;
+    transition-property: translate, scale, box-shadow;
+    transition-duration: 200ms;
+    transition-timing-function: ease-out;
+  }
 
   @media (hover: hover) {
-    &:hover {
+    .card-hover:hover {
       translate: 0 -3px;
       scale: 1.01;
       box-shadow: var(--shadow-lg);
     }
 
-    &:hover::after {
+    .card-hover:hover::after {
       content: "";
       position: absolute;
       inset: 100% 0 auto;
@@ -160,9 +164,11 @@ input[type="password"]::-ms-clear {
   }
 
   @media (prefers-reduced-motion: reduce) {
-    transition-property: box-shadow;
+    .card-hover {
+      transition-property: box-shadow;
+    }
 
-    &:hover {
+    .card-hover:hover {
       translate: none;
       scale: none;
     }

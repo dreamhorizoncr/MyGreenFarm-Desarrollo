@@ -107,7 +107,6 @@ function YearDropdown({
 			</button>
 
 			{open && (
-				<>
 					<div className="absolute left-0 right-0 top-[calc(100%+6px)] z-20 overflow-hidden rounded-xl border border-neutral-200 bg-white p-xs shadow-lg">
 						{categories.map((category) => (
 							<div
@@ -116,8 +115,7 @@ function YearDropdown({
 							>
 								<button
 									type="button"
-									role="option"
-									aria-selected={category.id === value}
+									aria-pressed={category.id === value}
 									onClick={() => {
 										onChange(category.id)
 										setOpen(false)
@@ -205,7 +203,6 @@ function YearDropdown({
 							</button>
 						)}
 					</div>
-				</>
 			)}
 		</div>
 	)

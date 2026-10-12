@@ -4,6 +4,7 @@ import Button from './ui/Button.tsx'
 import PasswordInput from './ui/PasswordInput.tsx'
 import DatePickerField from './ui/DatePickerField.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { useRegister } from '../hooks/useRegister.ts'
 import { notify } from '../utils/notifications.ts'
 import { validateEmail, validatePassword, validateRequired, validateSafeText } from '../utils/validators.ts'
@@ -31,6 +32,7 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
   const { submitRegister, loading } = useRegister()
 
   const [firstName, setFirstName] = useState('')
@@ -87,12 +89,6 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') requestClose()
-      }}
       aria-label={t('admin.addDocente')}
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg text-left backdrop:bg-scrim md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >

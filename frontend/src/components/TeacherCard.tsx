@@ -44,19 +44,21 @@ function TeacherCard({
       {/* Fotografía */}
       {showPhoto && (
         <div className="mb-lg flex justify-center">
-          {loading ? (
+          {loading && (
             <Skeleton
               shape="circle"
               className="h-28 w-28"
             />
-          ) : user?.photoUrl ? (
+          )}
+          {!loading && user?.photoUrl && (
             <img
               src={user.photoUrl}
               alt={`${user.firstName} ${user.lastName}`}
               className="h-28 w-28 rounded-full border-4 border-green-100 object-cover shadow-sm"
               loading="lazy"
             />
-          ) : (
+          )}
+          {!loading && !user?.photoUrl && (
             <div className="flex h-28 w-28 items-center justify-center rounded-full border-4 border-green-100 bg-green-50">
               <UserRoundIcon
                 size={44}

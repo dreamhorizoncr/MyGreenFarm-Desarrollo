@@ -260,17 +260,20 @@ function ExpedientFormModal({
                 <ul className="absolute z-50 mt-1 max-h-56 w-full overflow-auto rounded-xl border border-neutral-200 bg-white py-2 font-body text-body-sm shadow-lg">
                   {filteredOptions.length > 0 ? (
                     filteredOptions.map((option) => (
-                      <li
-                        key={option.studentId}
-                        onMouseDown={() => {
-                          setStudentId(option.studentId);
-                          setSearchTerm(`${option.fullName ?? option.childName}`);
-                          setIsOpen(false);
-                          setStudentError(null);
-                        }}
-                        className="mx-2 cursor-pointer rounded-lg px-4 py-2 text-heading transition-colors hover:bg-orange-100"
-                      >
-                        {option.fullName ?? option.childName}
+                      <li key={option.studentId} className="mx-2">
+                        {/* onMouseDown (no onClick) para elegir antes de que el input pierda el foco y cierre la lista */}
+                        <button
+                          type="button"
+                          onMouseDown={() => {
+                            setStudentId(option.studentId);
+                            setSearchTerm(`${option.fullName ?? option.childName}`);
+                            setIsOpen(false);
+                            setStudentError(null);
+                          }}
+                          className="w-full cursor-pointer rounded-lg px-4 py-2 text-left text-heading transition-colors hover:bg-orange-100"
+                        >
+                          {option.fullName ?? option.childName}
+                        </button>
                       </li>
                     ))
                   ) : (

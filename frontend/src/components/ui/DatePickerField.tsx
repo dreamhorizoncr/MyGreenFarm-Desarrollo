@@ -59,8 +59,20 @@ function DatePickerField({
     const handlePointerDown = (event: PointerEvent) => {
       if (!containerRef.current?.contains(event.target as Node)) setOpen(false)
     }
+    // Escape cierra solo el calendario, no el modal que lo contiene: se escucha en captura,
+    // antes que los manejadores del modal, y se cancela el evento.
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      event.preventDefault()
+      event.stopPropagation()
+      setOpen(false)
+    }
     document.addEventListener('pointerdown', handlePointerDown)
-    return () => document.removeEventListener('pointerdown', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown, true)
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown, true)
+    }
   }, [open])
 
   const handleChange = (date: CalendarDate | null) => {
@@ -75,18 +87,7 @@ function DatePickerField({
     : t('common.selectDate')
 
   return (
-    <div
-      ref={containerRef}
-      className="relative"
-      onKeyDown={(event) => {
-        // Escape cierra solo el calendario, no el modal que lo contiene.
-        if (event.key === 'Escape' && open) {
-          event.preventDefault()
-          event.stopPropagation()
-          setOpen(false)
-        }
-      }}
-    >
+    <div ref={containerRef} className="relative">
       <button
         ref={triggerRef}
         type="button"
@@ -103,11 +104,12 @@ function DatePickerField({
       </button>
 
       {open && position && (
-        <div
-          role="dialog"
+        // dialog no modal (open): sin los estilos por defecto del navegador para que se vea como un panel.
+        <dialog
+          open
           aria-label={ariaLabel}
           style={{ top: position.top, bottom: position.bottom, left: position.left, width: PANEL_WIDTH }}
-          className="fixed z-[9000] max-w-[calc(100vw-1rem)]"
+          className="fixed z-[9000] m-0 max-w-[calc(100vw-1rem)] border-0 bg-transparent p-0 text-inherit"
         >
           <CalendarPanel
             value={selected}
@@ -119,7 +121,7 @@ function DatePickerField({
             compact
             className="shadow-lg"
           />
-        </div>
+        </dialog>
       )}
     </div>
   )

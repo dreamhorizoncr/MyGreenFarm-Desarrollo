@@ -269,20 +269,22 @@ function AdminNewsletterPage() {
                 </div>
 
                 {/* Listado filtrado */}
-                {loadingSubscribers ? (
+                {loadingSubscribers && (
                     <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
                         <SubscriberRow loading />
                         <SubscriberRow loading />
                         <SubscriberRow loading />
                         <SubscriberRow loading />
                     </div>
-                ) : filteredItems.length === 0 ? (
+                )}
+                {!loadingSubscribers && filteredItems.length === 0 && (
                     <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
                         {subscribers.length > 0 || searchTerm.trim()
                             ? t('admin.newsletter.noResults')
                             : t('admin.newsletter.noContacts')}
                     </p>
-                ) : (
+                )}
+                {!loadingSubscribers && filteredItems.length > 0 && (
                     <>
                     <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
                         {pagedItems.map((item) => (

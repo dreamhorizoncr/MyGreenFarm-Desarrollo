@@ -61,7 +61,7 @@ const HTML_TAG_START = /<[a-zA-Z/!?]/
 // Caracteres de control ASCII salvo los de espacio (\t \n \v \f \r), igual que [\p{Cntrl}&&[^\s]] en Java.
 function hasControlCharacter(value: string): boolean {
   for (let i = 0; i < value.length; i++) {
-    const code = value.charCodeAt(i)
+    const code = value.codePointAt(i) ?? 0
     if (code <= 0x08 || (code >= 0x0e && code <= 0x1f) || code === 0x7f) return true
   }
   return false

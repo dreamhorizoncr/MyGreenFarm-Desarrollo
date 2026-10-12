@@ -70,8 +70,20 @@ function TimePickerField({
     const handlePointerDown = (event: PointerEvent) => {
       if (!containerRef.current?.contains(event.target as Node)) setOpen(false)
     }
+    // Escape cierra solo el reloj, no el modal que lo contiene: se escucha en captura,
+    // antes que los manejadores del modal, y se cancela el evento.
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      event.preventDefault()
+      event.stopPropagation()
+      setOpen(false)
+    }
     document.addEventListener('pointerdown', handlePointerDown)
-    return () => document.removeEventListener('pointerdown', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown, true)
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown, true)
+    }
   }, [open])
 
   const emit = (nextHours: number, nextMinutes: number) => onChange(`${pad(nextHours)}:${pad(nextMinutes)}`)
@@ -126,18 +138,7 @@ function TimePickerField({
     `rounded-lg px-2 py-0.5 font-body text-body-sm font-semibold transition-colors ${active ? 'bg-white text-green-600' : 'text-white/70 hover:text-white'}`
 
   return (
-    <div
-      ref={containerRef}
-      className="relative"
-      onKeyDown={(event) => {
-        // Escape cierra solo el reloj, no el modal que lo contiene.
-        if (event.key === 'Escape' && open) {
-          event.preventDefault()
-          event.stopPropagation()
-          setOpen(false)
-        }
-      }}
-    >
+    <div ref={containerRef} className="relative">
       <button
         ref={triggerRef}
         type="button"
@@ -154,11 +155,12 @@ function TimePickerField({
       </button>
 
       {open && position && (
-        <div
-          role="dialog"
+        // dialog no modal (open): margen y padding por defecto del navegador anulados.
+        <dialog
+          open
           aria-label={ariaLabel}
           style={{ top: position.top, bottom: position.bottom, left: position.left, width: PANEL_WIDTH }}
-          className="fixed z-[9000] max-w-[calc(100vw-1rem)] overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-lg"
+          className="fixed z-[9000] m-0 max-w-[calc(100vw-1rem)] overflow-hidden rounded-2xl border border-neutral-200 bg-white p-0 text-inherit shadow-lg"
         >
           <div className="flex items-center justify-center gap-md bg-green-500 px-md py-sm">
             <div className="flex items-center text-white">
@@ -231,7 +233,7 @@ function TimePickerField({
               })}
             </div>
           </div>
-        </div>
+        </dialog>
       )}
     </div>
   )

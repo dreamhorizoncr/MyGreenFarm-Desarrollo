@@ -37,24 +37,30 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
   // loading arranca en true y se vuelve a activar en changePage; el effect solo actualiza estado en los callbacks.
   useEffect(() => {
     let cancelled = false
-    forumService.getCommunityPosts(page - 1, 10)
-      .then(async (result) => {
+    const loadPosts = async () => {
+      try {
+        const result = await forumService.getCommunityPosts(page - 1, 10)
         // Mismo tipo de traducción que el muro público, para reutilizar lo ya traducido.
         const items = result.content.map((post) => ({ entityId: post.id, fieldName: 'content', originalText: post.content }))
-        const translated = items.length
-          ? await forumService.translateBatch(COMMUNITY_POST_TRANSLATION_TYPE, language, items).catch(() => ({} as Record<string, string>))
-          : {}
+        let translated: Record<string, string> = {}
+        if (items.length) {
+          try {
+            translated = await forumService.translateBatch(COMMUNITY_POST_TRANSLATION_TYPE, language, items)
+          } catch {
+            // Si la traducción falla se muestran los textos originales.
+          }
+        }
         if (cancelled) return
         setPosts(result.content.map((post) => ({ ...post, content: translated[`${post.id}:content`] ?? post.content })))
         setTotalPages(result.totalPages)
         setError('')
-      })
-      .catch(() => {
+      } catch {
         if (!cancelled) setError(t('adminForum.community.loadError'))
-      })
-      .finally(() => {
+      } finally {
         if (!cancelled) setLoading(false)
-      })
+      }
+    }
+    loadPosts()
     return () => {
       cancelled = true
     }

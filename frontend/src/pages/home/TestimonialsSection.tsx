@@ -12,6 +12,12 @@ const testimonialStyles = [
   { accent: '#FF93A9', initials: 'SV' },
 ]
 
+// Lugar de cada tarjeta en el carrusel: la activa al centro, la siguiente a la derecha y la otra a la izquierda.
+const cardPosition = (index: number, activeIndex: number, total: number) => {
+  if (index === activeIndex) return 'active'
+  return (index - activeIndex + total) % total === 1 ? 'right' : 'left'
+}
+
 function TestimonialsSection() {
   const { t } = useTranslation()
   const [activeIndex, setActiveIndex] = useState(0)
@@ -76,9 +82,7 @@ function TestimonialsSection() {
               {testimonials.map((testimonial, index) => {
                 const isActive = index === activeIndex
                 const style = testimonialStyles[index]
-                const position = isActive
-                  ? 'active'
-                  : (index - activeIndex + testimonials.length) % testimonials.length === 1 ? 'right' : 'left'
+                const position = cardPosition(index, activeIndex, testimonials.length)
                 const [name, role = ''] = testimonial.author.split(' — ')
 
                 return (
