@@ -28,6 +28,7 @@
     "react-phone-number-input": "^3.4.18",
     "react-router-dom": "^7.18.2",
     "sileo": "^0.1.5",
+    "swiper": "^14.2.0",
     "tailwind-variants": "^3.3.1",
     "tailwindcss": "^4.3.3",
     "zod": "^4.4.3"
