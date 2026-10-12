@@ -9,6 +9,7 @@ import ForumPendingReviewModal from '../components/forum/ForumPendingReviewModal
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 import { notify } from '../utils/notifications.ts'
 import { getErrorMessage } from '../utils/error.ts'
+import { hasUnsafeText } from '../utils/validators.ts'
 
 const MAX_CONTENT = 4000
 
@@ -89,6 +90,11 @@ function BlogPostPage() {
             : 'forum.blog.commentNameRequired',
         ),
       )
+      return
+    }
+
+    if (hasUnsafeText(trimmedName) || hasUnsafeText(trimmedContent)) {
+      notify.error(t('validation.unsafeText'))
       return
     }
 

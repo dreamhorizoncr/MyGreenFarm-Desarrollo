@@ -52,3 +52,25 @@ export function validateMinLength(value: string, min: number, t: TFunction): str
   if (value.trim().length < min) return t('validation.minLength', { min })
   return null
 }
+
+// Misma regla que Sanitizer.hasMaliciousContent del backend: etiquetas HTML ("<" seguido de letra, "/", "!" o "?")
+// o caracteres de control que no sean espacios. Así el formulario avisa en el campo antes de enviar,
+// en lugar de que el backend rechace la petición con un error genérico.
+const HTML_TAG_START = /<[a-zA-Z/!?]/
+
+// Caracteres de control ASCII salvo los de espacio (\t \n \v \f \r), igual que [\p{Cntrl}&&[^\s]] en Java.
+function hasControlCharacter(value: string): boolean {
+  for (let i = 0; i < value.length; i++) {
+    const code = value.charCodeAt(i)
+    if (code <= 0x08 || (code >= 0x0e && code <= 0x1f) || code === 0x7f) return true
+  }
+  return false
+}
+
+export function hasUnsafeText(value: string | null | undefined): boolean {
+  return value != null && (HTML_TAG_START.test(value) || hasControlCharacter(value))
+}
+
+export function validateSafeText(value: string | null | undefined, t: TFunction): string | null {
+  return hasUnsafeText(value) ? t('validation.unsafeText') : null
+}

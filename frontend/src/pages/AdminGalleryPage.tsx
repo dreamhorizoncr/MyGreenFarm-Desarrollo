@@ -1,17 +1,16 @@
-import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import {
 	CheckIcon,
 	ChevronDownIcon,
 	ChevronLeftIcon,
 	ChevronRightIcon,
-	FileImageIcon,
-	PencilIcon,
 	PlusIcon,
 	StarIcon,
 	Trash2Icon,
 	XIcon,
 } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
+import useDismiss from '../hooks/useDismiss.ts'
 import useEmblaCarousel from 'embla-carousel-react'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
@@ -21,9 +20,14 @@ import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
 import { useGalleryAdmin } from '../hooks/useGalleryAdmin.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { notify } from '../utils/notifications.ts'
-import { validateMinLength, validateRequired } from '../utils/validators.ts'
+import { validateMinLength, validateRequired, validateSafeText } from '../utils/validators.ts'
 import type { Gallery, GalleryCategory, GalleryImage, GalleryRequest } from '../types/gallery.ts'
 import ninos2 from '../assets/imgs/ninos2.svg'
+import CardActionButton from '../components/ui/CardActionButton.tsx'
+import CheckboxField from '../components/ui/CheckboxField.tsx'
+import ImagePickerButton from '../components/ui/ImagePickerButton.tsx'
+import ImageThumb, { ImageThumbList } from '../components/ui/ImageThumb.tsx'
+import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
 
 const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'])
 const TITLE_MIN_LENGTH = 5
@@ -61,24 +65,24 @@ function YearDropdown({
 		if (adding) yearInputRef.current?.focus()
 	}, [adding])
 	const [newYear, setNewYear] = useState('')
+	const [yearError, setYearError] = useState<string | null>(null)
 
 	const selected = categories.find((category) => category.id === value)
 
-	useEffect(() => {
-		if (!open) return
-		const handleKey = (event: globalThis.KeyboardEvent) => {
-			if (event.key === 'Escape') {
-				setOpen(false)
-				setAdding(false)
-			}
-		}
-		document.addEventListener('keydown', handleKey)
-		return () => document.removeEventListener('keydown', handleKey)
-	}, [open])
+	// Se cierra al tocar afuera o con Escape (antes era una capa fixed que dentro del modal no cubría la pantalla).
+	const rootRef = useRef<HTMLDivElement>(null)
+	const closeDropdown = useCallback(() => {
+		setOpen(false)
+		setAdding(false)
+	}, [])
+	useDismiss({ ref: rootRef, isOpen: open, onClose: closeDropdown })
 
 	const handleAdd = async () => {
 		const title = newYear.trim()
 		if (!title) return
+		const unsafeError = validateSafeText(title, t)
+		setYearError(unsafeError)
+		if (unsafeError) return
 		await onCreateYear(title)
 		setNewYear('')
 		setAdding(false)
@@ -86,7 +90,7 @@ function YearDropdown({
 	}
 
 	return (
-		<div className="relative mt-xs">
+		<div ref={rootRef} className="relative mt-xs">
 			<button
 				type="button"
 				onClick={() => setOpen((prev) => !prev)}
@@ -104,14 +108,6 @@ function YearDropdown({
 
 			{open && (
 				<>
-					<div
-						className="fixed inset-0 z-10"
-						onClick={() => {
-							setOpen(false)
-							setAdding(false)
-						}}
-						aria-hidden="true"
-					/>
 					<div className="absolute left-0 right-0 top-[calc(100%+6px)] z-20 overflow-hidden rounded-xl border border-neutral-200 bg-white p-xs shadow-lg">
 						{categories.map((category) => (
 							<div
@@ -149,11 +145,15 @@ function YearDropdown({
 						<div className="mx-lg my-sm border-t border-neutral-200" />
 
 						{adding ? (
+							<>
 							<div className="flex items-center gap-sm px-md py-sm">
 								<input
 									ref={yearInputRef}
 									value={newYear}
-									onChange={(e) => setNewYear(e.target.value)}
+									onChange={(e) => {
+										setNewYear(e.target.value)
+										if (yearError) setYearError(null)
+									}}
 									onKeyDown={(e) => {
 										if (e.key === 'Enter') {
 											e.preventDefault()
@@ -166,7 +166,8 @@ function YearDropdown({
 										}
 									}}
 									placeholder={t('admin.gallery.newYearPlaceholder')}
-									className="h-9 w-full min-w-0 rounded-lg border border-neutral-200 px-sm font-body text-body-sm outline-none focus:border-heading"
+									aria-invalid={Boolean(yearError)}
+									className={`h-9 w-full min-w-0 rounded-lg border px-sm font-body text-body-sm outline-none focus:border-heading ${yearError ? 'border-danger' : 'border-neutral-200'}`}
 								/>
 								<button
 									type="button"
@@ -189,6 +190,10 @@ function YearDropdown({
 									<XIcon size={16} />
 								</button>
 							</div>
+							{yearError && (
+								<p className="m-0 px-md pb-sm font-body text-caption text-danger">{yearError}</p>
+							)}
+							</>
 						) : (
 							<button
 								type="button"
@@ -237,7 +242,7 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading =
 	}
 
 	return (
-		<article className="relative h-full rounded-3xl border border-neutral-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+		<article className="relative h-full rounded-3xl border border-neutral-100 bg-white shadow-sm card-hover">
 			<div className="relative m-sm overflow-hidden rounded-[20px]">
 				<img
 					src={gallery!.galleryImages[0]?.fileUrl ?? ninos2}
@@ -247,18 +252,14 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading =
 				<span className="absolute bottom-sm left-sm rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
 					{t('home.galeria.photoCount', { count: gallery!.galleryImages.length })}
 				</span>
-				<button
-					type="button"
+				<CardActionButton
+					action="feature"
+					pressed={gallery!.featured}
+					label={t('admin.gallery.toggleFeatured')}
+					title={t('admin.gallery.toggleFeatured')}
 					onClick={onToggleFeatured}
-					aria-label={t('admin.gallery.toggleFeatured')}
-					className={`absolute left-sm top-sm flex size-[34px] items-center justify-center rounded-full shadow transition ${
-						gallery!.featured
-							? 'bg-yellow-400 text-white hover:bg-yellow-500'
-							: 'bg-white/80 text-neutral-400 hover:bg-white hover:text-yellow-500'
-					}`}
-				>
-					<StarIcon size={18} />
-				</button>
+					className="absolute left-sm top-sm shadow"
+				/>
 			</div>
 
 			<div className="overflow-hidden px-lg pb-lg text-left">
@@ -270,22 +271,8 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading =
 				</p>
 
 				<div className="mt-sm flex items-center justify-end gap-xs">
-					<button
-						type="button"
-						onClick={onEdit}
-						aria-label={t('admin.edit')}
-						className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
-					>
-						<PencilIcon size={17} />
-					</button>
-					<button
-						type="button"
-						onClick={onDelete}
-						aria-label={t('admin.delete')}
-						className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50"
-					>
-						<Trash2Icon size={17} />
-					</button>
+					<CardActionButton action="edit" label={t('admin.edit')} onClick={onEdit} />
+					<CardActionButton action="delete" label={t('admin.delete')} onClick={onDelete} />
 				</div>
 			</div>
 		</article>
@@ -428,7 +415,6 @@ function AdminGalleryPage() {
 	const [fileError, setFileError] = useState<string | null>(null)
 	const [images, setImages] = useState<GalleryImage[]>([])
 	const [submitting, setSubmitting] = useState(false)
-	const imagesInputRef = useRef<HTMLInputElement>(null)
 	const filesRef = useRef<SelectedImage[]>([])
 
 	useEffect(() => {
@@ -495,14 +481,13 @@ function AdminGalleryPage() {
 		setFileError(null)
 	}
 
-	const handleFilesSelected = (event: ChangeEvent<HTMLInputElement>) => {
-		const selected = event.target.files
-		if (!selected || selected.length === 0) return
+	const handleFilesSelected = (selected: File[]) => {
+		if (selected.length === 0) return
 
 		const valid: File[] = []
 		const rejected: string[] = []
 
-		Array.from(selected).forEach((file) => {
+		selected.forEach((file) => {
 			if (ALLOWED_IMAGE_TYPES.has(file.type)) valid.push(file)
 			else rejected.push(file.name)
 		})
@@ -517,8 +502,6 @@ function AdminGalleryPage() {
 			...prev,
 			...valid.map((file) => ({ file, previewUrl: URL.createObjectURL(file) })),
 		])
-
-		event.target.value = ''
 	}
 
 	const removeSelectedFile = (index: number) => {
@@ -536,10 +519,12 @@ function AdminGalleryPage() {
 
 		const titleErrorMessage =
 			validateRequired(form.title, t('admin.gallery.albumTitle'), t) ??
-			validateMinLength(form.title, TITLE_MIN_LENGTH, t)
+			validateMinLength(form.title, TITLE_MIN_LENGTH, t) ??
+			validateSafeText(form.title, t)
 		const descriptionErrorMessage =
 			validateRequired(form.description, t('admin.gallery.albumDescription'), t) ??
-			validateMinLength(form.description, DESCRIPTION_MIN_LENGTH, t)
+			validateMinLength(form.description, DESCRIPTION_MIN_LENGTH, t) ??
+			validateSafeText(form.description, t)
 
 		setTitleError(titleErrorMessage)
 		setDescriptionError(descriptionErrorMessage)
@@ -681,7 +666,7 @@ function AdminGalleryPage() {
 
 			{/* Formulario de álbum */}
 			{formOpen && (
-				<div className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]">
+				<div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
 					<button
 						type="button"
 						tabIndex={-1}
@@ -690,19 +675,15 @@ function AdminGalleryPage() {
 						onClick={requestClose}
 					/>
 
-					<form onSubmit={handleSubmit} className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}>
+					<form onSubmit={handleSubmit} className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}>
 					<div className="flex items-center justify-between gap-md">
 						<h2 className="m-0 font-heading text-2xl font-bold text-heading">
 							{editing ? t('admin.gallery.editAlbum') : t('admin.gallery.newAlbum')}
 						</h2>
-						<button
-							type="button"
+						<ModalCloseButton
 							onClick={requestClose}
 							aria-label={t('admin.gallery.close')}
-							className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-						>
-							<XIcon size={20} />
-						</button>
+						/>
 					</div>
 
 					<div className="mt-lg grid gap-md md:grid-cols-2">
@@ -756,104 +737,57 @@ onCreateYear={handleCreateYear}
 							)}
 						</label>
 
-						<label className="flex items-center gap-sm font-body text-body-sm font-semibold text-heading md:col-span-2">
-							<input
-								type="checkbox"
-								checked={form.featured}
-								onChange={(e) => setForm({ ...form, featured: e.target.checked })}
-								className="size-4 accent-yellow-500"
-							/>
-							<StarIcon size={16} className={form.featured ? 'text-yellow-500' : 'text-neutral-400'} />
+						<CheckboxField
+							checked={form.featured}
+							onChange={(featured) => setForm({ ...form, featured })}
+							className="md:col-span-2"
+						>
+							<StarIcon size={16} aria-hidden="true" className={form.featured ? 'text-yellow-500' : 'text-neutral-400'} />
 							{t('admin.gallery.featured')}
-						</label>
+						</CheckboxField>
 
 						<div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
-							<span className="block">{t('admin.gallery.chooseImages')}</span>
-							<input
-								ref={imagesInputRef}
-								type="file"
-								multiple
+							<span className="block">{t('admin.gallery.photos')}</span>
+							<ImagePickerButton
+								label={t('admin.gallery.chooseImages')}
 								accept="image/png,image/jpg,image/jpeg,image/svg+xml"
-								onChange={handleFilesSelected}
-								className="hidden"
+								multiple
+								onSelect={handleFilesSelected}
 							/>
-							<button
-								type="button"
-								onClick={() => imagesInputRef.current?.click()}
-								className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-body-sm font-semibold text-heading"
-							>
-								<FileImageIcon size={17} aria-hidden="true" />
-								{t('admin.gallery.chooseImages')}
-							</button>
 
-							<p className="mt-xs text-caption font-normal text-neutral-500">
-								{t('admin.gallery.addPhotosHelp')}
-							</p>
 
 							{fileError && (
 								<p className="mt-xs block font-body text-body-sm font-normal text-danger">{fileError}</p>
 							)}
 
 							{files.length > 0 && (
-								<div className="mt-md">
-									<h3 className="font-body text-body-sm font-semibold text-heading">
-										{t('admin.gallery.newPhotos')}
-									</h3>
-									<div className="mt-sm grid grid-cols-3 gap-sm sm:grid-cols-4 md:grid-cols-6">
-										{files.map((selected, index) => (
-											<div key={selected.previewUrl} className="relative">
-												<img
-													src={selected.previewUrl}
-													alt={selected.file.name}
-													className="aspect-square w-full rounded-lg border border-neutral-200 object-cover"
-												/>
-												<button
-													type="button"
-													onClick={() => removeSelectedFile(index)}
-													aria-label={`${t('admin.delete')}: ${selected.file.name}`}
-													className="absolute -right-sm -top-sm flex size-[26px] items-center justify-center rounded-full bg-red-600 text-white shadow transition hover:bg-red-700"
-												>
-													<XIcon size={14} />
-												</button>
-											</div>
-										))}
-									</div>
-									<p className="mt-sm text-caption font-normal text-neutral-500">
-										{files.length} {files.length === 1 ? t('admin.gallery.file') : t('admin.gallery.files')}
-									</p>
-								</div>
+								<ImageThumbList className="mt-sm">
+									{files.map((selected, index) => (
+										<ImageThumb
+											key={selected.previewUrl}
+											src={selected.previewUrl}
+											label={selected.file.name}
+											onDelete={() => removeSelectedFile(index)}
+											deleteLabel={`${t('admin.delete')}: ${selected.file.name}`}
+										/>
+									))}
+								</ImageThumbList>
 							)}
 						</div>
 					</div>
 
 					{images.length > 0 && (
-						<div className="mt-lg">
-							<h3 className="font-body text-body-sm font-semibold text-heading">
-								{t('admin.gallery.currentImages')}
-							</h3>
-							<div className="mt-sm flex flex-wrap gap-md">
-								{images.map((image) => (
-									<div
-										key={image.id}
-										className="flex items-center gap-sm rounded-xl border border-neutral-200 bg-white p-xs"
-									>
-										<img
-											src={image.fileUrl}
-											alt=""
-											className="size-16 rounded-lg object-cover"
-										/>
-										<button
-											type="button"
-											onClick={() => setImageToDelete(image.id)}
-											aria-label={t('admin.delete')}
-											className="text-danger"
-										>
-											<Trash2Icon size={16} />
-										</button>
-									</div>
-								))}
-							</div>
-						</div>
+						<ImageThumbList title={t('admin.gallery.currentImages')}>
+							{images.map((image) => (
+								<ImageThumb
+									key={image.id}
+									src={image.fileUrl}
+									label={t('admin.gallery.photoTag')}
+									onDelete={() => setImageToDelete(image.id)}
+									deleteLabel={t('admin.delete')}
+								/>
+							))}
+						</ImageThumbList>
 					)}
 
 					<div className="mt-lg flex flex-wrap justify-end gap-sm">

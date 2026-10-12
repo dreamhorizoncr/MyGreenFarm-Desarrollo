@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CircleCheckIcon, ClockIcon, PlusIcon, Trash2Icon, PencilIcon } from '@animateicons/react/lucide'
+import { CircleCheckIcon, ClockIcon, PlusIcon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import CreateServicePlanModal from '../components/CreateServicePlanModal.tsx'
@@ -15,6 +15,8 @@ import { useExchangeRate } from '../hooks/useExchangeRate.ts'
 import type { Currency, ExchangeRate } from '../types/exchangeRate.ts'
 import { convertCurrency, currencySymbol, formatCurrency } from '../utils/currency.ts'
 import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
+import CardActionButton from '../components/ui/CardActionButton.tsx'
+import CurrencyToggle from '../components/currency/CurrencyToggle.tsx'
 
 interface AdminPlanCardProps {
   plan?: ServicePlan
@@ -81,7 +83,7 @@ function AdminPlanCard({
   }
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white transition hover:-translate-y-1 hover:shadow-lg">
+    <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white card-hover">
       <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
         {plan!.imageUrl ? (
           <img src={plan!.imageUrl} alt={plan!.name} className="h-full w-full object-cover" />
@@ -109,22 +111,7 @@ function AdminPlanCard({
         <div className="my-1 border-t border-neutral-100" />
 
         <div className="flex flex-col items-start gap-2xs">
-          <div className="flex w-full flex-wrap justify-end gap-1" aria-label={t('moneda.convertTo')}>
-            {(['USD', 'CRC', 'EUR'] as Currency[]).map(option => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setCurrency(option)}
-                aria-pressed={currency === option}
-                disabled={!exchangeRate && option !== 'USD'}
-                className={`rounded-full border px-sm py-2xs font-body text-caption leading-tight transition disabled:cursor-not-allowed disabled:opacity-40 ${
-                  currency === option ? 'border-green-500 bg-green-500 text-white' : 'border-neutral-200 text-neutral-600 hover:border-green-500'
-                }`}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
+          <CurrencyToggle value={currency} onChange={setCurrency} hasExchangeRate={Boolean(exchangeRate)} />
           <span className="text-left font-heading text-h2 font-bold text-green-500">
             <AnimatedNumber
               value={price}
@@ -156,23 +143,8 @@ function AdminPlanCard({
         </div>
 
         <div className="mt-auto flex justify-end gap-sm pt-sm">
-          <button 
-            type="button" 
-            onClick={onEdit} 
-            aria-label={t('admin.edit')} 
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition hover:bg-green-50"
-          >
-            <PencilIcon size={17} />
-          </button>
-          <button 
-            type="button" 
-            onClick={onDelete} 
-            disabled={deleting} 
-            aria-label={t('admin.delete')} 
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition hover:bg-red-50 disabled:opacity-50"
-          >
-            <Trash2Icon size={17} />
-          </button>
+          <CardActionButton action="edit" label={t('admin.edit')} onClick={onEdit} />
+          <CardActionButton action="delete" label={t('admin.delete')} disabled={deleting} onClick={onDelete} />
         </div>
       </div>
     </article>
@@ -283,6 +255,7 @@ console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
           onvoPlans={onvoPlans}
           existingPlans={sourcePlans}
           planToEdit={editingPlan}
+          onImageDeleted={() => fetchAll(i18n.language)}
           onSave={async (data, file) => {
             try {
               await createPlan(data, file)

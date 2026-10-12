@@ -1,11 +1,7 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  FileImageIcon,
-  PencilIcon,
   PlusIcon,
-  Trash2Icon,
-  XIcon,
 } from "@animateicons/react/lucide";
 import AdminLayout from "../layout/AdminLayout.tsx";
 import Skeleton from "../components/ui/Skeleton.tsx";
@@ -15,7 +11,7 @@ import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 import { useAnnouncements } from "../hooks/useAnnouncements.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
 import { notify } from "../utils/notifications.ts";
-import { validateMinLength, validateRequired } from "../utils/validators.ts";
+import { validateMinLength, validateRequired, validateSafeText } from "../utils/validators.ts";
 import type {
   Announcement,
   AnnouncementImageResponse,
@@ -23,6 +19,12 @@ import type {
   AnnouncementType,
 } from "../types/announcement.ts";
 import NewsDetailModal from "../components/NewsDetailModal.tsx";
+import DatePickerField from "../components/ui/DatePickerField.tsx";
+import TimePickerField from "../components/ui/TimePickerField.tsx";
+import CardActionButton from "../components/ui/CardActionButton.tsx";
+import ImagePickerButton from "../components/ui/ImagePickerButton.tsx";
+import ImageThumb, { ImageThumbList } from "../components/ui/ImageThumb.tsx";
+import ModalCloseButton from "../components/ui/ModalCloseButton.tsx";
 
 const emptyForm: AnnouncementRequest = {
   title: "",
@@ -127,23 +129,9 @@ function AnnouncementRow({ announcement, typeLabel, onPreview, onEdit, onDelete,
           </button>
 
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={onEdit}
-              aria-label={t("adminNews.editButton")}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-green-500 text-green-500 transition"
-            >
-              <PencilIcon size={17} />
-            </button>
+            <CardActionButton action="edit" label={t("adminNews.editButton")} onClick={onEdit} />
 
-            <button
-              type="button"
-              onClick={onDelete}
-              aria-label={t("adminNews.deleteButton")}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-red-300 text-danger transition"
-            >
-              <Trash2Icon size={17} />
-            </button>
+            <CardActionButton action="delete" label={t("adminNews.deleteButton")} onClick={onDelete} />
           </div>
         </div>
       </div>
@@ -170,6 +158,7 @@ function AnnouncementsPage() {
   const [previewing, setPreviewing] = useState<Announcement | null>(null);
   const [form, setForm] = useState<AnnouncementRequest>(emptyForm);
   const [titleError, setTitleError] = useState<string | null>(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
   const [contentError, setContentError] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] =
     useState<AdminNewsCategory>("All");
@@ -181,8 +170,6 @@ function AnnouncementsPage() {
     useState<Announcement | null>(null);
   const [imageToDelete, setImageToDelete] =
     useState<AnnouncementImageResponse | null>(null);
-  const coverInputRef = useRef<HTMLInputElement>(null);
-  const galleryInputRef = useRef<HTMLInputElement>(null);
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
@@ -233,15 +220,19 @@ function AnnouncementsPage() {
 
     const titleErrorMessage =
       validateRequired(form.title, t("adminNews.newsTitle"), t) ??
-      validateMinLength(form.title, TITLE_MIN_LENGTH, t);
+      validateMinLength(form.title, TITLE_MIN_LENGTH, t) ??
+      validateSafeText(form.title, t);
     const contentErrorMessage =
       validateRequired(form.content, t("adminNews.newscontent"), t) ??
-      validateMinLength(form.content, CONTENT_MIN_LENGTH, t);
+      validateMinLength(form.content, CONTENT_MIN_LENGTH, t) ??
+      validateSafeText(form.content, t);
+    const locationErrorMessage = validateSafeText(form.location, t);
 
     setTitleError(titleErrorMessage);
     setContentError(contentErrorMessage);
+    setLocationError(locationErrorMessage);
 
-    if (titleErrorMessage || contentErrorMessage) return;
+    if (titleErrorMessage || contentErrorMessage || locationErrorMessage) return;
 
     const data: AnnouncementRequest = {
       ...form,
@@ -357,7 +348,7 @@ function AnnouncementsPage() {
 
       {formOpen && (
         <div
-          className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]"
+          className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]"
         >
           <button
             type="button"
@@ -369,21 +360,17 @@ function AnnouncementsPage() {
 
           <form
             onSubmit={handleSubmit}
-            className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+            className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
           >
             <div className="flex items-center justify-between gap-md">
               <h2 className="m-0 font-heading text-2xl font-bold text-heading">
                 {editing ? t("adminNews.editNews") : t("adminNews.newnews")}
               </h2>
 
-              <button
-                type="button"
+              <ModalCloseButton
                 onClick={requestClose}
                 aria-label="Cerrar formulario"
-                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-              >
-                <XIcon size={20} />
-              </button>
+              />
             </div>
 
             <div className="mt-lg grid gap-md md:grid-cols-2">
@@ -462,118 +449,100 @@ function AnnouncementsPage() {
                   }
                   className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                 />
+                {locationError && (
+                  <span className="mt-xs block font-body text-body-sm font-normal text-danger">{locationError}</span>
+                )}
               </label>
 
-              <label className="font-body text-body-sm font-semibold text-heading">
+              <div className="font-body text-body-sm font-semibold text-heading">
                 {t("adminNews.newsdate")}
 
-                <input
-                  type="datetime-local"
-                  value={form.eventDate}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      eventDate: e.target.value,
-                    })
-                  }
-                  className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
-                />
-              </label>
+                {/* El calendario elige el día y el reloj de al lado la hora; se guarda como YYYY-MM-DDTHH:mm. */}
+                <div className="flex gap-sm">
+                  <div className="min-w-0 flex-1">
+                    <DatePickerField
+                      value={(form.eventDate ?? "").slice(0, 10)}
+                      onChange={(date) =>
+                        setForm({
+                          ...form,
+                          eventDate: date ? `${date}T${(form.eventDate ?? "").slice(11, 16) || "00:00"}` : "",
+                        })
+                      }
+                      ariaLabel={t("adminNews.newsdate")}
+                    />
+                  </div>
+                  <div className="w-[150px] shrink-0">
+                    <TimePickerField
+                      value={(form.eventDate ?? "").slice(11, 16)}
+                      disabled={!form.eventDate}
+                      onChange={(time) =>
+                        setForm({
+                          ...form,
+                          eventDate: `${(form.eventDate ?? "").slice(0, 10)}T${time}`,
+                        })
+                      }
+                      ariaLabel={t("adminNews.newsdate")}
+                    />
+                  </div>
+                </div>
+              </div>
 
               <div className="font-body text-body-sm font-semibold text-heading">
                 <span className="block">{t("adminNews.newscover")}</span>
 
-                <input
-                  ref={coverInputRef}
-                  type="file"
+                <ImagePickerButton
+                  label={t("adminNews.chooseCover")}
+                  replacesCurrent={images.some((image) => image.isCover)}
                   accept="image/png,image/jpg,image/jpeg,image/svg+xml"
-                  onChange={(e) => setCover(e.target.files?.[0] ?? null)}
-                  className="hidden"
+                  onSelect={(files) => setCover(files[0] ?? null)}
                 />
 
-                <button
-                  type="button"
-                  onClick={() => coverInputRef.current?.click()}
-                  className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-body-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
-                >
-                  <FileImageIcon size={17} aria-hidden="true" />
-                  {t("adminNews.chooseCover")}
-                </button>
-
                 {cover && (
-                  <p className="mt-xs text-caption font-normal text-neutral-500">
-                    {cover.name}
-                  </p>
+                  <ImageThumbList className="mt-sm">
+                    <ImageThumb file={cover} label={cover.name} onDelete={() => setCover(null)} deleteLabel={t("adminNews.deleteImage")} />
+                  </ImageThumbList>
                 )}
               </div>
 
               <div className="font-body text-body-sm font-semibold text-heading">
                 <span className="block">{t("adminNews.newsgaleryimages")}</span>
 
-                <input
-                  ref={galleryInputRef}
-                  type="file"
-                  multiple
+                <ImagePickerButton
+                  label={t("adminNews.newschooseimages")}
+                  limit={4}
                   accept="image/png,image/jpg,image/jpeg,image/svg+xml"
-                  onChange={(e) =>
-                    setGallery(Array.from(e.target.files ?? []).slice(0, 4))
-                  }
-                  className="hidden"
+                  multiple
+                  onSelect={(files) => setGallery(files.slice(0, 4))}
                 />
 
-                <button
-                  type="button"
-                  onClick={() => galleryInputRef.current?.click()}
-                  className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 px-md py-sm text-body-sm font-semibold text-heading transition-colors hover:bg-neutral-50"
-                >
-                  <FileImageIcon size={17} aria-hidden="true" />
-                  {t("adminNews.newschooseimages")}
-                </button>
-
                 {gallery.length > 0 && (
-                  <p className="mt-xs text-caption font-normal text-neutral-500">
-                    {gallery.length} archivo(s) seleccionado(s)
-                  </p>
+                  <ImageThumbList className="mt-sm">
+                    {gallery.map((file, index) => (
+                      <ImageThumb
+                        key={`${file.name}-${index}`}
+                        file={file}
+                        label={file.name}
+                        onDelete={() => setGallery((current) => current.filter((_, i) => i !== index))}
+                        deleteLabel={t("adminNews.deleteImage")}
+                      />
+                    ))}
+                  </ImageThumbList>
                 )}
               </div>
             </div>
 
             {images.length > 0 && (
-              <div className="mt-lg">
-                <h3 className="font-body text-body-sm font-semibold text-heading">
-                  {t("adminNews.newsactualimage")}
-                </h3>
-
-                <div className="mt-sm flex flex-wrap gap-md">
-                  {images.map((image) => (
-                    <div
-                      key={image.id}
-                      className="flex items-center gap-sm rounded-xl border border-neutral-200 bg-white p-xs"
-                    >
-                      <img
-                        src={image.fileUrl}
-                        alt=""
-                        className="size-16 rounded-lg object-cover"
-                      />
-
-                      <span className="text-caption text-neutral-500">
-                        {image.isCover
-                          ? t("adminNews.newscover")
-                          : t("adminNews.newsgallery")}
-                      </span>
-
-                      <button
-                        type="button"
-                        onClick={() => setImageToDelete(image)}
-                        aria-label={t("adminNews.deleteImage")}
-                        className="rounded-full p-2xs text-danger transition-colors hover:bg-red-50"
-                      >
-                        <Trash2Icon size={16} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <ImageThumbList title={t("adminNews.newsactualimage")}>
+                {images.map((image) => (
+                  <ImageThumb
+                    key={image.id}
+                    src={image.fileUrl}
+                    label={image.isCover ? t("adminNews.newscover") : t("adminNews.newsgallery")}
+                    onDelete={() => setImageToDelete(image)}
+                    deleteLabel={t("adminNews.deleteImage")}
+                  />
+                ))}
+              </ImageThumbList>
             )}
 
             <div className="mt-lg flex flex-wrap justify-end gap-sm">

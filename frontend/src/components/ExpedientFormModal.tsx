@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronDownIcon, ImageIcon, XIcon } from "@animateicons/react/lucide";
+import { ChevronDownIcon } from "@animateicons/react/lucide";
 import Select from "./ui/Select.tsx";
 
 import { expedientService } from "../services/expedient";
 import { notify } from "../utils/notifications.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
-import { validateRequired } from "../utils/validators.ts";
+import DatePickerField from "./ui/DatePickerField.tsx";
+import { validateRequired, validateSafeText } from "../utils/validators.ts";
 
 import type {
   EducationalLevel,
@@ -15,6 +16,10 @@ import type {
 } from "../types/expedient";
 import { childService, type ChildOption } from "../services/child.ts";
 import { educationalLevelKeys } from "../utils/educationalLevels.ts";
+import ImagePickerButton from "./ui/ImagePickerButton.tsx";
+import ImageThumb, { ImageThumbList } from "./ui/ImageThumb.tsx";
+import DeleteConfirmModal from "./ui/DeleteConfirmModal.tsx";
+import ModalCloseButton from "./ui/ModalCloseButton.tsx";
 
 interface ExpedientFormModalProps {
   onClose: () => void;
@@ -69,6 +74,8 @@ function ExpedientFormModal({
 
   // Fotografía seleccionada
   const [file, setFile] = useState<File | undefined>();
+  const [currentPhotoUrl, setCurrentPhotoUrl] = useState(expedient?.photoUrl ?? null);
+  const [confirmPhotoDelete, setConfirmPhotoDelete] = useState(false);
 
   // Estado del formulario
   const [saving, setSaving] = useState(false);
@@ -77,6 +84,7 @@ function ExpedientFormModal({
 
   const [studentError, setStudentError] = useState<string | null>(null);
   const [dateError, setDateError] = useState<string | null>(null);
+  const [observationsError, setObservationsError] = useState<string | null>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -127,10 +135,13 @@ function ExpedientFormModal({
       : t("admin.expedients.selectStudentError");
     const dateErrorMessage = validateRequired(admisionDate, t("admin.expedients.admisiondate"), t);
 
+    const observationsErrorMessage = validateSafeText(generalObservations, t);
+
     setStudentError(studentErrorMessage);
     setDateError(dateErrorMessage);
+    setObservationsError(observationsErrorMessage);
 
-    if (studentErrorMessage || dateErrorMessage) return;
+    if (studentErrorMessage || dateErrorMessage || observationsErrorMessage) return;
 
     setSaving(true);
     setError(null);
@@ -186,7 +197,7 @@ function ExpedientFormModal({
     : t("admin.expedients.save");
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto scrollbar-none bg-black/50 p-[16px] md:p-[30px]">
+    <div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
       <button
         type="button"
         tabIndex={-1}
@@ -197,7 +208,7 @@ function ExpedientFormModal({
 
       <form
         onSubmit={handleSubmit}
-        className={`relative mx-auto w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+        className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
       >
         <div className="flex items-center justify-between gap-md">
           <h2 className="m-0 font-heading text-2xl font-bold text-heading">
@@ -206,14 +217,10 @@ function ExpedientFormModal({
               : t("admin.expedients.addTitle")}
           </h2>
 
-          <button
-            type="button"
+          <ModalCloseButton
             onClick={requestClose}
             aria-label={t("admin.expedients.cancel")}
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-          >
-            <XIcon size={20} />
-          </button>
+          />
         </div>
 
         <div className="mt-lg grid gap-md md:grid-cols-2">
@@ -278,21 +285,20 @@ function ExpedientFormModal({
           </div>
 
           {/* Fecha de admisión */}
-          <label className="font-body text-body-sm font-semibold text-heading">
+          <div className="font-body text-body-sm font-semibold text-heading">
             {t("admin.expedients.admisiondate")}
-            <input
-              type="date"
+            <DatePickerField
               value={admisionDate}
-              onChange={(e) => {
-                setAdmisionDate(e.target.value);
+              onChange={(value) => {
+                setAdmisionDate(value);
                 if (dateError) setDateError(null);
               }}
-              className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+              ariaLabel={t("admin.expedients.admisiondate")}
             />
             {dateError && (
               <span className="mt-xs block font-body text-body-sm font-normal text-danger">{dateError}</span>
             )}
-          </label>
+          </div>
 
           {/* Nivel educativo */}
           <label className="font-body text-body-sm font-semibold text-heading">
@@ -318,7 +324,10 @@ function ExpedientFormModal({
             {t("admin.expedients.notes")}
             <textarea
               value={generalObservations}
-              onChange={(e) => setGeneralObservations(e.target.value)}
+              onChange={(e) => {
+                setGeneralObservations(e.target.value);
+                if (observationsError) setObservationsError(null);
+              }}
               maxLength={600}
               rows={4}
               placeholder={t("admin.expedients.observationsPlaceholder")}
@@ -328,37 +337,38 @@ function ExpedientFormModal({
             <p className="mt-xs text-right font-body text-caption font-normal text-neutral-500">
               {generalObservations.length}/600
             </p>
+            {observationsError && (
+              <span className="block font-body text-body-sm font-normal text-danger">{observationsError}</span>
+            )}
           </label>
 
           {/* Fotografía */}
           <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
-            {t("admin.expedients.photo")}
+            <span className="block">{t("admin.expedients.photo")}</span>
 
-            <div className="mt-xs flex items-center gap-3">
-              <label className="flex h-11 cursor-pointer items-center gap-2 rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-md font-normal text-heading transition-colors hover:border-heading">
-                <ImageIcon size={18} />
-                <span>{t("admin.expedients.photo")}</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setFile(e.target.files?.[0])}
-                  className="hidden"
+            <ImagePickerButton
+              label={t("admin.expedients.choosePhoto")}
+              replacesCurrent={Boolean(currentPhotoUrl)}
+              accept="image/*"
+              onSelect={(files) => setFile(files[0])}
+            />
+
+            {file && (
+              <ImageThumbList className="mt-sm">
+                <ImageThumb file={file} label={file.name} onDelete={() => setFile(undefined)} deleteLabel={t("admin.delete")} />
+              </ImageThumbList>
+            )}
+
+            {!file && currentPhotoUrl && (
+              <ImageThumbList title={t("admin.expedients.currentPhoto")} className="mt-sm">
+                <ImageThumb
+                  src={currentPhotoUrl}
+                  label={t("admin.expedients.photo")}
+                  onDelete={() => setConfirmPhotoDelete(true)}
+                  deleteLabel={t("common.deleteImageTitle")}
                 />
-              </label>
-
-              {/* Muestra el nombre del archivo si ya se seleccionó uno */}
-              {file && (
-                <span className="max-w-[200px] truncate font-body text-body-sm font-normal text-neutral-500">
-                  {file.name}
-                </span>
-              )}
-            </div>
-
-            <p className="mt-xs font-body text-caption font-normal text-neutral-500">
-              {isEditing
-                ? t("admin.expedients.replacePhoto")
-                : t("admin.expedients.optionalPhoto")}
-            </p>
+              </ImageThumbList>
+            )}
           </div>
         </div>
 
@@ -387,6 +397,25 @@ function ExpedientFormModal({
           </button>
         </div>
       </form>
+
+      {confirmPhotoDelete && expedient && (
+        <DeleteConfirmModal
+          title={t("common.deleteImageTitle")}
+          message={t("common.deleteImageMessage")}
+          onConfirm={async () => {
+            try {
+              await expedientService.deletePhoto(expedient.id);
+            } catch (err) {
+              notify.error(t("common.imageDeleteErrorToast"));
+              throw err;
+            }
+            setCurrentPhotoUrl(null);
+            notify.success(t("common.imageDeletedToast"));
+            await onCreated();
+          }}
+          onClose={() => setConfirmPhotoDelete(false)}
+        />
+      )}
     </div>
   );
 }

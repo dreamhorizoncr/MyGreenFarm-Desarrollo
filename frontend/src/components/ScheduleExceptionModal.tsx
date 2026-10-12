@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { XIcon } from '@animateicons/react/lucide'
+import DatePickerField from './ui/DatePickerField.tsx'
 import Select from './ui/Select.tsx'
 import type { ScheduleException } from '../types/availability.ts'
 import { DEFAULT_END_TIME, DEFAULT_START_TIME, toApiTime, timeValue } from '../types/availability.ts'
+import { validateSafeText } from '../utils/validators.ts'
+import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface ScheduleExceptionModalProps {
   exception?: ScheduleException | null
@@ -65,6 +67,11 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
       setFormError(t('admin.availability.modal.errInvalidRange'))
       return
     }
+    const reasonError = validateSafeText(reason, t)
+    if (reasonError) {
+      setFormError(reasonError)
+      return
+    }
 
     setSaving(true)
     setFormError(null)
@@ -96,7 +103,7 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
         if (event.key === 'Escape') onClose()
       }}
       aria-labelledby="exception-modal-title"
-      className="m-0 mt-auto max-h-[92vh] w-full max-w-none scrollbar-none overflow-y-auto rounded-t-3xl bg-bg-card p-xl backdrop:bg-scrim md:m-auto md:w-[min(560px,92vw)] md:rounded-2xl"
+      className="text-left m-0 mt-auto max-h-[92vh] w-full max-w-none modal-scroll rounded-t-[20px] bg-bg-card p-xl backdrop:bg-scrim md:m-auto md:w-[min(560px,92vw)] md:rounded-[20px]"
     >
       <div className="relative p-xl">
         <div className="flex items-center justify-between gap-md">
@@ -104,16 +111,14 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
             {exception ? t('admin.availability.modal.editTitle') : t('admin.availability.modal.addTitle')}
           </h2>
 
-          <button type="button" onClick={onClose} aria-label={t('admin.availability.modal.close')} className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100">
-            <XIcon size={20} />
-          </button>
+          <ModalCloseButton onClick={onClose} aria-label={t('admin.availability.modal.close')} />
         </div>
         <p className="mt-xs font-body text-body-sm text-neutral-500">{t('admin.availability.modal.hint')}</p>
 
         <div className="mt-lg flex flex-col gap-md">
           <div>
             <label htmlFor="exception-date" className="mb-xs block font-body text-body-sm font-semibold text-body-text">{t('admin.availability.modal.dateLabel')}</label>
-            <input id="exception-date" type="date" min={todayIso()} value={date} onChange={(event) => { handleDateChange(event.target.value); setFormError(null) }} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body text-body-text focus:border-green-500 focus:outline-none" />
+            <DatePickerField id="exception-date" min={todayIso()} value={date} onChange={(value) => { handleDateChange(value); setFormError(null) }} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body text-body-text focus:border-green-500 focus:outline-none" />
             {date && new Date(`${date}T00:00:00`).getDay() % 6 === 0 && <p className="mt-xs text-body-sm text-danger">{t('admin.availability.modal.weekendNotAvailable')}</p>}
             {existing && <p className="mt-xs text-body-sm text-link">{t('admin.availability.modal.alreadyExists')}</p>}
           </div>

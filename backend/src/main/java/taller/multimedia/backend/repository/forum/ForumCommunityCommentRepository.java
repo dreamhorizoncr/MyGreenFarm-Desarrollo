@@ -6,4 +6,5 @@ import taller.multimedia.backend.model.forum.ForumCommunityComment;
 public interface ForumCommunityCommentRepository extends JpaRepository<ForumCommunityComment, UUID> {
     Page<ForumCommunityComment> findByCommunityPost_IdOrderByCreatedAtAsc(UUID postId, Pageable pageable);
     long countByCommunityPost_Id(UUID postId);
+    void deleteByCommunityPost_Id(UUID postId);
 }

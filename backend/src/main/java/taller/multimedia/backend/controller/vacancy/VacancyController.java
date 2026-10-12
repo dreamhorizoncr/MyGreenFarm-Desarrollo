@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.vacancy.VacancyRequest;
 import taller.multimedia.backend.dto.vacancy.VacancyResponse;
 import taller.multimedia.backend.service.vacancy.VacancyService;
+import taller.multimedia.backend.service.spelling.SpellingCorrectionAsyncService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class VacancyController {
 
     private final VacancyService vacancyService;
+    private final SpellingCorrectionAsyncService spellingCorrectionAsyncService;
 
     @GetMapping
     public ResponseEntity<List<VacancyResponse>> getAllVacancies() {
@@ -30,6 +32,7 @@ public class VacancyController {
     @PreAuthorize("hasAnyRole('ADMIN', 'OWNER')")
     public ResponseEntity<VacancyResponse> createVacancy(@Valid @RequestBody VacancyRequest request) {
         VacancyResponse created = vacancyService.createVacancy(request);
+        spellingCorrectionAsyncService.correctVacancy(created.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 

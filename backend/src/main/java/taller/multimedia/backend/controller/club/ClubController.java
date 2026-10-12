@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.club.ClubRequest;
 import taller.multimedia.backend.dto.club.ClubResponse;
 import taller.multimedia.backend.service.club.ClubService;
+import taller.multimedia.backend.service.spelling.SpellingCorrectionAsyncService;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,11 +25,13 @@ import java.util.List;
 public class ClubController {
 
     private final ClubService clubService;
+    private final SpellingCorrectionAsyncService spellingCorrectionAsyncService;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<ClubResponse> create(@Valid @RequestBody ClubRequest request) {
         ClubResponse createdClub = clubService.create(request);
+        spellingCorrectionAsyncService.correctClub(createdClub.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdClub);
     }
 
@@ -39,6 +42,7 @@ public class ClubController {
             @RequestParam(name = "coverImage", required = false) MultipartFile coverImage,
             @RequestParam(name = "contentImages", required = false) List<MultipartFile> contentImages) {
         ClubResponse createdClub = clubService.createWithImages(request, coverImage, contentImages);
+        spellingCorrectionAsyncService.correctClub(createdClub.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdClub);
     }
 
@@ -62,7 +66,9 @@ public class ClubController {
     public ResponseEntity<ClubResponse> update(
             @PathVariable Long id,
             @Valid @RequestBody ClubRequest request) {
-        return ResponseEntity.ok(clubService.update(id, request));
+        ClubResponse updatedClub = clubService.update(id, request);
+        spellingCorrectionAsyncService.correctClub(updatedClub.getId());
+        return ResponseEntity.ok(updatedClub);
     }
 
     @DeleteMapping("/{id}")

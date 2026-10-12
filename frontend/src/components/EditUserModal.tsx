@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import { getErrorMessage } from '../utils/error.ts'
-import { validateEmail, validateRequired } from '../utils/validators.ts'
+import { validateEmail, validateRequired, validateSafeText } from '../utils/validators.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import DatePickerField from './ui/DatePickerField.tsx'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
+import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface EditUserModalProps {
   userToEdit: UserInfo
@@ -37,8 +38,8 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
   }, [])
 
   const handleSave = async () => {
-    const firstNameErrorMessage = validateRequired(firstName, t('admin.firstName'), t)
-    const lastNameErrorMessage = validateRequired(lastName, t('admin.lastName'), t)
+    const firstNameErrorMessage = validateRequired(firstName, t('admin.firstName'), t) ?? validateSafeText(firstName, t)
+    const lastNameErrorMessage = validateRequired(lastName, t('admin.lastName'), t) ?? validateSafeText(lastName, t)
     const emailErrorMessage = isEditingSelf ? validateEmail(email, t) : null
 
     setFirstNameValidationError(firstNameErrorMessage)
@@ -75,21 +76,17 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
         if (event.key === 'Escape') requestClose()
       }}
       aria-label={t('admin.edit')}
-      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+      className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="flex items-center justify-between gap-md">
         <h2 className="m-0 font-heading text-2xl font-bold text-heading">
           {t('admin.edit')}
         </h2>
 
-        <button
-          type="button"
+        <ModalCloseButton
           onClick={requestClose}
           aria-label={t('admin.cancel')}
-          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100"
-        >
-          <XIcon size={20} />
-        </button>
+        />
       </div>
 
       <div className="mt-lg grid gap-md md:grid-cols-2">
@@ -145,15 +142,10 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
           )}
         </label>
 
-        <label className="font-body text-body-sm font-semibold text-heading">
+        <div className="font-body text-body-sm font-semibold text-heading">
           {t('admin.birthday')}
-          <input
-            type="date"
-            value={birthday}
-            onChange={(e) => setBirthday(e.target.value)}
-            className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
-          />
-        </label>
+          <DatePickerField value={birthday} onChange={setBirthday} ariaLabel={t('admin.birthday')} />
+        </div>
       </div>
 
       {saveError && (
