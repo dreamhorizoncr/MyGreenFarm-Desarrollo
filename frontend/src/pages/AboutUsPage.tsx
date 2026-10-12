@@ -5,8 +5,7 @@ import {
     UserRound,
     Flower2,
     Leaf,
-    Sparkles,
-    Sprout,
+    Sparkles
     } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
