@@ -10,6 +10,7 @@ import {
   validateEmail,
   validatePassword,
   validateRequired,
+  validateSafeText,
 } from "../utils/validators.ts";
 import { notify } from "../utils/notifications.ts";
 import { userStorage } from "../utils/userStorage.ts";
@@ -63,16 +64,10 @@ function SignUpPage() {
   const handleSignUp = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const firstNameErrorMessage = validateRequired(
-      firstName,
-      t("signup.firstName"),
-      t,
-    );
-    const lastNameErrorMessage = validateRequired(
-      lastName,
-      t("signup.lastName"),
-      t,
-    );
+    const firstNameErrorMessage =
+      validateRequired(firstName, t("signup.firstName"), t) ?? validateSafeText(firstName, t);
+    const lastNameErrorMessage =
+      validateRequired(lastName, t("signup.lastName"), t) ?? validateSafeText(lastName, t);
     const emailErrorMessage = validateEmail(email, t);
     const passwordErrorMessage = validatePassword(password, t);
     const roleErrorMessage = validateRequired(role, t("signup.role"), t);

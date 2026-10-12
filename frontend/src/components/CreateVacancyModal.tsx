@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
-import { validateRequired } from '../utils/validators.ts'
+import { validateRequired, validateSafeText } from '../utils/validators.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import type { OptionalApplicationField, VacancyInput } from '../types/vacancy.ts'
@@ -38,8 +38,8 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
   }, [])
 
   const handleSubmit = async () => {
-    const titleErrorMessage = validateRequired(title, t('vacancies.formTitle'), t)
-    const descriptionErrorMessage = validateRequired(description, t('vacancies.formDescription'), t)
+    const titleErrorMessage = validateRequired(title, t('vacancies.formTitle'), t) ?? validateSafeText(title, t)
+    const descriptionErrorMessage = validateRequired(description, t('vacancies.formDescription'), t) ?? validateSafeText(description, t)
 
     setTitleError(titleErrorMessage)
     setDescriptionError(descriptionErrorMessage)

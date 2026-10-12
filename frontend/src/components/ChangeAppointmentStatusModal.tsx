@@ -4,7 +4,7 @@ import { XIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import WizardSteps from './ui/WizardSteps.tsx'
 import { getErrorMessage } from '../utils/error.ts'
-import { validateRequired } from '../utils/validators.ts'
+import { validateRequired, validateSafeText } from '../utils/validators.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import type { Appointment, AppointmentStatus } from '../types/appointment.ts'
 
@@ -44,7 +44,7 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
 
   const advanceToConfirm = () => {
     if (requiresConclusion) {
-      const message = validateRequired(conclusion, t('teacherAppointments.rejectNoteLabel'), t)
+      const message = validateRequired(conclusion, t('teacherAppointments.rejectNoteLabel'), t) ?? validateSafeText(conclusion, t)
       setConclusionError(message)
       if (message) return
     }

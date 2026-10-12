@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { validateEmail, validatePhoneNumber, validateRequired } from '../utils/validators.ts'
+import { validateEmail, validatePhoneNumber, validateRequired, validateSafeText } from '../utils/validators.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
@@ -116,7 +116,7 @@ export function useVacancyApplicationForm(target: ApplicationFormTarget, onSubmi
   }
 
   const handleSubmit = async (): Promise<boolean> => {
-    const nameErrorMessage = validateRequired(name, t('vacancies.applicantName'), t)
+    const nameErrorMessage = validateRequired(name, t('vacancies.applicantName'), t) ?? validateSafeText(name, t)
     const emailErrorMessage = validateRequired(email, t('vacancies.applicantEmail'), t) ?? validateEmail(email, t)
     let phoneErrorMessage: string | null = null
     if (showPhone) {

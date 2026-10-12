@@ -5,6 +5,7 @@ import DatePickerField from './ui/DatePickerField.tsx'
 import Select from './ui/Select.tsx'
 import type { ScheduleException } from '../types/availability.ts'
 import { DEFAULT_END_TIME, DEFAULT_START_TIME, toApiTime, timeValue } from '../types/availability.ts'
+import { validateSafeText } from '../utils/validators.ts'
 
 interface ScheduleExceptionModalProps {
   exception?: ScheduleException | null
@@ -64,6 +65,11 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
     }
     if (!closed && endTime <= startTime) {
       setFormError(t('admin.availability.modal.errInvalidRange'))
+      return
+    }
+    const reasonError = validateSafeText(reason, t)
+    if (reasonError) {
+      setFormError(reasonError)
       return
     }
 

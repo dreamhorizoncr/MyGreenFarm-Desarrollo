@@ -603,6 +603,7 @@ export default {
       "La identificación extranjera debe tener entre 6 y 20 caracteres (letras, números o guiones)",
     countryRequired: "Selecciona el país (bandera) del número telefónico",
     phoneInvalid: "Ingresa un número telefónico válido",
+    unsafeText: "No se permiten etiquetas HTML ni caracteres como «<» seguidos de letras.",
   },
   profile: {
     title: "Mi perfil",

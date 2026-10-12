@@ -594,6 +594,7 @@ export default {
       "Foreign ID must be 6 to 20 characters (letters, numbers or dashes)",
     countryRequired: "Select the country (flag) of the phone number",
     phoneInvalid: "Enter a valid phone number",
+    unsafeText: "HTML tags and characters like “<” followed by letters are not allowed.",
   },
   profile: {
     title: "My profile",

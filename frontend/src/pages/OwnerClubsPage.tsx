@@ -22,6 +22,7 @@ import type {
 import CardActionButton from "../components/ui/CardActionButton.tsx";
 import ImagePickerButton from "../components/ui/ImagePickerButton.tsx";
 import ImageThumb, { ImageThumbList } from "../components/ui/ImageThumb.tsx";
+import { validateSafeText } from "../utils/validators.ts";
 
 const emptyForm: ClubRequest = {
   name: "",
@@ -170,6 +171,7 @@ function OwnerClubsPage() {
   const [clubs, setClubs] = useState<ClubResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [clubFieldErrors, setClubFieldErrors] = useState<Record<string, string | null>>({});
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<ClubResponse | null>(null);
@@ -308,6 +310,14 @@ function OwnerClubsPage() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const fieldErrors = {
+      name: validateSafeText(form.name, translate),
+      description: validateSafeText(form.description, translate),
+      schedule: validateSafeText(form.schedule, translate),
+    };
+    setClubFieldErrors(fieldErrors);
+    if (Object.values(fieldErrors).some(Boolean)) return;
 
     const publishedBool = Boolean(form.isPublished);
 
@@ -497,6 +507,9 @@ function OwnerClubsPage() {
                   placeholder={t("ownerClubs.clubNamePlaceholder")}
                   className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                 />
+                {clubFieldErrors.name && (
+                  <span className="mt-xs block font-body text-body-sm font-normal text-danger">{clubFieldErrors.name}</span>
+                )}
               </label>
 
               <label className="font-body text-body-sm font-semibold text-heading">
@@ -529,6 +542,9 @@ function OwnerClubsPage() {
                   placeholder={t("ownerClubs.descriptionPlaceholder")}
                   className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                 />
+                {clubFieldErrors.description && (
+                  <span className="mt-xs block font-body text-body-sm font-normal text-danger">{clubFieldErrors.description}</span>
+                )}
               </label>
 
               <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
@@ -539,6 +555,9 @@ function OwnerClubsPage() {
                   placeholder={t("ownerClubs.schedulePlaceholder")}
                   className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                 />
+                {clubFieldErrors.schedule && (
+                  <span className="mt-xs block font-body text-body-sm font-normal text-danger">{clubFieldErrors.schedule}</span>
+                )}
               </label>
 
               {/* Opción de Publicar / Visibilidad */}
