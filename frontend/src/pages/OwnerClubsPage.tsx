@@ -69,7 +69,7 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
   const isPublishedValue = club?.isPublished ?? (club as unknown as { published?: boolean })?.published ?? false;
 
   return (
-    <article className="relative flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm transition hover:shadow-lg">
+    <article className="relative flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm card-hover">
       <div className="absolute top-3 left-3 z-10">
         <span
           className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-body text-caption font-semibold text-white backdrop-blur-md shadow-sm ${isPublishedValue ? "bg-green-600/90" : "bg-neutral-600/90"

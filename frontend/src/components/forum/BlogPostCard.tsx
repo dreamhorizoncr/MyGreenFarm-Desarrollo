@@ -148,7 +148,7 @@ function BlogPostCard({
 
   return (
     <article
-      className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white text-left transition hover:shadow-lg ${
+      className={`relative flex h-full flex-col rounded-2xl border border-neutral-200 bg-white text-left card-hover ${
         isInteractive ? 'cursor-pointer' : ''
       }`}
     >
@@ -161,7 +161,8 @@ function BlogPostCard({
         />
       )}
 
-      <div className="h-[160px] shrink-0 bg-neutral-100 xs:h-[220px]">
+      {/* La imagen se redondea sola (sin overflow-hidden en la card) para que card-hover no tiemble. */}
+      <div className="h-[160px] shrink-0 overflow-hidden rounded-t-[15px] bg-neutral-100 xs:h-[220px]">
         {post!.imageUrl && (
           <img
             src={post!.imageUrl}

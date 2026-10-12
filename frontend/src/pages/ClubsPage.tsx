@@ -24,7 +24,7 @@ function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
     const isFull = available <= 0
 
     return (
-        <article className="relative flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+        <article className="relative flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm card-hover">
             {/* Imagen de portada */}
             <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
                 {club.coverImageUrl ? (
