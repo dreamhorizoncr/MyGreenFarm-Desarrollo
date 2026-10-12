@@ -469,6 +469,7 @@ export default {
       next: "Suivant",
       confirmButton: "Confirmer le rendez-vous",
     },
+    specialSchedule: "Horaire spécial",
   },
   login: {
     overtitle: "Bienvenue",
