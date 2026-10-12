@@ -22,7 +22,8 @@ export interface UserInfo {
   firstName: string
   lastName: string
   role: string
-  birthday?: string
+  birthday?: string | null
+  photoUrl?: string | null
 }
 
 export interface LoginResponse {

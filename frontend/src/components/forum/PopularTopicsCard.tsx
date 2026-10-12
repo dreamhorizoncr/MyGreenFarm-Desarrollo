@@ -15,7 +15,7 @@ function PopularTopicsCard({ blogPosts }: Readonly<PopularTopicsCardProps>) {
     .filter((topic, index, topics) => topics.indexOf(topic) === index)
 
   return (
-    <section className="rounded-2xl border border-neutral-200 bg-white p-lg text-left">
+    <section id="forum-popular" className="rounded-2xl border border-neutral-200 bg-white p-lg text-left">
       <h2 className="m-0 font-heading text-h6 font-bold text-heading">
         {t('forum.popular.title')}
       </h2>
@@ -25,7 +25,7 @@ function PopularTopicsCard({ blogPosts }: Readonly<PopularTopicsCardProps>) {
           <li key={topic}>
             <button
               type="button"
-              className="rounded-full bg-[var(--bg-200)] px-md py-2xs font-body text-body-sm font-semibold text-body-text transition-colors hover:bg-green-500 hover:text-white"
+              className="rounded-full px-0 py-2xs font-body text-body-sm font-semibold text-body-text"
             >
               #{topic}
             </button>

@@ -21,6 +21,7 @@ export default {
   },
   navbar: {
     home: "Inicio",
+    aboutUs: "Nosotros",
     news: "Noticias",
     multimedia: "Galería",
     forum: "Foro",
@@ -197,6 +198,51 @@ export default {
     privacy4Body:
       "Podés solicitar en cualquier momento acceder, corregir o eliminar la información que tenemos sobre tu familia, escribiéndonos a mygreenfarmcr@gmail.com.",
   },
+  aboutUsPage: {
+    hero: {
+      title: '¿Quiénes somos?',
+      description:
+        'En My Green Farm creemos en crear experiencias de aprendizaje significativas a través de la exploración, la creatividad y la conexión con la naturaleza.',
+    },
+    benefits: {
+      title: '¿Por qué elegirnos?',
+      description:
+        'En My Green Farm ofrecemos un ambiente acogedor donde los niños pueden aprender, descubrir y crecer mediante experiencias inspiradas en la naturaleza.',
+      nature: {
+        title: 'Aprendizaje en la naturaleza',
+        description:
+          'Los niños descubren y exploran el mundo mediante experiencias significativas conectadas con la naturaleza.',
+      },
+      creativity: {
+        title: 'Aprendizaje creativo',
+        description:
+          'Fomentamos la curiosidad, la imaginación y la creatividad mediante actividades educativas estimulantes.',
+      },
+      educators: {
+        title: 'Docentes comprometidos',
+        description:
+          'Nuestros docentes guían y acompañan a cada niño en un ambiente acogedor y lleno de cariño.',
+      },
+      growth: {
+        title: 'Creciendo juntos',
+        description:
+          'Cada niño tiene la oportunidad de desarrollar confianza, amistades y nuevas habilidades.',
+      },
+    },
+    team: {
+      title: 'Conoce a nuestro equipo',
+      description:
+        'Conoce a los docentes que hacen de My Green Farm un lugar especial para aprender, explorar y crecer.',
+      placeholderTitle: 'Nuestro equipo',
+      placeholderDescription:
+        'Nuestros docentes aparecerán aquí cuando conectemos esta sección con el sistema de gestión de docentes.',
+    },
+    roles: {
+      TEACHER: 'Docente',
+      ADMIN: 'Administrador',
+      OWNER: 'Propietario',
+    },
+  },
   newspage: {
     title: "Noticias",
     description:
@@ -281,6 +327,11 @@ export default {
     },
     popular: {
       title: "Temas populares",
+    },
+    latest: {
+      title: "Últimas publicaciones",
+      blog: "Blog",
+      community: "Comunidad",
     },
   },
   adminNews: {
@@ -696,6 +747,7 @@ export default {
     sidebar: {
       dashboard: "Dashboard",
       docentes: "Usuarios",
+      profesores: "Gestión de Docentes",
       noticias: "Noticias",
       galeria: "Galería",
       citas: "Citas",
