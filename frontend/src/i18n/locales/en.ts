@@ -473,6 +473,7 @@ export default {
       next: "Next",
       confirmButton: "Confirm appointment",
     },
+    specialSchedule: "Special schedule",
   },
   login: {
     overtitle: "Welcome",

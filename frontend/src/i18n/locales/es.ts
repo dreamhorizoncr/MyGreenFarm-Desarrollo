@@ -477,6 +477,7 @@ export default {
       next: "Siguiente",
       confirmButton: "Confirmar cita",
     },
+    specialSchedule: "Horario especial",
   },
   login: {
     overtitle: "Bienvenido",

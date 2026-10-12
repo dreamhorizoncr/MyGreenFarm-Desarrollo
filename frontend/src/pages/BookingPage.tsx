@@ -11,6 +11,7 @@ import Select from '../components/ui/Select.tsx'
 import CountrySelect from '../components/ui/CountrySelect.tsx'
 import { phoneLabels } from '../utils/phoneLabels.ts'
 import { useBooking } from '../hooks/useBooking.ts'
+import { appointmentService } from '../services/appointment.ts'
 import { notify } from '../utils/notifications.ts'
 import {
   validateEmail,
@@ -165,6 +166,31 @@ function BookingPage() {
     time ??
     (effectiveDay ? availability[effectiveDay]?.slots[0]?.slice(0, 5) ?? null : null)
   const selectedDay = effectiveDay ? availability[effectiveDay] : null
+
+  // Nombre de los días especiales traducido al idioma activo. La disponibilidad no trae el id de la
+  // excepción, así que se usa la fecha (solo dígitos) como identificador de la traducción.
+  const [eventNames, setEventNames] = useState<Record<string, string>>({})
+  useEffect(() => {
+    const items = Object.entries(availability).flatMap(([date, day]) =>
+      day.eventName ? [{ entityId: date.replaceAll('-', ''), fieldName: 'eventName', originalText: day.eventName }] : [],
+    )
+    if (items.length === 0) return
+    let cancelled = false
+    appointmentService.translateBatch('AVAILABILITY_EVENT', i18n.language.split('-')[0], items)
+      .then((result) => {
+        if (cancelled) return
+        setEventNames(Object.fromEntries(Object.keys(availability).flatMap((date) => {
+          const value = result[`${date.replaceAll('-', '')}:eventName`]
+          return value ? [[date, value]] : []
+        })))
+      })
+      .catch(() => {
+        // Si falla la traducción se muestra el nombre original.
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [availability, i18n.language])
   const selectedDaySlots = selectedDay?.slots ?? []
   const morningSlots = parseSlots(selectedDaySlots.filter((slot) => Number(slot.slice(0, 2)) < 12))
   const afternoonSlots = parseSlots(selectedDaySlots.filter((slot) => Number(slot.slice(0, 2)) >= 12))
@@ -402,7 +428,7 @@ function BookingPage() {
 
       {selectedDay?.specialDay && (
         <p className="m-0 text-left font-body text-body-sm font-semibold text-link">
-          Horario especial{selectedDay.eventName ? `: ${selectedDay.eventName}` : ''}
+          {t('booking.specialSchedule')}{selectedDay.eventName ? `: ${eventNames[effectiveDay ?? ''] ?? selectedDay.eventName}` : ''}
         </p>
       )}
 

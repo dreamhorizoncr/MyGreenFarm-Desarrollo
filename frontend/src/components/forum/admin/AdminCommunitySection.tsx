@@ -8,6 +8,9 @@ import { forumService } from '../../../services/forum.ts'
 import { notify } from '../../../utils/notifications.ts'
 import type { CommunityComment, CommunityPost } from '../../../types/forum.ts'
 
+const COMMUNITY_POST_TRANSLATION_TYPE = 'FORUM_COMMUNITY_POST'
+const COMMUNITY_COMMENT_TRANSLATION_TYPE = 'FORUM_COMMUNITY_COMMENT'
+
 interface AdminCommunitySectionProps {
   // Solo el OWNER puede borrar publicaciones y comentarios (el backend también lo valida).
   canDelete: boolean
@@ -15,7 +18,8 @@ interface AdminCommunitySectionProps {
 
 // Pestaña "Comunidad" del foro en el admin: moderación de las publicaciones del muro y sus comentarios.
 function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProps>) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const language = i18n.language.split('-')[0]
   const [posts, setPosts] = useState<CommunityPost[]>([])
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
@@ -34,9 +38,14 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
   useEffect(() => {
     let cancelled = false
     forumService.getCommunityPosts(page - 1, 10)
-      .then((result) => {
+      .then(async (result) => {
+        // Mismo tipo de traducción que el muro público, para reutilizar lo ya traducido.
+        const items = result.content.map((post) => ({ entityId: post.id, fieldName: 'content', originalText: post.content }))
+        const translated = items.length
+          ? await forumService.translateBatch(COMMUNITY_POST_TRANSLATION_TYPE, language, items).catch(() => ({} as Record<string, string>))
+          : {}
         if (cancelled) return
-        setPosts(result.content)
+        setPosts(result.content.map((post) => ({ ...post, content: translated[`${post.id}:content`] ?? post.content })))
         setTotalPages(result.totalPages)
         setError('')
       })
@@ -49,7 +58,7 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
     return () => {
       cancelled = true
     }
-  }, [page, reloadKey, t])
+  }, [page, reloadKey, t, language])
 
   function changePage(nextPage: number) {
     setLoading(true)
@@ -81,7 +90,12 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
     setCommentsLoading(true)
     setCommentsError('')
     try {
-      setComments(await forumService.getCommunityComments(postId))
+      const loaded = await forumService.getCommunityComments(postId)
+      const items = loaded.map((comment) => ({ entityId: comment.id, fieldName: 'content', originalText: comment.content }))
+      const translated = items.length
+        ? await forumService.translateBatch(COMMUNITY_COMMENT_TRANSLATION_TYPE, language, items).catch(() => ({} as Record<string, string>))
+        : {}
+      setComments(loaded.map((comment) => ({ ...comment, content: translated[`${comment.id}:content`] ?? comment.content })))
     } catch {
       setCommentsError(t('adminForum.loadCommentsError'))
     } finally {
