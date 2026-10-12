@@ -575,6 +575,10 @@ export default {
     deleteImageMessage: "Voulez-vous vraiment supprimer cette image ? Cette action est irréversible.",
     imageDeletedToast: "Image supprimée",
     imageDeleteErrorToast: "L'image n'a pas pu être supprimée",
+    countrySearch: {
+      placeholder: "Rechercher un pays ou un indicatif",
+      empty: "Aucun pays trouvé.",
+    },
   },
   validation: {
     emailRequired: "L'e-mail est obligatoire",

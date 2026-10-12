@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CheckIcon, ChevronDownIcon } from '@animateicons/react/lucide'
+import { useMenuPosition } from '../../hooks/useMenuPosition.ts'
 
 export interface SelectOption {
   value: string
@@ -19,17 +20,6 @@ interface SelectProps {
   'aria-labelledby'?: string
 }
 
-interface MenuPosition {
-  // Se usa top al abrir hacia abajo y bottom al abrir hacia arriba.
-  top?: number
-  bottom?: number
-  left: number
-  width: number
-  maxHeight: number
-}
-
-const MENU_GAP = 4
-const VIEWPORT_MARGIN = 8
 const MENU_MAX_HEIGHT = 240
 // Alto aproximado de cada opción (py-sm + texto) más el padding de la lista.
 const OPTION_HEIGHT = 40
@@ -47,7 +37,6 @@ function Select({
   ...aria
 }: Readonly<SelectProps>) {
   const [open, setOpen] = useState(false)
-  const [position, setPosition] = useState<MenuPosition | null>(null)
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLUListElement>(null)
@@ -72,48 +61,12 @@ function Select({
     }
   }, [open])
 
-  useLayoutEffect(() => {
-    if (!open) return
-
-    // El menú es fixed (para no quedar recortado por el modal), así que no agranda el área de scroll.
-    // Por eso se abre hacia donde quepa: primero dentro del panel del modal (form/dialog) y si no, dentro
-    // de la pantalla; y su alto se limita al espacio visible para que nunca quede cortado.
-    const updatePosition = () => {
-      const trigger = triggerRef.current
-      const rect = trigger?.getBoundingClientRect()
-      if (!trigger || !rect) return
-      const desiredHeight = Math.min(MENU_MAX_HEIGHT, options.length * OPTION_HEIGHT + MENU_PADDING)
-      const spaceBelow = window.innerHeight - rect.bottom - MENU_GAP - VIEWPORT_MARGIN
-      const spaceAbove = rect.top - MENU_GAP - VIEWPORT_MARGIN
-
-      const panel = trigger.closest('form, dialog')?.getBoundingClientRect()
-      const panelBottom = panel ? Math.min(panel.bottom, window.innerHeight - VIEWPORT_MARGIN) : null
-      const panelTop = panel ? Math.max(panel.top, VIEWPORT_MARGIN) : null
-      const fitsBelowInPanel = panelBottom !== null && panelBottom - rect.bottom - MENU_GAP >= desiredHeight
-      const fitsAboveInPanel = panelTop !== null && rect.top - MENU_GAP - panelTop >= desiredHeight
-
-      let openUp: boolean
-      if (fitsBelowInPanel) openUp = false
-      else if (fitsAboveInPanel) openUp = true
-      else openUp = spaceBelow < desiredHeight && spaceAbove > spaceBelow
-      const maxHeight = Math.min(MENU_MAX_HEIGHT, Math.max(openUp ? spaceAbove : spaceBelow, OPTION_HEIGHT))
-      setPosition(openUp
-        ? { bottom: window.innerHeight - rect.top + MENU_GAP, left: rect.left, width: rect.width, maxHeight }
-        : { top: rect.bottom + MENU_GAP, left: rect.left, width: rect.width, maxHeight })
-    }
-
-    updatePosition()
-    window.addEventListener('scroll', updatePosition, true)
-    window.addEventListener('resize', updatePosition)
-    return () => {
-      window.removeEventListener('scroll', updatePosition, true)
-      window.removeEventListener('resize', updatePosition)
-    }
-  }, [open, options.length])
-
-  useEffect(() => {
-    if (!open) setPosition(null)
-  }, [open])
+  const position = useMenuPosition({
+    triggerRef,
+    open,
+    desiredHeight: Math.min(MENU_MAX_HEIGHT, options.length * OPTION_HEIGHT + MENU_PADDING),
+    maxHeight: MENU_MAX_HEIGHT,
+  })
 
   const selected = options.find((option) => option.value === value)
 

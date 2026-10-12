@@ -7,6 +7,9 @@ import 'react-phone-number-input/style.css'
 import BookingSuccessModal from '../components/BookingSuccessModal.tsx'
 import Navbar from '../components/Navbar.tsx'
 import TextField from '../components/ui/TextField.tsx'
+import Select from '../components/ui/Select.tsx'
+import CountrySelect from '../components/ui/CountrySelect.tsx'
+import { phoneLabels } from '../utils/phoneLabels.ts'
 import { useBooking } from '../hooks/useBooking.ts'
 import { notify } from '../utils/notifications.ts'
 import {
@@ -503,11 +506,11 @@ function BookingPage() {
         <label htmlFor="booking-referral-source" className="sr-only">
           {t('booking.referral.title')}
         </label>
-        <select
+        <Select
           id="booking-referral-source"
           value={referralSource}
-          onChange={(event) => {
-            const source = event.target.value as ReferralSource | ''
+          onChange={(value) => {
+            const source = value as ReferralSource | ''
             setReferralSource(source)
             setReferralSourceError(false)
             if (source !== 'OTHER') {
@@ -515,14 +518,10 @@ function BookingPage() {
               setReferralOtherDetailError(false)
             }
           }}
-          aria-invalid={referralSourceError}
-          className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
-        >
-          <option value="">{t('booking.referral.placeholder')}</option>
-          {REFERRAL_SOURCES.map((source) => (
-            <option key={source} value={source}>{t(`booking.referral.options.${source}`)}</option>
-          ))}
-        </select>
+          placeholder={t('booking.referral.placeholder')}
+          options={REFERRAL_SOURCES.map((source) => ({ value: source, label: t(`booking.referral.options.${source}`) }))}
+          className={`w-full rounded-xl border bg-white px-md ${referralSourceError ? 'border-danger' : 'border-neutral-200'}`}
+        />
         {referralSourceError && <p className="m-0 text-left font-body text-body-sm text-danger" role="alert">{t('booking.referral.required')}</p>}
       </div>
       {referralSource === 'OTHER' && (
@@ -623,6 +622,8 @@ function BookingPage() {
           onCountryChange={handleCountryChange}
           onBlur={handlePhoneBlur}
           inputComponent={BookingPhoneInput}
+          countrySelectComponent={CountrySelect}
+          labels={phoneLabels(i18n.language)}
         />
       </TextField>
       <TextField

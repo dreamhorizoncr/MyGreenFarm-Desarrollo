@@ -582,6 +582,10 @@ export default {
     deleteImageMessage: "¿Seguro que deseas eliminar esta imagen? Esta acción no se puede deshacer.",
     imageDeletedToast: "Imagen eliminada",
     imageDeleteErrorToast: "No se pudo eliminar la imagen",
+    countrySearch: {
+      placeholder: "Buscar país o código",
+      empty: "No se encontraron países.",
+    },
   },
   validation: {
     emailRequired: "El correo electrónico es obligatorio",
