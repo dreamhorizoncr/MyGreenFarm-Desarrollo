@@ -15,6 +15,7 @@ import type { ExchangeRate, Currency } from '../types/exchangeRate.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 import { convertCurrency, formatCurrency, currencySymbol } from '../utils/currency.ts'
 import { CircleCheckIcon, ClockIcon } from '@animateicons/react/lucide'
+import CurrencyToggle from '../components/currency/CurrencyToggle.tsx'
 
 function PlanCard({
   plan,
@@ -113,21 +114,7 @@ function PlanCard({
         <div className="my-1 border-t border-neutral-100" />
 
         <div className="flex flex-col items-start gap-2xs">
-          <div className="flex w-full flex-wrap justify-end gap-1" aria-label={t('moneda.convertTo')}>
-            {(['USD', 'CRC', 'EUR'] as Currency[]).map(option => (
-              <button
-                key={option}
-                type="button"
-                onClick={() => setCurrency(option)}
-                aria-pressed={currency === option}
-                disabled={!exchangeRate && option !== 'USD'}
-                className={`rounded-full border px-sm py-2xs font-body text-caption transition disabled:cursor-not-allowed disabled:opacity-40 ${currency === option ? 'border-green-500 bg-green-500 text-white' : 'border-neutral-200 text-neutral-600 hover:border-green-500'
-                  }`}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
+          <CurrencyToggle value={currency} onChange={setCurrency} hasExchangeRate={Boolean(exchangeRate)} />
           <span className="text-left font-heading text-h2 font-bold text-green-500">
             <AnimatedNumber
               value={price}
