@@ -1,9 +1,11 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { XIcon, UserRoundIcon } from '@animateicons/react/lucide'
+import { UserRoundIcon } from '@animateicons/react/lucide'
 
 import Button from './ui/Button.tsx'
+import DatePickerField from './ui/DatePickerField.tsx'
+import ModalCloseButton from './ui/ModalCloseButton.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import { validateEmail, validateRequired } from '../utils/validators.ts'
@@ -153,8 +155,8 @@ import type { CreateTeacherData } from '../services/admin.ts'
         onKeyDown={(event) => {
             if (event.key === 'Escape' && !saving) requestClose()
         }}
-        aria-label={isEditing ? 'Editar profesor' : 'Registrar profesor'}
-        className={`fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none scrollbar-none overflow-y-auto rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${
+        aria-label={isEditing ? 'Editar docente' : 'Registrar docente'}
+        className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${
             closing
             ? 'animate-[modal-out_0.32s_ease-in]'
             : 'animate-[modal-in_0.32s_ease-out]'
@@ -163,18 +165,15 @@ import type { CreateTeacherData } from '../services/admin.ts'
         {/* Encabezado */}
         <div className="flex items-center justify-between gap-md">
             <h2 className="m-0 font-heading text-2xl font-bold text-heading">
-            {isEditing ? 'Editar profesor' : 'Registrar profesor'}
+            {isEditing ? 'Editar docente' : 'Registrar docente'}
             </h2>
 
-            <button
-            type="button"
+            <ModalCloseButton
             onClick={requestClose}
             disabled={saving}
             aria-label={t('admin.cancel')}
-            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-heading shadow-sm transition hover:bg-neutral-100 disabled:opacity-50"
-            >
-            <XIcon size={20} />
-            </button>
+            className="disabled:opacity-50"
+            />
         </div>
 
         {/* Fotografía */}
@@ -183,7 +182,7 @@ import type { CreateTeacherData } from '../services/admin.ts'
             {photoPreview || (teacher?.photoUrl && !removePhoto) ? (
                 <img
                 src={photoPreview || teacher?.photoUrl || ''}
-                alt="Fotografía del profesor"
+                alt="Fotografía del docente"
                 className="h-full w-full object-cover"
                 />
             ) : (
@@ -229,7 +228,7 @@ import type { CreateTeacherData } from '../services/admin.ts'
             </>
             ) : (
             <p className="m-0 text-center font-body text-body-sm text-neutral-500">
-                Podrás agregar una fotografía después de registrar al profesor.
+                Podrás agregar una fotografía después de registrar al docente.
             </p>
             )}
         </div>
@@ -292,16 +291,16 @@ import type { CreateTeacherData } from '../services/admin.ts'
             )}
             </label>
 
-            <label className="font-body text-body-sm font-semibold text-heading">
+            <div className="font-body text-body-sm font-semibold text-heading">
             {t('admin.birthday')}
-            <input
-                type="date"
+            <DatePickerField
                 value={birthday}
-                onChange={(e) => setBirthday(e.target.value)}
+                onChange={setBirthday}
+                max={new Date().toISOString().split('T')[0]}
                 disabled={saving}
-                className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading disabled:opacity-50"
+                ariaLabel={t('admin.birthday')}
             />
-            </label>
+            </div>
 
             {!isEditing && (
             <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">

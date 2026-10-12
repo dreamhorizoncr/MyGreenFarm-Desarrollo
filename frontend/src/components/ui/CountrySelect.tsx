@@ -63,10 +63,12 @@ function CountrySelect({
     ))
   }, [options, query])
 
-  // Al abrir, deja visible el país elegido.
+  // Al abrir, deja visible el país elegido. Solo una vez: la posición se recalcula con cada scroll
+  // (también el de la propia lista), y si dependiera de ella la lista volvería sola al país elegido.
+  const isPositioned = position !== null
   useEffect(() => {
-    if (open && position) listRef.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' })
-  }, [open, position])
+    if (open && isPositioned) listRef.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' })
+  }, [open, isPositioned])
 
   const selectedLabel = options.find((option) => option.value === value)?.label ?? ''
 

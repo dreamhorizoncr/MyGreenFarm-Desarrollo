@@ -32,7 +32,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 
     const currentUser = userStorage.getUser()
 
-    {/* Obtener profesores */}
+    {/* Obtener docentes */}
     const fetchTeachers = async () => {
         try {
         setError(null)
@@ -94,15 +94,15 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
         safeCurrentPage * PAGE_SIZE,
     )
 
-    {/* Registrar profesor */}
+    {/* Registrar docente */}
     const handleCreate = async (data: CreateTeacherData) => {
         await adminService.createTeacher(data)
         await fetchTeachers()
         setCurrentPage(1)
-        notify.success('Profesor registrado correctamente')
+        notify.success('Docente registrado correctamente')
     }
 
-    {/* Editar profesor */}
+    {/* Editar docente */}
     const handleUpdate = async (id: string, data: UpdateUserData) => {
         const updated = await adminService.updateUser(id, data)
 
@@ -114,7 +114,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
         ),
         )
 
-        notify.success('Información del profesor actualizada')
+        notify.success('Información del docente actualizada')
     }
 
     {/* Subir fotografía */}
@@ -147,7 +147,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
         notify.success('Fotografía eliminada correctamente')
     }
 
-    {/* Eliminar profesor */}
+    {/* Eliminar docente */}
     const handleDelete = async (id: string) => {
         try {
         await adminService.deleteUser(id)
@@ -157,7 +157,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
         )
 
         setTeacherToDelete(null)
-        notify.success('Profesor eliminado correctamente')
+        notify.success('Docente eliminado correctamente')
         } catch (err) {
         notify.error(getErrorMessage(err))
         throw err
@@ -172,11 +172,11 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
                 <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
-                Gestión de profesores
+                Gestión de docentes
                 </h1>
 
                 <p className="mt-2 font-body text-body text-neutral-500">
-                Administra los profesores de My Green Farm.
+                Administra los docentes de My Green Farm.
                 </p>
             </div>
 
@@ -185,8 +185,8 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
                 <button
                 type="button"
                 onClick={() => setIsCreateModalOpen(true)}
-                title="Registrar profesor"
-                aria-label="Registrar profesor"
+                title="Registrar docente"
+                aria-label="Registrar docente"
                 className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition hover:bg-orange-600"
                 >
                 <span className="text-3xl font-light leading-none">+</span>
@@ -202,13 +202,13 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 
                 <input
                     type="search"
-                    placeholder="Buscar profesor..."
+                    placeholder="Buscar docente..."
                     value={searchTerm}
                     onChange={(e) => {
                     setSearchTerm(e.target.value)
                     setCurrentPage(1)
                     }}
-                    aria-label="Buscar profesor"
+                    aria-label="Buscar docente"
                     className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
                 />
                 </div>
@@ -232,7 +232,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
             </p>
             )}
 
-            {/* Profesores */}
+            {/* Docentees */}
             {!loading && !error && filteredTeachers.length > 0 && (
             <>
                 <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -258,18 +258,18 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
             </>
             )}
 
-            {/* Sin profesores */}
+            {/* Sin docentes */}
             {!loading && !error && filteredTeachers.length === 0 && (
             <div className="mt-12 text-center">
                 <p className="font-body text-body-text">
                 {searchTerm
-                    ? 'No se encontraron profesores con ese nombre.'
-                    : 'Todavía no hay profesores registrados.'}
+                    ? 'No se encontraron docentes con ese nombre.'
+                    : 'Todavía no hay docentes registrados.'}
                 </p>
             </div>
             )}
 
-            {/* Registrar profesor */}
+            {/* Registrar docente */}
             {isCreateModalOpen && (
             <TeacherFormModal
                 onCreate={handleCreate}
@@ -280,7 +280,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
             />
             )}
 
-            {/* Editar profesor */}
+            {/* Editar docente */}
             {teacherToEdit && (
             <TeacherFormModal
                 teacher={teacherToEdit}
@@ -292,7 +292,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
             />
             )}
 
-            {/* Eliminar profesor */}
+            {/* Eliminar docente */}
             {teacherToDelete && (
             <DeleteUserModal
                 user={teacherToDelete}
