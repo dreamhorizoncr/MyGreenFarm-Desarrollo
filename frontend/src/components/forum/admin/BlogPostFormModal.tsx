@@ -5,7 +5,7 @@ import Button from '../../ui/Button.tsx'
 import { useModalExit } from '../../../hooks/useModalExit.ts'
 import type { BlogPost, BlogPostInput } from '../../../types/forum.ts'
 import { userStorage } from '../../../utils/userStorage.ts'
-import { validateRequired } from '../../../utils/validators.ts'
+import { validateRequired, validateSafeText } from '../../../utils/validators.ts'
 import ImagePickerButton from '../../ui/ImagePickerButton.tsx'
 import ImageThumb, { ImageThumbList } from '../../ui/ImageThumb.tsx'
 
@@ -122,11 +122,11 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
     event.preventDefault()
 
     const errors: Record<string, string | null> = {
-      title: validateRequired(form.title, t('adminForum.postTitle'), t),
-      topic: validateRequired(form.topic, t('adminForum.postTopic'), t),
-      authorName: validateRequired(form.authorName ?? '', t('adminForum.authorName'), t),
-      authorRole: validateRequired(form.authorRole ?? '', t('adminForum.authorRole'), t),
-      content: validateRequired(form.content, t('adminForum.postContent'), t),
+      title: validateRequired(form.title, t('adminForum.postTitle'), t) ?? validateSafeText(form.title, t),
+      topic: validateRequired(form.topic, t('adminForum.postTopic'), t) ?? validateSafeText(form.topic, t),
+      authorName: validateRequired(form.authorName ?? '', t('adminForum.authorName'), t) ?? validateSafeText(form.authorName ?? '', t),
+      authorRole: validateRequired(form.authorRole ?? '', t('adminForum.authorRole'), t) ?? validateSafeText(form.authorRole ?? '', t),
+      content: validateRequired(form.content, t('adminForum.postContent'), t) ?? validateSafeText(form.content, t),
     }
 
     setFieldErrors(errors)
@@ -135,6 +135,12 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
 
     if ((image || form.imageUrl) && !form.imageAlt?.trim()) {
       setAltError(t('adminForum.imageAltRequired'))
+      return
+    }
+
+    const altUnsafeError = validateSafeText(form.imageAlt, t)
+    if (altUnsafeError) {
+      setAltError(altUnsafeError)
       return
     }
 

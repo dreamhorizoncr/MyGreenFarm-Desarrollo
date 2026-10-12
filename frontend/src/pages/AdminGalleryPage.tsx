@@ -20,7 +20,7 @@ import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
 import { useGalleryAdmin } from '../hooks/useGalleryAdmin.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { notify } from '../utils/notifications.ts'
-import { validateMinLength, validateRequired } from '../utils/validators.ts'
+import { validateMinLength, validateRequired, validateSafeText } from '../utils/validators.ts'
 import type { Gallery, GalleryCategory, GalleryImage, GalleryRequest } from '../types/gallery.ts'
 import ninos2 from '../assets/imgs/ninos2.svg'
 import CardActionButton from '../components/ui/CardActionButton.tsx'
@@ -63,6 +63,7 @@ function YearDropdown({
 		if (adding) yearInputRef.current?.focus()
 	}, [adding])
 	const [newYear, setNewYear] = useState('')
+	const [yearError, setYearError] = useState<string | null>(null)
 
 	const selected = categories.find((category) => category.id === value)
 
@@ -77,6 +78,9 @@ function YearDropdown({
 	const handleAdd = async () => {
 		const title = newYear.trim()
 		if (!title) return
+		const unsafeError = validateSafeText(title, t)
+		setYearError(unsafeError)
+		if (unsafeError) return
 		await onCreateYear(title)
 		setNewYear('')
 		setAdding(false)
@@ -139,11 +143,15 @@ function YearDropdown({
 						<div className="mx-lg my-sm border-t border-neutral-200" />
 
 						{adding ? (
+							<>
 							<div className="flex items-center gap-sm px-md py-sm">
 								<input
 									ref={yearInputRef}
 									value={newYear}
-									onChange={(e) => setNewYear(e.target.value)}
+									onChange={(e) => {
+										setNewYear(e.target.value)
+										if (yearError) setYearError(null)
+									}}
 									onKeyDown={(e) => {
 										if (e.key === 'Enter') {
 											e.preventDefault()
@@ -156,7 +164,8 @@ function YearDropdown({
 										}
 									}}
 									placeholder={t('admin.gallery.newYearPlaceholder')}
-									className="h-9 w-full min-w-0 rounded-lg border border-neutral-200 px-sm font-body text-body-sm outline-none focus:border-heading"
+									aria-invalid={Boolean(yearError)}
+									className={`h-9 w-full min-w-0 rounded-lg border px-sm font-body text-body-sm outline-none focus:border-heading ${yearError ? 'border-danger' : 'border-neutral-200'}`}
 								/>
 								<button
 									type="button"
@@ -179,6 +188,10 @@ function YearDropdown({
 									<XIcon size={16} />
 								</button>
 							</div>
+							{yearError && (
+								<p className="m-0 px-md pb-sm font-body text-caption text-danger">{yearError}</p>
+							)}
+							</>
 						) : (
 							<button
 								type="button"
@@ -508,10 +521,12 @@ function AdminGalleryPage() {
 
 		const titleErrorMessage =
 			validateRequired(form.title, t('admin.gallery.albumTitle'), t) ??
-			validateMinLength(form.title, TITLE_MIN_LENGTH, t)
+			validateMinLength(form.title, TITLE_MIN_LENGTH, t) ??
+			validateSafeText(form.title, t)
 		const descriptionErrorMessage =
 			validateRequired(form.description, t('admin.gallery.albumDescription'), t) ??
-			validateMinLength(form.description, DESCRIPTION_MIN_LENGTH, t)
+			validateMinLength(form.description, DESCRIPTION_MIN_LENGTH, t) ??
+			validateSafeText(form.description, t)
 
 		setTitleError(titleErrorMessage)
 		setDescriptionError(descriptionErrorMessage)

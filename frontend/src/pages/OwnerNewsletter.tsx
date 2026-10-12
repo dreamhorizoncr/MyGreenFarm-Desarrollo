@@ -11,6 +11,7 @@ import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { notify } from '../utils/notifications.ts'
 import type { AudienceType, NewsletterRecipient } from '../types/newsletter.ts'
+import { hasUnsafeText } from '../utils/validators.ts'
 
 interface SubscriberRowProps {
     item?: NewsletterRecipient
@@ -156,6 +157,10 @@ function AdminNewsletterPage() {
 
     const handleBroadcastSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        if (hasUnsafeText(subject) || hasUnsafeText(message)) {
+            notify.error(t('validation.unsafeText'))
+            return
+        }
         try {
             await sendBroadcast({ audienceType: selectedAudience, subject, message })
             notify.success(t('admin.newsletter.sent'))

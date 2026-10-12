@@ -6,7 +6,7 @@ import Select from "./ui/Select.tsx";
 import { parentService } from "../services/parent";
 import { notify } from "../utils/notifications.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
-import { validateEmail, validateRequired } from "../utils/validators.ts";
+import { validateEmail, validateRequired, validateSafeText } from "../utils/validators.ts";
 
 import type { Parent, ParentLanguage, ParentRequest } from "../types/parent";
 
@@ -60,12 +60,12 @@ function ParentFormModal({
     e.preventDefault();
 
     const errors: Record<string, string | null> = {
-      firstName: validateRequired(firstName, t("admin.parents.firstName"), t),
-      lastName: validateRequired(lastName, t("admin.parents.lastName"), t),
-      identification: validateRequired(identification, t("admin.parents.identification"), t),
-      phoneNumber: validateRequired(phoneNumber, t("admin.parents.phoneNumber"), t),
+      firstName: validateRequired(firstName, t("admin.parents.firstName"), t) ?? validateSafeText(firstName, t),
+      lastName: validateRequired(lastName, t("admin.parents.lastName"), t) ?? validateSafeText(lastName, t),
+      identification: validateRequired(identification, t("admin.parents.identification"), t) ?? validateSafeText(identification, t),
+      phoneNumber: validateRequired(phoneNumber, t("admin.parents.phoneNumber"), t) ?? validateSafeText(phoneNumber, t),
       email: validateRequired(email, t("admin.parents.email"), t) ?? validateEmail(email, t),
-      address: validateRequired(address, t("admin.parents.address"), t),
+      address: validateRequired(address, t("admin.parents.address"), t) ?? validateSafeText(address, t),
     };
 
     setFieldErrors(errors);
