@@ -124,7 +124,13 @@ function AppointmentsSection() {
     rescheduleAppointment,
   } = useAppointments()
 
-  const { exceptions } = useAvailability()
+  const { exceptions, reload: loadExceptions } = useAvailability()
+
+  // Las excepciones de horario marcan las fechas especiales del calendario. useAvailability no las
+  // carga solo (cada pantalla las pide en su idioma), así que se cargan al entrar y al cambiar de idioma.
+  useEffect(() => {
+    loadExceptions(i18n.language)
+  }, [loadExceptions, i18n.language])
 
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('BY_DATE')
   const [selectedDate, setSelectedDate] = useState<CalendarDate | null>(today(getLocalTimeZone()))
