@@ -1113,6 +1113,8 @@ export default {
         'Voulez-vous vraiment supprimer "{{name}}" ? Cette action est irréversible.',
       deleteConfirmFieldLabel: 'Pour confirmer, tapez "{{name}}"',
       deleteConfirmPlaceholder: 'Tapez "{{name}}"',
+      isActive: "Utilisateur Actif",
+      isActiveDescription: "Définit si le tuteur est actif dans le système."
     },
 
     children: {
@@ -1179,6 +1181,8 @@ export default {
       firstNamePlaceholder: 'Saisissez le prénom',
       lastNamePlaceholder: 'Saisissez le nom',
       birthDatePlaceholder: 'Sélectionnez la date de naissance',
+      isActive: "Élève actif",
+      isActiveDescription: "Définit si l'élève est actif dans le système."
     },
 
     availability: {

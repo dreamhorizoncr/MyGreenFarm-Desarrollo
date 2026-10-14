@@ -10,6 +10,7 @@ import {
 import AdminLayout from "../layout/AdminLayout.tsx";
 import Skeleton from "../components/ui/Skeleton.tsx";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
+import Pagination from "../components/ui/Pagination.tsx";
 import { clubService, type TranslationItem } from "../services/clubs.ts";
 import { notify } from "../utils/notifications.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
@@ -31,6 +32,8 @@ const emptyForm: ClubRequest = {
   maxCapacity: undefined,
   isPublished: false,
 };
+
+const PAGE_SIZE = 10;
 
 interface ClubCardProps {
   club?: ClubResponse;
@@ -145,7 +148,7 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
                 </span>
               ) : (
                 <>
-                  <p>{maxCap}{" "}{t("ownerClubs.capacityUnit")}</p>
+                  <span>{maxCap}{" "}{t("ownerClubs.capacityUnit")}</span>
                 </>
               )}
             </p>
@@ -172,6 +175,7 @@ function OwnerClubsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [clubFieldErrors, setClubFieldErrors] = useState<Record<string, string | null>>({});
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<ClubResponse | null>(null);
@@ -192,7 +196,7 @@ function OwnerClubsPage() {
       setLoading(true);
       setError(null);
       const languageCode = (i18n.resolvedLanguage ?? i18n.language ?? 'es').split('-')[0];
-      const data = await clubService.getAll({ lang: languageCode, size: 50 });
+      const data = await clubService.getAll({ lang: languageCode, size: 10 });
 
       let clubsWithImages = await Promise.all(
         data.content.map(async (club) => {
@@ -357,6 +361,7 @@ function OwnerClubsPage() {
           : t("ownerClubs.createdToastTitle")
       );
 
+      setCurrentPage(1);
       requestClose();
       await fetchClubs();
     } catch (err) {
@@ -406,6 +411,18 @@ function OwnerClubsPage() {
     ? t("ownerClubs.saveChanges")
     : t("ownerClubs.publish");
 
+  const totalPages = Math.max(
+    1,
+    Math.ceil(clubs.length / PAGE_SIZE),
+  );
+
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+
+  const pagedClubs = clubs.slice(
+    (safeCurrentPage - 1) * PAGE_SIZE,
+    safeCurrentPage * PAGE_SIZE,
+  );
+
   return (
     <AdminLayout>
       {/* Header */}
@@ -447,7 +464,7 @@ function OwnerClubsPage() {
         )}
 
         {!loading &&
-          clubs.map((club) => (
+          pagedClubs.map((club) => (
             <ClubCard
               key={club.id}
               club={club}
@@ -456,6 +473,14 @@ function OwnerClubsPage() {
             />
           ))}
       </section>
+
+      {!loading && clubs.length > 0 && totalPages > 1 && (
+        <Pagination
+          currentPage={safeCurrentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      )}
 
       {!loading && clubs.length === 0 && (
         <p className="py-xl text-center font-body text-body-sm text-neutral-500">

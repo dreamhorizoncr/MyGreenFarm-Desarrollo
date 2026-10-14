@@ -1,6 +1,8 @@
 package taller.multimedia.backend.controller.club;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.club.ClubRequest;
 import taller.multimedia.backend.dto.club.ClubResponse;
@@ -8,17 +10,21 @@ import taller.multimedia.backend.service.club.ClubService;
 import taller.multimedia.backend.service.spelling.SpellingCorrectionAsyncService;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/api/clubs")
 @RequiredArgsConstructor
@@ -48,8 +54,8 @@ public class ClubController {
 
     @GetMapping
     public ResponseEntity<Page<ClubResponse>> getAll(
-            @RequestParam(defaultValue = "es") String lang,
-            @PageableDefault(size = 10, sort = "name") Pageable pageable) {
+        @RequestParam (defaultValue = "es") String lang,
+        @PageableDefault (size = 10, sort = "name") Pageable pageable) {
         return ResponseEntity.ok(clubService.getAll(lang, pageable));
     }
 

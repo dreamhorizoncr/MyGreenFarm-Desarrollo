@@ -2,16 +2,29 @@ import { apiClient } from './api.ts'
 import type { ServicePlan, ServicePlanRequest, OnvoRawPlan } from '../types/servicePlan.ts'
 import type { TranslationItem } from './announcement.ts'
 
+export interface PageResponse<T> {
+  content: T[]
+  totalPages: number
+  totalElements: number
+  size: number
+  number: number
+  first: boolean
+  last: boolean
+  empty: boolean
+}
+
 export const servicePlanService = {
-  async getActivePlans(): Promise<ServicePlan[]> {
-    const response = await apiClient.get<ServicePlan[]>('/service-plans', {
-      params: { activeOnly: true },
+  async getActivePlans(page = 0, size = 10): Promise<PageResponse<ServicePlan>> {
+    const response = await apiClient.get<PageResponse<ServicePlan>>('/service-plans', {
+      params: { activeOnly: true, page, size },
     })
     return response.data
   },
 
-  async getAllPlans(): Promise<ServicePlan[]> {
-    const response = await apiClient.get<ServicePlan[]>('/service-plans')
+  async getAllPlans(page = 0, size = 10): Promise<PageResponse<ServicePlan>> {
+    const response = await apiClient.get<PageResponse<ServicePlan>>('/service-plans', {
+      params: { page, size },
+    })
     return response.data
   },
 
@@ -57,14 +70,15 @@ export const servicePlanService = {
     const response = await apiClient.post<{ url: string; gatewaySessionId: string }>(`/service-plans/${planId}/checkout`)
     return response.data
   },
+
   async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {
-          const response = await apiClient.post<Record<string, string>>('/translations/batch', {
-              entityType,
-          targetLanguage: targetLanguage?.split('-')[0] || 'es',
-              items,
-          })
-          return response.data
-      },
+    const response = await apiClient.post<Record<string, string>>('/translations/batch', {
+      entityType,
+      targetLanguage: targetLanguage?.split('-')[0] || 'es',
+      items,
+    })
+    return response.data
+  },
 
   async checkPaymentStatus(gatewaySessionId: string): Promise<{ isPaid: boolean; isFailed: boolean; status: string }> {
     const response = await apiClient.get(`/service-plans/status/${gatewaySessionId}`);

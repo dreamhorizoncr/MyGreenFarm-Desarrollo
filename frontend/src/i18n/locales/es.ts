@@ -1017,7 +1017,8 @@ export default {
         '¿Seguro que deseas eliminar a "{{name}}"? Esta acción no se puede deshacer.',
       deleteConfirmFieldLabel: 'Para confirmar, escribe "{{name}}"',
       deleteConfirmPlaceholder: 'Escribe "{{name}}"',
-
+      isActive: "Usuario Activo",
+      isActiveDescription: "Define si el tutor se encuentra activo en el sistema."
     },
 
     children: {
@@ -1084,6 +1085,8 @@ export default {
       firstNamePlaceholder: 'Ingresa el nombre del niño',
       lastNamePlaceholder: 'Ingresa el apellido del niño',
       birthDatePlaceholder: 'Selecciona la fecha de nacimiento',
+      isActive: "Estudiante activo",
+      isActiveDescription: "Define si el estudiante se encuentra activo en el sistema."
     },
 
     availability: {

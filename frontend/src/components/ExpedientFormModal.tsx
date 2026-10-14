@@ -114,7 +114,7 @@ function ExpedientFormModal({
     const fetchOptions = async () => {
       try {
         setLoadingOptions(true);
-        const options = await childService.getChildrenOptions();
+        const options = await childService.getAvailableForExpedientOptions();
         setChildrenOptions(options);
       } catch (err) {
         console.error("Error al obtener las opciones de niños:", err);

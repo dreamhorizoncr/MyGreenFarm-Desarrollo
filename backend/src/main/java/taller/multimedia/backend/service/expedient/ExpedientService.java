@@ -37,16 +37,26 @@ public class ExpedientService {
     public ExpedientResponse createExpedient(ExpedientRequest request, MultipartFile file) {
         String studentId = Sanitizer.requireClean("studentId", request.getStudentId());
 
-        // 1. Buscar el estudiante por su studentId
+        // Buscar el estudiante por su studentId
         Child child = childRepository.findByStudentId(studentId)
                 .orElseThrow(
                         () -> new EntityNotFoundException("Niño no encontrado con el carné/studentId: " + studentId));
 
-        // 2. Verificar que no tenga ya un expediente asignado
+        // Verificar que no tenga ya un expediente asignado
         if (expedientRepository.existsByChildStudentId(child.getStudentId())) {
             throw new IllegalStateException("Ya existe un expediente registrado para el niño: "
                     + child.getFirstName() + " " + child.getLastName());
         }
+
+        if (!Boolean.TRUE.equals(child.getIsActive())) {
+            throw new IllegalStateException("No se puede registrar un expediente para el estudiante '" 
+                    + child.getFirstName() + " " + child.getLastName() + "' porque se encuentra inactivo.");
+        }
+
+        if (expedientRepository.existsByChildStudentId(child.getStudentId())) {
+        throw new IllegalStateException("Ya existe un expediente registrado para el niño: "
+                + child.getFirstName() + " " + child.getLastName());
+    }
 
         String generalObservations = request.getGeneralObservations() == null
                 ? null
@@ -123,6 +133,10 @@ public class ExpedientService {
                 Child newChild = childRepository.findByStudentId(newStudentId)
                         .orElseThrow(() -> new EntityNotFoundException(
                                 "Niño no encontrado con el carné/studentId: " + newStudentId));
+
+                if (!Boolean.TRUE.equals(newChild.getIsActive())) {
+                    throw new IllegalStateException("El estudiante seleccionado se encuentra inactivo.");
+                }
 
                 if (expedientRepository.existsByChildStudentId(newChild.getStudentId())) {
                     throw new IllegalStateException("Ya existe otro expediente registrado para el niño especificado.");

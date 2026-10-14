@@ -31,6 +31,7 @@ const emptyForm: ChildRequest = {
     birthDate: "",
     medicalNotes: "",
     clubIds: [],
+    isActive: true, 
 };
 
 function ChildFormModal({
@@ -83,6 +84,7 @@ function ChildFormModal({
                 birthDate: child.birthDate ?? "",
                 medicalNotes: child.medicalNotes ?? "",
                 clubIds: [],
+                isActive: child.isActive ?? true,
             });
         } else {
             setForm(emptyForm);
@@ -97,15 +99,15 @@ function ChildFormModal({
 
                 const languageCode = (i18n.resolvedLanguage ?? i18n.language ?? "es").split("-")[0];
 
-                const [parentsData, clubsData] = await Promise.all([
+                const [parentsData, availableClubsList] = await Promise.all([
                     parentService.getParents(),
-                    clubService.getAll({ lang: languageCode, size: 100 }),
+                    clubService.getAvailableClubs(languageCode),
                 ]);
 
                 if (!isMounted) return;
 
                 const loadedParents = parentsData.content ?? [];
-                const loadedClubs = clubsData.content ?? [];
+                const loadedClubs = availableClubsList ?? [];
 
                 setParents(loadedParents);
                 setClubs(loadedClubs);
@@ -130,7 +132,7 @@ function ChildFormModal({
         return () => {
             isMounted = false;
         };
-    }, [isOpen, child]); // 👈 Únicamente depender de isOpen y child
+    }, [isOpen, child]);
 
     const handleClubChange = (clubId: number) => {
         setForm((current) => ({
@@ -315,7 +317,7 @@ function ChildFormModal({
                     </label>
 
                     {/* Fecha de Nacimiento */}
-                    <div className="font-body text-body-sm font-semibold text-heading">
+                    <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
                         {t("admin.children.birthDate")}
                         <DatePickerField
                             value={form.birthDate}
@@ -328,7 +330,7 @@ function ChildFormModal({
                     </div>
 
                     {/* Clubes */}
-                    <div className="font-body text-body-sm font-semibold text-heading">
+                    <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
                         {t("admin.children.clubs")}
                         <div className="mt-xs rounded-xl border border-neutral-200 p-md">
                             {loadingOptions ? (
@@ -357,6 +359,27 @@ function ChildFormModal({
                                     ))}
                                 </div>
                             )}
+                        </div>
+                    </div>
+
+                    {/* Switch estilizado para Activo / Inactivo a todo el ancho */}
+                    <div className="md:col-span-2 flex items-center gap-md rounded-xl border border-neutral-200 bg-neutral-50 p-md">
+                        <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={form.isActive ?? true}
+                                onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
+                                className="sr-only peer"
+                            />
+                            <div className="w-11 h-6 bg-neutral-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                        </label>
+                        <div>
+                            <span className="block font-body text-body-sm font-semibold text-heading">
+                                {t("admin.children.isActive", { defaultValue: "Estudiante activo" })}
+                            </span>
+                            <span className="text-caption text-neutral-500">
+                                {t("admin.children.isActiveDescription")}
+                            </span>
                         </div>
                     </div>
 

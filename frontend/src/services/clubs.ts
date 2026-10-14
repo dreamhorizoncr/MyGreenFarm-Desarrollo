@@ -22,7 +22,7 @@ export const clubService = {
             params: {
                 lang: normalizeLanguageCode(params?.lang),
                 page: params?.page ?? 0,
-                size: params?.size ?? 50,
+                size: params?.size ?? 10,
                 sort: params?.sort ?? 'name',
             },
         })
@@ -83,6 +83,14 @@ export const clubService = {
         await apiClient.delete(`/clubs/${id}`)
     },
 
+    // Obtener solo los clubes que tienen cupos disponibles
+    async getAvailableClubs(lang: string = "es"): Promise<ClubResponse[]> {
+        const response = await apiClient.get<ClubResponse[]>("/clubs/available", {
+            params: { lang },
+        });
+        return response.data;
+    },
+
     // --- IMÁGENES ---
 
     async getImagesByClub(clubId: number): Promise<ClubImageResponse[]> {
@@ -116,11 +124,11 @@ export const clubService = {
     },
 
     async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {
-            const response = await apiClient.post<Record<string, string>>('/translations/batch', {
-                entityType,
-                targetLanguage: targetLanguage?.split('-')[0] || 'es',
-                items,
-            })
-            return response.data
-        },
+        const response = await apiClient.post<Record<string, string>>('/translations/batch', {
+            entityType,
+            targetLanguage: targetLanguage?.split('-')[0] || 'es',
+            items,
+        })
+        return response.data
+    },
 }

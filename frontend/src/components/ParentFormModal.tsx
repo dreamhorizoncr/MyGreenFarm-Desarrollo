@@ -42,6 +42,8 @@ function ParentFormModal({
   const [language, setLanguage] = useState<ParentLanguage>(
     parent?.language ?? "es",
   );
+  // Estado isActive (por defecto true si es nuevo, o el valor actual si se edita)
+  const [isActive, setIsActive] = useState<boolean>(parent?.isActive ?? true);
 
   // Estado del formulario
   const [saving, setSaving] = useState(false);
@@ -83,6 +85,7 @@ function ParentFormModal({
       firstName,
       lastName,
       language,
+      isActive,
     };
 
     try {
@@ -162,6 +165,7 @@ function ParentFormModal({
             {t("admin.parents.firstName")}
             <input
               type="text"
+              autoComplete="off"
               value={firstName}
               onChange={(e) => { setFirstName(e.target.value); clearFieldError("firstName"); }}
               placeholder={t("admin.parents.firstNamePlaceholder")}
@@ -176,6 +180,7 @@ function ParentFormModal({
             {t("admin.parents.lastName")}
             <input
               type="text"
+              autoComplete="off"
               value={lastName}
               onChange={(e) => { setLastName(e.target.value); clearFieldError("lastName"); }}
               placeholder={t("admin.parents.lastNamePlaceholder")}
@@ -190,6 +195,7 @@ function ParentFormModal({
             {t("admin.parents.identification")}
             <input
               type="text"
+              autoComplete="off"
               value={identification}
               onChange={(e) => { setIdentification(e.target.value); clearFieldError("identification"); }}
               placeholder={t("admin.parents.identificationPlaceholder")}
@@ -204,6 +210,7 @@ function ParentFormModal({
             {t("admin.parents.phoneNumber")}
             <input
               type="tel"
+              autoComplete="off"
               value={phoneNumber}
               onChange={(e) => { setPhoneNumber(e.target.value); clearFieldError("phoneNumber"); }}
               placeholder={t("admin.parents.phonePlaceholder")}
@@ -218,6 +225,7 @@ function ParentFormModal({
             {t("admin.parents.email")}
             <input
               type="email"
+              autoComplete="off"
               value={email}
               onChange={(e) => { setEmail(e.target.value); clearFieldError("email"); }}
               placeholder={t("admin.parents.emailPlaceholder")}
@@ -232,6 +240,7 @@ function ParentFormModal({
             {t("admin.parents.address")}
             <textarea
               value={address}
+              autoComplete="off"
               onChange={(e) => { setAddress(e.target.value); clearFieldError("address"); }}
               rows={3}
               placeholder={t("admin.parents.addressPlaceholder")}
@@ -257,6 +266,28 @@ function ParentFormModal({
               />
             </div>
           </label>
+
+          {/* Switch estilizado para Activo / Inactivo */}
+          <div className="md:col-span-2 flex items-center gap-md rounded-xl border border-neutral-200 bg-neutral-50 p-md">
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                autoComplete="off"
+                checked={isActive}
+                onChange={(e) => setIsActive(e.target.checked)}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-neutral-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+            </label>
+            <div>
+              <span className="block font-body text-body-sm font-semibold text-heading">
+                {t("admin.parents.isActive")}
+              </span>
+              <span className="text-caption text-neutral-500">
+                {t("admin.parents.isActiveDescription")}
+              </span>
+            </div>
+          </div>
         </div>
 
         {error && (

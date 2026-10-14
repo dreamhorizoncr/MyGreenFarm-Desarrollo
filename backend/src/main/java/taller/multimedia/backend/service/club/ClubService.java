@@ -74,6 +74,15 @@ public class ClubService {
     }
 
     @Transactional(readOnly = true)
+    public List<ClubResponse> getAvailableClubs(String lang) {
+        return clubRepository.findAllPublishedClubs()
+                .stream()
+                .map(club -> mapToResponse(club, lang))
+                .filter(club -> club.getAvailableSpots() != null && club.getAvailableSpots() > 0)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public ClubResponse getById(Long id, String lang) {
         Club club = clubRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Club no encontrado con ID: " + id));

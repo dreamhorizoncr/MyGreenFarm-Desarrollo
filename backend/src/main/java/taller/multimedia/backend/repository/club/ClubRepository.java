@@ -19,6 +19,9 @@ public interface ClubRepository extends JpaRepository<Club, Long> {
     @Query("SELECT DISTINCT c FROM Club c LEFT JOIN FETCH c.images")
     List<Club> findAllWithImages();
 
+    @Query("SELECT c FROM Club c WHERE c.isPublished = true")
+    List<Club> findAllPublishedClubs();
+
     boolean existsByNameIgnoreCase(String name);
 
     boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);

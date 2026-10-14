@@ -21,5 +21,6 @@ public class ChildResponse {
     private String lastName;
     private LocalDate birthDate;
     private String medicalNotes;
+    private Boolean isActive;
     private Set<String> clubNames;
 }

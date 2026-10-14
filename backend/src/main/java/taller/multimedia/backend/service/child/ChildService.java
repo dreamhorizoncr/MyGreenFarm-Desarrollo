@@ -49,6 +49,7 @@ public class ChildService {
         String medicalNotes = dto.getMedicalNotes() == null ? null
                 : Sanitizer.requireCleanPreserveLineBreaks("medicalNotes", dto.getMedicalNotes());
 
+        // 4. Reutiliza el carné anterior si quedó libre o genera uno nuevo secuencial
         String studentId = studentIdGeneratorService.generateNextStudentId();
 
         Child child = Child.builder()
@@ -59,6 +60,7 @@ public class ChildService {
                 .lastName(lastName)
                 .birthDate(dto.getBirthDate())
                 .medicalNotes(medicalNotes)
+                .isActive(dto.getIsActive() != null ? dto.getIsActive() : true) // 2. Soporte para isActive
                 .childClubs(new ArrayList<>())
                 .build();
 
@@ -120,29 +122,25 @@ public class ChildService {
                 : Sanitizer.requireCleanPreserveLineBreaks("medicalNotes", dto.getMedicalNotes());
 
         Set<Long> affectedClubIds = new HashSet<>();
-
         Set<Long> targetClubIds = dto.getClubIds() != null ? new HashSet<>(dto.getClubIds()) : new HashSet<>();
 
         List<ChildClub> currentChildClubs = childClubRepository.findByChildId(child.getId());
 
-        // Mapear los IDs de los clubes que el niño tiene actualmente
         Set<Long> existingClubIds = currentChildClubs.stream()
                 .map(cc -> cc.getClub().getId())
                 .collect(Collectors.toSet());
 
         affectedClubIds.addAll(existingClubIds);
 
-        // 4. ELIMINAR solo las relaciones que el usuario desmarcó
         List<ChildClub> toRemove = currentChildClubs.stream()
                 .filter(cc -> !targetClubIds.contains(cc.getClub().getId()))
                 .toList();
 
         if (!toRemove.isEmpty()) {
             childClubRepository.deleteAll(toRemove);
-            childClubRepository.flush(); // Se fuerza la eliminación inmediata en Postgres
+            childClubRepository.flush();
         }
 
-        // 5. INSERTAR solo los clubes verdaderamente NUEVOS
         Set<Long> newClubIds = targetClubIds.stream()
                 .filter(clubId -> !existingClubIds.contains(clubId))
                 .collect(Collectors.toSet());
@@ -152,7 +150,6 @@ public class ChildService {
             List<ChildClub> newChildClubs = new ArrayList<>();
 
             for (Club club : newClubs) {
-                // Validar si hay cupo en el club nuevo
                 long enrolled = childClubRepository.countByClubId(club.getId());
                 if (club.getMaxCapacity() != null && enrolled >= club.getMaxCapacity()) {
                     throw new IllegalArgumentException(
@@ -177,6 +174,10 @@ public class ChildService {
         child.setBirthDate(dto.getBirthDate());
         child.setMedicalNotes(medicalNotes);
 
+        if (dto.getIsActive() != null) {
+            child.setIsActive(dto.getIsActive());
+        }
+
         Child updated = childRepository.save(child);
         updateClubsAvailableSpots(affectedClubIds);
 
@@ -194,7 +195,6 @@ public class ChildService {
 
         childRepository.delete(child);
 
-        // Recalcular los cupos disponibles tras eliminar al niño
         updateClubsAvailableSpots(affectedClubIds);
     }
 
@@ -202,10 +202,18 @@ public class ChildService {
     public List<ChildOptionResponse> getChildrenOptions() {
         return childRepository.findAll()
                 .stream()
+                .filter(child -> Boolean.TRUE.equals(child.getIsActive()))
                 .map(child -> new ChildOptionResponse(
                         child.getId(),
                         child.getStudentId(),
                         child.getStudentId() + " - " + child.getFirstName() + " " + child.getLastName()))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChildResponse> getAvailableChildrenForExpedient() {
+        return childRepository.findAvailableChildrenForExpedient().stream()
+                .map(this::mapToResponse)
                 .toList();
     }
 
@@ -230,6 +238,7 @@ public class ChildService {
         response.setLastName(child.getLastName());
         response.setBirthDate(child.getBirthDate());
         response.setMedicalNotes(child.getMedicalNotes());
+        response.setIsActive(child.getIsActive());
         response.setClubNames(clubNames);
 
         return response;
