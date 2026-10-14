@@ -53,6 +53,12 @@ public class ClubController {
         return ResponseEntity.ok(clubService.getAll(lang, pageable));
     }
 
+    @GetMapping("/available")
+    public ResponseEntity<List<ClubResponse>> getAvailableClubs(
+            @RequestParam(defaultValue = "es") String lang) {
+        return ResponseEntity.ok(clubService.getAvailableClubs(lang));
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<ClubResponse> getById(
