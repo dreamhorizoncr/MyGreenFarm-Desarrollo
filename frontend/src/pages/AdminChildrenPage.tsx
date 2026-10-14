@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { SearchIcon } from "@animateicons/react/lucide";
 
 import AdminLayout from "../layout/AdminLayout";
+import ChildrenModuleTabs from "../components/ChildrenModuleTabs";
 import ChildFormModal from "../components/ChildFormModal";
 import ChildCard from "../components/ChildCard";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal";
@@ -15,7 +16,6 @@ import type { Child } from "../types/child";
 import { useTranslation } from "react-i18next";
 
 function AdminChildrenPage() {
-  // 💡 Extraemos totalPages y la función fetchChildren adaptada del hook
   const { children, sourceChildren, loading, error, fetchChildren, totalPages } = useChildren();
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -26,7 +26,6 @@ function AdminChildrenPage() {
 
   const { t, i18n } = useTranslation();
 
-  // 💡 Cada vez que cambia la página o el idioma, pedimos los datos al backend (Spring usa base 0)
   useEffect(() => {
     void fetchChildren(currentPage - 1, i18n.language);
   }, [currentPage, i18n.language]);
@@ -77,6 +76,7 @@ function AdminChildrenPage() {
 
   return (
     <AdminLayout>
+      <ChildrenModuleTabs />
       <section className="w-full">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>

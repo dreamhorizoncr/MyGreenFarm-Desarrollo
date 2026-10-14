@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { SearchIcon } from "@animateicons/react/lucide";
 
 import AdminLayout from "../layout/AdminLayout";
+import ChildrenModuleTabs from "../components/ChildrenModuleTabs";
 import EvaluationCard from "../components/EvaluationCard";
 import EvaluationFormModal from "../components/EvaluationFormModal";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal";
@@ -122,6 +123,7 @@ function AdminEvaluationsPage() {
 
     return (
         <AdminLayout>
+            <ChildrenModuleTabs />
             <section className="w-full">
                 {/* Header */}
                 <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
