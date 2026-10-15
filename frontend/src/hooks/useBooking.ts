@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useCallback, useState } from 'react'
 import { appointmentService } from '../services/appointment.ts'
 import { getErrorMessage } from '../utils/error.ts'
@@ -35,10 +36,13 @@ export function useBooking() {
     try {
       await appointmentService.createAppointment(request)
       setSuccess(true)
-      return true
+      return { ok: true as const, message: null }
     } catch (err) {
       setSubmitError(getErrorMessage(err))
-      return false
+      // Solo los errores 4xx traen un motivo pensado para el usuario (p. ej. el correo no permitido).
+      const status = axios.isAxiosError(err) ? err.response?.status : undefined
+      const message = status !== undefined && status < 500 ? getErrorMessage(err) : null
+      return { ok: false as const, message }
     } finally {
       setSubmitting(false)
     }

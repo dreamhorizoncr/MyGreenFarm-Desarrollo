@@ -509,6 +509,7 @@ export default {
     submitting: "Sending...",
     submitError: "The request could not be sent. Please try again.",
     submitErrorToastTitle: "Couldn't send your request",
+    emailDomainToastTitle: "Email not allowed",
     retry: "Retry",
     wizard: {
       schedule: "Schedule",
@@ -640,6 +641,7 @@ export default {
   validation: {
     emailRequired: "Email is required",
     emailInvalid: "Enter a valid email",
+    emailDomainNotAllowed: "Use a Gmail, Hotmail or Outlook email to book the appointment.",
     passwordRequired: "Password is required",
     passwordMinLength: "Password must be at least 8 characters",
     passwordPattern:

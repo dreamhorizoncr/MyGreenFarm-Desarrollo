@@ -505,6 +505,7 @@ export default {
     submitting: "Envoi...",
     submitError: "La demande n'a pas pu être envoyée. Veuillez réessayer.",
     submitErrorToastTitle: "Impossible d'envoyer votre demande",
+    emailDomainToastTitle: "E-mail non autorisé",
     retry: "Réessayer",
     wizard: {
       schedule: "Horaire",
@@ -642,6 +643,7 @@ export default {
   validation: {
     emailRequired: "L'e-mail est obligatoire",
     emailInvalid: "Entrez un e-mail valide",
+    emailDomainNotAllowed: "Utilisez une adresse Gmail, Hotmail ou Outlook pour réserver le rendez-vous.",
     passwordRequired: "Le mot de passe est obligatoire",
     passwordMinLength: "Le mot de passe doit contenir au moins 8 caractères",
     passwordPattern:

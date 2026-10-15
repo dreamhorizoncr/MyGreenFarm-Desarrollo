@@ -34,6 +34,15 @@ export function validateEmail(value: string, t: TFunction): string | null {
   return null
 }
 
+// Proveedores de correo que acepta el backend al reservar una cita (AppointmentService.validateAllowedEmail).
+// Si cambian allá, hay que cambiarlos aquí.
+export const BOOKING_EMAIL_DOMAINS = ['gmail.com', 'hotmail.com', 'outlook.com']
+
+export function validateBookingEmailDomain(value: string, t: TFunction): string | null {
+  const domain = value.slice(value.indexOf('@') + 1).trim().toLowerCase()
+  return BOOKING_EMAIL_DOMAINS.includes(domain) ? null : t('validation.emailDomainNotAllowed')
+}
+
 export function validatePassword(value: string, t: TFunction): string | null {
   if (!value) return t('validation.passwordRequired')
   if (value.length < 8) return t('validation.passwordMinLength')
