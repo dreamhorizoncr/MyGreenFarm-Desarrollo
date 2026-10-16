@@ -119,7 +119,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
             <div className="flex items-center gap-xs">
               <div className={compact ? 'w-[116px]' : 'w-[140px]'}>
                 <Select
-                  compact
+                  compact={compact}
                   value={String(focusedDate.month)}
                   onChange={(month) => moveTo(focusedDate.set({ month: Number(month) }))}
                   options={monthOptions}
@@ -129,7 +129,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
               </div>
               <div className={compact ? 'w-[90px]' : 'w-[96px]'}>
                 <Select
-                  compact
+                  compact={compact}
                   value={String(focusedDate.year)}
                   onChange={(year) => moveTo(focusedDate.set({ year: Number(year) }))}
                   options={yearOptions}
