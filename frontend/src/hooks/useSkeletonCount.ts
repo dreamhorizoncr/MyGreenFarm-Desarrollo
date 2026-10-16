@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 const STORAGE_PREFIX = 'mgf:skeleton-count:'
 
@@ -21,8 +21,9 @@ function writeCount(key: string, count: number) {
 
 export function useSkeletonCount(key: string, loading: boolean, visibleCount: number, fallback = 3): number {
   useEffect(() => {
-    if (!loading) writeCount(key, Math.max(1, visibleCount))
+    if (!loading && visibleCount > 0) writeCount(key, visibleCount)
   }, [key, loading, visibleCount])
 
-  return readCount(key) ?? fallback
+  // Se lee al empezar cada carga para que el número no cambie mientras se muestran los skeletons.
+  return useMemo(() => (loading ? readCount(key) ?? fallback : fallback), [key, loading, fallback])
 }
