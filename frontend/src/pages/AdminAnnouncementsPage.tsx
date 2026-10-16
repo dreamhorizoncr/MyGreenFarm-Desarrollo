@@ -4,7 +4,6 @@ import {
   PlusIcon,
 } from "@animateicons/react/lucide";
 import AdminLayout from "../layout/AdminLayout.tsx";
-import Skeleton from "../components/ui/Skeleton.tsx";
 import SkeletonList from "../components/ui/SkeletonList.tsx";
 import Pagination from "../components/ui/Pagination.tsx";
 import Select from "../components/ui/Select.tsx";
@@ -21,6 +20,9 @@ import type {
   AnnouncementType,
 } from "../types/announcement.ts";
 import NewsDetailModal from "../components/NewsDetailModal.tsx";
+import NewsCard from "../components/NewsCard.tsx";
+import { formatNewsDate } from "../utils/newsDate.ts";
+import { useAnnouncementImages } from "../hooks/useAnnouncementImages.ts";
 import DatePickerField from "../components/ui/DatePickerField.tsx";
 import TimePickerField from "../components/ui/TimePickerField.tsx";
 import CardActionButton from "../components/ui/CardActionButton.tsx";
@@ -62,85 +64,6 @@ type AdminNewsCategory =
   | "GENERAL"
   | "TRANSPORT";
 
-interface AnnouncementRowProps {
-  announcement?: Announcement
-  typeLabel?: string
-  onPreview?:() => void
-  onEdit?: () => void
-  onDelete?: () => void
-  loading?: boolean
-}
-
-function AnnouncementRow({ announcement, typeLabel, onPreview, onEdit, onDelete, loading = false }: Readonly<AnnouncementRowProps>) {
-  const { t } = useTranslation()
-
-  if (loading) {
-    return (
-      <div className="border-t border-neutral-200 px-md py-lg">
-        <Skeleton shape="line" className="h-3 w-24" />
-        <Skeleton shape="line" className="mt-xs h-6 w-2/3" />
-        <div className="mt-xs flex flex-col gap-2xs">
-          <Skeleton shape="line" className="h-4 w-full" />
-          <Skeleton shape="line" className="h-4 w-1/2" />
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <article className="border-t border-neutral-200 px-md py-lg transition-colors hover:bg-neutral-50">
-      <div className="flex flex-col gap-md">
-        <div>
-          <span className="inline-flex rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
-            {typeLabel}
-          </span>
-
-          <h2 className="mt-xs font-heading text-xl font-bold text-heading">
-            {announcement!.title}
-          </h2>
-
-          <p className="mt-xs whitespace-pre-line text-body-sm text-neutral-600">
-            {announcement!.content.length > 180
-              ? `${announcement!.content.slice(0, 180).trim()}...`
-              : announcement!.content}
-          </p>
-
-          {(announcement!.location || announcement!.eventDate) && (
-            <p className="mt-sm text-caption text-neutral-500">
-              {announcement!.location}
-
-              {announcement!.location && announcement!.eventDate
-                ? " · "
-                : ""}
-
-              {announcement!.eventDate
-                ? new Date(announcement!.eventDate).toLocaleString()
-                : ""}
-            </p>
-          )}
-        </div>
-
-            {/* Acciones */}
-        <div className="flex flex-wrap items-center justify-between gap-sm">
-          <button
-            type="button"
-            onClick={onPreview}
-            className="font-body text-body-sm font-semibold text-green-500 underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
-          >
-            {t("adminNews.preview")}
-          </button>
-
-          <div className="flex items-center gap-2">
-            <CardActionButton action="edit" label={t("adminNews.editButton")} onClick={onEdit} />
-
-            <CardActionButton action="delete" label={t("adminNews.deleteButton")} onClick={onDelete} />
-          </div>
-        </div>
-      </div>
-    </article>
-  )
-}
-
 function AnnouncementsPage() {
   const {
     announcements,
@@ -178,6 +101,13 @@ function AnnouncementsPage() {
     void fetchAnnouncements(i18n.language, currentPage - 1, 10);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i18n.language, currentPage]);
+
+  const { loading: coversLoading, fetchImages: fetchCovers, getCoverImage } = useAnnouncementImages();
+
+  useEffect(() => {
+    void fetchCovers(announcements.map((announcement) => announcement.id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [announcements]);
 
   const openCreate = () => {
     setEditing(null);
@@ -314,7 +244,8 @@ function AnnouncementsPage() {
     (announcement) =>
       activeCategory === "All" || announcement.type === activeCategory,
   );
-  const skeletonCount = useSkeletonCount("admin-news", loading, filteredAnnouncements.length);
+  const listLoading = loading || coversLoading;
+  const skeletonCount = useSkeletonCount("admin-news", listLoading, filteredAnnouncements.length);
 
   const idleSubmitLabel = editing
     ? t("adminNews.newssavechanges")
@@ -642,26 +573,32 @@ function AnnouncementsPage() {
         </button>
       </div>
 
-      <section className="mt-xl grid gap-md">
-        {loading && !formOpen && (
+      <section className="mt-xl grid grid-cols-1 gap-lg md:grid-cols-2 xl:grid-cols-3">
+        {listLoading && !formOpen && (
           <output className="contents" aria-label={t("adminNews.newsload")}>
-            <SkeletonList count={skeletonCount}>{() => <AnnouncementRow loading />}</SkeletonList>
+            <SkeletonList count={skeletonCount}>{() => <NewsCard loading actions={null} />}</SkeletonList>
           </output>
         )}
 
-        {!loading && filteredAnnouncements.map((announcement) => (
-          <AnnouncementRow
+        {!listLoading && filteredAnnouncements.map((announcement) => (
+          <NewsCard
             key={announcement.id}
             announcement={announcement}
             typeLabel={t(typeLabels[announcement.type])}
-            onPreview={()=> setPreviewing(announcement)}
-            onEdit={() => void openEdit(announcement)}
-            onDelete={() => handleDelete(announcement)}
+            formattedDate={formatNewsDate(announcement.eventDate, i18n.language)}
+            coverImage={getCoverImage(announcement.id)}
+            onReadMore={() => setPreviewing(announcement)}
+            actions={
+              <>
+                <CardActionButton action="edit" label={t("adminNews.editButton")} onClick={() => void openEdit(announcement)} />
+                <CardActionButton action="delete" label={t("adminNews.deleteButton")} onClick={() => handleDelete(announcement)} />
+              </>
+            }
           />
         ))}
 
-        {!loading && announcements.length === 0 && (
-          <p className="border-t border-neutral-200 py-xl text-body-sm text-neutral-500">
+        {!listLoading && announcements.length === 0 && (
+          <p className="col-span-full border-t border-neutral-200 py-xl text-body-sm text-neutral-500">
             {t("adminNews.noNews")}
           </p>
         )}
