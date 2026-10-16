@@ -20,13 +20,13 @@ interface CalendarPanelProps {
 
 const SIZES = {
   regular: {
-    card: 'max-w-[420px] p-lg gap-6',
+    card: 'max-w-[420px] p-lg gap-4',
     header: 'pb-4',
     gridHeader: 'mb-3',
-    grid: 'min-h-[304px]',
+    grid: 'min-h-[280px]',
     headCell: 'w-10 h-10 text-md',
-    cell: 'h-9 w-9 text-md m-1',
-    footer: 'pt-6',
+    cell: 'h-9 w-9 text-md my-0.5',
+    footer: 'pt-4',
     clear: 'px-6 py-2',
   },
   compact: {
