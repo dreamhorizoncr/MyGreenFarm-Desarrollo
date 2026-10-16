@@ -9,14 +9,11 @@ import Select from './Select.tsx'
 interface CalendarPanelProps {
   value: CalendarDate | null
   onChange: (value: CalendarDate | null) => void
-  // Fechas (YYYY-MM-DD) que llevan el punto naranja debajo del día.
   markedDates?: ReadonlySet<string>
   minValue?: CalendarDate
   maxValue?: CalendarDate
   ariaLabel?: string
-  // Barra Hoy / Semana / Mes; solo la usa Citas.
   showShortcuts?: boolean
-  // Versión más chica para los selectores de fecha dentro de modales.
   compact?: boolean
   className?: string
 }
@@ -42,14 +39,12 @@ const SIZES = {
   },
 } as const
 
-// Rango de años del selector cuando el campo no tiene mínimo o máximo.
 const YEARS_BACK = 100
 const YEARS_AHEAD = 10
 
 const shortcutClassName =
   'rounded-2xl text-white font-medium hover:bg-green-400/40 transition-colors data-[pressed=true]:scale-95 px-8 py-2 disabled:opacity-50'
 
-// Tarjeta de calendario compartida: la usan Citas y los selectores de fecha de los formularios.
 function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaLabel, showShortcuts = true, compact = false, className = '' }: Readonly<CalendarPanelProps>) {
   const { t, i18n } = useTranslation()
   const size = SIZES[compact ? 'compact' : 'regular']
@@ -66,8 +61,6 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
   const todayDate = today(getLocalTimeZone())
   const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
 
-  // Selectores de mes y año para saltar directo a fechas lejanas (p. ej. fechas de nacimiento)
-  // sin tener que avanzar mes a mes con las flechas.
   const monthOptions = useMemo(() => {
     const format = new Intl.DateTimeFormat(locale, { month: 'long' })
     return Array.from({ length: 12 }, (_, index) => {

@@ -22,9 +22,6 @@ function PublishExperienceModal({
   const [name, setName] = useState('')
   const [content, setContent] = useState('')
   const [submitted, setSubmitted] = useState(false)
-  // Ref (not state) so a second click within the same tick, before React
-  // re-renders to hide the button, is still blocked synchronously — avoids
-  // firing the Gemini moderation call twice for one submission.
   const isSubmittingRef = useRef(false)
 
   useEffect(() => {
@@ -66,9 +63,6 @@ function PublishExperienceModal({
     }
 
     isSubmittingRef.current = true
-    // Show the "sent for review" confirmation right away instead of leaving
-    // the form stuck while the moderation check runs; the real outcome
-    // arrives later as a toast (success or rejection reason).
     setSubmitted(true)
     onPublish({ name: trimmedName, content: trimmedContent })
       .then(() => {

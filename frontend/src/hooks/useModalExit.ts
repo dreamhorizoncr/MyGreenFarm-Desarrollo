@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 
 export const MODAL_EXIT_MS = 320
 
-// Retrasa el unmount para que alcance a correr la animacion de cierre.
 export function useModalExit(onClose: () => void) {
   const [closing, setClosing] = useState(false)
 
@@ -18,7 +17,6 @@ export function useModalExit(onClose: () => void) {
   return { closing, requestClose }
 }
 
-// Para modales que se quedan montados y alternan visibilidad con un prop `isOpen`.
 export function useModalVisibility(isOpen: boolean) {
   const [shouldRender, setShouldRender] = useState(isOpen)
   const [closing, setClosing] = useState(false)

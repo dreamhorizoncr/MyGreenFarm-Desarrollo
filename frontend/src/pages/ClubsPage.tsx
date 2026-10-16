@@ -200,7 +200,7 @@ function ClubsPage() {
             {/* Main Content */}
             <main className="flex flex-1 items-center justify-center">
                 <Container className="py-10 md:py-12">
-                    {loading ? (
+                    {loading && (
                         <div className="grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
                             {Array.from({ length: 3 }).map((_, index) => (
                                 <article
@@ -263,7 +263,8 @@ function ClubsPage() {
                                 </article>
                             ))}
                         </div>
-                    ) : clubs.length > 0 ? (
+                    )}
+                    {!loading && clubs.length > 0 && (
                         <div className="grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
                             {clubs.map((club) => (
                                 <PublicClubCard
@@ -273,7 +274,8 @@ function ClubsPage() {
                                 />
                             ))}
                         </div>
-                    ) : (
+                    )}
+                    {!loading && clubs.length === 0 && (
                         <div className="mx-auto max-w-140 rounded-3xl border border-neutral-200 bg-white p-xl text-center shadow-md md:p-2xl">
                             <div className="relative mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-orange-50 text-orange-500">
                                 <UsersIcon size={56} aria-hidden="true" />

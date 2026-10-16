@@ -29,10 +29,6 @@ import taller.multimedia.backend.repository.vacancy.VacancyRepository;
 import taller.multimedia.backend.service.announcement.AnnouncementSummaryAsyncService;
 import taller.multimedia.backend.service.forum.ForumArticleSummaryAsyncService;
 
-// Corrige la ortografía de noticias, publicaciones del blog, vacantes, clubes y servicios
-// después de guardarlos, en segundo plano, y reemplaza el texto sin preguntar.
-// Noticias y blog generan su resumen IA después de corregir, para resumir el texto ya corregido
-// y para que los dos procesos no se pisen al guardar la misma fila.
 @Service
 @RequiredArgsConstructor
 public class SpellingCorrectionAsyncService {
@@ -100,7 +96,6 @@ public class SpellingCorrectionAsyncService {
 
     private <T, I> void correct(String label, I id, JpaRepository<T, I> repository, List<TextField<T>> fields) {
         try {
-            // 1. Lee los textos actuales.
             Map<String, String> original = transactionTemplate.execute(status -> repository.findById(id)
                     .map(entity -> {
                         Map<String, String> texts = new LinkedHashMap<>();
@@ -112,13 +107,11 @@ public class SpellingCorrectionAsyncService {
                 return;
             }
 
-            // 2. Llama a Gemini fuera de la transacción (puede tardar unos segundos).
             Map<String, String> corrections = spellingCorrectionService.correct(original);
             if (corrections.isEmpty()) {
                 return;
             }
 
-            // 3. Guarda solo los campos que nadie cambió mientras tanto.
             transactionTemplate.executeWithoutResult(status -> repository.findById(id).ifPresent(entity -> {
                 int applied = 0;
                 for (TextField<T> field : fields) {

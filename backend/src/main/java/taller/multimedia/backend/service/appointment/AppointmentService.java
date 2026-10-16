@@ -151,7 +151,7 @@ public class AppointmentService {
 
         if (!allowedDomains.contains(domain)) {
             throw new IllegalArgumentException(
-                    "Por favor, utiliza un correo electrónico de un proveedor conocido (Gmail, Hotmail, Outlook, Yahoo).");
+                    "Por favor, utiliza un correo electrónico de Gmail, Hotmail u Outlook.");
         }
     }
 

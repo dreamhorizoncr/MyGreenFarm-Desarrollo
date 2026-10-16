@@ -17,7 +17,6 @@ public class VacancyRequest {
     @NotBlank(message = "La descripción es obligatoria")
     private String description;
 
-    // Valores esperados: applicantPhone, file, certificates
     @NotNull(message = "Los campos requeridos son obligatorios")
     private List<String> requiredFields;
 }

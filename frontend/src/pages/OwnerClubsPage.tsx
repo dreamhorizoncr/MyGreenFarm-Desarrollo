@@ -144,9 +144,7 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
                   {t("ownerClubs.noSpotsAvailable")}
                 </span>
               ) : (
-                <>
-                  <p>{maxCap}{" "}{t("ownerClubs.capacityUnit")}</p>
-                </>
+                <p>{maxCap}{" "}{t("ownerClubs.capacityUnit")}</p>
               )}
             </p>
           </div>
@@ -332,10 +330,8 @@ function OwnerClubsPage() {
     };
 
     try {
-      let savedClub: ClubResponse;
-
       if (editing) {
-        savedClub = await clubService.update(editing.id, dataToSend);
+        const savedClub = await clubService.update(editing.id, dataToSend);
 
         if (cover) {
           await clubService.uploadImages(savedClub.id, [cover], true);
@@ -344,7 +340,7 @@ function OwnerClubsPage() {
           await clubService.uploadImages(savedClub.id, gallery, false);
         }
       } else {
-        savedClub = await clubService.createWithImages(
+        await clubService.createWithImages(
           dataToSend,
           cover || undefined,
           gallery.length > 0 ? gallery : undefined
@@ -451,7 +447,7 @@ function OwnerClubsPage() {
             <ClubCard
               key={club.id}
               club={club}
-              onEdit={() => void openEdit(club)}
+              onEdit={() => openEdit(club)}
               onDelete={() => handleDelete(club)}
             />
           ))}
@@ -559,6 +555,7 @@ function OwnerClubsPage() {
               {/* Opción de Publicar / Visibilidad */}
               <div className="md:col-span-2 flex items-center gap-md rounded-xl border border-neutral-200 bg-neutral-50 p-md">
                 <label className="relative inline-flex items-center cursor-pointer">
+                  <span className="sr-only">{t("ownerClubs.publishClubLabel")}</span>
                   <input
                     type="checkbox"
                     checked={form.isPublished ?? false}

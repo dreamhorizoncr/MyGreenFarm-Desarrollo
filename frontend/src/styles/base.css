@@ -51,9 +51,6 @@ html [data-sileo-button][data-state] {
   --sileo-btn-bg-hover: color-mix(in oklch, var(--white) 30%, transparent);
 }
 
-/* ---------------------------------------------------------------------------
-   BLOB BUTTON — efecto gooey al hacer hover (usa el filtro SVG #blob-goo)
-   --------------------------------------------------------------------------- */
 .blob-btn {
   z-index: 1;
   position: relative;

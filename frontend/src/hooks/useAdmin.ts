@@ -8,9 +8,6 @@ export function useAdmin() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Fetched in one page-sized-to-fit-all request so the dashboard can filter
-  // (by role, by search) and paginate the result client-side, instead of
-  // paginating the unfiltered list and losing track of how many matches there are.
   const fetchUsers = async () => {
     setLoading(true)
     setError(null)

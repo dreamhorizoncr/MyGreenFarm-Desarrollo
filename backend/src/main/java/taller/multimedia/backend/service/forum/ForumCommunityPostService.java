@@ -44,7 +44,6 @@ public class ForumCommunityPostService {
         return toResponse(communityPostRepository.save(post));
     }
 
-    // Borra la publicación junto con sus likes y comentarios; false si no existe.
     @Transactional
     public boolean delete(UUID id) {
         if (!communityPostRepository.existsById(id)) return false;

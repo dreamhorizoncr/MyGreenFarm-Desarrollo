@@ -161,7 +161,6 @@ function BlogPostCard({
         />
       )}
 
-      {/* La imagen se redondea sola (sin overflow-hidden en la card) para que card-hover no tiemble. */}
       <div className="h-[160px] shrink-0 overflow-hidden rounded-t-[15px] bg-neutral-100 xs:h-[220px]">
         {post!.imageUrl && (
           <img

@@ -9,6 +9,7 @@ import CountrySelect from './ui/CountrySelect.tsx'
 import { phoneLabels } from '../utils/phoneLabels.ts'
 import { useVacancyApplicationForm } from '../hooks/useVacancyApplicationForm.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
@@ -40,6 +41,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
   const form = useVacancyApplicationForm({ vacancyId, requiredFields }, onSubmit)
   const heading = vacancyId === null ? title : t('vacancies.applyModalTitle')
   const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
   useBodyScrollLock()
 
   useEffect(() => {
@@ -55,12 +57,6 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') requestClose()
-      }}
       aria-label={heading}
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >

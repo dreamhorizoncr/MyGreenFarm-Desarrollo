@@ -513,6 +513,7 @@ export default {
     submitting: "Enviando...",
     submitError: "No se pudo enviar la solicitud. Inténtalo de nuevo.",
     submitErrorToastTitle: "No se pudo enviar tu solicitud",
+    emailDomainToastTitle: "Correo no permitido",
     retry: "Reintentar",
     wizard: {
       schedule: "Horario",
@@ -648,6 +649,7 @@ export default {
   validation: {
     emailRequired: "El correo electrónico es obligatorio",
     emailInvalid: "Ingresa un correo electrónico válido",
+    emailDomainNotAllowed: "Usa un correo de Gmail, Hotmail u Outlook para reservar la cita.",
     passwordRequired: "La contraseña es obligatoria",
     passwordMinLength: "La contraseña debe tener al menos 8 caracteres",
     passwordPattern:

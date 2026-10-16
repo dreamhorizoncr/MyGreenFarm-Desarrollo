@@ -32,7 +32,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 
     const currentUser = userStorage.getUser()
 
-    {/* Obtener docentes */}
+    // Obtener docentes
     const fetchTeachers = async () => {
         try {
         setError(null)
@@ -69,7 +69,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
         }
     }, [])
 
-    {/* Buscador */}
+    // Buscador
     const filteredTeachers = useMemo(() => {
         const term = searchTerm.trim().toLowerCase()
 
@@ -94,7 +94,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
         safeCurrentPage * PAGE_SIZE,
     )
 
-    {/* Registrar docente */}
+    // Registrar docente
     const handleCreate = async (data: CreateTeacherData) => {
         await adminService.createTeacher(data)
         await fetchTeachers()
@@ -102,7 +102,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
         notify.success('Docente registrado correctamente')
     }
 
-    {/* Editar docente */}
+    // Editar docente
     const handleUpdate = async (id: string, data: UpdateUserData) => {
         const updated = await adminService.updateUser(id, data)
 
@@ -117,7 +117,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
         notify.success('Información del docente actualizada')
     }
 
-    {/* Subir fotografía */}
+    // Subir fotografía
     const handleUploadPhoto = async (id: string, file: File) => {
         const updated = await adminService.uploadTeacherPhoto(id, file)
 
@@ -132,7 +132,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
         notify.success('Fotografía actualizada correctamente')
     }
 
-    {/* Eliminar fotografía */}
+    // Eliminar fotografía
     const handleDeletePhoto = async (id: string) => {
         await adminService.deleteTeacherPhoto(id)
 
@@ -147,7 +147,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
         notify.success('Fotografía eliminada correctamente')
     }
 
-    {/* Eliminar docente */}
+    // Eliminar docente
     const handleDelete = async (id: string) => {
         try {
         await adminService.deleteUser(id)

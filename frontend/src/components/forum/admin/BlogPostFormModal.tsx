@@ -106,7 +106,6 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
     setForm((current) => ({ ...current, imageAlt: '', removeImage: false }))
   }
 
-  // Quita la imagen recién elegida y vuelve a mostrar la actual (si había).
   function clearSelectedImage() {
     if (image) URL.revokeObjectURL(image.previewUrl)
     setImage(null)

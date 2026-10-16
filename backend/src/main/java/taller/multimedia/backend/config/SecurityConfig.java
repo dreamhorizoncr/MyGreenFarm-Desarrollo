@@ -124,7 +124,6 @@ public class SecurityConfig {
                 "/api/gallery/likes/**")
             .permitAll()
               .requestMatchers("/api/forum/articles/likes/**").permitAll()
-              // Borrar publicaciones y comentarios de la comunidad es solo del OWNER; va antes del permitAll de /community/**.
               .requestMatchers(HttpMethod.DELETE, "/api/forum/community/*", "/api/forum/community/*/comments/*").hasRole("OWNER")
               .requestMatchers("/api/forum/community/**", "/api/forum/posts/likes/**").permitAll()
               .requestMatchers(HttpMethod.GET, "/api/forum/articles/**").permitAll()

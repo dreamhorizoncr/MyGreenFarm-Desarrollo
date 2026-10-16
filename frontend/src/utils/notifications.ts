@@ -16,7 +16,6 @@ function withDefaults(options: SileoOptions, fill: string): SileoOptions {
   return options
 }
 
-// Sileo has no dismiss-on-click option, so toast nodes are tagged with their id as they appear.
 const pendingIds: string[] = []
 let tapToDismissReady = false
 

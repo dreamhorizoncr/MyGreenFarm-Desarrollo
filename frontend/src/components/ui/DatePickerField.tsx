@@ -7,7 +7,6 @@ import CalendarPanel from './CalendarPanel.tsx'
 import { usePopoverPosition } from '../../hooks/usePopoverPosition.ts'
 
 interface DatePickerFieldProps {
-  // Fecha en formato YYYY-MM-DD, o '' si no hay fecha.
   value: string
   onChange: (value: string) => void
   min?: string
@@ -27,16 +26,12 @@ const toCalendarDate = (value?: string): CalendarDate | undefined => {
   }
 }
 
-// Tamaño aproximado del calendario compacto, para decidir hacia dónde abrirlo.
 const PANEL_WIDTH = 300
 const PANEL_HEIGHT = 290
 
 const defaultTriggerClassName =
   'mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading'
 
-// Reemplaza al input type="date" nativo: abre el mismo calendario que se usa en Citas.
-// El panel se renderiza en linea (sin portal) para que funcione dentro de <dialog> con showModal(),
-// pero con posición fixed para que el modal no lo recorte aunque sea bajo o tenga scroll.
 function DatePickerField({
   value,
   onChange,
@@ -59,8 +54,18 @@ function DatePickerField({
     const handlePointerDown = (event: PointerEvent) => {
       if (!containerRef.current?.contains(event.target as Node)) setOpen(false)
     }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      event.preventDefault()
+      event.stopPropagation()
+      setOpen(false)
+    }
     document.addEventListener('pointerdown', handlePointerDown)
-    return () => document.removeEventListener('pointerdown', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown, true)
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown, true)
+    }
   }, [open])
 
   const handleChange = (date: CalendarDate | null) => {
@@ -75,18 +80,7 @@ function DatePickerField({
     : t('common.selectDate')
 
   return (
-    <div
-      ref={containerRef}
-      className="relative"
-      onKeyDown={(event) => {
-        // Escape cierra solo el calendario, no el modal que lo contiene.
-        if (event.key === 'Escape' && open) {
-          event.preventDefault()
-          event.stopPropagation()
-          setOpen(false)
-        }
-      }}
-    >
+    <div ref={containerRef} className="relative">
       <button
         ref={triggerRef}
         type="button"
@@ -103,11 +97,11 @@ function DatePickerField({
       </button>
 
       {open && position && (
-        <div
-          role="dialog"
+        <dialog
+          open
           aria-label={ariaLabel}
           style={{ top: position.top, bottom: position.bottom, left: position.left, width: PANEL_WIDTH }}
-          className="fixed z-[9000] max-w-[calc(100vw-1rem)]"
+          className="fixed z-[9000] m-0 max-w-[calc(100vw-1rem)] border-0 bg-transparent p-0 text-inherit"
         >
           <CalendarPanel
             value={selected}
@@ -119,7 +113,7 @@ function DatePickerField({
             compact
             className="shadow-lg"
           />
-        </div>
+        </dialog>
       )}
     </div>
   )

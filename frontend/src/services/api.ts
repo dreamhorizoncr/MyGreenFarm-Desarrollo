@@ -1,5 +1,3 @@
-// Esto de aquí es para el cliente HTTP (axios) que usan todos los servicios: le pone
-// el token a cada request y, si el backend responde 401, cierra la sesión.
 
 import axios from 'axios'
 import { tokenStorage } from '../utils/token.ts'

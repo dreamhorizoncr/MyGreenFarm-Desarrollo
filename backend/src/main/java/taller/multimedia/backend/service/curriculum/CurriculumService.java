@@ -42,8 +42,6 @@ public class CurriculumService {
     @Value("${supabase.s3.buckets.curriculums}")
     private String curriculumsBucket;
 
-    // In-memory send guards (reset on restart, by design): just stop a duplicate
-    // click/request within the same running instance from emailing twice.
     private final Set<UUID> receivedEmailSent = ConcurrentHashMap.newKeySet();
     private final Set<UUID> hiredEmailSent = ConcurrentHashMap.newKeySet();
 

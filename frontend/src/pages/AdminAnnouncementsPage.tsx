@@ -457,7 +457,6 @@ function AnnouncementsPage() {
               <div className="font-body text-body-sm font-semibold text-heading">
                 {t("adminNews.newsdate")}
 
-                {/* El calendario elige el día y el reloj de al lado la hora; se guarda como YYYY-MM-DDTHH:mm. */}
                 <div className="flex gap-sm">
                   <div className="min-w-0 flex-1">
                     <DatePickerField

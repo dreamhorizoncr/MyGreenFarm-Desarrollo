@@ -38,7 +38,7 @@ function ChildFormModal({
     child,
     onClose,
     onSaved,
-}: ChildFormModalProps) {
+}: Readonly<ChildFormModalProps>) {
     const { t } = useTranslation();
 
     const relationshipOptions: {
@@ -111,7 +111,7 @@ function ChildFormModal({
                 setClubs(loadedClubs);
 
                 // Mapear los clubIds en cuanto tengamos la lista de clubes disponibles
-                if (child && child.clubNames) {
+                if (child?.clubNames) {
                     const selectedIds = loadedClubs
                         .filter((club) => child.clubNames.includes(club.name))
                         .map((club) => club.id);
@@ -193,6 +193,45 @@ function ChildFormModal({
 
     const { shouldRender, closing } = useModalVisibility(isOpen);
     if (!shouldRender) return null;
+
+    let submitLabel = t("admin.children.register");
+    if (saving) submitLabel = t("admin.children.saving");
+    else if (child) submitLabel = t("admin.children.saveChanges");
+
+    const renderClubs = () => {
+        if (loadingOptions) {
+            return (
+                <p className="font-normal text-neutral-400 animate-pulse">
+                    {t("admin.children.loadingOptions")}
+                </p>
+            );
+        }
+        if (clubs.length === 0) {
+            return (
+                <p className="font-normal text-neutral-500">
+                    {t("admin.children.noClubs")}
+                </p>
+            );
+        }
+        return (
+            <div className="flex flex-col gap-3">
+                {clubs.map((club) => (
+                    <label
+                        key={club.id}
+                        className="flex cursor-pointer items-center gap-2 font-normal text-body-text"
+                    >
+                        <input
+                            type="checkbox"
+                            checked={form.clubIds.includes(club.id)}
+                            onChange={() => handleClubChange(club.id)}
+                            className="size-4 accent-green-500"
+                        />
+                        {club.name}
+                    </label>
+                ))}
+            </div>
+        );
+    };
 
     return (
         <div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
@@ -331,32 +370,7 @@ function ChildFormModal({
                     <div className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.children.clubs")}
                         <div className="mt-xs rounded-xl border border-neutral-200 p-md">
-                            {loadingOptions ? (
-                                <p className="font-normal text-neutral-400 animate-pulse">
-                                    {t("admin.children.loadingOptions")}
-                                </p>
-                            ) : clubs.length === 0 ? (
-                                <p className="font-normal text-neutral-500">
-                                    {t("admin.children.noClubs")}
-                                </p>
-                            ) : (
-                                <div className="flex flex-col gap-3">
-                                    {clubs.map((club) => (
-                                        <label
-                                            key={club.id}
-                                            className="flex cursor-pointer items-center gap-2 font-normal text-body-text"
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                checked={form.clubIds.includes(club.id)}
-                                                onChange={() => handleClubChange(club.id)}
-                                                className="size-4 accent-green-500"
-                                            />
-                                            {club.name}
-                                        </label>
-                                    ))}
-                                </div>
-                            )}
+                            {renderClubs()}
                         </div>
                     </div>
 
@@ -393,11 +407,7 @@ function ChildFormModal({
                         disabled={saving}
                         className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                        {saving
-                            ? t("admin.children.saving")
-                            : child
-                                ? t("admin.children.saveChanges")
-                                : t("admin.children.register")}
+                        {submitLabel}
                     </button>
                 </div>
             </form>

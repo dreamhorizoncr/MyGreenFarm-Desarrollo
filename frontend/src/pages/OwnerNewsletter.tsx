@@ -9,6 +9,7 @@ import useDismiss from '../hooks/useDismiss.ts'
 import { useNewsletter } from '../hooks/useNewsletter.ts'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { notify } from '../utils/notifications.ts'
 import type { AudienceType, NewsletterRecipient } from '../types/newsletter.ts'
 import { hasUnsafeText } from '../utils/validators.ts'
@@ -85,6 +86,7 @@ function AdminNewsletterPage() {
     const [isSendMenuOpen, setIsSendMenuOpen] = useState(false)
     const sendMenuRef = useRef<HTMLDivElement>(null)
     const broadcastDialogRef = useRef<HTMLDialogElement>(null)
+    useDialogDismiss(broadcastDialogRef, closeBroadcastModal)
 
     useDismiss({
         ref: sendMenuRef,
@@ -269,20 +271,22 @@ function AdminNewsletterPage() {
                 </div>
 
                 {/* Listado filtrado */}
-                {loadingSubscribers ? (
+                {loadingSubscribers && (
                     <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
                         <SubscriberRow loading />
                         <SubscriberRow loading />
                         <SubscriberRow loading />
                         <SubscriberRow loading />
                     </div>
-                ) : filteredItems.length === 0 ? (
+                )}
+                {!loadingSubscribers && filteredItems.length === 0 && (
                     <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
                         {subscribers.length > 0 || searchTerm.trim()
                             ? t('admin.newsletter.noResults')
                             : t('admin.newsletter.noContacts')}
                     </p>
-                ) : (
+                )}
+                {!loadingSubscribers && filteredItems.length > 0 && (
                     <>
                     <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
                         {pagedItems.map((item) => (
@@ -305,12 +309,6 @@ function AdminNewsletterPage() {
                             if (el && !el.open) el.showModal()
                         }}
                         onClose={closeBroadcastModal}
-                        onClick={(event) => {
-                            if (event.target === broadcastDialogRef.current) closeBroadcastModal()
-                        }}
-                        onKeyDown={(event) => {
-                            if (event.key === 'Escape') closeBroadcastModal()
-                        }}
                         aria-labelledby="newsletter-broadcast-title"
                         className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${broadcastClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
                     >

@@ -38,7 +38,7 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
     evaluation,
     onClose,
     onSaved,
-    }: EvaluationFormModalProps) {
+    }: Readonly<EvaluationFormModalProps>) {
     const { t } = useTranslation();
     const [form, setForm] = useState<EvaluationRequest>(emptyForm);
     const [expedients, setExpedients] = useState<Expedient[]>([]);
@@ -152,6 +152,10 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
 
     const { shouldRender, closing } = useModalVisibility(isOpen);
     if (!shouldRender) return null;
+
+    let submitLabel = t("admin.evaluations.formAdd");
+    if (saving) submitLabel = t("admin.evaluations.formSaving");
+    else if (evaluation) submitLabel = t("admin.evaluations.formSaveChanges");
 
     return (
         <div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
@@ -339,11 +343,7 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
                 disabled={saving || loadingOptions}
                 className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
             >
-                {saving
-                ? t("admin.evaluations.formSaving")
-                : evaluation
-                ? t("admin.evaluations.formSaveChanges")
-                : t("admin.evaluations.formAdd")}
+                {submitLabel}
             </button>
             </div>
         </form>

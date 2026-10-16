@@ -6,6 +6,7 @@ import type { ScheduleException } from '../types/availability.ts'
 import { DEFAULT_END_TIME, DEFAULT_START_TIME, toApiTime, timeValue } from '../types/availability.ts'
 import { validateSafeText } from '../utils/validators.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 
 interface ScheduleExceptionModalProps {
   exception?: ScheduleException | null
@@ -24,6 +25,7 @@ function todayIso() {
 function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Readonly<ScheduleExceptionModalProps>) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
+  useDialogDismiss(dialogRef, onClose)
   const [date, setDate] = useState(exception?.exceptionDate ?? '')
   const [closed, setClosed] = useState(exception?.closed ?? true)
   const [startTime, setStartTime] = useState(timeValue(exception?.startTime ?? DEFAULT_START_TIME))
@@ -96,12 +98,6 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
     <dialog
       ref={dialogRef}
       onClose={onClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) onClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') onClose()
-      }}
       aria-labelledby="exception-modal-title"
       className="text-left m-0 mt-auto max-h-[92vh] w-full max-w-none modal-scroll rounded-t-[20px] bg-bg-card p-xl backdrop:bg-scrim md:m-auto md:w-[min(560px,92vw)] md:rounded-[20px]"
     >
