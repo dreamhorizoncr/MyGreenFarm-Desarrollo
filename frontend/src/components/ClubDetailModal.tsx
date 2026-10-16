@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { ClockIcon, UsersIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
+import { formatSchedule } from '../utils/schedule.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import type { ClubResponse } from '../types/clubs.ts'
@@ -12,7 +13,7 @@ interface ClubDetailModalProps {
 }
 
 function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
-    const { t: translate } = useTranslation()
+    const { t: translate, i18n } = useTranslation()
     const translateKey = translate as (key: string, options?: Record<string, unknown>) => string
     const t = (key: string, options?: Record<string, unknown>): string => {
         if (key.startsWith("clubs.") || key.startsWith("common.") || key.startsWith("newspage.")) {
@@ -62,7 +63,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                         {club.schedule && (
                             <div className="flex items-center gap-[6px]">
                                 <ClockIcon size={16} className="text-orange-500" />
-                                <span>{club.schedule}</span>
+                                <span>{formatSchedule(club.schedule, translate, i18n.resolvedLanguage ?? i18n.language)}</span>
                             </div>
                         )}
                         {club.maxCapacity !== undefined && (

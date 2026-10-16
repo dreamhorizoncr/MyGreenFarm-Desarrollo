@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { formatSchedule, parseSchedule } from '../utils/schedule.ts'
 import { useTranslation } from 'react-i18next'
 import { UsersIcon, SparklesIcon, ClockIcon } from '@animateicons/react/lucide'
 import Navbar from '../components/Navbar.tsx'
@@ -16,7 +17,7 @@ interface PublicClubCardProps {
 }
 
 function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
-    const { t: translate } = useTranslation()
+    const { t: translate, i18n } = useTranslation()
     const translateKey = translate as (key: string, options?: Record<string, unknown>) => string
     const t = (key: string, options?: Record<string, unknown>): string =>
         translateKey(key.startsWith("admin.") ? key : `admin.${key}`, options)
@@ -74,7 +75,7 @@ function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
                                     {t("ownerClubs.schedule")}
                                 </span>
                             </div>
-                            <p className="m-0 mt-2xs px-1 text-left text-body-sm">{club.schedule}</p>
+                            <p className="m-0 mt-2xs px-1 text-left text-body-sm">{formatSchedule(club.schedule, translate, i18n.resolvedLanguage ?? i18n.language)}</p>
                         </div>
                     )}
 
@@ -149,7 +150,7 @@ function ClubsPage() {
                     const translationItems = clubsWithImages.flatMap((club) => [
                         { entityId: String(club.id), fieldName: "name", originalText: club.name },
                         { entityId: String(club.id), fieldName: "description", originalText: club.description },
-                        ...(club.schedule
+                        ...(club.schedule && !parseSchedule(club.schedule)
                             ? [{ entityId: String(club.id), fieldName: "schedule", originalText: club.schedule }]
                             : []),
                     ])
