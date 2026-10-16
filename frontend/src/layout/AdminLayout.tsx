@@ -23,7 +23,7 @@ function AdminLayout({ children }: Readonly<AdminLayoutProps>) {
           </main>
         </div>
 
-        <div className="md:pl-[260px]">
+        <div className="relative z-40">
           <Footer />
         </div>
       </div>
