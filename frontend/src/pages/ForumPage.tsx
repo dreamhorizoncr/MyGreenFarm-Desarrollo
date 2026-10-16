@@ -12,6 +12,8 @@ import type { ForumTab } from '../components/forum/ForumTabs.tsx'
 import PublishExperienceModal from '../components/forum/PublishExperienceModal.tsx'
 import PublishButtonCard from '../components/forum/PublishButtonCard.tsx'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 function ForumPage() {
   const { t } = useTranslation()
@@ -51,6 +53,10 @@ function ForumPage() {
   function handleTabChange(tab: ForumTab) {
     setSearchParams(tab === 'community' ? { tab } : {})
   }
+
+  const blogSkeletonCount = useSkeletonCount('forum-blog', isLoading, filteredBlogPosts.length, 3)
+
+  const communitySkeletonCount = useSkeletonCount('forum-community', isLoading, communityPosts.length, 3)
 
   return (
     <div id="forum-page" className="min-h-screen bg-bg-page">
@@ -111,11 +117,7 @@ function ForumPage() {
                 className="flex scroll-mt-24 flex-col gap-md"
               >
                 {isLoading && (
-                  <>
-                    <BlogPostCard loading />
-                    <BlogPostCard loading />
-                    <BlogPostCard loading />
-                  </>
+                  <SkeletonList count={blogSkeletonCount}>{() => <BlogPostCard loading />}</SkeletonList>
                 )}
 
                 {!isLoading && error && (
@@ -130,13 +132,13 @@ function ForumPage() {
                   </p>
                 )}
 
-                {blogPosts.length > 0 && filteredBlogPosts.length === 0 && (
+                {!isLoading && blogPosts.length > 0 && filteredBlogPosts.length === 0 && (
                   <p className="m-0 rounded-2xl border border-neutral-200 bg-white p-lg font-body text-body-sm text-neutral-500">
                     {t('forum.blog.noSearchResults')}
                   </p>
                 )}
 
-                {filteredBlogPosts.map((post) => (
+                {!isLoading && filteredBlogPosts.map((post) => (
                   <BlogPostCard
                     key={post.id}
                     post={post}
@@ -156,11 +158,7 @@ function ForumPage() {
                 className="flex scroll-mt-24 flex-col gap-md"
               >
                 {isLoading && (
-                  <>
-                    <CommunityPostCard loading />
-                    <CommunityPostCard loading />
-                    <CommunityPostCard loading />
-                  </>
+                  <SkeletonList count={communitySkeletonCount}>{() => <CommunityPostCard loading />}</SkeletonList>
                 )}
 
                 {!isLoading && error && (
@@ -175,7 +173,7 @@ function ForumPage() {
                   </p>
                 )}
 
-                {communityPosts.map((post) => (
+                {!isLoading && communityPosts.map((post) => (
                   <CommunityPostCard
                     key={post.id}
                     post={post}

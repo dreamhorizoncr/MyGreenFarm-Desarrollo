@@ -9,7 +9,7 @@ const ENTITY_TYPE = "expedient";
 export function useExpedients() {
     const [expedients, setExpedients] = useState<Expedient[]>([]);
     const [sourceExpedients, setSourceExpedients] = useState<Expedient[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
   // Obtiene todos los expedientes del backend

@@ -5,11 +5,13 @@ import {
 } from "@animateicons/react/lucide";
 import AdminLayout from "../layout/AdminLayout.tsx";
 import Skeleton from "../components/ui/Skeleton.tsx";
+import SkeletonList from "../components/ui/SkeletonList.tsx";
 import Pagination from "../components/ui/Pagination.tsx";
 import Select from "../components/ui/Select.tsx";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 import { useAnnouncements } from "../hooks/useAnnouncements.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
+import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 import { notify } from "../utils/notifications.ts";
 import { validateMinLength, validateRequired, validateSafeText } from "../utils/validators.ts";
 import type {
@@ -312,6 +314,7 @@ function AnnouncementsPage() {
     (announcement) =>
       activeCategory === "All" || announcement.type === activeCategory,
   );
+  const skeletonCount = useSkeletonCount("admin-news", loading, filteredAnnouncements.length);
 
   const idleSubmitLabel = editing
     ? t("adminNews.newssavechanges")
@@ -642,13 +645,11 @@ function AnnouncementsPage() {
       <section className="mt-xl grid gap-md">
         {loading && !formOpen && (
           <output className="contents" aria-label={t("adminNews.newsload")}>
-            <AnnouncementRow loading />
-            <AnnouncementRow loading />
-            <AnnouncementRow loading />
+            <SkeletonList count={skeletonCount}>{() => <AnnouncementRow loading />}</SkeletonList>
           </output>
         )}
 
-        {filteredAnnouncements.map((announcement) => (
+        {!loading && filteredAnnouncements.map((announcement) => (
           <AnnouncementRow
             key={announcement.id}
             announcement={announcement}

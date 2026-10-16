@@ -10,6 +10,8 @@ import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { ALL_VACANCIES, SPONTANEOUS_APPLICATIONS, useApplicationFilters } from '../hooks/useApplicationFilters.ts'
 import type { Curriculum } from '../types/curriculum.ts'
 import type { Vacancy } from '../types/vacancy.ts'
+import SkeletonList from './ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 interface ApplicationsSectionProps {
   curriculums: Curriculum[]
@@ -36,6 +38,8 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
 
   const handleToggleExpand = (id: string) => () =>
     setExpandedId((prev) => (prev === id ? null : id))
+
+  const skeletonCount = useSkeletonCount('admin-applications', loading, pagedApplications.length, 3)
 
   return (
     <>
@@ -67,9 +71,7 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
 
       {loading && (
         <div className="flex flex-col gap-md">
-          <CurriculumCard loading />
-          <CurriculumCard loading />
-          <CurriculumCard loading />
+          <SkeletonList count={skeletonCount}>{() => <CurriculumCard loading />}</SkeletonList>
         </div>
       )}
       {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}

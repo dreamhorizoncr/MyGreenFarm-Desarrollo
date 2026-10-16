@@ -11,6 +11,8 @@ import { useAdmin } from '../hooks/useAdmin.ts'
 import { notify } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 const PAGE_SIZE = 10
 
@@ -81,6 +83,8 @@ function AdminUsersPage() {
     setUserToDelete(user)
   }
 
+  const skeletonCount = useSkeletonCount('admin-users', loading, pagedUsers.length, 4)
+
   return (
     <div id="admin-users">
       <AdminLayout>
@@ -130,10 +134,7 @@ function AdminUsersPage() {
 
         {loading && (
           <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-            <TeacherCard loading />
-            <TeacherCard loading />
-            <TeacherCard loading />
-            <TeacherCard loading />
+            <SkeletonList count={skeletonCount}>{() => <TeacherCard loading />}</SkeletonList>
           </div>
         )}
 

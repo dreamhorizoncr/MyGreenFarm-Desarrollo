@@ -13,6 +13,8 @@ import { notify } from '../utils/notifications.ts'
 import type { BlogComment, BlogPost, BlogPostInput } from '../types/forum.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import { forumService } from '../services/forum.ts'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 type ForumAdminTab = 'posts' | 'community'
 
@@ -218,12 +220,13 @@ function AdminForumPage() {
     })
   }
 
+  const skeletonCount = useSkeletonCount('admin-forum-blog', visibleIsLoading, visiblePosts.length, 2)
+
   function renderBlogPosts() {
     if (visibleIsLoading) {
       return (
         <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
-          <li><BlogPostCard loading isAdmin /></li>
-          <li><BlogPostCard loading isAdmin /></li>
+          <SkeletonList count={skeletonCount}>{() => <li><BlogPostCard loading isAdmin /></li>}</SkeletonList>
         </ul>
       )
     }

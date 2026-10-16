@@ -14,6 +14,8 @@ import { notify } from '../utils/notifications.ts'
 import type { AudienceType, NewsletterRecipient } from '../types/newsletter.ts'
 import { hasUnsafeText } from '../utils/validators.ts'
 import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 interface SubscriberRowProps {
     item?: NewsletterRecipient
@@ -175,6 +177,8 @@ function AdminNewsletterPage() {
         }
     }
 
+    const skeletonCount = useSkeletonCount('admin-newsletter', loadingSubscribers, pagedItems.length, 4)
+
     return (
         <div id="admin-newsletter">
             <AdminLayout>
@@ -273,10 +277,7 @@ function AdminNewsletterPage() {
                 {/* Listado filtrado */}
                 {loadingSubscribers && (
                     <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-                        <SubscriberRow loading />
-                        <SubscriberRow loading />
-                        <SubscriberRow loading />
-                        <SubscriberRow loading />
+                        <SkeletonList count={skeletonCount}>{() => <SubscriberRow loading />}</SkeletonList>
                     </div>
                 )}
                 {!loadingSubscribers && filteredItems.length === 0 && (

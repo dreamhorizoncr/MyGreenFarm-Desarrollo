@@ -5,6 +5,8 @@ import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import ClubDetailModal from '../components/ClubDetailModal.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import { clubService } from '../services/clubs.ts'
 import type { ClubResponse } from '../types/clubs.ts'
 
@@ -181,6 +183,8 @@ function ClubsPage() {
         void fetchClubs()
     }, [i18n.language])
 
+    const skeletonCount = useSkeletonCount('clubs', loading, clubs.length, 3)
+
     return (
         <div id="clubs-page" className="flex min-h-screen flex-col bg-bg-page">
             <Navbar />
@@ -202,9 +206,8 @@ function ClubsPage() {
                 <Container className="py-10 md:py-12">
                     {loading && (
                         <div className="grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
-                            {Array.from({ length: 3 }).map((_, index) => (
+                            <SkeletonList count={skeletonCount}>{() => (
                                 <article
-                                    key={`skeleton-${index}`}
                                     className="relative flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm"
                                 >
                                     {/* Imagen de portada */}
@@ -261,7 +264,7 @@ function ClubsPage() {
                                         </div>
                                     </div>
                                 </article>
-                            ))}
+                            )}</SkeletonList>
                         </div>
                     )}
                     {!loading && clubs.length > 0 && (

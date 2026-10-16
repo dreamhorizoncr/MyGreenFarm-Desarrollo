@@ -12,6 +12,8 @@ import CardActionButton from './ui/CardActionButton.tsx'
 import Pagination from './ui/Pagination.tsx'
 import { useAppointments } from '../hooks/useAppointments.ts'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
+import SkeletonList from './ui/SkeletonList.tsx'
 import { notify } from '../utils/notifications.ts'
 import type { Appointment, AppointmentStatus } from '../types/appointment.ts'
 import { useAvailability } from '../hooks/useAvailability.ts'
@@ -168,6 +170,9 @@ function AppointmentsSection() {
   }, [appointments, statusFilter, selectedDate, searchTerm])
 
   const { currentPage, setPage, totalPages, pageItems: pagedAppointments } = useClientPagination(filteredAppointments)
+  const isDayView = statusFilter === 'BY_DATE'
+  const daySkeletonCount = useSkeletonCount('appointments-day', loading || !isDayView, pagedAppointments.length, 2)
+  const statusSkeletonCount = useSkeletonCount('appointments-status', loading || isDayView, pagedAppointments.length, 4)
 
   const statusLabel = (filter: StatusFilter): string => {
     if (filter === 'BY_DATE') return t('teacherAppointments.byDate')
@@ -272,8 +277,7 @@ function AppointmentsSection() {
 
             {loading && (
               <div className="grid grid-cols-1 gap-md">
-                <AppointmentCard loading />
-                <AppointmentCard loading />
+                <SkeletonList count={daySkeletonCount}>{() => <AppointmentCard loading />}</SkeletonList>
               </div>
             )}
 
@@ -314,10 +318,7 @@ function AppointmentsSection() {
         <>
           {loading && (
             <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-              <AppointmentCard loading />
-              <AppointmentCard loading />
-              <AppointmentCard loading />
-              <AppointmentCard loading />
+              <SkeletonList count={statusSkeletonCount}>{() => <AppointmentCard loading />}</SkeletonList>
             </div>
           )}
 

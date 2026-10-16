@@ -23,6 +23,8 @@ import ImagePickerButton from "../components/ui/ImagePickerButton.tsx";
 import ImageThumb, { ImageThumbList } from "../components/ui/ImageThumb.tsx";
 import { validateSafeText } from "../utils/validators.ts";
 import ModalCloseButton from "../components/ui/ModalCloseButton.tsx";
+import SkeletonList from "../components/ui/SkeletonList.tsx";
+import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
 const emptyForm: ClubRequest = {
   name: "",
@@ -402,6 +404,8 @@ function OwnerClubsPage() {
     ? t("ownerClubs.saveChanges")
     : t("ownerClubs.publish");
 
+  const skeletonCount = useSkeletonCount("admin-clubs", loading, clubs.length, 3);
+
   return (
     <AdminLayout>
       {/* Header */}
@@ -436,9 +440,7 @@ function OwnerClubsPage() {
       <section className="mt-xl grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
         {loading && !formOpen && (
           <output className="contents">
-            <ClubCard loading />
-            <ClubCard loading />
-            <ClubCard loading />
+            <SkeletonList count={skeletonCount}>{() => <ClubCard loading />}</SkeletonList>
           </output>
         )}
 

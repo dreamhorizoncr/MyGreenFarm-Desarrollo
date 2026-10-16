@@ -14,6 +14,8 @@ import { useEvaluations } from "../hooks/useEvaluations";
 
 import type { Evaluation } from "../types/evaluation";
 import type { Expedient } from "../types/expedient";
+import SkeletonList from "../components/ui/SkeletonList.tsx";
+import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
 
     function AdminEvaluationsPage() {
@@ -118,6 +120,8 @@ import type { Expedient } from "../types/expedient";
 
     const isLoading = loading || loadingExpedients;
 
+    const skeletonCount = useSkeletonCount("admin-evaluations", isLoading, filteredEvaluations.length, 2);
+
     return (
         <AdminLayout>
             <section className="w-full">
@@ -172,8 +176,7 @@ import type { Expedient } from "../types/expedient";
             {/* Loading */}
             {isLoading && (
                 <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <EvaluationCard loading />
-                <EvaluationCard loading />
+                <SkeletonList count={skeletonCount}>{() => <EvaluationCard loading />}</SkeletonList>
                 </div>
             )}
 

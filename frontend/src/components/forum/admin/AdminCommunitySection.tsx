@@ -7,6 +7,8 @@ import Pagination from '../../ui/Pagination.tsx'
 import { forumService } from '../../../services/forum.ts'
 import { notify } from '../../../utils/notifications.ts'
 import type { CommunityComment, CommunityPost } from '../../../types/forum.ts'
+import SkeletonList from '../../ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../../../hooks/useSkeletonCount.ts'
 
 const COMMUNITY_POST_TRANSLATION_TYPE = 'FORUM_COMMUNITY_POST'
 const COMMUNITY_COMMENT_TRANSLATION_TYPE = 'FORUM_COMMUNITY_COMMENT'
@@ -121,12 +123,13 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
     notify.success({ title: t('adminForum.commentDeletedToastTitle') })
   }
 
+  const skeletonCount = useSkeletonCount('admin-community', loading, posts.length, 2)
+
   function renderPosts() {
     if (loading) {
       return (
         <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
-          <li><CommunityPostCard loading /></li>
-          <li><CommunityPostCard loading /></li>
+          <SkeletonList count={skeletonCount}>{() => <li><CommunityPostCard loading /></li>}</SkeletonList>
         </ul>
       )
     }

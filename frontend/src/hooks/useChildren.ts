@@ -7,7 +7,7 @@ import type { Child } from '../types/child'
 export function useChildren() {
     const [children, setChildren] = useState<Child[]>([])
     const [sourceChildren, setSourceChildren] = useState<Child[]>([])
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
     const fetchChildren = async (lang?: string) => {
