@@ -44,59 +44,68 @@ public class ForumModerationService {
                     + "No cambies el significado, el tono, las palabras, el idioma ni el estilo (informal está bien); "
                     + "corrige únicamente errores ortográficos evidentes. Si no hay errores, devuelve el texto igual.";
 
+    private static final String CONTEXT =
+            "Eres moderador del foro de un centro educativo infantil en Costa Rica "
+                    + "(familias con niños de 0 a 12 años). ";
+
+    private static final String PROFANITY_RULES =
+            "Rechaza groserías, insultos o lenguaje sexual en español o inglés, aunque estén mal escritos, "
+                    + "abreviados o disimulados con números, símbolos o espacios. Ejemplos: Costa Rica: malparido, "
+                    + "hijueputa, hp, carepicha, picha, playo, zorra, puta, verga, culo, mierda, pendejo, huevón; "
+                    + "México: chingar, pinche, culero, joto, alv; Colombia: gonorrea, carechimba, pirobo; "
+                    + "Argentina: boludo, pelotudo, forro, conchudo; Chile: weón, culiao, ctm; Venezuela: coño, "
+                    + "mamagüevo, mmg; Centroamérica: cerote; España: gilipollas, joder; inglés: fuck, shit, bitch, "
+                    + "asshole, dick, pussy, wtf, insultos raciales u homofóbicos. Permite el habla coloquial que no "
+                    + "es grosera: mae, maje, güey, pura vida, tuanis, diay, brete, chunche, güila. "
+                    + "Rechaza también contenido sexual, violento, discriminatorio, acoso, spam, publicidad o datos "
+                    + "personales de terceros. ";
+
     private static final String APPROPRIATE_PROMPT =
-            "Eres un moderador de contenido para el muro comunitario de un centro educativo infantil "
-                    + "(familias con niños de 0 a 12 años). Evalúa el siguiente mensaje publicado por una familia.\n\n"
-                    + "Mensaje a evaluar:\n\"%s\"\n\n"
-                    + "Responde ÚNICAMENTE con un JSON de una línea, sin texto adicional ni bloques de código, "
-                    + "con este formato exacto:\n"
-                    + "{\"appropriate\": true|false, \"correctedContent\": \"...\"}\n\n"
-                    + "\"appropriate\" es false si el mensaje contiene lenguaje vulgar, ofensivo, sexual, violento, "
-                    + "spam, publicidad; contenido político o religioso ofensivo, proselitista o burlón; "
-                    + "o que suplanta/parodia a una figura pública o religiosa real; "
-                    + "o cualquier otro contenido inapropiado para un entorno escolar con niños. "
-                    + "Esto incluye insultos y groserías coloquiales en español latinoamericano (por ejemplo, "
-                    + "pero no limitado a: \"malparido\", \"hijueputa\"/\"hijueputas\", \"carepicha\"/\"carepichas\", "
-                    + "\"mierda\", \"pendejo\", \"gonorrea\"), aunque estén mal escritas o disimuladas.\n"
+            CONTEXT + "Evalúa esta publicación del muro de la comunidad.\n\n"
+                    + "Publicación:\n\"%s\"\n\n"
+                    + "Reglas: " + PROFANITY_RULES
+                    + "No se permite hablar de política (partidos, candidatos, gobiernos) ni hacer proselitismo o "
+                    + "burlas religiosas. Sí se permiten cortesías como \"Dios los bendiga\" o \"Feliz Navidad\".\n\n"
+                    + "Responde ÚNICAMENTE con un JSON de una línea, sin texto adicional ni bloques de código:\n"
+                    + "{\"appropriate\": true|false, \"correctedContent\": \"...\"}\n"
+                    + "- \"appropriate\" es false si incumple alguna regla.\n"
                     + SPELLING_INSTRUCTION;
 
     private static final String COMMENT_PROMPT =
-            "Eres un moderador de contenido para el foro de un centro educativo infantil "
-                    + "(familias con niños de 0 a 12 años). Evalúa el siguiente comentario que una familia escribió "
-                    + "en respuesta a un artículo del blog publicado por el personal del centro.\n\n"
+            CONTEXT + "Evalúa este comentario a un artículo del blog del centro.\n\n"
                     + "Tema del artículo: \"%s\"\n"
                     + "Título del artículo: \"%s\"\n"
-                    + "Comentario a evaluar:\n\"%s\"\n\n"
-                    + "Responde ÚNICAMENTE con un JSON de una línea, sin texto adicional ni bloques de código, "
-                    + "con este formato exacto:\n"
-                    + "{\"appropriate\": true|false, \"onTopic\": true|false, \"correctedContent\": \"...\"}\n\n"
-                    + "- \"appropriate\" es false si el comentario contiene lenguaje vulgar, ofensivo, sexual, "
-                    + "violento, spam; contenido político o religioso ofensivo, proselitista o burlón; "
-                    + "o que suplanta/parodia a una figura pública o religiosa real; "
-                    + "o cualquier otro contenido inapropiado para un entorno escolar con niños. "
-                    + "Esto incluye insultos y groserías coloquiales en español latinoamericano (por ejemplo, "
-                    + "pero no limitado a: \"malparido\", \"hijueputa\"/\"hijueputas\", \"carepicha\"/\"carepichas\", "
-                    + "\"mierda\", \"pendejo\", \"gonorrea\"), aunque estén mal escritas o disimuladas.\n"
-                    + "- \"onTopic\" es false si el comentario no guarda ninguna relación razonable con el tema o "
-                    + "el título del artículo (por ejemplo, habla de algo completamente distinto).\n"
+                    + "Comentario:\n\"%s\"\n\n"
+                    + "Reglas: " + PROFANITY_RULES
+                    + "Solo se permite mencionar figuras políticas o religiosas, o hablar de política o religión, si "
+                    + "el artículo trata de ese tema y el comentario es respetuoso; si no, recházalo. Nunca se "
+                    + "permiten burlas, insultos ni propaganda política o religiosa. Sí se permiten cortesías como "
+                    + "\"Dios los bendiga\".\n\n"
+                    + "Responde ÚNICAMENTE con un JSON de una línea, sin texto adicional ni bloques de código:\n"
+                    + "{\"appropriate\": true|false, \"onTopic\": true|false, \"correctedContent\": \"...\"}\n"
+                    + "- \"appropriate\" es false si incumple alguna regla.\n"
+                    + "- \"onTopic\" es false si el comentario no tiene ninguna relación razonable con el tema o el "
+                    + "título del artículo.\n"
                     + SPELLING_INSTRUCTION;
 
     private static final String NAME_PROMPT =
-            "Eres un moderador de contenido para el foro de un centro educativo infantil "
-                    + "(familias con niños de 0 a 12 años). Evalúa el siguiente nombre o alias que una persona "
-                    + "eligió para publicar en el foro.\n\n"
-                    + "Nombre a evaluar:\n\"%s\"\n\n"
-                    + "Antes de responder, usa la búsqueda para comprobar si ese nombre completo corresponde a "
-                    + "una persona real con un cargo público (presidente, diputado, alcalde, síndico, regidor, "
-                    + "líder religioso, etc.), aunque sea una figura local o poco conocida a nivel nacional. "
-                    + "No asumas que no es real solo porque no la reconoces de memoria.\n\n"
-                    + "Responde ÚNICAMENTE con un JSON de una línea, sin texto adicional ni bloques de código, "
-                    + "con este formato exacto:\n"
-                    + "{\"appropriate\": true|false}\n\n"
-                    + "\"appropriate\" es false si el nombre contiene lenguaje vulgar, sexual u ofensivo, un doble "
-                    + "sentido o juego de palabras de mal gusto, una burla o referencia a política o religión, "
-                    + "o suplanta a una figura pública o religiosa real (nacional o local). Un nombre común y corriente (real, "
-                    + "inventado o un apodo normal) es \"appropriate\": true.";
+            CONTEXT + "Evalúa este nombre o alias con el que alguien firma en el foro.\n\n"
+                    + "Nombre:\n\"%s\"\n\n"
+                    + "Rechaza el nombre si:\n"
+                    + "- Contiene groserías o lenguaje sexual u ofensivo, aunque esté disimulado.\n"
+                    + "- Leído en voz alta forma una frase vulgar, sexual o de burla (doble sentido), por ejemplo: "
+                    + "Agárrame Esta, Elver Galarga, Elsa Capuntas, Aquiles Baeza, Susana Oria, Débora Melo, "
+                    + "Mike Hawk, Ben Dover, Hugh Jass, Moe Lester, o cualquier variante que funcione igual.\n"
+                    + "- Suplanta a un presidente o expresidente de cualquier país, a otro político (diputado, alcalde, "
+                    + "ministro, aunque sea local), a una figura religiosa (Dios, Jesucristo, la Virgen, el Papa, "
+                    + "Mahoma, Buda, Satanás) o a un personaje criminal (Hitler, Pablo Escobar).\n"
+                    + "- Suena igual o casi igual a una de esas figuras o la imita con letras cambiadas, por ejemplo: "
+                    + "Donald Prompt, Donal Trum, Obamna, Nayib Bukelele, Jesu Cristo.\n"
+                    + "Si no sabes si un nombre completo corresponde a un político real, usa la búsqueda para "
+                    + "comprobarlo. Un nombre común es válido aunque coincida con un nombre religioso (Jesús "
+                    + "Rodríguez, María José Solano) y también lo son apodos normales (Mamá de Sofi, Familia Rojas).\n\n"
+                    + "Responde ÚNICAMENTE con un JSON de una línea, sin texto adicional ni bloques de código:\n"
+                    + "{\"appropriate\": true|false}";
 
     private final ObjectMapper objectMapper;
 
