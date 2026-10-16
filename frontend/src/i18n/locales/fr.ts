@@ -627,6 +627,8 @@ export default {
       daysRequired: "Sélectionnez au moins un jour.",
       timesRequired: "Sélectionnez l'heure de début et de fin.",
       endAfterStart: "L'heure de fin doit être postérieure à l'heure de début.",
+      addBlock: "Ajouter un autre horaire",
+      removeBlock: "Supprimer l'horaire",
     },
     imageHint: {
       formats: "Formats : {{formats}}.",

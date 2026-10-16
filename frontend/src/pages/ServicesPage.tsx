@@ -133,7 +133,7 @@ function PlanCard({
                 <ClockIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
                 <span className="font-semibold text-neutral-600">{t('services.schedule')}</span>
               </div>
-              <p className="m-0 mt-2xs px-1 py-2xs text-left text-body-sm">{formatSchedule(plan!.schedule, t, i18n.resolvedLanguage ?? i18n.language)}</p>
+              <p className="m-0 mt-2xs whitespace-pre-line px-1 py-2xs text-left text-body-sm">{formatSchedule(plan!.schedule, t, i18n.resolvedLanguage ?? i18n.language)}</p>
             </div>
           )}
 

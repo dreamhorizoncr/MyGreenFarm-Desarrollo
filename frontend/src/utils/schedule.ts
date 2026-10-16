@@ -1,33 +1,49 @@
 import type { TFunction } from 'i18next'
 
-export interface ScheduleValue {
+export interface ScheduleBlock {
   days: number[]
   start: string
   end: string
 }
 
+export type ScheduleValue = ScheduleBlock[]
+
 export const WEEK_DAYS = [1, 2, 3, 4, 5, 6, 7]
 
-export const emptySchedule = (): ScheduleValue => ({ days: [], start: '', end: '' })
+export const emptyScheduleBlock = (): ScheduleBlock => ({ days: [], start: '', end: '' })
 
-// Formato guardado en el backend: "1,2,3,4,5 07:00-17:00" (1 = lunes, 7 = domingo).
-const SCHEDULE_PATTERN = /^([1-7](?:,[1-7])*) (\d{2}:\d{2})-(\d{2}:\d{2})$/
+export const emptySchedule = (): ScheduleValue => [emptyScheduleBlock()]
+
+// Formato guardado en el backend: "1,2,3,4,5 07:00-17:00; 6 08:00-12:00" (1 = lunes, 7 = domingo).
+const BLOCK_PATTERN = /^([1-7](?:,[1-7])*) (\d{2}:\d{2})-(\d{2}:\d{2})$/
+const BLOCK_SEPARATOR = '; '
+
+const sortDays = (days: number[]) => Array.from(new Set(days)).sort((a, b) => a - b)
 
 export function parseSchedule(value: string | null | undefined): ScheduleValue | null {
-  const match = SCHEDULE_PATTERN.exec(value?.trim() ?? '')
-  if (!match) return null
-  const days = Array.from(new Set(match[1].split(',').map(Number))).sort((a, b) => a - b)
-  return { days, start: match[2], end: match[3] }
+  const text = value?.trim()
+  if (!text) return null
+  const blocks: ScheduleValue = []
+  for (const part of text.split(';')) {
+    const match = BLOCK_PATTERN.exec(part.trim())
+    if (!match) return null
+    blocks.push({ days: sortDays(match[1].split(',').map(Number)), start: match[2], end: match[3] })
+  }
+  return blocks
 }
 
-export function serializeSchedule({ days, start, end }: ScheduleValue): string {
-  return `${[...days].sort((a, b) => a - b).join(',')} ${start}-${end}`
+export function serializeSchedule(schedule: ScheduleValue): string {
+  return schedule
+    .map(({ days, start, end }) => `${sortDays(days).join(',')} ${start}-${end}`)
+    .join(BLOCK_SEPARATOR)
 }
 
-export function validateSchedule({ days, start, end }: ScheduleValue, t: TFunction): string | null {
-  if (days.length === 0) return t('common.schedule.daysRequired')
-  if (!start || !end) return t('common.schedule.timesRequired')
-  if (end <= start) return t('common.schedule.endAfterStart')
+export function validateSchedule(schedule: ScheduleValue, t: TFunction): string | null {
+  for (const { days, start, end } of schedule) {
+    if (days.length === 0) return t('common.schedule.daysRequired')
+    if (!start || !end) return t('common.schedule.timesRequired')
+    if (end <= start) return t('common.schedule.endAfterStart')
+  }
   return null
 }
 
@@ -58,19 +74,25 @@ function capitalize(text: string): string {
   return text.charAt(0).toLocaleUpperCase() + text.slice(1)
 }
 
-export function formatSchedule(value: string | null | undefined, t: TFunction, language: string): string {
-  const schedule = parseSchedule(value)
-  if (!schedule) return value ?? ''
-
-  const parts = dayRuns(schedule.days).flatMap((run) =>
+function formatBlock({ days, start, end }: ScheduleBlock, t: TFunction, language: string): string {
+  const parts = dayRuns(days).flatMap((run) =>
     run.length >= 3
       ? [t('common.schedule.dayRange', { from: dayName(run[0], language), to: dayName(run.at(-1)!, language) })]
       : run.map((day) => dayName(day, language)),
   )
-  const days = capitalize(new Intl.ListFormat(language, { style: 'long', type: 'conjunction' }).format(parts))
-  const hours = t('common.schedule.timeRange', {
-    from: formatTime(schedule.start, language),
-    to: formatTime(schedule.end, language),
-  })
-  return `${days}, ${hours}`
+  const dayText = capitalize(new Intl.ListFormat(language, { style: 'long', type: 'conjunction' }).format(parts))
+  const hours = t('common.schedule.timeRange', { from: formatTime(start, language), to: formatTime(end, language) })
+  return `${dayText}, ${hours}`
+}
+
+export function formatScheduleLines(value: string | null | undefined, t: TFunction, language: string): string[] {
+  const schedule = parseSchedule(value)
+  if (!schedule) return value ? [value] : []
+  return [...schedule]
+    .sort((a, b) => a.days[0] - b.days[0])
+    .map((block) => formatBlock(block, t, language))
+}
+
+export function formatSchedule(value: string | null | undefined, t: TFunction, language: string): string {
+  return formatScheduleLines(value, t, language).join('\n')
 }

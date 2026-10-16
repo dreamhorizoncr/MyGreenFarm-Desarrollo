@@ -63,7 +63,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                         {club.schedule && (
                             <div className="flex items-center gap-[6px]">
                                 <ClockIcon size={16} className="text-orange-500" />
-                                <span>{formatSchedule(club.schedule, translate, i18n.resolvedLanguage ?? i18n.language)}</span>
+                                <span className="whitespace-pre-line">{formatSchedule(club.schedule, translate, i18n.resolvedLanguage ?? i18n.language)}</span>
                             </div>
                         )}
                         {club.maxCapacity !== undefined && (

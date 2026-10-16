@@ -75,7 +75,7 @@ function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
                                     {t("ownerClubs.schedule")}
                                 </span>
                             </div>
-                            <p className="m-0 mt-2xs px-1 text-left text-body-sm">{formatSchedule(club.schedule, translate, i18n.resolvedLanguage ?? i18n.language)}</p>
+                            <p className="m-0 mt-2xs whitespace-pre-line px-1 text-left text-body-sm">{formatSchedule(club.schedule, translate, i18n.resolvedLanguage ?? i18n.language)}</p>
                         </div>
                     )}
 

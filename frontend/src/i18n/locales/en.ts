@@ -625,6 +625,8 @@ export default {
       daysRequired: "Select at least one day.",
       timesRequired: "Select the start and end time.",
       endAfterStart: "The end time must be after the start time.",
+      addBlock: "Add another schedule",
+      removeBlock: "Remove schedule",
     },
     imageHint: {
       formats: "Formats: {{formats}}.",
