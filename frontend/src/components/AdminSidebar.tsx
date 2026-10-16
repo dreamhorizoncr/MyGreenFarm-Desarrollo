@@ -157,7 +157,7 @@ function AdminSidebar() {
           setSidebarHovered(false)
         }
       }}
-      className="w-full shrink-0 bg-bg-page p-md md:sticky md:top-0 md:flex md:max-h-[calc(100svh-4rem)] md:w-[260px] md:flex-col md:gap-sm md:self-start md:overflow-y-auto md:py-lg"
+      className="w-full shrink-0 bg-bg-page p-md md:fixed md:bottom-0 md:left-0 md:top-16 md:z-30 md:flex md:w-[260px] md:flex-col md:gap-sm md:overflow-y-auto md:py-lg"
     >
       {/*Menu Exclusivo de Admin*/}
       <div ref={mobileMenuRef} className="md:hidden">

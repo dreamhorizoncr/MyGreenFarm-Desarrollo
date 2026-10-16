@@ -23,6 +23,8 @@ import ImagePickerButton from "../components/ui/ImagePickerButton.tsx";
 import ImageThumb, { ImageThumbList } from "../components/ui/ImageThumb.tsx";
 import { validateSafeText } from "../utils/validators.ts";
 import ModalCloseButton from "../components/ui/ModalCloseButton.tsx";
+import ScheduleField from "../components/ui/ScheduleField.tsx";
+import { emptySchedule, formatSchedule, parseSchedule, serializeSchedule, validateSchedule, type ScheduleValue } from "../utils/schedule.ts";
 import SkeletonList from "../components/ui/SkeletonList.tsx";
 import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
@@ -42,7 +44,7 @@ interface ClubCardProps {
 }
 
 function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCardProps>) {
-  const { t: translate } = useTranslation();
+  const { t: translate, i18n } = useTranslation();
   const translateKey = translate as (key: string, options?: Record<string, unknown>) => string;
   const t = (key: string, options?: Record<string, unknown>): string =>
     translateKey(key.startsWith("admin.") ? key : `admin.${key}`, options);
@@ -129,7 +131,7 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
                   {t("ownerClubs.schedule")}
                 </span>
               </div>
-              <p className="m-0 mt-2xs px-1 text-left text-body-sm">{club.schedule}</p>
+              <p className="m-0 mt-2xs whitespace-pre-line px-1 text-left text-body-sm">{formatSchedule(club.schedule, translate, i18n.resolvedLanguage ?? i18n.language)}</p>
             </div>
           )}
 
@@ -176,6 +178,7 @@ function OwnerClubsPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<ClubResponse | null>(null);
   const [form, setForm] = useState<ClubRequest>(emptyForm);
+  const [schedule, setSchedule] = useState<ScheduleValue>(emptySchedule);
 
   const [cover, setCover] = useState<File | null>(null);
   const [gallery, setGallery] = useState<File[]>([]);
@@ -226,7 +229,7 @@ function OwnerClubsPage() {
         const translationItems: TranslationItem[] = clubsWithImages.flatMap((club) => [
           { entityId: String(club.id), fieldName: "name", originalText: club.name },
           { entityId: String(club.id), fieldName: "description", originalText: club.description },
-          ...(club.schedule
+          ...(club.schedule && !parseSchedule(club.schedule)
             ? [{ entityId: String(club.id), fieldName: "schedule", originalText: club.schedule }]
             : []),
         ]);
@@ -263,6 +266,7 @@ function OwnerClubsPage() {
     editImagesClubIdRef.current = null;
     setEditing(null);
     setForm(emptyForm);
+    setSchedule(emptySchedule());
     setCover(null);
     setGallery([]);
     setExistingImages([]);
@@ -284,6 +288,7 @@ function OwnerClubsPage() {
       maxCapacity: club.maxCapacity,
       isPublished: currentIsPublished,
     });
+    setSchedule(parseSchedule(sourceClub.schedule) ?? emptySchedule());
     setCover(null);
     setGallery([]);
     setExistingImages(club.images ?? []);
@@ -314,7 +319,7 @@ function OwnerClubsPage() {
     const fieldErrors = {
       name: validateSafeText(form.name, translate),
       description: validateSafeText(form.description, translate),
-      schedule: validateSafeText(form.schedule, translate),
+      schedule: validateSchedule(schedule, translate),
     };
     setClubFieldErrors(fieldErrors);
     if (Object.values(fieldErrors).some(Boolean)) return;
@@ -325,7 +330,7 @@ function OwnerClubsPage() {
     const dataToSend: ClubRequest & { published?: boolean } = {
       name: form.name,
       description: form.description,
-      schedule: form.schedule?.trim() || undefined,
+      schedule: serializeSchedule(schedule),
       maxCapacity: form.maxCapacity ? Number(form.maxCapacity) : undefined,
       isPublished: publishedBool,
       published: publishedBool,
@@ -541,18 +546,18 @@ function OwnerClubsPage() {
                 )}
               </label>
 
-              <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
-                {t("ownerClubs.schedule")}
-                <input
-                  value={form.schedule ?? ""}
-                  onChange={(e) => setForm({ ...form, schedule: e.target.value })}
-                  placeholder={t("ownerClubs.schedulePlaceholder")}
-                  className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+              <div className="md:col-span-2">
+                <ScheduleField
+                  id="club-schedule"
+                  label={t("ownerClubs.schedule")}
+                  value={schedule}
+                  onChange={(value) => {
+                    setSchedule(value);
+                    if (clubFieldErrors.schedule) setClubFieldErrors({ ...clubFieldErrors, schedule: null });
+                  }}
+                  error={clubFieldErrors.schedule}
                 />
-                {clubFieldErrors.schedule && (
-                  <span className="mt-xs block font-body text-body-sm font-normal text-danger">{clubFieldErrors.schedule}</span>
-                )}
-              </label>
+              </div>
 
               {/* Opción de Publicar / Visibilidad */}
               <div className="md:col-span-2 flex items-center gap-md rounded-xl border border-neutral-200 bg-neutral-50 p-md">

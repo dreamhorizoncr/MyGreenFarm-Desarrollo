@@ -15,6 +15,7 @@ import SkeletonList from '../components/ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 const PAGE_SIZE = 10
+const ROLE_OPTIONS = ['ALL', 'OWNER', 'ADMIN', 'TEACHER']
 
 function AdminUsersPage() {
   const { t } = useTranslation()
@@ -51,8 +52,6 @@ function AdminUsersPage() {
   }, [searchTerm, roleFilter])
 
   const pagedUsers = filteredUsers.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
-
-  const roleOptions = useMemo(() => ['ALL', ...Array.from(new Set(['OWNER', ...users.map((user) => user.role)]))], [users])
 
   const roleLabels: Record<string, string> = {
     OWNER: t('admin.roles.OWNER'),
@@ -119,7 +118,7 @@ function AdminUsersPage() {
         </div>
 
         <div className="-mt-sm mb-lg flex flex-wrap gap-sm">
-          {roleOptions.map((role) => (
+          {ROLE_OPTIONS.map((role) => (
             <button
               key={role}
               type="button"

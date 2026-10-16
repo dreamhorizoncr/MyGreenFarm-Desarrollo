@@ -4,8 +4,8 @@ import Navbar from "../components/Navbar";
 import Container from "../components/home/Container";
 import { useTranslation } from "react-i18next";
 import NewsDetailModal from "../components/NewsDetailModal.tsx";
-import BlobButton from "../components/ui/BlobButton.tsx";
-import Skeleton from "../components/ui/Skeleton.tsx";
+import NewsCard from "../components/NewsCard.tsx";
+import { formatNewsDate } from "../utils/newsDate.ts";
 import SkeletonList from "../components/ui/SkeletonList.tsx";
 import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 import Pagination from "../components/ui/Pagination.tsx";
@@ -14,7 +14,6 @@ import { useAnnouncements } from "../hooks/useAnnouncements";
 import { useAnnouncementImages } from "../hooks/useAnnouncementImages";
 import type { Announcement, AnnouncementType } from "../types/announcement.ts";
 
-import LowCortisol from "../assets/imgs/LowCortisol.png";
 
 type NewsCategory = "All" | "NEWS" | "EVENT" | "NOTICE" | "TRANSPORT";
 
@@ -32,154 +31,6 @@ const TYPE_LABEL_KEY: Record<
   GENERAL: "newspage.category5",
   TRANSPORT: "newspage.category6"
 };
-
-function formatDate(iso: string | null | undefined, lang: string): string {
-  if (!iso) return "";
-  return new Date(iso).toLocaleDateString(lang, {
-    day: "numeric",
-    month: "long",
-  });
-}
-
-interface NewsCardProps {
-  big: boolean
-  announcement?: Announcement
-  typeLabel?: string
-  formattedDate?: string
-  coverImage?: string
-  onReadMore?: () => void
-  loading?: boolean
-}
-
-function NewsCard({ big, announcement, typeLabel, formattedDate, coverImage, onReadMore, loading = false }: Readonly<NewsCardProps>) {
-  const { t } = useTranslation()
-
-  if (loading) {
-    return (
-      <article
-        className={`relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow md:h-[340px] ${
-          big ? "md:col-span-8" : "md:col-span-4"
-        }`}
-      >
-        <div className="relative h-[240px] md:absolute md:inset-y-0 md:left-0 md:h-auto md:w-1/2">
-          <Skeleton shape="rect" className="h-full w-full rounded-none" />
-        </div>
-
-        <div className="relative flex flex-col gap-sm p-[22px] text-left md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2 md:justify-center">
-          <Skeleton shape="line" className="h-3 w-1/3" />
-          <Skeleton shape="line" className="h-6 w-4/5" />
-          <Skeleton shape="line" className="h-4 w-full" />
-          <Skeleton shape="line" className="h-4 w-2/3" />
-          <Skeleton shape="pill" className="h-8 w-28" />
-        </div>
-      </article>
-    );
-  }
-
-  if (big) {
-    return (
-      <article className="relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow card-hover md:col-span-8 md:h-[340px]">
-        {/* Imagen */}
-        <div className="relative h-[240px] md:absolute md:inset-y-0 md:left-0 md:h-auto md:w-1/2">
-          {coverImage ? (
-            <img
-              src={coverImage}
-              alt={announcement!.title}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-bg-page">
-              <img
-                src={LowCortisol}
-                alt=""
-                className="h-[75%] w-[75%] object-contain"
-              />
-            </div>
-          )}
-
-          <span className="absolute left-[14px] top-[14px] rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
-            {typeLabel}
-          </span>
-        </div>
-
-        {/* Contenido */}
-        <div className="relative flex flex-col items-start p-[22px] text-left md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2 md:pb-[60px]">
-          <span className="font-body text-caption text-neutral-500">
-            {formattedDate}
-          </span>
-
-          <h2 className="mt-[10px] line-clamp-2 font-heading text-[24px] font-bold text-heading">
-            {announcement!.title}
-          </h2>
-
-          <p className="mt-[14px] line-clamp-3 font-body text-body-sm leading-[1.6] text-body-text">
-            {announcement!.content}
-          </p>
-
-          <div className="mt-md md:absolute md:bottom-[22px] md:left-[22px]">
-            <BlobButton
-              onClick={onReadMore}
-              className="h-11 w-fit px-lg font-body text-caption uppercase"
-            >
-              {t("newspage.readMore")}
-            </BlobButton>
-          </div>
-        </div>
-      </article>
-    )
-  }
-
-  return (
-    <article className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow card-hover md:col-span-4 md:h-[340px]">
-      {/* Imagen */}
-      <div className="relative h-[200px] md:absolute md:inset-x-0 md:top-0 md:h-[125px]">
-        {coverImage ? (
-          <img
-            src={coverImage}
-            alt={announcement!.title}
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-bg-page">
-            <img
-              src={LowCortisol}
-              alt=""
-              className="h-[75%] w-[75%] object-contain"
-            />
-          </div>
-        )}
-
-        <span className="absolute left-[14px] top-[14px] rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
-          {typeLabel}
-        </span>
-      </div>
-
-      {/* Contenido */}
-      <div className="relative flex flex-col items-start p-[20px] text-left md:absolute md:inset-x-0 md:bottom-0 md:top-[125px] md:pb-[56px]">
-        <span className="font-body text-caption text-neutral-500">
-          {formattedDate}
-        </span>
-
-        <h2 className="mt-[8px] line-clamp-1 font-heading text-[24px] font-bold text-heading">
-          {announcement!.title}
-        </h2>
-
-        <p className="mt-[1px] line-clamp-2 font-body text-body-sm leading-[1.6] text-body-text">
-          {announcement!.content}
-        </p>
-
-        <div className="mt-sm md:absolute md:bottom-[20px] md:left-[20px]">
-          <BlobButton
-            onClick={onReadMore}
-            className="h-11 w-fit px-lg font-body text-caption uppercase"
-          >
-            {t("newspage.readMore")}
-          </BlobButton>
-        </div>
-      </div>
-    </article>
-  )
-}
 
 function NewsPage() {
   const { t, i18n } = useTranslation();
@@ -311,8 +162,8 @@ const cards = announcements.filter(
                 const cardsInRow = Math.min(2, skeletonCount - rowIndex * 2);
                 return (
                   <div className="grid grid-cols-1 gap-[18px] md:grid-cols-12">
-                    <NewsCard big={cardsInRow === 1 || rowIndex % 2 === 0} loading />
-                    {cardsInRow === 2 && <NewsCard big={rowIndex % 2 !== 0} loading />}
+                    <NewsCard big={cardsInRow === 1 || rowIndex % 2 === 0} loading className={cardsInRow === 1 || rowIndex % 2 === 0 ? "md:col-span-8" : "md:col-span-4"} />
+                    {cardsInRow === 2 && <NewsCard big={rowIndex % 2 !== 0} loading className={rowIndex % 2 !== 0 ? "md:col-span-8" : "md:col-span-4"} />}
                   </div>
                 );
               }}</SkeletonList>
@@ -342,9 +193,10 @@ const cards = announcements.filter(
                         <NewsCard
                           key={a.id}
                           big={isBig}
+                          className={isBig ? "md:col-span-8" : "md:col-span-4"}
                           announcement={a}
                           typeLabel={t(TYPE_LABEL_KEY[a.type])}
-                          formattedDate={formatDate(a.eventDate, i18n.language)}
+                          formattedDate={formatNewsDate(a.eventDate, i18n.language)}
                           coverImage={getCoverImage(a.id)}
                           onReadMore={() => setSelectedAnnouncement(a)}
                         />

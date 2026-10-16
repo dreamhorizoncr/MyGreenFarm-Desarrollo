@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { parseSchedule } from '../utils/schedule.ts'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { ServicePlan, OnvoRawPlan } from '../types/servicePlan.ts'
@@ -29,7 +30,7 @@ export function useServicePlanAdmin() {
       const items = dbPlans.flatMap((plan) => [
         ...(plan.name ? [{ entityId: plan.id, fieldName: 'name', originalText: plan.name }] : []),
         ...(plan.description ? [{ entityId: plan.id, fieldName: 'description', originalText: plan.description }] : []),
-        ...(plan.schedule ? [{ entityId: plan.id, fieldName: 'schedule', originalText: plan.schedule }] : []),
+        ...(plan.schedule && !parseSchedule(plan.schedule) ? [{ entityId: plan.id, fieldName: 'schedule', originalText: plan.schedule }] : []),
         ...(plan.includes ? [{ entityId: plan.id, fieldName: 'includes', originalText: plan.includes }] : []),
       ])
       if (targetLang && items.length > 0) {

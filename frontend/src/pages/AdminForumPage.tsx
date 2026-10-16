@@ -50,6 +50,7 @@ function AdminForumPage() {
   const [commentsLoading, setCommentsLoading] = useState(false)
   const [commentsError, setCommentsError] = useState('')
   const [commentToDelete, setCommentToDelete] = useState<BlogComment | null>(null)
+  const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null)
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [posts, setPosts] = useState<BlogPost[]>([])
@@ -190,6 +191,7 @@ function AdminForumPage() {
   async function confirmDeleteComment() {
     if (!commentsPost || !commentToDelete) return
 
+    setDeletingCommentId(commentToDelete.id)
     try {
       await removeComment(commentsPost.id, commentToDelete.id)
       notify.success({
@@ -198,6 +200,8 @@ function AdminForumPage() {
     } catch (err) {
       notify.error(t('adminForum.commentDeleteErrorToastTitle'))
       throw err
+    } finally {
+      setDeletingCommentId(null)
     }
   }
 
@@ -341,6 +345,8 @@ function AdminForumPage() {
           subtitle={commentsPost.title}
           comments={getComments(commentsPost.id)}
           loading={commentsLoading}
+          skeletonCount={commentsPost.commentCount}
+          deletingId={deletingCommentId}
           error={commentsError}
           canDelete={isOwner}
           onDeleteRequest={setCommentToDelete}

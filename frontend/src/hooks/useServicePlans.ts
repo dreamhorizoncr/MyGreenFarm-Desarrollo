@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { parseSchedule } from '../utils/schedule.ts'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
@@ -22,7 +23,7 @@ export function useServicePlans() {
         const items = data.flatMap((plan) => [
           { entityId: plan.id, fieldName: 'name', originalText: plan.name },
           { entityId: plan.id, fieldName: 'description', originalText: plan.description },
-          { entityId: plan.id, fieldName: 'schedule', originalText: plan.schedule },
+          ...(parseSchedule(plan.schedule) ? [] : [{ entityId: plan.id, fieldName: 'schedule', originalText: plan.schedule }]),
           { entityId: plan.id, fieldName: 'includes', originalText: plan.includes },
         ])
         const translated = await servicePlanService.translateBatch(ENTITY_TYPE, lang, items)

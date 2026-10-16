@@ -148,7 +148,12 @@ function AppointmentsSection() {
 
   const filteredAppointments = useMemo(() => {
     const term = searchTerm.trim().toLowerCase()
+    const startOfToday = new Date()
+    startOfToday.setHours(0, 0, 0, 0)
     return appointments.filter((appointment) => {
+      const isPast = new Date(appointment.appointmentDate) < startOfToday
+      if (isPast && statusFilter !== 'PENDING') return false
+
       if (statusFilter === 'BY_DATE') {
         if (!selectedDate) return false
         const appDate = new Date(appointment.appointmentDate)

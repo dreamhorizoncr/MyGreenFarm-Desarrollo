@@ -30,6 +30,7 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
   const [commentsLoading, setCommentsLoading] = useState(false)
   const [commentsError, setCommentsError] = useState('')
   const [commentToDelete, setCommentToDelete] = useState<CommunityComment | null>(null)
+  const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null)
   const [postToDelete, setPostToDelete] = useState<CommunityPost | null>(null)
   const [reloadKey, setReloadKey] = useState(0)
 
@@ -108,11 +109,14 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
   async function confirmDeleteComment() {
     if (!commentsPost || !commentToDelete) return
 
+    setDeletingCommentId(commentToDelete.id)
     try {
       await forumService.deleteCommunityComment(commentsPost.id, commentToDelete.id)
     } catch (err) {
       notify.error(t('adminForum.commentDeleteErrorToastTitle'))
       throw err
+    } finally {
+      setDeletingCommentId(null)
     }
 
     const postId = commentsPost.id
@@ -178,6 +182,8 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
           subtitle={commentsPost.name}
           comments={comments}
           loading={commentsLoading}
+          skeletonCount={commentsPost.commentCount}
+          deletingId={deletingCommentId}
           error={commentsError}
           canDelete={canDelete}
           onDeleteRequest={setCommentToDelete}

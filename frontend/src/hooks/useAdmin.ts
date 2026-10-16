@@ -22,7 +22,6 @@ export function useAdmin() {
   }
 
   const updateUser = async (id: string, data: UpdateUserData) => {
-    setLoading(true)
     setError(null)
     try {
       const updated = await adminService.updateUser(id, data)
@@ -31,13 +30,10 @@ export function useAdmin() {
       const message = getErrorMessage(err)
       setError(message)
       throw new Error(message, { cause: err })
-    } finally {
-      setLoading(false)
     }
   }
 
   const deleteUser = async (id: string) => {
-    setLoading(true)
     setError(null)
     try {
       await adminService.deleteUser(id)
@@ -46,8 +42,6 @@ export function useAdmin() {
       const message = getErrorMessage(err)
       setError(message)
       throw new Error(message, { cause: err })
-    } finally {
-      setLoading(false)
     }
   }
 
