@@ -7,7 +7,6 @@ import CalendarPanel from './CalendarPanel.tsx'
 import { usePopoverPosition } from '../../hooks/usePopoverPosition.ts'
 
 interface DatePickerFieldProps {
-  // Fecha en formato YYYY-MM-DD, o '' si no hay fecha.
   value: string
   onChange: (value: string) => void
   min?: string
@@ -27,16 +26,12 @@ const toCalendarDate = (value?: string): CalendarDate | undefined => {
   }
 }
 
-// Tamaño aproximado del calendario compacto, para decidir hacia dónde abrirlo.
 const PANEL_WIDTH = 300
 const PANEL_HEIGHT = 290
 
 const defaultTriggerClassName =
   'mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading'
 
-// Reemplaza al input type="date" nativo: abre el mismo calendario que se usa en Citas.
-// El panel se renderiza en linea (sin portal) para que funcione dentro de <dialog> con showModal(),
-// pero con posición fixed para que el modal no lo recorte aunque sea bajo o tenga scroll.
 function DatePickerField({
   value,
   onChange,
@@ -59,8 +54,6 @@ function DatePickerField({
     const handlePointerDown = (event: PointerEvent) => {
       if (!containerRef.current?.contains(event.target as Node)) setOpen(false)
     }
-    // Escape cierra solo el calendario, no el modal que lo contiene: se escucha en captura,
-    // antes que los manejadores del modal, y se cancela el evento.
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key !== 'Escape') return
       event.preventDefault()
@@ -104,7 +97,6 @@ function DatePickerField({
       </button>
 
       {open && position && (
-        // dialog no modal (open): sin los estilos por defecto del navegador para que se vea como un panel.
         <dialog
           open
           aria-label={ariaLabel}

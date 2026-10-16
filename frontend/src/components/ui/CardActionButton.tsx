@@ -1,4 +1,3 @@
-/** Botón circular de acción (editar, reprogramar, destacar, eliminar) que usan las cards del admin */
 
 import type { ButtonHTMLAttributes } from 'react'
 import { CalendarClockIcon, PencilIcon, StarIcon, Trash2Icon } from '@animateicons/react/lucide'
@@ -10,7 +9,6 @@ const cardActionButton = tv({
     action: {
       edit: 'border-green-500 text-green-500 hover:bg-green-50',
       reschedule: 'border-green-500 text-green-500 hover:bg-green-50',
-      // Lleva fondo blanco porque suele ir encima de una imagen.
       feature: 'border-yellow-500 bg-white text-yellow-500 hover:bg-yellow-50',
       delete: 'border-red-300 text-danger hover:bg-red-50',
     },
@@ -23,7 +21,6 @@ const cardActionButton = tv({
     },
   },
   compoundVariants: [
-    // Destacado: relleno amarillo con el ícono blanco.
     { action: 'feature', pressed: true, class: 'border-yellow-400 bg-yellow-400 text-white hover:bg-yellow-500' },
   ],
   defaultVariants: {
@@ -39,10 +36,8 @@ type CardActionSize = keyof typeof ICON_SIZE
 
 interface CardActionButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'aria-label' | 'aria-pressed'> {
   action: CardAction
-  // Texto para lectores de pantalla; el botón solo muestra el ícono.
   label: string
   size?: CardActionSize
-  // Para acciones que son un interruptor (p. ej. destacar): marca el estado activo.
   pressed?: boolean
 }
 

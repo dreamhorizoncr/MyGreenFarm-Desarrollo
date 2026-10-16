@@ -34,8 +34,6 @@ export function validateEmail(value: string, t: TFunction): string | null {
   return null
 }
 
-// Proveedores de correo que acepta el backend al reservar una cita (AppointmentService.validateAllowedEmail).
-// Si cambian allá, hay que cambiarlos aquí.
 export const BOOKING_EMAIL_DOMAINS = ['gmail.com', 'hotmail.com', 'outlook.com']
 
 export function validateBookingEmailDomain(value: string, t: TFunction): string | null {
@@ -62,12 +60,8 @@ export function validateMinLength(value: string, min: number, t: TFunction): str
   return null
 }
 
-// Misma regla que Sanitizer.hasMaliciousContent del backend: etiquetas HTML ("<" seguido de letra, "/", "!" o "?")
-// o caracteres de control que no sean espacios. Así el formulario avisa en el campo antes de enviar,
-// en lugar de que el backend rechace la petición con un error genérico.
 const HTML_TAG_START = /<[a-zA-Z/!?]/
 
-// Caracteres de control ASCII salvo los de espacio (\t \n \v \f \r), igual que [\p{Cntrl}&&[^\s]] en Java.
 function hasControlCharacter(value: string): boolean {
   for (let i = 0; i < value.length; i++) {
     const code = value.codePointAt(i) ?? 0

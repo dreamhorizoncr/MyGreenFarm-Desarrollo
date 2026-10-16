@@ -16,14 +16,12 @@ interface SelectProps {
   disabled?: boolean
   className?: string
   menuClassName?: string
-  // Versión baja (h-8) para espacios chicos, como la cabecera del calendario.
   compact?: boolean
   'aria-label'?: string
   'aria-labelledby'?: string
 }
 
 const MENU_MAX_HEIGHT = 240
-// Alto aproximado de cada opción (py-sm + texto) más el padding de la lista.
 const OPTION_HEIGHT = 40
 const MENU_PADDING = 8
 

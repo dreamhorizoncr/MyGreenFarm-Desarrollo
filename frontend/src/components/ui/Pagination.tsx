@@ -7,8 +7,6 @@ interface PaginationProps {
 function Pagination({ currentPage, totalPages, onPageChange }: Readonly<PaginationProps>) {
   if (totalPages <= 1) return null
 
-  // The dashboard scrolls its own container (#admin-scroll-container), not the
-  // window, so changing page has to scroll that element back to the top.
   const goToPage = (page: number) => {
     onPageChange(page)
     const container = document.getElementById('admin-scroll-container')

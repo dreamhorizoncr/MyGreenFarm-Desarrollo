@@ -32,7 +32,6 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
     const clubImages = club.images ?? []
     const coverImage = clubImages.find((img) => img.isCover) ?? clubImages[0]
     const galleryImages = clubImages.filter((img) => !img.isCover)
-    // Portada: la imagen marcada (o la primera) y, si no hay imágenes, la URL de portada del club.
     const coverUrl = coverImage?.fileUrl ?? club.coverImageUrl
 
     let galleryGridColumns = 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4'

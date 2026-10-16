@@ -1,4 +1,3 @@
-/** Selector de país para react-phone-number-input (prop countrySelectComponent), con el estilo del Select */
 
 import { useEffect, useMemo, useRef, useState, type ElementType } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -26,7 +25,6 @@ interface CountrySelectProps {
 const MENU_MAX_HEIGHT = 320
 const MENU_MIN_WIDTH = 300
 
-// Para buscar sin importar tildes ni mayúsculas.
 const normalize = (text: string) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
 const callingCode = (country?: Country) => (country ? `+${getCountryCallingCode(country)}` : '')
@@ -64,7 +62,6 @@ function CountrySelect({
     ))
   }, [options, query])
 
-  // Claves estables: los separadores no tienen país, así que toman el del país anterior.
   const keyedOptions = useMemo(() => {
     const result: { option: CountryOption; key: string }[] = []
     let previous = 'start'
@@ -76,10 +73,7 @@ function CountrySelect({
     return result
   }, [filtered])
 
-  // Al abrir, deja visible el país elegido. Solo una vez: la posición se recalcula con cada scroll
-  // (también el de la propia lista), y si dependiera de ella la lista volvería sola al país elegido.
   const isPositioned = position !== null
-  // También pone el foco en el buscador (en lugar de autoFocus) para escribir directo.
   useEffect(() => {
     if (!open || !isPositioned) return
     searchRef.current?.focus({ preventScroll: true })

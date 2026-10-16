@@ -15,7 +15,6 @@ import Container from '../components/home/Container.tsx'
 import { adminService } from '../services/admin.ts'
 import type { UserInfo } from '../types/auth.ts'
 
-// Color de la flor decorativa de cada docente, rotando entre tres (index % 3).
 const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
 
     const squishyTransition = {

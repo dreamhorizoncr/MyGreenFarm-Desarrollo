@@ -11,7 +11,6 @@ import { validateEmail, validatePassword, validateRequired, validateSafeText } f
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface CreateUserModalProps {
-  // Se llama después de crear el usuario, para refrescar la lista.
   onCreated: () => void | Promise<void>
   onClose: () => void
 }
@@ -26,8 +25,6 @@ const roleClassName = (active: boolean) =>
     active ? 'border-green-500 bg-green-500 text-white' : 'border-green-500 bg-white text-heading hover:bg-green-50'
   }`
 
-// Alta de usuarios (docentes y administradores) desde Usuarios del admin.
-// Antes era la página /signup; ahora se abre como modal sobre la lista.
 function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)

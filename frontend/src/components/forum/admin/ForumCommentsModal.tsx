@@ -3,7 +3,6 @@ import { useModalExit } from '../../../hooks/useModalExit.ts'
 import CardActionButton from '../../ui/CardActionButton.tsx'
 import ModalCloseButton from '../../ui/ModalCloseButton.tsx'
 
-// Lo mínimo que comparten los comentarios del Blog y de la Comunidad.
 export interface ForumCommentItem {
   id: string
   alias: string
@@ -12,7 +11,6 @@ export interface ForumCommentItem {
 }
 
 interface ForumCommentsModalProps<T extends ForumCommentItem> {
-  // Texto bajo el título: el título del artículo o el autor de la publicación.
   subtitle: string
   comments: T[]
   loading: boolean

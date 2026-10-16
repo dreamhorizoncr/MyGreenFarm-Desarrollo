@@ -1,5 +1,3 @@
-// Esto de aquí es para manejar el formulario de registro: guarda si está cargando,
-// si hubo error y si salió bien, y llama al servicio para registrar al usuario.
 
 import { useState } from 'react'
 import { authService } from '../services/auth.ts'

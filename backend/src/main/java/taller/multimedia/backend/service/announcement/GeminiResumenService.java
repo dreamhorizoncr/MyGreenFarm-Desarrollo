@@ -137,9 +137,6 @@ public class GeminiResumenService {
         }
     }
 
-    // Gemini a veces antepone una nota/aclaración entre asteriscos (p. ej. cuando el
-    // contenido no encaja con el tema esperado) a pesar de que el prompt lo prohíbe.
-    // La quitamos como segunda capa de defensa para que nunca llegue al usuario.
     private String stripMetaNotes(String text) {
         String withoutLeadingNote = text.replaceFirst("^\\*[^*]+\\*\\s*", "");
         return withoutLeadingNote.isBlank() ? text : withoutLeadingNote.trim();

@@ -31,7 +31,6 @@ interface CreateServicePlanModalProps {
   onSave: (data: { schedule: string; includes: string; gatewayPriceId: string }, file: File) => Promise<unknown>
   onUpdate?: (id: string, data: { schedule: string; includes: string; gatewayPriceId: string }, file?: File) => Promise<unknown>
   onClose: () => void
-  // Se llama al borrar la imagen actual del plan, para refrescar la lista.
   onImageDeleted?: () => void | Promise<void>
 }
 

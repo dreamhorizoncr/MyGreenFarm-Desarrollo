@@ -17,10 +17,6 @@ public class VacancyResponse {
     private String title;
     private String description;
 
-    // Getter manual con @JsonProperty más abajo: si Lombok generara isOpen()
-    // aquí (el nombre por defecto para un campo "open"), Jackson lo detecta
-    // bien como "open"; el problema es forzarlo a "isOpen" sin que también
-    // aparezca "open" duplicado en el JSON.
     @Getter(AccessLevel.NONE)
     private boolean open;
 

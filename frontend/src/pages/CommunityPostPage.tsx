@@ -26,9 +26,6 @@ function CommunityPostPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [error, setError] = useState('')
   const [pendingReview, setPendingReview] = useState(false)
-  // Ref (not state) so a second click within the same tick, before React
-  // re-renders to hide the form, is still blocked synchronously — avoids
-  // firing the Gemini moderation call twice for one submission.
   const isSubmittingRef = useRef(false)
 
   useEffect(() => {
@@ -90,9 +87,6 @@ function CommunityPostPage() {
     isSubmittingRef.current = true
 
     const payload = { alias: name.trim(), content: content.trim() }
-    // Show the "sent for review" confirmation right away instead of leaving
-    // the form stuck while the moderation check runs; the real outcome
-    // arrives later as a toast (success or rejection reason).
     setName('')
     setContent('')
     setFormOpen(false)

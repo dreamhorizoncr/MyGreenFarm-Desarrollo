@@ -1,10 +1,8 @@
-/** Botón X para cerrar modales: mismo tamaño, color y hover en todo el sistema */
 
 import type { ButtonHTMLAttributes } from 'react'
 import { XIcon } from '@animateicons/react/lucide'
 
 interface ModalCloseButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'type'> {
-  // Solo para ubicarlo (p. ej. "absolute right-3 top-3 z-10"); el estilo del botón es fijo.
   className?: string
 }
 

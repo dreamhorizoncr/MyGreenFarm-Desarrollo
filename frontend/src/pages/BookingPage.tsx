@@ -169,8 +169,6 @@ function BookingPage() {
     (effectiveDay ? availability[effectiveDay]?.slots[0]?.slice(0, 5) ?? null : null)
   const selectedDay = effectiveDay ? availability[effectiveDay] : null
 
-  // Nombre de los días especiales traducido al idioma activo. La disponibilidad no trae el id de la
-  // excepción, así que se usa la fecha (solo dígitos) como identificador de la traducción.
   const [eventNames, setEventNames] = useState<Record<string, string>>({})
   useEffect(() => {
     const items = Object.entries(availability).flatMap(([date, day]) =>
@@ -247,7 +245,6 @@ function BookingPage() {
     const emailFormatValid = validateRequired(email, t('booking.email'), t) === null && validateEmail(email, t) === null
     const emailDomainError = emailFormatValid ? validateBookingEmailDomain(email, t) : null
     const emailValid = emailFormatValid && emailDomainError === null
-    // El backend rechaza la cita si el correo no es de un proveedor aceptado: se avisa aquí, antes del último paso.
     if (emailDomainError) {
       notify.error({ title: t('booking.emailDomainToastTitle'), description: emailDomainError })
     }

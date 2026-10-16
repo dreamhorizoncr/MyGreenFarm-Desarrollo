@@ -16,8 +16,6 @@ export function useServicePlans() {
     try {
       const data = await servicePlanService.getActivePlans()
 
-      // Se muestra de una vez sin traducir, para que no quede en blanco si
-      // la traducción falla o tarda
       setPlans(data)
 
       try {

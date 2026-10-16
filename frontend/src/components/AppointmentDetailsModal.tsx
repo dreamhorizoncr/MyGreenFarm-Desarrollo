@@ -12,7 +12,6 @@ interface AppointmentDetailsModalProps {
   onClose: () => void
 }
 
-// Texto libre que escribe la familia o el docente; se traduce al idioma activo.
 const TRANSLATABLE_FIELDS = ['parentOccupation', 'parentNotes', 'teacherConclusion'] as const
 const TRANSLATION_ENTITY_TYPE = 'APPOINTMENT'
 

@@ -1,4 +1,3 @@
-// Esto de aquí es para la pantalla de recuperar contraseña.
 import { useEffect, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import TextField from "../components/ui/TextField.tsx";

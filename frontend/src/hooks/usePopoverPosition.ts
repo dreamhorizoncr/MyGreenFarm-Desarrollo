@@ -1,7 +1,6 @@
 import { useLayoutEffect, useState, type RefObject } from 'react'
 
 export interface PopoverPosition {
-  // Se usa top al abrir hacia abajo y bottom al abrir hacia arriba.
   top?: number
   bottom?: number
   left: number
@@ -13,16 +12,11 @@ const VIEWPORT_MARGIN = 8
 interface UsePopoverPositionOptions {
   triggerRef: RefObject<HTMLElement | null>
   open: boolean
-  // Tamaño aproximado del panel, para decidir hacia dónde abrirlo y que no se salga de la pantalla.
   width: number
   height: number
-  // start: alineado al borde izquierdo del campo; end: al borde derecho.
   align?: 'start' | 'end'
 }
 
-// Posición fixed para paneles flotantes que no se pueden achicar (calendario, reloj).
-// Al ser fixed no los recorta el modal aunque tenga scroll (overflow): se abren hacia abajo
-// o hacia arriba según el espacio en pantalla, y siguen al campo si el modal se desplaza.
 export function usePopoverPosition({ triggerRef, open, width, height, align = 'start' }: UsePopoverPositionOptions) {
   const [position, setPosition] = useState<PopoverPosition | null>(null)
 
@@ -54,6 +48,5 @@ export function usePopoverPosition({ triggerRef, open, width, height, align = 's
     }
   }, [open, triggerRef, width, height, align])
 
-  // Al cerrar se descarta la posición para que el próximo open la recalcule antes de pintar.
   return open ? position : null
 }

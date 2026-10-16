@@ -20,9 +20,6 @@ import taller.multimedia.backend.util.Sanitizer;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
-// Corrige la ortografía de varios textos con Gemini en una sola llamada.
-// Solo devuelve una corrección cuando es "segura": mismo tamaño aproximado, mismos saltos de
-// línea y sin HTML. Si algo no cuadra, ese texto queda como lo escribió el autor.
 @Service
 @RequiredArgsConstructor
 public class SpellingCorrectionService {
@@ -40,7 +37,6 @@ public class SpellingCorrectionService {
                     + "Si un texto ya está bien escrito, devuélvelo idéntico. "
                     + "Responde ÚNICAMENTE con un objeto JSON con las mismas claves.\n\nJSON:\n";
 
-    // Una corrección ortográfica casi no cambia el largo: si cambia más que esto, se descarta.
     private static final double MAX_LENGTH_CHANGE = 0.15;
     private static final int MIN_LENGTH_SLACK = 10;
 
@@ -60,7 +56,6 @@ public class SpellingCorrectionService {
             .readTimeout(30, TimeUnit.SECONDS)
             .build();
 
-    // Recibe los textos por nombre de campo y devuelve solo los que se corrigieron.
     public Map<String, String> correct(Map<String, String> texts) {
         Map<String, String> pending = new LinkedHashMap<>();
         texts.forEach((field, value) -> {
@@ -112,7 +107,6 @@ public class SpellingCorrectionService {
             Map<String, Object> generationConfig = Map.of(
                     "temperature", 0,
                     "responseMimeType", "application/json",
-                    // Margen holgado: la respuesta repite los textos completos dentro del JSON.
                     "maxOutputTokens", totalLength + 512);
             Map<String, Object> body = Map.of(
                     "contents", List.of(Map.of("parts", List.of(part))),

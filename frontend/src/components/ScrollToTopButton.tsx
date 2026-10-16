@@ -9,21 +9,14 @@ function isDashboardPath(pathname: string) {
 	return pathname.startsWith('/admin') || pathname === '/profile'
 }
 
-// The button now shows on every page; only how it scrolls (window vs the
-// dashboard's own container) depends on the route.
 function supportsScrollToTop(_pathname: string) {
 	return true
 }
 
-// Dashboard pages scroll inside AdminLayout's own container, not the window,
-// so the button has to track and scroll that element instead on those routes.
 function getScrollElement(pathname: string): HTMLElement | null {
 	return isDashboardPath(pathname) ? document.getElementById(ADMIN_SCROLL_CONTAINER_ID) : null
 }
 
-// Checks what's actually painted behind the button's own position so it can
-// swap to a color that still contrasts when it lands over a green section
-// (e.g. the public-page hero bands, marked with data-scroll-bg="green").
 function isOverGreenSection(button: HTMLElement): boolean {
 	const rect = button.getBoundingClientRect()
 	const x = rect.left + rect.width / 2

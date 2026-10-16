@@ -49,7 +49,6 @@ import type { CreateTeacherData } from '../services/admin.ts'
     const [removePhoto, setRemovePhoto] = useState(false)
 
     const [saving, setSaving] = useState(false)
-    // Mientras guarda, ni el fondo ni Escape cierran el modal.
     useDialogDismiss(dialogRef, requestClose, !saving)
     const [saveError, setSaveError] = useState<string | null>(null)
 

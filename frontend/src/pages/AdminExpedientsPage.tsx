@@ -141,7 +141,6 @@ function AdminExpedientsPage() {
                 <ExpedientCard
                   key={expedient.id}
                   expedient={expedient}
-                  // Abre el modal de edición
                   onEdit={setEditingExpedient}
                   // Elimina el expediente
                   onDelete={setExpedientToDelete}

@@ -261,7 +261,6 @@ function ExpedientFormModal({
                   {filteredOptions.length > 0 ? (
                     filteredOptions.map((option) => (
                       <li key={option.studentId} className="mx-2">
-                        {/* onMouseDown (no onClick) para elegir antes de que el input pierda el foco y cierre la lista */}
                         <button
                           type="button"
                           onMouseDown={() => {

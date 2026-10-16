@@ -11,9 +11,6 @@ interface ForumPendingReviewModalProps {
   onClose: () => void
 }
 
-// Shown right when a community post or reply is submitted, before we know
-// whether the moderation check will approve or reject it. The real outcome
-// arrives later as a toast (success or rejection reason).
 function ForumPendingReviewModal({ title, description, onClose }: Readonly<ForumPendingReviewModalProps>) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)

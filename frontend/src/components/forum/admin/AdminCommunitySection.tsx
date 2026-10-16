@@ -12,11 +12,9 @@ const COMMUNITY_POST_TRANSLATION_TYPE = 'FORUM_COMMUNITY_POST'
 const COMMUNITY_COMMENT_TRANSLATION_TYPE = 'FORUM_COMMUNITY_COMMENT'
 
 interface AdminCommunitySectionProps {
-  // Solo el OWNER puede borrar publicaciones y comentarios (el backend también lo valida).
   canDelete: boolean
 }
 
-// Pestaña "Comunidad" del foro en el admin: moderación de las publicaciones del muro y sus comentarios.
 function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProps>) {
   const { t, i18n } = useTranslation()
   const language = i18n.language.split('-')[0]
@@ -31,16 +29,13 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
   const [commentsError, setCommentsError] = useState('')
   const [commentToDelete, setCommentToDelete] = useState<CommunityComment | null>(null)
   const [postToDelete, setPostToDelete] = useState<CommunityPost | null>(null)
-  // Se incrementa para volver a pedir la página actual (p. ej. después de borrar).
   const [reloadKey, setReloadKey] = useState(0)
 
-  // loading arranca en true y se vuelve a activar en changePage; el effect solo actualiza estado en los callbacks.
   useEffect(() => {
     let cancelled = false
     const loadPosts = async () => {
       try {
         const result = await forumService.getCommunityPosts(page - 1, 10)
-        // Mismo tipo de traducción que el muro público, para reutilizar lo ya traducido.
         const items = result.content.map((post) => ({ entityId: post.id, fieldName: 'content', originalText: post.content }))
         let translated: Record<string, string> = {}
         if (items.length) {
@@ -82,7 +77,6 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
     }
 
     notify.success({ title: t('adminForum.community.deletedToastTitle') })
-    // Si era la última publicación de la página, volver a la anterior; si no, recargar la actual.
     if (posts.length === 1 && page > 1) changePage(page - 1)
     else setReloadKey((key) => key + 1)
   }

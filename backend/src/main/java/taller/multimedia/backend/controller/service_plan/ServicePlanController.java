@@ -95,7 +95,6 @@ public class ServicePlanController {
         return ResponseEntity.ok(updated);
     }
 
-    // Quitar solo la imagen del plan (el plan se conserva)
     @DeleteMapping("/{id}/image")
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<ServicePlan> deleteImage(@PathVariable UUID id) {

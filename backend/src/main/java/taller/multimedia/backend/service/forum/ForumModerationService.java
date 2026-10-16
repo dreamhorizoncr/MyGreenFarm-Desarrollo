@@ -21,9 +21,6 @@ import taller.multimedia.backend.exception.InvalidFieldException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
-// Synchronous, Gemini-backed moderation gate for the parts of the forum that
-// regular families can write to directly: the community wall and replies.
-// Blog articles are written by staff (teachers/admins) and are not moderated.
 @Service
 @RequiredArgsConstructor
 public class ForumModerationService {
@@ -39,7 +36,6 @@ public class ForumModerationService {
     private static final String EMOJI_REJECTED_MESSAGE =
             "No se permiten emojis en el foro. Quítalos e intenta de nuevo.";
 
-    // Detecta emojis sin depender de Gemini.
     private static final Pattern EMOJI_PATTERN = Pattern.compile(
             "[\\x{1F300}-\\x{1FAFF}\\x{2600}-\\x{27BF}\\x{1F1E6}-\\x{1F1FF}\\x{2B00}-\\x{2BFF}\\x{FE0F}\\x{200D}]");
 
@@ -118,8 +114,6 @@ public class ForumModerationService {
             .readTimeout(15, TimeUnit.SECONDS)
             .build();
 
-    // Used for the community wall and its replies: content just has to be appropriate.
-    // Returns the content with spelling/accents/punctuation corrected by Gemini.
     public String assertAppropriate(String content) {
         rejectIfEmoji("content", content);
         JsonNode result = callGemini("content", APPROPRIATE_PROMPT.formatted(content), false);
@@ -132,8 +126,6 @@ public class ForumModerationService {
         return correctedContent(result, content);
     }
 
-    // Used for replies to blog articles: content has to be appropriate AND relevant
-    // to the article it responds to. Returns the spelling-corrected content.
     public String assertCommentRelevant(String articleTopic, String articleTitle, String commentContent) {
         rejectIfEmoji("content", commentContent);
         JsonNode result = callGemini("content", COMMENT_PROMPT.formatted(articleTopic, articleTitle, commentContent), false);
@@ -147,8 +139,6 @@ public class ForumModerationService {
         return correctedContent(result, commentContent);
     }
 
-    // Used for the display name/alias people choose when posting: blocks vulgar, political,
-    // religious or mocking names (e.g. puns impersonating public figures), independent of content.
     public void assertAppropriateName(String fieldName, String name) {
         rejectIfEmoji(fieldName, name);
         JsonNode result = callGemini(fieldName, NAME_PROMPT.formatted(name), true);
@@ -165,17 +155,11 @@ public class ForumModerationService {
         }
     }
 
-    // Falls back to the original content if Gemini didn't return a usable correction,
-    // so a missing/blank field never erases what the user wrote.
     private String correctedContent(JsonNode result, String original) {
         String corrected = result.path("correctedContent").asString();
         return corrected == null || corrected.isBlank() ? original : corrected;
     }
 
-    // withSearchGrounding le da a Gemini la herramienta de Búsqueda de Google para que
-    // verifique si el nombre corresponde a una persona real (política, religiosa, etc.)
-    // en vez de depender solo de lo que recuerde de su entrenamiento, que no cubre bien
-    // a figuras poco conocidas (ej. alcaldes o síndicos locales).
     private JsonNode callGemini(String fieldName, String prompt, boolean withSearchGrounding) {
         try {
             String url = baseUrl + "/models/" + model + ":generateContent";
@@ -214,8 +198,6 @@ public class ForumModerationService {
 
                 JsonNode root = objectMapper.readTree(responseBody);
 
-                // Gemini's own safety filters blocked the prompt or the response outright:
-                // treat that as a rejection, since it is itself evidence the content is unsafe.
                 if (root.path("candidates").isEmpty()) {
                     log.warn("Gemini bloqueó el contenido a moderar: {}", root.path("promptFeedback"));
                     throw new InvalidFieldException(fieldName, REJECTED_MESSAGE);
@@ -237,13 +219,10 @@ public class ForumModerationService {
             throw e;
         } catch (Exception e) {
             log.error("Error moderando contenido con Gemini API: {}", e.getMessage());
-            // Fail closed: if we can't verify the content, we don't publish it.
             throw new InvalidFieldException(fieldName, UNAVAILABLE_MESSAGE);
         }
     }
 
-    // Gemini sometimes wraps its JSON answer in a ```json ... ``` code fence despite
-    // being told not to; strip that before parsing.
     private String extractJson(String text) {
         String trimmed = text.trim();
         int start = trimmed.indexOf('{');

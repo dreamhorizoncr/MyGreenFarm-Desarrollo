@@ -99,7 +99,6 @@ function AppointmentCard({
         {formattedDate}
       </p>
 
-      {/* Solo el enlace abre el detalle; antes toda la card era clickeable y lo activaba. */}
       <button
         type="button"
         onClick={onView}
@@ -126,8 +125,6 @@ function AppointmentsSection() {
 
   const { exceptions, reload: loadExceptions } = useAvailability()
 
-  // Las excepciones de horario marcan las fechas especiales del calendario. useAvailability no las
-  // carga solo (cada pantalla las pide en su idioma), así que se cargan al entrar y al cambiar de idioma.
   useEffect(() => {
     loadExceptions(i18n.language)
   }, [loadExceptions, i18n.language])

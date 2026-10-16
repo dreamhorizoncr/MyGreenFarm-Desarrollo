@@ -119,26 +119,11 @@
   .testimonial-card, .testimonial-carousel__arrow { transition: none; }
 }
 
-/* Oculta el ojo nativo de Edge, PasswordInput ya trae el suyo */
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
 }
 
-/* =============================================================================
-   CARD HOVER — La card se levanta al pasar el mouse (uso: className="card-hover")
-   =============================================================================
-   Antes era hover:-translate-y-1, pero si el cursor estaba en el borde inferior
-   la card subía, el cursor quedaba afuera, bajaba y se repetía en bucle (temblor).
-   Para evitarlo:
-   - Crece un 1% desde el borde superior (scale con origin top): en cards de
-     300px o más el borde inferior no sube aunque la card se levante 3px.
-   - Un puente invisible (::after) bajo la card cubre el hueco en las más bajas.
-     Como overflow-hidden lo recortaría, las cards bajas no deben usarlo
-     (que la imagen se redondee sola).
-   ============================================================================= */
-/* Selectores planos (sin & anidado dentro de @media) para que cualquier analizador de CSS
-   los entienda; en la capa utilities, igual que una utilidad de Tailwind. */
 @layer utilities {
   .card-hover {
     position: relative;
@@ -175,14 +160,6 @@ input[type="password"]::-ms-clear {
   }
 }
 
-/* =============================================================================
-   MODAL SCROLL — Contenido de modales que no cabe en pantalla
-   =============================================================================
-   El modal nunca pasa del alto de la pantalla: su contenido hace scroll por
-   dentro. La barra nativa queda oculta (base.css) porque ocupa su propio carril
-   y ensancha el modal; en su lugar utils/modalScrollbars.ts dibuja una barra
-   flotante (.modal-scrollbar) encima del contenido, sin ocupar espacio.
-   ============================================================================= */
 .modal-scroll {
   overflow-y: auto;
   overscroll-behavior: contain;

@@ -6,11 +6,9 @@ const CURRENCIES: Currency[] = ['USD', 'CRC', 'EUR']
 interface CurrencyToggleProps {
   value: Currency
   onChange: (currency: Currency) => void
-  // Sin tipo de cambio solo se puede mostrar el precio en USD.
   hasExchangeRate: boolean
 }
 
-// Pastillas USD / CRC / EUR de las cards de servicios (sitio público y admin).
 function CurrencyToggle({ value, onChange, hasExchangeRate }: Readonly<CurrencyToggleProps>) {
   const { t } = useTranslation()
 

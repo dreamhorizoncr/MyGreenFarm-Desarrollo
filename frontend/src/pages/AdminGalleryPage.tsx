@@ -69,7 +69,6 @@ function YearDropdown({
 
 	const selected = categories.find((category) => category.id === value)
 
-	// Se cierra al tocar afuera o con Escape (antes era una capa fixed que dentro del modal no cubría la pantalla).
 	const rootRef = useRef<HTMLDivElement>(null)
 	const closeDropdown = useCallback(() => {
 		setOpen(false)

@@ -39,7 +39,6 @@ export function useBooking() {
       return { ok: true as const, message: null }
     } catch (err) {
       setSubmitError(getErrorMessage(err))
-      // Solo los errores 4xx traen un motivo pensado para el usuario (p. ej. el correo no permitido).
       const status = axios.isAxiosError(err) ? err.response?.status : undefined
       const message = status !== undefined && status < 500 ? getErrorMessage(err) : null
       return { ok: false as const, message }

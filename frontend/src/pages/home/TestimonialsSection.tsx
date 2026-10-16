@@ -12,7 +12,6 @@ const testimonialStyles = [
   { accent: '#FF93A9', initials: 'SV' },
 ]
 
-// Lugar de cada tarjeta en el carrusel: la activa al centro, la siguiente a la derecha y la otra a la izquierda.
 const cardPosition = (index: number, activeIndex: number, total: number) => {
   if (index === activeIndex) return 'active'
   return (index - activeIndex + total) % total === 1 ? 'right' : 'left'
