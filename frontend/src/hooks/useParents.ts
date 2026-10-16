@@ -6,7 +6,7 @@ import type { Parent } from "../types/parent.ts";
 
 export function useParents() {
     const [parents, setParents] = useState<Parent[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
   // Obtiene todos los padres del backend

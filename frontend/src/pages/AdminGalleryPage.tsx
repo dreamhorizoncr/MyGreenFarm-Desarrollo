@@ -14,6 +14,8 @@ import useDismiss from '../hooks/useDismiss.ts'
 import useEmblaCarousel from 'embla-carousel-react'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import DeleteAlbumModal from '../components/DeleteAlbumModal.tsx'
 import DeleteYearModal from '../components/DeleteYearModal.tsx'
 import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
@@ -360,14 +362,12 @@ function AdminAlbumCarousel({
 	)
 }
 
-function AlbumCarouselSkeleton() {
+function AlbumCarouselSkeleton({ albums }: Readonly<{ albums: number }>) {
 	return (
 		<div className="mt-xl">
 			<Skeleton shape="pill" className="h-9 w-32" />
 			<div className="mt-md flex gap-md py-md">
-				<div className="min-w-0 flex-[0_0_260px] md:flex-[0_0_280px]"><AdminAlbumCard loading /></div>
-				<div className="min-w-0 flex-[0_0_260px] md:flex-[0_0_280px]"><AdminAlbumCard loading /></div>
-				<div className="min-w-0 flex-[0_0_260px] md:flex-[0_0_280px]"><AdminAlbumCard loading /></div>
+				<SkeletonList count={albums}>{() => <div className="min-w-0 flex-[0_0_260px] md:flex-[0_0_280px]"><AdminAlbumCard loading /></div>}</SkeletonList>
 			</div>
 		</div>
 	)
@@ -637,6 +637,10 @@ function AdminGalleryPage() {
 
 	const idleSubmitLabel = editing ? t('admin.save') : t('admin.gallery.publish')
 
+	const visibleAlbumRows = categories.map((category) => galleriesByCategory[category.id]?.length ?? 0).filter((count) => count > 0)
+	const rowSkeletonCount = useSkeletonCount('admin-gallery-rows', loading, visibleAlbumRows.length, 2)
+	const albumSkeletonCount = useSkeletonCount('admin-gallery-albums', loading, Math.min(4, Math.max(0, ...visibleAlbumRows)), 3)
+
 	return (
 		<AdminLayout>
 			<div className="flex flex-wrap items-start justify-between gap-md">
@@ -814,8 +818,7 @@ onCreateYear={handleCreateYear}
 
 				{loading && !formOpen && (
 					<output className="contents" aria-label={t('common.loading')}>
-						<AlbumCarouselSkeleton />
-						<AlbumCarouselSkeleton />
+						<SkeletonList count={rowSkeletonCount}>{() => <AlbumCarouselSkeleton albums={albumSkeletonCount} />}</SkeletonList>
 					</output>
 				)}
 

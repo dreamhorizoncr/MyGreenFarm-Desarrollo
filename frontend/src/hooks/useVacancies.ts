@@ -8,7 +8,7 @@ const ENTITY_TYPE = 'vacancy'
 
 export function useVacancies() {
   const [vacancies, setVacancies] = useState<Vacancy[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const fetchVacancies = async (lang: string = SOURCE_LANG) => {

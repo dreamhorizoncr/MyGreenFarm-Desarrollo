@@ -14,7 +14,7 @@ function byDateAsc(a: Appointment, b: Appointment) {
 
 export function useAppointments() {
   const [appointments, setAppointments] = useState<Appointment[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [actionId, setActionId] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)

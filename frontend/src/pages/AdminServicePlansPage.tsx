@@ -17,6 +17,8 @@ import { convertCurrency, currencySymbol, formatCurrency } from '../utils/curren
 import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
 import CardActionButton from '../components/ui/CardActionButton.tsx'
 import CurrencyToggle from '../components/currency/CurrencyToggle.tsx'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 interface AdminPlanCardProps {
   plan?: ServicePlan
@@ -189,6 +191,8 @@ function AdminServicePlansPage() {
   console.log('onvoPlans actuales:', onvoPlans);
 console.log('existingPlans actuales:', plans);
 console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
+  const skeletonCount = useSkeletonCount('admin-service-plans', loading, pagedPlans.length, 3)
+
   return (
     <AdminLayout>
       <div className="flex flex-col gap-lg">
@@ -214,9 +218,7 @@ console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
 
         {loading && (
           <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 lg:grid-cols-3">
-            <AdminPlanCard loading />
-            <AdminPlanCard loading />
-            <AdminPlanCard loading />
+            <SkeletonList count={skeletonCount}>{() => <AdminPlanCard loading />}</SkeletonList>
           </div>
         )}
 

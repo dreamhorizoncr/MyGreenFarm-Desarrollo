@@ -14,7 +14,7 @@ export function useGalleryAdmin() {
 	const [galleriesByCategory, setGalleriesByCategory] = useState<
 		Record<string, Gallery[]>
 	>({})
-	const [loading, setLoading] = useState(false)
+	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
 
 	const fetchAll = async (lang: string) => {

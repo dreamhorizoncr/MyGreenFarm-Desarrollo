@@ -11,6 +11,8 @@ import { useTranslation } from 'react-i18next'
 
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 import { adminService } from '../services/admin.ts'
 import type { UserInfo } from '../types/auth.ts'
@@ -78,6 +80,8 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
         }
     }, [])
 
+    const teacherSkeletonCount = useSkeletonCount('about-teachers', teachersLoading, teachers.length, 4)
+
     return (
         <>
             <Navbar />
@@ -119,16 +123,13 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
                 {/* Loading */}
                 {teachersLoading && (
                     <div className="grid w-full grid-cols-1 justify-items-center gap-x-lg gap-y-xl sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    {[1, 2, 3, 4].map((item) => (
-                        <div
-                        key={item}
-                        className="flex w-full max-w-[19rem] animate-pulse flex-col items-center gap-md"
-                        >
+                    <SkeletonList count={teacherSkeletonCount}>{() => (
+                        <div className="flex w-full max-w-[19rem] animate-pulse flex-col items-center gap-md">
                         <div className="size-48 rounded-full bg-neutral-200" />
                         <div className="h-5 w-40 rounded bg-neutral-200" />
                         <div className="h-4 w-24 rounded bg-neutral-200" />
                         </div>
-                    ))}
+                    )}</SkeletonList>
                     </div>
                 )}
 

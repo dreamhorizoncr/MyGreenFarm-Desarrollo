@@ -13,6 +13,8 @@ import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { notify } from '../utils/notifications.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 interface ApplyTarget {
   title: string
@@ -116,6 +118,8 @@ function VacanciesPage() {
     })
   }
 
+  const skeletonCount = useSkeletonCount('vacancies', loading, openVacancies.length, 2)
+
   return (
     <div id="vacancies-page" className="min-h-screen bg-bg-page">
       <Navbar />
@@ -135,8 +139,7 @@ function VacanciesPage() {
         <Container className="py-10 md:py-12">
           {loading && (
             <div className="grid grid-cols-1 gap-md md:grid-cols-2">
-              <VacancyCard loading />
-              <VacancyCard loading />
+              <SkeletonList count={skeletonCount}>{() => <VacancyCard loading />}</SkeletonList>
             </div>
           )}
           {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}

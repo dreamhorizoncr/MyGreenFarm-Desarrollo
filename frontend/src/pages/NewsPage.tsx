@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import NewsDetailModal from "../components/NewsDetailModal.tsx";
 import BlobButton from "../components/ui/BlobButton.tsx";
 import Skeleton from "../components/ui/Skeleton.tsx";
+import SkeletonList from "../components/ui/SkeletonList.tsx";
+import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 import Pagination from "../components/ui/Pagination.tsx";
 
 import { useAnnouncements } from "../hooks/useAnnouncements";
@@ -217,6 +219,9 @@ const cards = announcements.filter(
     rows.push(cards.slice(i, i + 2));
   }
 
+  const skeletonCount = useSkeletonCount("news", loading || imagesLoading, cards.length, 4);
+  const skeletonRows = Math.ceil(skeletonCount / 2);
+
   return (
     <div id="news-page" className="min-h-screen bg-bg-page">
       <Navbar />
@@ -302,12 +307,15 @@ const cards = announcements.filter(
         <Container className="py-10 md:py-12">
           {(loading || imagesLoading) && (
             <div className="flex flex-col gap-[18px]">
-              {[0, 1].map((rowIndex) => (
-                <div key={rowIndex} className="grid grid-cols-1 gap-[18px] md:grid-cols-12">
-                  <NewsCard big={rowIndex % 2 === 0} loading />
-                  <NewsCard big={rowIndex % 2 !== 0} loading />
-                </div>
-              ))}
+              <SkeletonList count={skeletonRows}>{(rowIndex) => {
+                const cardsInRow = Math.min(2, skeletonCount - rowIndex * 2);
+                return (
+                  <div className="grid grid-cols-1 gap-[18px] md:grid-cols-12">
+                    <NewsCard big={cardsInRow === 1 || rowIndex % 2 === 0} loading />
+                    {cardsInRow === 2 && <NewsCard big={rowIndex % 2 !== 0} loading />}
+                  </div>
+                );
+              }}</SkeletonList>
             </div>
           )}
 

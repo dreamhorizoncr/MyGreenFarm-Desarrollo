@@ -7,6 +7,8 @@ import Container from '../components/home/Container.tsx'
 import MultimediaCard from '../components/home/MultimediaCard.tsx'
 import { useGallery } from '../hooks/useGallery.ts'
 import ninos2 from '../assets/imgs/ninos2.svg'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 function GalleryPage() {
   const { t, i18n } = useTranslation()
@@ -39,6 +41,8 @@ function GalleryPage() {
   const selectCategory = (categoryId: string | null) => {
     setActiveCategory(categoryId)
   }
+
+  const skeletonCount = useSkeletonCount('gallery', loading, visibleGalleries.length, 3)
 
   return (
     <div id="gallery-page" className="min-h-screen bg-bg-page">
@@ -106,11 +110,7 @@ function GalleryPage() {
 
           <Container className="grid grid-cols-1 gap-[24px] md:grid-cols-3">
             {loading && (
-              <>
-                <MultimediaCard loading />
-                <MultimediaCard loading />
-                <MultimediaCard loading />
-              </>
+              <SkeletonList count={skeletonCount}>{() => <MultimediaCard loading />}</SkeletonList>
             )}
 
             {error && (

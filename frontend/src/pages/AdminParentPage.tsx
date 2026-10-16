@@ -13,6 +13,8 @@ import { notify } from "../utils/notifications";
 import { useParents } from "../hooks/useParents";
 
 import type { Parent } from "../types/parent";
+import SkeletonList from "../components/ui/SkeletonList.tsx";
+import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
 
 function AdminParentsPage() {
@@ -68,6 +70,8 @@ function AdminParentsPage() {
     }
   };
 
+  const skeletonCount = useSkeletonCount("admin-parents", loading, filteredParents.length, 2);
+
   return (
     <AdminLayout>
       <section className="w-full">
@@ -117,8 +121,7 @@ function AdminParentsPage() {
         {/* Estado de carga */}
         {loading && (
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <ParentCard loading />
-            <ParentCard loading />
+            <SkeletonList count={skeletonCount}>{() => <ParentCard loading />}</SkeletonList>
           </div>
         )}
 

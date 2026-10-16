@@ -7,7 +7,7 @@ const ENTITY_TYPE = 'service_plan'
 
 export function useServicePlans() {
   const [plans, setPlans] = useState<ServicePlan[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const fetchPlans = useCallback(async (lang: string) => {

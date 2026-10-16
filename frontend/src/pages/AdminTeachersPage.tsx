@@ -15,6 +15,8 @@ import { getErrorMessage } from '../utils/error.ts'
 import { userStorage } from '../utils/userStorage.ts'
 
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
     const PAGE_SIZE = 10
 
@@ -164,6 +166,8 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
         }
     }
 
+    const skeletonCount = useSkeletonCount('admin-teachers', loading, filteredTeachers.length, 4)
+
     return (
         <AdminLayout>
         <section className="w-full">
@@ -218,10 +222,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
             {/* Cargando */}
             {loading && (
             <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <TeacherCard loading showPhoto />
-                <TeacherCard loading showPhoto />
-                <TeacherCard loading showPhoto />
-                <TeacherCard loading showPhoto />
+                <SkeletonList count={skeletonCount}>{() => <TeacherCard loading showPhoto />}</SkeletonList>
             </div>
             )}
 

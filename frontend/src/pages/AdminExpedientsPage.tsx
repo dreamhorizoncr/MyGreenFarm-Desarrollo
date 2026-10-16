@@ -20,6 +20,8 @@ import { useExpedients } from "../hooks/useExpedients";
 import type { Expedient } from "../types/expedient";
 
 import { useTranslation } from "react-i18next";
+import SkeletonList from "../components/ui/SkeletonList.tsx";
+import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
 function AdminExpedientsPage() {
 
@@ -76,6 +78,8 @@ function AdminExpedientsPage() {
     }
   };
 
+  const skeletonCount = useSkeletonCount("admin-expedients", loading, filteredExpedients.length, 2);
+
   return (
     <AdminLayout>
       <section className="w-full">
@@ -125,8 +129,7 @@ function AdminExpedientsPage() {
         {/* Estado de carga */}
         {loading && (
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <ExpedientCard loading />
-            <ExpedientCard loading />
+            <SkeletonList count={skeletonCount}>{() => <ExpedientCard loading />}</SkeletonList>
           </div>
         )}
 
