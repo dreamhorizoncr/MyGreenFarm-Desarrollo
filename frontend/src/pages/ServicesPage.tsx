@@ -16,6 +16,8 @@ import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 import { convertCurrency, formatCurrency, currencySymbol } from '../utils/currency.ts'
 import { CircleCheckIcon, ClockIcon } from '@animateicons/react/lucide'
 import CurrencyToggle from '../components/currency/CurrencyToggle.tsx'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 function PlanCard({
   plan,
@@ -315,6 +317,8 @@ function ServicesPage() {
     }
   }
 
+  const skeletonCount = useSkeletonCount('services', loading, plans.length, 3)
+
   return (
     <div className="min-h-screen bg-bg-page">
       <Navbar />
@@ -342,11 +346,7 @@ function ServicesPage() {
 
         <Container className="grid grid-cols-1 gap-[20px] md:grid-cols-3">
           {loading && (
-            <>
-              <PlanCard loading />
-              <PlanCard loading />
-              <PlanCard loading />
-            </>
+            <SkeletonList count={skeletonCount}>{() => <PlanCard loading />}</SkeletonList>
           )}
 
           {error && (

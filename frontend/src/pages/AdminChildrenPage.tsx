@@ -12,6 +12,8 @@ import { useChildren } from "../hooks/useChildren";
 
 import type { Child } from "../types/child";
 import { useTranslation } from "react-i18next";
+import SkeletonList from "../components/ui/SkeletonList.tsx";
+import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
 function AdminChildrenPage() {
   const { children, sourceChildren, loading, error, fetchChildren } = useChildren();
@@ -71,6 +73,8 @@ function AdminChildrenPage() {
     }
   }
 
+  const skeletonCount = useSkeletonCount("admin-children", loading, filteredChildren.length, 2);
+
   return (
     <AdminLayout>
       <section className="w-full">
@@ -122,8 +126,7 @@ function AdminChildrenPage() {
 
         {loading && (
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <ChildCard loading />
-            <ChildCard loading />
+            <SkeletonList count={skeletonCount}>{() => <ChildCard loading />}</SkeletonList>
           </div>
         )}
 

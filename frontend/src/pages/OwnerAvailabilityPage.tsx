@@ -13,6 +13,8 @@ import { notify } from '../utils/notifications.ts'
 import type { ScheduleException, WeeklySchedule } from '../types/availability.ts'
 import { DEFAULT_END_TIME, DEFAULT_START_TIME, timeValue, toApiTime, WEEK_DAYS } from '../types/availability.ts'
 import CardActionButton from '../components/ui/CardActionButton.tsx'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 const hours = Array.from({ length: 15 }, (_, index) => `${String(index + 6).padStart(2, '0')}:00`)
 
@@ -170,6 +172,7 @@ function OwnerAvailabilityPage() {
 
   const futureExceptions = exceptions.filter((item) => item.exceptionDate >= new Date().toISOString().slice(0, 10)).sort((a, b) => a.exceptionDate.localeCompare(b.exceptionDate))
   const { currentPage, setPage, totalPages, pageItems: pagedExceptions } = useClientPagination(futureExceptions)
+  const exceptionSkeletonCount = useSkeletonCount('availability-exceptions', loading, pagedExceptions.length, 2)
 
   const openException = (exception?: ScheduleException) => setExceptionModal(exception ?? null)
 
@@ -182,13 +185,10 @@ function OwnerAvailabilityPage() {
         {loading && (
           <div className="mt-xl">
             <div className="flex flex-col gap-sm">
-              <WeeklyDayRow loading />
-              <WeeklyDayRow loading />
-              <WeeklyDayRow loading />
+              <SkeletonList count={WEEK_DAYS.length}>{() => <WeeklyDayRow loading />}</SkeletonList>
             </div>
             <div className="mt-2xl grid grid-cols-1 gap-md lg:grid-cols-2">
-              <ExceptionCard loading />
-              <ExceptionCard loading />
+              <SkeletonList count={exceptionSkeletonCount}>{() => <ExceptionCard loading />}</SkeletonList>
             </div>
           </div>
         )}

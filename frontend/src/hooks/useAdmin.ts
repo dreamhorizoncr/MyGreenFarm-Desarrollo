@@ -5,7 +5,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 
 export function useAdmin() {
   const [users, setUsers] = useState<UserInfo[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const fetchUsers = async () => {

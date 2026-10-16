@@ -9,7 +9,7 @@ export function useServicePlanAdmin() {
   const [plans, setPlans] = useState<ServicePlan[]>([])
   const [sourcePlans, setSourcePlans] = useState<ServicePlan[]>([])
   const [onvoPlans, setOnvoPlans] = useState<OnvoRawPlan[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const fetchAll = useCallback(async (lang?: string) => {
