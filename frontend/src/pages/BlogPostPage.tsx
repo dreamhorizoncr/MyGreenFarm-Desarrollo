@@ -33,9 +33,6 @@ function BlogPostPage() {
   const [content, setContent] = useState('')
   const [isDetailLoading, setIsDetailLoading] = useState(true)
   const [pendingReview, setPendingReview] = useState(false)
-  // Ref (not state) so a second click within the same tick, before React
-  // re-renders, is still blocked synchronously — avoids firing the Gemini
-  // moderation call twice for one submission.
   const isSubmittingRef = useRef(false)
 
   useEffect(() => {
@@ -99,9 +96,6 @@ function BlogPostPage() {
     }
 
     isSubmittingRef.current = true
-    // Show the "sent for review" confirmation right away instead of leaving
-    // the form stuck while the moderation check runs; the real outcome
-    // arrives later as a toast (success or rejection reason).
     setName('')
     setContent('')
     setPendingReview(true)

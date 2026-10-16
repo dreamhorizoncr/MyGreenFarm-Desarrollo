@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { ClockIcon, UsersIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import type { ClubResponse } from '../types/clubs.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
@@ -22,6 +23,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
 
     const dialogRef = useRef<HTMLDialogElement>(null)
     const { closing, requestClose } = useModalExit(onClose)
+    useDialogDismiss(dialogRef, requestClose)
 
     useEffect(() => {
         dialogRef.current?.showModal()
@@ -30,6 +32,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
     const clubImages = club.images ?? []
     const coverImage = clubImages.find((img) => img.isCover) ?? clubImages[0]
     const galleryImages = clubImages.filter((img) => !img.isCover)
+    const coverUrl = coverImage?.fileUrl ?? club.coverImageUrl
 
     let galleryGridColumns = 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4'
     if (galleryImages.length === 1) galleryGridColumns = 'grid-cols-1'
@@ -39,12 +42,6 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
         <dialog
             ref={dialogRef}
             onClose={requestClose}
-            onClick={(event) => {
-                if (event.target === dialogRef.current) requestClose()
-            }}
-            onKeyDown={(event) => {
-                if (event.key === 'Escape') requestClose()
-            }}
             aria-label={club.name}
             className={`fixed inset-0 m-auto max-h-[90vh] w-[min(1100px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-page backdrop:bg-black/50 ${
                 closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'
@@ -80,23 +77,15 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                 </header>
 
                 {/* Imagen de portada */}
-                {coverImage ? (
+                {coverUrl && (
                     <div className="mt-[40px] overflow-hidden rounded-[22px]">
                         <img
-                            src={coverImage.fileUrl}
+                            src={coverUrl}
                             alt={club.name}
                             className="h-[260px] w-full object-cover sm:h-[360px] md:h-[480px]"
                         />
                     </div>
-                ) : club.coverImageUrl ? (
-                    <div className="mt-[40px] overflow-hidden rounded-[22px]">
-                        <img
-                            src={club.coverImageUrl}
-                            alt={club.name}
-                            className="h-[260px] w-full object-cover sm:h-[360px] md:h-[480px]"
-                        />
-                    </div>
-                ) : null}
+                )}
 
                 {/* Descripción principal */}
                 <section className="mx-auto max-w-[950px] text-left mt-[40px]">

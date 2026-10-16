@@ -7,6 +7,7 @@ import Button from './ui/Button.tsx'
 import DatePickerField from './ui/DatePickerField.tsx'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import { validateEmail, validateRequired } from '../utils/validators.ts'
 
@@ -48,6 +49,7 @@ import type { CreateTeacherData } from '../services/admin.ts'
     const [removePhoto, setRemovePhoto] = useState(false)
 
     const [saving, setSaving] = useState(false)
+    useDialogDismiss(dialogRef, requestClose, !saving)
     const [saveError, setSaveError] = useState<string | null>(null)
 
     const [firstNameError, setFirstNameError] = useState<string | null>(null)
@@ -94,12 +96,9 @@ import type { CreateTeacherData } from '../services/admin.ts'
         const lastError = validateRequired(lastName, t('admin.lastName'), t)
         const mailError = validateEmail(email, t)
 
-        const passError =
-        !isEditing && !password.trim()
-            ? 'La contraseña es obligatoria.'
-            : !isEditing && password.length < 8
-            ? 'La contraseña debe tener al menos 8 caracteres.'
-            : null
+        let passError: string | null = null
+        if (!isEditing && !password.trim()) passError = 'La contraseña es obligatoria.'
+        else if (!isEditing && password.length < 8) passError = 'La contraseña debe tener al menos 8 caracteres.'
 
         setFirstNameError(firstError)
         setLastNameError(lastError)
@@ -149,12 +148,6 @@ import type { CreateTeacherData } from '../services/admin.ts'
         <dialog
         ref={dialogRef}
         onClose={requestClose}
-        onClick={(event) => {
-            if (event.target === dialogRef.current && !saving) requestClose()
-        }}
-        onKeyDown={(event) => {
-            if (event.key === 'Escape' && !saving) requestClose()
-        }}
         aria-label={isEditing ? 'Editar docente' : 'Registrar docente'}
         className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${
             closing
@@ -304,7 +297,7 @@ import type { CreateTeacherData } from '../services/admin.ts'
 
             {!isEditing && (
             <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
-                Contraseña
+                {'Contraseña'}
                 <input
                 type="password"
                 value={password}

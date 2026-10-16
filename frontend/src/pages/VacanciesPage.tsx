@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ArrowRightIcon } from '@animateicons/react/lucide'
 import Navbar from '../components/Navbar.tsx'
@@ -9,6 +9,7 @@ import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
 import { useVacancies } from '../hooks/useVacancies.ts'
 import { useCurriculums } from '../hooks/useCurriculums.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { notify } from '../utils/notifications.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
@@ -83,7 +84,9 @@ function VacanciesPage() {
 
   const [applyTarget, setApplyTarget] = useState<ApplyTarget | null>(null)
   const [applicationSent, setApplicationSent] = useState(false)
+  const sentDialogRef = useRef<HTMLDialogElement | null>(null)
   const { closing: sentClosing, requestClose: requestCloseSent } = useModalExit(() => setApplicationSent(false))
+  useDialogDismiss(sentDialogRef, requestCloseSent)
 
   useEffect(() => {
     void fetchVacancies(i18n.language)
@@ -191,15 +194,10 @@ function VacanciesPage() {
       {applicationSent && (
         <dialog
           ref={(el) => {
+            sentDialogRef.current = el
             if (el && !el.open) el.showModal()
           }}
           onClose={requestCloseSent}
-          onClick={(event) => {
-            if (event.target === event.currentTarget) requestCloseSent()
-          }}
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') requestCloseSent()
-          }}
           aria-label={t('vacancies.applicationSentTitle')}
           className={`fixed inset-0 m-auto max-h-[90vh] w-[min(420px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card text-center backdrop:bg-scrim ${sentClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         >

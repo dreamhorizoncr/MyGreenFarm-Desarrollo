@@ -33,8 +33,6 @@ export function useAnnouncements() {
         size,
       );
 
-      // Guarda de una vez las noticias sin traducir, para que se vean aunque
-      // la traducción falle o tarde
       setAnnouncements(data.content);
       setTotalPages(data.totalPages);
       setTotalElements(data.totalElements);

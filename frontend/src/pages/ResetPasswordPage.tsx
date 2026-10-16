@@ -150,7 +150,6 @@ function ResetPasswordPage() {
             </div>
           )}
 
-          {/*Volver al inicio de sesión o al perfil*/}
           <p className="mt-[35px] text-center">
             <Link
               to={isAuthenticated ? '/profile' : '/login'}

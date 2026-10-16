@@ -15,6 +15,8 @@ import Container from '../components/home/Container.tsx'
 import { adminService } from '../services/admin.ts'
 import type { UserInfo } from '../types/auth.ts'
 
+const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
+
     const squishyTransition = {
     type: 'spring' as const,
     stiffness: 180,
@@ -251,13 +253,7 @@ import type { UserInfo } from '../types/auth.ts'
                                 transition={squishyTransition}
                                 >
                                 <div
-                                    className={`flex size-12 items-center justify-center rounded-full bg-white shadow-sm ${
-                                    decoration === 0
-                                        ? 'text-accent'
-                                        : decoration === 1
-                                        ? 'text-link'
-                                        : 'text-green-500'
-                                    }`}
+                                    className={`flex size-12 items-center justify-center rounded-full bg-white shadow-sm ${DECORATION_COLORS[decoration]}`}
                                 >
                                     <Flower2 size={34} strokeWidth={1.7} />
                                 </div>

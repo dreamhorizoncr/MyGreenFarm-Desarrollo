@@ -5,7 +5,6 @@ import { ClockIcon } from '@animateicons/react/lucide'
 import { usePopoverPosition } from '../../hooks/usePopoverPosition.ts'
 
 interface TimePickerFieldProps {
-  // Hora en formato HH:mm (24 h), o '' si no hay hora.
   value: string
   onChange: (value: string) => void
   id?: string
@@ -18,7 +17,6 @@ type View = 'hours' | 'minutes'
 
 const CLOCK_SIZE = 200
 const CENTER = CLOCK_SIZE / 2
-// Tamaño aproximado del panel (cabecera + esfera), para decidir hacia dónde abrirlo.
 const PANEL_WIDTH = 260
 const PANEL_HEIGHT = 290
 const NUMBER_RADIUS = 76
@@ -33,7 +31,6 @@ const parseTime = (value: string) => {
   return { hours: Number(match[1]), minutes: Number(match[2]) }
 }
 
-// Posición de un número en la esfera; el paso 0 queda arriba y avanza en sentido horario.
 const pointAt = (step: number, steps: number, radius = NUMBER_RADIUS) => {
   const angle = (step / steps) * 2 * Math.PI
   return { x: CENTER + radius * Math.sin(angle), y: CENTER - radius * Math.cos(angle) }
@@ -42,8 +39,6 @@ const pointAt = (step: number, steps: number, radius = NUMBER_RADIUS) => {
 const defaultTriggerClassName =
   'mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading'
 
-// Reloj analógico para elegir la hora: primero la hora y después los minutos.
-// Igual que DatePickerField, el panel va en línea (fixed) para funcionar dentro de modales sin que lo recorten.
 function TimePickerField({
   value,
   onChange,
@@ -70,8 +65,18 @@ function TimePickerField({
     const handlePointerDown = (event: PointerEvent) => {
       if (!containerRef.current?.contains(event.target as Node)) setOpen(false)
     }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      event.preventDefault()
+      event.stopPropagation()
+      setOpen(false)
+    }
     document.addEventListener('pointerdown', handlePointerDown)
-    return () => document.removeEventListener('pointerdown', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown, true)
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown, true)
+    }
   }, [open])
 
   const emit = (nextHours: number, nextMinutes: number) => onChange(`${pad(nextHours)}:${pad(nextMinutes)}`)
@@ -88,7 +93,6 @@ function TimePickerField({
     if (!value) emit(12, 0)
   }
 
-  // Convierte la posición del puntero en una hora o un minuto según la vista.
   const selectFromPointer = (event: ReactPointerEvent<HTMLDivElement>) => {
     const rect = clockRef.current?.getBoundingClientRect()
     if (!rect) return
@@ -126,18 +130,7 @@ function TimePickerField({
     `rounded-lg px-2 py-0.5 font-body text-body-sm font-semibold transition-colors ${active ? 'bg-white text-green-600' : 'text-white/70 hover:text-white'}`
 
   return (
-    <div
-      ref={containerRef}
-      className="relative"
-      onKeyDown={(event) => {
-        // Escape cierra solo el reloj, no el modal que lo contiene.
-        if (event.key === 'Escape' && open) {
-          event.preventDefault()
-          event.stopPropagation()
-          setOpen(false)
-        }
-      }}
-    >
+    <div ref={containerRef} className="relative">
       <button
         ref={triggerRef}
         type="button"
@@ -154,11 +147,11 @@ function TimePickerField({
       </button>
 
       {open && position && (
-        <div
-          role="dialog"
+        <dialog
+          open
           aria-label={ariaLabel}
           style={{ top: position.top, bottom: position.bottom, left: position.left, width: PANEL_WIDTH }}
-          className="fixed z-[9000] max-w-[calc(100vw-1rem)] overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-lg"
+          className="fixed z-[9000] m-0 max-w-[calc(100vw-1rem)] overflow-hidden rounded-2xl border border-neutral-200 bg-white p-0 text-inherit shadow-lg"
         >
           <div className="flex items-center justify-center gap-md bg-green-500 px-md py-sm">
             <div className="flex items-center text-white">
@@ -181,7 +174,6 @@ function TimePickerField({
               ref={clockRef}
               className={`relative shrink-0 touch-none select-none rounded-full bg-neutral-100 ${dragging ? 'cursor-grabbing' : 'cursor-grab'}`}
               style={{ width: CLOCK_SIZE, height: CLOCK_SIZE }}
-              // La esfera recibe todo el puntero: se agarra la aguja desde cualquier punto y sigue al arrastrar.
               onPointerDown={(event) => {
                 event.currentTarget.setPointerCapture(event.pointerId)
                 setDragging(true)
@@ -210,7 +202,6 @@ function TimePickerField({
                     tabIndex={0}
                     aria-label={view === 'hours' ? `${number}` : pad(number)}
                     aria-pressed={selected}
-                    // Con mouse/touch los maneja la esfera (pointer-events-none); el click queda para teclado.
                     onClick={() => {
                       if (view === 'hours') {
                         setHour12(number)
@@ -231,7 +222,7 @@ function TimePickerField({
               })}
             </div>
           </div>
-        </div>
+        </dialog>
       )}
     </div>
   )

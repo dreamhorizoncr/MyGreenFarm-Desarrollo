@@ -1,4 +1,3 @@
-/** Selector de país para react-phone-number-input (prop countrySelectComponent), con el estilo del Select */
 
 import { useEffect, useMemo, useRef, useState, type ElementType } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -26,7 +25,6 @@ interface CountrySelectProps {
 const MENU_MAX_HEIGHT = 320
 const MENU_MIN_WIDTH = 300
 
-// Para buscar sin importar tildes ni mayúsculas.
 const normalize = (text: string) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
 const callingCode = (country?: Country) => (country ? `+${getCountryCallingCode(country)}` : '')
@@ -46,6 +44,7 @@ function CountrySelect({
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
+  const searchRef = useRef<HTMLInputElement>(null)
 
   const close = () => {
     setOpen(false)
@@ -63,11 +62,22 @@ function CountrySelect({
     ))
   }, [options, query])
 
-  // Al abrir, deja visible el país elegido. Solo una vez: la posición se recalcula con cada scroll
-  // (también el de la propia lista), y si dependiera de ella la lista volvería sola al país elegido.
+  const keyedOptions = useMemo(() => {
+    const result: { option: CountryOption; key: string }[] = []
+    let previous = 'start'
+    for (const option of filtered) {
+      const key = option.divider ? `divider-after-${previous}` : (option.value ?? 'international')
+      if (!option.divider) previous = key
+      result.push({ option, key })
+    }
+    return result
+  }, [filtered])
+
   const isPositioned = position !== null
   useEffect(() => {
-    if (open && isPositioned) listRef.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' })
+    if (!open || !isPositioned) return
+    searchRef.current?.focus({ preventScroll: true })
+    listRef.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' })
   }, [open, isPositioned])
 
   const selectedLabel = options.find((option) => option.value === value)?.label ?? ''
@@ -98,8 +108,8 @@ function CountrySelect({
           <div className="flex shrink-0 items-center gap-xs border-b border-neutral-100 px-md py-xs">
             <SearchIcon size={16} aria-hidden="true" className="shrink-0 text-neutral-400" />
             <input
+              ref={searchRef}
               type="search"
-              autoFocus
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder={t('common.countrySearch.placeholder')}
@@ -112,10 +122,12 @@ function CountrySelect({
             {filtered.length === 0 && (
               <li className="px-md py-sm font-body text-body-sm text-neutral-500">{t('common.countrySearch.empty')}</li>
             )}
-            {filtered.map((option, index) => option.divider ? (
-              <li key={`divider-${index}`} role="separator" className="mx-md my-xs border-t border-neutral-200" />
+            {keyedOptions.map(({ option, key }) => option.divider ? (
+              <li key={key} role="none">
+                <hr className="mx-md my-xs border-0 border-t border-neutral-200" />
+              </li>
             ) : (
-              <li key={option.value ?? 'international'} role="none">
+              <li key={key} role="none">
                 <button
                   type="button"
                   role="option"

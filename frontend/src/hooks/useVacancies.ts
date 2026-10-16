@@ -16,13 +16,8 @@ export function useVacancies() {
     setError(null)
     try {
       const data = await vacancyService.getVacancies()
-      // Se muestran de una vez sin traducir: así, si la traducción falla, el
-      // contenido original sigue visible en vez de quedar en blanco.
       setVacancies(data)
 
-      // No asumimos que el admin siempre escribe en español: aunque se esté
-      // viendo en "es", se pide la traducción igual (como hace el foro), para
-      // que una vacante redactada en otro idioma también se traduzca.
       try {
         const items = data.flatMap((v) => [
           { entityId: v.id, fieldName: 'title', originalText: v.title },

@@ -124,7 +124,6 @@ public class ServicePlanImageService {
         servicePlanRepository.delete(plan);
     }
 
-    // Quita la imagen del plan (y su archivo del bucket) sin borrar el plan.
     @Transactional
     public ServicePlan deleteImage(UUID id) {
         ServicePlan plan = servicePlanRepository.findById(id)

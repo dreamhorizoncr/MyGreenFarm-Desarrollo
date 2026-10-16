@@ -35,8 +35,6 @@ export function useGalleryAdmin() {
             }),
         )
 
-        // Se muestra de una vez sin traducir, para que no quede en blanco si
-        // la traducción falla o tarda
         setCategories(sortedCategories)
         setGalleriesByCategory(Object.fromEntries(entries))
 

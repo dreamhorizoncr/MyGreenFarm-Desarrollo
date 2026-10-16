@@ -99,7 +99,6 @@ function AppointmentCard({
         {formattedDate}
       </p>
 
-      {/* Solo el enlace abre el detalle; antes toda la card era clickeable y lo activaba. */}
       <button
         type="button"
         onClick={onView}
@@ -124,10 +123,14 @@ function AppointmentsSection() {
     rescheduleAppointment,
   } = useAppointments()
 
-  const { exceptions } = useAvailability()
+  const { exceptions, reload: loadExceptions } = useAvailability()
+
+  useEffect(() => {
+    loadExceptions(i18n.language)
+  }, [loadExceptions, i18n.language])
 
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('BY_DATE')
-  const [selectedDate, setValue] = useState<CalendarDate | null>(today(getLocalTimeZone()))
+  const [selectedDate, setSelectedDate] = useState<CalendarDate | null>(today(getLocalTimeZone()))
   const [searchTerm, setSearchTerm] = useState('')
   const [appointmentToEdit, setAppointmentToEdit] = useState<Appointment | null>(null)
   const [appointmentToReschedule, setAppointmentToReschedule] = useState<Appointment | null>(null)
@@ -259,7 +262,7 @@ function AppointmentsSection() {
       {statusFilter === 'BY_DATE' ? (
         <div className="grid grid-cols-1 gap-xl lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] items-start">
           {/* El calendario conserva su ancho máximo y las citas usan el espacio restante. */}
-          <CalendarPanel value={selectedDate} onChange={setValue} markedDates={specialScheduleDates} />
+          <CalendarPanel value={selectedDate} onChange={setSelectedDate} markedDates={specialScheduleDates} />
 
           {/* Columna Derecha: Tarjetas de citas con mejor espaciado */}
           <div className="flex flex-col gap-md">

@@ -15,6 +15,7 @@ import { appointmentService } from '../services/appointment.ts'
 import { notify } from '../utils/notifications.ts'
 import {
   validateEmail,
+  validateBookingEmailDomain,
   validateIdNumber,
   validatePhoneNumber,
   validateRequired,
@@ -168,8 +169,6 @@ function BookingPage() {
     (effectiveDay ? availability[effectiveDay]?.slots[0]?.slice(0, 5) ?? null : null)
   const selectedDay = effectiveDay ? availability[effectiveDay] : null
 
-  // Nombre de los días especiales traducido al idioma activo. La disponibilidad no trae el id de la
-  // excepción, así que se usa la fecha (solo dígitos) como identificador de la traducción.
   const [eventNames, setEventNames] = useState<Record<string, string>>({})
   useEffect(() => {
     const items = Object.entries(availability).flatMap(([date, day]) =>
@@ -243,7 +242,12 @@ function BookingPage() {
   }
 
   const validateContactStep = () => {
-    const emailValid = validateRequired(email, t('booking.email'), t) === null && validateEmail(email, t) === null
+    const emailFormatValid = validateRequired(email, t('booking.email'), t) === null && validateEmail(email, t) === null
+    const emailDomainError = emailFormatValid ? validateBookingEmailDomain(email, t) : null
+    const emailValid = emailFormatValid && emailDomainError === null
+    if (emailDomainError) {
+      notify.error({ title: t('booking.emailDomainToastTitle'), description: emailDomainError })
+    }
     const phoneValid = phoneCountry
       ? validateRequired(phone, t('booking.phone'), t) === null && validatePhoneNumber(phone, t) === null
       : false
@@ -284,7 +288,7 @@ function BookingPage() {
   const handleSubmit = async () => {
     if (!effectiveDay || !effectiveTime) return
 
-    const ok = await submit({
+    const result = await submit({
       idType,
       parentIdentification: idNumber,
       parentName: fullName,
@@ -298,12 +302,12 @@ function BookingPage() {
       referralOtherDetail: referralSource === 'OTHER' ? referralOtherDetail.trim() : undefined,
       language: (i18n.language ?? 'es').split('-')[0],
     })
-    if (ok) {
+    if (result.ok) {
       resetForm()
     } else {
       notify.error({
         title: t('booking.submitErrorToastTitle'),
-        description: t('booking.submitError'),
+        description: result.message ?? t('booking.submitError'),
       })
     }
   }
@@ -356,7 +360,7 @@ function BookingPage() {
         ? validateRequired(idNumber, t('booking.idNumber'), t) ?? validateIdNumber(idNumber, idType, t)
         : null,
       emailErrorMessage: emailError
-        ? validateRequired(email, t('booking.email'), t) ?? validateEmail(email, t)
+        ? validateRequired(email, t('booking.email'), t) ?? validateEmail(email, t) ?? validateBookingEmailDomain(email, t)
         : null,
       phoneErrorMessage: computePhoneErrorMessage(),
       occupationErrorMessage: occupationError

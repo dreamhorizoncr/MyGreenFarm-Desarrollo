@@ -71,7 +71,6 @@ function ProfileButton() {
           <button
             type="button"
             onClick={handleLogout}
-            // Acción destructiva: mismo formato que las demás opciones, pero en rojo.
             className="flex w-full items-center gap-2 rounded-lg px-md py-sm text-left font-body text-body-sm text-danger transition-colors duration-150 hover:bg-danger-100"
           >
             <LogOutIcon size={18} className="shrink-0" />

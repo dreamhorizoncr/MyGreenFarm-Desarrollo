@@ -1,7 +1,6 @@
 import { useLayoutEffect, useState, type RefObject } from 'react'
 
 export interface MenuPosition {
-  // Se usa top al abrir hacia abajo y bottom al abrir hacia arriba.
   top?: number
   bottom?: number
   left: number
@@ -16,17 +15,11 @@ const MIN_MENU_HEIGHT = 40
 interface UseMenuPositionOptions {
   triggerRef: RefObject<HTMLElement | null>
   open: boolean
-  // Alto que el menú querría ocupar (ya limitado a su máximo).
   desiredHeight: number
   maxHeight: number
-  // Ancho mínimo del menú; si el trigger es más angosto el menú lo supera (p. ej. el selector de país).
   minWidth?: number
 }
 
-// Posición fixed para menús desplegables (Select, CountrySelect).
-// El menú es fixed para no quedar recortado por el modal, así que no agranda el área de scroll.
-// Por eso se abre hacia donde quepa: primero dentro del panel del modal (form/dialog) y si no, dentro
-// de la pantalla; y su alto se limita al espacio visible para que nunca quede cortado.
 export function useMenuPosition({ triggerRef, open, desiredHeight, maxHeight, minWidth = 0 }: UseMenuPositionOptions) {
   const [position, setPosition] = useState<MenuPosition | null>(null)
 
@@ -68,6 +61,5 @@ export function useMenuPosition({ triggerRef, open, desiredHeight, maxHeight, mi
     }
   }, [open, triggerRef, desiredHeight, maxHeight, minWidth])
 
-  // Al cerrar se descarta la posición para que el próximo open la recalcule antes de pintar.
   return open ? position : null
 }

@@ -305,6 +305,7 @@ function ServicesPage() {
       }, 1500)
 
     } catch (error) {
+      console.error('Error creando la sesión de pago', error)
       checkoutWindow.close()
       setCheckoutLoading(null)
       notify.error({

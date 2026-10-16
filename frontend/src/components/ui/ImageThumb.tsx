@@ -1,14 +1,10 @@
-/** Miniatura de una imagen ya publicada o recién elegida en los formularios del admin */
 
 import { useEffect, useRef, type ReactNode } from 'react'
 import { Trash2Icon } from '@animateicons/react/lucide'
 
 interface ImageThumbProps {
-  // URL de una imagen ya publicada...
   src?: string
-  // ...o el archivo recién elegido; la vista previa se genera y se libera sola.
   file?: File
-  // Texto al lado de la miniatura: "Portada", "Galería", el nombre del archivo...
   label?: string
   onDelete?: () => void
   deleteLabel?: string
@@ -17,7 +13,6 @@ interface ImageThumbProps {
 function ImageThumb({ src, file, label, onDelete, deleteLabel }: Readonly<ImageThumbProps>) {
   const imgRef = useRef<HTMLImageElement>(null)
 
-  // El src del archivo se asigna directo al <img> para poder revocar la URL al cambiar o desmontar.
   useEffect(() => {
     if (!file || !imgRef.current) return
     const url = URL.createObjectURL(file)
@@ -47,13 +42,11 @@ function ImageThumb({ src, file, label, onDelete, deleteLabel }: Readonly<ImageT
 }
 
 interface ImageThumbListProps {
-  // Sin título se usa para las imágenes recién elegidas, justo debajo del botón "Elegir...".
   title?: string
   children: ReactNode
   className?: string
 }
 
-// Miniaturas en fila, con título opcional como "Imágenes actuales".
 export function ImageThumbList({ title, children, className = 'mt-lg' }: Readonly<ImageThumbListProps>) {
   return (
     <div className={className}>

@@ -1,4 +1,3 @@
-/** Botón para elegir imágenes en los formularios del admin (input file oculto + texto de ayuda) */
 
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -8,15 +7,12 @@ interface ImagePickerButtonProps {
   label: string
   accept: string
   multiple?: boolean
-  // Máximo de imágenes cuando es múltiple; se muestra en el texto de ayuda.
   limit?: number
-  // Cuando ya hay una imagen guardada y la nueva la reemplaza.
   replacesCurrent?: boolean
   disabled?: boolean
   onSelect: (files: File[]) => void
 }
 
-// "image/png,image/jpeg,image/svg+xml" -> "PNG, JPG, SVG"
 function formatList(accept: string): string | null {
   if (accept.trim() === 'image/*') return null
   const names = accept
@@ -54,7 +50,6 @@ function ImagePickerButton({
         multiple={multiple}
         onChange={(event) => {
           onSelect(Array.from(event.target.files ?? []))
-          // Se limpia para que volver a elegir el mismo archivo dispare onChange.
           event.target.value = ''
         }}
         className="hidden"
