@@ -576,7 +576,7 @@ function AnnouncementsPage() {
       <section className="mt-xl grid grid-cols-1 gap-lg md:grid-cols-2 xl:grid-cols-3">
         {listLoading && !formOpen && (
           <output className="contents" aria-label={t("adminNews.newsload")}>
-            <SkeletonList count={skeletonCount}>{() => <NewsCard loading actions={null} />}</SkeletonList>
+            <SkeletonList count={skeletonCount}>{() => <NewsCard loading actions={null} previewLinkLabel="" />}</SkeletonList>
           </output>
         )}
 
@@ -588,6 +588,7 @@ function AnnouncementsPage() {
             formattedDate={formatNewsDate(announcement.eventDate, i18n.language)}
             coverImage={getCoverImage(announcement.id)}
             onReadMore={() => setPreviewing(announcement)}
+            previewLinkLabel={t("adminNews.preview")}
             actions={
               <>
                 <CardActionButton action="edit" label={t("adminNews.editButton")} onClick={() => void openEdit(announcement)} />

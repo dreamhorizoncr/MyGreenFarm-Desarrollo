@@ -12,6 +12,7 @@ interface NewsCardProps {
   formattedDate?: string
   coverImage?: string
   onReadMore?: () => void
+  previewLinkLabel?: string
   actions?: ReactNode
   loading?: boolean
   className?: string
@@ -27,7 +28,7 @@ function CoverImage({ coverImage, title }: Readonly<{ coverImage?: string; title
   );
 }
 
-function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverImage, onReadMore, actions, loading = false, className = "" }: Readonly<NewsCardProps>) {
+function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverImage, onReadMore, previewLinkLabel, actions, loading = false, className = "" }: Readonly<NewsCardProps>) {
   const { t } = useTranslation();
 
   if (loading && big) {
@@ -61,7 +62,9 @@ function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverIm
           <Skeleton shape="line" className="h-4 w-full" />
           <Skeleton shape="line" className="h-4 w-2/3" />
           <div className="mt-auto flex items-center justify-between gap-sm">
-            <Skeleton shape="pill" className="h-11 w-32" />
+            {previewLinkLabel === undefined
+              ? <Skeleton shape="pill" className="h-11 w-32" />
+              : <Skeleton shape="line" className="h-4 w-24" />}
             {actions !== undefined && (
               <div className="flex items-center gap-2">
                 <Skeleton shape="circle" className="size-10" />
@@ -76,9 +79,19 @@ function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverIm
 
   const footer = (
     <>
-      <BlobButton onClick={onReadMore} className="h-11 w-fit px-lg font-body text-caption uppercase">
-        {t("newspage.readMore")}
-      </BlobButton>
+      {previewLinkLabel === undefined ? (
+        <BlobButton onClick={onReadMore} className="h-11 w-fit px-lg font-body text-caption uppercase">
+          {t("newspage.readMore")}
+        </BlobButton>
+      ) : (
+        <button
+          type="button"
+          onClick={onReadMore}
+          className="font-body text-body-sm font-semibold text-green-500 underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
+        >
+          {previewLinkLabel}
+        </button>
+      )}
       {actions && <div className="flex items-center gap-2">{actions}</div>}
     </>
   );
