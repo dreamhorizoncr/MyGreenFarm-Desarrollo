@@ -23,6 +23,7 @@ const SIZES = {
     card: 'max-w-[420px] p-lg gap-6',
     header: 'pb-4',
     gridHeader: 'mb-3',
+    grid: 'min-h-[304px]',
     headCell: 'w-10 h-10 text-md',
     cell: 'h-9 w-9 text-md m-1',
     footer: 'pt-6',
@@ -32,6 +33,7 @@ const SIZES = {
     card: 'p-sm gap-1',
     header: 'pb-1',
     gridHeader: '',
+    grid: 'min-h-[204px]',
     headCell: 'w-8 h-6 text-xs',
     cell: 'h-7 w-7 text-sm my-px',
     footer: '',
@@ -143,6 +145,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
               <Calendar.NavButton slot="next" />
             </div>
           </Calendar.Header>
+          <div className={`w-full ${size.grid}`}>
           <Calendar.Grid className="w-full border-collapse">
             <Calendar.GridHeader className={size.gridHeader}>
               {(day) => <Calendar.HeaderCell className={`text-center font-semibold text-neutral-500 ${size.headCell}`}>{day}</Calendar.HeaderCell>}
@@ -165,6 +168,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
               }}
             </Calendar.GridBody>
           </Calendar.Grid>
+          </div>
         </Calendar>
       </I18nProvider>
 
