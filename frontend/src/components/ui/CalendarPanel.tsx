@@ -20,18 +20,20 @@ interface CalendarPanelProps {
 
 const SIZES = {
   regular: {
-    card: 'max-w-[420px] p-lg gap-6',
+    card: 'max-w-[420px] p-lg gap-4',
     header: 'pb-4',
     gridHeader: 'mb-3',
+    grid: 'min-h-[280px]',
     headCell: 'w-10 h-10 text-md',
-    cell: 'h-9 w-9 text-md m-1',
-    footer: 'pt-6',
+    cell: 'h-9 w-9 text-md my-0.5',
+    footer: 'pt-4',
     clear: 'px-6 py-2',
   },
   compact: {
     card: 'p-sm gap-1',
     header: 'pb-1',
     gridHeader: '',
+    grid: 'min-h-[204px]',
     headCell: 'w-8 h-6 text-xs',
     cell: 'h-7 w-7 text-sm my-px',
     footer: '',
@@ -119,7 +121,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
             <div className="flex items-center gap-xs">
               <div className={compact ? 'w-[116px]' : 'w-[140px]'}>
                 <Select
-                  compact
+                  compact={compact}
                   value={String(focusedDate.month)}
                   onChange={(month) => moveTo(focusedDate.set({ month: Number(month) }))}
                   options={monthOptions}
@@ -129,7 +131,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
               </div>
               <div className={compact ? 'w-[90px]' : 'w-[96px]'}>
                 <Select
-                  compact
+                  compact={compact}
                   value={String(focusedDate.year)}
                   onChange={(year) => moveTo(focusedDate.set({ year: Number(year) }))}
                   options={yearOptions}
@@ -143,6 +145,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
               <Calendar.NavButton slot="next" />
             </div>
           </Calendar.Header>
+          <div className={`w-full ${size.grid}`}>
           <Calendar.Grid className="w-full border-collapse">
             <Calendar.GridHeader className={size.gridHeader}>
               {(day) => <Calendar.HeaderCell className={`text-center font-semibold text-neutral-500 ${size.headCell}`}>{day}</Calendar.HeaderCell>}
@@ -165,6 +168,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
               }}
             </Calendar.GridBody>
           </Calendar.Grid>
+          </div>
         </Calendar>
       </I18nProvider>
 
@@ -186,7 +190,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
             size="sm"
             variant="tertiary"
             onPress={() => onChange(null)}
-            className={`border-green-500 bg-white text-heading hover:bg-green-50 rounded-full border items-center justify-center font-body text-sm font-semibold transition-colors ${size.clear}`}
+            className={`border-orange-500 bg-orange-500 text-white hover:bg-orange-600 rounded-full border items-center justify-center font-body text-sm font-semibold transition-colors ${size.clear}`}
           >
             {t('teacherAppointments.calendar.clear')}
           </Button>

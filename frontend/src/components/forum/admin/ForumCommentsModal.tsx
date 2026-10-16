@@ -2,6 +2,8 @@ import { useTranslation } from 'react-i18next'
 import { useModalExit } from '../../../hooks/useModalExit.ts'
 import CardActionButton from '../../ui/CardActionButton.tsx'
 import ModalCloseButton from '../../ui/ModalCloseButton.tsx'
+import Skeleton from '../../ui/Skeleton.tsx'
+import SkeletonList from '../../ui/SkeletonList.tsx'
 
 export interface ForumCommentItem {
   id: string
@@ -14,16 +16,34 @@ interface ForumCommentsModalProps<T extends ForumCommentItem> {
   subtitle: string
   comments: T[]
   loading: boolean
+  skeletonCount: number
+  deletingId: string | null
   error: string
   canDelete: boolean
   onDeleteRequest: (comment: T) => void
   onClose: () => void
 }
 
+function CommentRowSkeleton({ canDelete }: Readonly<{ canDelete: boolean }>) {
+  return (
+    <div className="flex items-start justify-between gap-md border-b border-neutral-100 py-md last:border-0">
+      <div className="min-w-0 flex-1">
+        <Skeleton shape="line" className="h-4 w-32" />
+        <Skeleton shape="line" className="mt-sm h-3.5 w-full" />
+        <Skeleton shape="line" className="mt-xs h-3.5 w-3/4" />
+        <Skeleton shape="line" className="mt-sm h-3 w-28" />
+      </div>
+      {canDelete && <Skeleton shape="circle" className="size-8 shrink-0" />}
+    </div>
+  )
+}
+
 function ForumCommentsModal<T extends ForumCommentItem>({
   subtitle,
   comments,
   loading,
+  skeletonCount,
+  deletingId,
   error,
   canDelete,
   onDeleteRequest,
@@ -61,9 +81,11 @@ function ForumCommentsModal<T extends ForumCommentItem>({
 
         <div className="mt-lg max-h-[60vh] overflow-y-auto">
           {loading && (
-            <p className="m-0 font-body text-body-sm text-neutral-500">
-              {t('adminForum.loadingComments')}
-            </p>
+            <div aria-busy="true" aria-label={t('adminForum.loadingComments')}>
+              <SkeletonList count={Math.min(10, Math.max(1, skeletonCount))}>
+                {() => <CommentRowSkeleton canDelete={canDelete} />}
+              </SkeletonList>
+            </div>
           )}
 
           {!loading && error && (
@@ -78,7 +100,9 @@ function ForumCommentsModal<T extends ForumCommentItem>({
             </p>
           )}
 
-          {!loading && !error && comments.map((comment) => (
+          {!loading && !error && comments.map((comment) => comment.id === deletingId ? (
+            <CommentRowSkeleton key={comment.id} canDelete={canDelete} />
+          ) : (
             <div
               key={comment.id}
               className="flex items-start justify-between gap-md border-b border-neutral-100 py-md last:border-0"
