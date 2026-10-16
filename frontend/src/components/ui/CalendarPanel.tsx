@@ -190,7 +190,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
             size="sm"
             variant="tertiary"
             onPress={() => onChange(null)}
-            className={`border-green-500 bg-white text-heading hover:bg-green-50 rounded-full border items-center justify-center font-body text-sm font-semibold transition-colors ${size.clear}`}
+            className={`border-orange-500 bg-orange-500 text-white hover:bg-orange-600 rounded-full border items-center justify-center font-body text-sm font-semibold transition-colors ${size.clear}`}
           >
             {t('teacherAppointments.calendar.clear')}
           </Button>
