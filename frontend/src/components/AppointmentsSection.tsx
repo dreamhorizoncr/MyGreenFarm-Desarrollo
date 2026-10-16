@@ -152,7 +152,7 @@ function AppointmentsSection() {
     startOfToday.setHours(0, 0, 0, 0)
     return appointments.filter((appointment) => {
       const isPast = new Date(appointment.appointmentDate) < startOfToday
-      if (isPast && (statusFilter === 'ALL' || statusFilter === 'CONFIRMED')) return false
+      if (isPast && statusFilter !== 'PENDING') return false
 
       if (statusFilter === 'BY_DATE') {
         if (!selectedDate) return false
