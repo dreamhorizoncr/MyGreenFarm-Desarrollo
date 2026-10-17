@@ -10,7 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import taller.multimedia.backend.dto.announcement.AnnouncementRequest;
 import taller.multimedia.backend.dto.announcement.AnnouncementResponse;
+import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.model.announcement.Announcement;
+import taller.multimedia.backend.model.announcement.AnnouncementCategory;
+import taller.multimedia.backend.repository.announcement.AnnouncementCategoryRepository;
 import taller.multimedia.backend.repository.announcement.AnnouncementRepository;
 import taller.multimedia.backend.util.Sanitizer;
 
@@ -24,6 +27,9 @@ public class AnnouncementService {
 
     private final AnnouncementImageService announcementImageService;
     private final AnnouncementRepository announcementRepository;
+    private final AnnouncementCategoryRepository announcementCategoryRepository;
+
+    static final String FALLBACK_TYPE = "GENERAL";
 
     @Transactional
     public AnnouncementResponse create(AnnouncementRequest dto) {
@@ -38,7 +44,7 @@ public class AnnouncementService {
         Announcement announcement = new Announcement();
         announcement.setTitle(title);
         announcement.setContent(content);
-        announcement.setType(dto.getType());
+        applyCategory(announcement, dto.getCategoryId());
         announcement.setEventDate(dto.getEventDate());
         announcement.setLocation(location);
 
@@ -55,7 +61,14 @@ public class AnnouncementService {
     private AnnouncementResponse mapToResponse(Announcement announcement, String lang) {
         AnnouncementResponse response = new AnnouncementResponse();
         response.setId(announcement.getId());
-        response.setType(announcement.getType());
+        AnnouncementCategory category = announcement.getCategory();
+        if (category != null) {
+            response.setCategoryId(category.getId());
+            response.setCategoryTitle(category.getTitle());
+            response.setCategoryCode(category.getCode());
+        } else {
+            response.setCategoryCode(announcement.getType());
+        }
         response.setEventDate(announcement.getEventDate());
         response.setLocation(announcement.getLocation());
         response.setAiSummary(announcement.getAiSummary());
@@ -86,12 +99,19 @@ public class AnnouncementService {
 
         announcement.setTitle(title);
         announcement.setContent(content);
-        announcement.setType(dto.getType());
+        applyCategory(announcement, dto.getCategoryId());
         announcement.setEventDate(dto.getEventDate());
         announcement.setLocation(location);
 
         Announcement updated = announcementRepository.save(announcement);
         return mapToResponse(updated, "es");
+    }
+
+    private void applyCategory(Announcement announcement, UUID categoryId) {
+        AnnouncementCategory category = announcementCategoryRepository.findById(categoryId)
+                .orElseThrow(() -> new InvalidFieldException("categoryId", "La categoría seleccionada ya no existe."));
+        announcement.setCategory(category);
+        announcement.setType(category.getCode() != null ? category.getCode() : FALLBACK_TYPE);
     }
 
     @Transactional

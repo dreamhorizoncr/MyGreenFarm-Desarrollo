@@ -4,14 +4,15 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import lombok.Data;
-import taller.multimedia.backend.model.announcement.AnnouncementType;
 
 @Data
 public class AnnouncementResponse {
         private UUID id;
         private String title;
         private String content;
-        private AnnouncementType type;
+        private UUID categoryId;
+        private String categoryTitle;
+        private String categoryCode;
         private LocalDateTime eventDate;
         private String location;
         private String aiSummary;
@@ -32,9 +33,6 @@ public class AnnouncementResponse {
             this.eventDate = eventDate;
         }
 
-        public void setType(AnnouncementType type) {
-            this.type = type;
-        }
 
         public void setId(UUID id) {
             this.id = id;

@@ -1,18 +1,6 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
-import {
-	CheckIcon,
-	ChevronDownIcon,
-	ChevronLeftIcon,
-	ChevronRightIcon,
-	PlusIcon,
-	StarIcon,
-	Trash2Icon,
-	XIcon,
-} from '@animateicons/react/lucide'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, StarIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
-import { AnimatePresence, motion } from 'motion/react'
-import { useDropdownMotion } from '../hooks/useDropdownMotion.ts'
-import useDismiss from '../hooks/useDismiss.ts'
 import useEmblaCarousel from 'embla-carousel-react'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
@@ -32,6 +20,7 @@ import CheckboxField from '../components/ui/CheckboxField.tsx'
 import ImagePickerButton from '../components/ui/ImagePickerButton.tsx'
 import ImageThumb, { ImageThumbList } from '../components/ui/ImageThumb.tsx'
 import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
+import CreatableDropdown from '../components/ui/CreatableDropdown.tsx'
 
 const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'])
 const TITLE_MIN_LENGTH = 5
@@ -44,174 +33,6 @@ interface SelectedImage {
 
 function releasePreviews(list: SelectedImage[]) {
 	list.forEach(({ previewUrl }) => URL.revokeObjectURL(previewUrl))
-}
-
-interface YearDropdownProps {
-	categories: GalleryCategory[]
-	value: string
-	onChange: (categoryId: string) => void
-	onCreateYear: (title: string) => Promise<void>
-	onDeleteYear: (category: GalleryCategory) => void
-}
-
-function YearDropdown({
-	categories,
-	value,
-	onChange,
-	onCreateYear,
-	onDeleteYear,
-}: Readonly<YearDropdownProps>) {
-	const { t } = useTranslation()
-	const [open, setOpen] = useState(false)
-	const [adding, setAdding] = useState(false)
-	const dropdownMotion = useDropdownMotion()
-	const yearInputRef = useRef<HTMLInputElement>(null)
-	useEffect(() => {
-		if (adding) yearInputRef.current?.focus()
-	}, [adding])
-	const [newYear, setNewYear] = useState('')
-	const [yearError, setYearError] = useState<string | null>(null)
-
-	const selected = categories.find((category) => category.id === value)
-
-	const rootRef = useRef<HTMLDivElement>(null)
-	const closeDropdown = useCallback(() => {
-		setOpen(false)
-		setAdding(false)
-	}, [])
-	useDismiss({ ref: rootRef, isOpen: open, onClose: closeDropdown })
-
-	const handleAdd = async () => {
-		const title = newYear.trim()
-		if (!title) return
-		const unsafeError = validateSafeText(title, t)
-		setYearError(unsafeError)
-		if (unsafeError) return
-		await onCreateYear(title)
-		setNewYear('')
-		setAdding(false)
-		setOpen(false)
-	}
-
-	return (
-		<div ref={rootRef} className="relative mt-xs">
-			<button
-				type="button"
-				onClick={() => setOpen((prev) => !prev)}
-				className="flex h-11 w-full items-center justify-between rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
-			>
-				<span className={selected ? 'text-heading' : 'text-neutral-500'}>
-					{selected ? selected.title : t('admin.gallery.selectYear')}
-				</span>
-				<ChevronDownIcon
-					size={18}
-					aria-hidden="true"
-					className={open ? 'rotate-180 transition-transform' : 'transition-transform'}
-				/>
-			</button>
-
-			<AnimatePresence>
-			{open && (
-					<motion.div {...dropdownMotion} className="absolute left-0 right-0 top-[calc(100%+6px)] z-20 overflow-hidden rounded-xl border border-neutral-200 bg-white p-xs shadow-lg">
-						{categories.map((category) => (
-							<div
-								key={category.id}
-								className="flex w-full items-center justify-between gap-2 text-body-sm"
-							>
-								<button
-									type="button"
-									aria-pressed={category.id === value}
-									onClick={() => {
-										onChange(category.id)
-										setOpen(false)
-									}}
-									className={`flex w-full flex-1 items-center justify-between gap-2 rounded-lg px-md py-sm text-left transition-colors duration-150 hover:bg-orange-100 ${
-										category.id === value
-											? 'font-semibold text-link'
-											: 'text-heading'
-									}`}
-								>
-									<span className="truncate">{category.title}</span>
-									{category.id === value && <CheckIcon size={16} className="shrink-0" aria-hidden="true" />}
-								</button>
-								<button
-									type="button"
-									onClick={() => onDeleteYear(category)}
-									aria-label={`${t('admin.gallery.deleteYear')}: ${category.title}`}
-									className="flex size-8 shrink-0 items-center justify-center rounded-full text-neutral-400 transition hover:bg-red-50 hover:text-red-600"
-								>
-									<Trash2Icon size={15} />
-								</button>
-							</div>
-						))}
-
-						<div className="mx-lg my-sm border-t border-neutral-200" />
-
-						{adding ? (
-							<>
-							<div className="flex items-center gap-sm px-md py-sm">
-								<input
-									ref={yearInputRef}
-									value={newYear}
-									onChange={(e) => {
-										setNewYear(e.target.value)
-										if (yearError) setYearError(null)
-									}}
-									onKeyDown={(e) => {
-										if (e.key === 'Enter') {
-											e.preventDefault()
-											void handleAdd()
-										}
-										if (e.key === 'Escape') {
-											e.preventDefault()
-											setAdding(false)
-											setNewYear('')
-										}
-									}}
-									placeholder={t('admin.gallery.newYearPlaceholder')}
-									aria-invalid={Boolean(yearError)}
-									className={`h-9 w-full min-w-0 rounded-lg border px-sm font-body text-body-sm outline-none focus:border-heading ${yearError ? 'border-danger' : 'border-neutral-200'}`}
-								/>
-								<button
-									type="button"
-									onClick={() => void handleAdd()}
-									disabled={!newYear.trim()}
-									aria-label={t('admin.gallery.addNewYear')}
-									className="flex size-9 shrink-0 items-center justify-center rounded-full bg-green-600 text-white disabled:opacity-50"
-								>
-									<CheckIcon size={16} />
-								</button>
-								<button
-									type="button"
-									onClick={() => {
-										setAdding(false)
-										setNewYear('')
-									}}
-									aria-label={t('admin.cancel')}
-									className="flex size-9 shrink-0 items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-100"
-								>
-									<XIcon size={16} />
-								</button>
-							</div>
-							{yearError && (
-								<p className="m-0 px-md pb-sm font-body text-caption text-danger">{yearError}</p>
-							)}
-							</>
-						) : (
-							<button
-								type="button"
-								onClick={() => setAdding(true)}
-								className="flex w-full items-center gap-sm px-md py-sm text-body-sm font-semibold text-heading transition hover:bg-neutral-50"
-							>
-								<PlusIcon size={16} aria-hidden="true" />
-								{t('admin.gallery.addNewYear')}
-							</button>
-						)}
-					</motion.div>
-			)}
-			</AnimatePresence>
-		</div>
-	)
 }
 
 interface AdminAlbumCardProps {
@@ -709,16 +530,22 @@ function AdminGalleryPage() {
 
 						<label className="font-body text-body-sm font-semibold text-heading">
 							{t('admin.gallery.albumYear')}
-							<YearDropdown
-								categories={categories}
+							<CreatableDropdown
+								options={categories.map((category) => ({ id: category.id, label: category.title }))}
 								value={form.categoryId}
 								onChange={(categoryId) => {
 									setForm((prev) => ({ ...prev, categoryId }))
 									setFormError(null)
 								}}
-onCreateYear={handleCreateYear}
-							onDeleteYear={(category) => setDeleteYearTarget(category)}
-						/>
+								onCreate={handleCreateYear}
+								onDelete={(option) => setDeleteYearTarget(categories.find((category) => category.id === option.id) ?? null)}
+								labels={{
+									placeholder: t('admin.gallery.selectYear'),
+									add: t('admin.gallery.addNewYear'),
+									newPlaceholder: t('admin.gallery.newYearPlaceholder'),
+									delete: t('admin.gallery.deleteYear'),
+								}}
+							/>
 							{formError && (
 								<p className="mt-xs block font-body text-body-sm font-normal text-danger">{formError}</p>
 							)}

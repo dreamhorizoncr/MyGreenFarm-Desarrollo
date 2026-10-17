@@ -5,28 +5,14 @@ import { useTranslation } from 'react-i18next';
 import { useAnnouncementImages } from '../hooks/useAnnouncementImages.ts';
 import { useModalExit } from '../hooks/useModalExit.ts';
 
-import type { Announcement, AnnouncementType } from '../types/announcement.ts';
+import type { Announcement } from '../types/announcement.ts';
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface NewsDetailModalProps{
     announcement: Announcement;
+    typeLabel: string;
     onClose: () => void;
 }
-
-const TYPE_LABEL_KEY: Record<AnnouncementType,
-    |'newspage.category1'
-    |'newspage.category2'
-    |'newspage.category3'
-    |'newspage.category4'
-    |'newspage.category5'
-    |'newspage.category6'
-    > = {
-        NEWS: 'newspage.category2',
-        EVENT: 'newspage.category3',
-        NOTICE: 'newspage.category4',
-        GENERAL: 'newspage.category5',
-        TRANSPORT: 'newspage.category6',
-    };
 
 function formatDate(
     iso: string|null|undefined,
@@ -43,6 +29,7 @@ function formatDate(
 
 function NewsDetailModal({
     announcement,
+    typeLabel,
     onClose,
 }: Readonly<NewsDetailModalProps>) {
     const { t, i18n } = useTranslation();
@@ -120,7 +107,7 @@ function NewsDetailModal({
             <header className="mx-auto max-w-[850px] text-center">
 
             <span className="inline-flex rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
-                    {t(TYPE_LABEL_KEY[announcement.type])}
+                    {typeLabel}
             </span>
             <h2 className="mt-[16px] font-heading text-[32px] font-bold leading-[1.15] text-heading md:text-h1">
                 {announcement.title}
