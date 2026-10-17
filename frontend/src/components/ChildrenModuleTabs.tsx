@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { userStorage } from '../utils/userStorage.ts'
+import TabHighlight from './ui/TabHighlight.tsx'
 
 const moduleSections = [
   { path: '/admin/children', labelKey: 'admin.children.title', adminOnly: true },
@@ -17,7 +18,7 @@ function ChildrenModuleTabs() {
   return (
     <nav
       aria-label={t('admin.sidebar.niños')}
-      className="mb-8 flex w-full max-w-full gap-2 overflow-x-auto rounded-2xl sm:rounded-full border border-neutral-200 bg-white p-1.5 sm:w-fit sm:p-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className="isolate mb-8 flex w-full max-w-full gap-sm overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:w-fit"
     >
       {moduleSections
         .filter((section) => isAdmin || !section.adminOnly)
@@ -29,12 +30,13 @@ function ChildrenModuleTabs() {
               key={path}
               to={path}
               aria-current={isActive ? 'page' : undefined}
-              className={`shrink-0 whitespace-nowrap rounded-xl sm:rounded-full px-3 py-1.5 text-center font-body text-xs sm:px-4 sm:py-2 sm:text-body-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
+              className={`relative shrink-0 whitespace-nowrap rounded-full border px-md py-xs font-body text-body-sm transition duration-300 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
                 isActive
-                  ? 'bg-heading text-white shadow-xs'
-                  : 'text-body-text hover:bg-(--grey-100)'
+                  ? 'border-green-500 text-white'
+                  : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
               }`}
             >
+              {isActive && <TabHighlight layoutId="children-module-tab" className="bg-green-500" />}
               {t(labelKey)}
             </Link>
           )

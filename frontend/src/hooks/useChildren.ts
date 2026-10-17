@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import i18n from '../i18n/index.ts'
 
 import { childService } from '../services/child'
 import { clubService } from '../services/clubs'
@@ -56,6 +57,7 @@ export function useChildren() {
                     : {}
 
                 const translatedClubName = new Map<string, string>()
+                
                 try {
                     const catalog = await clubService.getAll({ size: 50 })
                     const idByName = new Map(catalog.content.map((club) => [club.name, String(club.id)]))
@@ -82,7 +84,6 @@ export function useChildren() {
                         }
                     }
                 } catch {
-                    // Si el catálogo de clubes falla por red lenta, se omiten las traducciones de clubes silenciosamente
                 }
 
                 processedContent = rawContent.map((child) => ({
@@ -112,8 +113,7 @@ export function useChildren() {
                 setTotalPages(cached.totalPages)
                 setError(null)
             } else {
-                console.error("Error crítico cargando niños:", err)
-                setError('No se pudieron cargar los niños.')
+                setError(i18n.t('admin.children.loadError'))
             }
         } finally {
             setLoading(false)
