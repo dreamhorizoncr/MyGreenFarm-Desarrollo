@@ -1,5 +1,6 @@
 import { sileo } from 'sileo'
 import type { SileoButton, SileoOptions } from 'sileo'
+import { getErrorMessage } from './error.ts'
 
 type NotifyInput = string | SileoOptions
 type SileoKind = 'success' | 'error' | 'warning' | 'info'
@@ -88,4 +89,9 @@ export const notify = {
   clear(position?: SileoOptions['position']): void {
     sileo.clear(position)
   },
+}
+
+export function notifyError(title: string, error?: unknown): string {
+  const reason = error === undefined ? null : getErrorMessage(error)
+  return notify.error(reason && reason !== title ? { title, description: reason } : title)
 }

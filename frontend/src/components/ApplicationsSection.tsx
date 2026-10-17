@@ -48,7 +48,7 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
           <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
           <input
             type="search"
-            className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
+            className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
             placeholder={t('admin.curriculums.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

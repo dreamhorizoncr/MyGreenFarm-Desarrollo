@@ -9,7 +9,7 @@ import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
 import { useServicePlanAdmin } from '../hooks/useServicePlanAdmin.ts'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
-import { notify } from '../utils/notifications.ts'
+import { notify, notifyError } from '../utils/notifications.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 import { useExchangeRate } from '../hooks/useExchangeRate.ts'
@@ -174,7 +174,7 @@ function AdminServicePlansPage() {
         description: t('admin.servicios.deletedToastDescription'),
       })
     } catch (err) {
-      notify.error(t('admin.servicios.deleteErrorToastTitle'))
+      notifyError(t('admin.servicios.deleteErrorToastTitle'), err)
       throw err
     } finally {
       setDeletingId(null)
@@ -263,10 +263,7 @@ console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
                 description: t('admin.servicios.createdToastDescription'),
               })
             } catch (err) {
-              notify.error({
-                title: t('admin.servicios.saveErrorToastTitle'),
-                description: t('admin.servicios.saveErrorToastDescription'),
-              })
+              notifyError(t('admin.servicios.saveErrorToastTitle'), err)
               throw err
             }
           }}
@@ -279,10 +276,7 @@ console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
                 description: t('admin.servicios.updatedToastDescription'),
               })
             } catch (err) {
-              notify.error({
-                title: t('admin.servicios.saveErrorToastTitle'),
-                description: t('admin.servicios.saveErrorToastDescription'),
-              })
+              notifyError(t('admin.servicios.saveErrorToastTitle'), err)
               throw err
             }
           }}

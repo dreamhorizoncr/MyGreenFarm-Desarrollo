@@ -9,7 +9,7 @@ import DeleteConfirmModal from "../components/ui/DeleteConfirmModal";
 
 import { evaluationService } from "../services/evaluation";
 import { expedientService } from "../services/expedient";
-import { notify } from "../utils/notifications";
+import { notify, notifyError } from "../utils/notifications";
 import { useEvaluations } from "../hooks/useEvaluations";
 
 import type { Evaluation } from "../types/evaluation";
@@ -49,8 +49,8 @@ import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
             const data = await expedientService.getExpedients(0, 100);
             setExpedients(data.content);
-        } catch {
-            notify.error(t("admin.evaluations.loadExpedientsError"));
+        } catch (err) {
+            notifyError(t("admin.evaluations.loadExpedientsError"), err);
         } finally {
             setLoadingExpedients(false);
         }
@@ -108,7 +108,7 @@ import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
         notify.success(t("admin.evaluations.deleteSuccess"));
         } catch (err) {
-        notify.error(t("admin.evaluations.deleteError"));
+        notifyError(t("admin.evaluations.deleteError"), err);
         throw err;
         }
     };
@@ -164,7 +164,7 @@ import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
                     value={searchTerm}
                     onChange={(event) => setSearchTerm(event.target.value)}
                     aria-label={t("admin.evaluations.searchAriaLabel")}
-                    className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
+                    className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
                     />
                 </div>
                 </div>

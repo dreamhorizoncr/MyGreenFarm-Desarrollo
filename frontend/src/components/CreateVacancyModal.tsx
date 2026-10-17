@@ -8,6 +8,7 @@ import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import type { OptionalApplicationField, VacancyInput } from '../types/vacancy.ts'
 import CheckboxField from './ui/CheckboxField.tsx'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
+import FieldHint from './ui/FieldHint.tsx'
 
 interface CreateVacancyModalProps {
   onCreate: (data: VacancyInput) => Promise<void>
@@ -83,6 +84,7 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
         <label className="font-body text-body-sm font-semibold text-heading">
           {t('vacancies.formTitle')}
           <input
+            placeholder={t('fields.vacancy.title.placeholder')}
             id="vacancy-title"
             type="text"
             value={title}
@@ -92,6 +94,7 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
             }}
             className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
           />
+          <FieldHint>{t('fields.vacancy.title.hint')}</FieldHint>
           {titleError && (
             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{titleError}</span>
           )}
@@ -100,6 +103,7 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
         <label className="font-body text-body-sm font-semibold text-heading">
           {t('vacancies.formDescription')}
           <textarea
+            placeholder={t('fields.vacancy.description.placeholder')}
             id="vacancy-description"
             rows={4}
             value={description}
@@ -142,7 +146,7 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
         <p className="mt-md rounded-xl bg-red-50 p-md font-body text-body-sm text-red-700">{saveError}</p>
       )}
 
-      <div className="mt-lg flex flex-wrap justify-end gap-sm">
+      <div className="mt-lg flex justify-end gap-md *:flex-1">
         <Button
           variant="secondary"
           onClick={requestClose}
@@ -154,6 +158,7 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
           variant="success"
           onClick={handleSubmit}
           loading={saving}
+          disabled={!title.trim() || !description.trim()}
           className="h-11 w-auto rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
         >
           {saving ? t('common.loading') : t('vacancies.publish')}

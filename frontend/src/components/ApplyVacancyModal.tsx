@@ -19,7 +19,7 @@ function VacancyPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="h-full w-full bg-transparent pl-2 font-body text-body-sm text-body-text outline-none"
+      className="h-full w-full bg-transparent pl-2 font-body text-body-sm text-body-text-dark outline-none"
     />
   )
 }
@@ -78,6 +78,8 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
 
         <div className="flex flex-col gap-md px-7 pb-8 pt-2.5 text-left">
           <TextField
+            hint={t('fields.apply.name.hint')}
+            placeholder={t('fields.apply.name.placeholder')}
             id="apply-name"
             label={t('vacancies.applicantName')}
             value={form.name}
@@ -86,6 +88,8 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
           />
 
           <TextField
+            hint={t('fields.apply.email.hint')}
+            placeholder={t('fields.apply.email.placeholder')}
             id="apply-email"
             type="email"
             label={t('vacancies.applicantEmail')}
@@ -96,11 +100,13 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
 
           {form.showPhone && (
             <TextField
+              hint={t('fields.apply.phone.hint')}
               id="apply-phone"
               label={t('vacancies.applicantPhone')}
               error={form.phoneError}
             >
               <PhoneInput
+                placeholder={t('fields.apply.phone.placeholder')}
                 id="apply-phone"
                 className="h-11 rounded-xl border border-neutral-200 bg-white px-md"
                 value={form.phone}
@@ -221,6 +227,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
               variant="success"
               onClick={handleSubmitClick}
               loading={form.submitting}
+              disabled={!form.name.trim() || !form.email.trim() || (form.showPhone && !form.phone.trim()) || (form.showFile && !form.file)}
               className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold uppercase tracking-wide text-white hover:bg-orange-600"
             >
               {form.submitting ? t('common.loading') : t('vacancies.submitApplication')}

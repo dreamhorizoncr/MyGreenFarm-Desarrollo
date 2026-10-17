@@ -9,7 +9,7 @@ import Pagination from "../components/ui/Pagination.tsx";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 
 import { parentService } from "../services/parent";
-import { notify } from "../utils/notifications";
+import { notify, notifyError } from "../utils/notifications";
 import { useParents } from "../hooks/useParents";
 
 import type { Parent } from "../types/parent";
@@ -59,7 +59,7 @@ function AdminParentsPage() {
     } catch (error) {
       console.error("Error al eliminar el padre:", error);
 
-      notify.error(t("admin.parents.deleteErrorToastTitle"));
+      notifyError(t("admin.parents.deleteErrorToastTitle"), error);
       throw error;
     }
   };
@@ -101,7 +101,7 @@ function AdminParentsPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 aria-label={t("admin.parents.searchPlaceholder")}
-                className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
+                className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
               />
             </div>
           </div>

@@ -1,12 +1,14 @@
 import type { InputHTMLAttributes, ReactNode } from 'react'
+import FieldHint from './FieldHint.tsx'
 
 interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string
   error?: string | null
+  hint?: string
   children?: ReactNode
 }
 
-function TextField({ label, error, id, children, ...rest }: Readonly<TextFieldProps>) {
+function TextField({ label, error, hint, id, children, ...rest }: Readonly<TextFieldProps>) {
   return (
     <div>
       <label
@@ -19,10 +21,12 @@ function TextField({ label, error, id, children, ...rest }: Readonly<TextFieldPr
       {children ?? (
         <input
           id={id}
-          className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
+          className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body-sm text-body-text-dark outline-none transition focus:border-green-500"
           {...rest}
         />
       )}
+
+      {hint && <FieldHint>{hint}</FieldHint>}
 
       {error && (
         <p className="mt-2 text-left font-body text-body-sm text-danger">{error}</p>

@@ -9,7 +9,7 @@ import AdminCommunitySection from '../components/forum/admin/AdminCommunitySecti
 import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
-import { notify } from '../utils/notifications.ts'
+import { notify, notifyError } from '../utils/notifications.ts'
 import type { BlogComment, BlogPost, BlogPostInput } from '../types/forum.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import { forumService } from '../services/forum.ts'
@@ -160,8 +160,8 @@ function AdminForumPage() {
       }
 
       closeForm()
-    } catch {
-      notify.error(t('adminForum.saveErrorToastTitle'))
+    } catch (err) {
+      notifyError(t('adminForum.saveErrorToastTitle'), err)
     }
   }
 
@@ -196,7 +196,7 @@ function AdminForumPage() {
         title: t('adminForum.commentDeletedToastTitle'),
       })
     } catch (err) {
-      notify.error(t('adminForum.commentDeleteErrorToastTitle'))
+      notifyError(t('adminForum.commentDeleteErrorToastTitle'), err)
       throw err
     } finally {
       setDeletingCommentId(null)
@@ -210,7 +210,7 @@ function AdminForumPage() {
       await removeBlogPost(postToDelete.id)
       await refreshPosts(page, i18n.language)
     } catch (err) {
-      notify.error(t('adminForum.deleteErrorToastTitle'))
+      notifyError(t('adminForum.deleteErrorToastTitle'), err)
       throw err
     }
 

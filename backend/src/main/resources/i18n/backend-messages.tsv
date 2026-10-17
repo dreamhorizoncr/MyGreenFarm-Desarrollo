@@ -1,0 +1,260 @@
+source	mode	es	en	fr
+Error al procesar la postulación:	replace	No se pudo procesar la postulación. Revisa los archivos e inténtalo de nuevo.	The application could not be processed. Check the files and try again.	La candidature n'a pas pu être traitée. Vérifiez les fichiers et réessayez.
+Error al procesar el expediente:	replace	No se pudo procesar el expediente. Revisa los datos e inténtalo de nuevo.	The record could not be processed. Check the data and try again.	Le dossier n'a pas pu être traité. Vérifiez les données et réessayez.
+Error al actualizar el expediente:	replace	No se pudo actualizar el expediente. Revisa los datos e inténtalo de nuevo.	The record could not be updated. Check the data and try again.	Le dossier n'a pas pu être mis à jour. Vérifiez les données et réessayez.
+Ocurrió un error inesperado	exact	Ocurrió un error inesperado	An unexpected error occurred	Une erreur inattendue s'est produite
+Los datos enviados tienen un formato inválido.	exact	Los datos enviados tienen un formato inválido.	The submitted data has an invalid format.	Les données envoyées ont un format invalide.
+El archivo supera el tamaño máximo permitido.	exact	El archivo supera el tamaño máximo permitido.	The file exceeds the maximum allowed size.	Le fichier dépasse la taille maximale autorisée.
+Ya existe un registro con esos datos o está siendo usado por otro elemento.	exact	Ya existe un registro con esos datos o está siendo usado por otro elemento.	A record with that data already exists or is being used by another item.	Un enregistrement avec ces données existe déjà ou est utilisé par un autre élément.
+Los datos enviados no son válidos.	exact	Los datos enviados no son válidos.	The submitted data is not valid.	Les données envoyées ne sont pas valides.
+Error al procesar el plan:	replace	No se pudo procesar el plan. Revisa los datos e inténtalo de nuevo.	The plan could not be processed. Check the data and try again.	Le plan n'a pas pu être traité. Vérifiez les données et réessayez.
+User registered successfully!	exact	¡Usuario registrado correctamente!	User registered successfully!	Utilisateur inscrit avec succès !
+Error: Unexpected error	exact	Ocurrió un error inesperado.	An unexpected error occurred.	Une erreur inattendue s'est produite.
+You've been signed out!	exact	Cerraste sesión.	You've been signed out!	Vous avez été déconnecté.
+Correo de recuperación enviado con éxito.	exact	Correo de recuperación enviado con éxito.	Recovery email sent successfully.	E-mail de récupération envoyé avec succès.
+Contraseña actualizada exitosamente.	exact	Contraseña actualizada exitosamente.	Password updated successfully.	Mot de passe mis à jour avec succès.
+User deleted successfully	exact	Usuario eliminado correctamente	User deleted successfully	Utilisateur supprimé avec succès
+El nombre de la categoría es obligatorio	exact	El nombre de la categoría es obligatorio	The category name is required	Le nom de la catégorie est obligatoire
+El nombre de la categoría debe tener entre 2 y 40 caracteres	exact	El nombre de la categoría debe tener entre 2 y 40 caracteres	The category name must be between 2 and 40 characters	Le nom de la catégorie doit comporter entre 2 et 40 caractères
+El título es obligatorio	exact	El título es obligatorio	The title is required	Le titre est obligatoire
+El título debe tener entre 3 y 70 caracteres	exact	El título debe tener entre 3 y 70 caracteres	The title must be between 3 and 70 characters	Le titre doit comporter entre 3 et 70 caractères
+El contenido es obligatorio	exact	El contenido es obligatorio	The content is required	Le contenu est obligatoire
+El contenido no puede superar los 4000 caracteres	exact	El contenido no puede superar los 4000 caracteres	The content cannot exceed 4000 characters	Le contenu ne peut pas dépasser 4000 caractères
+La categoría es obligatoria	exact	La categoría es obligatoria	The category is required	La catégorie est obligatoire
+La locación no puede superar los 255 caracteres	exact	La ubicación no puede superar los 255 caracteres	The location cannot exceed 255 characters	Le lieu ne peut pas dépasser 255 caractères
+El tipo de identificación es obligatorio	exact	El tipo de identificación es obligatorio	The ID type is required	Le type de pièce d'identité est obligatoire
+La identificación es obligatoria	exact	La identificación es obligatoria	The ID number is required	Le numéro d'identité est obligatoire
+El nombre del padre o tutor es obligatorio	exact	El nombre del padre o tutor es obligatorio	The parent or guardian's name is required	Le nom du parent ou tuteur est obligatoire
+El correo electrónico es obligatorio	exact	El correo electrónico es obligatorio	The email is required	L'adresse e-mail est obligatoire
+El formato del correo electrónico no es válido	exact	El formato del correo electrónico no es válido	The email format is not valid	Le format de l'adresse e-mail n'est pas valide
+El nombre debe tener como máximo 150 caracteres	exact	El nombre debe tener como máximo 150 caracteres	The name must be at most 150 characters	Le nom doit comporter au maximum 150 caractères
+El teléfono es obligatorio	exact	El teléfono es obligatorio	The phone number is required	Le numéro de téléphone est obligatoire
+El teléfono debe tener como máximo 35 caracteres	exact	El teléfono debe tener como máximo 35 caracteres	The phone number must be at most 35 characters	Le numéro de téléphone doit comporter au maximum 35 caractères
+La ocupación es obligatoria	exact	La ocupación es obligatoria	The occupation is required	La profession est obligatoire
+La ocupación debe tener como máximo 150 caracteres	exact	La ocupación debe tener como máximo 150 caracteres	The occupation must be at most 150 characters	La profession doit comporter au maximum 150 caractères
+El nombre del niño o niña es obligatorio	exact	El nombre del niño o niña es obligatorio	The child's name is required	Le nom de l'enfant est obligatoire
+El nombre del niño debe tener como máximo 150 caracteres	exact	El nombre del niño debe tener como máximo 150 caracteres	The child's name must be at most 150 characters	Le nom de l'enfant doit comporter au maximum 150 caractères
+La fecha de la cita es obligatoria	exact	La fecha de la cita es obligatoria	The appointment date is required	La date du rendez-vous est obligatoire
+La fecha de la cita debe ser en el futuro	exact	La fecha de la cita debe ser en el futuro	The appointment date must be in the future	La date du rendez-vous doit être dans le futur
+El motivo debe tener como máximo 2000 caracteres	exact	El motivo debe tener como máximo 2000 caracteres	The reason must be at most 2000 characters	Le motif doit comporter au maximum 2000 caractères
+El motivo o datos extras son obligatorios	exact	El motivo o los datos adicionales son obligatorios	The reason or additional details are required	Le motif ou les informations complémentaires sont obligatoires
+El campo referralSource es obligatorio	exact	Debes indicar cómo nos conociste	You must indicate how you heard about us	Vous devez indiquer comment vous nous avez connus
+La razón debe tener como máximo 255 caracteres	exact	El motivo debe tener como máximo 255 caracteres	The reason must be at most 255 characters	Le motif doit comporter au maximum 255 caractères
+La cédula del padre/tutor es obligatorio	exact	La cédula del padre o tutor es obligatoria	The parent or guardian's ID number is required	Le numéro d'identité du parent ou tuteur est obligatoire
+El parentesco es obligatorio	exact	El parentesco es obligatorio	The relationship is required	Le lien de parenté est obligatoire
+El nombre es obligatorio	exact	El nombre es obligatorio	The name is required	Le nom est obligatoire
+El nombre no puede exceder los 100 caracteres	exact	El nombre no puede superar los 100 caracteres	The name cannot exceed 100 characters	Le nom ne peut pas dépasser 100 caractères
+El apellido es obligatorio	exact	El apellido es obligatorio	The last name is required	Le nom de famille est obligatoire
+El apellido no puede exceder los 100 caracteres	exact	El apellido no puede superar los 100 caracteres	The last name cannot exceed 100 characters	Le nom de famille ne peut pas dépasser 100 caractères
+La fecha de nacimiento debe ser en el pasado	exact	La fecha de nacimiento debe ser en el pasado	The date of birth must be in the past	La date de naissance doit être dans le passé
+La URL de la imagen es obligatoria	exact	La URL de la imagen es obligatoria	The image URL is required	L'URL de l'image est obligatoire
+El orden no puede ser negativo	exact	El orden no puede ser negativo	The order cannot be negative	L'ordre ne peut pas être négatif
+El nombre del club es obligatorio	exact	El nombre del club es obligatorio	The club name is required	Le nom du club est obligatoire
+El nombre no puede exceder los 150 caracteres	exact	El nombre no puede superar los 150 caracteres	The name cannot exceed 150 characters	Le nom ne peut pas dépasser 150 caractères
+La descripción es obligatoria	exact	La descripción es obligatoria	The description is required	La description est obligatoire
+La descripción no puede exceder los 150 caracteres	exact	La descripción no puede superar los 150 caracteres	The description cannot exceed 150 characters	La description ne peut pas dépasser 150 caractères
+El horario es obligatorio	exact	El horario es obligatorio	The schedule is required	L'horaire est obligatoire
+El horario no puede exceder los 255 caracteres	exact	El horario no puede superar los 255 caracteres	The schedule cannot exceed 255 characters	L'horaire ne peut pas dépasser 255 caractères
+La capacidad máxima debe ser al menos 1	exact	La capacidad máxima debe ser al menos 1	The maximum capacity must be at least 1	La capacité maximale doit être d'au moins 1
+El estado de publicación no puede ser nulo	exact	El estado de publicación es obligatorio	The publication status is required	Le statut de publication est obligatoire
+El nombre no puede superar los 150 caracteres	exact	El nombre no puede superar los 150 caracteres	The name cannot exceed 150 characters	Le nom ne peut pas dépasser 150 caractères
+El ID del expediente es obligatorio	exact	El expediente es obligatorio	The record is required	Le dossier est obligatoire
+La fecha de evaluación es obligatoria	exact	La fecha de evaluación es obligatoria	The evaluation date is required	La date d'évaluation est obligatoire
+El progreso de comunicación es obligatorio	exact	El progreso de comunicación es obligatorio	Communication progress is required	Le progrès en communication est obligatoire
+El progreso de comunicación no puede superar los 2000 caracteres	exact	El progreso de comunicación no puede superar los 2000 caracteres	Communication progress cannot exceed 2000 characters	Le progrès en communication ne peut pas dépasser 2000 caractères
+El progreso de lenguaje es obligatorio	exact	El progreso de lenguaje es obligatorio	Language progress is required	Le progrès en langage est obligatoire
+El progreso de lenguaje no puede superar los 2000 caracteres	exact	El progreso de lenguaje no puede superar los 2000 caracteres	Language progress cannot exceed 2000 characters	Le progrès en langage ne peut pas dépasser 2000 caractères
+El progreso de lectura es obligatorio	exact	El progreso de lectura es obligatorio	Reading progress is required	Le progrès en lecture est obligatoire
+El progreso de lectura no puede superar los 2000 caracteres	exact	El progreso de lectura no puede superar los 2000 caracteres	Reading progress cannot exceed 2000 characters	Le progrès en lecture ne peut pas dépasser 2000 caractères
+El progreso motor es obligatorio	exact	El progreso motor es obligatorio	Motor progress is required	Le progrès moteur est obligatoire
+El progreso motor no puede superar los 2000 caracteres	exact	El progreso motor no puede superar los 2000 caracteres	Motor progress cannot exceed 2000 characters	Le progrès moteur ne peut pas dépasser 2000 caractères
+La observación del profesor es obligatoria	exact	La observación del docente es obligatoria	The teacher's observation is required	L'observation de l'enseignant est obligatoire
+La observación no puede superar los 3000 caracteres	exact	La observación no puede superar los 3000 caracteres	The observation cannot exceed 3000 characters	L'observation ne peut pas dépasser 3000 caractères
+El carné del niño es obligatorio	exact	El carné del niño es obligatorio	The child's student ID is required	Le numéro d'élève de l'enfant est obligatoire
+La fecha de admisión es obligatoria	exact	La fecha de admisión es obligatoria	The admission date is required	La date d'admission est obligatoire
+El nivel educativo es obligatorio	exact	El nivel educativo es obligatorio	The educational level is required	Le niveau scolaire est obligatoire
+Las observaciones generales no pueden superar los 600 caracteres	exact	Las observaciones generales no pueden superar los 600 caracteres	General observations cannot exceed 600 characters	Les observations générales ne peuvent pas dépasser 600 caractères
+El título no puede superar los 120 caracteres	exact	El título no puede superar los 120 caracteres	The title cannot exceed 120 characters	Le titre ne peut pas dépasser 120 caractères
+El tema es obligatorio	exact	El tema es obligatorio	The topic is required	Le sujet est obligatoire
+El tema no puede superar los 60 caracteres	exact	El tema no puede superar los 60 caracteres	The topic cannot exceed 60 characters	Le sujet ne peut pas dépasser 60 caractères
+El nombre del autor no puede superar los 120 caracteres	exact	El nombre del autor no puede superar los 120 caracteres	The author's name cannot exceed 120 characters	Le nom de l'auteur ne peut pas dépasser 120 caractères
+El puesto del autor no puede superar los 40 caracteres	exact	El puesto del autor no puede superar los 40 caracteres	The author's position cannot exceed 40 characters	Le poste de l'auteur ne peut pas dépasser 40 caractères
+El texto alternativo no puede superar los 140 caracteres	exact	El texto alternativo no puede superar los 140 caracteres	The alternative text cannot exceed 140 characters	Le texte alternatif ne peut pas dépasser 140 caractères
+El alias es obligatorio	exact	El alias es obligatorio	The alias is required	Le pseudonyme est obligatoire
+El alias no puede superar los 40 caracteres	exact	El alias no puede superar los 40 caracteres	The alias cannot exceed 40 characters	Le pseudonyme ne peut pas dépasser 40 caractères
+El nombre no puede superar los 40 caracteres	exact	El nombre no puede superar los 40 caracteres	The name cannot exceed 40 characters	Le nom ne peut pas dépasser 40 caractères
+La imagen es obligatoria	exact	La imagen es obligatoria	The image is required	L'image est obligatoire
+El título debe tener entre 50 y 70 caracteres	exact	El título debe tener entre 50 y 70 caracteres	The title must be between 50 and 70 characters	Le titre doit comporter entre 50 et 70 caractères
+El contenido no puede superar los 200 caracteres	exact	El contenido no puede superar los 200 caracteres	The content cannot exceed 200 characters	Le contenu ne peut pas dépasser 200 caractères
+El estado de destacado es obligatorio	exact	Debes indicar si está destacado	You must indicate whether it is featured	Vous devez indiquer s'il est mis en avant
+El asunto es obligatorio	exact	El asunto es obligatorio	The subject is required	L'objet est obligatoire
+El mensaje es obligatorio	exact	El mensaje es obligatorio	The message is required	Le message est obligatoire
+El tipo de audiencia es obligatorio (PARENTS, SUBSCRIBERS, BOTH)	exact	Debes elegir a quién enviar el correo	You must choose who to send the email to	Vous devez choisir à qui envoyer l'e-mail
+El correo es obligatorio	exact	El correo es obligatorio	The email is required	L'adresse e-mail est obligatoire
+El formato del correo no es válido	exact	El formato del correo no es válido	The email format is not valid	Le format de l'adresse e-mail n'est pas valide
+La dirección es obligatoria	exact	La dirección es obligatoria	The address is required	L'adresse est obligatoire
+La descripción no puede superar los 500 caracteres	exact	La descripción no puede superar los 500 caracteres	The description cannot exceed 500 characters	La description ne peut pas dépasser 500 caractères
+El precio es obligatorio	exact	El precio es obligatorio	The price is required	Le prix est obligatoire
+El precio debe ser mayor a cero	exact	El precio debe ser mayor a cero	The price must be greater than zero	Le prix doit être supérieur à zéro
+El tipo de plan es obligatorio	exact	El tipo de plan es obligatorio	The plan type is required	Le type de plan est obligatoire
+El ID del precio de Onvo es obligatorio	exact	Debes seleccionar un plan de OnvoPay	You must select an OnvoPay plan	Vous devez sélectionner un plan OnvoPay
+El horario debe tener como máximo 200 caracteres	exact	El horario debe tener como máximo 200 caracteres	The schedule must be at most 200 characters	L'horaire doit comporter au maximum 200 caractères
+Los beneficios que incluye son obligatorios	exact	Los beneficios que incluye son obligatorios	The included benefits are required	Les avantages inclus sont obligatoires
+Los beneficios deben tener como máximo 800 caracteres	exact	Los beneficios deben tener como máximo 800 caracteres	The benefits must be at most 800 characters	Les avantages doivent comporter au maximum 800 caractères
+La moneda es obligatoria	exact	La moneda es obligatoria	The currency is required	La devise est obligatoire
+El máximo de caracteres es de 6	exact	El máximo es de 6 caracteres	The maximum is 6 characters	Le maximum est de 6 caractères
+El payment URL es obligatorio	exact	El enlace de pago es obligatorio	The payment link is required	Le lien de paiement est obligatoire
+El payment URL deben tener como máximo 300 caracteres	exact	El enlace de pago debe tener como máximo 300 caracteres	The payment link must be at most 300 characters	Le lien de paiement doit comporter au maximum 300 caractères
+Email is required	exact	El correo es obligatorio	Email is required	L'adresse e-mail est obligatoire
+The email must end in .com or .go.cr	exact	El correo debe terminar en .com o .go.cr	The email must end in .com or .go.cr	L'adresse e-mail doit se terminer par .com ou .go.cr
+The password is required	exact	La contraseña es obligatoria	The password is required	Le mot de passe est obligatoire
+The password must have at least 8 characters	exact	La contraseña debe tener al menos 8 caracteres	The password must have at least 8 characters	Le mot de passe doit contenir au moins 8 caractères
+The password must include uppercase, lowercase, number and symbol	exact	La contraseña debe incluir mayúscula, minúscula, número y símbolo	The password must include uppercase, lowercase, number and symbol	Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un symbole
+First name is required	exact	El nombre es obligatorio	First name is required	Le prénom est obligatoire
+Last name is required	exact	El apellido es obligatorio	Last name is required	Le nom de famille est obligatoire
+Email must be valid	exact	El correo debe ser válido	Email must be valid	L'adresse e-mail doit être valide
+El título no puede superar los 150 caracteres	exact	El título no puede superar los 150 caracteres	The title cannot exceed 150 characters	Le titre ne peut pas dépasser 150 caractères
+Los campos requeridos son obligatorios	exact	Completa los campos obligatorios	Complete the required fields	Complétez les champs obligatoires
+Usuario no encontrado:	replace	El usuario no existe.	The user does not exist.	L'utilisateur n'existe pas.
+Ya existe una categoría con ese nombre.	exact	Ya existe una categoría con ese nombre.	A category with that name already exists.	Une catégorie avec ce nom existe déjà.
+La categoría no existe.	exact	La categoría no existe.	The category does not exist.	La catégorie n'existe pas.
+Anuncio no encontrado con ID:	replace	La noticia ya no existe.	The news item no longer exists.	L'actualité n'existe plus.
+Debe seleccionar al menos un archivo.	exact	Debes seleccionar al menos un archivo.	You must select at least one file.	Vous devez sélectionner au moins un fichier.
+Solo se puede establecer una imagen de portada a la vez.	exact	Solo se puede establecer una imagen de portada a la vez.	Only one cover image can be set at a time.	Une seule image de couverture peut être définie à la fois.
+Límite excedido. Solo se permiten un máximo de 4 imágenes en la galería. Actualmente hay	prefix	Límite excedido. Solo se permiten 4 imágenes en la galería. Imágenes actuales:	Limit exceeded. Only 4 gallery images are allowed. Current images:	Limite dépassée. Seules 4 images sont autorisées dans la galerie. Images actuelles :
+Formato no permitido en uno de los archivos. Solo PNG, JPG, JPEG, SVG.	exact	Uno de los archivos tiene un formato no permitido. Solo PNG, JPG, JPEG o SVG.	One of the files has an unsupported format. Only PNG, JPG, JPEG or SVG.	L'un des fichiers a un format non autorisé. Uniquement PNG, JPG, JPEG ou SVG.
+Imagen no encontrada con ID:	replace	La imagen ya no existe.	The image no longer exists.	L'image n'existe plus.
+Ya existe un anuncio con el título:	prefix	Ya existe una noticia con el título:	A news item with this title already exists:	Une actualité avec ce titre existe déjà :
+La categoría seleccionada ya no existe.	exact	La categoría seleccionada ya no existe.	The selected category no longer exists.	La catégorie sélectionnée n'existe plus.
+Anuncio no encontrado:	replace	La noticia ya no existe.	The news item no longer exists.	L'actualité n'existe plus.
+No se pueden agendar citas para el mismo día o fechas pasadas. Debes agendar al menos con un día de anticipación.	exact	No se pueden agendar citas para el mismo día o fechas pasadas. Debes agendar al menos con un día de anticipación.	Appointments cannot be booked for the same day or past dates. You must book at least one day in advance.	Impossible de prendre rendez-vous le jour même ou à une date passée. Réservez au moins un jour à l'avance.
+La guardería no labora los fines de semana.	exact	El centro no abre los fines de semana.	The center is closed on weekends.	Le centre est fermé le week-end.
+Lo sentimos, el horario seleccionado no está habilitado por la administración.	exact	Lo sentimos, el horario seleccionado no está disponible.	Sorry, the selected time is not available.	Désolé, le créneau sélectionné n'est pas disponible.
+Lo sentimos, este horario ya ha sido reservado o está pendiente de aprobación.	exact	Lo sentimos, este horario ya fue reservado o está pendiente de aprobación.	Sorry, this time has already been booked or is pending approval.	Désolé, ce créneau a déjà été réservé ou est en attente d'approbation.
+Debes indicar cómo nos conociste.	exact	Debes indicar cómo nos conociste.	You must indicate how you heard about us.	Vous devez indiquer comment vous nous avez connus.
+El correo electrónico no es válido.	exact	El correo electrónico no es válido.	The email is not valid.	L'adresse e-mail n'est pas valide.
+Por favor, utiliza un correo electrónico de Gmail, Hotmail u Outlook.	exact	Por favor, utiliza un correo de Gmail, Hotmail u Outlook.	Please use a Gmail, Hotmail or Outlook email.	Veuillez utiliser une adresse Gmail, Hotmail ou Outlook.
+La identificación no puede estar vacía.	exact	La identificación no puede estar vacía.	The ID number cannot be empty.	Le numéro d'identité ne peut pas être vide.
+El formato de la cédula costarricense no es válido.	exact	El formato de la cédula costarricense no es válido.	The Costa Rican ID format is not valid.	Le format de la carte d'identité costaricienne n'est pas valide.
+El formato de la identificación extranjera no es válido.	exact	El formato de la identificación extranjera no es válido.	The foreign ID format is not valid.	Le format de la pièce d'identité étrangère n'est pas valide.
+Debe seleccionar un tipo de identificación válido.	exact	Debes seleccionar un tipo de identificación válido.	You must select a valid ID type.	Vous devez sélectionner un type de pièce d'identité valide.
+El número de teléfono no puede estar vacío.	exact	El número de teléfono no puede estar vacío.	The phone number cannot be empty.	Le numéro de téléphone ne peut pas être vide.
+El número de teléfono debe incluir el prefijo internacional (ej. +506...).	exact	El número de teléfono debe incluir el prefijo internacional (ej. +506...).	The phone number must include the international prefix (e.g. +506...).	Le numéro de téléphone doit inclure l'indicatif international (ex. +506...).
+El formato del número de teléfono no es válido.	exact	El formato del número de teléfono no es válido.	The phone number format is not valid.	Le format du numéro de téléphone n'est pas valide.
+Cita no encontrada con el ID:	replace	La cita ya no existe.	The appointment no longer exists.	Le rendez-vous n'existe plus.
+Cita no encontrada con ID:	replace	La cita ya no existe.	The appointment no longer exists.	Le rendez-vous n'existe plus.
+No se puede reprogramar una cita para el mismo día o fechas pasadas.	exact	No se puede reprogramar una cita para el mismo día o fechas pasadas.	An appointment cannot be rescheduled to the same day or past dates.	Un rendez-vous ne peut pas être reporté au jour même ou à une date passée.
+Cita no encontrada	exact	La cita ya no existe.	The appointment no longer exists.	Le rendez-vous n'existe plus.
+No se puede reprogramar una cita cancelada.	exact	No se puede reprogramar una cita cancelada.	A cancelled appointment cannot be rescheduled.	Un rendez-vous annulé ne peut pas être reporté.
+Lo sentimos, el nuevo horario seleccionado no está habilitado por la administración.	exact	Lo sentimos, el nuevo horario seleccionado no está disponible.	Sorry, the new selected time is not available.	Désolé, le nouveau créneau sélectionné n'est pas disponible.
+El nuevo horario seleccionado ya está ocupado.	exact	El nuevo horario seleccionado ya está ocupado.	The new selected time is already taken.	Le nouveau créneau sélectionné est déjà pris.
+Cita no encontrada:	replace	La cita ya no existe.	The appointment no longer exists.	Le rendez-vous n'existe plus.
+No se encontraron credenciales de Google Calendar ni en variable de entorno ni en archivo local.	exact	El calendario no está configurado. Contacta al administrador.	The calendar is not configured. Contact the administrator.	Le calendrier n'est pas configuré. Contactez l'administrateur.
+No se pudo cargar la disponibilidad en este momento	exact	No se pudo cargar la disponibilidad en este momento	Availability could not be loaded right now	Les disponibilités n'ont pas pu être chargées pour le moment
+Error al sincronizar la cita con Google Calendar	exact	No se pudo sincronizar la cita con el calendario.	The appointment could not be synced with the calendar.	Le rendez-vous n'a pas pu être synchronisé avec le calendrier.
+Error al eliminar la cita de Google Calendar	exact	No se pudo eliminar la cita del calendario.	The appointment could not be removed from the calendar.	Le rendez-vous n'a pas pu être supprimé du calendrier.
+Error al actualizar la cita en Google Calendar	exact	No se pudo actualizar la cita en el calendario.	The appointment could not be updated in the calendar.	Le rendez-vous n'a pas pu être mis à jour dans le calendrier.
+Error al enviar correo con Brevo:	replace	No se pudo enviar el correo. Inténtalo más tarde.	The email could not be sent. Try again later.	L'e-mail n'a pas pu être envoyé. Réessayez plus tard.
+Límite diario o rate limit de Brevo alcanzado:	replace	Se alcanzó el límite de envío de correos. Inténtalo más tarde.	The email sending limit was reached. Try again later.	La limite d'envoi d'e-mails a été atteinte. Réessayez plus tard.
+Padre/Tutor no encontrado con la cédula:	prefix	No hay un padre o tutor registrado con la cédula:	No parent or guardian is registered with ID number:	Aucun parent ou tuteur n'est inscrit avec le numéro d'identité :
+El club '{}' ya no tiene cupos disponibles.	template	El club '{}' ya no tiene cupos disponibles.	The club '{}' has no spots left.	Le club « {} » n'a plus de places disponibles.
+Registro de niño no encontrado con ID:	replace	El niño ya no existe.	The child no longer exists.	L'enfant n'existe plus.
+Club no encontrado con ID:	replace	El club ya no existe.	The club no longer exists.	Le club n'existe plus.
+Formato no permitido en uno de los archivos. Solo PNG, JPG, JPEG, SVG y WEBP.	exact	Uno de los archivos tiene un formato no permitido. Solo PNG, JPG, JPEG, SVG o WEBP.	One of the files has an unsupported format. Only PNG, JPG, JPEG, SVG or WEBP.	L'un des fichiers a un format non autorisé. Uniquement PNG, JPG, JPEG, SVG ou WEBP.
+Debe seleccionar un archivo válido para actualizar.	exact	Debes seleccionar un archivo válido.	You must select a valid file.	Vous devez sélectionner un fichier valide.
+Formato no permitido. Solo PNG, JPG, JPEG, SVG y WEBP.	exact	Formato no permitido. Solo PNG, JPG, JPEG, SVG o WEBP.	Unsupported format. Only PNG, JPG, JPEG, SVG or WEBP.	Format non autorisé. Uniquement PNG, JPG, JPEG, SVG ou WEBP.
+Límite alcanzado. Solo se permiten un máximo de 4 imágenes en la galería.	exact	Límite alcanzado. Solo se permiten 4 imágenes en la galería.	Limit reached. Only 4 gallery images are allowed.	Limite atteinte. Seules 4 images sont autorisées dans la galerie.
+El orden de la imagen debe ser un número entero mayor o igual a cero.	exact	El orden de la imagen debe ser un número entero mayor o igual a cero.	The image order must be a whole number greater than or equal to zero.	L'ordre de l'image doit être un nombre entier supérieur ou égal à zéro.
+Ya existe un club con el nombre:	prefix	Ya existe un club con el nombre:	A club with this name already exists:	Un club avec ce nom existe déjà :
+Club no encontrado	exact	El club ya no existe.	The club no longer exists.	Le club n'existe plus.
+El CV debe ser un archivo PDF.	exact	El CV debe ser un archivo PDF.	The resume must be a PDF file.	Le CV doit être un fichier PDF.
+Los certificados deben ser PDF, PNG o JPEG.	exact	Los certificados deben ser PDF, PNG o JPEG.	Certificates must be PDF, PNG or JPEG.	Les certificats doivent être au format PDF, PNG ou JPEG.
+La vacante seleccionada no existe.	exact	La vacante seleccionada no existe.	The selected vacancy does not exist.	L'offre sélectionnée n'existe pas.
+Postulación no encontrada con ID:	replace	La postulación ya no existe.	The application no longer exists.	La candidature n'existe plus.
+No se pudo enviar el correo	exact	No se pudo enviar el correo	The email could not be sent	L'e-mail n'a pas pu être envoyé
+Error al enviar el correo de reprogramación	exact	No se pudo enviar el correo de reprogramación	The rescheduling email could not be sent	L'e-mail de report n'a pas pu être envoyé
+No se pudo enviar el correo de recordatorio	exact	No se pudo enviar el correo de recordatorio	The reminder email could not be sent	L'e-mail de rappel n'a pas pu être envoyé
+Google Translate no devolvió el asunto y el mensaje.	exact	No se pudo traducir el correo. Inténtalo de nuevo.	The email could not be translated. Try again.	L'e-mail n'a pas pu être traduit. Réessayez.
+Google Translate devolvió un asunto vacío.	exact	No se pudo traducir el asunto. Inténtalo de nuevo.	The subject could not be translated. Try again.	L'objet n'a pas pu être traduit. Réessayez.
+Google Translate devolvió un mensaje vacío.	exact	No se pudo traducir el mensaje. Inténtalo de nuevo.	The message could not be translated. Try again.	Le message n'a pas pu être traduit. Réessayez.
+Expediente no encontrado con ID:	replace	El expediente ya no existe.	The record no longer exists.	Le dossier n'existe plus.
+Evaluación no encontrada con ID:	replace	La evaluación ya no existe.	The evaluation no longer exists.	L'évaluation n'existe plus.
+No se pudo leer el XML de BAC:	replace	No se pudo obtener el tipo de cambio en este momento.	The exchange rate could not be retrieved right now.	Le taux de change n'a pas pu être obtenu pour le moment.
+No se pudo buscar Costa Rica en el XML de BAC:	replace	No se pudo obtener el tipo de cambio en este momento.	The exchange rate could not be retrieved right now.	Le taux de change n'a pas pu être obtenu pour le moment.
+No se encontró el nodo 'Costa Rica' en el XML de BAC	exact	No se pudo obtener el tipo de cambio en este momento.	The exchange rate could not be retrieved right now.	Le taux de change n'a pas pu être obtenu pour le moment.
+El XML de BAC no trae las cuatro tasas esperadas:	replace	No se pudo obtener el tipo de cambio en este momento.	The exchange rate could not be retrieved right now.	Le taux de change n'a pas pu être obtenu pour le moment.
+La etiqueta <{}> vino vacía	template	No se pudo obtener el tipo de cambio en este momento.	The exchange rate could not be retrieved right now.	Le taux de change n'a pas pu être obtenu pour le moment.
+Niño no encontrado con el carné/studentId:	prefix	No hay un niño registrado con el carné:	No child is registered with student ID:	Aucun enfant n'est inscrit avec le numéro d'élève :
+Ya existe un expediente registrado para el niño: {}	template	Ya existe un expediente registrado para el niño: {}	A record is already registered for the child: {}	Un dossier est déjà enregistré pour l'enfant : {}
+Formato de imagen no permitido.	exact	Formato de imagen no permitido.	Unsupported image format.	Format d'image non autorisé.
+Ya existe otro expediente registrado para el niño especificado.	exact	Ya existe otro expediente registrado para ese niño.	Another record is already registered for that child.	Un autre dossier est déjà enregistré pour cet enfant.
+Formato no permitido. Solo se aceptan PNG, JPG, JPEG, SVG.	exact	Formato no permitido. Solo se aceptan PNG, JPG, JPEG o SVG.	Unsupported format. Only PNG, JPG, JPEG or SVG are accepted.	Format non autorisé. Seuls PNG, JPG, JPEG ou SVG sont acceptés.
+El expediente no tiene ninguna fotografía registrada.	exact	El expediente no tiene ninguna fotografía registrada.	The record has no photo.	Le dossier n'a aucune photo.
+No se encontró el identificador del visitante	exact	No se pudo identificar tu navegador. Recarga la página e inténtalo de nuevo.	Your browser could not be identified. Reload the page and try again.	Votre navigateur n'a pas pu être identifié. Rechargez la page et réessayez.
+Artículo no encontrado:	replace	El artículo ya no existe.	The article no longer exists.	L'article n'existe plus.
+Usuario no encontrado	exact	El usuario no existe.	The user does not exist.	L'utilisateur n'existe pas.
+No tiene permisos para gestionar este artículo	exact	No tienes permiso para gestionar este artículo.	You do not have permission to manage this article.	Vous n'avez pas l'autorisation de gérer cet article.
+El texto alternativo es obligatorio cuando existe una imagen	exact	El texto alternativo es obligatorio cuando hay una imagen	The alternative text is required when there is an image	Le texte alternatif est obligatoire lorsqu'il y a une image
+Formato de imagen no permitido. Use PNG, JPG, JPEG o SVG	exact	Formato de imagen no permitido. Usa PNG, JPG, JPEG o SVG	Unsupported image format. Use PNG, JPG, JPEG or SVG	Format d'image non autorisé. Utilisez PNG, JPG, JPEG ou SVG
+El bucket de imágenes del foro no está configurado	exact	El almacenamiento de imágenes del foro no está configurado. Contacta al administrador.	Forum image storage is not configured. Contact the administrator.	Le stockage des images du forum n'est pas configuré. Contactez l'administrateur.
+Solo un OWNER puede eliminar comentarios	exact	Solo el propietario puede eliminar comentarios.	Only the owner can delete comments.	Seul le propriétaire peut supprimer des commentaires.
+Comentario no encontrado:	replace	El comentario ya no existe.	The comment no longer exists.	Le commentaire n'existe plus.
+No pudimos publicar el contenido porque no cumple con las normas del foro.	exact	No pudimos publicar el contenido porque no cumple con las normas del foro.	We could not publish the content because it does not follow the forum rules.	Nous n'avons pas pu publier le contenu car il ne respecte pas les règles du forum.
+Ese nombre no cumple con las normas del foro. Elegí otro para continuar.	exact	Ese nombre no cumple con las normas del foro. Elige otro para continuar.	That name does not follow the forum rules. Choose another one to continue.	Ce nom ne respecte pas les règles du forum. Choisissez-en un autre pour continuer.
+No se pudo verificar el contenido en este momento. Intenta de nuevo en unos segundos.	exact	No se pudo verificar el contenido en este momento. Inténtalo de nuevo en unos segundos.	The content could not be verified right now. Try again in a few seconds.	Le contenu n'a pas pu être vérifié pour le moment. Réessayez dans quelques secondes.
+No se permiten emojis en el foro. Quítalos e intenta de nuevo.	exact	No se permiten emojis en el foro. Quítalos e inténtalo de nuevo.	Emojis are not allowed in the forum. Remove them and try again.	Les emojis ne sont pas autorisés sur le forum. Retirez-les et réessayez.
+Post no encontrado:	replace	La publicación ya no existe.	The post no longer exists.	La publication n'existe plus.
+Categoría no encontrada con ID:	replace	La categoría ya no existe.	The category no longer exists.	La catégorie n'existe plus.
+Galería no encontrada con ID:	replace	El álbum ya no existe.	The album no longer exists.	L'album n'existe plus.
+El título de la imagen es obligatorio.	exact	El título de la imagen es obligatorio.	The image title is required.	Le titre de l'image est obligatoire.
+Ya existen 3 galerías destacadas. Debes desmarcar una antes de destacar otra.	exact	Ya existen 3 galerías destacadas. Debes desmarcar una antes de destacar otra.	There are already 3 featured galleries. Unmark one before featuring another.	Il y a déjà 3 galeries mises en avant. Retirez-en une avant d'en mettre une autre en avant.
+Imagen no encontrada	exact	La imagen ya no existe.	The image no longer exists.	L'image n'existe plus.
+Este correo ya se encuentra suscrito activamente al boletín.	exact	Este correo ya se encuentra suscrito activamente al boletín.	This email is already actively subscribed to the newsletter.	Cette adresse e-mail est déjà abonnée à la newsletter.
+El correo no se encuentra registrado en el boletín.	exact	El correo no está registrado en el boletín.	The email is not registered in the newsletter.	L'adresse e-mail n'est pas inscrite à la newsletter.
+El correo electrónico es obligatorio.	exact	El correo electrónico es obligatorio.	The email is required.	L'adresse e-mail est obligatoire.
+El formato del correo electrónico no es válido.	exact	El formato del correo electrónico no es válido.	The email format is not valid.	Le format de l'adresse e-mail n'est pas valide.
+El dominio del correo no es válido.	exact	El dominio del correo no es válido.	The email domain is not valid.	Le domaine de l'adresse e-mail n'est pas valide.
+Solo se permiten correos de proveedores comunes (Gmail, Hotmail, Outlook, etc).	exact	Solo se permiten correos de proveedores comunes (Gmail, Hotmail, Outlook, etc.).	Only emails from common providers are allowed (Gmail, Hotmail, Outlook, etc.).	Seules les adresses de fournisseurs courants sont autorisées (Gmail, Hotmail, Outlook, etc.).
+Error al generar el link de pago con Onvo:	replace	No se pudo generar el enlace de pago. Inténtalo más tarde.	The payment link could not be generated. Try again later.	Le lien de paiement n'a pas pu être généré. Réessayez plus tard.
+No se pudo obtener la URL de pago de Onvo.	exact	No se pudo obtener el enlace de pago. Inténtalo más tarde.	The payment link could not be retrieved. Try again later.	Le lien de paiement n'a pas pu être obtenu. Réessayez plus tard.
+No se pudo obtener la URL de pago de Onvo	exact	No se pudo obtener el enlace de pago. Inténtalo más tarde.	The payment link could not be retrieved. Try again later.	Le lien de paiement n'a pas pu être obtenu. Réessayez plus tard.
+Ya existe un padre registrado con este correo.	exact	Ya existe un padre registrado con este correo.	A parent is already registered with this email.	Un parent est déjà inscrit avec cette adresse e-mail.
+Solo se permiten correos de proveedores comunes (Gmail, Hotmail, Outlook, etc.).	exact	Solo se permiten correos de proveedores comunes (Gmail, Hotmail, Outlook, etc.).	Only emails from common providers are allowed (Gmail, Hotmail, Outlook, etc.).	Seules les adresses de fournisseurs courants sont autorisées (Gmail, Hotmail, Outlook, etc.).
+No se permiten correos temporales o de prueba.	exact	No se permiten correos temporales o de prueba.	Temporary or test emails are not allowed.	Les adresses e-mail temporaires ou de test ne sont pas autorisées.
+No se encontró ningún padre con el ID proporcionado.	exact	El padre ya no existe.	The parent no longer exists.	Le parent n'existe plus.
+Ya existe otro padre registrado con este correo.	exact	Ya existe otro padre registrado con este correo.	Another parent is already registered with this email.	Un autre parent est déjà inscrit avec cette adresse e-mail.
+El padre no se encuentra registrado.	exact	El padre no está registrado.	The parent is not registered.	Le parent n'est pas inscrit.
+Debe seleccionar una imagen obligatoriamente.	exact	Debes seleccionar una imagen.	You must select an image.	Vous devez sélectionner une image.
+Formato no permitido. Solo se permiten PNG, JPG, JPEG, SVG.	exact	Formato no permitido. Solo se permiten PNG, JPG, JPEG o SVG.	Unsupported format. Only PNG, JPG, JPEG or SVG are allowed.	Format non autorisé. Seuls PNG, JPG, JPEG ou SVG sont autorisés.
+Configuración de plan no encontrada con ID:	replace	El plan ya no existe.	The plan no longer exists.	Le plan n'existe plus.
+Ya existe un plan de servicio registrado en Onvo.	exact	Ya existe un plan de servicio vinculado a ese plan de OnvoPay.	A service plan is already linked to that OnvoPay plan.	Un plan de service est déjà lié à ce plan OnvoPay.
+No se encontró el precio con ID: {} en OnvoPay	template	El plan seleccionado ya no existe en OnvoPay.	The selected plan no longer exists in OnvoPay.	Le plan sélectionné n'existe plus dans OnvoPay.
+Este plan no tiene asociado un precio de OnvoPay.	exact	Este plan no tiene un precio de OnvoPay asociado.	This plan has no OnvoPay price linked.	Ce plan n'a pas de prix OnvoPay associé.
+Error al comunicarse con OnvoPay:	replace	No se pudo conectar con OnvoPay. Inténtalo más tarde.	Could not connect to OnvoPay. Try again later.	Impossible de se connecter à OnvoPay. Réessayez plus tard.
+No se pudo obtener el enlace de pago de OnvoPay.	exact	No se pudo obtener el enlace de pago. Inténtalo más tarde.	The payment link could not be retrieved. Try again later.	Le lien de paiement n'a pas pu être obtenu. Réessayez plus tard.
+Fallo al subir el archivo al Storage	exact	No se pudo subir el archivo. Inténtalo de nuevo.	The file could not be uploaded. Try again.	Le fichier n'a pas pu être téléversé. Réessayez.
+Fallo al eliminar el archivo del Storage	exact	No se pudo eliminar el archivo. Inténtalo de nuevo.	The file could not be deleted. Try again.	Le fichier n'a pas pu être supprimé. Réessayez.
+Fallo al generar la URL firmada para el archivo privado	exact	No se pudo abrir el archivo. Inténtalo de nuevo.	The file could not be opened. Try again.	Le fichier n'a pas pu être ouvert. Réessayez.
+Error de Google Translate API:	replace	No se pudo traducir el contenido en este momento.	The content could not be translated right now.	Le contenu n'a pas pu être traduit pour le moment.
+Google Translate devolvió una cantidad inesperada de traducciones.	exact	No se pudo traducir el contenido en este momento.	The content could not be translated right now.	Le contenu n'a pas pu être traduit pour le moment.
+Error: Email is already in use!	exact	Ese correo ya está en uso.	That email is already in use.	Cette adresse e-mail est déjà utilisée.
+Error: Birthday is only allowed for TEACHER role!	exact	La fecha de cumpleaños solo se permite para docentes.	A birthday can only be set for teachers.	La date d'anniversaire n'est autorisée que pour les enseignants.
+The OWNER role cannot be assigned	exact	No se puede asignar el rol de propietario.	The owner role cannot be assigned.	Le rôle de propriétaire ne peut pas être attribué.
+Token inválido	exact	El enlace no es válido. Solicita uno nuevo.	The link is not valid. Request a new one.	Le lien n'est pas valide. Demandez-en un nouveau.
+La sesión ha expirado	exact	La sesión ha expirado. Inicia sesión nuevamente.	Your session has expired. Sign in again.	Votre session a expiré. Reconnectez-vous.
+Usuario no encontrado con ID:	replace	El usuario no existe.	The user does not exist.	L'utilisateur n'existe pas.
+Solo se pueden asignar fotos de perfil a usuarios con rol TEACHER.	exact	Solo se pueden asignar fotos de perfil a docentes.	Profile photos can only be assigned to teachers.	Les photos de profil ne peuvent être attribuées qu'aux enseignants.
+Debe seleccionar un archivo válido.	exact	Debes seleccionar un archivo válido.	You must select a valid file.	Vous devez sélectionner un fichier valide.
+Formato de imagen no permitido. Solo se aceptan PNG, JPG, JPEG, SVG.	exact	Formato de imagen no permitido. Solo se aceptan PNG, JPG, JPEG o SVG.	Unsupported image format. Only PNG, JPG, JPEG or SVG are accepted.	Format d'image non autorisé. Seuls PNG, JPG, JPEG ou SVG sont acceptés.
+User not found	exact	El usuario no existe.	The user does not exist.	L'utilisateur n'existe pas.
+Only owners and admins can list users	exact	Solo el propietario y los administradores pueden ver los usuarios.	Only the owner and administrators can list users.	Seuls le propriétaire et les administrateurs peuvent voir les utilisateurs.
+Current user not found	exact	No se encontró tu cuenta. Inicia sesión nuevamente.	Your account was not found. Sign in again.	Votre compte est introuvable. Reconnectez-vous.
+You do not have permission to view this user	exact	No tienes permiso para ver este usuario.	You do not have permission to view this user.	Vous n'avez pas l'autorisation de voir cet utilisateur.
+You do not have permission to edit this user	exact	No tienes permiso para editar este usuario.	You do not have permission to edit this user.	Vous n'avez pas l'autorisation de modifier cet utilisateur.
+Only teachers can set a birthday	exact	Solo los docentes pueden tener fecha de cumpleaños.	Only teachers can set a birthday.	Seuls les enseignants peuvent définir une date d'anniversaire.
+Only teachers can set a profile photo	exact	Solo los docentes pueden tener foto de perfil.	Only teachers can set a profile photo.	Seuls les enseignants peuvent définir une photo de profil.
+You cannot delete your own account	exact	No puedes eliminar tu propia cuenta.	You cannot delete your own account.	Vous ne pouvez pas supprimer votre propre compte.
+You do not have permission to delete this user	exact	No tienes permiso para eliminar este usuario.	You do not have permission to delete this user.	Vous n'avez pas l'autorisation de supprimer cet utilisateur.
+Vacante no encontrada con ID:	replace	La vacante ya no existe.	The vacancy no longer exists.	L'offre n'existe plus.
+El campo {} contiene caracteres no permitidos	template	El campo contiene caracteres no permitidos.	The field contains characters that are not allowed.	Le champ contient des caractères non autorisés.
+SHA-256 no disponible	exact	Ocurrió un error inesperado.	An unexpected error occurred.	Une erreur inattendue s'est produite.

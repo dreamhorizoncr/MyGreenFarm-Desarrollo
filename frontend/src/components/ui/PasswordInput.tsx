@@ -6,6 +6,8 @@ interface PasswordInputProps {
   value: string
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
   className?: string
+  placeholder?: string
+  autoComplete?: string
   showAriaLabel: string
   hideAriaLabel: string
 }
@@ -15,6 +17,8 @@ function PasswordInput({
   value,
   onChange,
   className = '',
+  placeholder,
+  autoComplete,
   showAriaLabel,
   hideAriaLabel,
 }: Readonly<PasswordInputProps>) {
@@ -27,6 +31,8 @@ function PasswordInput({
         type={visible ? 'text' : 'password'}
         value={value}
         onChange={onChange}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
         className={`${className} pr-10`}
       />
 

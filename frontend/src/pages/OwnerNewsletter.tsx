@@ -10,13 +10,14 @@ import { useNewsletter } from '../hooks/useNewsletter.ts'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
-import { notify } from '../utils/notifications.ts'
+import { notify, notifyError } from '../utils/notifications.ts'
 import type { AudienceType, NewsletterRecipient } from '../types/newsletter.ts'
 import { hasUnsafeText } from '../utils/validators.ts'
 import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import TabHighlight from '../components/ui/TabHighlight.tsx'
+import FieldHint from '../components/ui/FieldHint.tsx'
 
 interface SubscriberRowProps {
     item?: NewsletterRecipient
@@ -104,7 +105,7 @@ function AdminNewsletterPage() {
                     setSubscribers(data)
                 }
             } catch (error) {
-                notify.error(t('admin.newsletter.loadError'))
+                notifyError(t('admin.newsletter.loadError'), error)
             } finally {
                 setLoadingSubscribers(false)
             }
@@ -168,8 +169,8 @@ function AdminNewsletterPage() {
             closeBroadcastModal()
             setSubject('')
             setMessage('')
-        } catch {
-            notify.error(t('admin.newsletter.sendError'))
+        } catch (err) {
+            notifyError(t('admin.newsletter.sendError'), err)
         }
     }
 
@@ -186,11 +187,11 @@ function AdminNewsletterPage() {
                 </p>
 
                 <div className="mb-[var(--spacing-lg)] mt-[var(--spacing-xl)] flex flex-wrap items-center justify-between gap-md">
-                    <div className="flex h-11 min-w-[240px] max-w-[420px] flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
+                    <div className="flex h-11 w-full min-w-0 max-w-[420px] flex-1 basis-full items-center sm:min-w-[240px] sm:basis-auto gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
                         <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
                         <input
                             type="search"
-                            className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
+                            className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
                             placeholder={t('admin.newsletter.searchPlaceholder')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
@@ -217,7 +218,7 @@ function AdminNewsletterPage() {
 
                         {isSendMenuOpen && (
                             <div
-                                className="absolute right-0 top-[calc(100%+var(--spacing-2xs))] z-30 min-w-[220px] rounded-xl border border-neutral-200 bg-white p-xs shadow animate-[admin-row-menu-in_0.12s_ease-out]"
+                                className="absolute left-0 top-[calc(100%+var(--spacing-2xs))] z-30 min-w-[220px] sm:left-auto sm:right-0 rounded-xl border border-neutral-200 bg-white p-xs shadow animate-[admin-row-menu-in_0.12s_ease-out]"
                                 role="menu"
                             >
                                 <button
@@ -323,23 +324,27 @@ function AdminNewsletterPage() {
                                 <label className="font-body text-body-sm font-semibold text-heading">
                                     {t('admin.newsletter.subject')}
                                     <input
+                                        placeholder={t('fields.newsletter.subject.placeholder')}
                                         required
                                         value={subject}
                                         onChange={(event) => setSubject(event.target.value)}
                                         className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                                     />
+                                    <FieldHint>{t('fields.newsletter.subject.hint')}</FieldHint>
                                 </label>
                                 <label className="font-body text-body-sm font-semibold text-heading">
                                     {t('admin.newsletter.message')}
                                     <textarea
+                                        placeholder={t('fields.newsletter.message.placeholder')}
                                         required
                                         rows={6}
                                         value={message}
                                         onChange={(event) => setMessage(event.target.value)}
                                         className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                                     />
+                                    <FieldHint>{t('fields.newsletter.message.hint')}</FieldHint>
                                 </label>
-                                <div className="mt-sm flex flex-wrap justify-end gap-sm">
+                                <div className="mt-sm flex justify-end gap-md *:flex-1">
                                     <button
                                         type="button"
                                         onClick={closeBroadcastModal}
@@ -349,7 +354,7 @@ function AdminNewsletterPage() {
                                     </button>
                                     <button
                                         type="submit"
-                                        disabled={broadcastLoading}
+                                        disabled={broadcastLoading || !subject.trim() || !message.trim()}
                                         className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
                                     >
                                         <SendIcon size={16} aria-hidden="true" />

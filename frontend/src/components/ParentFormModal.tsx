@@ -9,6 +9,7 @@ import { validateEmail, validateRequired, validateSafeText } from "../utils/vali
 
 import type { Parent, ParentLanguage, ParentRequest } from "../types/parent";
 import ModalCloseButton from "./ui/ModalCloseButton.tsx";
+import FieldHint from "./ui/FieldHint.tsx";
 
 interface ParentFormModalProps {
   onClose: () => void;
@@ -148,16 +149,17 @@ function ParentFormModal({
           />
         </div>
 
-        <div className="mt-lg grid gap-md md:grid-cols-2">
+        <div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
           <label className="font-body text-body-sm font-semibold text-heading">
             {t("admin.parents.firstName")}
             <input
               type="text"
               value={firstName}
               onChange={(e) => { setFirstName(e.target.value); clearFieldError("firstName"); }}
-              placeholder={t("admin.parents.firstNamePlaceholder")}
+              placeholder={t("fields.person.firstName.placeholder")}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            <FieldHint>{t("fields.person.firstName.hint")}</FieldHint>
             {fieldErrors.firstName && (
               <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.firstName}</span>
             )}
@@ -169,9 +171,10 @@ function ParentFormModal({
               type="text"
               value={lastName}
               onChange={(e) => { setLastName(e.target.value); clearFieldError("lastName"); }}
-              placeholder={t("admin.parents.lastNamePlaceholder")}
+              placeholder={t("fields.person.lastName.placeholder")}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            <FieldHint>{t("fields.person.lastName.hint")}</FieldHint>
             {fieldErrors.lastName && (
               <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.lastName}</span>
             )}
@@ -183,9 +186,10 @@ function ParentFormModal({
               type="text"
               value={identification}
               onChange={(e) => { setIdentification(e.target.value); clearFieldError("identification"); }}
-              placeholder={t("admin.parents.identificationPlaceholder")}
+              placeholder={t("fields.parent.identification.placeholder")}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            <FieldHint>{t("fields.parent.identification.hint")}</FieldHint>
             {fieldErrors.identification && (
               <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.identification}</span>
             )}
@@ -197,9 +201,10 @@ function ParentFormModal({
               type="tel"
               value={phoneNumber}
               onChange={(e) => { setPhoneNumber(e.target.value); clearFieldError("phoneNumber"); }}
-              placeholder={t("admin.parents.phonePlaceholder")}
+              placeholder={t("fields.parent.phone.placeholder")}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            <FieldHint>{t("fields.parent.phone.hint")}</FieldHint>
             {fieldErrors.phoneNumber && (
               <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.phoneNumber}</span>
             )}
@@ -211,9 +216,10 @@ function ParentFormModal({
               type="email"
               value={email}
               onChange={(e) => { setEmail(e.target.value); clearFieldError("email"); }}
-              placeholder={t("admin.parents.emailPlaceholder")}
+              placeholder={t("fields.parent.email.placeholder")}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            <FieldHint>{t("fields.parent.email.hint")}</FieldHint>
             {fieldErrors.email && (
               <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.email}</span>
             )}
@@ -225,9 +231,10 @@ function ParentFormModal({
               value={address}
               onChange={(e) => { setAddress(e.target.value); clearFieldError("address"); }}
               rows={3}
-              placeholder={t("admin.parents.addressPlaceholder")}
+              placeholder={t("fields.parent.address.placeholder")}
               className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
             />
+            <FieldHint>{t("fields.parent.address.hint")}</FieldHint>
             {fieldErrors.address && (
               <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.address}</span>
             )}
@@ -246,6 +253,7 @@ function ParentFormModal({
                 className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
                 aria-label={t("admin.parents.language")}
               />
+              <FieldHint>{t("fields.parent.language.hint")}</FieldHint>
             </div>
           </label>
         </div>
@@ -256,7 +264,7 @@ function ParentFormModal({
           </p>
         )}
 
-        <div className="mt-lg flex flex-wrap justify-end gap-sm">
+        <div className="mt-lg flex justify-end gap-md *:flex-1">
           <button
             type="button"
             onClick={requestClose}
@@ -268,7 +276,7 @@ function ParentFormModal({
 
           <button
             type="submit"
-            disabled={saving}
+            disabled={saving || !firstName.trim() || !lastName.trim() || !identification.trim() || !phoneNumber.trim() || !email.trim() || !address.trim()}
             className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {saving ? t("admin.parents.saving") : idleSaveLabel}

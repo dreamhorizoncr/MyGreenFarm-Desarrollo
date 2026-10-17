@@ -95,6 +95,8 @@ function LoginPage() {
       <form onSubmit={handleLogin} noValidate>
         <div className="mb-[22px] md:mb-[30px]">
           <TextField
+            hint={t("fields.auth.email.hint")}
+            placeholder={t("fields.auth.email.placeholder")}
             id="login-email"
             type="email"
             value={email}
@@ -111,11 +113,13 @@ function LoginPage() {
         </div>
 
         <TextField
+          hint={t("fields.auth.password.hint")}
           id="login-password"
           label={t("login.password")}
           error={passwordValidationError}
         >
           <PasswordInput
+            placeholder={t("fields.auth.password.placeholder")}
             id="login-password"
             value={password}
             onChange={(e) => {
@@ -150,6 +154,7 @@ function LoginPage() {
           <Button
             type="submit"
             loading={loading}
+            disabled={!email.trim() || !password}
             variant="success"
             className="h-11 w-full rounded-full bg-green-500 font-body text-button font-normal uppercase tracking-wide text-white"
           >

@@ -5,7 +5,7 @@ import VacancyManagementSection from '../components/VacancyManagementSection.tsx
 import ApplicationsSection from '../components/ApplicationsSection.tsx'
 import { useVacancies } from '../hooks/useVacancies.ts'
 import { useCurriculums } from '../hooks/useCurriculums.ts'
-import { notify } from '../utils/notifications.ts'
+import { notify, notifyError } from '../utils/notifications.ts'
 import type { Curriculum } from '../types/curriculum.ts'
 import type { VacancyInput } from '../types/vacancy.ts'
 import TabHighlight from '../components/ui/TabHighlight.tsx'
@@ -50,7 +50,7 @@ function AdminCurriculumsPage() {
       if (assignedVacancyId) await setVacancyFilledBy(assignedVacancyId, application.id)
       notify.success(t('admin.curriculums.approvedToastTitle'))
     } catch (err) {
-      notify.error(t('admin.curriculums.approveErrorToastTitle'))
+      notifyError(t('admin.curriculums.approveErrorToastTitle'), err)
       throw err
     }
   }
@@ -62,7 +62,7 @@ function AdminCurriculumsPage() {
       if (filledVacancy) await setVacancyFilledBy(filledVacancy.id, null)
       notify.success(t('admin.curriculums.rejectedToastTitle'))
     } catch (err) {
-      notify.error(t('admin.curriculums.rejectErrorToastTitle'))
+      notifyError(t('admin.curriculums.rejectErrorToastTitle'), err)
       throw err
     }
   }
@@ -74,7 +74,7 @@ function AdminCurriculumsPage() {
       if (filledVacancy) await setVacancyFilledBy(filledVacancy.id, null)
       notify.success(t('admin.curriculums.deletedToastTitle'))
     } catch (err) {
-      notify.error(t('admin.curriculums.deleteErrorToastTitle'))
+      notifyError(t('admin.curriculums.deleteErrorToastTitle'), err)
       throw err
     }
   }
@@ -87,7 +87,7 @@ function AdminCurriculumsPage() {
         description: t('vacancies.createdToastDescription'),
       })
     } catch (err) {
-      notify.error(t('vacancies.createErrorToastTitle'))
+      notifyError(t('vacancies.createErrorToastTitle'), err)
       throw err
     }
   }
@@ -96,8 +96,8 @@ function AdminCurriculumsPage() {
     try {
       await setVacancyOpen(id, isOpen)
       notify.success(isOpen ? t('vacancies.openedToastTitle') : t('vacancies.closedToastTitle'))
-    } catch {
-      notify.error(t('vacancies.statusErrorToastTitle'))
+    } catch (err) {
+      notifyError(t('vacancies.statusErrorToastTitle'), err)
     }
   }
 
@@ -105,8 +105,8 @@ function AdminCurriculumsPage() {
     try {
       await setVacancyFilledBy(id, null)
       notify.success(t('vacancies.releasedToastTitle'))
-    } catch {
-      notify.error(t('vacancies.releaseErrorToastTitle'))
+    } catch (err) {
+      notifyError(t('vacancies.releaseErrorToastTitle'), err)
     }
   }
 
@@ -115,7 +115,7 @@ function AdminCurriculumsPage() {
       await deleteVacancy(id)
       notify.success(t('vacancies.deletedToastTitle'))
     } catch (err) {
-      notify.error(t('vacancies.deleteErrorToastTitle'))
+      notifyError(t('vacancies.deleteErrorToastTitle'), err)
       throw err
     }
   }

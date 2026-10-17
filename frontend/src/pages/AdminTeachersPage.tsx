@@ -205,7 +205,7 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
                     setCurrentPage(1)
                     }}
                     aria-label={t('admin.teachersPage.searchLabel')}
-                    className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
+                    className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
                 />
                 </div>
             </div>

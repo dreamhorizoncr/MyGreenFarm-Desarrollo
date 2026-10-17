@@ -50,7 +50,7 @@ function ForumSidebar({
             onChange={(event) => onBlogSearchChange(event.target.value)}
             placeholder={t('forum.blog.searchPlaceholder')}
             aria-label={t('forum.blog.searchLabel')}
-            className="h-full min-w-0 flex-1 bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
+            className="h-full min-w-0 flex-1 bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
           />
         </label>
       )}

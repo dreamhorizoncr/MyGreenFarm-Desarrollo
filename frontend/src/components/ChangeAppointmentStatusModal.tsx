@@ -8,6 +8,7 @@ import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import type { Appointment, AppointmentStatus } from '../types/appointment.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
+import FieldHint from './ui/FieldHint.tsx'
 
 const STATUS_OPTIONS: AppointmentStatus[] = ['PENDING', 'CONFIRMED', 'CANCELLED']
 
@@ -147,9 +148,10 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
                       if (conclusionError) setConclusionError(null)
                       if (saveError) setSaveError(null)
                     }}
-                    placeholder={t('teacherAppointments.rejectNotePlaceholder')}
-                    className="w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-body text-body-sm text-body-text outline-none transition-colors focus:border-heading placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
+                    placeholder={t('fields.appointment.conclusion.placeholder')}
+                    className="w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-body text-body-sm text-body-text-dark outline-none transition-colors focus:border-heading placeholder:text-neutral-400 disabled:cursor-not-allowed disabled:opacity-55"
                   />
+                  <FieldHint>{t('fields.appointment.conclusion.hint')}</FieldHint>
                   {conclusionError && (
                     <p className="mt-2xs text-left font-body text-body-sm text-danger">{conclusionError}</p>
                   )}
@@ -163,6 +165,7 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
                 <Button
                   variant="primary"
                   onClick={advanceToConfirm}
+                  disabled={requiresConclusion && !conclusion.trim()}
                   className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
                 >
                   {t('teacherAppointments.continue')}
