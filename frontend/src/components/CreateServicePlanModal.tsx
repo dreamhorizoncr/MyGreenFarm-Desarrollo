@@ -9,11 +9,12 @@ import ImagePickerButton from './ui/ImagePickerButton.tsx'
 import ImageThumb, { ImageThumbList } from './ui/ImageThumb.tsx'
 import DeleteConfirmModal from './ui/DeleteConfirmModal.tsx'
 import { servicePlanService } from '../services/servicePlan.ts'
-import { notify } from '../utils/notifications.ts'
+import { notify, notifyError } from '../utils/notifications.ts'
 import { validateSafeText } from '../utils/validators.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 import ScheduleField from './ui/ScheduleField.tsx'
 import { emptySchedule, parseSchedule, serializeSchedule, validateSchedule } from '../utils/schedule.ts'
+import FieldHint from './ui/FieldHint.tsx'
 
 const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']
 
@@ -170,6 +171,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
               className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
               aria-label={t('admin.servicios.selectPlan')}
             />
+            <FieldHint>{t('fields.plan.onvo.hint')}</FieldHint>
           </div>
           {availablePlans.length === 0 && !isEditing && (
             <span className="mt-xs block font-body text-body-sm font-normal text-neutral-500">
@@ -181,16 +183,19 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
           )}
         </label>
 
-        <ScheduleField
-          id="create-plan-schedule"
-          label={t('admin.servicios.scheduleLabel')}
-          value={schedule}
-          onChange={(value) => {
-            setSchedule(value)
-            if (scheduleError) setScheduleError(null)
-          }}
-          error={scheduleError}
-        />
+        <div>
+          <ScheduleField
+            id="create-plan-schedule"
+            label={t('admin.servicios.scheduleLabel')}
+            value={schedule}
+            onChange={(value) => {
+              setSchedule(value)
+              if (scheduleError) setScheduleError(null)
+            }}
+            error={scheduleError}
+          />
+          <FieldHint>{t('fields.plan.schedule.hint')}</FieldHint>
+        </div>
 
         <label className="font-body text-body-sm font-semibold text-heading">
           {t('admin.servicios.includesLabel')}
@@ -202,10 +207,11 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
               setIncludes(e.target.value)
               if (includesError) setIncludesError(null)
             }}
-            placeholder={t('admin.servicios.includesPlaceholder')}
+            placeholder={t('fields.plan.includes.placeholder')}
             rows={3}
             className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
           />
+          <FieldHint>{t('fields.plan.includes.hint')}</FieldHint>
           {includesError && (
             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{includesError}</span>
           )}
@@ -247,7 +253,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
           )}
         </div>
 
-        <div className="mt-sm flex flex-wrap justify-end gap-sm">
+        <div className="mt-sm flex justify-end gap-md *:flex-1">
           <Button
             variant="secondary"
             type="button"
@@ -260,6 +266,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
             variant="success"
             type="submit"
             loading={saving}
+            disabled={!gatewayPriceId || !includes.trim() || !schedule.every((block) => block.days.length > 0 && block.start && block.end) || (!isEditing && !selectedImage)}
             className="h-11 w-auto rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
           >
             {saving ? t('common.loading') : idleSubmitLabel}
@@ -275,7 +282,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
             try {
               await servicePlanService.deleteImage(planToEdit.id)
             } catch (err) {
-              notify.error(t('common.imageDeleteErrorToast'))
+              notifyError(t('common.imageDeleteErrorToast'), err)
               throw err
             }
             setCurrentImageUrl(null)

@@ -12,7 +12,7 @@ interface ScheduleFieldProps {
 }
 
 const dayClassName = (active: boolean) =>
-  `flex h-10 min-w-10 flex-1 items-center justify-center rounded-full border px-sm font-body text-body-sm font-semibold capitalize transition-colors focus-visible:outline-2 focus-visible:outline-link disabled:cursor-not-allowed disabled:border-neutral-100 disabled:bg-neutral-50 disabled:text-neutral-300 ${
+  `flex h-10 min-w-0 items-center justify-center rounded-full border px-0 font-body text-caption font-semibold capitalize sm:text-body-sm transition-colors focus-visible:outline-2 focus-visible:outline-link disabled:cursor-not-allowed disabled:border-neutral-100 disabled:bg-neutral-50 disabled:text-neutral-300 ${
     active ? 'border-green-500 bg-green-500 text-white' : 'border-neutral-200 bg-white text-heading hover:border-green-500'
   }`
 
@@ -43,7 +43,7 @@ function ScheduleField({ id, label, value, onChange, error }: Readonly<ScheduleF
           return (
             <div key={blockId} className="rounded-xl border border-neutral-200 p-sm">
               <div className="flex items-start gap-xs">
-                <div id={`${blockId}-days`} className="flex flex-1 flex-wrap gap-xs">
+                <div id={`${blockId}-days`} className="grid min-w-0 flex-1 grid-cols-7 gap-1 sm:gap-xs">
                   {WEEK_DAYS.map((day) => {
                     const active = block.days.includes(day)
                     return (

@@ -20,7 +20,7 @@ interface CalendarPanelProps {
 
 const SIZES = {
   regular: {
-    card: 'max-w-[420px] p-lg gap-4',
+    card: 'max-w-[420px] p-md gap-4 sm:p-lg',
     header: 'pb-4',
     gridHeader: 'mb-3',
     grid: 'min-h-[280px]',
@@ -45,7 +45,7 @@ const YEARS_BACK = 100
 const YEARS_AHEAD = 10
 
 const shortcutClassName =
-  'rounded-2xl text-white font-medium hover:bg-green-400/40 transition-colors data-[pressed=true]:scale-95 px-8 py-2 disabled:opacity-50'
+  'min-w-0 flex-1 rounded-2xl px-xs py-2 text-white font-medium hover:bg-green-400/40 transition-colors data-[pressed=true]:scale-95 disabled:opacity-50 sm:px-8'
 
 function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaLabel, showShortcuts = true, compact = false, className = '' }: Readonly<CalendarPanelProps>) {
   const { t, i18n } = useTranslation()
@@ -116,10 +116,10 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
           maxValue={maxValue}
           className="flex flex-col items-center w-full"
         >
-          <Calendar.Header className={`w-full flex justify-between items-center gap-xs ${compact ? '' : 'px-2'} ${size.header}`}>
+          <Calendar.Header className={`w-full flex justify-between items-center gap-xs ${compact ? '' : 'sm:px-2'} ${size.header}`}>
             <Calendar.Heading className="sr-only" />
             <div className="flex items-center gap-xs">
-              <div className={compact ? 'w-[116px]' : 'w-[140px]'}>
+              <div className={compact ? 'w-[116px]' : 'w-[110px] sm:w-[140px]'}>
                 <Select
                   compact={compact}
                   value={String(focusedDate.month)}
@@ -129,7 +129,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
                   className="w-full rounded-lg border border-neutral-200 bg-white px-sm font-semibold text-heading"
                 />
               </div>
-              <div className={compact ? 'w-[90px]' : 'w-[96px]'}>
+              <div className={compact ? 'w-[90px]' : 'w-[94px] sm:w-[96px]'}>
                 <Select
                   compact={compact}
                   value={String(focusedDate.year)}

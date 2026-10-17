@@ -10,6 +10,7 @@ import { notify } from '../utils/notifications.ts'
 import { validateEmail, validatePassword, validateRequired, validateSafeText } from '../utils/validators.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 import TabHighlight from './ui/TabHighlight.tsx'
+import FieldHint from './ui/FieldHint.tsx'
 
 interface CreateUserModalProps {
   onCreated: () => void | Promise<void>
@@ -99,10 +100,11 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
         />
       </div>
 
-      <div className="mt-lg grid gap-md md:grid-cols-2">
+      <div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
         <label className="font-body text-body-sm font-semibold text-heading">
           {t('signup.firstName')}
           <input
+            placeholder={t('fields.person.firstName.placeholder')}
             type="text"
             value={firstName}
             onChange={(e) => {
@@ -111,12 +113,14 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
             }}
             className={inputClassName}
           />
+          <FieldHint>{t('fields.person.firstName.hint')}</FieldHint>
           {errorText('firstName')}
         </label>
 
         <label className="font-body text-body-sm font-semibold text-heading">
           {t('signup.lastName')}
           <input
+            placeholder={t('fields.person.lastName.placeholder')}
             type="text"
             value={lastName}
             onChange={(e) => {
@@ -125,12 +129,14 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
             }}
             className={inputClassName}
           />
+          <FieldHint>{t('fields.person.lastName.hint')}</FieldHint>
           {errorText('lastName')}
         </label>
 
         <label className="font-body text-body-sm font-semibold text-heading">
           {t('signup.email')}
           <input
+            placeholder={t('fields.person.email.placeholder')}
             type="email"
             value={email}
             onChange={(e) => {
@@ -139,6 +145,7 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
             }}
             className={inputClassName}
           />
+          <FieldHint>{t('fields.person.email.hint')}</FieldHint>
           {errorText('email')}
         </label>
 
@@ -146,6 +153,7 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
           <label htmlFor="create-user-password">{t('signup.password')}</label>
           <div className="mt-xs">
             <PasswordInput
+              placeholder={t('fields.person.password.placeholder')}
               id="create-user-password"
               value={password}
               onChange={(e) => {
@@ -156,6 +164,7 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
               hideAriaLabel={t('passwordInput.hidePassword')}
               className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            <FieldHint>{t('fields.person.password.hint')}</FieldHint>
           </div>
           {errorText('password')}
         </div>
@@ -186,11 +195,12 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
           <div className="font-body text-body-sm font-semibold text-heading">
             {t('signup.birthdayOptional')}
             <DatePickerField value={birthday} onChange={setBirthday} max={new Date().toISOString().split('T')[0]} ariaLabel={t('signup.birthdayOptional')} />
+            <FieldHint>{t('fields.person.birthday.hint')}</FieldHint>
           </div>
         )}
       </div>
 
-      <div className="mt-lg flex flex-wrap justify-end gap-sm">
+      <div className="mt-lg flex justify-end gap-md *:flex-1">
         <Button
           variant="secondary"
           onClick={requestClose}
@@ -202,6 +212,7 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
           variant="success"
           onClick={handleSave}
           loading={loading}
+          disabled={!firstName.trim() || !lastName.trim() || !email.trim() || !password || !role}
           className="h-11 w-auto rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
         >
           {loading ? t('signup.loading') : t('signup.buttonLabel')}

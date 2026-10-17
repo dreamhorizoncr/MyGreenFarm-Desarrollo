@@ -7,6 +7,7 @@ import { DEFAULT_END_TIME, DEFAULT_START_TIME, toApiTime, timeValue } from '../t
 import { validateSafeText } from '../utils/validators.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
+import FieldHint from './ui/FieldHint.tsx'
 
 interface ScheduleExceptionModalProps {
   exception?: ScheduleException | null
@@ -115,6 +116,7 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
           <div>
             <label htmlFor="exception-date" className="mb-xs block font-body text-body-sm font-semibold text-heading">{t('admin.availability.modal.dateLabel')}</label>
             <DatePickerField id="exception-date" min={todayIso()} value={date} onChange={(value) => { handleDateChange(value); setFormError(null) }} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body text-body-text focus:border-green-500 focus:outline-none" />
+            <FieldHint>{t('fields.exception.date.hint')}</FieldHint>
             {date && new Date(`${date}T00:00:00`).getDay() % 6 === 0 && <p className="mt-xs text-body-sm text-danger">{t('admin.availability.modal.weekendNotAvailable')}</p>}
             {existing && <p className="mt-xs text-body-sm text-link">{t('admin.availability.modal.alreadyExists')}</p>}
           </div>
@@ -140,13 +142,14 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
 
           <div>
             <label htmlFor="exception-reason" className="mb-xs block font-body text-body-sm font-semibold text-heading">{t('admin.availability.modal.reasonLabel')} <span className="font-normal text-neutral-500">{t('admin.availability.modal.reasonOptional')}</span></label>
-            <input id="exception-reason" value={reason} maxLength={1000} onChange={(event) => setReason(event.target.value)} placeholder={t('admin.availability.modal.reasonPlaceholder')} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-green-500 text-body focus:border-green-500 focus:outline-none" />
+            <input id="exception-reason" value={reason} maxLength={1000} onChange={(event) => setReason(event.target.value)} placeholder={t('fields.exception.reason.placeholder')} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body text-body-text-dark focus:border-green-500 focus:outline-none" />
+            <FieldHint>{t('fields.exception.reason.hint')}</FieldHint>
           </div>
 
           {formError && <p className="m-0 text-body-sm text-danger" role="alert">{formError}</p>}
-          <div className="flex flex-wrap justify-end gap-sm">
+          <div className="flex justify-end gap-md *:flex-1">
             <button type="button" onClick={onClose} className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link">{t('admin.availability.modal.cancel')}</button>
-            <button type="button" onClick={() => void handleSubmit()} disabled={saving} className="inline-flex h-11 items-center justify-center gap-sm rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-link">
+            <button type="button" onClick={() => void handleSubmit()} disabled={saving || !date || (!closed && (!startTime || !endTime))} className="inline-flex h-11 items-center justify-center gap-sm rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-link">
               {saving && <span className="size-4 animate-spin rounded-full border-2 border-white border-r-transparent" aria-hidden="true" />}
               {exception ? t('admin.availability.modal.saveChanges') : t('admin.availability.modal.add')}
             </button>

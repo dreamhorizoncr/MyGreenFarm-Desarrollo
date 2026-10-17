@@ -6,6 +6,7 @@ import { notify } from '../../utils/notifications.ts'
 import { getErrorMessage } from '../../utils/error.ts'
 import { hasUnsafeText } from '../../utils/validators.ts'
 import ModalCloseButton from '../ui/ModalCloseButton.tsx'
+import FieldHint from '../ui/FieldHint.tsx'
 
 const MAX_CONTENT = 4000
 
@@ -119,9 +120,10 @@ function PublishExperienceModal({
             onChange={(event) => setName(event.target.value)}
             maxLength={40}
             aria-label={t('forum.community.nameLabel')}
-            placeholder={t('forum.community.nameLabel')}
-            className="mt-md h-11 w-full rounded-xl border border-neutral-200 bg-white px-md text-left font-body text-body-sm text-body-text outline-none focus:border-heading"
+            placeholder={t('fields.experience.name.placeholder')}
+            className="mt-md h-11 w-full rounded-xl border border-neutral-200 bg-white px-md text-left font-body text-body-sm text-body-text-dark outline-none focus:border-heading"
           />
+          <FieldHint>{t('fields.experience.name.hint')}</FieldHint>
 
           <textarea
             id="community-content"
@@ -130,9 +132,10 @@ function PublishExperienceModal({
             maxLength={MAX_CONTENT}
             rows={6}
             aria-label={t('forum.community.contentLabel')}
-            placeholder={t('forum.community.contentLabel')}
-            className="mt-md w-full resize-y rounded-xl border border-neutral-200 bg-white p-md text-left font-body text-body-sm text-body-text outline-none focus:border-heading"
+            placeholder={t('fields.experience.content.placeholder')}
+            className="mt-md w-full resize-y rounded-xl border border-neutral-200 bg-white p-md text-left font-body text-body-sm text-body-text-dark outline-none focus:border-heading"
           />
+          <FieldHint>{t('fields.experience.content.hint')}</FieldHint>
 
           <p className="m-0 mt-xs text-right font-body text-caption text-body-text">
             {content.length}/{MAX_CONTENT}
@@ -148,7 +151,7 @@ function PublishExperienceModal({
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={submitted}
+              disabled={submitted || !name.trim() || !content.trim()}
               className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600"
             >
               {t('forum.community.submit')}

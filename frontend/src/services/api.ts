@@ -1,5 +1,6 @@
 
 import axios from 'axios'
+import i18n from '../i18n/index.ts'
 import { tokenStorage } from '../utils/token.ts'
 import { userStorage } from '../utils/userStorage.ts'
 
@@ -22,6 +23,7 @@ export interface PageResponse<T> {
 apiClient.interceptors.request.use((config) => {
   const token = tokenStorage.getToken()
   if (token) config.headers.Authorization = `Bearer ${token}`
+  config.headers['Accept-Language'] = (i18n.resolvedLanguage ?? i18n.language ?? 'es').split('-')[0]
   return config
 })
 

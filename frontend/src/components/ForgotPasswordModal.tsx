@@ -85,7 +85,7 @@ function ForgotPasswordModal({ email, onClose }: Readonly<ForgotPasswordModalPro
                   type="email"
                   value={email}
                   readOnly
-                  className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-neutral-50 px-md font-normal text-body-text outline-none disabled:cursor-not-allowed"
+                  className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-neutral-50 px-md font-normal text-body-text-dark outline-none disabled:cursor-not-allowed"
                 />
               </label>
 
@@ -93,7 +93,7 @@ function ForgotPasswordModal({ email, onClose }: Readonly<ForgotPasswordModalPro
                 <p className="m-0 rounded-xl bg-red-50 p-md font-body text-body-sm text-red-700">{error}</p>
               )}
 
-              <div className="mt-sm flex flex-wrap justify-end gap-sm">
+              <div className="mt-sm flex justify-end gap-md *:flex-1">
                 <Button
                   variant="secondary"
                   onClick={requestClose}

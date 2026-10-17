@@ -7,7 +7,7 @@ import ChildCard from "../components/ChildCard";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal";
 
 import { childService } from "../services/child";
-import { notify } from "../utils/notifications";
+import { notify, notifyError } from "../utils/notifications";
 import { useChildren } from "../hooks/useChildren";
 
 import type { Child } from "../types/child";
@@ -66,7 +66,7 @@ function AdminChildrenPage() {
 
       notify.success(t("admin.children.deleteSuccess"))
     } catch (err) {
-      notify.error(t("admin.children.deleteError"))
+      notifyError(t("admin.children.deleteError"), err)
       throw err
     }
   }
@@ -116,7 +116,7 @@ function AdminChildrenPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 aria-label={t('admin.children.searchPlaceholder')}
-                className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
+                className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
               />
             </div>
           </div>

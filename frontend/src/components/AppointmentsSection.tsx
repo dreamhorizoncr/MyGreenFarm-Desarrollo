@@ -14,7 +14,7 @@ import { useAppointments } from '../hooks/useAppointments.ts'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import SkeletonList from './ui/SkeletonList.tsx'
-import { notify } from '../utils/notifications.ts'
+import { notify, notifyError } from '../utils/notifications.ts'
 import type { Appointment, AppointmentStatus } from '../types/appointment.ts'
 import { useAvailability } from '../hooks/useAvailability.ts'
 import TabHighlight from './ui/TabHighlight.tsx'
@@ -210,7 +210,7 @@ function AppointmentsSection() {
       await changeStatus(id, status, conclusion)
       notify.success(t('teacherAppointments.statusUpdatedToastTitle'))
     } catch (err) {
-      notify.error(t('teacherAppointments.statusUpdateErrorToastTitle'))
+      notifyError(t('teacherAppointments.statusUpdateErrorToastTitle'), err)
       throw err
     }
   }
@@ -223,7 +223,7 @@ function AppointmentsSection() {
         description: t('teacherAppointments.rescheduledToastDescription'),
       })
     } catch (err) {
-      notify.error(t('teacherAppointments.rescheduleErrorToastTitle'))
+      notifyError(t('teacherAppointments.rescheduleErrorToastTitle'), err)
       throw err
     }
   }
@@ -238,11 +238,11 @@ function AppointmentsSection() {
       </p>
 
       <div className="mb-[var(--spacing-lg)] mt-[var(--spacing-xl)] flex flex-wrap items-center justify-between gap-md">
-        <div className="flex h-11 min-w-[240px] max-w-[420px] flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
+        <div className="flex h-11 w-full min-w-0 max-w-[420px] flex-1 sm:min-w-[240px] items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
           <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
           <input
             type="search"
-            className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
+            className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
             placeholder={t('teacherAppointments.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

@@ -318,6 +318,18 @@ html [data-sileo-button][data-state] {
    FONT WEIGHT OVERRIDES — Combina familia + peso para utilidades Tailwind
    --------------------------------------------------------------------------- */
 @layer base {
+  input,
+  textarea {
+    color: var(--color-body-text-dark);
+    font-weight: 400;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-neutral-400);
+    opacity: 1;
+  }
+
   .font-heading {
     font-weight: 700;
   }
@@ -332,5 +344,15 @@ html [data-sileo-button][data-state] {
 
   .font-subtitle {
     font-weight: 400;
+  }
+}
+
+dialog:focus {
+  outline: none;
+}
+
+@media (max-width: 373px) {
+  [data-sileo-toast] {
+    zoom: 0.84;
   }
 }

@@ -10,7 +10,7 @@ import { useVacancies } from '../hooks/useVacancies.ts'
 import { useCurriculums } from '../hooks/useCurriculums.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
-import { notify } from '../utils/notifications.ts'
+import { notifyError } from '../utils/notifications.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
@@ -102,10 +102,7 @@ function VacanciesPage() {
       await submitApplication(data)
       setApplicationSent(true)
     } catch (err) {
-      notify.error({
-        title: t('vacancies.applyErrorToastTitle'),
-        description: t('vacancies.applyErrorToastDescription'),
-      })
+      notifyError(t('vacancies.applyErrorToastTitle'), err)
       throw err
     }
   }

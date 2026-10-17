@@ -8,7 +8,7 @@ import DeleteUserModal from '../components/DeleteUserModal.tsx'
 import TeacherCard from '../components/TeacherCard.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
 import { useAdmin } from '../hooks/useAdmin.ts'
-import { notify } from '../utils/notifications.ts'
+import { notify, notifyError } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
@@ -70,7 +70,7 @@ function AdminUsersPage() {
       await updateUser(id, data)
       notify.success(t('admin.updateDocenteToastTitle'))
     } catch (err) {
-      notify.error(t('admin.updateDocenteErrorToastTitle'))
+      notifyError(t('admin.updateDocenteErrorToastTitle'), err)
       throw err
     }
   }
@@ -96,11 +96,11 @@ function AdminUsersPage() {
         </p>
 
         <div className="mb-[var(--spacing-lg)] mt-[var(--spacing-xl)] flex flex-wrap items-center justify-between gap-md">
-          <div className="flex h-11 min-w-[240px] max-w-[420px] flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
+          <div className="flex h-11 w-full min-w-0 max-w-[420px] flex-1 sm:min-w-[240px] items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
             <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
             <input
               type="search"
-              className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
+              className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
               placeholder={t('admin.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -186,7 +186,7 @@ function AdminUsersPage() {
               await deleteUser(id)
               notify.success(t('admin.deleteDocenteToastTitle'))
             } catch (err) {
-              notify.error(t('admin.deleteDocenteErrorToastTitle'))
+              notifyError(t('admin.deleteDocenteErrorToastTitle'), err)
               throw err
             }
           }}

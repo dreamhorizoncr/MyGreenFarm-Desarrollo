@@ -9,7 +9,7 @@ import Pagination from '../components/ui/Pagination.tsx'
 import Select from '../components/ui/Select.tsx'
 import { useAvailability } from '../hooks/useAvailability.ts'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
-import { notify } from '../utils/notifications.ts'
+import { notify, notifyError } from '../utils/notifications.ts'
 import type { ScheduleException, WeeklySchedule } from '../types/availability.ts'
 import { DEFAULT_END_TIME, DEFAULT_START_TIME, timeValue, toApiTime, WEEK_DAYS } from '../types/availability.ts'
 import CardActionButton from '../components/ui/CardActionButton.tsx'
@@ -136,7 +136,7 @@ function OwnerAvailabilityPage() {
       await deleteException(exceptionToDelete.id)
       notify.success(t('admin.availability.deleteExceptionSuccessToastTitle'))
     } catch (err) {
-      notify.error(t('admin.availability.deleteExceptionErrorToastTitle'))
+      notifyError(t('admin.availability.deleteExceptionErrorToastTitle'), err)
       throw err
     }
   }
@@ -165,8 +165,8 @@ function OwnerAvailabilityPage() {
     try {
       await saveWeekly(visibleDraft.map((day) => ({ ...day, startTime: toApiTime(day.startTime), endTime: toApiTime(day.endTime) })))
       notify.success(t('admin.availability.saveWeeklySuccessToastTitle'))
-    } catch {
-      notify.error(t('admin.availability.saveWeeklyErrorToastTitle'))
+    } catch (err) {
+      notifyError(t('admin.availability.saveWeeklyErrorToastTitle'), err)
     }
   }
 
@@ -210,7 +210,7 @@ function OwnerAvailabilityPage() {
                 ))}
               </div>
               {weeklyError && <p className="mt-md font-body text-body-sm text-danger" role="alert">{weeklyError}</p>}
-              <div className="sticky bottom-0 z-10 mt-lg flex items-center justify-between gap-md border-t border-neutral-200 bg-bg-page/95 py-md backdrop-blur"><span className="font-body text-body-sm text-neutral-600">{isDirty ? t('admin.availability.unsavedChanges') : t('admin.availability.allSaved')}</span><div className="flex gap-sm"><button type="button" disabled={!isDirty || weeklySaving} onClick={() => setDraft(null)} className="inline-flex h-11 items-center justify-center rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent focus-visible:outline-2 focus-visible:outline-link">{t('admin.availability.discard')}</button><button type="button" disabled={!isDirty || weeklySaving || visibleDraft.some((day) => day.active && day.endTime <= day.startTime)} onClick={() => void handleSaveWeekly()} className="inline-flex h-11 items-center justify-center gap-sm rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-orange-500 focus-visible:outline-2 focus-visible:outline-link">{weeklySaving && <span className="size-4 animate-spin rounded-full border-2 border-white border-r-transparent" aria-hidden="true" />}{t('admin.availability.save')}</button></div></div>
+              <div className="sticky bottom-0 z-10 mt-lg flex flex-col gap-sm border-t border-neutral-200 bg-bg-page/95 py-md backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:gap-md"><span className="font-body text-body-sm text-neutral-600">{isDirty ? t('admin.availability.unsavedChanges') : t('admin.availability.allSaved')}</span><div className="flex gap-sm *:flex-1 *:whitespace-nowrap sm:*:flex-none"><button type="button" disabled={!isDirty || weeklySaving} onClick={() => setDraft(null)} className="inline-flex h-11 items-center justify-center rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent focus-visible:outline-2 focus-visible:outline-link">{t('admin.availability.discard')}</button><button type="button" disabled={!isDirty || weeklySaving || visibleDraft.some((day) => day.active && day.endTime <= day.startTime)} onClick={() => void handleSaveWeekly()} className="inline-flex h-11 items-center justify-center gap-sm rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-orange-500 focus-visible:outline-2 focus-visible:outline-link">{weeklySaving && <span className="size-4 animate-spin rounded-full border-2 border-white border-r-transparent" aria-hidden="true" />}{t('admin.availability.save')}</button></div></div>
             </section>
 
             <section className="mt-2xl" aria-labelledby="exceptions-title">
@@ -230,7 +230,7 @@ function OwnerAvailabilityPage() {
               await saveException(exception)
               notify.success(t('admin.availability.saveExceptionSuccessToastTitle'))
             } catch (err) {
-              notify.error(t('admin.availability.saveExceptionErrorToastTitle'))
+              notifyError(t('admin.availability.saveExceptionErrorToastTitle'), err)
               throw err
             }
           }}

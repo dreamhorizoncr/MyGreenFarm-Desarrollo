@@ -22,12 +22,13 @@ import {
   validateSafeText,
 } from '../utils/validators.ts'
 import type { ReferralSource } from '../types/appointment.ts'
+import FieldHint from '../components/ui/FieldHint.tsx'
 
 function BookingPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className="h-full w-full bg-transparent pl-2 font-body text-body-sm text-body-text outline-none"
+      className="h-full w-full bg-transparent pl-2 font-body text-body-sm text-body-text-dark outline-none"
     />
   )
 }
@@ -273,6 +274,21 @@ function BookingPage() {
     }
   }
 
+  const stepFilled = (() => {
+    switch (step) {
+      case 1:
+        return effectiveDay !== null && effectiveTime !== null
+      case 2:
+        return Boolean(childName.trim() && reason.trim() && referralSource) && (referralSource !== 'OTHER' || Boolean(referralOtherDetail.trim()))
+      case 3:
+        return Boolean(fullName.trim() && idNumber.trim())
+      case 4:
+        return Boolean(email.trim() && phone.trim() && phoneCountry && occupation.trim())
+      default:
+        return true
+    }
+  })()
+
   const handleNext = () => {
     if (validateStep(step) && step < 5) {
       setStep(step + 1)
@@ -504,6 +520,8 @@ function BookingPage() {
         {t('booking.wizard.childTitle')}
       </h3>
       <TextField
+        hint={t('fields.booking.childName.hint')}
+        placeholder={t('fields.booking.childName.placeholder')}
         id="booking-child"
         label={t('booking.childName')}
         value={childName}
@@ -514,11 +532,13 @@ function BookingPage() {
         error={childNameErrorMessage}
       />
       <TextField
+        hint={t('fields.booking.reason.hint')}
         id="booking-reason"
         label={t('booking.reason')}
         error={reasonErrorMessage}
       >
         <textarea
+          placeholder={t('fields.booking.reason.placeholder')}
           id="booking-reason"
           value={reason}
           maxLength={4000}
@@ -527,36 +547,41 @@ function BookingPage() {
             if (reasonError) setReasonError(false)
           }}
           rows={3}
-          className="w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-body text-body-sm text-body-text outline-none transition focus:border-green-500"
+          className="w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-body text-body-sm text-body-text-dark outline-none transition focus:border-green-500"
         />
       </TextField>
       <div className="flex flex-col gap-sm">
-        <h4 className="m-0 text-left font-body text-body font-bold text-body-text">
+        <h4 className="m-0 text-left font-body text-body-sm font-semibold text-heading">
           {t('booking.referral.title')}
         </h4>
         <label htmlFor="booking-referral-source" className="sr-only">
           {t('booking.referral.title')}
         </label>
-        <Select
-          id="booking-referral-source"
-          value={referralSource}
-          onChange={(value) => {
-            const source = value as ReferralSource | ''
-            setReferralSource(source)
-            setReferralSourceError(false)
-            if (source !== 'OTHER') {
-              setReferralOtherDetail('')
-              setReferralOtherDetailError(false)
-            }
-          }}
-          placeholder={t('booking.referral.placeholder')}
-          options={REFERRAL_SOURCES.map((source) => ({ value: source, label: t(`booking.referral.options.${source}`) }))}
-          className={`w-full rounded-xl border bg-white px-md ${referralSourceError ? 'border-danger' : 'border-neutral-200'}`}
-        />
+        <div>
+          <Select
+            id="booking-referral-source"
+            value={referralSource}
+            onChange={(value) => {
+              const source = value as ReferralSource | ''
+              setReferralSource(source)
+              setReferralSourceError(false)
+              if (source !== 'OTHER') {
+                setReferralOtherDetail('')
+                setReferralOtherDetailError(false)
+              }
+            }}
+            placeholder={t('booking.referral.placeholder')}
+            options={REFERRAL_SOURCES.map((source) => ({ value: source, label: t(`booking.referral.options.${source}`) }))}
+            className={`w-full rounded-xl border bg-white px-md ${referralSourceError ? 'border-danger' : 'border-neutral-200'}`}
+          />
+          <FieldHint>{t('fields.booking.referral.hint')}</FieldHint>
+        </div>
         {referralSourceError && <p className="m-0 text-left font-body text-body-sm text-danger" role="alert">{t('booking.referral.required')}</p>}
       </div>
       {referralSource === 'OTHER' && (
         <TextField
+          hint={t('fields.booking.referralOther.hint')}
+          placeholder={t('fields.booking.referralOther.placeholder')}
           id="booking-referral-other"
           label={t('booking.referral.otherDetail')}
           value={referralOtherDetail}
@@ -577,6 +602,8 @@ function BookingPage() {
         {t('booking.wizard.identityTitle')}
       </h3>
       <TextField
+        hint={t('fields.booking.fullName.hint')}
+        placeholder={t('fields.booking.fullName.placeholder')}
         id="booking-name"
         label={t('booking.fullName')}
         value={fullName}
@@ -610,6 +637,8 @@ function BookingPage() {
         </div>
       </div>
       <TextField
+        hint={t('fields.booking.idNumber.hint')}
+        placeholder={t('fields.booking.idNumber.placeholder')}
         id="booking-id"
         label={t('booking.idNumber')}
         value={idNumber}
@@ -629,6 +658,8 @@ function BookingPage() {
         {t('booking.wizard.contactTitle')}
       </h3>
       <TextField
+        hint={t('fields.booking.email.hint')}
+        placeholder={t('fields.booking.email.placeholder')}
         id="booking-email"
         type="email"
         label={t('booking.email')}
@@ -641,11 +672,13 @@ function BookingPage() {
         error={emailErrorMessage}
       />
       <TextField
+        hint={t('fields.booking.phone.hint')}
         id="booking-phone"
         label={t('booking.phone')}
         error={phoneErrorMessage}
       >
         <PhoneInput
+          placeholder={t('fields.booking.phone.placeholder')}
           id="booking-phone"
           className="h-11 rounded-xl border border-neutral-200 bg-white px-md"
           value={phone}
@@ -658,6 +691,8 @@ function BookingPage() {
         />
       </TextField>
       <TextField
+        hint={t('fields.booking.occupation.hint')}
+        placeholder={t('fields.booking.occupation.placeholder')}
         id="booking-occupation"
         label={t('booking.occupation')}
         value={occupation}
@@ -787,7 +822,8 @@ function BookingPage() {
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
+                  disabled={!stepFilled}
+                  className="flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-orange-500"
                 >
                   {t('booking.wizard.next')}
                 </button>

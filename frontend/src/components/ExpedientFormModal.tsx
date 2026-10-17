@@ -4,7 +4,7 @@ import { ChevronDownIcon } from "@animateicons/react/lucide";
 import Select from "./ui/Select.tsx";
 
 import { expedientService } from "../services/expedient";
-import { notify } from "../utils/notifications.ts";
+import { notify, notifyError } from "../utils/notifications.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
 import DatePickerField from "./ui/DatePickerField.tsx";
 import { validateRequired, validateSafeText } from "../utils/validators.ts";
@@ -20,6 +20,7 @@ import ImagePickerButton from "./ui/ImagePickerButton.tsx";
 import ImageThumb, { ImageThumbList } from "./ui/ImageThumb.tsx";
 import DeleteConfirmModal from "./ui/DeleteConfirmModal.tsx";
 import ModalCloseButton from "./ui/ModalCloseButton.tsx";
+import FieldHint from "./ui/FieldHint.tsx";
 
 interface ExpedientFormModalProps {
   onClose: () => void;
@@ -210,7 +211,7 @@ function ExpedientFormModal({
           />
         </div>
 
-        <div className="mt-lg grid gap-md md:grid-cols-2">
+        <div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
           <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
             {t("admin.expedients.childName")}
 
@@ -266,6 +267,7 @@ function ExpedientFormModal({
                 </ul>
               )}
             </div>
+            <FieldHint>{t("fields.expedient.child.hint")}</FieldHint>
             {studentError && (
               <span className="mt-xs block font-body text-body-sm font-normal text-danger">{studentError}</span>
             )}
@@ -281,6 +283,7 @@ function ExpedientFormModal({
               }}
               ariaLabel={t("admin.expedients.admisiondate")}
             />
+            <FieldHint>{t("fields.expedient.admissionDate.hint")}</FieldHint>
             {dateError && (
               <span className="mt-xs block font-body text-body-sm font-normal text-danger">{dateError}</span>
             )}
@@ -301,6 +304,7 @@ function ExpedientFormModal({
                 className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
                 aria-label={t("admin.expedients.grade")}
               />
+              <FieldHint>{t("fields.expedient.grade.hint")}</FieldHint>
             </div>
           </label>
 
@@ -314,7 +318,7 @@ function ExpedientFormModal({
               }}
               maxLength={600}
               rows={4}
-              placeholder={t("admin.expedients.observationsPlaceholder")}
+              placeholder={t("fields.expedient.notes.placeholder")}
               className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
             />
 
@@ -361,7 +365,7 @@ function ExpedientFormModal({
           </p>
         )}
 
-        <div className="mt-lg flex flex-wrap justify-end gap-sm">
+        <div className="mt-lg flex justify-end gap-md *:flex-1">
           <button
             type="button"
             onClick={requestClose}
@@ -373,7 +377,7 @@ function ExpedientFormModal({
 
           <button
             type="submit"
-            disabled={saving}
+            disabled={saving || !studentId || !admisionDate}
             className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {saving ? t("admin.expedients.saving") : idleSaveLabel}
@@ -389,7 +393,7 @@ function ExpedientFormModal({
             try {
               await expedientService.deletePhoto(expedient.id);
             } catch (err) {
-              notify.error(t("common.imageDeleteErrorToast"));
+              notifyError(t("common.imageDeleteErrorToast"), err);
               throw err;
             }
             setCurrentPhotoUrl(null);
