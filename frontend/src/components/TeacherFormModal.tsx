@@ -156,7 +156,7 @@ import type { CreateTeacherData } from '../services/admin.ts'
         }`}
         >
         <div className="flex items-center justify-between gap-md">
-            <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+            <h2 className="m-0 font-heading text-h4 font-bold text-heading">
             {isEditing ? t('admin.teachersPage.edit') : t('admin.teachersPage.register')}
             </h2>
 

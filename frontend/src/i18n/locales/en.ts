@@ -344,7 +344,7 @@ export default {
     categoryCreateErrorToast: 'The category could not be added',
     categoryDeletedToast: 'Category deleted',
     categoryDeleteErrorToast: 'The category could not be deleted',
-    title: "News",
+    title: "News Management",
     description:
       "Add news to keep families and the educational community informed.",
     addNews: "Add news",
@@ -399,7 +399,7 @@ export default {
     deleteErrorToastTitle: 'The article could not be deleted',
     loadPostsError: 'The articles could not be loaded',
     loadOwnPostsError: 'Your posts could not be loaded',
-    title: "Forum",
+    title: "Forum Management",
     description:
       "Publish research for the blog and moderate community comments.",
     noPersistenceNotice:
@@ -689,7 +689,7 @@ export default {
     unsafeText: "HTML tags and characters like “<” followed by letters are not allowed.",
   },
   profile: {
-    title: "My profile",
+    title: "Profile Management",
     description: "Here you can see your personal information.",
     firstName: "First name",
     lastName: "Last names",
@@ -709,7 +709,7 @@ export default {
   },
   admin: {
     teachersPage: {
-      title: 'Teacher management',
+      title: "Teacher Management",
       subtitle: "Manage My Green Farm's teachers.",
       register: 'Register teacher',
       edit: 'Edit teacher',
@@ -817,7 +817,11 @@ export default {
       foro: "Forum",
     },
     curriculums: {
-      title: "Vacancies and Applications",
+      assignVacancyLabel: 'Assign to a vacancy (optional)',
+      noVacancyOption: 'No vacancy',
+      assignVacancyHint: 'If you choose a vacancy, it will be filled by this person and the hiring email will mention that position.',
+      noOpenVacancies: 'There are no open vacancies. It will be approved without a position and the email will use a general message.',
+      title: "Vacancy and Application Management",
       subtitle:
         "Publish vacancies and review the curriculums submitted for each one.",
       applicationsTab: "Applications",
@@ -901,7 +905,7 @@ export default {
       imageDeleteErrorToastTitle: "Error deleting image."
     },
     evaluations: {
-      title: "Evaluations",
+      title: "Evaluation Management",
       description: "Record, review, and manage children's progress.",
       registerEvaluation: "Register evaluation",
       searchPlaceholder: "Search evaluations...",
@@ -956,7 +960,7 @@ export default {
       formCreateError: "Couldn't register the evaluation.",
     },
     gallery: {
-      title: "Gallery",
+      title: "Gallery Management",
       subtitle: "Manage the photo albums of the educational center.",
       addAlbum: "Add album",
       newAlbum: "New album",
@@ -1021,7 +1025,7 @@ export default {
       photoTag: "Photo",
     },
     servicios: {
-      title: "Service Plans",
+      title: "Service Plan Management",
       subtitle: "Manage service plans linked to OnvoPay.",
       addPlan: "Add plan",
       newPlan: "New service plan",
@@ -1056,7 +1060,7 @@ export default {
     },
     expedients: {
       noMatches: 'No records found with that name.',
-      title: "Academic Records",
+      title: "Academic Record Management",
       description:
         "View the academic records of the children enrolled at the institution.",
       searchbutton: "Search child",
@@ -1128,7 +1132,7 @@ export default {
     parents: {
       empty: 'There are no registered parents.',
       noMatches: 'No parents match that search.',
-      title: "Parents",
+      title: "Parent Management",
       description: "View and manage the information of parents registered at the institution.",
       searchPlaceholder: "Search for a parent...",
       addTitle: "Add Parent",
@@ -1174,7 +1178,7 @@ export default {
     },
 
     children: {
-      title: 'Children',
+      title: "Children Management",
       description: 'Manage the children registered in My Green Farm.',
       searchPlaceholder: 'Search children...',
       addChild: 'Register child',
@@ -1240,7 +1244,7 @@ export default {
     },
 
     availability: {
-      title: "My availability",
+      title: "Availability Management",
       subtitle: "Set the days and hours when you are available.",
       retry: "Retry",
       weeklyTitle: "Weekly schedule",

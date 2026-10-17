@@ -33,8 +33,8 @@ export const curriculumService = {
     return response.data
   },
 
-  async setCurriculumStatus(id: string, status: CurriculumStatus, lang = 'es'): Promise<Curriculum> {
-    const response = await apiClient.patch<Curriculum>(`/applications/${id}/status`, null, { params: { status, lang } })
+  async setCurriculumStatus(id: string, status: CurriculumStatus, lang = 'es', vacancyId?: string): Promise<Curriculum> {
+    const response = await apiClient.patch<Curriculum>(`/applications/${id}/status`, null, { params: { status, lang, vacancyId } })
     return response.data
   },
 

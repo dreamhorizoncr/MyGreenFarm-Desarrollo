@@ -104,7 +104,7 @@ function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Readonl
     >
       <div className="relative p-[28px_22px_30px]">
         <div className="flex items-center justify-between gap-md">
-          <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+          <h2 className="m-0 font-heading text-h4 font-bold text-heading">
             {t('teacherAppointments.rescheduleTitle')}
           </h2>
 
@@ -129,7 +129,7 @@ function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Readonl
               </p>
 
               <div className="flex flex-col gap-sm">
-                <label htmlFor="reschedule-appointment-date" className="font-body text-body font-normal leading-[1.6] text-body-text">
+                <label htmlFor="reschedule-appointment-date" className="font-body text-body-sm font-semibold text-heading">
                   {t('teacherAppointments.rescheduleDateLabel')}
                 </label>
                 <DatePickerField

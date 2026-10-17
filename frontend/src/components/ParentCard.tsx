@@ -31,7 +31,7 @@ function ParentCard({
         {loading ? (
           <Skeleton shape="line" className="h-6 w-1/2" />
         ) : (
-          <h2 className="font-heading text-xl font-bold text-heading">
+          <h2 className="font-heading text-h5 font-bold text-heading">
               {parent!.firstName} {parent!.lastName}
           </h2>
         )}

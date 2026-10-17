@@ -43,10 +43,11 @@ function AdminCurriculumsPage() {
 
   const applicantNameById = new Map(curriculums.map((c) => [c.id, c.applicantName]))
 
-  const handleApprove = async (application: Curriculum) => {
+  const handleApprove = async (application: Curriculum, vacancyId?: string) => {
     try {
-      await setCurriculumStatus(application.id, 'APPROVED')
-      if (application.vacancyId) await setVacancyFilledBy(application.vacancyId, application.id)
+      await setCurriculumStatus(application.id, 'APPROVED', vacancyId)
+      const assignedVacancyId = application.vacancyId ?? vacancyId
+      if (assignedVacancyId) await setVacancyFilledBy(assignedVacancyId, application.id)
       notify.success(t('admin.curriculums.approvedToastTitle'))
     } catch (err) {
       notify.error(t('admin.curriculums.approveErrorToastTitle'))

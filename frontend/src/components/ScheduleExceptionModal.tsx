@@ -103,7 +103,7 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
     >
       <div className="relative p-xl">
         <div className="flex items-center justify-between gap-md">
-          <h2 id="exception-modal-title" className="m-0 font-heading text-2xl font-bold text-heading">
+          <h2 id="exception-modal-title" className="m-0 font-heading text-h4 font-bold text-heading">
             {exception ? t('admin.availability.modal.editTitle') : t('admin.availability.modal.addTitle')}
           </h2>
 
@@ -113,14 +113,14 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
 
         <div className="mt-lg flex flex-col gap-md">
           <div>
-            <label htmlFor="exception-date" className="mb-xs block font-body text-body-sm font-semibold text-body-text">{t('admin.availability.modal.dateLabel')}</label>
+            <label htmlFor="exception-date" className="mb-xs block font-body text-body-sm font-semibold text-heading">{t('admin.availability.modal.dateLabel')}</label>
             <DatePickerField id="exception-date" min={todayIso()} value={date} onChange={(value) => { handleDateChange(value); setFormError(null) }} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body text-body-text focus:border-green-500 focus:outline-none" />
             {date && new Date(`${date}T00:00:00`).getDay() % 6 === 0 && <p className="mt-xs text-body-sm text-danger">{t('admin.availability.modal.weekendNotAvailable')}</p>}
             {existing && <p className="mt-xs text-body-sm text-link">{t('admin.availability.modal.alreadyExists')}</p>}
           </div>
 
           <fieldset className="flex flex-col gap-sm">
-            <legend className="mb-xs font-body text-body-sm font-semibold text-body-text">{t('admin.availability.modal.howLabel')}</legend>
+            <legend className="mb-xs font-body text-body-sm font-semibold text-heading">{t('admin.availability.modal.howLabel')}</legend>
             <label className="flex min-h-12 cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md font-body text-body text-body-text">
               <input type="radio" name="exception-mode" checked={closed} onChange={() => setClosed(true)} className="size-5 accent-green-500" />
               <span>{t('admin.availability.modal.closedOption')}</span>
@@ -133,13 +133,13 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
 
           {!closed && (
             <div className="grid grid-cols-2 gap-md">
-              <label className="font-body text-body-sm font-semibold text-body-text">{t('admin.availability.from')}<div className="mt-xs"><Select value={startTime} onChange={setStartTime} options={hours.slice(0, -1).map((hour) => ({ value: hour, label: hour }))} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md" aria-label={t('admin.availability.from')} /></div></label>
-              <label className="font-body text-body-sm font-semibold text-body-text">{t('admin.availability.to')}<div className="mt-xs"><Select value={endTime} onChange={setEndTime} options={hours.slice(1).map((hour) => ({ value: hour, label: hour }))} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md" aria-label={t('admin.availability.to')} /></div></label>
+              <label className="font-body text-body-sm font-semibold text-heading">{t('admin.availability.from')}<div className="mt-xs"><Select value={startTime} onChange={setStartTime} options={hours.slice(0, -1).map((hour) => ({ value: hour, label: hour }))} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md" aria-label={t('admin.availability.from')} /></div></label>
+              <label className="font-body text-body-sm font-semibold text-heading">{t('admin.availability.to')}<div className="mt-xs"><Select value={endTime} onChange={setEndTime} options={hours.slice(1).map((hour) => ({ value: hour, label: hour }))} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md" aria-label={t('admin.availability.to')} /></div></label>
             </div>
           )}
 
           <div>
-            <label htmlFor="exception-reason" className="mb-xs block font-body text-body-sm font-semibold text-body-text">{t('admin.availability.modal.reasonLabel')} <span className="font-normal text-neutral-500">{t('admin.availability.modal.reasonOptional')}</span></label>
+            <label htmlFor="exception-reason" className="mb-xs block font-body text-body-sm font-semibold text-heading">{t('admin.availability.modal.reasonLabel')} <span className="font-normal text-neutral-500">{t('admin.availability.modal.reasonOptional')}</span></label>
             <input id="exception-reason" value={reason} maxLength={1000} onChange={(event) => setReason(event.target.value)} placeholder={t('admin.availability.modal.reasonPlaceholder')} className="h-12 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-green-500 text-body focus:border-green-500 focus:outline-none" />
           </div>
 

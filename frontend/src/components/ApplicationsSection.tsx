@@ -18,7 +18,7 @@ interface ApplicationsSectionProps {
   vacancies: Vacancy[]
   loading: boolean
   error: string | null
-  onApprove: (application: Curriculum) => Promise<void>
+  onApprove: (application: Curriculum, vacancyId?: string) => Promise<void>
   onReject: (application: Curriculum) => Promise<void>
   onDelete: (id: string) => Promise<void>
 }
@@ -119,6 +119,9 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
           application={applicationToDecide.application}
           action={applicationToDecide.action}
           onConfirm={applicationToDecide.action === 'approve' ? onApprove : onReject}
+          vacancyOptions={vacancies
+            .filter((vacancy) => vacancy.isOpen && !vacancy.filledByApplicationId)
+            .map((vacancy) => ({ value: vacancy.id, label: vacancy.title }))}
           onClose={() => setApplicationToDecide(null)}
         />
       )}

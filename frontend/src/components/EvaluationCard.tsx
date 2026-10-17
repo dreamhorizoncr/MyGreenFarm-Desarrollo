@@ -43,7 +43,7 @@ import CardActionButton from "./ui/CardActionButton.tsx";
               </div>
             ) : (
               <div className="min-w-0">
-                <h3 className="m-0 font-heading text-h4 font-bold text-heading">
+                <h3 className="m-0 font-heading text-h5 font-bold text-heading">
                     {expedient?.childName ?? t("admin.evaluations.cardDefaultExpedient")}
                 </h3>
 

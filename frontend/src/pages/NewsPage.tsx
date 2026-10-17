@@ -61,7 +61,7 @@ const cards = announcements.filter(
 
       <section data-scroll-bg="green" className="flex min-h-[280px] items-start bg-green-500 px-[30px] pt-[48px] pb-[40px] text-center text-white md:min-h-[320px] md:pt-[72px]">
         <div className="mx-auto w-full max-w-[700px]">
-          <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
+          <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-white">
             {t("newspage.title")}
           </h1>
 

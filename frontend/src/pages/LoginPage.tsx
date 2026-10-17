@@ -79,7 +79,7 @@ function LoginPage() {
       overtitle={t("login.overtitle")}
       contentClassName="max-w-[303px] md:max-w-[390px]"
     >
-      <h2 className="mb-[35px] text-left font-heading text-[28px] leading-none text-heading md:mb-[55px] md:text-h1">
+      <h2 className="mb-[35px] text-left font-heading text-h1 leading-none text-heading md:mb-[55px]">
         {t("login.title")}
       </h2>
 

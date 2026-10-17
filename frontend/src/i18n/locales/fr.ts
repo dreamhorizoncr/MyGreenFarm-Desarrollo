@@ -345,7 +345,7 @@ export default {
     categoryCreateErrorToast: "La catégorie n'a pas pu être ajoutée",
     categoryDeletedToast: 'Catégorie supprimée',
     categoryDeleteErrorToast: "La catégorie n'a pas pu être supprimée",
-    title: "Actualités",
+    title: "Gestion des Actualités",
     description:
       "Ajoutez des actualités pour tenir les familles et la communauté éducative informées.",
     addNews: "Ajouter une actualité",
@@ -405,7 +405,7 @@ export default {
     confirmChangesDescription: 'Saisissez « {{word}} » pour enregistrer les modifications.',
     confirmWord: 'CONFIRMER',
     confirmChanges: 'Confirmer les modifications',
-    title: "Forum",
+    title: "Gestion du Forum",
     description:
       "Publiez des recherches pour le blog et modérez les commentaires de la communauté.",
     noPersistenceNotice:
@@ -698,7 +698,7 @@ export default {
     unsafeText: "Les balises HTML et les caractères comme « < » suivis de lettres ne sont pas autorisés.",
   },
   profile: {
-    title: "Mon profil",
+    title: "Gestion du Profil",
     description: "Ici, vous pouvez voir vos informations personnelles.",
     firstName: "Prénom",
     lastName: "Noms",
@@ -718,7 +718,7 @@ export default {
   },
   admin: {
     teachersPage: {
-      title: 'Gestion des enseignants',
+      title: "Gestion des Enseignants",
       subtitle: 'Gérez les enseignants de My Green Farm.',
       register: 'Inscrire un enseignant',
       edit: "Modifier l'enseignant",
@@ -743,7 +743,7 @@ export default {
       passwordMin: 'Le mot de passe doit contenir au moins 8 caractères.',
       passwordHint: 'Au moins 8 caractères, dont une majuscule, une minuscule, un chiffre et un symbole.',
     },
-    docentesTitle: "Gestion des enseignants",
+    docentesTitle: "Gestion des Utilisateurs",
     docentesSubtitle: "Consultez et gérez les utilisateurs du centre éducatif.",
     searchPlaceholder: "Rechercher par nom, prénom, e-mail ou rôle",
     addDocente: "Ajouter un utilisateur",
@@ -777,7 +777,7 @@ export default {
     deleteDocenteToastTitle: "Utilisateur supprimé",
     deleteDocenteErrorToastTitle: "Impossible de supprimer l'utilisateur",
     newsletter: {
-      title: "Gestion de la newsletter",
+      title: "Gestion de la Newsletter",
       subtitle: "Gérez les abonnés et les parents, et envoyez des e-mails groupés.",
       searchPlaceholder: "Rechercher par e-mail...",
       sendBroadcast: "Envoyer",
@@ -826,7 +826,11 @@ export default {
       foro: "Forum",
     },
     curriculums: {
-      title: "Offres et candidatures",
+      assignVacancyLabel: 'Associer à une offre (facultatif)',
+      noVacancyOption: 'Aucune offre',
+      assignVacancyHint: "Si vous choisissez une offre, elle sera pourvue par cette personne et l'e-mail d'embauche mentionnera ce poste.",
+      noOpenVacancies: "Aucune offre ouverte. La candidature sera approuvée sans poste et l'e-mail utilisera un message général.",
+      title: "Gestion des Offres et Candidatures",
       subtitle: "Publiez des offres et consultez les CV reçus pour chacune.",
       applicationsTab: "Candidatures",
       searchPlaceholder: "Rechercher par nom ou e-mail du candidat",
@@ -909,7 +913,7 @@ export default {
       imageDeleteErrorToastTitle: "Erreur lors de la suppression de l'image."
     },
     evaluations: {
-      title: "Évaluations",
+      title: "Gestion des Évaluations",
       description: "Enregistrez, consultez et gérez les progrès des enfants.",
       registerEvaluation: "Enregistrer une évaluation",
       searchPlaceholder: "Rechercher une évaluation...",
@@ -964,7 +968,7 @@ export default {
       formCreateError: "Impossible d'enregistrer l'évaluation.",
     },
     gallery: {
-      title: "Galerie",
+      title: "Gestion de la Galerie",
       subtitle: "Gérez les albums photos du centre éducatif.",
       addAlbum: "Ajouter un album",
       newAlbum: "Nouvel album",
@@ -1030,7 +1034,7 @@ export default {
       photoTag: "Photo",
     },
     servicios: {
-      title: "Plans de service",
+      title: "Gestion des Plans de Service",
       subtitle: "Gérez les plans de service liés à OnvoPay.",
       addPlan: "Ajouter un plan",
       newPlan: "Nouveau plan de service",
@@ -1066,7 +1070,7 @@ export default {
 
     expedients: {
       noMatches: 'Aucun dossier trouvé avec ce nom.',
-      title: "Dossiers Académiques",
+      title: "Gestion des Dossiers Académiques",
       description:
         "Consultez les dossiers académiques des enfants inscrits dans l’établissement.",
       searchbutton: "Rechercher un enfant",
@@ -1138,7 +1142,7 @@ export default {
     parents: {
       empty: "Aucun parent n'est inscrit.",
       noMatches: 'Aucun parent ne correspond à cette recherche.',
-      title: "Parents",
+      title: "Gestion des Parents",
       description: "Consultez et gérez les informations des parents enregistrés dans l'établissement.",
       searchPlaceholder: "Rechercher un parent...",
       addTitle: "Ajouter un Parent",
@@ -1184,7 +1188,7 @@ export default {
     },
 
     children: {
-      title: 'Enfants',
+      title: "Gestion des Enfants",
       description: 'Gérez les enfants enregistrés dans My Green Farm.',
       searchPlaceholder: 'Rechercher un enfant...',
       addChild: 'Inscrire un enfant',
@@ -1250,7 +1254,7 @@ export default {
     },
 
     availability: {
-      title: "Mes disponibilités",
+      title: "Gestion des Disponibilités",
       subtitle: "Configurez les jours et horaires où vous êtes disponible.",
       retry: "Réessayer",
       weeklyTitle: "Horaire hebdomadaire",
@@ -1394,7 +1398,7 @@ export default {
     releaseErrorToastTitle: "Impossible de libérer l'offre",
   },
   teacherAppointments: {
-    title: "Gestion des rendez-vous",
+    title: "Gestion des Rendez-vous",
     subtitle: "Consultez et gérez les rendez-vous d'inscription.",
     searchPlaceholder: "Rechercher par enfant, parent, e-mail ou téléphone",
     all: "Toutes",

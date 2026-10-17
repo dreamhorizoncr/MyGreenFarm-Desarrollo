@@ -343,7 +343,7 @@ export default {
     categoryCreateErrorToast: 'No se pudo agregar la categoría',
     categoryDeletedToast: 'Categoría eliminada',
     categoryDeleteErrorToast: 'No se pudo eliminar la categoría',
-    title: "Noticias",
+    title: "Gestión de Noticias",
     description:
       "Agregá noticias para mantener informadas a las familias y la comunidad educativa.",
     addNews: "Agregar Noticia",
@@ -398,7 +398,7 @@ export default {
     deleteErrorToastTitle: 'No se pudo eliminar el artículo',
     loadPostsError: 'No se pudieron cargar los artículos',
     loadOwnPostsError: 'No se pudieron cargar tus publicaciones',
-    title: "Foro",
+    title: "Gestión del Foro",
     description:
       "Publicá investigaciones para el Blog y moderá los comentarios de la comunidad.",
     noPersistenceNotice:
@@ -694,7 +694,7 @@ export default {
     unsafeText: "No se permiten etiquetas HTML ni caracteres como «<» seguidos de letras.",
   },
   profile: {
-    title: "Mi perfil",
+    title: "Gestión de Perfil",
     description: "Aquí puedes ver tu información personal.",
     firstName: "Nombre",
     lastName: "Apellidos",
@@ -712,7 +712,7 @@ export default {
   },
   admin: {
     teachersPage: {
-      title: 'Gestión de docentes',
+      title: "Gestión de Docentes",
       subtitle: 'Administra los docentes de My Green Farm.',
       register: 'Registrar docente',
       edit: 'Editar docente',
@@ -821,7 +821,11 @@ export default {
       foro: "Foro",
     },
     curriculums: {
-      title: "Vacantes y Postulaciones",
+      assignVacancyLabel: 'Asignar a una vacante (opcional)',
+      noVacancyOption: 'Sin vacante',
+      assignVacancyHint: 'Si eliges una vacante, quedará ocupada por esta persona y el correo de contratación mencionará ese puesto.',
+      noOpenVacancies: 'No hay vacantes abiertas. Se aprobará sin puesto y el correo usará un mensaje general.',
+      title: "Gestión de Vacantes y Postulaciones",
       subtitle:
         "Publica vacantes y revisa los currículums que llegan para cada una.",
       applicationsTab: "Postulaciones",
@@ -858,7 +862,7 @@ export default {
       deleteErrorToastTitle: "No se pudo eliminar la postulación",
     },
     gallery: {
-      title: "Galería",
+      title: "Gestión de Galería",
       subtitle: "Administra los álbumes de fotos del centro educativo.",
       addAlbum: "Añadir álbum",
       newAlbum: "Nuevo álbum",
@@ -923,7 +927,7 @@ export default {
       photoTag: "Foto",
     },
     servicios: {
-      title: "Planes de Servicio",
+      title: "Gestión de Planes de Servicio",
       subtitle: "Administra los planes de servicio vinculados a OnvoPay.",
       addPlan: "Agregar plan",
       newPlan: "Nuevo plan de servicio",
@@ -958,7 +962,7 @@ export default {
     },
     expedients: {
       noMatches: 'No se encontraron expedientes con ese nombre.',
-      title: "Expedientes Académicos",
+      title: "Gestión de Expedientes Académicos",
       description:
         "Visualiza los expedientes académicos de los niños y niñas matriculados en la institución.",
       searchbutton: "Buscar niño",
@@ -1031,7 +1035,7 @@ export default {
       empty: 'No hay padres de familia registrados.',
       noMatches: 'No se encontraron padres con esa búsqueda.',
 
-      title: "Padres de Familia",
+      title: "Gestión de Padres de Familia",
       description: "Visualiza y administra la información de los padres de familia registrados en la institución.",
       searchPlaceholder: "Buscar padre o madre...",
       addTitle: "Agregar Padre de Familia",
@@ -1080,7 +1084,7 @@ export default {
     },
 
     children: {
-      title: 'Niños',
+      title: "Gestión de Niños",
       description: 'Administra los niños registrados en My Green Farm.',
       searchPlaceholder: 'Buscar niño...',
       addChild: 'Registrar niño',
@@ -1146,7 +1150,7 @@ export default {
     },
 
     availability: {
-      title: "Mi disponibilidad",
+      title: "Gestión de Disponibilidad",
       subtitle: "Configura los días y horarios en los que atiendes.",
       retry: "Reintentar",
       weeklyTitle: "Horario semanal",
@@ -1260,7 +1264,7 @@ export default {
       imageDeleteErrorToastTitle: "Error al eliminar la imagen."
     },
     evaluations: {
-      title: "Evaluaciones",
+      title: "Gestión de Evaluaciones",
       description: "Registra, consulta y administra el progreso de los niños.",
       registerEvaluation: "Registrar evaluación",
       searchPlaceholder: "Buscar evaluación...",

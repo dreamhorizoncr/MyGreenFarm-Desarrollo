@@ -187,7 +187,7 @@ function ClubsPage() {
 
             <section className="flex min-h-[280px] items-start bg-green-500 px-[30px] pt-[48px] pb-[40px] text-center text-white md:min-h-[320px] md:pt-[72px]">
                 <div className="mx-auto w-full max-w-175">
-                    <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
+                    <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-white">
                         {t('clubs.title')}
                     </h1>
                     <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-white md:text-body-sm">
@@ -273,7 +273,7 @@ function ClubsPage() {
                                 </div>
                             </div>
 
-                            <h2 className="mt-xl font-heading text-2xl font-bold leading-snug text-heading md:text-3xl">
+                            <h2 className="mt-xl font-heading text-h3 font-bold leading-snug text-heading">
                                 {t('clubs.comingSoonTitle')}
                             </h2>
 

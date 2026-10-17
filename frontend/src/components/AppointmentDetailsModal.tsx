@@ -89,7 +89,7 @@ function AppointmentDetailsModal({ appointment, onClose }: Readonly<AppointmentD
           <span className="inline-flex rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
             {statusLabel}
           </span>
-          <h2 id="appointment-details-title" className="m-0 mt-sm font-heading text-[30px] font-bold leading-tight text-heading">
+          <h2 id="appointment-details-title" className="m-0 mt-sm font-heading text-h4 font-bold leading-tight text-heading">
             {appointment.childName}
           </h2>
           <p className="m-0 mt-2xs font-body text-body-sm text-neutral-500">{appointmentDate}</p>

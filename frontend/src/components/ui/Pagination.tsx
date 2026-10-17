@@ -27,7 +27,7 @@ function Pagination({ currentPage, totalPages, onPageChange }: Readonly<Paginati
         onClick={() => goToPage(Math.max(currentPage - 1, 1))}
         disabled={currentPage === 1}
         aria-label={t('common.pagination.previous')}
-        className="flex size-[38px] items-center justify-center rounded-full border border-neutral-200 bg-white font-body text-[18px] text-heading transition hover:border-green-500 disabled:cursor-not-allowed disabled:opacity-40"
+        className="flex size-[38px] items-center justify-center rounded-full border border-neutral-200 bg-white font-body text-body-lg text-heading transition hover:border-green-500 disabled:cursor-not-allowed disabled:opacity-40"
       >
         ‹
       </button>
@@ -57,7 +57,7 @@ function Pagination({ currentPage, totalPages, onPageChange }: Readonly<Paginati
         onClick={() => goToPage(Math.min(currentPage + 1, totalPages))}
         disabled={currentPage === totalPages}
         aria-label={t('common.pagination.next')}
-        className="flex size-[38px] items-center justify-center rounded-full border border-neutral-200 bg-white font-body text-[18px] text-heading transition hover:border-green-500 disabled:cursor-not-allowed disabled:opacity-40"
+        className="flex size-[38px] items-center justify-center rounded-full border border-neutral-200 bg-white font-body text-body-lg text-heading transition hover:border-green-500 disabled:cursor-not-allowed disabled:opacity-40"
       >
         ›
       </button>

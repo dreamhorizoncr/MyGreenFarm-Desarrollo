@@ -204,7 +204,7 @@ function AdminNewsletterPage() {
                             onClick={() => setIsSendMenuOpen((prev) => !prev)}
                             aria-expanded={isSendMenuOpen}
                             aria-haspopup="menu"
-                            className="inline-flex h-[44px] items-center gap-xs whitespace-nowrap rounded-full border bg-orange-500 hover:bg-orange-600 px-md font-body text-[15px] font-semibold text-white transition-colors"
+                            className="inline-flex h-[44px] items-center gap-xs whitespace-nowrap rounded-full border bg-orange-500 hover:bg-orange-600 px-md font-body text-body-sm font-semibold text-white transition-colors"
                         >
                             <SendIcon size={18} aria-hidden="true" />
                             <span>{t('admin.newsletter.sendBroadcast')}</span>
@@ -309,7 +309,7 @@ function AdminNewsletterPage() {
                         className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${broadcastClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
                     >
                             <div className="flex items-center justify-between gap-md">
-                                <h2 id="newsletter-broadcast-title" className="m-0 font-heading text-2xl font-bold text-heading">
+                                <h2 id="newsletter-broadcast-title" className="m-0 font-heading text-h4 font-bold text-heading">
                                     {broadcastModalTitle}
                                 </h2>
 

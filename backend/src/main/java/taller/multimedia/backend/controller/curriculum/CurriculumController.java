@@ -57,8 +57,9 @@ public class CurriculumController {
     public ResponseEntity<ApplicationResponse> setStatus(
             @PathVariable UUID id,
             @RequestParam CurriculumStatus status,
-            @RequestParam(required = false, defaultValue = "es") String lang) {
-        return ResponseEntity.ok(curriculumService.setStatus(id, status, lang));
+            @RequestParam(required = false, defaultValue = "es") String lang,
+            @RequestParam(required = false) UUID vacancyId) {
+        return ResponseEntity.ok(curriculumService.setStatus(id, status, lang, vacancyId));
     }
 
     @DeleteMapping("/{id}")

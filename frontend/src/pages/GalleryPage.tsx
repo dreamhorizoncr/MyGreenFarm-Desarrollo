@@ -51,7 +51,7 @@ function GalleryPage() {
 
       <section className="flex min-h-[280px] items-start bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
         <div className="mx-auto w-full max-w-[700px]">
-          <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-green-500 md:text-h1">
+          <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">
             {t('home.galeria.title')}
           </h1>
 
@@ -103,7 +103,7 @@ function GalleryPage() {
 
             <div className="h-1 w-12 rounded-full bg-orange-500" aria-hidden="true" />
 
-            <p className="max-w-[25rem] font-body text-body-sm font-normal text-white">
+            <p className="max-w-[25rem] font-body text-body font-normal text-white">
               {t('home.galeria.description')}
             </p>
           </Container>

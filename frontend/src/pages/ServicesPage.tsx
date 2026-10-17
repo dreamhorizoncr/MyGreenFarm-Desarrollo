@@ -325,7 +325,7 @@ function ServicesPage() {
 
       <section className="flex min-h-[280px] items-start bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
         <div className="mx-auto w-full max-w-[700px]">
-          <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-green-500 md:text-h1">
+          <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">
             {t('services.title')}
           </h1>
           <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">

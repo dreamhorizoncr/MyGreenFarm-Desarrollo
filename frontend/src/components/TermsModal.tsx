@@ -66,7 +66,7 @@ function TermsModal({ onClose }: Readonly<TermsModalProps>) {
         />
 
         <div className="relative mb-lg text-center">
-          <h2 className="m-0 font-heading text-[28px] font-bold leading-tight text-heading">
+          <h2 className="m-0 font-heading text-h4 font-bold leading-tight text-heading">
             {t('legalModal.title')}
           </h2>
         </div>

@@ -114,7 +114,7 @@ function AlbumDetailPage() {
 
           {album && (
             <header className="mx-auto mt-[32px] max-w-[760px] text-center">
-              <h1 className="mt-0 font-heading text-[30px] font-bold leading-tight text-green-500 md:text-h1">
+              <h1 className="mt-0 font-heading text-h1 font-bold leading-tight text-green-500">
                 {album.title}
               </h1>
 

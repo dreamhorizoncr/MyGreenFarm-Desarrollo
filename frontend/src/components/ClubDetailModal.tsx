@@ -56,7 +56,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                 />
 
                 <header className="mx-auto max-w-[850px] text-center">
-                    <h2 className="mt-[16px] font-heading text-[32px] font-bold leading-[1.15] text-heading md:text-h1">
+                    <h2 className="mt-[16px] font-heading text-h2 font-bold leading-[1.15] text-heading">
                         {club.name}
                     </h2>
                     <div className="mt-[16px] flex flex-wrap items-center justify-center gap-x-[18px] gap-y-[8px] font-body text-body-sm text-neutral-500">
@@ -95,7 +95,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
 
                 {galleryImages.length > 0 && (
                     <section className="mt-[60px]">
-                        <h3 className="mb-[18px] font-heading text-[26px] font-bold text-heading">
+                        <h3 className="mb-[18px] font-heading text-h4 font-bold text-heading">
                             {t('clubs.gallery')}
                         </h3>
                         <div className={`grid gap-[12px] ${galleryGridColumns}`}>

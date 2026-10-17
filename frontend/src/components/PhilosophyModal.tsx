@@ -88,7 +88,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
 
         <div className="p-[22px_22px_30px] md:p-[26px_28px_32px]">
           <div className="relative mb-lg text-center">
-            <h2 className="m-0 font-heading text-[30px] font-bold leading-tight text-heading">
+            <h2 className="m-0 font-heading text-h4 font-bold leading-tight text-heading">
               {t('home.philosophy.title')}
             </h2>
             <div className="mx-auto mt-xs h-1 w-12 rounded-full bg-[var(--pink-400)]" aria-hidden="true" />

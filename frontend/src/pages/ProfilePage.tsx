@@ -72,7 +72,7 @@ function ProfilePage() {
             <div>
               <label
                 htmlFor="profile-firstname"
-                className="mb-xs block font-body text-body-sm font-medium text-body-text"
+                className="mb-xs block font-body text-body-sm font-semibold text-heading"
               >
                 {t('profile.firstName')}
               </label>
@@ -82,7 +82,7 @@ function ProfilePage() {
             <div>
               <label
                 htmlFor="profile-lastname"
-                className="mb-xs block font-body text-body-sm font-medium text-body-text"
+                className="mb-xs block font-body text-body-sm font-semibold text-heading"
               >
                 {t('profile.lastName')}
               </label>
@@ -92,7 +92,7 @@ function ProfilePage() {
             <div>
               <label
                 htmlFor="profile-email"
-                className="mb-xs block font-body text-body-sm font-medium text-body-text"
+                className="mb-xs block font-body text-body-sm font-semibold text-heading"
               >
                 {t('profile.email')}
               </label>
@@ -102,7 +102,7 @@ function ProfilePage() {
             <div>
               <label
                 htmlFor="profile-role"
-                className="mb-xs block font-body text-body-sm font-medium text-body-text"
+                className="mb-xs block font-body text-body-sm font-semibold text-heading"
               >
                 {t('profile.role')}
               </label>

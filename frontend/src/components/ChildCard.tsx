@@ -31,7 +31,7 @@ function ChildCard({ child, onEdit, onDelete, loading = false }: Readonly<ChildC
             </>
           ) : (
             <>
-              <h2 className="font-heading text-xl font-bold text-heading">
+              <h2 className="font-heading text-h5 font-bold text-heading">
                 {fullName}
               </h2>
 

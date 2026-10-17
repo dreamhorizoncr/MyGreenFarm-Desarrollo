@@ -83,7 +83,7 @@ function TeacherCard({
           </div>
         ) : (
           <div className="min-w-0">
-            <h3 className="m-0 break-words font-heading text-lg font-bold leading-snug text-heading">
+            <h3 className="m-0 break-words font-heading text-h5 font-bold leading-snug text-heading">
               {user!.firstName} {user!.lastName}
             </h3>
 

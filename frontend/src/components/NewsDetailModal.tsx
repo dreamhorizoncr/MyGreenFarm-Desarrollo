@@ -109,7 +109,7 @@ function NewsDetailModal({
             <span className="inline-flex rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
                     {typeLabel}
             </span>
-            <h2 className="mt-[16px] font-heading text-[32px] font-bold leading-[1.15] text-heading md:text-h1">
+            <h2 className="mt-[16px] font-heading text-h2 font-bold leading-[1.15] text-heading">
                 {announcement.title}
             </h2>
             <div className="mt-[16px] flex flex-wrap items-center justify-center gap-x-[18px] gap-y-[8px] font-body text-body-sm text-neutral-500">
@@ -182,7 +182,7 @@ function NewsDetailModal({
                 {!loading && galleryImages.length > 0 && (
                     <section className="mt-[60px]">
 
-                <h3 className="mb-[18px] font-heading text-[26px] font-bold text-heading">
+                <h3 className="mb-[18px] font-heading text-h4 font-bold text-heading">
                     {t("newspage.gallery")}
                 </h3>
 

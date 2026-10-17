@@ -68,7 +68,7 @@ function ResetPasswordPage() {
 
   return (
     <AuthLayout overtitle={t('resetPassword.overtitle')} closeTo={isAuthenticated ? '/profile' : '/login'}>
-      <h2 className="mb-[50px] text-left font-heading text-[28px] leading-none text-heading md:text-h1">
+      <h2 className="mb-[50px] text-left font-heading text-h1 leading-none text-heading">
         {t('resetPassword.title')}
       </h2>
 

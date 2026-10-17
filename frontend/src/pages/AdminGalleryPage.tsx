@@ -87,7 +87,7 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading =
 			</div>
 
 			<div className="overflow-hidden px-lg pb-lg text-left">
-				<h3 className="m-0 line-clamp-2 min-h-[2.8em] font-heading text-h5 font-bold text-heading">
+				<h3 className="m-0 line-clamp-2 min-h-[2.8em] font-heading text-h4 font-bold text-heading">
 					{gallery!.title}
 				</h3>
 				<p className="-mt-sm line-clamp-5 min-h-[7.5em] font-body text-body-sm font-normal leading-[1.5] text-body-text-dark">
@@ -502,7 +502,7 @@ function AdminGalleryPage() {
 
 					<form onSubmit={handleSubmit} className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}>
 					<div className="flex items-center justify-between gap-md">
-						<h2 className="m-0 font-heading text-2xl font-bold text-heading">
+						<h2 className="m-0 font-heading text-h4 font-bold text-heading">
 							{editing ? t('admin.gallery.editAlbum') : t('admin.gallery.newAlbum')}
 						</h2>
 						<ModalCloseButton
@@ -642,7 +642,7 @@ function AdminGalleryPage() {
 			)}
 
 			<section className="mt-xl border-t border-neutral-200 pt-xl">
-				<h2 className="font-heading text-2xl font-bold text-heading">
+				<h2 className="font-heading text-h4 font-bold text-heading">
 					{t('admin.gallery.albumsSection')}
 				</h2>
 

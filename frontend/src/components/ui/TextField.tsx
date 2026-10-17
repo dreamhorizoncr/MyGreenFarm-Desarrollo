@@ -11,7 +11,7 @@ function TextField({ label, error, id, children, ...rest }: Readonly<TextFieldPr
     <div>
       <label
         htmlFor={id}
-        className="mb-[4px] block text-left font-body text-body text-body-text"
+        className="mb-[4px] block text-left font-body text-body-sm font-semibold text-heading"
       >
         {label}
       </label>

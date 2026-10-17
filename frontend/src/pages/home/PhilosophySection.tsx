@@ -36,7 +36,7 @@ function PhilosophySection() {
 
               <div className="h-1 w-12 rounded-full bg-[var(--pink-400)]" aria-hidden="true" />
 
-              <p className="line-clamp-4 font-body text-body-sm font-normal text-body-text">
+              <p className="line-clamp-4 font-body text-body font-normal text-body-text">
                 {t('home.philosophy.description')}
               </p>
 
@@ -48,7 +48,7 @@ function PhilosophySection() {
                       className="mt-1 shrink-0 text-[var(--pink-400)] [&_svg]:fill-current"
                       aria-hidden="true"
                     />
-                    <span className="font-body text-body-sm font-normal text-body-text">
+                    <span className="font-body text-body font-normal text-body-text">
                       {item}
                     </span>
                   </li>
@@ -57,7 +57,7 @@ function PhilosophySection() {
 
               <BlobButton
                 onClick={() => setIsModalOpen(true)}
-                className="h-11 w-fit px-lg font-body text-caption uppercase"
+                className="h-11 w-fit px-lg font-body text-button font-bold"
               >
                 {t('home.philosophy.cta')}
               </BlobButton>

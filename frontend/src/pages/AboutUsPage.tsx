@@ -92,11 +92,11 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
                 className="flex min-h-[280px] items-center bg-green-500 px-[30px] py-[40px] text-center text-white xs:min-h-[320px]"
             >
                 <div className="mx-auto w-full max-w-[700px]">
-                <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
+                <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-white">
                     {t('aboutUsPage.hero.title')}
                 </h1>
 
-                <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-sm leading-[1.6] text-white">
+                <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body leading-[1.6] text-white">
                     {t('aboutUsPage.hero.description')}
                 </p>
                 </div>
@@ -112,7 +112,7 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
                     {t('aboutUsPage.team.title')}
                     </h2>
 
-                    <p className="m-0 max-w-[48rem] font-body text-body-sm leading-[1.6] text-body-text">
+                    <p className="m-0 max-w-[48rem] font-body text-body leading-[1.6] text-body-text">
                     {t('aboutUsPage.team.description')}
                     </p>
                 </div>

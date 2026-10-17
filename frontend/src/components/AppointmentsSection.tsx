@@ -95,7 +95,7 @@ function AppointmentCard({
         </div>
       </header>
 
-      <h3 className="m-0 mt-sm font-heading text-lg font-bold leading-snug text-heading">
+      <h3 className="m-0 mt-sm font-heading text-h5 font-bold leading-snug text-heading">
         {appointment!.childName}
       </h3>
       <p className="m-0 font-body text-body-sm text-neutral-500">
@@ -275,7 +275,7 @@ function AppointmentsSection() {
           <CalendarPanel value={selectedDate} onChange={setSelectedDate} markedDates={specialScheduleDates} />
 
           <div className="flex flex-col gap-md">
-            <h2 className="m-0 font-heading text-xl font-bold text-heading">
+            <h2 className="m-0 font-heading text-h4 font-bold text-heading">
               {t('teacherAppointments.calendar.appointmentsForDay')}: <span className="text-green-600">{selectedDate?.toString()}</span>
             </h2>
 

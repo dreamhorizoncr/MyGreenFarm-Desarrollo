@@ -587,7 +587,7 @@ function BookingPage() {
         error={fullNameErrorMessage}
       />
       <div className="flex flex-col gap-sm">
-        <label className="mb-[4px] block text-left font-body text-body text-body-text">
+        <label className="mb-[4px] block text-left font-body text-body-sm font-semibold text-heading">
           {t('booking.idType')}
         </label>
         <div className="flex flex-wrap gap-sm">
@@ -758,7 +758,7 @@ function BookingPage() {
               >
                 <ArrowLeftIcon size={30} aria-hidden="true" />
               </button>
-              <h2 className="m-0 text-left font-heading text-[28px] leading-none text-heading md:text-[36px]">
+              <h2 className="m-0 text-left font-heading text-h1 leading-none text-heading">
                 {t('booking.title')}
               </h2>
             </div>

@@ -55,7 +55,7 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
             aria-expanded={isExpanded}
           >
             <div className="min-w-0 flex-1">
-              <h3 className="m-0 font-heading text-lg font-bold leading-snug text-heading">
+              <h3 className="m-0 font-heading text-h5 font-bold leading-snug text-heading">
                 {application!.applicantName}
               </h3>
               <p className="m-0 mt-2xs wrap-break-word font-body text-body-sm text-neutral-500">
