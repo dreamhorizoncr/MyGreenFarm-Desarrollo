@@ -17,10 +17,13 @@ export function useServicePlanAdmin() {
     setLoading(true)
     setError(null)
     try {
-      const [dbPlans, rawPlans] = await Promise.all([
+      const [dbPlansRes, rawPlans] = await Promise.all([
         servicePlanService.getAllPlans(),
         servicePlanService.getOnvoRawPlans(),
       ])
+
+      const dbPlans = Array.isArray(dbPlansRes) ? dbPlansRes : dbPlansRes.content
+
       setSourcePlans(dbPlans)
       setOnvoPlans(rawPlans)
 

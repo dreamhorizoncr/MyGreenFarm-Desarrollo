@@ -9,11 +9,12 @@ import Pagination from "../components/ui/Pagination.tsx";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 
 import { parentService } from "../services/parent";
-import { notify, notifyError } from "../utils/notifications";
+import { notify } from "../utils/notifications";
 import { useParents } from "../hooks/useParents";
 
 import type { Parent } from "../types/parent";
 import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
+import SkeletonList from "../components/ui/SkeletonList.tsx";
 
 function AdminParentsPage() {
     const { parents, loading, error, totalPages, fetchParents } = useParents();
@@ -105,8 +106,7 @@ function AdminParentsPage() {
                 {/* Loading */}
                 {loading && (
                     <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                        <ParentCard loading />
-                        <ParentCard loading />
+                        <SkeletonList count={skeletonCount}>{() => <ParentCard loading />}</SkeletonList>
                     </div>
                 )}
 
@@ -136,7 +136,6 @@ function AdminParentsPage() {
                     </>
                 )}
 
-                {/* No hay padres registrados */}
                 {!loading && !error && parents.length === 0 && searchTerm === "" && (
                     <div className="mt-12 rounded-2xl border border-dashed border-neutral-200 bg-white px-6 py-16 text-center">
                         <p className="font-body text-body text-body-text">
@@ -145,7 +144,7 @@ function AdminParentsPage() {
                     </div>
                 )}
 
-                {/* Búsqueda sin resultados */}
+
                 {!loading &&
                     !error &&
                     parents.length > 0 &&
