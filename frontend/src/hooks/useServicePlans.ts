@@ -68,7 +68,6 @@ export function useServicePlans() {
         processedPlans = rawPlans
       }
 
-      // 💡 Guardamos en caché
       cacheRef.current.set(cacheKey, {
         plans: processedPlans,
         totalPages: calculatedTotalPages,
