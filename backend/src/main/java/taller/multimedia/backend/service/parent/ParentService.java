@@ -34,7 +34,7 @@ public class ParentService {
         parent.setFirstName(Sanitizer.requireClean("firstName", dto.getFirstName()));
         parent.setLastName(Sanitizer.requireClean("lastName", dto.getLastName()));
         parent.setLanguage(resolverLangCode(dto.getLanguage()));
-        parent.setIsActive(true);
+        parent.setIsActive(dto.getIsActive() != null ? dto.getIsActive() : true);
 
         return parentRepository.save(parent);
     }
@@ -121,6 +121,10 @@ public class ParentService {
         existingParent.setLastName(Sanitizer.requireClean("lastName", dto.getLastName()));
 
         existingParent.setLanguage(resolverLangCode(dto.getLanguage()));
+
+        if (dto.getIsActive() != null) {
+            existingParent.setIsActive(dto.getIsActive());
+        }
 
         return parentRepository.save(existingParent);
     }

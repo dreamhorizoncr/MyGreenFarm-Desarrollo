@@ -2,6 +2,7 @@ package taller.multimedia.backend.dto.evaluation;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ public class EvaluationRequest {
     private UUID expedientId;
 
     @NotNull(message = "La fecha de evaluación es obligatoria")
+    @PastOrPresent(message = "La fecha de evaluación no puede ser una fecha futura")
     private LocalDate evaluationDate;
 
     @NotBlank(message = "El progreso de comunicación es obligatorio")

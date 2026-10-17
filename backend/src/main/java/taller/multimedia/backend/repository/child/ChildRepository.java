@@ -26,4 +26,7 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
     List<Child> findAllWithoutExpedient();
     
     Optional<Child> findByStudentId(String studentId);
+
+    @Query("SELECT c FROM Child c WHERE c.isActive = true AND c.studentId NOT IN (SELECT e.child.studentId FROM Expedient e)")
+    List<Child> findAvailableChildrenForExpedient();
 }

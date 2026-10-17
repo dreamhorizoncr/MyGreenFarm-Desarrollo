@@ -91,7 +91,6 @@ function App() {
             <Route path="/admin/clubs" element={<OwnerClubsPage />} />
             <Route path="/admin/parents" element={<AdminParentsPage />} />
             <Route path="/admin/children" element={<AdminChildrenPage />} />
-            <Route path="/admin/evaluations" element={<AdminEvaluationsPage />} />
           <Route element={<OwnerRoute />}>
             <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />
             <Route path="/admin/disponibilidad" element={<OwnerAvailabilityPage />} />
@@ -100,6 +99,7 @@ function App() {
         </Route>
         <Route element={<ExpedientsRoute />}>
           <Route path="/admin/expedients" element={<AdminExpedientsPage />} />
+          <Route path="/admin/evaluations" element={<AdminEvaluationsPage />} />
         </Route>
         <Route path="/" element={<HomePage />} />
         <Route path="/booking" element={<BookingPage />} />

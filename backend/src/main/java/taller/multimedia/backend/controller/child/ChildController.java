@@ -1,16 +1,20 @@
 package taller.multimedia.backend.controller.child;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import taller.multimedia.backend.dto.child.ChildOptionResponse;
@@ -18,6 +22,7 @@ import taller.multimedia.backend.dto.child.ChildRequest;
 import taller.multimedia.backend.dto.child.ChildResponse;
 import taller.multimedia.backend.service.child.ChildService;
 
+@Validated
 @RestController
 @RequestMapping("/api/child")
 @RequiredArgsConstructor
@@ -37,6 +42,13 @@ public class ChildController {
     public ResponseEntity<Page<ChildResponse>> getAll(
             @PageableDefault(size = 10, sort = "firstName") Pageable pageable) {
         return ResponseEntity.ok(childService.getAll(pageable));
+    }
+
+    @GetMapping("/available-for-expedient")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
+    public ResponseEntity<List<ChildResponse>> getAvailableChildrenForExpedient() {
+        List<ChildResponse> children = childService.getAvailableChildrenForExpedient();
+        return ResponseEntity.ok(children);
     }
 
     @GetMapping("/parent/{parentId}")

@@ -25,7 +25,6 @@ import taller.multimedia.backend.dto.appointment.AvailableDayResponse;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
 import taller.multimedia.backend.service.appointment.AppointmentService;
-import taller.multimedia.backend.service.appointment.GoogleCalendarService;
 import taller.multimedia.backend.service.appointment.ScheduleConfigService;
 
 @RestController

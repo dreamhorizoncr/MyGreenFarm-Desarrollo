@@ -46,6 +46,16 @@ public class ExpedientService {
                     + child.getFirstName() + " " + child.getLastName());
         }
 
+        if (!Boolean.TRUE.equals(child.getIsActive())) {
+            throw new IllegalStateException("No se puede registrar un expediente para el estudiante '" 
+                    + child.getFirstName() + " " + child.getLastName() + "' porque se encuentra inactivo.");
+        }
+
+        if (expedientRepository.existsByChildStudentId(child.getStudentId())) {
+        throw new IllegalStateException("Ya existe un expediente registrado para el niño: "
+                + child.getFirstName() + " " + child.getLastName());
+    }
+
         String generalObservations = request.getGeneralObservations() == null
                 ? null
                 : Sanitizer.requireClean("generalObservations", request.getGeneralObservations());
@@ -119,6 +129,10 @@ public class ExpedientService {
                 Child newChild = childRepository.findByStudentId(newStudentId)
                         .orElseThrow(() -> new EntityNotFoundException(
                                 "Niño no encontrado con el carné/studentId: " + newStudentId));
+
+                if (!Boolean.TRUE.equals(newChild.getIsActive())) {
+                    throw new IllegalStateException("El estudiante seleccionado se encuentra inactivo.");
+                }
 
                 if (expedientRepository.existsByChildStudentId(newChild.getStudentId())) {
                     throw new IllegalStateException("Ya existe otro expediente registrado para el niño especificado.");

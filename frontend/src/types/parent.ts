@@ -20,6 +20,7 @@ export interface ParentRequest {
     address: string;
     firstName: string;
     lastName: string;
+    isActive: boolean;
     language: ParentLanguage;
 } 
 

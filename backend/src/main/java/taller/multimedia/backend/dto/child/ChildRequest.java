@@ -38,5 +38,7 @@ public class ChildRequest {
 
     private String medicalNotes;
 
+    private Boolean isActive = true;
+
     private Set<Long> clubIds;
 }
