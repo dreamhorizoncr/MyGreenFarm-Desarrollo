@@ -14,4 +14,9 @@ public class AppointmentExceptionHandler {
     public ResponseEntity<MessageResponse> handleInvalidField(InvalidFieldException exception) {
         return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<MessageResponse> handleIllegalArgument(IllegalArgumentException exception) {
+        return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
+    }
 }

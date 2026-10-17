@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { formatSchedule } from '../utils/schedule.ts'
 import { CircleCheckIcon, ClockIcon, PlusIcon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
@@ -17,6 +18,8 @@ import { convertCurrency, currencySymbol, formatCurrency } from '../utils/curren
 import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
 import CardActionButton from '../components/ui/CardActionButton.tsx'
 import CurrencyToggle from '../components/currency/CurrencyToggle.tsx'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 interface AdminPlanCardProps {
   plan?: ServicePlan
@@ -37,25 +40,21 @@ function AdminPlanCard({
   language,
   loading = false,
 }: Readonly<AdminPlanCardProps>) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
-  // 1. Obtener y limpiar la moneda base del plan de forma segura
   const getCleanCurrency = (curr?: string): Currency => {
     const upper = curr?.toUpperCase()
     return ['CRC', 'USD', 'EUR'].includes(upper ?? '') ? (upper as Currency) : 'CRC'
   }
 
-  // 2. Estado local inicial sincronizado con la moneda del plan
   const [currency, setCurrency] = useState<Currency>(() => getCleanCurrency(plan?.currency))
 
-  // 3. Forzar actualización si el plan cambia o termina de cargar con retraso
   useEffect(() => {
     if (plan?.currency) {
       setCurrency(getCleanCurrency(plan.currency))
     }
   }, [plan?.currency])
 
-  // 4. Calcular el precio usando la moneda real del plan
   const baseCurrency = getCleanCurrency(plan?.currency)
   const price = plan && exchangeRate
     ? convertCurrency(plan.price, baseCurrency, currency, 'buy', exchangeRate)
@@ -127,7 +126,7 @@ function AdminPlanCard({
                 <ClockIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
                 <span className="font-semibold text-neutral-600">{t('admin.servicios.scheduleLabel')}</span>
               </div>
-              <p className="m-0 mt-2xs px-1 py-2xs text-left text-body-sm">{plan!.schedule}</p>
+              <p className="m-0 mt-2xs whitespace-pre-line px-1 py-2xs text-left text-body-sm">{formatSchedule(plan!.schedule, t, i18n.resolvedLanguage ?? i18n.language)}</p>
             </div>
           )}
 
@@ -164,7 +163,6 @@ function AdminServicePlansPage() {
     void fetchAll(i18n.language)
   }, [fetchAll, i18n.language])
 
-  // El modal siempre edita el texto original, aunque la card muestre traducido
   const getSourcePlan = (id: string) => sourcePlans.find(p => p.id === id) ?? plans.find(p => p.id === id) ?? null
 
   const handleDelete = async (id: string) => {
@@ -189,6 +187,8 @@ function AdminServicePlansPage() {
   console.log('onvoPlans actuales:', onvoPlans);
 console.log('existingPlans actuales:', plans);
 console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
+  const skeletonCount = useSkeletonCount('admin-service-plans', loading, pagedPlans.length, 3)
+
   return (
     <AdminLayout>
       <div className="flex flex-col gap-lg">
@@ -214,9 +214,7 @@ console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
 
         {loading && (
           <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 lg:grid-cols-3">
-            <AdminPlanCard loading />
-            <AdminPlanCard loading />
-            <AdminPlanCard loading />
+            <SkeletonList count={skeletonCount}>{() => <AdminPlanCard loading />}</SkeletonList>
           </div>
         )}
 

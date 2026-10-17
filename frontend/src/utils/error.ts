@@ -4,7 +4,6 @@ import i18n from '../i18n/index.ts'
 const CALENDAR_AVAILABILITY_MESSAGE = 'No se pudo cargar la disponibilidad en este momento'
 const MAX_FEATURED_MESSAGE = 'Ya existen 3 galerías destacadas. Debes desmarcar una antes de destacar otra.'
 
-// Handle stable API error codes before generic messages.
 function messageFromCode(data: object): string | undefined {
   const code = 'code' in data ? data.code : undefined
   switch (code) {

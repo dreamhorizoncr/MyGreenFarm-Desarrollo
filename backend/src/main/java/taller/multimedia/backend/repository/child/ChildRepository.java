@@ -17,7 +17,6 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
 
     Page<Child> findByParentId(Long parentId, Pageable pageable);
 
-    // Búsqueda en lista simple por el ID del encargado/padre
     List<Child> findByParentId(Long parentId);
 
     @Query("SELECT c.studentId FROM Child c WHERE c.studentId LIKE :prefix ORDER BY c.studentId DESC LIMIT 1")

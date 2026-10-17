@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react'
+import { parseSchedule } from '../utils/schedule.ts'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { ServicePlan, OnvoRawPlan } from '../types/servicePlan.ts'
@@ -9,7 +10,7 @@ export function useServicePlanAdmin() {
   const [plans, setPlans] = useState<ServicePlan[]>([])
   const [sourcePlans, setSourcePlans] = useState<ServicePlan[]>([])
   const [onvoPlans, setOnvoPlans] = useState<OnvoRawPlan[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const fetchAll = useCallback(async (lang?: string) => {
@@ -23,13 +24,11 @@ export function useServicePlanAdmin() {
       setSourcePlans(dbPlans)
       setOnvoPlans(rawPlans)
 
-      // Traducción dinámica como en el catálogo público (foro/services).
-      // Las cards visibles muestran traducido; el modal edita el original (sourcePlans).
       const targetLang = lang?.split('-')[0]
       const items = dbPlans.flatMap((plan) => [
         ...(plan.name ? [{ entityId: plan.id, fieldName: 'name', originalText: plan.name }] : []),
         ...(plan.description ? [{ entityId: plan.id, fieldName: 'description', originalText: plan.description }] : []),
-        ...(plan.schedule ? [{ entityId: plan.id, fieldName: 'schedule', originalText: plan.schedule }] : []),
+        ...(plan.schedule && !parseSchedule(plan.schedule) ? [{ entityId: plan.id, fieldName: 'schedule', originalText: plan.schedule }] : []),
         ...(plan.includes ? [{ entityId: plan.id, fieldName: 'includes', originalText: plan.includes }] : []),
       ])
       if (targetLang && items.length > 0) {
@@ -45,7 +44,6 @@ export function useServicePlanAdmin() {
             })),
           )
         } catch {
-          // Si falla la traducción se muestra el original
           setPlans(dbPlans)
         }
       } else {

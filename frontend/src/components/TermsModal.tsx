@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { FileTextIcon, LockIcon } from '@animateicons/react/lucide'
 import TermsSection from './TermsSection.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
+import TabHighlight from './ui/TabHighlight.tsx'
 
 type LegalTab = 'terms' | 'privacy'
 
@@ -15,6 +17,7 @@ function TermsModal({ onClose }: Readonly<TermsModalProps>) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
   const [activeTab, setActiveTab] = useState<LegalTab>('terms')
 
   useEffect(() => {
@@ -44,20 +47,14 @@ function TermsModal({ onClose }: Readonly<TermsModalProps>) {
   ]
 
   const tabClassName = (tab: LegalTab) =>
-    `inline-flex h-11 flex-1 items-center justify-center gap-xs rounded-full px-lg font-body text-body-sm font-semibold transition-colors ${
-      activeTab === tab ? 'bg-orange-500 text-white' : 'bg-(--grey-100) text-body-text hover:bg-(--grey-200)'
+    `relative inline-flex h-11 flex-1 items-center justify-center gap-xs rounded-full px-lg font-body text-body-sm font-semibold transition-colors duration-300 ${
+      activeTab === tab ? 'text-white' : 'bg-(--grey-100) text-body-text hover:bg-(--grey-200)'
     }`
 
   return (
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') requestClose()
-      }}
       aria-label={t('legalModal.title')}
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(680px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
@@ -69,13 +66,13 @@ function TermsModal({ onClose }: Readonly<TermsModalProps>) {
         />
 
         <div className="relative mb-lg text-center">
-          <h2 className="m-0 font-heading text-[28px] font-bold leading-tight text-heading">
+          <h2 className="m-0 font-heading text-h4 font-bold leading-tight text-heading">
             {t('legalModal.title')}
           </h2>
         </div>
 
         <div className="flex flex-col gap-lg px-2 pb-4 pt-2.5 text-left md:px-5">
-          <div className="flex gap-sm" role="tablist">
+          <div className="isolate flex gap-sm" role="tablist">
             <button
               type="button"
               role="tab"
@@ -83,6 +80,7 @@ function TermsModal({ onClose }: Readonly<TermsModalProps>) {
               onClick={() => setActiveTab('terms')}
               className={tabClassName('terms')}
             >
+              {activeTab === 'terms' && <TabHighlight layoutId="legal-tab" />}
               <FileTextIcon size={16} aria-hidden="true" />
               {t('legalModal.tabTerms')}
             </button>
@@ -93,6 +91,7 @@ function TermsModal({ onClose }: Readonly<TermsModalProps>) {
               onClick={() => setActiveTab('privacy')}
               className={tabClassName('privacy')}
             >
+              {activeTab === 'privacy' && <TabHighlight layoutId="legal-tab" />}
               <LockIcon size={16} aria-hidden="true" />
               {t('legalModal.tabPrivacy')}
             </button>

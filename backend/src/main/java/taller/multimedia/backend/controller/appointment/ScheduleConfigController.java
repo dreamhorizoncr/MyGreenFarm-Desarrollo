@@ -21,7 +21,6 @@ public class ScheduleConfigController {
     @Autowired
     private ScheduleConfigService scheduleService;
 
-    // Obtiene los slots disponibles para una fecha que consulta un cliente
     @GetMapping("/slots")
     public ResponseEntity<List<LocalTime>> getSlots(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -29,7 +28,6 @@ public class ScheduleConfigController {
         return ResponseEntity.ok(slots);
     }
 
-    // Guarda o actualiza regla de un día de la semana
     @PostMapping("/weekly")
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<WeeklySchedule> saveWeekly(@RequestBody WeeklySchedule schedule) {
@@ -37,8 +35,6 @@ public class ScheduleConfigController {
         return ResponseEntity.ok(saved);
     }
 
-    // Crea una excepción (ej: cerrar un día específico o cambiar hora por
-    // imprevisto)
     @PostMapping("/exceptions")
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<ScheduleException> saveException(@RequestBody ScheduleException exception) {
@@ -74,11 +70,9 @@ public class ScheduleConfigController {
         for (int i = 0; i < 7; i++) {
             LocalDate currentDay = startDate.plusDays(i);
 
-            // Si es hoy, pasado o fin de semana, devolvemos lista vacía
             if (!currentDay.isAfter(today) || currentDay.getDayOfWeek().getValue() >= 6) {
                 weekSlots.put(currentDay.toString(), List.of());
             } else {
-                // Reutilizamos tu método existente para calcular los slots del día
                 List<LocalTime> slotsForDay = scheduleService.getAvailableSlotsForDate(currentDay);
                 weekSlots.put(currentDay.toString(), slotsForDay);
             }

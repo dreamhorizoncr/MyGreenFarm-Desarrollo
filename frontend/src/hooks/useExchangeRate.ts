@@ -29,7 +29,6 @@ export function useExchangeRate(): UseExchangeRateResult {
   useEffect(() => {
     void reload()
 
-    // Mantiene la tasa sincronizada con las actualizaciones periódicas del backend.
     const interval = window.setInterval(() => {
       if (document.visibilityState === 'visible') void reload()
     }, 5 * 60 * 1000)

@@ -13,6 +13,7 @@ import { notify } from "../utils/notifications";
 import { useParents } from "../hooks/useParents";
 
 import type { Parent } from "../types/parent";
+import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
 function AdminParentsPage() {
     const { parents, loading, error, totalPages, fetchParents } = useParents();
@@ -56,6 +57,8 @@ function AdminParentsPage() {
             throw error;
         }
     };
+
+    const skeletonCount = useSkeletonCount("admin-parents", loading, filteredParents.length, 2);
 
     return (
         <AdminLayout>

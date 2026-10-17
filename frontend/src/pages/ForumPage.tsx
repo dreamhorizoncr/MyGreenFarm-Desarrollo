@@ -12,6 +12,8 @@ import type { ForumTab } from '../components/forum/ForumTabs.tsx'
 import PublishExperienceModal from '../components/forum/PublishExperienceModal.tsx'
 import PublishButtonCard from '../components/forum/PublishButtonCard.tsx'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 function ForumPage() {
   const { t } = useTranslation()
@@ -52,13 +54,17 @@ function ForumPage() {
     setSearchParams(tab === 'community' ? { tab } : {})
   }
 
+  const blogSkeletonCount = useSkeletonCount('forum-blog', isLoading, filteredBlogPosts.length, 3)
+
+  const communitySkeletonCount = useSkeletonCount('forum-community', isLoading, communityPosts.length, 3)
+
   return (
     <div id="forum-page" className="min-h-screen bg-bg-page">
       <Navbar />
 
       <section data-scroll-bg="green" className="flex min-h-[280px] items-start bg-green-500 px-[30px] pt-[48px] pb-[40px] text-center text-white md:min-h-[320px] md:pt-[72px]">
         <div className="mx-auto w-full max-w-[700px]">
-          <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
+          <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-white">
             {t('forum.title')}
           </h1>
 
@@ -86,14 +92,14 @@ function ForumPage() {
                     className="h-full min-w-0 flex-1 bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
                   />
                 </label>
-                <nav aria-label={t('forum.sidebarLabel')} className="mt-sm flex gap-xs lg:hidden">
-                  <a href="#forum-about" className="min-w-0 flex-1 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-1 py-2xs text-center font-body text-[10px] font-semibold text-neutral-500 transition-colors sm:px-sm sm:text-caption">
+                <nav aria-label={t('forum.sidebarLabel')} className="mt-sm flex gap-xs overflow-x-auto [scrollbar-width:none] lg:hidden">
+                  <a href="#forum-about" className="flex-auto shrink-0 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-sm py-2xs text-center font-body text-caption font-semibold text-neutral-500 transition-colors">
                     {t('forum.about.title')}
                   </a>
-                  <a href="#forum-latest" className="min-w-0 flex-1 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-1 py-2xs text-center font-body text-[10px] font-semibold text-neutral-500 transition-colors sm:px-sm sm:text-caption">
+                  <a href="#forum-latest" className="flex-auto shrink-0 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-sm py-2xs text-center font-body text-caption font-semibold text-neutral-500 transition-colors">
                     {t('forum.latest.title')}
                   </a>
-                  <a href="#forum-popular" className="min-w-0 flex-1 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-1 py-2xs text-center font-body text-[10px] font-semibold text-neutral-500 transition-colors sm:px-sm sm:text-caption">
+                  <a href="#forum-popular" className="flex-auto shrink-0 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-sm py-2xs text-center font-body text-caption font-semibold text-neutral-500 transition-colors">
                     {t('forum.popular.title')}
                   </a>
                 </nav>
@@ -111,11 +117,7 @@ function ForumPage() {
                 className="flex scroll-mt-24 flex-col gap-md"
               >
                 {isLoading && (
-                  <>
-                    <BlogPostCard loading />
-                    <BlogPostCard loading />
-                    <BlogPostCard loading />
-                  </>
+                  <SkeletonList count={blogSkeletonCount}>{() => <BlogPostCard loading />}</SkeletonList>
                 )}
 
                 {!isLoading && error && (
@@ -130,13 +132,13 @@ function ForumPage() {
                   </p>
                 )}
 
-                {blogPosts.length > 0 && filteredBlogPosts.length === 0 && (
+                {!isLoading && blogPosts.length > 0 && filteredBlogPosts.length === 0 && (
                   <p className="m-0 rounded-2xl border border-neutral-200 bg-white p-lg font-body text-body-sm text-neutral-500">
                     {t('forum.blog.noSearchResults')}
                   </p>
                 )}
 
-                {filteredBlogPosts.map((post) => (
+                {!isLoading && filteredBlogPosts.map((post) => (
                   <BlogPostCard
                     key={post.id}
                     post={post}
@@ -156,11 +158,7 @@ function ForumPage() {
                 className="flex scroll-mt-24 flex-col gap-md"
               >
                 {isLoading && (
-                  <>
-                    <CommunityPostCard loading />
-                    <CommunityPostCard loading />
-                    <CommunityPostCard loading />
-                  </>
+                  <SkeletonList count={communitySkeletonCount}>{() => <CommunityPostCard loading />}</SkeletonList>
                 )}
 
                 {!isLoading && error && (
@@ -175,7 +173,7 @@ function ForumPage() {
                   </p>
                 )}
 
-                {communityPosts.map((post) => (
+                {!isLoading && communityPosts.map((post) => (
                   <CommunityPostCard
                     key={post.id}
                     post={post}

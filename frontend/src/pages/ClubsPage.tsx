@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react'
+import { formatSchedule, parseSchedule } from '../utils/schedule.ts'
 import { useTranslation } from 'react-i18next'
 import { UsersIcon, SparklesIcon, ClockIcon } from '@animateicons/react/lucide'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import ClubDetailModal from '../components/ClubDetailModal.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import { clubService } from '../services/clubs.ts'
 import type { ClubResponse } from '../types/clubs.ts'
 
@@ -14,7 +17,7 @@ interface PublicClubCardProps {
 }
 
 function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
-    const { t: translate } = useTranslation()
+    const { t: translate, i18n } = useTranslation()
     const translateKey = translate as (key: string, options?: Record<string, unknown>) => string
     const t = (key: string, options?: Record<string, unknown>): string =>
         translateKey(key.startsWith("admin.") ? key : `admin.${key}`, options)
@@ -25,7 +28,6 @@ function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
 
     return (
         <article className="relative flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm card-hover">
-            {/* Imagen de portada */}
             <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
                 {club.coverImageUrl ? (
                     <img
@@ -42,7 +44,6 @@ function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
                 )}
             </div>
 
-            {/* Contenido */}
             <div className="flex flex-1 flex-col gap-sm px-lg pb-lg pt-md">
                 <div className="flex items-start justify-between gap-sm">
                     <h3 className="m-0 min-w-0 flex-1 text-left font-heading text-h4 font-bold text-green-500 line-clamp-2">
@@ -62,7 +63,6 @@ function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
 
                 <div className="my-1 border-t border-neutral-200" />
 
-                {/* Detalles: Horario y Cupos Disponibles */}
                 <div className="space-y-2xs pt-xs text-left">
                     {club.schedule && (
                         <div className="font-body text-body-sm leading-relaxed text-neutral-500">
@@ -72,7 +72,7 @@ function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
                                     {t("ownerClubs.schedule")}
                                 </span>
                             </div>
-                            <p className="m-0 mt-2xs px-1 text-left text-body-sm">{club.schedule}</p>
+                            <p className="m-0 mt-2xs whitespace-pre-line px-1 text-left text-body-sm">{formatSchedule(club.schedule, translate, i18n.resolvedLanguage ?? i18n.language)}</p>
                         </div>
                     )}
 
@@ -95,7 +95,6 @@ function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
                     </div>
                 </div>
 
-                {/* Botón Más Información */}
                 <div className="mt-auto pt-md">
                     <button
                         type="button"
@@ -142,12 +141,11 @@ function ClubsPage() {
                     })
                 )
 
-                // Traducción dinámica de datos provenientes de la BD (Backend Batch Translation)
                 if (languageCode !== "es" && clubsWithImages.length > 0) {
                     const translationItems = clubsWithImages.flatMap((club) => [
                         { entityId: String(club.id), fieldName: "name", originalText: club.name },
                         { entityId: String(club.id), fieldName: "description", originalText: club.description },
-                        ...(club.schedule
+                        ...(club.schedule && !parseSchedule(club.schedule)
                             ? [{ entityId: String(club.id), fieldName: "schedule", originalText: club.schedule }]
                             : []),
                     ])
@@ -181,14 +179,15 @@ function ClubsPage() {
         void fetchClubs()
     }, [i18n.language])
 
+    const skeletonCount = useSkeletonCount('clubs', loading, clubs.length, 3)
+
     return (
         <div id="clubs-page" className="flex min-h-screen flex-col bg-bg-page">
             <Navbar />
 
-            {/* Header Banner */}
             <section className="flex min-h-[280px] items-start bg-green-500 px-[30px] pt-[48px] pb-[40px] text-center text-white md:min-h-[320px] md:pt-[72px]">
                 <div className="mx-auto w-full max-w-175">
-                    <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
+                    <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-white">
                         {t('clubs.title')}
                     </h1>
                     <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-white md:text-body-sm">
@@ -197,24 +196,19 @@ function ClubsPage() {
                 </div>
             </section>
 
-            {/* Main Content */}
             <main className="flex flex-1 items-center justify-center">
                 <Container className="py-10 md:py-12">
-                    {loading ? (
+                    {loading && (
                         <div className="grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
-                            {Array.from({ length: 3 }).map((_, index) => (
+                            <SkeletonList count={skeletonCount}>{() => (
                                 <article
-                                    key={`skeleton-${index}`}
                                     className="relative flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm"
                                 >
-                                    {/* Imagen de portada */}
                                     <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100 shrink-0">
                                         <Skeleton shape="rect" className="h-full w-full rounded-none" />
                                     </div>
 
-                                    {/* Contenido */}
                                     <div className="flex flex-1 flex-col gap-sm px-lg pb-lg pt-md">
-                                        {/* Título y Badge */}
                                         <div className="flex items-start justify-between gap-sm">
                                             <div className="flex-1 min-w-0">
                                                 <Skeleton shape="line" className="h-6 w-4/5" />
@@ -222,7 +216,6 @@ function ClubsPage() {
                                             <Skeleton shape="rect" className="h-6 w-20 shrink-0 rounded-full" />
                                         </div>
 
-                                        {/* Descripción (2 líneas) */}
                                         <div className="min-h-[48px] space-y-2 py-3.5">
                                             <Skeleton shape="line" className="h-4 w-full" />
                                             <Skeleton shape="line" className="h-4 w-2/3" />
@@ -230,9 +223,7 @@ function ClubsPage() {
 
                                         <div className="my-1 border-t border-neutral-200" />
 
-                                        {/* Detalles: Horario y Cupos */}
                                         <div className="space-y-2xs pt-lg text-left">
-                                            {/* Horario */}
                                             <div className="space-y-2.5">
                                                 <div className="flex items-center gap-2">
                                                     <Skeleton shape="rect" className="h-[18px] w-[18px] shrink-0 rounded-full" />
@@ -243,7 +234,6 @@ function ClubsPage() {
                                                 </div>
                                             </div>
 
-                                            {/* Cupos disponibles */}
                                             <div className="space-y-2.5 pt-2">
                                                 <div className="flex items-center gap-2">
                                                     <Skeleton shape="rect" className="h-[18px] w-[18px] shrink-0 rounded-full" />
@@ -255,15 +245,15 @@ function ClubsPage() {
                                             </div>
                                         </div>
 
-                                        {/* Botón Más Información */}
                                         <div className="mt-xl pt-md">
                                             <Skeleton shape="rect" className="h-10 w-full rounded-full" />
                                         </div>
                                     </div>
                                 </article>
-                            ))}
+                            )}</SkeletonList>
                         </div>
-                    ) : clubs.length > 0 ? (
+                    )}
+                    {!loading && clubs.length > 0 && (
                         <div className="grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
                             {clubs.map((club) => (
                                 <PublicClubCard
@@ -273,7 +263,8 @@ function ClubsPage() {
                                 />
                             ))}
                         </div>
-                    ) : (
+                    )}
+                    {!loading && clubs.length === 0 && (
                         <div className="mx-auto max-w-140 rounded-3xl border border-neutral-200 bg-white p-xl text-center shadow-md md:p-2xl">
                             <div className="relative mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-orange-50 text-orange-500">
                                 <UsersIcon size={56} aria-hidden="true" />
@@ -282,7 +273,7 @@ function ClubsPage() {
                                 </div>
                             </div>
 
-                            <h2 className="mt-xl font-heading text-2xl font-bold leading-snug text-heading md:text-3xl">
+                            <h2 className="mt-xl font-heading text-h3 font-bold leading-snug text-heading">
                                 {t('clubs.comingSoonTitle')}
                             </h2>
 

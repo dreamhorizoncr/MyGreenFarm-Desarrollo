@@ -5,8 +5,10 @@ import WizardSteps from './ui/WizardSteps.tsx'
 import { appointmentService } from '../services/appointment.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import type { Appointment } from '../types/appointment.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
+import DatePickerField from './ui/DatePickerField.tsx'
 
 interface RescheduleAppointmentModalProps {
   appointment: Appointment
@@ -32,6 +34,7 @@ function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Readonl
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
 
   const [step, setStep] = useState(0)
   const [date, setDate] = useState('')
@@ -96,18 +99,12 @@ function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Readonl
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') requestClose()
-      }}
       aria-label={t('teacherAppointments.rescheduleTitle')}
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="relative p-[28px_22px_30px]">
         <div className="flex items-center justify-between gap-md">
-          <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+          <h2 className="m-0 font-heading text-h4 font-bold text-heading">
             {t('teacherAppointments.rescheduleTitle')}
           </h2>
 
@@ -132,16 +129,15 @@ function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Readonl
               </p>
 
               <div className="flex flex-col gap-sm">
-                <label htmlFor="reschedule-appointment-date" className="font-body text-body font-normal leading-[1.6] text-body-text">
+                <label htmlFor="reschedule-appointment-date" className="font-body text-body-sm font-semibold text-heading">
                   {t('teacherAppointments.rescheduleDateLabel')}
                 </label>
-                <input
+                <DatePickerField
                   id="reschedule-appointment-date"
-                  type="date"
                   min={todayISO()}
                   value={date}
-                  onChange={(e) => handleDateChange(e.target.value)}
-                  className="h-[38px] w-full rounded-lg border border-neutral-200 bg-white px-md font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500"
+                  onChange={handleDateChange}
+                  ariaLabel={t('teacherAppointments.rescheduleDateLabel')}
                 />
 
                 {!date && (

@@ -24,6 +24,10 @@ import ImagePickerButton from "../components/ui/ImagePickerButton.tsx";
 import ImageThumb, { ImageThumbList } from "../components/ui/ImageThumb.tsx";
 import { validateSafeText } from "../utils/validators.ts";
 import ModalCloseButton from "../components/ui/ModalCloseButton.tsx";
+import ScheduleField from "../components/ui/ScheduleField.tsx";
+import { emptySchedule, formatSchedule, parseSchedule, serializeSchedule, validateSchedule, type ScheduleValue } from "../utils/schedule.ts";
+import SkeletonList from "../components/ui/SkeletonList.tsx";
+import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
 const emptyForm: ClubRequest = {
   name: "",
@@ -43,7 +47,7 @@ interface ClubCardProps {
 }
 
 function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCardProps>) {
-  const { t: translate } = useTranslation();
+  const { t: translate, i18n } = useTranslation();
   const translateKey = translate as (key: string, options?: Record<string, unknown>) => string;
   const t = (key: string, options?: Record<string, unknown>): string =>
     translateKey(key.startsWith("admin.") ? key : `admin.${key}`, options);
@@ -69,7 +73,6 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
   const maxCap = club?.maxCapacity ?? 0;
   const isFull = available <= 0;
 
-  // Soporta tanto isPublished como published provenientes de la API
   const isPublishedValue = club?.isPublished ?? (club as unknown as { published?: boolean })?.published ?? false;
 
   return (
@@ -84,7 +87,6 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
         </span>
       </div>
 
-      {/* Imagen de portada */}
       <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
         {club?.coverImageUrl ? (
           <img
@@ -120,7 +122,6 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
 
         <div className="my-1 border-t border-neutral-200" />
 
-        {/* Detalles: Horario y Cupos Disponibles */}
         <div className="space-y-2.5 pt-xs text-left">
           {club?.schedule && (
             <div className="font-body text-body-sm leading-relaxed text-neutral-500">
@@ -130,7 +131,7 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
                   {t("ownerClubs.schedule")}
                 </span>
               </div>
-              <p className="m-0 mt-2xs px-1 text-left text-body-sm">{club.schedule}</p>
+              <p className="m-0 mt-2xs whitespace-pre-line px-1 text-left text-body-sm">{formatSchedule(club.schedule, translate, i18n.resolvedLanguage ?? i18n.language)}</p>
             </div>
           )}
 
@@ -155,7 +156,6 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
           </div>
         </div>
 
-        {/* Botones de Acción */}
         <div className="mt-auto flex justify-end gap-sm pt-sm">
           <CardActionButton action="edit" label={t("ownerClubs.editClub")} onClick={onEdit} />
           <CardActionButton action="delete" label={t("ownerClubs.deleteModalTitle")} onClick={onDelete} />
@@ -180,6 +180,7 @@ function OwnerClubsPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<ClubResponse | null>(null);
   const [form, setForm] = useState<ClubRequest>(emptyForm);
+  const [schedule, setSchedule] = useState<ScheduleValue>(emptySchedule);
 
   const [cover, setCover] = useState<File | null>(null);
   const [gallery, setGallery] = useState<File[]>([]);
@@ -230,7 +231,7 @@ function OwnerClubsPage() {
         const translationItems: TranslationItem[] = clubsWithImages.flatMap((club) => [
           { entityId: String(club.id), fieldName: "name", originalText: club.name },
           { entityId: String(club.id), fieldName: "description", originalText: club.description },
-          ...(club.schedule
+          ...(club.schedule && !parseSchedule(club.schedule)
             ? [{ entityId: String(club.id), fieldName: "schedule", originalText: club.schedule }]
             : []),
         ]);
@@ -267,6 +268,7 @@ function OwnerClubsPage() {
     editImagesClubIdRef.current = null;
     setEditing(null);
     setForm(emptyForm);
+    setSchedule(emptySchedule());
     setCover(null);
     setGallery([]);
     setExistingImages([]);
@@ -278,7 +280,6 @@ function OwnerClubsPage() {
     editImagesClubIdRef.current = club.id;
     setEditing(club);
 
-    // Leer isPublished soportando ambos nombres del backend
     const currentIsPublished = club.isPublished ?? (club as unknown as { published?: boolean }).published ?? false;
 
     setForm({
@@ -288,6 +289,7 @@ function OwnerClubsPage() {
       maxCapacity: club.maxCapacity,
       isPublished: currentIsPublished,
     });
+    setSchedule(parseSchedule(sourceClub.schedule) ?? emptySchedule());
     setCover(null);
     setGallery([]);
     setExistingImages(club.images ?? []);
@@ -318,28 +320,25 @@ function OwnerClubsPage() {
     const fieldErrors = {
       name: validateSafeText(form.name, translate),
       description: validateSafeText(form.description, translate),
-      schedule: validateSafeText(form.schedule, translate),
+      schedule: validateSchedule(schedule, translate),
     };
     setClubFieldErrors(fieldErrors);
     if (Object.values(fieldErrors).some(Boolean)) return;
 
     const publishedBool = Boolean(form.isPublished);
 
-    // Mandamos tanto isPublished como published para asegurar que Spring Boot/Jackson lo mapee en el backend
     const dataToSend: ClubRequest & { published?: boolean } = {
       name: form.name,
       description: form.description,
-      schedule: form.schedule?.trim() || undefined,
+      schedule: serializeSchedule(schedule),
       maxCapacity: form.maxCapacity ? Number(form.maxCapacity) : undefined,
       isPublished: publishedBool,
       published: publishedBool,
     };
 
     try {
-      let savedClub: ClubResponse;
-
       if (editing) {
-        savedClub = await clubService.update(editing.id, dataToSend);
+        const savedClub = await clubService.update(editing.id, dataToSend);
 
         if (cover) {
           await clubService.uploadImages(savedClub.id, [cover], true);
@@ -348,7 +347,7 @@ function OwnerClubsPage() {
           await clubService.uploadImages(savedClub.id, gallery, false);
         }
       } else {
-        savedClub = await clubService.createWithImages(
+        await clubService.createWithImages(
           dataToSend,
           cover || undefined,
           gallery.length > 0 ? gallery : undefined
@@ -422,10 +421,10 @@ function OwnerClubsPage() {
     (safeCurrentPage - 1) * PAGE_SIZE,
     safeCurrentPage * PAGE_SIZE,
   );
+  const skeletonCount = useSkeletonCount("admin-clubs", loading, clubs.length, 3);
 
   return (
     <AdminLayout>
-      {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-md">
         <div>
           <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
@@ -453,13 +452,10 @@ function OwnerClubsPage() {
         </p>
       )}
 
-      {/* Grid de Cards de Clubes */}
       <section className="mt-xl grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
         {loading && !formOpen && (
           <output className="contents">
-            <ClubCard loading />
-            <ClubCard loading />
-            <ClubCard loading />
+            <SkeletonList count={skeletonCount}>{() => <ClubCard loading />}</SkeletonList>
           </output>
         )}
 
@@ -468,7 +464,7 @@ function OwnerClubsPage() {
             <ClubCard
               key={club.id}
               club={club}
-              onEdit={() => void openEdit(club)}
+              onEdit={() => openEdit(club)}
               onDelete={() => handleDelete(club)}
             />
           ))}
@@ -488,7 +484,6 @@ function OwnerClubsPage() {
         </p>
       )}
 
-      {/* Modal Form */}
       {formOpen && (
         <div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
           <button
@@ -504,7 +499,7 @@ function OwnerClubsPage() {
             className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
           >
             <div className="flex items-center justify-between gap-md">
-              <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+              <h2 className="m-0 font-heading text-h4 font-bold text-heading">
                 {editing
                   ? t("ownerClubs.editClub")
                   : t("ownerClubs.newClub")}
@@ -512,7 +507,7 @@ function OwnerClubsPage() {
 
               <ModalCloseButton
                 onClick={requestClose}
-                aria-label="Cerrar formulario"
+                aria-label={t("common.closeForm")}
               />
             </div>
 
@@ -568,22 +563,22 @@ function OwnerClubsPage() {
                 )}
               </label>
 
-              <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
-                {t("ownerClubs.schedule")}
-                <input
-                  value={form.schedule ?? ""}
-                  onChange={(e) => setForm({ ...form, schedule: e.target.value })}
-                  placeholder={t("ownerClubs.schedulePlaceholder")}
-                  className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+              <div className="md:col-span-2">
+                <ScheduleField
+                  id="club-schedule"
+                  label={t("ownerClubs.schedule")}
+                  value={schedule}
+                  onChange={(value) => {
+                    setSchedule(value);
+                    if (clubFieldErrors.schedule) setClubFieldErrors({ ...clubFieldErrors, schedule: null });
+                  }}
+                  error={clubFieldErrors.schedule}
                 />
-                {clubFieldErrors.schedule && (
-                  <span className="mt-xs block font-body text-body-sm font-normal text-danger">{clubFieldErrors.schedule}</span>
-                )}
-              </label>
+              </div>
 
-              {/* Opción de Publicar / Visibilidad */}
               <div className="md:col-span-2 flex items-center gap-md rounded-xl border border-neutral-200 bg-neutral-50 p-md">
                 <label className="relative inline-flex items-center cursor-pointer">
+                  <span className="sr-only">{t("ownerClubs.publishClubLabel")}</span>
                   <input
                     type="checkbox"
                     checked={form.isPublished ?? false}
@@ -680,7 +675,6 @@ function OwnerClubsPage() {
         </div>
       )}
 
-      {/* Modal de Confirmación de Eliminación */}
       {clubToDelete && (
         <DeleteConfirmModal
           title={t("ownerClubs.deleteModalTitle")}

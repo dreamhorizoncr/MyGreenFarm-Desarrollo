@@ -12,7 +12,7 @@ interface CacheData {
 export function useChildren() {
     const [children, setChildren] = useState<Child[]>([])
     const [sourceChildren, setSourceChildren] = useState<Child[]>([])
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [totalPages, setTotalPages] = useState(0)
 
@@ -34,19 +34,16 @@ export function useChildren() {
             setLoading(true)
             setError(null)
 
-            // Petición principal (Obligatoria para mostrar los datos)
             const data = await childService.getAll(page, 10)
             const rawContent = data.content
             
             setSourceChildren(rawContent)
             setTotalPages(data.totalPages)
             
-            // Si la red es lenta, mostramos los datos base de inmediato para que el usuario no espere
             setChildren(rawContent)
 
             let processedContent = rawContent
 
-            // Traducciones secundarias en segundo plano (Protegidas ante fallos de red)
             try {
                 const notesItems = rawContent.flatMap((child) =>
                     child.medicalNotes
@@ -99,18 +96,15 @@ export function useChildren() {
 
                 setChildren(processedContent)
             } catch {
-                // Si la traducción masiva falla por completo, dejamos la data limpia en crudo
                 processedContent = rawContent
             }
 
-            // Guardamos en caché el resultado final
             cacheRef.current.set(cacheKey, {
                 content: processedContent,
                 totalPages: data.totalPages,
             })
 
         } catch (err) {
-            // Si falla la petición principal pero teníamos algo en caché de emergencia, lo salvamos
             if (cacheRef.current.has(cacheKey)) {
                 const cached = cacheRef.current.get(cacheKey)!
                 setSourceChildren(cached.content)

@@ -39,7 +39,6 @@ public class Vacancy {
     @Column(name = "filled_by_application_id")
     private UUID filledByApplicationId;
 
-    // Lista separada por comas de OptionalApplicationField (applicantPhone, file, certificates)
     @Column(name = "required_fields")
     private String requiredFields;
 }

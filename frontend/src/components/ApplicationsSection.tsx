@@ -10,13 +10,15 @@ import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { ALL_VACANCIES, SPONTANEOUS_APPLICATIONS, useApplicationFilters } from '../hooks/useApplicationFilters.ts'
 import type { Curriculum } from '../types/curriculum.ts'
 import type { Vacancy } from '../types/vacancy.ts'
+import SkeletonList from './ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 interface ApplicationsSectionProps {
   curriculums: Curriculum[]
   vacancies: Vacancy[]
   loading: boolean
   error: string | null
-  onApprove: (application: Curriculum) => Promise<void>
+  onApprove: (application: Curriculum, vacancyId?: string) => Promise<void>
   onReject: (application: Curriculum) => Promise<void>
   onDelete: (id: string) => Promise<void>
 }
@@ -36,6 +38,8 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
 
   const handleToggleExpand = (id: string) => () =>
     setExpandedId((prev) => (prev === id ? null : id))
+
+  const skeletonCount = useSkeletonCount('admin-applications', loading, pagedApplications.length, 3)
 
   return (
     <>
@@ -67,9 +71,7 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
 
       {loading && (
         <div className="flex flex-col gap-md">
-          <CurriculumCard loading />
-          <CurriculumCard loading />
-          <CurriculumCard loading />
+          <SkeletonList count={skeletonCount}>{() => <CurriculumCard loading />}</SkeletonList>
         </div>
       )}
       {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
@@ -117,6 +119,9 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
           application={applicationToDecide.application}
           action={applicationToDecide.action}
           onConfirm={applicationToDecide.action === 'approve' ? onApprove : onReject}
+          vacancyOptions={vacancies
+            .filter((vacancy) => vacancy.isOpen && !vacancy.filledByApplicationId)
+            .map((vacancy) => ({ value: vacancy.id, label: vacancy.title }))}
           onClose={() => setApplicationToDecide(null)}
         />
       )}

@@ -7,6 +7,7 @@ import taller.multimedia.backend.dto.curriculum.CertificateFileResponse;
 import taller.multimedia.backend.model.curriculum.Curriculum;
 import taller.multimedia.backend.model.curriculum.CurriculumCertificate;
 import taller.multimedia.backend.model.curriculum.CurriculumStatus;
+import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.model.vacancy.Vacancy;
 import taller.multimedia.backend.repository.curriculum.CurriculumRepository;
 import taller.multimedia.backend.repository.vacancy.VacancyRepository;
@@ -42,8 +43,6 @@ public class CurriculumService {
     @Value("${supabase.s3.buckets.curriculums}")
     private String curriculumsBucket;
 
-    // In-memory send guards (reset on restart, by design): just stop a duplicate
-    // click/request within the same running instance from emailing twice.
     private final Set<UUID> receivedEmailSent = ConcurrentHashMap.newKeySet();
     private final Set<UUID> hiredEmailSent = ConcurrentHashMap.newKeySet();
 
@@ -100,16 +99,28 @@ public class CurriculumService {
 
     @Transactional
     public ApplicationResponse setStatus(UUID id, CurriculumStatus status, String lang) {
+        return setStatus(id, status, lang, null);
+    }
+
+    @Transactional
+    public ApplicationResponse setStatus(UUID id, CurriculumStatus status, String lang, UUID vacancyId) {
         Curriculum curriculum = findEntityById(id);
         CurriculumStatus previousStatus = curriculum.getStatus();
         curriculum.setStatus(status);
+
+        if (status == CurriculumStatus.APPROVED && curriculum.getVacancyId() == null && vacancyId != null) {
+            if (!vacancyRepository.existsById(vacancyId)) {
+                throw new InvalidFieldException("vacancyId", "La vacante seleccionada no existe.");
+            }
+            curriculum.setVacancyId(vacancyId);
+        }
 
         Curriculum saved = curriculumRepository.save(curriculum);
 
         if (previousStatus != status && status == CurriculumStatus.APPROVED && hiredEmailSent.add(id)) {
             String languageCode = saved.getLanguage() != null ? saved.getLanguage() : resolverLangCode(lang);
             Locale locale = Locale.forLanguageTag(languageCode);
-            emailService.sendApplicationHiredEmail(saved, resolveVacancyTitle(saved.getVacancyId()), locale);
+            emailService.sendApplicationHiredEmail(saved, resolveHiredVacancyTitle(saved.getVacancyId()), locale);
         }
 
         return mapToResponse(saved);
@@ -144,6 +155,11 @@ public class CurriculumService {
         return vacancyRepository.findById(vacancyId)
                 .map(Vacancy::getTitle)
                 .orElse("Postulación espontánea");
+    }
+
+    private String resolveHiredVacancyTitle(UUID vacancyId) {
+        if (vacancyId == null) return null;
+        return vacancyRepository.findById(vacancyId).map(Vacancy::getTitle).orElse(null);
     }
 
     private Curriculum findEntityById(UUID id) {

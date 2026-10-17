@@ -7,16 +7,16 @@ import Pagination from '../../ui/Pagination.tsx'
 import { forumService } from '../../../services/forum.ts'
 import { notify } from '../../../utils/notifications.ts'
 import type { CommunityComment, CommunityPost } from '../../../types/forum.ts'
+import SkeletonList from '../../ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../../../hooks/useSkeletonCount.ts'
 
 const COMMUNITY_POST_TRANSLATION_TYPE = 'FORUM_COMMUNITY_POST'
 const COMMUNITY_COMMENT_TRANSLATION_TYPE = 'FORUM_COMMUNITY_COMMENT'
 
 interface AdminCommunitySectionProps {
-  // Solo el OWNER puede borrar publicaciones y comentarios (el backend también lo valida).
   canDelete: boolean
 }
 
-// Pestaña "Comunidad" del foro en el admin: moderación de las publicaciones del muro y sus comentarios.
 function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProps>) {
   const { t, i18n } = useTranslation()
   const language = i18n.language.split('-')[0]
@@ -30,31 +30,35 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
   const [commentsLoading, setCommentsLoading] = useState(false)
   const [commentsError, setCommentsError] = useState('')
   const [commentToDelete, setCommentToDelete] = useState<CommunityComment | null>(null)
+  const [deletingCommentId, setDeletingCommentId] = useState<string | null>(null)
   const [postToDelete, setPostToDelete] = useState<CommunityPost | null>(null)
-  // Se incrementa para volver a pedir la página actual (p. ej. después de borrar).
   const [reloadKey, setReloadKey] = useState(0)
 
-  // loading arranca en true y se vuelve a activar en changePage; el effect solo actualiza estado en los callbacks.
   useEffect(() => {
     let cancelled = false
-    forumService.getCommunityPosts(page - 1, 10)
-      .then(async (result) => {
-        // Mismo tipo de traducción que el muro público, para reutilizar lo ya traducido.
+    const loadPosts = async () => {
+      try {
+        const result = await forumService.getCommunityPosts(page - 1, 10)
         const items = result.content.map((post) => ({ entityId: post.id, fieldName: 'content', originalText: post.content }))
-        const translated = items.length
-          ? await forumService.translateBatch(COMMUNITY_POST_TRANSLATION_TYPE, language, items).catch(() => ({} as Record<string, string>))
-          : {}
+        let translated: Record<string, string> = {}
+        if (items.length) {
+          try {
+            translated = await forumService.translateBatch(COMMUNITY_POST_TRANSLATION_TYPE, language, items)
+          } catch {
+            // Si la traducción falla se muestran los textos originales.
+          }
+        }
         if (cancelled) return
         setPosts(result.content.map((post) => ({ ...post, content: translated[`${post.id}:content`] ?? post.content })))
         setTotalPages(result.totalPages)
         setError('')
-      })
-      .catch(() => {
+      } catch {
         if (!cancelled) setError(t('adminForum.community.loadError'))
-      })
-      .finally(() => {
+      } finally {
         if (!cancelled) setLoading(false)
-      })
+      }
+    }
+    loadPosts()
     return () => {
       cancelled = true
     }
@@ -76,7 +80,6 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
     }
 
     notify.success({ title: t('adminForum.community.deletedToastTitle') })
-    // Si era la última publicación de la página, volver a la anterior; si no, recargar la actual.
     if (posts.length === 1 && page > 1) changePage(page - 1)
     else setReloadKey((key) => key + 1)
   }
@@ -106,11 +109,14 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
   async function confirmDeleteComment() {
     if (!commentsPost || !commentToDelete) return
 
+    setDeletingCommentId(commentToDelete.id)
     try {
       await forumService.deleteCommunityComment(commentsPost.id, commentToDelete.id)
     } catch (err) {
       notify.error(t('adminForum.commentDeleteErrorToastTitle'))
       throw err
+    } finally {
+      setDeletingCommentId(null)
     }
 
     const postId = commentsPost.id
@@ -121,12 +127,13 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
     notify.success({ title: t('adminForum.commentDeletedToastTitle') })
   }
 
+  const skeletonCount = useSkeletonCount('admin-community', loading, posts.length, 2)
+
   function renderPosts() {
     if (loading) {
       return (
-        <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
-          <li><CommunityPostCard loading /></li>
-          <li><CommunityPostCard loading /></li>
+        <ul className="m-0 mt-lg grid list-none grid-cols-1 gap-xl p-0 lg:auto-rows-fr lg:grid-cols-2">
+          <SkeletonList count={skeletonCount}>{() => <li className="flex"><CommunityPostCard loading /></li>}</SkeletonList>
         </ul>
       )
     }
@@ -148,9 +155,9 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
     }
 
     return (
-      <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
+      <ul className="m-0 mt-lg grid list-none grid-cols-1 gap-xl p-0 lg:auto-rows-fr lg:grid-cols-2">
         {posts.map((post) => (
-          <li key={post.id}>
+          <li key={post.id} className="flex">
             <CommunityPostCard
               post={post}
               onOpenComments={openComments}
@@ -175,6 +182,8 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
           subtitle={commentsPost.name}
           comments={comments}
           loading={commentsLoading}
+          skeletonCount={commentsPost.commentCount}
+          deletingId={deletingCommentId}
           error={commentsError}
           canDelete={canDelete}
           onDeleteRequest={setCommentToDelete}

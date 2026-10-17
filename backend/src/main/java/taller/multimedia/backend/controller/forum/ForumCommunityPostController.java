@@ -91,14 +91,12 @@ public class ForumCommunityPostController {
                 .communityPostId(postId).alias(saved.getAlias()).content(saved.getContent()).createdAt(saved.getCreatedAt()).build());
     }
 
-    // Solo el OWNER puede borrar publicaciones de la comunidad.
     @DeleteMapping("/{postId}")
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Void> delete(@PathVariable java.util.UUID postId) {
         return communityPostService.delete(postId) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
-    // Solo el OWNER modera los comentarios de la comunidad.
     @DeleteMapping("/{postId}/comments/{commentId}")
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Void> deleteComment(@PathVariable java.util.UUID postId, @PathVariable java.util.UUID commentId) {

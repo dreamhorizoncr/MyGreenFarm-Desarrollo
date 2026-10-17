@@ -12,6 +12,5 @@ import java.util.UUID;
 public interface AnnouncementImageRepository extends JpaRepository<AnnouncementImage, UUID> {
     List<AnnouncementImage> findByAnnouncementId(UUID announcement);
 
-    // Encuentra específicamente la imagen de portada de un anuncio
     Optional<AnnouncementImage> findByAnnouncementIdAndIsCoverTrue(UUID announcement);
 }

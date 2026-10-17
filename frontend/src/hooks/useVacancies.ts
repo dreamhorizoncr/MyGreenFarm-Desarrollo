@@ -8,7 +8,7 @@ const ENTITY_TYPE = 'vacancy'
 
 export function useVacancies() {
   const [vacancies, setVacancies] = useState<Vacancy[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const fetchVacancies = async (lang: string = SOURCE_LANG) => {
@@ -16,13 +16,8 @@ export function useVacancies() {
     setError(null)
     try {
       const data = await vacancyService.getVacancies()
-      // Se muestran de una vez sin traducir: así, si la traducción falla, el
-      // contenido original sigue visible en vez de quedar en blanco.
       setVacancies(data)
 
-      // No asumimos que el admin siempre escribe en español: aunque se esté
-      // viendo en "es", se pide la traducción igual (como hace el foro), para
-      // que una vacante redactada en otro idioma también se traduzca.
       try {
         const items = data.flatMap((v) => [
           { entityId: v.id, fieldName: 'title', originalText: v.title },
@@ -45,7 +40,6 @@ export function useVacancies() {
   }
 
   const createVacancy = async (data: VacancyInput) => {
-    setLoading(true)
     setError(null)
     try {
       const created = await vacancyService.createVacancy(data)
@@ -53,47 +47,36 @@ export function useVacancies() {
     } catch (err) {
       setError(getErrorMessage(err))
       throw err
-    } finally {
-      setLoading(false)
     }
   }
 
   const setVacancyOpen = async (id: string, isOpen: boolean) => {
-    setLoading(true)
     setError(null)
     try {
       const updated = await vacancyService.setVacancyOpen(id, isOpen)
       setVacancies((prev) => prev.map((v) => (v.id === id ? updated : v)))
     } catch (err) {
       setError(getErrorMessage(err))
-    } finally {
-      setLoading(false)
     }
   }
 
   const setVacancyFilledBy = async (id: string, applicationId: string | null) => {
-    setLoading(true)
     setError(null)
     try {
       const updated = await vacancyService.setVacancyFilledBy(id, applicationId)
       setVacancies((prev) => prev.map((v) => (v.id === id ? updated : v)))
     } catch (err) {
       setError(getErrorMessage(err))
-    } finally {
-      setLoading(false)
     }
   }
 
   const deleteVacancy = async (id: string) => {
-    setLoading(true)
     setError(null)
     try {
       await vacancyService.deleteVacancy(id)
       setVacancies((prev) => prev.filter((v) => v.id !== id))
     } catch (err) {
       setError(getErrorMessage(err))
-    } finally {
-      setLoading(false)
     }
   }
 

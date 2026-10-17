@@ -15,6 +15,7 @@ import { appointmentService } from '../services/appointment.ts'
 import { notify } from '../utils/notifications.ts'
 import {
   validateEmail,
+  validateBookingEmailDomain,
   validateIdNumber,
   validatePhoneNumber,
   validateRequired,
@@ -168,8 +169,6 @@ function BookingPage() {
     (effectiveDay ? availability[effectiveDay]?.slots[0]?.slice(0, 5) ?? null : null)
   const selectedDay = effectiveDay ? availability[effectiveDay] : null
 
-  // Nombre de los días especiales traducido al idioma activo. La disponibilidad no trae el id de la
-  // excepción, así que se usa la fecha (solo dígitos) como identificador de la traducción.
   const [eventNames, setEventNames] = useState<Record<string, string>>({})
   useEffect(() => {
     const items = Object.entries(availability).flatMap(([date, day]) =>
@@ -243,7 +242,12 @@ function BookingPage() {
   }
 
   const validateContactStep = () => {
-    const emailValid = validateRequired(email, t('booking.email'), t) === null && validateEmail(email, t) === null
+    const emailFormatValid = validateRequired(email, t('booking.email'), t) === null && validateEmail(email, t) === null
+    const emailDomainError = emailFormatValid ? validateBookingEmailDomain(email, t) : null
+    const emailValid = emailFormatValid && emailDomainError === null
+    if (emailDomainError) {
+      notify.error({ title: t('booking.emailDomainToastTitle'), description: emailDomainError })
+    }
     const phoneValid = phoneCountry
       ? validateRequired(phone, t('booking.phone'), t) === null && validatePhoneNumber(phone, t) === null
       : false
@@ -284,7 +288,7 @@ function BookingPage() {
   const handleSubmit = async () => {
     if (!effectiveDay || !effectiveTime) return
 
-    const ok = await submit({
+    const result = await submit({
       idType,
       parentIdentification: idNumber,
       parentName: fullName,
@@ -298,12 +302,12 @@ function BookingPage() {
       referralOtherDetail: referralSource === 'OTHER' ? referralOtherDetail.trim() : undefined,
       language: (i18n.language ?? 'es').split('-')[0],
     })
-    if (ok) {
+    if (result.ok) {
       resetForm()
     } else {
       notify.error({
         title: t('booking.submitErrorToastTitle'),
-        description: t('booking.submitError'),
+        description: result.message ?? t('booking.submitError'),
       })
     }
   }
@@ -356,7 +360,7 @@ function BookingPage() {
         ? validateRequired(idNumber, t('booking.idNumber'), t) ?? validateIdNumber(idNumber, idType, t)
         : null,
       emailErrorMessage: emailError
-        ? validateRequired(email, t('booking.email'), t) ?? validateEmail(email, t)
+        ? validateRequired(email, t('booking.email'), t) ?? validateEmail(email, t) ?? validateBookingEmailDomain(email, t)
         : null,
       phoneErrorMessage: computePhoneErrorMessage(),
       occupationErrorMessage: occupationError
@@ -583,7 +587,7 @@ function BookingPage() {
         error={fullNameErrorMessage}
       />
       <div className="flex flex-col gap-sm">
-        <label className="mb-[4px] block text-left font-body text-body text-body-text">
+        <label className="mb-[4px] block text-left font-body text-body-sm font-semibold text-heading">
           {t('booking.idType')}
         </label>
         <div className="flex flex-wrap gap-sm">
@@ -744,9 +748,7 @@ function BookingPage() {
       <main className="flex items-center justify-center px-[30px] py-[30px] md:px-6 md:py-10">
         <section className="relative flex w-full max-w-[333px] flex-col overflow-hidden rounded-[13px] bg-bg-card shadow md:max-w-[900px] md:rounded-2xl">
 
-          {/* Wizard */}
           <div className="flex w-full flex-col px-[30px] pb-[28px] pt-[40px] md:px-[50px] md:py-[40px]">
-            {/* Header */}
             <div className="mb-lg flex items-center gap-sm">
               <button
                 type="button"
@@ -756,19 +758,17 @@ function BookingPage() {
               >
                 <ArrowLeftIcon size={30} aria-hidden="true" />
               </button>
-              <h2 className="m-0 text-left font-heading text-[28px] leading-none text-heading md:text-[36px]">
+              <h2 className="m-0 text-left font-heading text-h1 leading-none text-heading">
                 {t('booking.title')}
               </h2>
             </div>
 
             <WizardProgress step={step} />
 
-            {/* Step content */}
             <div className="flex-1 overflow-y-auto">
               {stepContents[step]()}
             </div>
 
-            {/* Navigation buttons */}
             <div className="mt-lg flex items-center justify-between gap-sm">
               {step > 1 ? (
                 <button

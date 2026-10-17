@@ -2,17 +2,6 @@
    KEYFRAMES — Animaciones usadas desde utilidades animate-[...] de Tailwind
    ============================================================================= */
 
-@keyframes language-switcher-in {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @keyframes profile-button-in {
   from {
     opacity: 0;
@@ -98,7 +87,7 @@
 .testimonial-card:hover { box-shadow: var(--shadow); }
 
 .testimonial-card__quote-mark { display: block; height: 22px; color: var(--testimonial-accent); font-family: Georgia, serif; font-size: 48px; line-height: 0.8; }
-.testimonial-card__quote { display: flex; flex: 1; align-items: center; color: var(--grey-700); font-size: 20px; line-height: 1.6; }
+.testimonial-card__quote { display: flex; flex: 1; align-items: center; color: var(--grey-700); font-size: var(--text-body-lg); line-height: 1.6; }
 
 .testimonial-carousel__arrow { position: absolute; top: 149px; z-index: 4; display: inline-flex; width: 42px; height: 42px; align-items: center; justify-content: center; border-radius: 999px; background: var(--white); color: var(--green-500); box-shadow: 0 5px 18px rgba(0, 0, 0, 0.12); cursor: pointer; }
 .testimonial-carousel__arrow--left { left: max(1rem, calc(50% - 470px)); }
@@ -107,7 +96,6 @@
 @media (max-width: 767px) {
   .testimonial-carousel { min-height: 480px; }
   .testimonial-card { width: calc(100% - 2rem); min-height: 360px; padding: 24px; }
-  .testimonial-card__quote { font-size: 18px; }
   .testimonial-card[data-position="left"] { transform: translateX(calc(-50% - 20px)) scale(0.92) rotateY(5deg); }
   .testimonial-card[data-position="right"] { transform: translateX(calc(-50% + 20px)) scale(0.92) rotateY(-5deg); }
   .testimonial-carousel__arrow { top: auto; bottom: -12px; }
@@ -119,39 +107,28 @@
   .testimonial-card, .testimonial-carousel__arrow { transition: none; }
 }
 
-/* Oculta el ojo nativo de Edge, PasswordInput ya trae el suyo */
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
 }
 
-/* =============================================================================
-   CARD HOVER — La card se levanta al pasar el mouse (uso: className="card-hover")
-   =============================================================================
-   Antes era hover:-translate-y-1, pero si el cursor estaba en el borde inferior
-   la card subía, el cursor quedaba afuera, bajaba y se repetía en bucle (temblor).
-   Para evitarlo:
-   - Crece un 1% desde el borde superior (scale con origin top): en cards de
-     300px o más el borde inferior no sube aunque la card se levante 3px.
-   - Un puente invisible (::after) bajo la card cubre el hueco en las más bajas.
-     Como overflow-hidden lo recortaría, las cards bajas no deben usarlo
-     (que la imagen se redondee sola).
-   ============================================================================= */
-@utility card-hover {
-  position: relative;
-  transform-origin: center top;
-  transition-property: translate, scale, box-shadow;
-  transition-duration: 200ms;
-  transition-timing-function: ease-out;
+@layer utilities {
+  .card-hover {
+    position: relative;
+    transform-origin: center top;
+    transition-property: translate, scale, box-shadow;
+    transition-duration: 200ms;
+    transition-timing-function: ease-out;
+  }
 
   @media (hover: hover) {
-    &:hover {
+    .card-hover:hover {
       translate: 0 -3px;
       scale: 1.01;
       box-shadow: var(--shadow-lg);
     }
 
-    &:hover::after {
+    .card-hover:hover::after {
       content: "";
       position: absolute;
       inset: 100% 0 auto;
@@ -160,23 +137,17 @@ input[type="password"]::-ms-clear {
   }
 
   @media (prefers-reduced-motion: reduce) {
-    transition-property: box-shadow;
+    .card-hover {
+      transition-property: box-shadow;
+    }
 
-    &:hover {
+    .card-hover:hover {
       translate: none;
       scale: none;
     }
   }
 }
 
-/* =============================================================================
-   MODAL SCROLL — Contenido de modales que no cabe en pantalla
-   =============================================================================
-   El modal nunca pasa del alto de la pantalla: su contenido hace scroll por
-   dentro. La barra nativa queda oculta (base.css) porque ocupa su propio carril
-   y ensancha el modal; en su lugar utils/modalScrollbars.ts dibuja una barra
-   flotante (.modal-scrollbar) encima del contenido, sin ocupar espacio.
-   ============================================================================= */
 .modal-scroll {
   overflow-y: auto;
   overscroll-behavior: contain;

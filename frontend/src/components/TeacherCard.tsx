@@ -41,22 +41,23 @@ function TeacherCard({
   return (
     <article className="card-hover flex min-w-0 flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
 
-      {/* Fotografía */}
       {showPhoto && (
         <div className="mb-lg flex justify-center">
-          {loading ? (
+          {loading && (
             <Skeleton
               shape="circle"
               className="h-28 w-28"
             />
-          ) : user?.photoUrl ? (
+          )}
+          {!loading && user?.photoUrl && (
             <img
               src={user.photoUrl}
               alt={`${user.firstName} ${user.lastName}`}
               className="h-28 w-28 rounded-full border-4 border-green-100 object-cover shadow-sm"
               loading="lazy"
             />
-          ) : (
+          )}
+          {!loading && !user?.photoUrl && (
             <div className="flex h-28 w-28 items-center justify-center rounded-full border-4 border-green-100 bg-green-50">
               <UserRoundIcon
                 size={44}
@@ -68,7 +69,6 @@ function TeacherCard({
         </div>
       )}
 
-      {/* Información principal */}
       <header className="flex min-w-0 items-start justify-between gap-sm">
         {loading ? (
           <div className="min-w-0 flex-1">
@@ -83,7 +83,7 @@ function TeacherCard({
           </div>
         ) : (
           <div className="min-w-0">
-            <h3 className="m-0 break-words font-heading text-lg font-bold leading-snug text-heading">
+            <h3 className="m-0 break-words font-heading text-h5 font-bold leading-snug text-heading">
               {user!.firstName} {user!.lastName}
             </h3>
 
@@ -94,7 +94,6 @@ function TeacherCard({
         )}
       </header>
 
-      {/* Información adicional */}
       {loading ? (
         <>
           <Skeleton
@@ -122,7 +121,6 @@ function TeacherCard({
         </>
       )}
 
-      {/* Acciones */}
       <div className="mt-auto flex justify-end gap-xs pt-lg">
         {loading ? (
           <>

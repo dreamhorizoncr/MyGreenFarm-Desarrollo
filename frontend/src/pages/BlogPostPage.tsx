@@ -33,9 +33,6 @@ function BlogPostPage() {
   const [content, setContent] = useState('')
   const [isDetailLoading, setIsDetailLoading] = useState(true)
   const [pendingReview, setPendingReview] = useState(false)
-  // Ref (not state) so a second click within the same tick, before React
-  // re-renders, is still blocked synchronously — avoids firing the Gemini
-  // moderation call twice for one submission.
   const isSubmittingRef = useRef(false)
 
   useEffect(() => {
@@ -62,7 +59,7 @@ function BlogPostPage() {
   const comments = post ? getComments(post.id) : []
 
   if (isLoading || isDetailLoading) {
-    return <p className="p-lg font-body text-body-sm text-neutral-500">Cargando artículo...</p>
+    return <p className="p-lg font-body text-body-sm text-neutral-500">{t('forum.blog.loadingArticle')}</p>
   }
 
   if (!post) return <Navigate to="/forum" replace />
@@ -99,9 +96,6 @@ function BlogPostPage() {
     }
 
     isSubmittingRef.current = true
-    // Show the "sent for review" confirmation right away instead of leaving
-    // the form stuck while the moderation check runs; the real outcome
-    // arrives later as a toast (success or rejection reason).
     setName('')
     setContent('')
     setPendingReview(true)
@@ -148,7 +142,7 @@ function BlogPostPage() {
                     {post.authorName}
                   </p>
 
-                    <p className="m-0 mt-3xs truncate text-left font-body text-[14px] text-neutral-500">
+                    <p className="m-0 mt-3xs truncate text-left font-body text-body-sm text-neutral-500">
                     {post.authorRole}
                   </p>
                 </div>
@@ -158,7 +152,7 @@ function BlogPostPage() {
                 </span>
               </div>
 
-              <h1 className="m-0 mt-md text-left font-heading text-[26px] font-bold leading-tight text-heading md:text-page-title">
+              <h1 className="m-0 mt-md text-left font-heading text-h2 font-bold leading-tight text-heading">
                 {post.title}
               </h1>
 
@@ -178,7 +172,7 @@ function BlogPostPage() {
                       {t('newspage.aiSummary')}
                     </span>
                   </div>
-                  <p className="font-body text-body leading-[1.7] text-heading md:text-button">
+                  <p className="font-body text-body leading-[1.7] text-heading">
                     {post.aiSummary}
                   </p>
                 </div>

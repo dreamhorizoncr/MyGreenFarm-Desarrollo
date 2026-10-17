@@ -8,6 +8,7 @@ import 'swiper/css'
 import 'swiper/css/zoom'
 import CarouselDots from './ui/CarouselDots.tsx'
 import type { GalleryImage } from '../types/gallery.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 
 interface PhotoLightboxProps {
   images: GalleryImage[]
@@ -16,7 +17,6 @@ interface PhotoLightboxProps {
   onClose: () => void
 }
 
-// Las flechas van a los lados de la foto activa (no del carrusel), a esta distancia de su borde.
 const ARROW_GAP = 12
 
 function ArrowIcon({ flip = false }: Readonly<{ flip?: boolean }>) {
@@ -30,14 +30,12 @@ function ArrowIcon({ flip = false }: Readonly<{ flip?: boolean }>) {
 const arrowClassName =
   'absolute top-1/2 z-10 flex size-[36px] -translate-y-1/2 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-[left,right,scale,opacity] duration-300 enabled:hover:scale-105 enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 md:size-[44px]'
 
-// Visor de fotos con carrusel (Swiper): las fotos se deslizan al cambiar, se pueden
-// arrastrar o deslizar con el dedo, y hacer zoom con doble click o pellizco.
 function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLightboxProps>) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
+  useDialogDismiss(dialogRef, onClose)
   const [swiper, setSwiper] = useState<SwiperInstance | null>(null)
   const [index, setIndex] = useState(initialIndex)
-  // Mitad del ancho de la foto activa, para ubicar las flechas junto a ella.
   const [photoHalfWidth, setPhotoHalfWidth] = useState(0)
   const total = images.length
 
@@ -53,14 +51,12 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
 
   const measurePhoto = (current: SwiperInstance | null) => {
     if (!current) return
-    // offsetWidth no cambia con el zoom (transform), solo con el tamaño real de la foto.
     const photo = current.slides[current.activeIndex]?.querySelector('img')
     setPhotoHalfWidth((photo?.offsetWidth || current.width) / 2)
   }
 
   const arrowOffset = `calc(50% + ${photoHalfWidth + ARROW_GAP}px)`
   const image = images[index]
-  // Sin vuelta: en la primera foto se bloquea "anterior" y en la última "siguiente".
   const isFirst = index === 0
   const isLast = index === total - 1
 
@@ -68,12 +64,6 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
     <dialog
       ref={dialogRef}
       onClose={onClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) onClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') onClose()
-      }}
       aria-label={image?.title || alt}
       className="inset-0 m-0 flex h-full w-full max-h-none max-w-none items-center justify-center bg-transparent p-[16px] backdrop:bg-black/90 md:p-[30px]"
     >
@@ -87,7 +77,6 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
       </button>
 
       <figure className="m-0 flex max-h-full max-w-full flex-col items-center gap-md">
-        {/* El padding lateral deja lugar a las flechas, que siguen el borde de la foto activa */}
         <div className="relative px-[48px] md:px-[60px]">
           {total > 1 && (
             <button
@@ -118,7 +107,6 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
               measurePhoto(current)
             }}
             onResize={measurePhoto}
-            // Click (no arrastre) en el espacio vacío alrededor de la foto: cierra, igual que el fondo.
             onClick={(_, event) => {
               if (!(event.target instanceof HTMLImageElement)) onClose()
             }}

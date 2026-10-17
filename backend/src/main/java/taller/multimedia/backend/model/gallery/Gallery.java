@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 @Entity
 @Table(name = "gallery")
-@Data // Lombok annotation to generate getters, setters, and other utility methods
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Gallery {

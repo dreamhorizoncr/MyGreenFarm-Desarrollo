@@ -14,7 +14,7 @@ export function useGalleryAdmin() {
 	const [galleriesByCategory, setGalleriesByCategory] = useState<
 		Record<string, Gallery[]>
 	>({})
-	const [loading, setLoading] = useState(false)
+	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
 
 	const fetchAll = async (lang: string) => {
@@ -35,8 +35,6 @@ export function useGalleryAdmin() {
             }),
         )
 
-        // Se muestra de una vez sin traducir, para que no quede en blanco si
-        // la traducción falla o tarda
         setCategories(sortedCategories)
         setGalleriesByCategory(Object.fromEntries(entries))
 

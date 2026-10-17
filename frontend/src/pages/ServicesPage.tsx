@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { formatSchedule } from '../utils/schedule.ts'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
@@ -17,6 +18,8 @@ import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 import { convertCurrency, formatCurrency, currencySymbol } from '../utils/currency.ts'
 import { CircleCheckIcon, ClockIcon } from '@animateicons/react/lucide'
 import CurrencyToggle from '../components/currency/CurrencyToggle.tsx'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 function PlanCard({
   plan,
@@ -33,7 +36,7 @@ function PlanCard({
   idioma?: string
   loading?: boolean
 }>) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   const getCleanCurrency = (curr?: string): Currency => {
     const upper = curr?.toUpperCase()
@@ -131,7 +134,7 @@ function PlanCard({
                 <ClockIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
                 <span className="font-semibold text-neutral-600">{t('services.schedule')}</span>
               </div>
-              <p className="m-0 mt-2xs px-1 py-2xs text-left text-body-sm">{plan!.schedule}</p>
+              <p className="m-0 mt-2xs whitespace-pre-line px-1 py-2xs text-left text-body-sm">{formatSchedule(plan!.schedule, t, i18n.resolvedLanguage ?? i18n.language)}</p>
             </div>
           )}
 
@@ -164,8 +167,7 @@ function PlanCard({
 function ServicesPage() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
-  
-  // 💡 Extraemos totalPages y la función con soporte de página del hook
+
   const { plans, loading, error, fetchPlans, totalPages } = useServicePlans()
   const [currentPage, setCurrentPage] = useState(1)
 
@@ -173,7 +175,6 @@ function ServicesPage() {
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
   const checkoutWindowRef = useRef<Window | null>(null)
 
-  // Cada vez que cambia la página o el idioma, consultamos al backend (enviando currentPage - 1 para base 0)
   useEffect(() => {
     void fetchPlans(currentPage - 1, i18n.language)
   }, [currentPage, i18n.language])
@@ -223,7 +224,7 @@ function ServicesPage() {
     checkoutWindowRef.current = checkoutWindow
 
     const doc = checkoutWindow.document;
-    doc.title = 'Conectando con Pasarela de Pago...';
+    doc.title = t('services.connectingPayment');
     doc.body.style.cssText = `
       margin: 0;
       min-height: 100vh;
@@ -307,6 +308,7 @@ function ServicesPage() {
       }, 1500)
 
     } catch (error) {
+      console.error('Error creando la sesión de pago', error)
       checkoutWindow.close()
       setCheckoutLoading(null)
       notify.error({
@@ -316,13 +318,15 @@ function ServicesPage() {
     }
   }
 
+  const skeletonCount = useSkeletonCount('services', loading, plans.length, 3)
+
   return (
     <div className="min-h-screen bg-bg-page">
       <Navbar />
 
       <section className="flex min-h-[280px] items-start bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
         <div className="mx-auto w-full max-w-[700px]">
-          <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-green-500 md:text-h1">
+          <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">
             {t('services.title')}
           </h1>
           <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">
@@ -344,11 +348,7 @@ function ServicesPage() {
         <Container className="flex flex-col gap-[36px]">
           <div className="grid grid-cols-1 gap-[20px] md:grid-cols-3">
             {loading && (
-              <>
-                <PlanCard loading />
-                <PlanCard loading />
-                <PlanCard loading />
-              </>
+              <SkeletonList count={3}>{() => <PlanCard loading />}</SkeletonList>
             )}
 
             {error && (

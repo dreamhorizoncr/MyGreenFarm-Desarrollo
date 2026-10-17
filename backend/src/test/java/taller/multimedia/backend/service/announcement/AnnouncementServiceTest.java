@@ -1,5 +1,8 @@
 package taller.multimedia.backend.service.announcement;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,7 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import taller.multimedia.backend.dto.announcement.AnnouncementRequest;
 import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.model.announcement.Announcement;
-import taller.multimedia.backend.model.announcement.AnnouncementType;
+import taller.multimedia.backend.model.announcement.AnnouncementCategory;
+import taller.multimedia.backend.repository.announcement.AnnouncementCategoryRepository;
 import taller.multimedia.backend.repository.announcement.AnnouncementRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,6 +35,11 @@ class AnnouncementServiceTest {
     @Mock
     private AnnouncementRepository announcementRepository;
 
+    @Mock
+    private AnnouncementCategoryRepository announcementCategoryRepository;
+
+    private static final UUID CATEGORY_ID = UUID.randomUUID();
+
     @InjectMocks
     private AnnouncementService announcementService;
 
@@ -38,7 +47,7 @@ class AnnouncementServiceTest {
         AnnouncementRequest request = new AnnouncementRequest();
         request.setTitle(title);
         request.setContent(content);
-        request.setType(AnnouncementType.NEWS);
+        request.setCategoryId(CATEGORY_ID);
         request.setLocation(location);
         return request;
     }
@@ -66,6 +75,7 @@ class AnnouncementServiceTest {
         String multilineContent = "Primer párrafo.\n\nSegundo párrafo con más detalle.";
         AnnouncementRequest request = requestWith("Título válido", multilineContent, "Salón principal");
 
+        when(announcementCategoryRepository.findById(CATEGORY_ID)).thenReturn(Optional.of(new AnnouncementCategory(CATEGORY_ID, "Noticias", "NEWS", 0)));
         when(announcementRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         announcementService.create(request);

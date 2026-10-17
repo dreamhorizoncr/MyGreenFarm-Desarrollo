@@ -2,8 +2,9 @@ import { useTranslation } from 'react-i18next'
 import { useModalExit } from '../../../hooks/useModalExit.ts'
 import CardActionButton from '../../ui/CardActionButton.tsx'
 import ModalCloseButton from '../../ui/ModalCloseButton.tsx'
+import Skeleton from '../../ui/Skeleton.tsx'
+import SkeletonList from '../../ui/SkeletonList.tsx'
 
-// Lo mínimo que comparten los comentarios del Blog y de la Comunidad.
 export interface ForumCommentItem {
   id: string
   alias: string
@@ -12,20 +13,37 @@ export interface ForumCommentItem {
 }
 
 interface ForumCommentsModalProps<T extends ForumCommentItem> {
-  // Texto bajo el título: el título del artículo o el autor de la publicación.
   subtitle: string
   comments: T[]
   loading: boolean
+  skeletonCount: number
+  deletingId: string | null
   error: string
   canDelete: boolean
   onDeleteRequest: (comment: T) => void
   onClose: () => void
 }
 
+function CommentRowSkeleton({ canDelete }: Readonly<{ canDelete: boolean }>) {
+  return (
+    <div className="flex items-start justify-between gap-md border-b border-neutral-100 py-md last:border-0">
+      <div className="min-w-0 flex-1">
+        <Skeleton shape="line" className="h-4 w-32" />
+        <Skeleton shape="line" className="mt-sm h-3.5 w-full" />
+        <Skeleton shape="line" className="mt-xs h-3.5 w-3/4" />
+        <Skeleton shape="line" className="mt-sm h-3 w-28" />
+      </div>
+      {canDelete && <Skeleton shape="circle" className="size-8 shrink-0" />}
+    </div>
+  )
+}
+
 function ForumCommentsModal<T extends ForumCommentItem>({
   subtitle,
   comments,
   loading,
+  skeletonCount,
+  deletingId,
   error,
   canDelete,
   onDeleteRequest,
@@ -47,7 +65,7 @@ function ForumCommentsModal<T extends ForumCommentItem>({
       <div className={`relative mx-auto max-h-full modal-scroll w-full max-w-[680px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}>
         <div className="flex items-center justify-between gap-md">
           <div className="min-w-0">
-            <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+            <h2 className="m-0 font-heading text-h4 font-bold text-heading">
               {t('adminForum.commentsModalTitle')}
             </h2>
             <p className="m-0 mt-2xs truncate font-body text-body-sm text-neutral-500">
@@ -63,9 +81,11 @@ function ForumCommentsModal<T extends ForumCommentItem>({
 
         <div className="mt-lg max-h-[60vh] overflow-y-auto">
           {loading && (
-            <p className="m-0 font-body text-body-sm text-neutral-500">
-              {t('adminForum.loadingComments')}
-            </p>
+            <div aria-busy="true" aria-label={t('adminForum.loadingComments')}>
+              <SkeletonList count={Math.min(10, Math.max(1, skeletonCount))}>
+                {() => <CommentRowSkeleton canDelete={canDelete} />}
+              </SkeletonList>
+            </div>
           )}
 
           {!loading && error && (
@@ -80,7 +100,9 @@ function ForumCommentsModal<T extends ForumCommentItem>({
             </p>
           )}
 
-          {!loading && !error && comments.map((comment) => (
+          {!loading && !error && comments.map((comment) => comment.id === deletingId ? (
+            <CommentRowSkeleton key={comment.id} canDelete={canDelete} />
+          ) : (
             <div
               key={comment.id}
               className="flex items-start justify-between gap-md border-b border-neutral-100 py-md last:border-0"

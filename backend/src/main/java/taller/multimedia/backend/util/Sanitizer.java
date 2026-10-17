@@ -25,7 +25,6 @@ public final class Sanitizer {
         return input != null && SUSPICIOUS.matcher(input).find();
     }
 
-    // Rejects a field that contains HTML tags or control characters instead of silently stripping them.
     public static String requireClean(String field, String value) {
         if (hasMaliciousContent(value)) {
             throw new InvalidFieldException(field, "El campo " + field + " contiene caracteres no permitidos");
@@ -33,9 +32,6 @@ public final class Sanitizer {
         return text(value);
     }
 
-    // Same rejection as requireClean, but keeps the line breaks the author typed instead of
-    // collapsing them to a single space. Use this for long-form fields rendered with
-    // white-space: pre-line / pre-wrap (news body, appointment notes, newsletter message).
     public static String requireCleanPreserveLineBreaks(String field, String value) {
         if (hasMaliciousContent(value)) {
             throw new InvalidFieldException(field, "El campo " + field + " contiene caracteres no permitidos");
@@ -46,9 +42,6 @@ public final class Sanitizer {
         return value.replace("\r\n", "\n").replace('\r', '\n').trim();
     }
 
-    // Makes an uploaded file's original name safe to store and display: strips any
-    // directory portion, HTML/control characters and reserved filename characters,
-    // and falls back to a default name when nothing legible is left.
     public static String safeFileName(String original) {
         String name = text(original == null ? "" : original);
         int lastSeparator = Math.max(name.lastIndexOf('/'), name.lastIndexOf('\\'));

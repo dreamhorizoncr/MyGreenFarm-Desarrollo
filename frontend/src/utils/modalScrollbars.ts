@@ -1,16 +1,9 @@
-// Barra de scroll flotante para el contenido de los modales (.modal-scroll).
-// La barra nativa ocupa su propio carril y ensancha el modal; esta va encima del
-// contenido, sin ocupar espacio. Se instala una sola vez y detecta sola los modales
-// que se abren, así ningún modal tiene que hacer nada más que usar la clase.
 
 const SELECTOR = '.modal-scroll'
-// Separación de la barra con los bordes del modal, para que no choque con el redondeado.
 const EDGE_GAP = 20
-// La barra es apenas una señal de que hay más contenido: corta y de tamaño acotado.
 const MIN_THUMB = 24
 const MAX_THUMB = 56
 
-// Modales con barra instalada y la función que la reacomoda.
 const updaters = new Map<HTMLElement, () => void>()
 
 function enhance(container: HTMLElement) {
@@ -20,7 +13,6 @@ function enhance(container: HTMLElement) {
   const thumb = document.createElement('div')
   thumb.className = 'modal-scrollbar-thumb'
   track.appendChild(thumb)
-  // Primer hijo: no altera estilos que dependen del último hijo (last:, space-y).
   container.prepend(track)
 
   let thumbHeight = 0
@@ -28,7 +20,6 @@ function enhance(container: HTMLElement) {
 
   const update = () => {
     if (track.parentElement !== container) container.prepend(track)
-    // Observa también el contenido nuevo (imágenes que cargan, secciones que aparecen).
     for (const child of Array.from(container.children)) {
       if (child !== track) resizeObserver.observe(child)
     }
@@ -42,14 +33,12 @@ function enhance(container: HTMLElement) {
     track.hidden = false
     trackHeight = clientHeight - EDGE_GAP * 2
     thumbHeight = Math.min(MAX_THUMB, Math.max(MIN_THUMB, (trackHeight * clientHeight) / scrollHeight))
-    // El track es absolute dentro del contenedor que hace scroll: se compensa el scrollTop para que quede quieto.
     track.style.top = `${scrollTop + EDGE_GAP}px`
     track.style.height = `${trackHeight}px`
     thumb.style.height = `${thumbHeight}px`
     thumb.style.transform = `translateY(${(scrollTop / maxScroll) * (trackHeight - thumbHeight)}px)`
   }
 
-  // Arrastrar la barra mueve el contenido.
   thumb.addEventListener('pointerdown', (event) => {
     event.preventDefault()
     event.stopPropagation()
@@ -73,7 +62,6 @@ function enhance(container: HTMLElement) {
     thumb.addEventListener('pointercancel', onUp)
   })
 
-  // Click en el carril: salta a esa altura.
   track.addEventListener('pointerdown', (event) => {
     if (event.target !== track) return
     event.preventDefault()
@@ -82,7 +70,6 @@ function enhance(container: HTMLElement) {
     const maxScroll = container.scrollHeight - container.clientHeight
     container.scrollTo({ top: (offset / Math.max(1, trackHeight - thumbHeight)) * maxScroll, behavior: 'smooth' })
   })
-  // Que un click en la barra no cierre el modal (los modales cierran al hacer click en el fondo).
   track.addEventListener('click', (event) => event.stopPropagation())
 
   const resizeObserver = new ResizeObserver(update)
@@ -102,7 +89,6 @@ function scan() {
   for (const element of document.querySelectorAll<HTMLElement>(SELECTOR)) {
     if (!updaters.has(element)) enhance(element)
   }
-  // Reacomoda las barras abiertas y suelta las de modales que ya se cerraron.
   for (const update of Array.from(updaters.values())) update()
 }
 

@@ -10,7 +10,6 @@ import java.util.UUID;
 @Data
 public class ApplicationRequest {
 
-    // Nula cuando es una postulación espontánea (sin vacante asociada)
     private UUID vacancyId;
 
     @NotBlank(message = "El nombre es obligatorio")

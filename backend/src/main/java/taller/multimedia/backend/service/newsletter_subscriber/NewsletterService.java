@@ -15,7 +15,6 @@ public class NewsletterService {
         this.newsletterRepository = newsletterRepository;
     }
 
-    // Método para suscribir un nuevo correo
     public NewsletterSubscriber subscribe(String email, String language) {
         String cleanEmail = sanitizeEmail(email);
 
@@ -23,7 +22,6 @@ public class NewsletterService {
         
         if (existingSubscriber.isPresent()) {
             NewsletterSubscriber subscriber = existingSubscriber.get();
-            // Si ya existía pero estaba inactivo, lo reactivamos
             if (!subscriber.getIsActive()) {
                 subscriber.setIsActive(true);
                 subscriber.setLanguage(resolverLangCode(language));
@@ -32,7 +30,6 @@ public class NewsletterService {
             throw new RuntimeException("Este correo ya se encuentra suscrito activamente al boletín.");
         }
 
-        // Si es nuevo, lo creamos
         NewsletterSubscriber newSubscriber = new NewsletterSubscriber();
         newSubscriber.setEmail(cleanEmail);
         newSubscriber.setIsActive(true);
@@ -41,7 +38,6 @@ public class NewsletterService {
         return newsletterRepository.save(newSubscriber);
     }
 
-    // Método para desuscribir
     public void unsubscribe(String email) {
         String cleanEmail = sanitizeEmail(email);
         
@@ -69,7 +65,6 @@ public class NewsletterService {
             throw new RuntimeException("El dominio del correo no es válido.");
         }
 
-        // Lista blanca de proveedores comunes (igual que en parents)
         List<String> allowedDomains = List.of(
             "gmail.com", 
             "hotmail.com", 

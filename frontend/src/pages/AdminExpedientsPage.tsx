@@ -21,19 +21,18 @@ import { useExpedients } from "../hooks/useExpedients";
 import type { Expedient } from "../types/expedient";
 
 import { useTranslation } from "react-i18next";
+import SkeletonList from "../components/ui/SkeletonList.tsx";
+import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
 function AdminExpedientsPage() {
 
   const { expedients, sourceExpedients, loading, error, totalPages, fetchExpedients } = useExpedients();
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Guarda lo que escribe el usuario en el buscador
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Controla la apertura del formulario para agregar un expediente
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  // Guarda el expediente que se está editando
   const [editingExpedient, setEditingExpedient] = useState<Expedient | null>(
     null,
   );
@@ -42,12 +41,10 @@ function AdminExpedientsPage() {
 
   const { t, i18n } = useTranslation();
 
-  // Obtiene los expedientes cuando carga la página o cambia el idioma (traduce generalObservations)
   useEffect(() => {
     void fetchExpedients(currentPage - 1, i18n.language);
   }, [currentPage, i18n.language]);
 
-  // Filtra por nombre propio (no se traduce) y por observaciones en original Y traducido
   const filteredExpedients = expedients.filter((expedient, index) => {
     const search = searchTerm.trim().toLowerCase();
     if (!search) return true;
@@ -65,7 +62,6 @@ function AdminExpedientsPage() {
     try {
       await expedientService.delete(expedientToDelete.id);
 
-      // Actualiza la lista después de eliminar
       await fetchExpedients(currentPage - 1, i18n.language);
 
       notify.success(t("admin.expedients.deleteSuccessToastTitle"));
@@ -77,13 +73,13 @@ function AdminExpedientsPage() {
     }
   };
 
+  const skeletonCount = useSkeletonCount("admin-expedients", loading, filteredExpedients.length, 2);
+
   return (
     <AdminLayout>
       <ChildrenModuleTabs />
       <section className="w-full">
-        {/* Encabezado de la página */}
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          {/* Título y descripción */}
           <div>
             <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
               {t('admin.expedients.title')}
@@ -94,48 +90,41 @@ function AdminExpedientsPage() {
             </p>
           </div>
 
-          {/* Acciones y buscador */}
           <div className="flex w-full items-center gap-3 md:w-auto">
-            {/* Botón para agregar un expediente */}
             <button
               type="button"
               onClick={() => setIsCreateModalOpen(true)}
               className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-all duration-300 hover:scale-105 hover:bg-orange-600"
-              aria-label="Agregar expediente"
-              title="Agregar expediente"
+              aria-label={t("admin.expedients.addTitle")}
+              title={t("admin.expedients.addTitle")}
             >
               <span className="text-3xl font-light leading-none transition-transform duration-300 group-hover:rotate-90">
                 +
               </span>
             </button>
 
-            {/* Buscador de expedientes */}
             <div className="flex h-11 min-w-0 flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 md:w-[360px] md:flex-none">
               <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
               <input
                 type="search"
-                placeholder="Buscar niño..."
+                placeholder={t("admin.children.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                aria-label="Buscar niño..."
+                aria-label={t("admin.children.searchPlaceholder")}
                 className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
               />
             </div>
           </div>
         </div>
 
-        {/* Estado de carga */}
         {loading && (
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <ExpedientCard loading />
-            <ExpedientCard loading />
+            <SkeletonList count={skeletonCount}>{() => <ExpedientCard loading />}</SkeletonList>
           </div>
         )}
 
-        {/* Error al cargar */}
         {error && <p className="mt-8 font-body text-red-500">Error: {error}</p>}
 
-        {/* Lista de expedientes */}
         {!loading && !error && filteredExpedients.length > 0 && (
           <>
             <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -143,9 +132,7 @@ function AdminExpedientsPage() {
                 <ExpedientCard
                   key={expedient.id}
                   expedient={expedient}
-                  // Abre el modal de edición
                   onEdit={setEditingExpedient}
-                  // Elimina el expediente
                   onDelete={setExpedientToDelete}
                 />
               ))}
@@ -154,7 +141,6 @@ function AdminExpedientsPage() {
           </>
         )}
 
-        {/* No existen expedientes */}
         {!loading && !error && expedients.length === 0 && (
           <div className="mt-12 text-center">
             <p className="font-body text-body-text">
@@ -163,19 +149,17 @@ function AdminExpedientsPage() {
           </div>
         )}
 
-        {/* La búsqueda no encontró resultados */}
         {!loading &&
           !error &&
           expedients.length > 0 &&
           filteredExpedients.length === 0 && (
             <div className="mt-12 text-center">
               <p className="font-body text-body-text">
-                No se encontraron expedientes con ese nombre.
+                {t("admin.expedients.noMatches")}
               </p>
             </div>
           )}
 
-        {/* Modal para agregar un expediente */}
         {isCreateModalOpen && (
           <ExpedientFormModal
             onClose={() => setIsCreateModalOpen(false)}
@@ -183,7 +167,6 @@ function AdminExpedientsPage() {
           />
         )}
 
-        {/* Modal para editar un expediente */}
         {editingExpedient && (
           <ExpedientFormModal
             expedient={editingExpedient}

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import Button from './ui/Button.tsx'
 import Select from './ui/Select.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import type { OnvoRawPlan, ServicePlan } from '../types/servicePlan.ts'
 import ImagePickerButton from './ui/ImagePickerButton.tsx'
 import ImageThumb, { ImageThumbList } from './ui/ImageThumb.tsx'
@@ -11,6 +12,8 @@ import { servicePlanService } from '../services/servicePlan.ts'
 import { notify } from '../utils/notifications.ts'
 import { validateSafeText } from '../utils/validators.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
+import ScheduleField from './ui/ScheduleField.tsx'
+import { emptySchedule, parseSchedule, serializeSchedule, validateSchedule } from '../utils/schedule.ts'
 
 const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']
 
@@ -30,7 +33,6 @@ interface CreateServicePlanModalProps {
   onSave: (data: { schedule: string; includes: string; gatewayPriceId: string }, file: File) => Promise<unknown>
   onUpdate?: (id: string, data: { schedule: string; includes: string; gatewayPriceId: string }, file?: File) => Promise<unknown>
   onClose: () => void
-  // Se llama al borrar la imagen actual del plan, para refrescar la lista.
   onImageDeleted?: () => void | Promise<void>
 }
 
@@ -38,11 +40,12 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
 
   const isEditing = !!planToEdit
 
   const [gatewayPriceId, setGatewayPriceId] = useState(planToEdit?.gatewayPriceId ?? '')
-  const [schedule, setSchedule] = useState(planToEdit?.schedule ?? '')
+  const [schedule, setSchedule] = useState(() => parseSchedule(planToEdit?.schedule) ?? emptySchedule())
   const [includes, setIncludes] = useState(planToEdit?.includes ?? '')
   const [selectedImage, setSelectedImage] = useState<SelectedImage | null>(null)
   const [saving, setSaving] = useState(false)
@@ -93,9 +96,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
       setOnvoError(null)
     }
 
-    const scheduleMessage = schedule.trim()
-      ? validateSafeText(schedule, t)
-      : t('validation.fieldRequired', { field: t('admin.servicios.scheduleLabel') })
+    const scheduleMessage = validateSchedule(schedule, t)
     setScheduleError(scheduleMessage)
     if (scheduleMessage) hasError = true
 
@@ -116,7 +117,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
 
     setSaving(true)
     try {
-      const data = { schedule: schedule.trim(), includes: includes.trim(), gatewayPriceId }
+      const data = { schedule: serializeSchedule(schedule), includes: includes.trim(), gatewayPriceId }
       if (isEditing && onUpdate) {
         await onUpdate(planToEdit.id, data, selectedImage?.file)
       } else {
@@ -135,17 +136,11 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') requestClose()
-      }}
       aria-label={isEditing ? t('admin.servicios.editPlan') : t('admin.servicios.newPlan')}
       className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="flex items-center justify-between gap-md">
-        <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+        <h2 className="m-0 font-heading text-h4 font-bold text-heading">
           {isEditing ? t('admin.servicios.editPlan') : t('admin.servicios.newPlan')}
         </h2>
 
@@ -186,24 +181,16 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
           )}
         </label>
 
-        <label className="font-body text-body-sm font-semibold text-heading">
-          {t('admin.servicios.scheduleLabel')}
-          <input
-            id="create-plan-schedule"
-            type="text"
-            maxLength={200}
-            value={schedule}
-            onChange={(e) => {
-              setSchedule(e.target.value)
-              if (scheduleError) setScheduleError(null)
-            }}
-            placeholder={t('admin.servicios.schedulePlaceholder')}
-            className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
-          />
-          {scheduleError && (
-            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{scheduleError}</span>
-          )}
-        </label>
+        <ScheduleField
+          id="create-plan-schedule"
+          label={t('admin.servicios.scheduleLabel')}
+          value={schedule}
+          onChange={(value) => {
+            setSchedule(value)
+            if (scheduleError) setScheduleError(null)
+          }}
+          error={scheduleError}
+        />
 
         <label className="font-body text-body-sm font-semibold text-heading">
           {t('admin.servicios.includesLabel')}

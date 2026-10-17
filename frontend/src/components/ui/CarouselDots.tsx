@@ -1,11 +1,9 @@
-/** Puntos de navegación de carruseles (testimonios, visor de fotos): uno por elemento, el activo en verde */
 
 interface CarouselDotsProps {
   count: number
   activeIndex: number
   onSelect: (index: number) => void
   ariaLabel: string
-  // Texto accesible de cada punto, p. ej. "Ir a la foto 3".
   getItemLabel: (index: number) => string
   className?: string
 }

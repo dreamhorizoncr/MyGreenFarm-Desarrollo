@@ -1,4 +1,3 @@
-// Esto de aquí es para la pantalla de restablecer contraseña (la que abre el link del correo).
 import { useEffect, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router-dom'
@@ -69,13 +68,11 @@ function ResetPasswordPage() {
 
   return (
     <AuthLayout overtitle={t('resetPassword.overtitle')} closeTo={isAuthenticated ? '/profile' : '/login'}>
-      {/*Título*/}
-      <h2 className="mb-[50px] text-left font-heading text-[28px] leading-none text-heading md:text-h1">
+      <h2 className="mb-[50px] text-left font-heading text-h1 leading-none text-heading">
         {t('resetPassword.title')}
       </h2>
 
       {!token ? (
-        /*Sin Token*/
         <div className="text-center">
           <p className="mb-[35px] font-body text-body-sm leading-[1.7] text-body-text">
             {t('resetPassword.missingToken')}
@@ -89,9 +86,7 @@ function ResetPasswordPage() {
           </Link>
         </div>
       ) : (
-        /*Formulario*/
         <form onSubmit={handleResetPassword} noValidate>
-          {/*Nueva Contraseña*/}
           <TextField
             id="reset-password-new"
             type="password"
@@ -107,7 +102,6 @@ function ResetPasswordPage() {
             error={passwordValidationError}
           />
 
-          {/*Confirmar Contraseña*/}
           <div className="mt-[35px]">
             <TextField
               id="reset-password-confirm"
@@ -125,21 +119,18 @@ function ResetPasswordPage() {
             />
           </div>
 
-          {/*Error del backend*/}
           {error && (
             <p className="mt-4 text-center font-body text-body-sm text-danger">
               {error}
             </p>
           )}
 
-          {/*Mensaje de éxito*/}
           {success && (
             <p className="mt-5 text-center font-body text-body-sm text-body-text">
               {t('resetPassword.success')}
             </p>
           )}
 
-          {/*Botón*/}
           {!success && (
             <div className="mx-auto mt-[50px] w-[72%]">
               <AuthButton loading={loading}>
@@ -150,7 +141,6 @@ function ResetPasswordPage() {
             </div>
           )}
 
-          {/*Volver al inicio de sesión o al perfil*/}
           <p className="mt-[35px] text-center">
             <Link
               to={isAuthenticated ? '/profile' : '/login'}

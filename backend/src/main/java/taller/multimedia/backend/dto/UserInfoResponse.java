@@ -5,7 +5,6 @@ import lombok.Getter;
 import java.time.LocalDate;
 import java.util.UUID;
 
-// DTO class for user information response payload
 @Getter 
 public class UserInfoResponse {
     private UUID id;

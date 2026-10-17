@@ -3,12 +3,12 @@ package taller.multimedia.backend.model.announcement;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.CascadeType;
@@ -25,7 +25,7 @@ import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "announcements")
-@Data // Lombok annotation to generate getters, setters, and other utility methods
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Announcement {
@@ -39,9 +39,12 @@ public class Announcement {
     @Column(nullable = false, length = 4000)
     private String content;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private AnnouncementType type;
+    @Column(nullable = false, length = 30)
+    private String type;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id")
+    private AnnouncementCategory category;
 
     @Column(name = "event_date")
     private LocalDateTime eventDate;
@@ -62,10 +65,10 @@ public class Announcement {
     @BatchSize(size = 20)
     private List<AnnouncementImage> images = new ArrayList<>();
 
-    public Announcement(String title, String content, AnnouncementType type) {
+    public Announcement(String title, String content, AnnouncementCategory category) {
         this.title = title;
         this.content = content;
-        this.type = type;
+        this.category = category;
     }
     
 }

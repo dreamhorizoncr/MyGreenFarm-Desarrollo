@@ -4,6 +4,7 @@ import { BanknoteIcon } from '@animateicons/react/lucide'
 import type { ExchangeRate } from '../../types/exchangeRate.ts'
 import { formatCurrency } from '../../utils/currency.ts'
 import { useModalExit } from '../../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../../hooks/useDialogDismiss.ts'
 import ModalCloseButton from '../ui/ModalCloseButton.tsx'
 
 interface ExchangeRateWidgetProps {
@@ -19,6 +20,7 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
   const [isOpen, setIsOpen] = useState(false)
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose: handleClose } = useModalExit(() => setIsOpen(false))
+  useDialogDismiss(dialogRef, handleClose)
 
   const lastUpdated = data
     ? new Intl.DateTimeFormat(locale, {
@@ -83,12 +85,6 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
             if (el && !el.open) el.showModal()
           }}
           onClose={handleClose}
-          onClick={(event) => {
-            if (event.target === dialogRef.current) handleClose()
-          }}
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') handleClose()
-          }}
           aria-labelledby="exchange-rate-title"
           className={`fixed inset-0 m-auto max-h-[90vh] w-[min(520px,94vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg shadow-xl backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         >

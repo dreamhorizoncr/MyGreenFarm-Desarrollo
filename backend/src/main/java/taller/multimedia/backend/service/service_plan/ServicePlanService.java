@@ -58,7 +58,6 @@ public class ServicePlanService {
             throw new IllegalArgumentException("Ya existe un plan de servicio registrado en Onvo.");
         }
 
-        // 1. Buscamos la info completa usando tu método maestro de Onvo
         List<Map<String, Object>> onvoPlans = getPlansFromOnvo();
         Map<String, Object> targetOnvoPlan = onvoPlans.stream()
                 .filter(p -> dto.getGatewayPriceId().equals(p.get("gatewayPriceId")))
@@ -66,8 +65,6 @@ public class ServicePlanService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "No se encontró el precio con ID: " + dto.getGatewayPriceId() + " en OnvoPay"));
 
-        // 2. Llenamos el DTO con los datos reales que faltaban para que no viajen en
-        // null
         dto.setName((String) targetOnvoPlan.get("name"));
 
         String desc = (String) targetOnvoPlan.get("description");
@@ -84,7 +81,6 @@ public class ServicePlanService {
         String realCheckoutUrl = generateCheckoutUrl(dto.getGatewayPriceId());
         dto.setPaymentUrl(realCheckoutUrl);
 
-        // 3. Se lo pasamos al servicio de imágenes para que suba el archivo y guarde
         return servicePlanImagesService.createPlanWithImage(dto, file);
     }
 
@@ -103,8 +99,6 @@ public class ServicePlanService {
         servicePlanImagesService.deletePlan(id);
     }
 
-    // Trae los planes/productos desde la API de OnvoPay para alimentar el dropdown
-    // del frontend.
     public List<Map<String, Object>> getPlansFromOnvo() {
         List<Map<String, Object>> plansList = new ArrayList<>();
         HttpHeaders headers = new HttpHeaders();
@@ -112,7 +106,6 @@ public class ServicePlanService {
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
         try {
-            // 1. Obtener productos y mapearlos por ID
             Map<String, Map<String, Object>> prodMap = new HashMap<>();
             long productsRequestStart = System.currentTimeMillis();
             ResponseEntity<Map> prodRes = restTemplate.exchange(onvoApiUrl + "/products", HttpMethod.GET, entity,
@@ -145,12 +138,10 @@ public class ServicePlanService {
                     info.put("currency",
                             item.get("currency") != null ? item.get("currency").toString().toUpperCase() : "CRC");
 
-                    // Precio en formato decimal
                     Object amount = item.get("unitAmount");
                     double price = amount != null ? Double.parseDouble(amount.toString()) / 100.0 : 0.0;
                     info.put("price", price);
 
-                    // Mapeo inteligente y limpio del tipo de plan (Enum compatible)
                     String mappedType = "ONE_TIME";
                     Object recurringObj = item.get("recurring");
 
@@ -223,14 +214,11 @@ public class ServicePlanService {
     }
 
 
-    // Une lo que viene de OnvoPay con la imagen, horarios y detalles guardados en
-    // Supabase.
     public List<Map<String, Object>> getFullEnrichedPlans() {
         List<Map<String, Object>> onvoPlans = getPlansFromOnvo();
         List<ServicePlan> localPlans = servicePlanRepository.findAll();
 
         for (Map<String, Object> onvoPlan : onvoPlans) {
-            // CORREGIDO: Usamos "gatewayPriceId" en lugar de "priceId"
             String priceId = (String) onvoPlan.get("gatewayPriceId");
 
             ServicePlan match = localPlans.stream()
@@ -239,7 +227,7 @@ public class ServicePlanService {
                     .orElse(null);
 
             if (match != null) {
-                onvoPlan.put("id", match.getId()); // minúscula para mantener consistencia REST
+                onvoPlan.put("id", match.getId());
                 onvoPlan.put("imageUrl", match.getImageUrl());
                 onvoPlan.put("schedule", match.getSchedule());
                 onvoPlan.put("includes", match.getIncludes());
@@ -303,7 +291,6 @@ public class ServicePlanService {
         ServicePlan plan = getPlanById(planId);
         String gatewayPriceId = plan.getGatewayPriceId();
 
-        // Solo genera la sesión en Onvo y retorna los datos al frontend
         return generateCheckoutUrlInternal(gatewayPriceId);
     }
 
@@ -311,8 +298,6 @@ public class ServicePlanService {
         return createCheckoutSessionForPlan(planId);
     }
 
-    // 1. Consulta directa a la API de Onvo para verificar si la sesión ya fue
-    // pagada
     public boolean checkStatusDirectlyFromOnvo(String gatewaySessionId) {
         if (gatewaySessionId == null || gatewaySessionId.isEmpty()) {
             return false;

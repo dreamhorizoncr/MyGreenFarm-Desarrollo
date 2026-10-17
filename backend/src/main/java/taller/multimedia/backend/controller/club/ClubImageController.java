@@ -47,7 +47,6 @@ public class ClubImageController {
         return ResponseEntity.ok(clubImageService.updateImage(imageId, file, isCover));
     }
 
-    // Cambiar la posición / orden de una imagen específica
     @PatchMapping("/images/{imageId}/order")
     public ResponseEntity<ClubImageResponse> updateSortOrder(
             @PathVariable Long imageId,

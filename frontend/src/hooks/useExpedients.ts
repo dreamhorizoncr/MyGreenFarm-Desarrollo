@@ -15,7 +15,7 @@ interface CacheData {
 export function useExpedients() {
     const [expedients, setExpedients] = useState<Expedient[]>([]);
     const [sourceExpedients, setSourceExpedients] = useState<Expedient[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [totalPages, setTotalPages] = useState(0);
 

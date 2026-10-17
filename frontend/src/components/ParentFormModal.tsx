@@ -16,7 +16,6 @@ interface ParentFormModalProps {
   parent?: Parent;
 }
 
-// Idiomas disponibles
 const languages: ParentLanguage[] = ["es", "en", "fr"];
 
 function ParentFormModal({
@@ -27,10 +26,8 @@ function ParentFormModal({
   const { t } = useTranslation();
   const { closing, requestClose } = useModalExit(onClose);
 
-  // Si existe un padre, el modal está en modo edición
   const isEditing = Boolean(parent);
 
-  // Datos del formulario
   const [firstName, setFirstName] = useState(parent?.firstName ?? "");
   const [lastName, setLastName] = useState(parent?.lastName ?? "");
   const [identification, setIdentification] = useState(
@@ -45,7 +42,6 @@ function ParentFormModal({
   // Estado isActive (por defecto true si es nuevo, o el valor actual si se edita)
   const [isActive, setIsActive] = useState<boolean>(parent?.isActive ?? true);
 
-  // Estado del formulario
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string | null>>({});
@@ -57,7 +53,6 @@ function ParentFormModal({
     });
   };
 
-  // Guarda o actualiza el padre
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -89,15 +84,12 @@ function ParentFormModal({
     };
 
     try {
-      // Si existe un padre, lo actualiza
       if (parent) {
         await parentService.update(parent.id, data);
       } else {
-        // Si no existe, crea uno nuevo
         await parentService.create(data);
       }
 
-      // Actualiza la lista de padres
       await onCreated();
 
       notify.success(
@@ -106,7 +98,6 @@ function ParentFormModal({
           : t("admin.parents.createSuccessToastTitle"),
       );
 
-      // Cierra el modal
       requestClose();
     } catch (error) {
       console.error("Error al guardar el padre:", error);
@@ -148,7 +139,7 @@ function ParentFormModal({
         noValidate
       >
         <div className="flex items-center justify-between gap-md">
-          <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+          <h2 className="m-0 font-heading text-h4 font-bold text-heading">
             {isEditing
               ? t("admin.parents.editTitle")
               : t("admin.parents.addTitle")}

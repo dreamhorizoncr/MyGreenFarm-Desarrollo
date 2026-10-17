@@ -7,6 +7,7 @@ import Button from './ui/Button.tsx'
 import DatePickerField from './ui/DatePickerField.tsx'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import { validateEmail, validateRequired } from '../utils/validators.ts'
 
@@ -48,6 +49,7 @@ import type { CreateTeacherData } from '../services/admin.ts'
     const [removePhoto, setRemovePhoto] = useState(false)
 
     const [saving, setSaving] = useState(false)
+    useDialogDismiss(dialogRef, requestClose, !saving)
     const [saveError, setSaveError] = useState<string | null>(null)
 
     const [firstNameError, setFirstNameError] = useState<string | null>(null)
@@ -75,12 +77,12 @@ import type { CreateTeacherData } from '../services/admin.ts'
         if (!file) return
 
         if (!file.type.startsWith('image/')) {
-        setSaveError('Seleccioná un archivo de imagen válido.')
+        setSaveError(t('admin.teachersPage.invalidImage'))
         return
         }
 
         if (file.size > 5 * 1024 * 1024) {
-        setSaveError('La fotografía no puede superar los 5 MB.')
+        setSaveError(t('admin.teachersPage.imageTooLarge'))
         return
         }
 
@@ -94,12 +96,9 @@ import type { CreateTeacherData } from '../services/admin.ts'
         const lastError = validateRequired(lastName, t('admin.lastName'), t)
         const mailError = validateEmail(email, t)
 
-        const passError =
-        !isEditing && !password.trim()
-            ? 'La contraseña es obligatoria.'
-            : !isEditing && password.length < 8
-            ? 'La contraseña debe tener al menos 8 caracteres.'
-            : null
+        let passError: string | null = null
+        if (!isEditing && !password.trim()) passError = t('admin.teachersPage.passwordRequired')
+        else if (!isEditing && password.length < 8) passError = t('admin.teachersPage.passwordMin')
 
         setFirstNameError(firstError)
         setLastNameError(lastError)
@@ -149,23 +148,16 @@ import type { CreateTeacherData } from '../services/admin.ts'
         <dialog
         ref={dialogRef}
         onClose={requestClose}
-        onClick={(event) => {
-            if (event.target === dialogRef.current && !saving) requestClose()
-        }}
-        onKeyDown={(event) => {
-            if (event.key === 'Escape' && !saving) requestClose()
-        }}
-        aria-label={isEditing ? 'Editar docente' : 'Registrar docente'}
+        aria-label={isEditing ? t('admin.teachersPage.edit') : t('admin.teachersPage.register')}
         className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${
             closing
             ? 'animate-[modal-out_0.32s_ease-in]'
             : 'animate-[modal-in_0.32s_ease-out]'
         }`}
         >
-        {/* Encabezado */}
         <div className="flex items-center justify-between gap-md">
-            <h2 className="m-0 font-heading text-2xl font-bold text-heading">
-            {isEditing ? 'Editar docente' : 'Registrar docente'}
+            <h2 className="m-0 font-heading text-h4 font-bold text-heading">
+            {isEditing ? t('admin.teachersPage.edit') : t('admin.teachersPage.register')}
             </h2>
 
             <ModalCloseButton
@@ -176,13 +168,12 @@ import type { CreateTeacherData } from '../services/admin.ts'
             />
         </div>
 
-        {/* Fotografía */}
         <div className="mt-lg flex flex-col items-center gap-sm">
             <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-green-100 bg-green-50">
             {photoPreview || (teacher?.photoUrl && !removePhoto) ? (
                 <img
                 src={photoPreview || teacher?.photoUrl || ''}
-                alt="Fotografía del docente"
+                alt={t('admin.teachersPage.photoAlt')}
                 className="h-full w-full object-cover"
                 />
             ) : (
@@ -207,7 +198,7 @@ import type { CreateTeacherData } from '../services/admin.ts'
                     onClick={() => fileInputRef.current?.click()}
                     className="rounded-full border border-green-500 px-md py-xs font-body text-body-sm font-semibold text-green-600 transition hover:bg-green-50 disabled:opacity-50"
                 >
-                    {teacher?.photoUrl ? 'Cambiar fotografía' : 'Agregar fotografía'}
+                    {teacher?.photoUrl ? t('admin.teachersPage.changePhoto') : t('admin.teachersPage.addPhoto')}
                 </button>
 
                 {(teacher?.photoUrl || selectedPhoto) && (
@@ -221,19 +212,18 @@ import type { CreateTeacherData } from '../services/admin.ts'
                     }}
                     className="rounded-full border border-red-300 px-md py-xs font-body text-body-sm font-semibold text-danger transition hover:bg-red-50 disabled:opacity-50"
                     >
-                    Eliminar fotografía
+                    {t('admin.teachersPage.removePhoto')}
                     </button>
                 )}
                 </div>
             </>
             ) : (
             <p className="m-0 text-center font-body text-body-sm text-neutral-500">
-                Podrás agregar una fotografía después de registrar al docente.
+                {t('admin.teachersPage.photoAfterRegister')}
             </p>
             )}
         </div>
 
-        {/* Campos */}
         <div className="mt-lg grid gap-md md:grid-cols-2">
             <label className="font-body text-body-sm font-semibold text-heading">
             {t('admin.firstName')}
@@ -304,7 +294,7 @@ import type { CreateTeacherData } from '../services/admin.ts'
 
             {!isEditing && (
             <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
-                Contraseña
+                {t('admin.teachersPage.password')}
                 <input
                 type="password"
                 value={password}
@@ -317,7 +307,7 @@ import type { CreateTeacherData } from '../services/admin.ts'
                 className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading disabled:opacity-50"
                 />
                 <span className="mt-xs block font-body text-body-sm font-normal text-neutral-500">
-                Mínimo 8 caracteres, incluyendo mayúscula, minúscula, número y símbolo.
+                {t('admin.teachersPage.passwordHint')}
                 </span>
                 {passwordError && (
                 <span className="mt-xs block font-normal text-danger">{passwordError}</span>
@@ -326,14 +316,12 @@ import type { CreateTeacherData } from '../services/admin.ts'
             )}
         </div>
 
-        {/* Errores */}
         {saveError && (
             <p className="mt-md rounded-xl bg-red-50 p-md font-body text-body-sm text-red-700">
             {saveError}
             </p>
         )}
 
-        {/* Acciones */}
         <div className="mt-lg flex flex-wrap justify-end gap-sm">
             <Button
             variant="secondary"

@@ -13,10 +13,12 @@ import { evaluationService } from "../services/evaluation";
 import { expedientService } from "../services/expedient";
 import { notify } from "../utils/notifications";
 import { useEvaluations } from "../hooks/useEvaluations";
-import { useClientPagination } from "../hooks/useClientPagination"; // 💡 Importamos el hook unificado
+import { useClientPagination } from "../hooks/useClientPagination";
 
 import type { Evaluation } from "../types/evaluation";
 import type { Expedient } from "../types/expedient";
+import SkeletonList from "../components/ui/SkeletonList.tsx";
+import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
 function AdminEvaluationsPage() {
     const { t, i18n } = useTranslation();
@@ -121,11 +123,12 @@ function AdminEvaluationsPage() {
 
     const isLoading = loading || loadingExpedients;
 
+    const skeletonCount = useSkeletonCount("admin-evaluations", isLoading, filteredEvaluations.length, 2);
+
     return (
         <AdminLayout>
             <ChildrenModuleTabs />
             <section className="w-full">
-                {/* Header */}
                 <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                     <div>
                         <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
@@ -137,7 +140,6 @@ function AdminEvaluationsPage() {
                         </p>
                     </div>
 
-                    {/* Acciones + buscador */}
                     <div className="flex w-full items-center gap-3 md:w-auto">
                         <button
                             type="button"
@@ -175,7 +177,6 @@ function AdminEvaluationsPage() {
                     </div>
                 </div>
 
-                {/* Loading */}
                 {isLoading && (
                     <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
                         <EvaluationCard loading />
@@ -183,7 +184,6 @@ function AdminEvaluationsPage() {
                     </div>
                 )}
 
-                {/* Error */}
                 {!isLoading && error && (
                     <div className="mt-8 rounded-2xl border border-danger-100 bg-white p-6">
                         <p className="font-body text-body-sm text-danger">
@@ -192,7 +192,6 @@ function AdminEvaluationsPage() {
                     </div>
                 )}
 
-                {/* Evaluaciones */}
                 {!isLoading &&
                     !error &&
                     filteredEvaluations.length > 0 && (
@@ -241,7 +240,6 @@ function AdminEvaluationsPage() {
                     )}
             </section>
 
-            {/* Crear / editar */}
             <EvaluationFormModal
                 isOpen={isFormOpen}
                 evaluation={selectedEvaluation}
@@ -254,7 +252,6 @@ function AdminEvaluationsPage() {
                 }}
             />
 
-            {/* Eliminar */}
             {evaluationToDelete && (
                 <DeleteConfirmModal
                     title={t("admin.evaluations.deleteTitle")}

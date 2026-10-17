@@ -46,9 +46,12 @@
                                 ¡Felicidades, fuiste contratado/a!
                             </h2>
                             <p style="color:#3F4A3B; font-size:15.5px; line-height:1.75; margin:0 0 16px;">
+                                <th:block th:if="${vacancyTitle != null}">
                                 <span th:text="#{email.application.hired.body}">Nos complace informarte que tu postulación para</span>
                                 <strong th:text="${vacancyTitle}" style="color:#015C39;"></strong>
                                 <span th:text="#{email.application.hired.body2}">ha sido aprobada. Pronto nos pondremos en contacto contigo para coordinar los siguientes pasos.</span>
+                                </th:block>
+                                <span th:if="${vacancyTitle == null}" th:text="#{email.application.hired.bodyGeneral}">Nos complace informarte que tu postulación ha sido aprobada. Pronto nos pondremos en contacto contigo para coordinar los siguientes pasos.</span>
                             </p>
 
                             <table role="presentation" style="border-spacing:0; width:100%">

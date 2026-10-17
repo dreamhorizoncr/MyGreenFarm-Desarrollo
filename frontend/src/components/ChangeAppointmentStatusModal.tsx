@@ -5,6 +5,7 @@ import WizardSteps from './ui/WizardSteps.tsx'
 import { getErrorMessage } from '../utils/error.ts'
 import { validateRequired, validateSafeText } from '../utils/validators.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import type { Appointment, AppointmentStatus } from '../types/appointment.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
@@ -27,6 +28,7 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
 
   const [step, setStep] = useState(0)
   const [status, setStatus] = useState<AppointmentStatus>(appointment.status)
@@ -76,18 +78,12 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') requestClose()
-      }}
       aria-label={t('teacherAppointments.changeStatus')}
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="relative p-[28px_22px_30px]">
         <div className="flex items-center justify-between gap-md">
-          <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+          <h2 className="m-0 font-heading text-h4 font-bold text-heading">
             {t('teacherAppointments.changeStatus')}
           </h2>
 
@@ -114,7 +110,7 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
               </p>
 
               <div className="flex flex-col gap-sm">
-                <label className="font-body text-body font-normal leading-[1.6] text-body-text">
+                <label className="font-body text-body-sm font-semibold text-heading">
                   {t('teacherAppointments.state')}
                 </label>
                 <div className="flex flex-wrap gap-sm">
@@ -138,7 +134,7 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
 
               {requiresConclusion && (
                 <div className="flex flex-col">
-                  <label htmlFor="change-status-conclusion" className="mb-1 font-body text-body font-normal leading-[1.6] text-body-text">
+                  <label htmlFor="change-status-conclusion" className="mb-1 font-body text-body-sm font-semibold text-heading">
                     {t('teacherAppointments.rejectNoteLabel')}
                   </label>
                   <textarea

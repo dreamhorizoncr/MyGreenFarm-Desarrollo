@@ -11,9 +11,13 @@ import { useTranslation } from 'react-i18next'
 
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 import { adminService } from '../services/admin.ts'
 import type { UserInfo } from '../types/auth.ts'
+
+const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
 
     const squishyTransition = {
     type: 'spring' as const,
@@ -76,61 +80,55 @@ import type { UserInfo } from '../types/auth.ts'
         }
     }, [])
 
+    const teacherSkeletonCount = useSkeletonCount('about-teachers', teachersLoading, teachers.length, 4)
+
     return (
         <>
             <Navbar />
 
             <main className="flex min-w-0 flex-col bg-bg-page">
-            {/* Hero */}
             <section
                 data-scroll-bg="green"
                 className="flex min-h-[280px] items-center bg-green-500 px-[30px] py-[40px] text-center text-white xs:min-h-[320px]"
             >
                 <div className="mx-auto w-full max-w-[700px]">
-                <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
+                <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-white">
                     {t('aboutUsPage.hero.title')}
                 </h1>
 
-                <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-sm leading-[1.6] text-white">
+                <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body leading-[1.6] text-white">
                     {t('aboutUsPage.hero.description')}
                 </p>
                 </div>
             </section>
 
-            {/* Our Teachers */}
             <section
                 id="our-teachers"
                 className="relative w-full overflow-hidden"
             >
                 <Container className="relative flex flex-col items-center gap-xl py-1000 sm:py-1200 lg:py-1500">
-                {/* Encabezado */}
                 <div className="relative z-10 flex w-full max-w-[55rem] flex-col items-center gap-700 text-center">
                     <h2 className="m-0 font-heading text-h2 font-bold leading-tight text-heading">
                     {t('aboutUsPage.team.title')}
                     </h2>
 
-                    <p className="m-0 max-w-[48rem] font-body text-body-sm leading-[1.6] text-body-text">
+                    <p className="m-0 max-w-[48rem] font-body text-body leading-[1.6] text-body-text">
                     {t('aboutUsPage.team.description')}
                     </p>
                 </div>
 
-                {/* Loading */}
                 {teachersLoading && (
                     <div className="grid w-full grid-cols-1 justify-items-center gap-x-lg gap-y-xl sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    {[1, 2, 3, 4].map((item) => (
-                        <div
-                        key={item}
-                        className="flex w-full max-w-[19rem] animate-pulse flex-col items-center gap-md"
-                        >
+                    <SkeletonList count={teacherSkeletonCount}>{() => (
+                        <div className="flex w-full max-w-[19rem] animate-pulse flex-col items-center gap-md">
                         <div className="size-48 rounded-full bg-neutral-200" />
                         <div className="h-5 w-40 rounded bg-neutral-200" />
                         <div className="h-4 w-24 rounded bg-neutral-200" />
                         </div>
-                    ))}
+                    )}</SkeletonList>
                     </div>
                 )}
 
-                {/* Error */}
                 {!teachersLoading && teachersError && (
                     <div className="relative z-10 w-full rounded-3xl bg-[var(--grey-100)] px-lg py-1000 text-center">
                     <p className="m-0 font-body text-body-sm text-body-text">
@@ -139,7 +137,6 @@ import type { UserInfo } from '../types/auth.ts'
                     </div>
                 )}
 
-                {/* Docentes */}
                 {!teachersLoading && !teachersError && teachers.length > 0 && (
                     <div className="relative z-10 w-full pt-md sm:pt-lg lg:pt-xl">
                     <div className="grid w-full grid-cols-1 justify-items-center gap-x-lg gap-y-xl sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-md xl:grid-cols-4 xl:gap-x-lg">
@@ -168,9 +165,7 @@ import type { UserInfo } from '../types/auth.ts'
                             transition={squishyTransition}
                             className="group relative z-0 flex w-full max-w-[19rem] min-w-0 flex-col items-center gap-md text-center hover:z-10"
                             >
-                            {/* Retrato y decoraciones */}
                             <div className="relative flex h-60 w-60 shrink-0 items-center justify-center sm:h-56 sm:w-56 lg:h-52 lg:w-52 xl:h-56 xl:w-56">
-                                {/* Efecto Squishy */}
                                 <motion.svg
                                 viewBox="0 0 220 220"
                                 fill="none"
@@ -228,7 +223,6 @@ import type { UserInfo } from '../types/auth.ts'
                                 />
                                 </motion.svg>
 
-                                {/* Flor */}
                                 <motion.div
                                 aria-hidden="true"
                                 className={`pointer-events-none absolute z-20 ${
@@ -251,19 +245,12 @@ import type { UserInfo } from '../types/auth.ts'
                                 transition={squishyTransition}
                                 >
                                 <div
-                                    className={`flex size-12 items-center justify-center rounded-full bg-white shadow-sm ${
-                                    decoration === 0
-                                        ? 'text-accent'
-                                        : decoration === 1
-                                        ? 'text-link'
-                                        : 'text-green-500'
-                                    }`}
+                                    className={`flex size-12 items-center justify-center rounded-full bg-white shadow-sm ${DECORATION_COLORS[decoration]}`}
                                 >
                                     <Flower2 size={34} strokeWidth={1.7} />
                                 </div>
                                 </motion.div>
 
-                                {/* Hoja */}
                                 <motion.div
                                 aria-hidden="true"
                                 className={`pointer-events-none absolute bottom-2 z-20 text-green-500 ${
@@ -286,7 +273,6 @@ import type { UserInfo } from '../types/auth.ts'
                                 <Leaf size={40} strokeWidth={1.7} />
                                 </motion.div>
 
-                                {/* Destello */}
                                 <motion.div
                                 aria-hidden="true"
                                 className="pointer-events-none absolute -right-1 top-1/2 z-20 text-link"
@@ -307,7 +293,6 @@ import type { UserInfo } from '../types/auth.ts'
                                 <Sparkles size={26} />
                                 </motion.div>
 
-                                {/* Fotografía circular */}
                                 <motion.div
                                 variants={{
                                     rest: {
@@ -353,7 +338,6 @@ import type { UserInfo } from '../types/auth.ts'
                                 </motion.div>
                             </div>
 
-                            {/* Información del docente */}
                             <div className="relative z-10 flex w-full min-w-0 flex-col items-center gap-sm">
                                 <motion.h3
                                 variants={{
@@ -371,7 +355,7 @@ import type { UserInfo } from '../types/auth.ts'
                                 </motion.h3>
 
                                 <p className="m-0 font-body text-body-sm leading-[1.6] text-body-text">
-                                {t(`aboutUsPage.team.roles.${teacher.role}`, {
+                                {t(`aboutUsPage.roles.${teacher.role}`, {
                                     defaultValue: teacher.role,
                                 })}
                                 </p>
@@ -383,7 +367,6 @@ import type { UserInfo } from '../types/auth.ts'
                     </div>
                 )}
 
-                {/* Sin docentes */}
                 {!teachersLoading &&
                     !teachersError &&
                     teachers.length === 0 && (

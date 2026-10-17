@@ -6,9 +6,6 @@ import java.time.LocalDateTime;
 
 import lombok.Data;
 
-/**
- * Tasa de cambio tal como viaja al frontend.
- */
 @Data
 public class ExchangeRateResponse {
 

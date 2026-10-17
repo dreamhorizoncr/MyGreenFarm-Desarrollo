@@ -10,7 +10,7 @@ function currentLang(): string {
 
 export function useCurriculums() {
   const [curriculums, setCurriculums] = useState<Curriculum[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const fetchCurriculums = async () => {
@@ -27,7 +27,6 @@ export function useCurriculums() {
   }
 
   const submitApplication = async (data: ApplicationInput) => {
-    setLoading(true)
     setError(null)
     try {
       const created = await curriculumService.submitApplication(data)
@@ -35,26 +34,20 @@ export function useCurriculums() {
     } catch (err) {
       setError(getErrorMessage(err))
       throw err
-    } finally {
-      setLoading(false)
     }
   }
 
-  const setCurriculumStatus = async (id: string, status: CurriculumStatus) => {
-    setLoading(true)
+  const setCurriculumStatus = async (id: string, status: CurriculumStatus, vacancyId?: string) => {
     setError(null)
     try {
-      const updated = await curriculumService.setCurriculumStatus(id, status, currentLang())
+      const updated = await curriculumService.setCurriculumStatus(id, status, currentLang(), vacancyId)
       setCurriculums((prev) => prev.map((c) => (c.id === id ? updated : c)))
     } catch (err) {
       setError(getErrorMessage(err))
-    } finally {
-      setLoading(false)
     }
   }
 
   const deleteCurriculum = async (id: string) => {
-    setLoading(true)
     setError(null)
     try {
       await curriculumService.deleteCurriculum(id)
@@ -62,8 +55,6 @@ export function useCurriculums() {
     } catch (err) {
       setError(getErrorMessage(err))
       throw err
-    } finally {
-      setLoading(false)
     }
   }
 

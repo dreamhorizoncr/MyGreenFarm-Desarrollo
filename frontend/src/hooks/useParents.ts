@@ -11,7 +11,7 @@ interface CacheData {
 
 export function useParents() {
     const [parents, setParents] = useState<Parent[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [totalPages, setTotalPages] = useState(0);
 

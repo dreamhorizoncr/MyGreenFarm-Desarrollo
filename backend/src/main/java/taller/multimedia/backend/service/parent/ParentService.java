@@ -62,20 +62,16 @@ public class ParentService {
 
         String cleanEmail = email.toLowerCase().trim();
 
-        // Valida estructura básica con arroba y punto
         if (!cleanEmail.contains("@") || !cleanEmail.contains(".")) {
             throw new RuntimeException("El formato del correo electrónico no es válido.");
         }
 
-        // Extrae lo que está después del @ (el dominio)
         String domain = cleanEmail.substring(cleanEmail.lastIndexOf("@") + 1);
 
-        // Valida que el dominio no esté vacío y tenga al menos un punto (ej: gmail.com)
         if (domain.isBlank() || !domain.contains(".")) {
             throw new RuntimeException("El dominio del correo no es válido.");
         }
 
-        // Lista blanca
         List<String> allowedDomains = List.of(
                 "gmail.com",
                 "hotmail.com",
@@ -124,7 +120,6 @@ public class ParentService {
         existingParent.setFirstName(Sanitizer.requireClean("firstName", dto.getFirstName()));
         existingParent.setLastName(Sanitizer.requireClean("lastName", dto.getLastName()));
 
-        // Actualizamos y normalizamos el idioma por si cambió
         existingParent.setLanguage(resolverLangCode(dto.getLanguage()));
 
         if (dto.getIsActive() != null) {

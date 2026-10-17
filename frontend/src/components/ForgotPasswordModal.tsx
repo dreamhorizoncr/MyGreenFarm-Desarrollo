@@ -4,6 +4,7 @@ import { CircleCheck } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import { useForgotPassword } from '../hooks/useForgotPassword.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { notify } from '../utils/notifications.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
@@ -16,6 +17,7 @@ function ForgotPasswordModal({ email, onClose }: Readonly<ForgotPasswordModalPro
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
   const { submitForgotPassword, loading, error, success } = useForgotPassword()
 
   useEffect(() => {
@@ -44,12 +46,6 @@ function ForgotPasswordModal({ email, onClose }: Readonly<ForgotPasswordModalPro
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') requestClose()
-      }}
       aria-label={t('profile.resetPassword')}
       className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(480px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white shadow-lg backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
@@ -57,7 +53,7 @@ function ForgotPasswordModal({ email, onClose }: Readonly<ForgotPasswordModalPro
         {success ? (
           <div className="flex flex-col items-center gap-md px-[10px] py-[20px] text-center">
             <CircleCheck size={64} className="text-green-500" />
-            <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+            <h2 className="m-0 font-heading text-h4 font-bold text-heading">
               {t('forgotPassword.successToastTitle')}
             </h2>
             <p className="m-0 max-w-[22rem] font-body text-body-sm text-body-text">
@@ -67,7 +63,7 @@ function ForgotPasswordModal({ email, onClose }: Readonly<ForgotPasswordModalPro
         ) : (
           <>
             <div className="flex items-center justify-between gap-md">
-              <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+              <h2 className="m-0 font-heading text-h4 font-bold text-heading">
                 {t('profile.resetPassword')}
               </h2>
 

@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 interface PaginationProps {
   currentPage: number
   totalPages: number
@@ -5,10 +7,9 @@ interface PaginationProps {
 }
 
 function Pagination({ currentPage, totalPages, onPageChange }: Readonly<PaginationProps>) {
+  const { t } = useTranslation()
   if (totalPages <= 1) return null
 
-  // The dashboard scrolls its own container (#admin-scroll-container), not the
-  // window, so changing page has to scroll that element back to the top.
   const goToPage = (page: number) => {
     onPageChange(page)
     const container = document.getElementById('admin-scroll-container')
@@ -25,8 +26,8 @@ function Pagination({ currentPage, totalPages, onPageChange }: Readonly<Paginati
         type="button"
         onClick={() => goToPage(Math.max(currentPage - 1, 1))}
         disabled={currentPage === 1}
-        aria-label="Página anterior"
-        className="flex size-[38px] items-center justify-center rounded-full border border-neutral-200 bg-white font-body text-[18px] text-heading transition hover:border-green-500 disabled:cursor-not-allowed disabled:opacity-40"
+        aria-label={t('common.pagination.previous')}
+        className="flex size-[38px] items-center justify-center rounded-full border border-neutral-200 bg-white font-body text-body-lg text-heading transition hover:border-green-500 disabled:cursor-not-allowed disabled:opacity-40"
       >
         ‹
       </button>
@@ -55,8 +56,8 @@ function Pagination({ currentPage, totalPages, onPageChange }: Readonly<Paginati
         type="button"
         onClick={() => goToPage(Math.min(currentPage + 1, totalPages))}
         disabled={currentPage === totalPages}
-        aria-label="Página siguiente"
-        className="flex size-[38px] items-center justify-center rounded-full border border-neutral-200 bg-white font-body text-[18px] text-heading transition hover:border-green-500 disabled:cursor-not-allowed disabled:opacity-40"
+        aria-label={t('common.pagination.next')}
+        className="flex size-[38px] items-center justify-center rounded-full border border-neutral-200 bg-white font-body text-body-lg text-heading transition hover:border-green-500 disabled:cursor-not-allowed disabled:opacity-40"
       >
         ›
       </button>

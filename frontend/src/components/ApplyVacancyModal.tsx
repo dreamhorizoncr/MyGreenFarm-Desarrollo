@@ -1,6 +1,6 @@
 import { useEffect, useRef, type InputHTMLAttributes } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CloudUploadIcon, XIcon } from '@animateicons/react/lucide'
+import { FileTextIcon, XIcon } from '@animateicons/react/lucide'
 import PhoneInput from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import Button from './ui/Button.tsx'
@@ -9,6 +9,7 @@ import CountrySelect from './ui/CountrySelect.tsx'
 import { phoneLabels } from '../utils/phoneLabels.ts'
 import { useVacancyApplicationForm } from '../hooks/useVacancyApplicationForm.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
@@ -40,6 +41,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
   const form = useVacancyApplicationForm({ vacancyId, requiredFields }, onSubmit)
   const heading = vacancyId === null ? title : t('vacancies.applyModalTitle')
   const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
   useBodyScrollLock()
 
   useEffect(() => {
@@ -55,12 +57,6 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') requestClose()
-      }}
       aria-label={heading}
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
@@ -72,7 +68,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
         />
 
         <div className="relative mb-lg text-center">
-          <h2 className="m-0 font-heading text-[30px] font-bold leading-tight text-heading">
+          <h2 className="m-0 font-heading text-h4 font-bold leading-tight text-heading">
             {heading}
           </h2>
           {vacancyId !== null && (
@@ -129,16 +125,16 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
                 id="apply-file-input"
               />
 
-              <p className="mb-2xs font-body text-body-sm font-semibold text-body-text">
+              <p className="mb-2xs font-body text-body-sm font-semibold text-heading">
                 {t('vacancies.resumeLabel')}
               </p>
 
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="flex h-11 w-fit items-center gap-sm whitespace-nowrap rounded-full border border-neutral-200 bg-white px-md font-body text-body-sm font-semibold text-body-text hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+                className="inline-flex w-fit items-center gap-xs whitespace-nowrap rounded-full border border-neutral-300 bg-white px-md py-sm font-body text-body-sm font-semibold text-heading transition-colors hover:border-green-500 hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
               >
-                <CloudUploadIcon size={18} aria-hidden="true" />
+                <FileTextIcon size={17} aria-hidden="true" />
                 <span>{t('vacancies.chooseFile')}</span>
               </button>
 
@@ -162,7 +158,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
                 id="apply-certificates-input"
               />
 
-              <p className="mb-2xs font-body text-body-sm font-semibold text-body-text">
+              <p className="mb-2xs font-body text-body-sm font-semibold text-heading">
                 {t('vacancies.certificates')}
               </p>
               <p className="mb-xs font-body text-body-sm text-neutral-500">
@@ -172,9 +168,9 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
               <button
                 type="button"
                 onClick={() => certificatesInputRef.current?.click()}
-                className="flex h-11 w-fit items-center gap-sm whitespace-nowrap rounded-full border border-neutral-200 bg-white px-md font-body text-body-sm font-semibold text-body-text hover:bg-(--grey-100) focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+                className="inline-flex w-fit items-center gap-xs whitespace-nowrap rounded-full border border-neutral-300 bg-white px-md py-sm font-body text-body-sm font-semibold text-heading transition-colors hover:border-green-500 hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
               >
-                <CloudUploadIcon size={18} aria-hidden="true" />
+                <FileTextIcon size={17} aria-hidden="true" />
                 <span>{t('vacancies.chooseCertificates')}</span>
               </button>
 

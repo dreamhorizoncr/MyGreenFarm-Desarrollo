@@ -6,6 +6,8 @@ import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import PhotoLightbox from '../components/PhotoLightbox.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import { useGallery } from '../hooks/useGallery.ts'
 import type { Gallery } from '../types/gallery.ts'
 import { galleryService } from '../services/gallery.ts'
@@ -66,7 +68,6 @@ function AlbumDetailPage() {
   const album: Gallery | undefined = albumEntry?.[1].find((gallery) => gallery.id === id)
   const category = categories.find((candidate) => candidate.id === albumEntry?.[0])
 
-  // inicializa likes cuando el álbum ya tiene imágenes cargadas
   useEffect(() => {
     if (album && album.galleryImages.length > 0) {
       void galleryService.getMyLikes().then((likedImageIds) => {
@@ -76,11 +77,12 @@ function AlbumDetailPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [album?.id])
 
+  const skeletonCount = useSkeletonCount(`album-${id}`, loading, album?.galleryImages.length ?? 0, 8)
+
   return (
     <div id="album-detail-page" className="min-h-screen bg-bg-page">
       <Navbar />
 
-      {/* Encabezado del álbum */}
       <section className="bg-white py-[50px] md:py-[70px]">
         <Container>
           <nav
@@ -112,7 +114,7 @@ function AlbumDetailPage() {
 
           {album && (
             <header className="mx-auto mt-[32px] max-w-[760px] text-center">
-              <h1 className="mt-0 font-heading text-[30px] font-bold leading-tight text-green-500 md:text-h1">
+              <h1 className="mt-0 font-heading text-h1 font-bold leading-tight text-green-500">
                 {album.title}
               </h1>
 
@@ -124,18 +126,16 @@ function AlbumDetailPage() {
         </Container>
       </section>
 
-      {/* Fotos del álbum */}
       <main>
         <Container className="py-[60px] md:py-[80px]">
           {loading && (
             <div className="grid grid-cols-2 gap-[12px] md:grid-cols-4 md:gap-[14px]">
-              {Array.from({ length: 8 }, (_, index) => (
+              <SkeletonList count={skeletonCount}>{(position) => (
                 <Skeleton
-                  key={index}
                   shape="rect"
-                  className={`aspect-square w-full ${index === 0 ? 'col-span-2 row-span-2' : ''}`}
+                  className={`aspect-square w-full ${position === 0 ? 'col-span-2 row-span-2' : ''}`}
                 />
-              ))}
+              )}</SkeletonList>
             </div>
           )}
 

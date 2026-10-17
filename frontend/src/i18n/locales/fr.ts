@@ -1,9 +1,3 @@
-/**
- * Diccionario de textos de la aplicación en francés.
- * Cada sección (app, signup, forgotPassword, etc.) agrupa las claves
- * de una pantalla o componente específico, para que los nombres de las claves
- * no se repitan en diferentes partes de la aplicación.
- */
 export default {
   teacherDashboard: {
     hello: "Bonjour",
@@ -40,6 +34,7 @@ export default {
       heroAlt: "Image de couverture",
     },
     philosophy: {
+      imageAlt: 'Fillette les bras tendus en plein air',
       title: "Notre philosophie",
       description:
         "Chez My Green Farm, nous croyons que l'enfance s'apprend en la vivant. C'est pourquoi nous offrons une éducation de qualité où chaque enfant a l'opportunité d'explorer, de découvrir, de créer, de jouer et d'apprendre à travers des expériences enrichissantes...",
@@ -49,7 +44,6 @@ export default {
         paragraph3: "Nous travaillons avec des matériels spécialement sélectionnés, des expériences sensorielles et des activités qui éveillent la curiosité, la créativité, l'autonomie et le désir d'apprendre. Notre approche s'inspire de méthodologies actives et des apports de courants tels que Montessori, Reggio Emilia, Waldorf et le constructivisme, en les adaptant aux besoins et aux caractéristiques de nos enfants.",
         paragraph4: "Plus que d'enseigner des contenus, nous cherchons à offrir une enfance pleine d'expériences, accompagnée par des enseignants qui respectent le rythme individuel de chaque enfant et veillent à ce qu'il se sente en sécurité, aimé, écouté et heureux tout en apprenant. My Green Farm : éducation, valeurs, nature, langues et expériences qui laissent une empreinte.",
       },
-      item: "Une phrase de test qui ne fait que tester en est une de test",
       cta: "Lire la suite",
       pillar1Title: "Accréditation MEP et Sécurité",
       pillar1Tag: "Accréditation officielle",
@@ -71,6 +65,8 @@ export default {
       modalClose: "Fermer",
     },
     testimonials: {
+      navigation: 'Navigation des témoignages',
+      goTo: 'Aller au témoignage {{number}}',
       title: "Témoignages",
       description:
         "Trouvez ici ce que disent les familles de notre communauté sur l'expérience de grandir, d'apprendre et de vivre l'enfance à My Green Farm.",
@@ -125,6 +121,9 @@ export default {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     },
     join: {
+      unsubscribeSuccess: 'Vous vous êtes désabonné de la newsletter.',
+      parentUnsubscribed: 'Le parent a été désabonné de la newsletter.',
+      broadcastSuccess: 'E-mail groupé envoyé avec succès.',
       title1: "Rejoignez",
       title2: "notre révolution éducative",
       description:
@@ -241,6 +240,7 @@ export default {
     },
   },
   newspage: {
+    closeNews: "Fermer l'actualité",
     title: "Nouvelles",
     description:
       "Restez informé des dernières actualités et mises à jour du centre éducatif.",
@@ -256,6 +256,7 @@ export default {
     noImage: "Aucune image disponible",
   },
   forum: {
+    loadError: "Le forum n'a pas pu être chargé",
     title: "Forum",
     subtitle:
       "Un espace pour partager des nouvelles, répondre aux questions et échanger avec d'autres familles.",
@@ -269,6 +270,7 @@ export default {
       blog: "Blog",
     },
     community: {
+      loadError: "La publication n'a pas pu être chargée",
       label: "Publications de la communauté",
       publish: "Publier une expérience",
       empty: "Il n'y a pas encore de publications.",
@@ -296,6 +298,7 @@ export default {
       toastDescription: "Votre expérience est sur le mur.",
     },
     blog: {
+      loadingArticle: "Chargement de l'article...",
       label: "Publications du blog",
       empty: "Il n'y a pas encore de recherches.",
       searchPlaceholder: "Rechercher dans le blog...",
@@ -332,7 +335,17 @@ export default {
     },
   },
   adminNews: {
-    title: "Actualités",
+    selectCategory: 'Sélectionnez une catégorie',
+    addCategory: 'Ajouter une catégorie',
+    newCategoryPlaceholder: 'Nom de la catégorie',
+    deleteCategory: 'Supprimer la catégorie',
+    deleteCategoryTitle: 'Supprimer la catégorie',
+    deleteCategoryMessage: 'La catégorie « {{name}} » sera supprimée avec toutes ses actualités et images. Cette action est irréversible.',
+    categoryCreatedToast: 'Catégorie ajoutée',
+    categoryCreateErrorToast: "La catégorie n'a pas pu être ajoutée",
+    categoryDeletedToast: 'Catégorie supprimée',
+    categoryDeleteErrorToast: "La catégorie n'a pas pu être supprimée",
+    title: "Gestion des Actualités",
     description:
       "Ajoutez des actualités pour tenir les familles et la communauté éducative informées.",
     addNews: "Ajouter une actualité",
@@ -356,11 +369,6 @@ export default {
     noNews: "Aucune actualité n’a encore été publiée.",
     newsgallery: "Galerie",
     deleteImage: "Supprimer l’image",
-    typeNews: "Actualité",
-    typeEvent: "Événement",
-    typeNotice: "Avis",
-    typeGeneral: "Général",
-    typeTransport: "Transport",
     deleteModalTitle: "Supprimer l’actualité ?",
     deleteModalMessage: "Êtes-vous sûr de vouloir supprimer cette actualité ?",
     deleteModalCancel: "Annuler",
@@ -388,7 +396,16 @@ export default {
     preview: "Aperçu",
   },
   adminForum: {
-    title: "Forum",
+    saveErrorToastTitle: "L'article n'a pas pu être enregistré",
+    deleteErrorToastTitle: "L'article n'a pas pu être supprimé",
+    loadPostsError: "Les articles n'ont pas pu être chargés",
+    loadOwnPostsError: "Vos publications n'ont pas pu être chargées",
+    deleteConfirmFieldLabel: 'Pour confirmer, saisissez le titre « {{title}} »',
+    confirmChangesTitle: 'Confirmer les modifications',
+    confirmChangesDescription: 'Saisissez « {{word}} » pour enregistrer les modifications.',
+    confirmWord: 'CONFIRMER',
+    confirmChanges: 'Confirmer les modifications',
+    title: "Gestion du Forum",
     description:
       "Publiez des recherches pour le blog et modérez les commentaires de la communauté.",
     noPersistenceNotice:
@@ -505,6 +522,7 @@ export default {
     submitting: "Envoi...",
     submitError: "La demande n'a pas pu être envoyée. Veuillez réessayer.",
     submitErrorToastTitle: "Impossible d'envoyer votre demande",
+    emailDomainToastTitle: "E-mail non autorisé",
     retry: "Réessayer",
     wizard: {
       schedule: "Horaire",
@@ -604,6 +622,17 @@ export default {
     backToProfile: "Retour à mon profil",
   },
   common: {
+    errorBoundary: {
+      title: "Une erreur s'est produite",
+      description: 'Veuillez recharger la page. Si le problème persiste, contactez-nous.',
+      reload: 'Recharger',
+    },
+    pagination: {
+      previous: 'Page précédente',
+      next: 'Page suivante',
+    },
+    close: 'Fermer',
+    closeForm: 'Fermer le formulaire',
     error: "Une erreur est survenue",
     timeout: "La connexion prend trop de temps. Veuillez réessayer.",
     calendarAvailabilityError:
@@ -617,6 +646,17 @@ export default {
     timePicker: {
       hours: "Heures",
       minutes: "Minutes",
+    },
+    schedule: {
+      from: "De",
+      to: "À",
+      dayRange: "{{from}} au {{to}}",
+      timeRange: "{{from}} - {{to}}",
+      daysRequired: "Sélectionnez au moins un jour.",
+      timesRequired: "Sélectionnez l'heure de début et de fin.",
+      endAfterStart: "L'heure de fin doit être postérieure à l'heure de début.",
+      addBlock: "Ajouter un autre horaire",
+      removeBlock: "Supprimer l'horaire",
     },
     imageHint: {
       formats: "Formats : {{formats}}.",
@@ -642,6 +682,7 @@ export default {
   validation: {
     emailRequired: "L'e-mail est obligatoire",
     emailInvalid: "Entrez un e-mail valide",
+    emailDomainNotAllowed: "Utilisez une adresse Gmail, Hotmail ou Outlook pour réserver le rendez-vous.",
     passwordRequired: "Le mot de passe est obligatoire",
     passwordMinLength: "Le mot de passe doit contenir au moins 8 caractères",
     passwordPattern:
@@ -657,7 +698,7 @@ export default {
     unsafeText: "Les balises HTML et les caractères comme « < » suivis de lettres ne sont pas autorisés.",
   },
   profile: {
-    title: "Mon profil",
+    title: "Gestion du Profil",
     description: "Ici, vous pouvez voir vos informations personnelles.",
     firstName: "Prénom",
     lastName: "Noms",
@@ -676,7 +717,33 @@ export default {
     viewProfile: "Voir le profil",
   },
   admin: {
-    docentesTitle: "Gestion des enseignants",
+    teachersPage: {
+      title: "Gestion des Enseignants",
+      subtitle: 'Gérez les enseignants de My Green Farm.',
+      register: 'Inscrire un enseignant',
+      edit: "Modifier l'enseignant",
+      searchPlaceholder: 'Rechercher un enseignant...',
+      searchLabel: 'Rechercher un enseignant',
+      noMatches: 'Aucun enseignant trouvé avec ce nom.',
+      empty: "Aucun enseignant n'est encore inscrit.",
+      createdToast: 'Enseignant inscrit avec succès',
+      updatedToast: "Informations de l'enseignant mises à jour",
+      photoUpdatedToast: 'Photo mise à jour avec succès',
+      photoDeletedToast: 'Photo supprimée avec succès',
+      deletedToast: 'Enseignant supprimé avec succès',
+      photoAlt: "Photo de l'enseignant",
+      changePhoto: 'Changer la photo',
+      addPhoto: 'Ajouter une photo',
+      removePhoto: 'Supprimer la photo',
+      photoAfterRegister: "Vous pourrez ajouter une photo après avoir inscrit l'enseignant.",
+      invalidImage: 'Sélectionnez un fichier image valide.',
+      imageTooLarge: 'La photo ne peut pas dépasser 5 Mo.',
+      password: 'Mot de passe',
+      passwordRequired: 'Le mot de passe est obligatoire.',
+      passwordMin: 'Le mot de passe doit contenir au moins 8 caractères.',
+      passwordHint: 'Au moins 8 caractères, dont une majuscule, une minuscule, un chiffre et un symbole.',
+    },
+    docentesTitle: "Gestion des Utilisateurs",
     docentesSubtitle: "Consultez et gérez les utilisateurs du centre éducatif.",
     searchPlaceholder: "Rechercher par nom, prénom, e-mail ou rôle",
     addDocente: "Ajouter un utilisateur",
@@ -710,7 +777,7 @@ export default {
     deleteDocenteToastTitle: "Utilisateur supprimé",
     deleteDocenteErrorToastTitle: "Impossible de supprimer l'utilisateur",
     newsletter: {
-      title: "Gestion de la newsletter",
+      title: "Gestion de la Newsletter",
       subtitle: "Gérez les abonnés et les parents, et envoyez des e-mails groupés.",
       searchPlaceholder: "Rechercher par e-mail...",
       sendBroadcast: "Envoyer",
@@ -749,7 +816,7 @@ export default {
       cv: "CV",
       clubs: "Clubs",
       expedientes: "Dossiers",
-      parents: "Parents",
+      padres: "Parents",
       niños: "Enfants",
       evaluaciones: "Évaluations",
       miPerfil: "Mon profil",
@@ -759,7 +826,11 @@ export default {
       foro: "Forum",
     },
     curriculums: {
-      title: "Offres et candidatures",
+      assignVacancyLabel: 'Associer à une offre (facultatif)',
+      noVacancyOption: 'Aucune offre',
+      assignVacancyHint: "Si vous choisissez une offre, elle sera pourvue par cette personne et l'e-mail d'embauche mentionnera ce poste.",
+      noOpenVacancies: "Aucune offre ouverte. La candidature sera approuvée sans poste et l'e-mail utilisera un message général.",
+      title: "Gestion des Offres et Candidatures",
       subtitle: "Publiez des offres et consultez les CV reçus pour chacune.",
       applicationsTab: "Candidatures",
       searchPlaceholder: "Rechercher par nom ou e-mail du candidat",
@@ -805,7 +876,6 @@ export default {
       descriptionLabel: "Description",
       descriptionPlaceholder: "Détaillez les activités du club...",
       schedule: "Horaire",
-      schedulePlaceholder: "Ex. Lundi et Mercredi de 15h00 à 16h30",
       maxCapacity: "Capacité maximale",
       capacityPlaceholder: "Ex. 20",
       capacityLabel: "places",
@@ -843,7 +913,7 @@ export default {
       imageDeleteErrorToastTitle: "Erreur lors de la suppression de l'image."
     },
     evaluations: {
-      title: "Évaluations",
+      title: "Gestion des Évaluations",
       description: "Enregistrez, consultez et gérez les progrès des enfants.",
       registerEvaluation: "Enregistrer une évaluation",
       searchPlaceholder: "Rechercher une évaluation...",
@@ -898,7 +968,7 @@ export default {
       formCreateError: "Impossible d'enregistrer l'évaluation.",
     },
     gallery: {
-      title: "Galerie",
+      title: "Gestion de la Galerie",
       subtitle: "Gérez les albums photos du centre éducatif.",
       addAlbum: "Ajouter un album",
       newAlbum: "Nouvel album",
@@ -964,14 +1034,13 @@ export default {
       photoTag: "Photo",
     },
     servicios: {
-      title: "Plans de service",
+      title: "Gestion des Plans de Service",
       subtitle: "Gérez les plans de service liés à OnvoPay.",
       addPlan: "Ajouter un plan",
       newPlan: "Nouveau plan de service",
       editPlan: "Modifier le plan",
       selectPlan: "Sélectionner un plan OnvoPay",
       scheduleLabel: "Horaire",
-      schedulePlaceholder: "Ex : Lundi à vendredi, 8h00 - 15h00",
       includesLabel: "Ce qui est inclus",
       includesPlaceholder: "Décrivez les avantages du plan...",
       image: "Image",
@@ -1000,7 +1069,8 @@ export default {
     },
 
     expedients: {
-      title: "Dossiers Académiques",
+      noMatches: 'Aucun dossier trouvé avec ce nom.',
+      title: "Gestion des Dossiers Académiques",
       description:
         "Consultez les dossiers académiques des enfants inscrits dans l’établissement.",
       searchbutton: "Rechercher un enfant",
@@ -1070,7 +1140,9 @@ export default {
     },
 
     parents: {
-      title: "Parents",
+      empty: "Aucun parent n'est inscrit.",
+      noMatches: 'Aucun parent ne correspond à cette recherche.',
+      title: "Gestion des Parents",
       description: "Consultez et gérez les informations des parents enregistrés dans l'établissement.",
       searchPlaceholder: "Rechercher un parent...",
       addTitle: "Ajouter un Parent",
@@ -1118,7 +1190,7 @@ export default {
     },
 
     children: {
-      title: 'Enfants',
+      title: "Gestion des Enfants",
       description: 'Gérez les enfants enregistrés dans My Green Farm.',
       searchPlaceholder: 'Rechercher un enfant...',
       addChild: 'Inscrire un enfant',
@@ -1186,7 +1258,7 @@ export default {
     },
 
     availability: {
-      title: "Mes disponibilités",
+      title: "Gestion des Disponibilités",
       subtitle: "Configurez les jours et horaires où vous êtes disponible.",
       retry: "Réessayer",
       weeklyTitle: "Horaire hebdomadaire",
@@ -1330,7 +1402,7 @@ export default {
     releaseErrorToastTitle: "Impossible de libérer l'offre",
   },
   teacherAppointments: {
-    title: "Gestion des rendez-vous",
+    title: "Gestion des Rendez-vous",
     subtitle: "Consultez et gérez les rendez-vous d'inscription.",
     searchPlaceholder: "Rechercher par enfant, parent, e-mail ou téléphone",
     all: "Toutes",
@@ -1412,6 +1484,7 @@ export default {
     },
   },
   services: {
+    connectingPayment: 'Connexion à la passerelle de paiement...',
     title: "Nos Services",
     description:
       "Découvrez nos conçus pour le soin et l'apprentissage de votre enfant.",

@@ -8,6 +8,8 @@ import Pagination from './ui/Pagination.tsx'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
 import type { Vacancy, VacancyInput } from '../types/vacancy.ts'
 import CardActionButton from './ui/CardActionButton.tsx'
+import SkeletonList from './ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 interface AdminVacancyCardProps {
   vacancy?: Vacancy
@@ -44,7 +46,7 @@ function AdminVacancyCard({ vacancy, applicantNameById, onDelete, onRelease, onS
   return (
     <article className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm card-hover">
       <div className="flex items-start justify-between gap-sm">
-        <h3 className="m-0 font-heading text-lg font-bold leading-snug text-heading">
+        <h3 className="m-0 font-heading text-h5 font-bold leading-snug text-heading">
           {vacancy!.title}
         </h3>
 
@@ -110,6 +112,8 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
   const [vacancyToDelete, setVacancyToDelete] = useState<Vacancy | null>(null)
   const { currentPage, setPage, totalPages, pageItems: pagedVacancies } = useClientPagination(vacancies)
 
+  const skeletonCount = useSkeletonCount('admin-vacancies', loading, pagedVacancies.length, 2)
+
   return (
     <>
       <div className="mb-lg flex justify-end">
@@ -125,8 +129,7 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
 
       {loading && (
         <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-          <AdminVacancyCard loading />
-          <AdminVacancyCard loading />
+          <SkeletonList count={skeletonCount}>{() => <AdminVacancyCard loading />}</SkeletonList>
         </div>
       )}
       {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}

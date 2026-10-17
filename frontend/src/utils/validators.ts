@@ -34,6 +34,13 @@ export function validateEmail(value: string, t: TFunction): string | null {
   return null
 }
 
+export const BOOKING_EMAIL_DOMAINS = ['gmail.com', 'hotmail.com', 'outlook.com']
+
+export function validateBookingEmailDomain(value: string, t: TFunction): string | null {
+  const domain = value.slice(value.indexOf('@') + 1).trim().toLowerCase()
+  return BOOKING_EMAIL_DOMAINS.includes(domain) ? null : t('validation.emailDomainNotAllowed')
+}
+
 export function validatePassword(value: string, t: TFunction): string | null {
   if (!value) return t('validation.passwordRequired')
   if (value.length < 8) return t('validation.passwordMinLength')
@@ -53,15 +60,11 @@ export function validateMinLength(value: string, min: number, t: TFunction): str
   return null
 }
 
-// Misma regla que Sanitizer.hasMaliciousContent del backend: etiquetas HTML ("<" seguido de letra, "/", "!" o "?")
-// o caracteres de control que no sean espacios. Así el formulario avisa en el campo antes de enviar,
-// en lugar de que el backend rechace la petición con un error genérico.
 const HTML_TAG_START = /<[a-zA-Z/!?]/
 
-// Caracteres de control ASCII salvo los de espacio (\t \n \v \f \r), igual que [\p{Cntrl}&&[^\s]] en Java.
 function hasControlCharacter(value: string): boolean {
   for (let i = 0; i < value.length; i++) {
-    const code = value.charCodeAt(i)
+    const code = value.codePointAt(i) ?? 0
     if (code <= 0x08 || (code >= 0x0e && code <= 0x1f) || code === 0x7f) return true
   }
   return false

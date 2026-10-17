@@ -12,9 +12,12 @@ import CardActionButton from './ui/CardActionButton.tsx'
 import Pagination from './ui/Pagination.tsx'
 import { useAppointments } from '../hooks/useAppointments.ts'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
+import SkeletonList from './ui/SkeletonList.tsx'
 import { notify } from '../utils/notifications.ts'
 import type { Appointment, AppointmentStatus } from '../types/appointment.ts'
 import { useAvailability } from '../hooks/useAvailability.ts'
+import TabHighlight from './ui/TabHighlight.tsx'
 
 type StatusFilter = 'ALL' | 'BY_DATE' | AppointmentStatus
 
@@ -92,14 +95,13 @@ function AppointmentCard({
         </div>
       </header>
 
-      <h3 className="m-0 mt-sm font-heading text-lg font-bold leading-snug text-heading">
+      <h3 className="m-0 mt-sm font-heading text-h5 font-bold leading-snug text-heading">
         {appointment!.childName}
       </h3>
       <p className="m-0 font-body text-body-sm text-neutral-500">
         {formattedDate}
       </p>
 
-      {/* Solo el enlace abre el detalle; antes toda la card era clickeable y lo activaba. */}
       <button
         type="button"
         onClick={onView}
@@ -124,10 +126,14 @@ function AppointmentsSection() {
     rescheduleAppointment,
   } = useAppointments()
 
-  const { exceptions } = useAvailability()
+  const { exceptions, reload: loadExceptions } = useAvailability()
+
+  useEffect(() => {
+    loadExceptions(i18n.language)
+  }, [loadExceptions, i18n.language])
 
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('BY_DATE')
-  const [selectedDate, setValue] = useState<CalendarDate | null>(today(getLocalTimeZone()))
+  const [selectedDate, setSelectedDate] = useState<CalendarDate | null>(today(getLocalTimeZone()))
   const [searchTerm, setSearchTerm] = useState('')
   const [appointmentToEdit, setAppointmentToEdit] = useState<Appointment | null>(null)
   const [appointmentToReschedule, setAppointmentToReschedule] = useState<Appointment | null>(null)
@@ -143,7 +149,12 @@ function AppointmentsSection() {
 
   const filteredAppointments = useMemo(() => {
     const term = searchTerm.trim().toLowerCase()
+    const startOfToday = new Date()
+    startOfToday.setHours(0, 0, 0, 0)
     return appointments.filter((appointment) => {
+      const isPast = new Date(appointment.appointmentDate) < startOfToday
+      if (isPast && statusFilter !== 'PENDING') return false
+
       if (statusFilter === 'BY_DATE') {
         if (!selectedDate) return false
         const appDate = new Date(appointment.appointmentDate)
@@ -165,6 +176,9 @@ function AppointmentsSection() {
   }, [appointments, statusFilter, selectedDate, searchTerm])
 
   const { currentPage, setPage, totalPages, pageItems: pagedAppointments } = useClientPagination(filteredAppointments)
+  const isDayView = statusFilter === 'BY_DATE'
+  const daySkeletonCount = useSkeletonCount('appointments-day', loading || !isDayView, pagedAppointments.length, 2)
+  const statusSkeletonCount = useSkeletonCount('appointments-status', loading || isDayView, pagedAppointments.length, 4)
 
   const statusLabel = (filter: StatusFilter): string => {
     if (filter === 'BY_DATE') return t('teacherAppointments.byDate')
@@ -174,10 +188,10 @@ function AppointmentsSection() {
   }
 
   const filterClassName = (active: boolean) =>
-    `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
+    `relative rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
       active
-        ? 'border-green-500 bg-green-500 text-white'
-        : 'border-green-500 bg-white text-heading hover:bg-green-50'
+        ? 'border-green-500 text-white'
+        : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
     }`
 
   const badgeClassName = (status: AppointmentStatus) => {
@@ -223,7 +237,6 @@ function AppointmentsSection() {
         {t('teacherAppointments.subtitle')}
       </p>
 
-      {/* Barra superior de búsqueda y filtros */}
       <div className="mb-[var(--spacing-lg)] mt-[var(--spacing-xl)] flex flex-wrap items-center justify-between gap-md">
         <div className="flex h-11 min-w-[240px] max-w-[420px] flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
           <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
@@ -237,7 +250,7 @@ function AppointmentsSection() {
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-sm">
+        <div className="isolate flex flex-wrap items-center gap-sm">
           {STATUS_FILTERS.map((filter) => (
             <button
               key={filter}
@@ -246,6 +259,7 @@ function AppointmentsSection() {
               onClick={() => setStatusFilter(filter)}
               className={filterClassName(statusFilter === filter)}
             >
+              {statusFilter === filter && <TabHighlight layoutId="appointments-status-tab" className="bg-green-500" />}
               {statusLabel(filter)}
             </button>
           ))}
@@ -258,19 +272,16 @@ function AppointmentsSection() {
 
       {statusFilter === 'BY_DATE' ? (
         <div className="grid grid-cols-1 gap-xl lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] items-start">
-          {/* El calendario conserva su ancho máximo y las citas usan el espacio restante. */}
-          <CalendarPanel value={selectedDate} onChange={setValue} markedDates={specialScheduleDates} />
+          <CalendarPanel value={selectedDate} onChange={setSelectedDate} markedDates={specialScheduleDates} />
 
-          {/* Columna Derecha: Tarjetas de citas con mejor espaciado */}
           <div className="flex flex-col gap-md">
-            <h2 className="m-0 font-heading text-xl font-bold text-heading">
+            <h2 className="m-0 font-heading text-h4 font-bold text-heading">
               {t('teacherAppointments.calendar.appointmentsForDay')}: <span className="text-green-600">{selectedDate?.toString()}</span>
             </h2>
 
             {loading && (
               <div className="grid grid-cols-1 gap-md">
-                <AppointmentCard loading />
-                <AppointmentCard loading />
+                <SkeletonList count={daySkeletonCount}>{() => <AppointmentCard loading />}</SkeletonList>
               </div>
             )}
 
@@ -307,14 +318,10 @@ function AppointmentsSection() {
           </div>
         </div>
       ) : (
-        /* Vista de Estados (Todas, Pendiente, Confirmada, Cancelada) */
         <>
           {loading && (
             <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-              <AppointmentCard loading />
-              <AppointmentCard loading />
-              <AppointmentCard loading />
-              <AppointmentCard loading />
+              <SkeletonList count={statusSkeletonCount}>{() => <AppointmentCard loading />}</SkeletonList>
             </div>
           )}
 

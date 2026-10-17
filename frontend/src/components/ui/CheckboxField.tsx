@@ -1,4 +1,3 @@
-/** Opción con checkbox dentro de una caja con borde (estilo de los formularios del admin) */
 
 import type { ReactNode } from 'react'
 

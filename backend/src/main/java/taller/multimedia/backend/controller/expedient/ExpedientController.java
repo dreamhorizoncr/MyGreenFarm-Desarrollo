@@ -38,7 +38,6 @@ public class ExpedientController {
             @RequestParam(value = "file", required = false) MultipartFile file) {
         
         try {
-            // Convierte el texto JSON en tu DTO con validaciones
             ExpedientRequest request = objectMapper.readValue(requestJson, ExpedientRequest.class);
             
             ExpedientResponse created = expedientService.createExpedient(request, file);
@@ -79,7 +78,6 @@ public class ExpedientController {
         return ResponseEntity.noContent().build();
     }
 
-    // Modifica o añade la foto del niño
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
     public ResponseEntity<ExpedientResponse> uploadOrUpdatePhoto(

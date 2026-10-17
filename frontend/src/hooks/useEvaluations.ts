@@ -22,7 +22,7 @@ export function useEvaluations() {
     const { t } = useTranslation();
     const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
     const [sourceEvaluations, setSourceEvaluations] = useState<Evaluation[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     const cacheRef = useRef<Map<string, CacheData>>(new Map());

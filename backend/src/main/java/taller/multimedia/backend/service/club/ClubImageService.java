@@ -184,7 +184,6 @@ public class ClubImageService {
         ClubImage image = imageRepository.findById(imageId)
                 .orElseThrow(() -> new EntityNotFoundException("Imagen no encontrada con ID: " + imageId));
 
-        // 1. Borrar archivo físico del storage
         String fileUrl = image.getFileUrl();
         String filePath = extractPathFromUrl(fileUrl, clubsBucket);
 
@@ -196,8 +195,6 @@ public class ClubImageService {
             }
         }
 
-        // 2. Desvincular de la lista del club padre para evitar doble DELETE de
-        // Hibernate
         Club club = image.getClub();
         if (club != null && club.getImages() != null) {
             club.getImages().remove(image);
@@ -215,7 +212,6 @@ public class ClubImageService {
             return;
         }
 
-        // 1. Borrar archivos físicos del storage
         for (ClubImage image : images) {
             String filePath = extractPathFromUrl(image.getFileUrl(), clubsBucket);
             if (filePath != null && !filePath.isEmpty()) {
@@ -227,17 +223,14 @@ public class ClubImageService {
             }
         }
 
-        // 2. Limpiar la colección del padre si el club está cargado
         Club club = images.get(0).getClub();
         if (club != null && club.getImages() != null) {
             club.getImages().removeAll(images);
         }
 
-        // 3. Borrar de la base de datos
         imageRepository.deleteAll(images);
     }
 
-    // Método auxiliar para limpiar la URL y obtener la ruta interna del bucket
     private String extractPathFromUrl(String fileUrl, String bucketName) {
         try {
             String marker = "/" + bucketName + "/";

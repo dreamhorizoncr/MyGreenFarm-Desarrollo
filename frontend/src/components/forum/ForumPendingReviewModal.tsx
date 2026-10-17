@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import Button from '../ui/Button.tsx'
 import { useModalExit } from '../../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../../hooks/useDialogDismiss.ts'
 import ModalCloseButton from '../ui/ModalCloseButton.tsx'
 
 interface ForumPendingReviewModalProps {
@@ -10,13 +11,11 @@ interface ForumPendingReviewModalProps {
   onClose: () => void
 }
 
-// Shown right when a community post or reply is submitted, before we know
-// whether the moderation check will approve or reject it. The real outcome
-// arrives later as a toast (success or rejection reason).
 function ForumPendingReviewModal({ title, description, onClose }: Readonly<ForumPendingReviewModalProps>) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
 
   useEffect(() => {
     dialogRef.current?.showModal()
@@ -26,12 +25,6 @@ function ForumPendingReviewModal({ title, description, onClose }: Readonly<Forum
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') requestClose()
-      }}
       aria-label={title}
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,calc(100vw-48px))] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
@@ -43,7 +36,7 @@ function ForumPendingReviewModal({ title, description, onClose }: Readonly<Forum
         />
 
         <div className="flex flex-col items-center gap-md px-[28px] pb-[32px] pt-[30px]">
-          <h2 className="m-0 text-center font-heading text-h1 font-bold leading-none text-heading">
+          <h2 className="m-0 text-center font-heading text-h2 font-bold leading-none text-heading">
             {title}
           </h2>
 

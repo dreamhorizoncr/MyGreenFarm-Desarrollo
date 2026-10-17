@@ -14,7 +14,7 @@ export function useAnnouncements() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchAnnouncements = async (
@@ -26,15 +26,12 @@ export function useAnnouncements() {
     setError(null);
 
     try {
-      // Solicita al backend únicamente la página necesaria
       const data = await announcementService.getAnnouncements(
         SOURCE_LANG,
         page,
         size,
       );
 
-      // Guarda de una vez las noticias sin traducir, para que se vean aunque
-      // la traducción falle o tarde
       setAnnouncements(data.content);
       setTotalPages(data.totalPages);
       setTotalElements(data.totalElements);

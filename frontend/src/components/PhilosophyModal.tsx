@@ -5,6 +5,7 @@ import { GlobeIcon, HeartIcon, ShieldCheckIcon, SunIcon } from '@animateicons/re
 import Button from './ui/Button.tsx'
 import PhilosophyPillarItem from './PhilosophyPillarItem.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import nino from '../assets/imgs/nino.svg'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
@@ -17,6 +18,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
   const navigate = useNavigate()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
 
   useEffect(() => {
     dialogRef.current?.showModal()
@@ -66,12 +68,6 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') requestClose()
-      }}
       aria-label={t('home.philosophy.title')}
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(760px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
@@ -92,7 +88,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
 
         <div className="p-[22px_22px_30px] md:p-[26px_28px_32px]">
           <div className="relative mb-lg text-center">
-            <h2 className="m-0 font-heading text-[30px] font-bold leading-tight text-heading">
+            <h2 className="m-0 font-heading text-h4 font-bold leading-tight text-heading">
               {t('home.philosophy.title')}
             </h2>
             <div className="mx-auto mt-xs h-1 w-12 rounded-full bg-[var(--pink-400)]" aria-hidden="true" />

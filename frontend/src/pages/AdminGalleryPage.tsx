@@ -1,19 +1,11 @@
-import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
-import {
-	CheckIcon,
-	ChevronDownIcon,
-	ChevronLeftIcon,
-	ChevronRightIcon,
-	PlusIcon,
-	StarIcon,
-	Trash2Icon,
-	XIcon,
-} from '@animateicons/react/lucide'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, StarIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
-import useDismiss from '../hooks/useDismiss.ts'
 import useEmblaCarousel from 'embla-carousel-react'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import DeleteAlbumModal from '../components/DeleteAlbumModal.tsx'
 import DeleteYearModal from '../components/DeleteYearModal.tsx'
 import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
@@ -28,6 +20,7 @@ import CheckboxField from '../components/ui/CheckboxField.tsx'
 import ImagePickerButton from '../components/ui/ImagePickerButton.tsx'
 import ImageThumb, { ImageThumbList } from '../components/ui/ImageThumb.tsx'
 import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
+import CreatableDropdown from '../components/ui/CreatableDropdown.tsx'
 
 const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'])
 const TITLE_MIN_LENGTH = 5
@@ -40,175 +33,6 @@ interface SelectedImage {
 
 function releasePreviews(list: SelectedImage[]) {
 	list.forEach(({ previewUrl }) => URL.revokeObjectURL(previewUrl))
-}
-
-interface YearDropdownProps {
-	categories: GalleryCategory[]
-	value: string
-	onChange: (categoryId: string) => void
-	onCreateYear: (title: string) => Promise<void>
-	onDeleteYear: (category: GalleryCategory) => void
-}
-
-function YearDropdown({
-	categories,
-	value,
-	onChange,
-	onCreateYear,
-	onDeleteYear,
-}: Readonly<YearDropdownProps>) {
-	const { t } = useTranslation()
-	const [open, setOpen] = useState(false)
-	const [adding, setAdding] = useState(false)
-	const yearInputRef = useRef<HTMLInputElement>(null)
-	useEffect(() => {
-		if (adding) yearInputRef.current?.focus()
-	}, [adding])
-	const [newYear, setNewYear] = useState('')
-	const [yearError, setYearError] = useState<string | null>(null)
-
-	const selected = categories.find((category) => category.id === value)
-
-	// Se cierra al tocar afuera o con Escape (antes era una capa fixed que dentro del modal no cubría la pantalla).
-	const rootRef = useRef<HTMLDivElement>(null)
-	const closeDropdown = useCallback(() => {
-		setOpen(false)
-		setAdding(false)
-	}, [])
-	useDismiss({ ref: rootRef, isOpen: open, onClose: closeDropdown })
-
-	const handleAdd = async () => {
-		const title = newYear.trim()
-		if (!title) return
-		const unsafeError = validateSafeText(title, t)
-		setYearError(unsafeError)
-		if (unsafeError) return
-		await onCreateYear(title)
-		setNewYear('')
-		setAdding(false)
-		setOpen(false)
-	}
-
-	return (
-		<div ref={rootRef} className="relative mt-xs">
-			<button
-				type="button"
-				onClick={() => setOpen((prev) => !prev)}
-				className="flex h-11 w-full items-center justify-between rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
-			>
-				<span className={selected ? 'text-heading' : 'text-neutral-500'}>
-					{selected ? selected.title : t('admin.gallery.selectYear')}
-				</span>
-				<ChevronDownIcon
-					size={18}
-					aria-hidden="true"
-					className={open ? 'rotate-180 transition-transform' : 'transition-transform'}
-				/>
-			</button>
-
-			{open && (
-				<>
-					<div className="absolute left-0 right-0 top-[calc(100%+6px)] z-20 overflow-hidden rounded-xl border border-neutral-200 bg-white p-xs shadow-lg">
-						{categories.map((category) => (
-							<div
-								key={category.id}
-								className="flex w-full items-center justify-between gap-2 text-body-sm"
-							>
-								<button
-									type="button"
-									role="option"
-									aria-selected={category.id === value}
-									onClick={() => {
-										onChange(category.id)
-										setOpen(false)
-									}}
-									className={`flex w-full flex-1 items-center justify-between gap-2 rounded-lg px-md py-sm text-left transition-colors duration-150 hover:bg-orange-100 ${
-										category.id === value
-											? 'font-semibold text-link'
-											: 'text-heading'
-									}`}
-								>
-									<span className="truncate">{category.title}</span>
-									{category.id === value && <CheckIcon size={16} className="shrink-0" aria-hidden="true" />}
-								</button>
-								<button
-									type="button"
-									onClick={() => onDeleteYear(category)}
-									aria-label={`${t('admin.gallery.deleteYear')}: ${category.title}`}
-									className="flex size-8 shrink-0 items-center justify-center rounded-full text-neutral-400 transition hover:bg-red-50 hover:text-red-600"
-								>
-									<Trash2Icon size={15} />
-								</button>
-							</div>
-						))}
-
-						<div className="mx-lg my-sm border-t border-neutral-200" />
-
-						{adding ? (
-							<>
-							<div className="flex items-center gap-sm px-md py-sm">
-								<input
-									ref={yearInputRef}
-									value={newYear}
-									onChange={(e) => {
-										setNewYear(e.target.value)
-										if (yearError) setYearError(null)
-									}}
-									onKeyDown={(e) => {
-										if (e.key === 'Enter') {
-											e.preventDefault()
-											void handleAdd()
-										}
-										if (e.key === 'Escape') {
-											e.preventDefault()
-											setAdding(false)
-											setNewYear('')
-										}
-									}}
-									placeholder={t('admin.gallery.newYearPlaceholder')}
-									aria-invalid={Boolean(yearError)}
-									className={`h-9 w-full min-w-0 rounded-lg border px-sm font-body text-body-sm outline-none focus:border-heading ${yearError ? 'border-danger' : 'border-neutral-200'}`}
-								/>
-								<button
-									type="button"
-									onClick={() => void handleAdd()}
-									disabled={!newYear.trim()}
-									aria-label={t('admin.gallery.addNewYear')}
-									className="flex size-9 shrink-0 items-center justify-center rounded-full bg-green-600 text-white disabled:opacity-50"
-								>
-									<CheckIcon size={16} />
-								</button>
-								<button
-									type="button"
-									onClick={() => {
-										setAdding(false)
-										setNewYear('')
-									}}
-									aria-label={t('admin.cancel')}
-									className="flex size-9 shrink-0 items-center justify-center rounded-full text-neutral-500 hover:bg-neutral-100"
-								>
-									<XIcon size={16} />
-								</button>
-							</div>
-							{yearError && (
-								<p className="m-0 px-md pb-sm font-body text-caption text-danger">{yearError}</p>
-							)}
-							</>
-						) : (
-							<button
-								type="button"
-								onClick={() => setAdding(true)}
-								className="flex w-full items-center gap-sm px-md py-sm text-body-sm font-semibold text-heading transition hover:bg-neutral-50"
-							>
-								<PlusIcon size={16} aria-hidden="true" />
-								{t('admin.gallery.addNewYear')}
-							</button>
-						)}
-					</div>
-				</>
-			)}
-		</div>
-	)
 }
 
 interface AdminAlbumCardProps {
@@ -263,7 +87,7 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading =
 			</div>
 
 			<div className="overflow-hidden px-lg pb-lg text-left">
-				<h3 className="m-0 line-clamp-2 min-h-[2.8em] font-heading text-h5 font-bold text-heading">
+				<h3 className="m-0 line-clamp-2 min-h-[2.8em] font-heading text-h4 font-bold text-heading">
 					{gallery!.title}
 				</h3>
 				<p className="-mt-sm line-clamp-5 min-h-[7.5em] font-body text-body-sm font-normal leading-[1.5] text-body-text-dark">
@@ -364,14 +188,12 @@ function AdminAlbumCarousel({
 	)
 }
 
-function AlbumCarouselSkeleton() {
+function AlbumCarouselSkeleton({ albums }: Readonly<{ albums: number }>) {
 	return (
 		<div className="mt-xl">
 			<Skeleton shape="pill" className="h-9 w-32" />
 			<div className="mt-md flex gap-md py-md">
-				<div className="min-w-0 flex-[0_0_260px] md:flex-[0_0_280px]"><AdminAlbumCard loading /></div>
-				<div className="min-w-0 flex-[0_0_260px] md:flex-[0_0_280px]"><AdminAlbumCard loading /></div>
-				<div className="min-w-0 flex-[0_0_260px] md:flex-[0_0_280px]"><AdminAlbumCard loading /></div>
+				<SkeletonList count={albums}>{() => <div className="min-w-0 flex-[0_0_260px] md:flex-[0_0_280px]"><AdminAlbumCard loading /></div>}</SkeletonList>
 			</div>
 		</div>
 	)
@@ -641,6 +463,10 @@ function AdminGalleryPage() {
 
 	const idleSubmitLabel = editing ? t('admin.save') : t('admin.gallery.publish')
 
+	const visibleAlbumRows = categories.map((category) => galleriesByCategory[category.id]?.length ?? 0).filter((count) => count > 0)
+	const rowSkeletonCount = useSkeletonCount('admin-gallery-rows', loading, visibleAlbumRows.length, 2)
+	const albumSkeletonCount = useSkeletonCount('admin-gallery-albums', loading, Math.min(4, Math.max(0, ...visibleAlbumRows)), 3)
+
 	return (
 		<AdminLayout>
 			<div className="flex flex-wrap items-start justify-between gap-md">
@@ -664,7 +490,6 @@ function AdminGalleryPage() {
 
 			{error && <p className="mt-lg rounded-xl bg-red-50 p-md text-body-sm text-red-700">{error}</p>}
 
-			{/* Formulario de álbum */}
 			{formOpen && (
 				<div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
 					<button
@@ -677,7 +502,7 @@ function AdminGalleryPage() {
 
 					<form onSubmit={handleSubmit} className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}>
 					<div className="flex items-center justify-between gap-md">
-						<h2 className="m-0 font-heading text-2xl font-bold text-heading">
+						<h2 className="m-0 font-heading text-h4 font-bold text-heading">
 							{editing ? t('admin.gallery.editAlbum') : t('admin.gallery.newAlbum')}
 						</h2>
 						<ModalCloseButton
@@ -705,16 +530,22 @@ function AdminGalleryPage() {
 
 						<label className="font-body text-body-sm font-semibold text-heading">
 							{t('admin.gallery.albumYear')}
-							<YearDropdown
-								categories={categories}
+							<CreatableDropdown
+								options={categories.map((category) => ({ id: category.id, label: category.title }))}
 								value={form.categoryId}
 								onChange={(categoryId) => {
 									setForm((prev) => ({ ...prev, categoryId }))
 									setFormError(null)
 								}}
-onCreateYear={handleCreateYear}
-							onDeleteYear={(category) => setDeleteYearTarget(category)}
-						/>
+								onCreate={handleCreateYear}
+								onDelete={(option) => setDeleteYearTarget(categories.find((category) => category.id === option.id) ?? null)}
+								labels={{
+									placeholder: t('admin.gallery.selectYear'),
+									add: t('admin.gallery.addNewYear'),
+									newPlaceholder: t('admin.gallery.newYearPlaceholder'),
+									delete: t('admin.gallery.deleteYear'),
+								}}
+							/>
 							{formError && (
 								<p className="mt-xs block font-body text-body-sm font-normal text-danger">{formError}</p>
 							)}
@@ -810,16 +641,14 @@ onCreateYear={handleCreateYear}
 				</div>
 			)}
 
-			{/* Álbumes agrupados por año */}
 			<section className="mt-xl border-t border-neutral-200 pt-xl">
-				<h2 className="font-heading text-2xl font-bold text-heading">
+				<h2 className="font-heading text-h4 font-bold text-heading">
 					{t('admin.gallery.albumsSection')}
 				</h2>
 
 				{loading && !formOpen && (
 					<output className="contents" aria-label={t('common.loading')}>
-						<AlbumCarouselSkeleton />
-						<AlbumCarouselSkeleton />
+						<SkeletonList count={rowSkeletonCount}>{() => <AlbumCarouselSkeleton albums={albumSkeletonCount} />}</SkeletonList>
 					</output>
 				)}
 

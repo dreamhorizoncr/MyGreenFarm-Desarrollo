@@ -1,7 +1,9 @@
 import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CheckIcon, ChevronDownIcon, GlobeIcon } from '@animateicons/react/lucide'
+import { AnimatePresence, motion } from 'motion/react'
 import useDismiss from '../hooks/useDismiss.ts'
+import { useDropdownMotion } from '../hooks/useDropdownMotion.ts'
 import { notify } from '../utils/notifications.ts'
 import { SUPPORTED_LANGUAGES } from '../i18n/index.ts'
 import { claimExclusiveOpen, releaseExclusiveOpen } from '../utils/exclusiveMenu.ts'
@@ -10,6 +12,7 @@ function LanguageSwitcher() {
   const { t, i18n } = useTranslation()
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
+  const dropdownMotion = useDropdownMotion()
   const closeMenu = useCallback(() => setOpen(false), [])
 
   useDismiss({ ref: rootRef, isOpen: open, onClose: () => { releaseExclusiveOpen(closeMenu); closeMenu() } })
@@ -60,9 +63,11 @@ function LanguageSwitcher() {
         />
       </button>
 
+      <AnimatePresence>
       {open && (
-        <ul
-          className="absolute right-0 top-[calc(100%+var(--spacing-xs))] z-10 m-0 min-w-[168px] list-none rounded-xl border border-neutral-200 bg-white p-xs animate-[language-switcher-in_0.15s_ease-out] md:left-0 md:right-auto md:w-full"
+        <motion.ul
+          {...dropdownMotion}
+          className="absolute right-0 top-[calc(100%+var(--spacing-xs))] z-10 m-0 min-w-[168px] list-none rounded-xl border border-neutral-200 bg-white p-xs md:left-0 md:right-auto md:w-full"
           role="menu"
         >
           {SUPPORTED_LANGUAGES.map((language) => (
@@ -80,8 +85,9 @@ function LanguageSwitcher() {
               </button>
             </li>
           ))}
-        </ul>
+        </motion.ul>
       )}
+      </AnimatePresence>
     </div>
   )
 }

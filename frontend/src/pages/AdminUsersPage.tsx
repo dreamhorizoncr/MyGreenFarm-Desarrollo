@@ -11,8 +11,12 @@ import { useAdmin } from '../hooks/useAdmin.ts'
 import { notify } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
+import TabHighlight from '../components/ui/TabHighlight.tsx'
 
 const PAGE_SIZE = 10
+const ROLE_OPTIONS = ['ALL', 'OWNER', 'ADMIN', 'TEACHER']
 
 function AdminUsersPage() {
   const { t } = useTranslation()
@@ -50,8 +54,6 @@ function AdminUsersPage() {
 
   const pagedUsers = filteredUsers.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
-  const roleOptions = useMemo(() => ['ALL', ...Array.from(new Set(['OWNER', ...users.map((user) => user.role)]))], [users])
-
   const roleLabels: Record<string, string> = {
     OWNER: t('admin.roles.OWNER'),
     TEACHER: t('admin.roles.TEACHER'),
@@ -59,8 +61,8 @@ function AdminUsersPage() {
   }
 
   const roleFilterClassName = (active: boolean) =>
-    `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
-      active ? 'border-green-500 bg-green-500 text-white' : 'border-green-500 bg-white text-heading hover:bg-green-50'
+    `relative rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
+      active ? 'border-green-500 text-white' : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
     }`
 
   const handleSave = async (id: string, data: UpdateUserData) => {
@@ -80,6 +82,8 @@ function AdminUsersPage() {
   const handleDelete = (user: UserInfo) => () => {
     setUserToDelete(user)
   }
+
+  const skeletonCount = useSkeletonCount('admin-users', loading, pagedUsers.length, 4)
 
   return (
     <div id="admin-users">
@@ -114,8 +118,8 @@ function AdminUsersPage() {
           </button>
         </div>
 
-        <div className="-mt-sm mb-lg flex flex-wrap gap-sm">
-          {roleOptions.map((role) => (
+        <div className="isolate -mt-sm mb-lg flex flex-wrap gap-sm">
+          {ROLE_OPTIONS.map((role) => (
             <button
               key={role}
               type="button"
@@ -123,6 +127,7 @@ function AdminUsersPage() {
               onClick={() => setRoleFilter(role)}
               className={roleFilterClassName(roleFilter === role)}
             >
+              {roleFilter === role && <TabHighlight layoutId="admin-users-role-tab" className="bg-green-500" />}
               {role === 'ALL' ? t('admin.allRoles') : roleLabels[role] ?? role}
             </button>
           ))}
@@ -130,10 +135,7 @@ function AdminUsersPage() {
 
         {loading && (
           <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-            <TeacherCard loading />
-            <TeacherCard loading />
-            <TeacherCard loading />
-            <TeacherCard loading />
+            <SkeletonList count={skeletonCount}>{() => <TeacherCard loading />}</SkeletonList>
           </div>
         )}
 

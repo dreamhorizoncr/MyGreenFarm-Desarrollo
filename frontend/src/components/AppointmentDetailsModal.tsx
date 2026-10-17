@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { formatPhoneNumberIntl } from 'react-phone-number-input'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { appointmentService } from '../services/appointment.ts'
 import type { Appointment } from '../types/appointment.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
@@ -11,7 +12,6 @@ interface AppointmentDetailsModalProps {
   onClose: () => void
 }
 
-// Texto libre que escribe la familia o el docente; se traduce al idioma activo.
 const TRANSLATABLE_FIELDS = ['parentOccupation', 'parentNotes', 'teacherConclusion'] as const
 const TRANSLATION_ENTITY_TYPE = 'APPOINTMENT'
 
@@ -28,6 +28,7 @@ function AppointmentDetailsModal({ appointment, onClose }: Readonly<AppointmentD
   const { t, i18n } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
   const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
   const [translations, setTranslations] = useState<Record<string, string>>({})
 
@@ -74,12 +75,6 @@ function AppointmentDetailsModal({ appointment, onClose }: Readonly<AppointmentD
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') requestClose()
-      }}
       aria-labelledby="appointment-details-title"
       className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(720px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
@@ -91,10 +86,10 @@ function AppointmentDetailsModal({ appointment, onClose }: Readonly<AppointmentD
         />
 
         <div className="mb-lg px-[28px] pr-10">
-          <span className="inline-flex rounded-full px-sm py-2xs font-body text-caption font-semibold text-body-text bg-[var(--grey-100)]">
+          <span className="inline-flex rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
             {statusLabel}
           </span>
-          <h2 id="appointment-details-title" className="m-0 mt-sm font-heading text-[30px] font-bold leading-tight text-heading">
+          <h2 id="appointment-details-title" className="m-0 mt-sm font-heading text-h4 font-bold leading-tight text-heading">
             {appointment.childName}
           </h2>
           <p className="m-0 mt-2xs font-body text-body-sm text-neutral-500">{appointmentDate}</p>

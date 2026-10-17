@@ -161,7 +161,6 @@ function BlogPostCard({
         />
       )}
 
-      {/* La imagen se redondea sola (sin overflow-hidden en la card) para que card-hover no tiemble. */}
       <div className="h-[160px] shrink-0 overflow-hidden rounded-t-[15px] bg-neutral-100 xs:h-[220px]">
         {post!.imageUrl && (
           <img
@@ -186,7 +185,7 @@ function BlogPostCard({
               {post!.authorName}
             </p>
 
-            <p className="m-0 truncate font-body text-[14px] text-neutral-500">
+            <p className="m-0 truncate font-body text-body-sm text-neutral-500">
               {post!.authorRole}
             </p>
           </div>
@@ -196,7 +195,7 @@ function BlogPostCard({
           </span>
         </div>
 
-        <h2 className="m-0 mt-md min-h-[2.4em] text-left font-heading text-h5 font-bold leading-tight text-heading line-clamp-2">
+        <h2 className="m-0 mt-md min-h-[2.4em] text-left font-heading text-h4 font-bold leading-tight text-heading line-clamp-2">
           {post!.title}
         </h2>
 

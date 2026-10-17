@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
+import { parseSchedule } from '../utils/schedule.ts'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
@@ -12,11 +13,10 @@ interface CacheData {
 
 export function useServicePlans() {
   const [plans, setPlans] = useState<ServicePlan[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [totalPages, setTotalPages] = useState(0)
 
-  // 💡 Caché en memoria para evitar latencias al cambiar de página o idioma
   const cacheRef = useRef<Map<string, CacheData>>(new Map())
 
   const fetchPlans = useCallback(async (page = 0, lang?: string) => {
@@ -34,13 +34,12 @@ export function useServicePlans() {
     setError(null)
     
     try {
-      // Nota: Si tu servicio usa getAll(page) o getActivePlans(page), asegúrate de pasar el parámetro de página
       const data = await servicePlanService.getActivePlans(page)
-      const rawPlans = data.content ?? data // Soporte por si devuelve objeto Page o lista directa
+      const rawPlans = data.content ?? data 
       const calculatedTotalPages = data.totalPages ?? 1
 
       setTotalPages(calculatedTotalPages)
-      setPlans(rawPlans) // Se muestra de una vez sin traducir para evitar pantallas en blanco por red lenta
+      setPlans(rawPlans) 
 
       let processedPlans = rawPlans
 
@@ -48,7 +47,7 @@ export function useServicePlans() {
         const items = rawPlans.flatMap((plan) => [
           { entityId: plan.id, fieldName: 'name', originalText: plan.name },
           { entityId: plan.id, fieldName: 'description', originalText: plan.description },
-          { entityId: plan.id, fieldName: 'schedule', originalText: plan.schedule },
+          ...(parseSchedule(plan.schedule) ? [] : [{ entityId: plan.id, fieldName: 'schedule', originalText: plan.schedule }]),
           { entityId: plan.id, fieldName: 'includes', originalText: plan.includes },
         ])
 

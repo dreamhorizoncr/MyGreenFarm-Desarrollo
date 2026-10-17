@@ -41,7 +41,7 @@ public class AppointmentService {
     @Autowired
     private ScheduleConfigService scheduleConfigService;
 
-    @Value("${daycare.mail.admin}") // Correo de la administración para avisarle de nuevas solicitudes
+    @Value("${daycare.mail.admin}")
     private String correoAdmin;
 
     AppointmentService(CalendarSyncAsyncService calendarSyncAsyncService) {
@@ -73,7 +73,7 @@ public class AppointmentService {
                     "Lo sentimos, el horario seleccionado no está habilitado por la administración.");
         }
 
-        LocalDateTime requestedEnd = requestedStart.plusMinutes(59); // Duración de la cita
+        LocalDateTime requestedEnd = requestedStart.plusMinutes(59);
 
         validateParentIdentification(dto.getIdType(), dto.getParentIdentification());
 
@@ -91,7 +91,7 @@ public class AppointmentService {
         String formattedPhone = parseAndValidatePhone(dto.getParentPhone());
 
         List<Appointment> conflictingAppointments = appointmentRepository.findByAppointmentDateBetween(
-                requestedStart.minusMinutes(59), // Margen para evitar solapamientos
+                requestedStart.minusMinutes(59),
                 requestedEnd);
 
         boolean isSlotTaken = conflictingAppointments.stream()
@@ -121,7 +121,6 @@ public class AppointmentService {
         appointment.setAppointmentDate(dto.getAppointmentDate());
         appointment.setParentNotes(parentNotes);
 
-        // Nace obligatoriamente en PENDING
         appointment.setStatus(AppointmentStatus.PENDING);
         long start = System.currentTimeMillis();
         Appointment savedAppointment = appointmentRepository.save(appointment);
@@ -151,7 +150,7 @@ public class AppointmentService {
 
         if (!allowedDomains.contains(domain)) {
             throw new IllegalArgumentException(
-                    "Por favor, utiliza un correo electrónico de un proveedor conocido (Gmail, Hotmail, Outlook, Yahoo).");
+                    "Por favor, utiliza un correo electrónico de Gmail, Hotmail u Outlook.");
         }
     }
 
@@ -197,7 +196,6 @@ public class AppointmentService {
             throw new IllegalArgumentException("El número de teléfono no puede estar vacío.");
         }
 
-        // Limpia espacios y guiones para hacer la validación uniforme
         String cleanedPhone = fullPhoneNumber.trim().replaceAll("[\\s-]", "");
 
         if (!cleanedPhone.startsWith("+")) {
@@ -205,8 +203,6 @@ public class AppointmentService {
                     "El número de teléfono debe incluir el prefijo internacional (ej. +506...).");
         }
 
-        // Expresión regular para separar el prefijo (grupo 1) y el número local (grupo
-        // 2)
         Pattern pattern = java.util.regex.Pattern.compile("^(\\+\\d{1,3})(\\d{7,12})$");
         Matcher matcher = pattern.matcher(cleanedPhone);
 
@@ -214,7 +210,6 @@ public class AppointmentService {
             throw new IllegalArgumentException("El formato del número de teléfono no es válido.");
         }
 
-        // Retorna ambos fragmentos unidos explícitamente con un espacio intermedio
         return matcher.group(1) + " " + matcher.group(2);
     }
 
@@ -349,7 +344,6 @@ public class AppointmentService {
         return savedAppointment;
     }
 
-    // Se ejecuta cada hora para revisar citas a 24 horas de distancia
     @Scheduled(cron = "0 0 * * * *")
     @Transactional
     public void send24HourReminders() {
@@ -381,13 +375,11 @@ public class AppointmentService {
         }
     }
 
-    // Se ejecuta cada hora para auto-cancelar citas pendientes que ya expiraron
     @Scheduled(cron = "0 0 * * * *")
     @Transactional
     public void autoCancelExpiredPendingAppointments() {
         LocalDateTime now = LocalDateTime.now();
         
-        // Busca todas las citas pendientes cuya fecha ya pasó
         List<Appointment> expiredAppointments = appointmentRepository.findByAppointmentDateBeforeAndStatus(
                 now, AppointmentStatus.PENDING);
 

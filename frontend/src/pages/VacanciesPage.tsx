@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ArrowRightIcon } from '@animateicons/react/lucide'
 import Navbar from '../components/Navbar.tsx'
@@ -9,9 +9,12 @@ import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
 import { useVacancies } from '../hooks/useVacancies.ts'
 import { useCurriculums } from '../hooks/useCurriculums.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { notify } from '../utils/notifications.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 interface ApplyTarget {
   title: string
@@ -49,7 +52,7 @@ function VacancyCard({ title, description, onApply, loading = false }: Readonly<
 
   return (
     <article className="group flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow card-hover">
-      <h2 className="m-0 font-heading text-xl font-bold leading-snug text-heading">
+      <h2 className="m-0 font-heading text-h4 font-bold leading-snug text-heading">
         {title}
       </h2>
 
@@ -83,7 +86,9 @@ function VacanciesPage() {
 
   const [applyTarget, setApplyTarget] = useState<ApplyTarget | null>(null)
   const [applicationSent, setApplicationSent] = useState(false)
+  const sentDialogRef = useRef<HTMLDialogElement | null>(null)
   const { closing: sentClosing, requestClose: requestCloseSent } = useModalExit(() => setApplicationSent(false))
+  useDialogDismiss(sentDialogRef, requestCloseSent)
 
   useEffect(() => {
     void fetchVacancies(i18n.language)
@@ -113,13 +118,15 @@ function VacanciesPage() {
     })
   }
 
+  const skeletonCount = useSkeletonCount('vacancies', loading, openVacancies.length, 2)
+
   return (
     <div id="vacancies-page" className="min-h-screen bg-bg-page">
       <Navbar />
 
       <section className="flex min-h-[280px] items-start bg-green-500 px-[30px] pt-[48px] pb-[40px] text-center text-white md:min-h-[320px] md:pt-[72px]">
         <div className="mx-auto w-full max-w-175">
-          <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
+          <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-white">
             {t('vacancies.title')}
           </h1>
           <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-white md:text-body-sm">
@@ -132,8 +139,7 @@ function VacanciesPage() {
         <Container className="py-10 md:py-12">
           {loading && (
             <div className="grid grid-cols-1 gap-md md:grid-cols-2">
-              <VacancyCard loading />
-              <VacancyCard loading />
+              <SkeletonList count={skeletonCount}>{() => <VacancyCard loading />}</SkeletonList>
             </div>
           )}
           {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
@@ -145,7 +151,7 @@ function VacanciesPage() {
                   {t('vacancies.noVacancies')}
                 </p>
 
-                <h2 className="mt-lg font-heading text-xl font-bold leading-snug text-heading">
+                <h2 className="mt-lg font-heading text-h4 font-bold leading-snug text-heading">
                   {t('vacancies.spontaneousTitle')}
                 </h2>
                 <p className="mt-sm font-body text-body-sm text-body-text">
@@ -191,21 +197,16 @@ function VacanciesPage() {
       {applicationSent && (
         <dialog
           ref={(el) => {
+            sentDialogRef.current = el
             if (el && !el.open) el.showModal()
           }}
           onClose={requestCloseSent}
-          onClick={(event) => {
-            if (event.target === event.currentTarget) requestCloseSent()
-          }}
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') requestCloseSent()
-          }}
           aria-label={t('vacancies.applicationSentTitle')}
           className={`fixed inset-0 m-auto max-h-[90vh] w-[min(420px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card text-center backdrop:bg-scrim ${sentClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         >
           <div className="relative p-xl">
             <ModalCloseButton onClick={requestCloseSent} aria-label={t('legalModal.close')} className="absolute right-3 top-[26px] z-20" />
-            <h2 className="m-0 px-xl font-heading text-2xl font-bold text-heading">{t('vacancies.applicationSentTitle')}</h2>
+            <h2 className="m-0 px-xl font-heading text-h4 font-bold text-heading">{t('vacancies.applicationSentTitle')}</h2>
             <p className="mt-sm font-body text-body-sm text-body-text">{t('vacancies.applicationSentMessage')}</p>
             <button
               type="button"

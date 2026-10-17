@@ -28,8 +28,6 @@ public class Curriculum {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    // Sin relación JPA a Vacancy a propósito: se guarda solo el id, igual
-    // que Vacancy.filledByApplicationId. Evita acoplar las dos entidades.
     @Column(name = "vacancy_id")
     private UUID vacancyId;
 

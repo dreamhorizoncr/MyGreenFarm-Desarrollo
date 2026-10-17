@@ -106,7 +106,6 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
     setForm((current) => ({ ...current, imageAlt: '', removeImage: false }))
   }
 
-  // Quita la imagen recién elegida y vuelve a mostrar la actual (si había).
   function clearSelectedImage() {
     if (image) URL.revokeObjectURL(image.previewUrl)
     setImage(null)
@@ -180,7 +179,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
         className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
       >
         <div className="flex items-center justify-between gap-md">
-          <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+          <h2 className="m-0 font-heading text-h4 font-bold text-heading">
             {post ? t('adminForum.editPost') : t('adminForum.newPost')}
           </h2>
 

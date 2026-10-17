@@ -83,15 +83,12 @@ export const clubService = {
         await apiClient.delete(`/clubs/${id}`)
     },
 
-    // Obtener solo los clubes que tienen cupos disponibles
     async getAvailableClubs(lang: string = "es"): Promise<ClubResponse[]> {
         const response = await apiClient.get<ClubResponse[]>("/clubs/available", {
             params: { lang },
         });
         return response.data;
     },
-
-    // --- IMÁGENES ---
 
     async getImagesByClub(clubId: number): Promise<ClubImageResponse[]> {
         const response = await apiClient.get<ClubImageResponse[]>(`/clubs/${clubId}/images`)

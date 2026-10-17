@@ -85,7 +85,6 @@ public class AppointmentController {
     public ResponseEntity<?> getAvailableWeek(@RequestParam("date") String dateStr) {
         try {
             LocalDate date = LocalDate.parse(dateStr);
-            // El controller solo llama al servicio y devuelve la respuesta
             Map<String, AvailableDayResponse> weekSlots = scheduleConfigService.getAvailableSlotsForWeek(date);
             return ResponseEntity.ok(weekSlots);
         } catch (Exception e) {

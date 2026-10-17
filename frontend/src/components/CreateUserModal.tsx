@@ -4,13 +4,14 @@ import Button from './ui/Button.tsx'
 import PasswordInput from './ui/PasswordInput.tsx'
 import DatePickerField from './ui/DatePickerField.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { useRegister } from '../hooks/useRegister.ts'
 import { notify } from '../utils/notifications.ts'
 import { validateEmail, validatePassword, validateRequired, validateSafeText } from '../utils/validators.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
+import TabHighlight from './ui/TabHighlight.tsx'
 
 interface CreateUserModalProps {
-  // Se llama después de crear el usuario, para refrescar la lista.
   onCreated: () => void | Promise<void>
   onClose: () => void
 }
@@ -21,16 +22,15 @@ const inputClassName =
   'mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading'
 
 const roleClassName = (active: boolean) =>
-  `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
-    active ? 'border-green-500 bg-green-500 text-white' : 'border-green-500 bg-white text-heading hover:bg-green-50'
+  `relative rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
+    active ? 'border-green-500 text-white' : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
   }`
 
-// Alta de usuarios (docentes y administradores) desde Usuarios del admin.
-// Antes era la página /signup; ahora se abre como modal sobre la lista.
 function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
   const { submitRegister, loading } = useRegister()
 
   const [firstName, setFirstName] = useState('')
@@ -87,17 +87,11 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      onClick={(event) => {
-        if (event.target === dialogRef.current) requestClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') requestClose()
-      }}
       aria-label={t('admin.addDocente')}
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg text-left backdrop:bg-scrim md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="flex items-center justify-between gap-md">
-        <h2 className="m-0 font-heading text-2xl font-bold text-heading">{t('admin.addDocente')}</h2>
+        <h2 className="m-0 font-heading text-h4 font-bold text-heading">{t('admin.addDocente')}</h2>
 
         <ModalCloseButton
           onClick={requestClose}
@@ -168,7 +162,7 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
 
         <fieldset className="m-0 border-0 p-0 font-body text-body-sm font-semibold text-heading md:col-span-2">
           <legend className="mb-xs p-0">{t('signup.role')}</legend>
-          <div className="flex flex-wrap gap-sm">
+          <div className="isolate flex flex-wrap gap-sm">
             {(['TEACHER', 'ADMIN'] as const).map((option) => (
               <button
                 key={option}
@@ -180,6 +174,7 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
                 }}
                 className={roleClassName(role === option)}
               >
+                {role === option && <TabHighlight layoutId="create-user-role" className="bg-green-500" />}
                 {t(option === 'TEACHER' ? 'signup.teacherRole' : 'signup.adminRole')}
               </button>
             ))}

@@ -1,11 +1,12 @@
-/** Selector de país para react-phone-number-input (prop countrySelectComponent), con el estilo del Select */
 
 import { useEffect, useMemo, useRef, useState, type ElementType } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CheckIcon, ChevronDownIcon, SearchIcon } from '@animateicons/react/lucide'
 import { getCountryCallingCode, type Country } from 'react-phone-number-input'
 import useDismiss from '../../hooks/useDismiss.ts'
+import { AnimatePresence, motion } from 'motion/react'
 import { useMenuPosition } from '../../hooks/useMenuPosition.ts'
+import { useDropdownMotion } from '../../hooks/useDropdownMotion.ts'
 
 interface CountryOption {
   value?: Country
@@ -26,7 +27,6 @@ interface CountrySelectProps {
 const MENU_MAX_HEIGHT = 320
 const MENU_MIN_WIDTH = 300
 
-// Para buscar sin importar tildes ni mayúsculas.
 const normalize = (text: string) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
 const callingCode = (country?: Country) => (country ? `+${getCountryCallingCode(country)}` : '')
@@ -46,6 +46,7 @@ function CountrySelect({
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const listRef = useRef<HTMLUListElement>(null)
+  const searchRef = useRef<HTMLInputElement>(null)
 
   const close = () => {
     setOpen(false)
@@ -63,14 +64,27 @@ function CountrySelect({
     ))
   }, [options, query])
 
-  // Al abrir, deja visible el país elegido. Solo una vez: la posición se recalcula con cada scroll
-  // (también el de la propia lista), y si dependiera de ella la lista volvería sola al país elegido.
+  const keyedOptions = useMemo(() => {
+    const result: { option: CountryOption; key: string }[] = []
+    let previous = 'start'
+    for (const option of filtered) {
+      const key = option.divider ? `divider-after-${previous}` : (option.value ?? 'international')
+      if (!option.divider) previous = key
+      result.push({ option, key })
+    }
+    return result
+  }, [filtered])
+
   const isPositioned = position !== null
   useEffect(() => {
-    if (open && isPositioned) listRef.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' })
+    if (!open || !isPositioned) return
+    searchRef.current?.focus({ preventScroll: true })
+    listRef.current?.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' })
   }, [open, isPositioned])
 
   const selectedLabel = options.find((option) => option.value === value)?.label ?? ''
+
+  const dropdownMotion = useDropdownMotion(position?.bottom !== undefined)
 
   return (
     <div ref={rootRef} className="relative mr-xs flex items-center self-stretch">
@@ -90,16 +104,18 @@ function CountrySelect({
         <ChevronDownIcon size={14} aria-hidden="true" className={`shrink-0 text-neutral-500 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
       </button>
 
+      <AnimatePresence>
       {open && position && (
-        <div
+        <motion.div
+          {...dropdownMotion}
           style={{ top: position.top, bottom: position.bottom, left: position.left, width: position.width, maxHeight: position.maxHeight }}
-          className="fixed z-[10000] flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg animate-[language-switcher-in_0.15s_ease-out]"
+          className="fixed z-[10000] flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg"
         >
           <div className="flex shrink-0 items-center gap-xs border-b border-neutral-100 px-md py-xs">
             <SearchIcon size={16} aria-hidden="true" className="shrink-0 text-neutral-400" />
             <input
+              ref={searchRef}
               type="search"
-              autoFocus
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder={t('common.countrySearch.placeholder')}
@@ -112,10 +128,12 @@ function CountrySelect({
             {filtered.length === 0 && (
               <li className="px-md py-sm font-body text-body-sm text-neutral-500">{t('common.countrySearch.empty')}</li>
             )}
-            {filtered.map((option, index) => option.divider ? (
-              <li key={`divider-${index}`} role="separator" className="mx-md my-xs border-t border-neutral-200" />
+            {keyedOptions.map(({ option, key }) => option.divider ? (
+              <li key={key} role="none">
+                <hr className="mx-md my-xs border-0 border-t border-neutral-200" />
+              </li>
             ) : (
-              <li key={option.value ?? 'international'} role="none">
+              <li key={key} role="none">
                 <button
                   type="button"
                   role="option"
@@ -138,8 +156,9 @@ function CountrySelect({
               </li>
             ))}
           </ul>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </div>
   )
 }

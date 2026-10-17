@@ -38,7 +38,7 @@ function EvaluationFormModal({
     evaluation,
     onClose,
     onSaved,
-}: EvaluationFormModalProps) {
+}: Readonly<EvaluationFormModalProps>) {
     const { t } = useTranslation();
     const [form, setForm] = useState<EvaluationRequest>(emptyForm);
     const [expedients, setExpedients] = useState<Expedient[]>([]);
@@ -50,7 +50,6 @@ function EvaluationFormModal({
         Partial<Record<keyof EvaluationRequest, string | null>>
     >({});
 
-    // Cargar expedientes cuando se abre el modal
     useEffect(() => {
         if (!isOpen) return;
 
@@ -72,7 +71,6 @@ function EvaluationFormModal({
         void loadExpedients();
     }, [isOpen, t]);
 
-    // Preparar formulario para crear o editar
     useEffect(() => {
         if (!isOpen) return;
 
@@ -175,13 +173,13 @@ function EvaluationFormModal({
                 className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
             >
                 <div className="flex items-center justify-between gap-md">
-                    <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+                    <h2 className="m-0 font-heading text-h4 font-bold text-heading">
                         {evaluation ? t("admin.evaluations.formEditTitle") : t("admin.evaluations.registerEvaluation")}
                     </h2>
 
                     <ModalCloseButton
                         onClick={onClose}
-                        aria-label="Cerrar"
+                        aria-label={t("common.close")}
                     />
                 </div>
 
@@ -192,7 +190,6 @@ function EvaluationFormModal({
                 )}
 
                 <div className="mt-lg grid gap-md md:grid-cols-2">
-                    {/* Expediente + fecha */}
                     <label className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.evaluations.formChildLabel")}
                         <div className="mt-xs">
@@ -218,7 +215,7 @@ function EvaluationFormModal({
                         {t("admin.evaluations.formDateLabel")}
                         <DatePickerField
                             value={form.evaluationDate}
-                            max={new Date().toISOString().split("T")[0]} // 👈 Bloquea fechas futuras en el calendario
+                            max={new Date().toISOString().split("T")[0]}
                             onChange={(value) =>
                                 handleChange("evaluationDate", value)
                             }
@@ -229,101 +226,95 @@ function EvaluationFormModal({
                         )}
                     </div>
 
-                    {/* Áreas de progreso */}
                     <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
                         {t("admin.evaluations.formProgressTitle")}
                         <p className="mt-2xs font-normal text-neutral-500">
-                        {t("admin.evaluations.formProgressHint")}
+                            {t("admin.evaluations.formProgressHint")}
                         </p>
                     </div>
 
-                    {/* Comunicación */}
                     <label className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.evaluations.formCommunicationLabel")}
                         <textarea
-                        value={form.communicationProgress}
-                        onChange={(event) =>
-                            handleChange(
-                                "communicationProgress",
-                                event.target.value,
-                            )
-                        }
-                        maxLength={2000}
-                        rows={5}
-                        placeholder={t("admin.evaluations.formCommunicationPlaceholder")}
-                        className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
+                            value={form.communicationProgress}
+                            onChange={(event) =>
+                                handleChange(
+                                    "communicationProgress",
+                                    event.target.value,
+                                )
+                            }
+                            maxLength={2000}
+                            rows={5}
+                            placeholder={t("admin.evaluations.formCommunicationPlaceholder")}
+                            className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                         />
                         {fieldErrors.communicationProgress && (
                             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.communicationProgress}</span>
                         )}
                     </label>
 
-                    {/* Lenguaje */}
                     <label className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.evaluations.formLanguageLabel")}
                         <textarea
-                        value={form.languageProgress}
-                        onChange={(event) =>
-                            handleChange("languageProgress", event.target.value)
-                        }
-                        maxLength={2000}
-                        rows={5}
-                        placeholder={t("admin.evaluations.formLanguagePlaceholder")}
-                        className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
+                            value={form.languageProgress}
+                            onChange={(event) =>
+                                handleChange("languageProgress", event.target.value)
+                            }
+                            maxLength={2000}
+                            rows={5}
+                            placeholder={t("admin.evaluations.formLanguagePlaceholder")}
+                            className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                         />
                         {fieldErrors.languageProgress && (
                             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.languageProgress}</span>
                         )}
                     </label>
 
-                    {/* Lectura */}
                     <label className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.evaluations.formReadingLabel")}
                         <textarea
-                        value={form.readingProgress}
-                        onChange={(event) =>
-                            handleChange("readingProgress", event.target.value)
-                        }
-                        maxLength={2000}
-                        rows={5}
-                        placeholder={t("admin.evaluations.formReadingPlaceholder")}
-                        className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
+                            value={form.readingProgress}
+                            onChange={(event) =>
+                                handleChange("readingProgress", event.target.value)
+                            }
+                            maxLength={2000}
+                            rows={5}
+                            placeholder={t("admin.evaluations.formReadingPlaceholder")}
+                            className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                         />
                         {fieldErrors.readingProgress && (
                             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.readingProgress}</span>
                         )}
                     </label>
 
-                    {/* Desarrollo motor */}
                     <label className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.evaluations.formMotorLabel")}
                         <textarea
-                        value={form.motorProgress}
-                        onChange={(event) =>
-                            handleChange("motorProgress", event.target.value)
-                        }
-                        maxLength={2000}
-                        rows={5}
-                        placeholder={t("admin.evaluations.formMotorPlaceholder")}
-                        className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
+                            value={form.motorProgress}
+                            onChange={(event) =>
+                                handleChange("motorProgress", event.target.value)
+                            }
+                            maxLength={2000}
+                            rows={5}
+                            placeholder={t("admin.evaluations.formMotorPlaceholder")}
+                            className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                         />
                         {fieldErrors.motorProgress && (
                             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.motorProgress}</span>
                         )}
                     </label>
 
-                    {/* Observación */}
                     <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
                         {t("admin.evaluations.formObservationLabel")}
                         <textarea
-                        value={form.teacherObservation}
-                        onChange={(event) =>
-                            handleChange("teacherObservation", event.target.value)
-                        }
-                        maxLength={3000}
-                        rows={5}
-                        placeholder={t("admin.evaluations.formObservationPlaceholder")}
-                        className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
+                            value={form.teacherObservation}
+                            onChange={(event) =>
+                                handleChange("teacherObservation", event.target.value)
+                            }
+                            maxLength={3000}
+                            rows={5}
+                            placeholder={t("admin.evaluations.formObservationPlaceholder")}
+                            className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                         />
                         {fieldErrors.teacherObservation && (
                             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.teacherObservation}</span>
@@ -331,7 +322,6 @@ function EvaluationFormModal({
                     </label>
                 </div>
 
-                {/* Botones */}
                 <div className="mt-lg flex flex-wrap justify-end gap-sm">
                     <button
                         type="button"
@@ -348,10 +338,10 @@ function EvaluationFormModal({
                         className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         {saving
-                        ? t("admin.evaluations.formSaving")
-                        : evaluation
-                        ? t("admin.evaluations.formSaveChanges")
-                        : t("admin.evaluations.formAdd")}
+                            ? t("admin.evaluations.formSaving")
+                            : evaluation
+                            ? t("admin.evaluations.formSaveChanges")
+                            : t("admin.evaluations.formAdd")}
                     </button>
                 </div>
             </form>

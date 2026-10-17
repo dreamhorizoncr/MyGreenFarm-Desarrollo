@@ -22,6 +22,8 @@ import {
   WEEK_DAYS,
 } from "../types/availability.ts";
 import CardActionButton from "../components/ui/CardActionButton.tsx";
+import SkeletonList from "../components/ui/SkeletonList.tsx";
+import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
 const hours = Array.from(
   { length: 15 },
@@ -329,6 +331,8 @@ function OwnerAvailabilityPage() {
   const openException = (exception?: ScheduleException) =>
     setExceptionModal(exception ?? null);
 
+  const exceptionSkeletonCount = useSkeletonCount('availability-exceptions', loading, pagedExceptions.length, 2)
+
   return (
     <AdminLayout>
       <div className="pb-8">
@@ -342,13 +346,10 @@ function OwnerAvailabilityPage() {
         {loading && (
           <div className="mt-xl">
             <div className="flex flex-col gap-sm">
-              <WeeklyDayRow loading />
-              <WeeklyDayRow loading />
-              <WeeklyDayRow loading />
+              <SkeletonList count={WEEK_DAYS.length}>{() => <WeeklyDayRow loading />}</SkeletonList>
             </div>
             <div className="mt-2xl grid grid-cols-1 gap-md lg:grid-cols-2">
-              <ExceptionCard loading />
-              <ExceptionCard loading />
+              <SkeletonList count={exceptionSkeletonCount}>{() => <ExceptionCard loading />}</SkeletonList>
             </div>
           </div>
         )}

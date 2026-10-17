@@ -35,7 +35,6 @@ public class SecurityConfig {
   @Value("${frontend.origin:http://localhost:5173}")
   private String frontendOrigin;
 
-  //
   public SecurityConfig(UserDetailsServiceImpl userDetailsService, AuthEntryPointJwt unauthorizedHandler,
       JwtUtils jwtUtils) {
     this.userDetailsService = userDetailsService;
@@ -43,27 +42,17 @@ public class SecurityConfig {
     this.jwtUtils = jwtUtils;
   }
 
-  // Create the authentication token filter
   @Bean
   public AuthTokenFilter authenticationJwtTokenFilter() {
     return new AuthTokenFilter(jwtUtils, userDetailsService);
   }
 
-  // Create the authentication provider
-  // @Bean
-  // public DaoAuthenticationProvider authenticationProvider() {
-  //   DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
-  //   authProvider.setPasswordEncoder(passwordEncoder());
-  //   return authProvider;
-  // }
 
-  // Create the authentication manager
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
     return authConfig.getAuthenticationManager();
   }
 
-  // Create the password encoder
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
@@ -82,10 +71,7 @@ public class SecurityConfig {
     return source;
   }
 
-  // Este método es porque por la dependencia de Spring Security me muestra un
-  // login obligatorio
-  // Entonces esto lo quita
-  @Bean // Lo que sea de seguridad se usa con el endpoint Bean
+  @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -124,12 +110,12 @@ public class SecurityConfig {
                 "/api/gallery/likes/**")
             .permitAll()
               .requestMatchers("/api/forum/articles/likes/**").permitAll()
-              // Borrar publicaciones y comentarios de la comunidad es solo del OWNER; va antes del permitAll de /community/**.
               .requestMatchers(HttpMethod.DELETE, "/api/forum/community/*", "/api/forum/community/*/comments/*").hasRole("OWNER")
               .requestMatchers("/api/forum/community/**", "/api/forum/posts/likes/**").permitAll()
               .requestMatchers(HttpMethod.GET, "/api/forum/articles/**").permitAll()
               .requestMatchers(HttpMethod.POST, "/api/forum/articles/*/comments").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/announcements").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/announcements/categories").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/announcements/*/images").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/gallery/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/service-plans").permitAll()

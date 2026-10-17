@@ -10,22 +10,18 @@ export interface TranslationItem {
 }
 
 export const expedientService = {
-  //Obtiene todos los expedientes.
   async getExpedients(page = 0, size = 10): Promise<PageResponse<Expedient>> {
     const response = await apiClient.get<PageResponse<Expedient>>("/expedients", { params: { page, size } });
     return response.data;
   },
 
-  //Obtiene un expediente por su ID
   async getById(id: string): Promise<Expedient> {
     const response = await apiClient.get<Expedient>(`/expedients/${id}`);
     return response.data;
   },
 
-  //Crea un nuevo expediente
   async create(data: ExpedientRequest, file?: File): Promise<Expedient> {
     const formData = new FormData();
-    //El backend espera los datos del expediente como JSON
     formData.append("data", JSON.stringify(data));
 
     if (file) {
@@ -42,7 +38,6 @@ export const expedientService = {
     return response.data;
   },
 
-  // Actualiza un expediente
   async update(
     id: string,
     data: ExpedientRequest,
@@ -50,10 +45,8 @@ export const expedientService = {
   ): Promise<Expedient> {
     const formData = new FormData();
 
-    // El backend espera los datos del expediente como JSON
     formData.append("data", JSON.stringify(data));
 
-    // Agrega una nueva fotografía si fue seleccionada
     if (file) {
       const sanitizedFile = new File([file], sanitizeFileName(file.name), {
         type: file.type,
@@ -73,12 +66,10 @@ export const expedientService = {
     return response.data;
   },
 
-  //Elimina la fotografía del expediente
   async deletePhoto(id: string): Promise<void> {
     await apiClient.delete(`/expedients/${id}/photo`);
   },
 
-  //Elimina el expediente
   async delete(id: string): Promise<void> {
     await apiClient.delete(`/expedients/${id}`);
   },

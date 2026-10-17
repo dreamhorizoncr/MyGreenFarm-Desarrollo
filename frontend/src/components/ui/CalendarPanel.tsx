@@ -9,32 +9,31 @@ import Select from './Select.tsx'
 interface CalendarPanelProps {
   value: CalendarDate | null
   onChange: (value: CalendarDate | null) => void
-  // Fechas (YYYY-MM-DD) que llevan el punto naranja debajo del día.
   markedDates?: ReadonlySet<string>
   minValue?: CalendarDate
   maxValue?: CalendarDate
   ariaLabel?: string
-  // Barra Hoy / Semana / Mes; solo la usa Citas.
   showShortcuts?: boolean
-  // Versión más chica para los selectores de fecha dentro de modales.
   compact?: boolean
   className?: string
 }
 
 const SIZES = {
   regular: {
-    card: 'max-w-[420px] p-lg gap-6',
+    card: 'max-w-[420px] p-lg gap-4',
     header: 'pb-4',
     gridHeader: 'mb-3',
+    grid: 'min-h-[280px]',
     headCell: 'w-10 h-10 text-md',
-    cell: 'h-9 w-9 text-md m-1',
-    footer: 'pt-6',
+    cell: 'h-9 w-9 text-md my-0.5',
+    footer: 'pt-4',
     clear: 'px-6 py-2',
   },
   compact: {
     card: 'p-sm gap-1',
     header: 'pb-1',
     gridHeader: '',
+    grid: 'min-h-[204px]',
     headCell: 'w-8 h-6 text-xs',
     cell: 'h-7 w-7 text-sm my-px',
     footer: '',
@@ -42,14 +41,12 @@ const SIZES = {
   },
 } as const
 
-// Rango de años del selector cuando el campo no tiene mínimo o máximo.
 const YEARS_BACK = 100
 const YEARS_AHEAD = 10
 
 const shortcutClassName =
   'rounded-2xl text-white font-medium hover:bg-green-400/40 transition-colors data-[pressed=true]:scale-95 px-8 py-2 disabled:opacity-50'
 
-// Tarjeta de calendario compartida: la usan Citas y los selectores de fecha de los formularios.
 function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaLabel, showShortcuts = true, compact = false, className = '' }: Readonly<CalendarPanelProps>) {
   const { t, i18n } = useTranslation()
   const size = SIZES[compact ? 'compact' : 'regular']
@@ -66,8 +63,6 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
   const todayDate = today(getLocalTimeZone())
   const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
 
-  // Selectores de mes y año para saltar directo a fechas lejanas (p. ej. fechas de nacimiento)
-  // sin tener que avanzar mes a mes con las flechas.
   const monthOptions = useMemo(() => {
     const format = new Intl.DateTimeFormat(locale, { month: 'long' })
     return Array.from({ length: 12 }, (_, index) => {
@@ -126,7 +121,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
             <div className="flex items-center gap-xs">
               <div className={compact ? 'w-[116px]' : 'w-[140px]'}>
                 <Select
-                  compact
+                  compact={compact}
                   value={String(focusedDate.month)}
                   onChange={(month) => moveTo(focusedDate.set({ month: Number(month) }))}
                   options={monthOptions}
@@ -136,7 +131,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
               </div>
               <div className={compact ? 'w-[90px]' : 'w-[96px]'}>
                 <Select
-                  compact
+                  compact={compact}
                   value={String(focusedDate.year)}
                   onChange={(year) => moveTo(focusedDate.set({ year: Number(year) }))}
                   options={yearOptions}
@@ -150,6 +145,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
               <Calendar.NavButton slot="next" />
             </div>
           </Calendar.Header>
+          <div className={`w-full ${size.grid}`}>
           <Calendar.Grid className="w-full border-collapse">
             <Calendar.GridHeader className={size.gridHeader}>
               {(day) => <Calendar.HeaderCell className={`text-center font-semibold text-neutral-500 ${size.headCell}`}>{day}</Calendar.HeaderCell>}
@@ -172,6 +168,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
               }}
             </Calendar.GridBody>
           </Calendar.Grid>
+          </div>
         </Calendar>
       </I18nProvider>
 
@@ -193,7 +190,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
             size="sm"
             variant="tertiary"
             onPress={() => onChange(null)}
-            className={`border-green-500 bg-white text-heading hover:bg-green-50 rounded-full border items-center justify-center font-body text-sm font-semibold transition-colors ${size.clear}`}
+            className={`border-orange-500 bg-orange-500 text-white hover:bg-orange-600 rounded-full border items-center justify-center font-body text-sm font-semibold transition-colors ${size.clear}`}
           >
             {t('teacherAppointments.calendar.clear')}
           </Button>

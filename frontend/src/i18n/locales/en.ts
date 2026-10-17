@@ -1,10 +1,3 @@
-/**
- * Diccionario de textos de la aplicación en inglés.
- * Cada sección (app, signup, forgotPassword, etc.) agrupa las claves
- * de una pantalla o componente específico, para que los nombres de las claves
- * no se repitan en diferentes partes de la aplicación.
- */
-
 export default {
   teacherDashboard: {
     hello: "Hello",
@@ -41,6 +34,7 @@ export default {
       heroAlt: "Cover image",
     },
     philosophy: {
+      imageAlt: 'Girl with her arms outstretched outdoors',
       title: "Our Philosophy",
       description:
         "At My Green Farm, we believe that childhood is learned by living it. That is why we offer quality education where every child has the opportunity to explore, discover, create, play, and learn through meaningful experiences...",
@@ -50,7 +44,6 @@ export default {
         paragraph3: "We work with specially selected materials, sensory experiences, and activities that awaken curiosity, creativity, autonomy, and the desire to learn. Our proposal draws on active methodologies and contributions from currents such as Montessori, Reggio Emilia, Waldorf, and constructivism, adapting them to the needs and characteristics of our children.",
         paragraph4: "More than teaching content, we seek to offer a childhood full of experiences, accompanied by teachers who respect each child's individual pace and ensure they feel safe, loved, heard, and happy while learning. My Green Farm: education, values, nature, languages, and experiences that leave a mark.",
       },
-      item: "A test sentence only testing is a test one",
       cta: "Read more",
       pillar1Title: "MEP Accreditation and Safety",
       pillar1Tag: "Official accreditation",
@@ -72,6 +65,8 @@ export default {
       modalClose: "Close",
     },
     testimonials: {
+      navigation: 'Testimonials navigation',
+      goTo: 'Go to testimonial {{number}}',
       title: "Testimonials",
       description:
         "Find here what the families in our community say about the experience of growing, learning, and living childhood at My Green Farm.",
@@ -126,6 +121,9 @@ export default {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     },
     join: {
+      unsubscribeSuccess: 'You have successfully unsubscribed from the newsletter.',
+      parentUnsubscribed: 'The parent has been unsubscribed from the newsletter.',
+      broadcastSuccess: 'Bulk email sent successfully.',
       title1: "Join our",
       title2: "educational revolution",
       description:
@@ -241,6 +239,7 @@ export default {
     },
   },
   newspage: {
+    closeNews: 'Close news',
     title: "News",
     description:
       "Stay informed about the latest news and updates from the educational center.",
@@ -256,6 +255,7 @@ export default {
     noImage: "No image available",
   },
   forum: {
+    loadError: 'The forum could not be loaded',
     title: "Forum",
     subtitle:
       "A space to share news, answer questions and talk with other families.",
@@ -269,6 +269,7 @@ export default {
       blog: "Blog",
     },
     community: {
+      loadError: 'The post could not be loaded',
       label: "Community posts",
       publish: "Post an experience",
       empty: "There are no posts yet.",
@@ -296,6 +297,7 @@ export default {
       toastDescription: "Your experience is now on the board.",
     },
     blog: {
+      loadingArticle: 'Loading article...',
       label: "Blog posts",
       empty: "There are no research posts yet.",
       searchPlaceholder: "Search the blog...",
@@ -332,7 +334,17 @@ export default {
     },
   },
   adminNews: {
-    title: "News",
+    selectCategory: 'Select a category',
+    addCategory: 'Add category',
+    newCategoryPlaceholder: 'Category name',
+    deleteCategory: 'Delete category',
+    deleteCategoryTitle: 'Delete category',
+    deleteCategoryMessage: 'The category «{{name}}» will be deleted along with all its news and images. This action cannot be undone.',
+    categoryCreatedToast: 'Category added',
+    categoryCreateErrorToast: 'The category could not be added',
+    categoryDeletedToast: 'Category deleted',
+    categoryDeleteErrorToast: 'The category could not be deleted',
+    title: "News Management",
     description:
       "Add news to keep families and the educational community informed.",
     addNews: "Add news",
@@ -356,11 +368,6 @@ export default {
     noNews: "There are no published news yet.",
     newsgallery: "Gallery",
     deleteImage: "Delete image",
-    typeNews: "News",
-    typeEvent: "Event",
-    typeNotice: "Notice",
-    typeGeneral: "General",
-    typeTransport: "Transport",
     deleteModalTitle: "Delete news?",
     deleteModalMessage: "Are you sure you want to delete this news item?",
     deleteModalCancel: "Cancel",
@@ -388,7 +395,11 @@ export default {
     preview: "Preview",
   },
   adminForum: {
-    title: "Forum",
+    saveErrorToastTitle: 'The article could not be saved',
+    deleteErrorToastTitle: 'The article could not be deleted',
+    loadPostsError: 'The articles could not be loaded',
+    loadOwnPostsError: 'Your posts could not be loaded',
+    title: "Forum Management",
     description:
       "Publish research for the blog and moderate community comments.",
     noPersistenceNotice:
@@ -509,6 +520,7 @@ export default {
     submitting: "Sending...",
     submitError: "The request could not be sent. Please try again.",
     submitErrorToastTitle: "Couldn't send your request",
+    emailDomainToastTitle: "Email not allowed",
     retry: "Retry",
     wizard: {
       schedule: "Schedule",
@@ -603,6 +615,17 @@ export default {
     backToProfile: "Back to My profile",
   },
   common: {
+    errorBoundary: {
+      title: 'Something went wrong',
+      description: 'Please reload the page. If the problem persists, contact us.',
+      reload: 'Reload',
+    },
+    pagination: {
+      previous: 'Previous page',
+      next: 'Next page',
+    },
+    close: 'Close',
+    closeForm: 'Close form',
     error: "An error has occurred",
     timeout: "The connection is taking too long. Please try again.",
     calendarAvailabilityError: "Could not load availability. Please try again.",
@@ -615,6 +638,17 @@ export default {
     timePicker: {
       hours: "Hours",
       minutes: "Minutes",
+    },
+    schedule: {
+      from: "From",
+      to: "To",
+      dayRange: "{{from}} to {{to}}",
+      timeRange: "{{from}} - {{to}}",
+      daysRequired: "Select at least one day.",
+      timesRequired: "Select the start and end time.",
+      endAfterStart: "The end time must be after the start time.",
+      addBlock: "Add another schedule",
+      removeBlock: "Remove schedule",
     },
     imageHint: {
       formats: "Formats: {{formats}}.",
@@ -640,6 +674,7 @@ export default {
   validation: {
     emailRequired: "Email is required",
     emailInvalid: "Enter a valid email",
+    emailDomainNotAllowed: "Use a Gmail, Hotmail or Outlook email to book the appointment.",
     passwordRequired: "Password is required",
     passwordMinLength: "Password must be at least 8 characters",
     passwordPattern:
@@ -654,7 +689,7 @@ export default {
     unsafeText: "HTML tags and characters like “<” followed by letters are not allowed.",
   },
   profile: {
-    title: "My profile",
+    title: "Profile Management",
     description: "Here you can see your personal information.",
     firstName: "First name",
     lastName: "Last names",
@@ -673,6 +708,32 @@ export default {
     viewProfile: "View profile",
   },
   admin: {
+    teachersPage: {
+      title: "Teacher Management",
+      subtitle: "Manage My Green Farm's teachers.",
+      register: 'Register teacher',
+      edit: 'Edit teacher',
+      searchPlaceholder: 'Search teacher...',
+      searchLabel: 'Search teacher',
+      noMatches: 'No teachers found with that name.',
+      empty: 'There are no registered teachers yet.',
+      createdToast: 'Teacher registered successfully',
+      updatedToast: 'Teacher information updated',
+      photoUpdatedToast: 'Photo updated successfully',
+      photoDeletedToast: 'Photo deleted successfully',
+      deletedToast: 'Teacher deleted successfully',
+      photoAlt: 'Teacher photo',
+      changePhoto: 'Change photo',
+      addPhoto: 'Add photo',
+      removePhoto: 'Remove photo',
+      photoAfterRegister: 'You can add a photo after registering the teacher.',
+      invalidImage: 'Select a valid image file.',
+      imageTooLarge: 'The photo cannot exceed 5 MB.',
+      password: 'Password',
+      passwordRequired: 'Password is required.',
+      passwordMin: 'The password must be at least 8 characters long.',
+      passwordHint: 'At least 8 characters, including an uppercase letter, a lowercase letter, a number and a symbol.',
+    },
     docentesTitle: "User Management",
     docentesSubtitle: "View and manage the educational center users.",
     searchPlaceholder: "Search by name, last name, email or role",
@@ -756,7 +817,11 @@ export default {
       foro: "Forum",
     },
     curriculums: {
-      title: "Vacancies and Applications",
+      assignVacancyLabel: 'Assign to a vacancy (optional)',
+      noVacancyOption: 'No vacancy',
+      assignVacancyHint: 'If you choose a vacancy, it will be filled by this person and the hiring email will mention that position.',
+      noOpenVacancies: 'There are no open vacancies. It will be approved without a position and the email will use a general message.',
+      title: "Vacancy and Application Management",
       subtitle:
         "Publish vacancies and review the curriculums submitted for each one.",
       applicationsTab: "Applications",
@@ -803,7 +868,6 @@ export default {
       descriptionLabel: "Description",
       descriptionPlaceholder: "Detail the club's activities...",
       schedule: "Schedule",
-      schedulePlaceholder: "E.g. Mon & Wed from 3:00 PM to 4:30 PM",
       maxCapacity: "Maximum capacity",
       capacityPlaceholder: "E.g. 20",
       capacityLabel: "spots",
@@ -841,7 +905,7 @@ export default {
       imageDeleteErrorToastTitle: "Error deleting image."
     },
     evaluations: {
-      title: "Evaluations",
+      title: "Evaluation Management",
       description: "Record, review, and manage children's progress.",
       registerEvaluation: "Register evaluation",
       searchPlaceholder: "Search evaluations...",
@@ -896,7 +960,7 @@ export default {
       formCreateError: "Couldn't register the evaluation.",
     },
     gallery: {
-      title: "Gallery",
+      title: "Gallery Management",
       subtitle: "Manage the photo albums of the educational center.",
       addAlbum: "Add album",
       newAlbum: "New album",
@@ -961,14 +1025,13 @@ export default {
       photoTag: "Photo",
     },
     servicios: {
-      title: "Service Plans",
+      title: "Service Plan Management",
       subtitle: "Manage service plans linked to OnvoPay.",
       addPlan: "Add plan",
       newPlan: "New service plan",
       editPlan: "Edit plan",
       selectPlan: "Select an OnvoPay plan",
       scheduleLabel: "Schedule",
-      schedulePlaceholder: "E.g: Monday to Friday, 8:00am - 3:00pm",
       includesLabel: "What's included",
       includesPlaceholder: "Describe the plan benefits...",
       image: "Image",
@@ -996,7 +1059,8 @@ export default {
       deleteErrorToastTitle: "Couldn't delete the plan",
     },
     expedients: {
-      title: "Academic Records",
+      noMatches: 'No records found with that name.',
+      title: "Academic Record Management",
       description:
         "View the academic records of the children enrolled at the institution.",
       searchbutton: "Search child",
@@ -1066,7 +1130,9 @@ export default {
     },
 
     parents: {
-      title: "Parents",
+      empty: 'There are no registered parents.',
+      noMatches: 'No parents match that search.',
+      title: "Parent Management",
       description: "View and manage the information of parents registered at the institution.",
       searchPlaceholder: "Search for a parent...",
       addTitle: "Add Parent",
@@ -1114,7 +1180,7 @@ export default {
     },
 
     children: {
-      title: 'Children',
+      title: "Children Management",
       description: 'Manage the children registered in My Green Farm.',
       searchPlaceholder: 'Search children...',
       addChild: 'Register child',
@@ -1182,7 +1248,7 @@ export default {
     },
 
     availability: {
-      title: "My availability",
+      title: "Availability Management",
       subtitle: "Set the days and hours when you are available.",
       retry: "Retry",
       weeklyTitle: "Weekly schedule",
@@ -1404,6 +1470,7 @@ export default {
     },
   },
   services: {
+    connectingPayment: 'Connecting to the payment gateway...',
     title: "Our Services",
     description:
       "Discover our plans designed for the care and learning of your child.",

@@ -7,6 +7,9 @@ import Container from '../components/home/Container.tsx'
 import MultimediaCard from '../components/home/MultimediaCard.tsx'
 import { useGallery } from '../hooks/useGallery.ts'
 import ninos2 from '../assets/imgs/ninos2.svg'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
+import TabHighlight from '../components/ui/TabHighlight.tsx'
 
 function GalleryPage() {
   const { t, i18n } = useTranslation()
@@ -40,14 +43,15 @@ function GalleryPage() {
     setActiveCategory(categoryId)
   }
 
+  const skeletonCount = useSkeletonCount('gallery', loading, visibleGalleries.length, 3)
+
   return (
     <div id="gallery-page" className="min-h-screen bg-bg-page">
       <Navbar />
 
-      {/* Header de Galería */}
       <section className="flex min-h-[280px] items-start bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
         <div className="mx-auto w-full max-w-[700px]">
-          <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-green-500 md:text-h1">
+          <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">
             {t('home.galeria.title')}
           </h1>
 
@@ -55,18 +59,18 @@ function GalleryPage() {
             {t('home.galeria.description')}
           </p>
 
-          {/* Filtro por año */}
           <div className="mt-[24px] w-full overflow-hidden" ref={emblaRef}>
-            <div className={`flex items-center gap-[10px] ${fits ? 'w-full justify-center' : ''}`}>
+            <div className={`isolate flex items-center gap-[10px] ${fits ? 'w-full justify-center' : ''}`}>
               <button
                 type="button"
                 onClick={() => selectCategory(null)}
-                className={`shrink-0 rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
+                className={`relative shrink-0 rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
                   activeCategory === null
-                    ? 'border-orange-500 bg-orange-500 text-white'
-                    : 'border-orange-500 bg-white text-orange-600 hover:bg-orange-50'
+                    ? 'border-orange-500 text-white'
+                    : 'border-orange-500 bg-transparent text-orange-600 hover:bg-orange-50'
                 }`}
               >
+                {activeCategory === null && <TabHighlight layoutId="gallery-category-tab" className="bg-orange-500" />}
                 {t('home.galeria.filterAll')}
               </button>
 
@@ -75,12 +79,13 @@ function GalleryPage() {
                   key={category.id}
                   type="button"
                   onClick={() => selectCategory(category.id)}
-                  className={`shrink-0 rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
+                  className={`relative shrink-0 rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
                     activeCategory === category.id
-                      ? 'border-orange-500 bg-orange-500 text-white'
-                      : 'border-orange-500 bg-white text-orange-600 hover:bg-orange-50'
+                      ? 'border-orange-500 text-white'
+                      : 'border-orange-500 bg-transparent text-orange-600 hover:bg-orange-50'
                   }`}
                 >
+                  {activeCategory === category.id && <TabHighlight layoutId="gallery-category-tab" className="bg-orange-500" />}
                   {category.title}
                 </button>
               ))}
@@ -89,7 +94,6 @@ function GalleryPage() {
         </div>
       </section>
 
-      {/* Sección de Álbumes */}
       <section data-scroll-bg="green" className="relative w-full bg-green-500 py-10 md:py-12">
         <div className="flex w-full flex-col gap-[24px]">
           <Container className="flex flex-col items-start gap-[16px] text-left">
@@ -99,18 +103,14 @@ function GalleryPage() {
 
             <div className="h-1 w-12 rounded-full bg-orange-500" aria-hidden="true" />
 
-            <p className="max-w-[25rem] font-body text-body-sm font-normal text-white">
+            <p className="max-w-[25rem] font-body text-body font-normal text-white">
               {t('home.galeria.description')}
             </p>
           </Container>
 
           <Container className="grid grid-cols-1 gap-[24px] md:grid-cols-3">
             {loading && (
-              <>
-                <MultimediaCard loading />
-                <MultimediaCard loading />
-                <MultimediaCard loading />
-              </>
+              <SkeletonList count={skeletonCount}>{() => <MultimediaCard loading />}</SkeletonList>
             )}
 
             {error && (
@@ -142,7 +142,6 @@ function GalleryPage() {
         </div>
       </section>
 
-      {/* Separación visual antes del footer */}
       <section
         aria-hidden="true"
         className="h-[280px] w-full bg-white md:h-[320px]"

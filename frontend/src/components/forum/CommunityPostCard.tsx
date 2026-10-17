@@ -9,7 +9,6 @@ interface CommunityPostCardProps {
   post?: CommunityPost
   onToggleLike?: (postId: string) => void
   onOpenComments?: (postId: string) => void
-  // Solo en el admin: muestra el botón de eliminar la publicación.
   onDelete?: (postId: string) => void
   loading?: boolean
 }
@@ -19,12 +18,12 @@ function CommunityPostCard({ post, onToggleLike, onOpenComments, onDelete, loadi
 
   if (loading) {
     return (
-      <article className="rounded-2xl border border-neutral-200 bg-white p-lg text-left">
+      <article className="flex w-full flex-col rounded-2xl border border-neutral-200 bg-white p-lg text-left">
         <div className="flex items-center gap-md">
           <Skeleton shape="circle" className="size-8 shrink-0" />
           <Skeleton shape="line" className="h-4 w-1/3" />
         </div>
-        <div className="mt-md flex flex-col gap-2xs">
+        <div className="mt-md flex flex-1 flex-col gap-2xs">
           <Skeleton shape="line" className="h-4 w-full" />
           <Skeleton shape="line" className="h-4 w-4/5" />
         </div>
@@ -37,7 +36,7 @@ function CommunityPostCard({ post, onToggleLike, onOpenComments, onDelete, loadi
   }
 
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-lg text-left card-hover">
+    <article className="flex w-full flex-col rounded-2xl border border-neutral-200 bg-white p-lg text-left card-hover">
       <header className="flex items-center gap-md">
         <PostAvatar name={post!.name} />
 
@@ -56,11 +55,10 @@ function CommunityPostCard({ post, onToggleLike, onOpenComments, onDelete, loadi
         )}
       </header>
 
-      <p className="m-0 mt-md whitespace-pre-line break-words font-body text-body-sm leading-[1.6] text-body-text">
+      <p className="m-0 mt-md flex-1 whitespace-pre-line break-words font-body text-body-sm leading-[1.6] text-body-text">
         {post!.content}
       </p>
       <div className="mt-md flex items-center gap-lg border-t border-neutral-100 pt-md">
-        {/* Sin onToggleLike (vista del admin) el contador de likes es solo informativo. */}
         {onToggleLike ? (
           <button type="button" onClick={() => onToggleLike(post!.id)} aria-pressed={post!.reacted} aria-label={t('forum.likes.label')} className={`flex items-center gap-xs font-body text-body-sm ${post!.reacted ? 'text-danger' : 'text-neutral-500 hover:text-danger'}`}>
             <HeartIcon size={18} className={post!.reacted ? 'fill-current' : ''} /><span>{post!.likeCount}</span>

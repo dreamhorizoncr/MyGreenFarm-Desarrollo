@@ -48,7 +48,6 @@ public class VacancyService {
         return mapToResponse(saved);
     }
 
-    // Asignar una postulación cierra la vacante; liberarla (applicationId = null) la reabre
     @Transactional
     public VacancyResponse setFilledBy(UUID id, UUID applicationId) {
         Vacancy vacancy = findEntityById(id);
