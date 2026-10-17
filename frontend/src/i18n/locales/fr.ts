@@ -40,6 +40,7 @@ export default {
       heroAlt: "Image de couverture",
     },
     philosophy: {
+      imageAlt: 'Fillette les bras tendus en plein air',
       title: "Notre philosophie",
       description:
         "Chez My Green Farm, nous croyons que l'enfance s'apprend en la vivant. C'est pourquoi nous offrons une éducation de qualité où chaque enfant a l'opportunité d'explorer, de découvrir, de créer, de jouer et d'apprendre à travers des expériences enrichissantes...",
@@ -49,7 +50,6 @@ export default {
         paragraph3: "Nous travaillons avec des matériels spécialement sélectionnés, des expériences sensorielles et des activités qui éveillent la curiosité, la créativité, l'autonomie et le désir d'apprendre. Notre approche s'inspire de méthodologies actives et des apports de courants tels que Montessori, Reggio Emilia, Waldorf et le constructivisme, en les adaptant aux besoins et aux caractéristiques de nos enfants.",
         paragraph4: "Plus que d'enseigner des contenus, nous cherchons à offrir une enfance pleine d'expériences, accompagnée par des enseignants qui respectent le rythme individuel de chaque enfant et veillent à ce qu'il se sente en sécurité, aimé, écouté et heureux tout en apprenant. My Green Farm : éducation, valeurs, nature, langues et expériences qui laissent une empreinte.",
       },
-      item: "Une phrase de test qui ne fait que tester en est une de test",
       cta: "Lire la suite",
       pillar1Title: "Accréditation MEP et Sécurité",
       pillar1Tag: "Accréditation officielle",
@@ -71,6 +71,8 @@ export default {
       modalClose: "Fermer",
     },
     testimonials: {
+      navigation: 'Navigation des témoignages',
+      goTo: 'Aller au témoignage {{number}}',
       title: "Témoignages",
       description:
         "Trouvez ici ce que disent les familles de notre communauté sur l'expérience de grandir, d'apprendre et de vivre l'enfance à My Green Farm.",
@@ -125,6 +127,9 @@ export default {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     },
     join: {
+      unsubscribeSuccess: 'Vous vous êtes désabonné de la newsletter.',
+      parentUnsubscribed: 'Le parent a été désabonné de la newsletter.',
+      broadcastSuccess: 'E-mail groupé envoyé avec succès.',
       title1: "Rejoignez",
       title2: "notre révolution éducative",
       description:
@@ -241,6 +246,7 @@ export default {
     },
   },
   newspage: {
+    closeNews: "Fermer l'actualité",
     title: "Nouvelles",
     description:
       "Restez informé des dernières actualités et mises à jour du centre éducatif.",
@@ -256,6 +262,7 @@ export default {
     noImage: "Aucune image disponible",
   },
   forum: {
+    loadError: "Le forum n'a pas pu être chargé",
     title: "Forum",
     subtitle:
       "Un espace pour partager des nouvelles, répondre aux questions et échanger avec d'autres familles.",
@@ -269,6 +276,7 @@ export default {
       blog: "Blog",
     },
     community: {
+      loadError: "La publication n'a pas pu être chargée",
       label: "Publications de la communauté",
       publish: "Publier une expérience",
       empty: "Il n'y a pas encore de publications.",
@@ -296,6 +304,7 @@ export default {
       toastDescription: "Votre expérience est sur le mur.",
     },
     blog: {
+      loadingArticle: "Chargement de l'article...",
       label: "Publications du blog",
       empty: "Il n'y a pas encore de recherches.",
       searchPlaceholder: "Rechercher dans le blog...",
@@ -388,6 +397,15 @@ export default {
     preview: "Aperçu",
   },
   adminForum: {
+    saveErrorToastTitle: "L'article n'a pas pu être enregistré",
+    deleteErrorToastTitle: "L'article n'a pas pu être supprimé",
+    loadPostsError: "Les articles n'ont pas pu être chargés",
+    loadOwnPostsError: "Vos publications n'ont pas pu être chargées",
+    deleteConfirmFieldLabel: 'Pour confirmer, saisissez le titre « {{title}} »',
+    confirmChangesTitle: 'Confirmer les modifications',
+    confirmChangesDescription: 'Saisissez « {{word}} » pour enregistrer les modifications.',
+    confirmWord: 'CONFIRMER',
+    confirmChanges: 'Confirmer les modifications',
     title: "Forum",
     description:
       "Publiez des recherches pour le blog et modérez les commentaires de la communauté.",
@@ -605,6 +623,17 @@ export default {
     backToProfile: "Retour à mon profil",
   },
   common: {
+    errorBoundary: {
+      title: "Une erreur s'est produite",
+      description: 'Veuillez recharger la page. Si le problème persiste, contactez-nous.',
+      reload: 'Recharger',
+    },
+    pagination: {
+      previous: 'Page précédente',
+      next: 'Page suivante',
+    },
+    close: 'Fermer',
+    closeForm: 'Fermer le formulaire',
     error: "Une erreur est survenue",
     timeout: "La connexion prend trop de temps. Veuillez réessayer.",
     calendarAvailabilityError:
@@ -689,6 +718,32 @@ export default {
     viewProfile: "Voir le profil",
   },
   admin: {
+    teachersPage: {
+      title: 'Gestion des enseignants',
+      subtitle: 'Gérez les enseignants de My Green Farm.',
+      register: 'Inscrire un enseignant',
+      edit: "Modifier l'enseignant",
+      searchPlaceholder: 'Rechercher un enseignant...',
+      searchLabel: 'Rechercher un enseignant',
+      noMatches: 'Aucun enseignant trouvé avec ce nom.',
+      empty: "Aucun enseignant n'est encore inscrit.",
+      createdToast: 'Enseignant inscrit avec succès',
+      updatedToast: "Informations de l'enseignant mises à jour",
+      photoUpdatedToast: 'Photo mise à jour avec succès',
+      photoDeletedToast: 'Photo supprimée avec succès',
+      deletedToast: 'Enseignant supprimé avec succès',
+      photoAlt: "Photo de l'enseignant",
+      changePhoto: 'Changer la photo',
+      addPhoto: 'Ajouter une photo',
+      removePhoto: 'Supprimer la photo',
+      photoAfterRegister: "Vous pourrez ajouter une photo après avoir inscrit l'enseignant.",
+      invalidImage: 'Sélectionnez un fichier image valide.',
+      imageTooLarge: 'La photo ne peut pas dépasser 5 Mo.',
+      password: 'Mot de passe',
+      passwordRequired: 'Le mot de passe est obligatoire.',
+      passwordMin: 'Le mot de passe doit contenir au moins 8 caractères.',
+      passwordHint: 'Au moins 8 caractères, dont une majuscule, une minuscule, un chiffre et un symbole.',
+    },
     docentesTitle: "Gestion des enseignants",
     docentesSubtitle: "Consultez et gérez les utilisateurs du centre éducatif.",
     searchPlaceholder: "Rechercher par nom, prénom, e-mail ou rôle",
@@ -762,7 +817,7 @@ export default {
       cv: "CV",
       clubs: "Clubs",
       expedientes: "Dossiers",
-      parents: "Parents",
+      padres: "Parents",
       niños: "Enfants",
       evaluaciones: "Évaluations",
       miPerfil: "Mon profil",
@@ -1011,6 +1066,7 @@ export default {
     },
 
     expedients: {
+      noMatches: 'Aucun dossier trouvé avec ce nom.',
       title: "Dossiers Académiques",
       description:
         "Consultez les dossiers académiques des enfants inscrits dans l’établissement.",
@@ -1081,6 +1137,8 @@ export default {
     },
 
     parents: {
+      empty: "Aucun parent n'est inscrit.",
+      noMatches: 'Aucun parent ne correspond à cette recherche.',
       title: "Parents",
       description: "Consultez et gérez les informations des parents enregistrés dans l'établissement.",
       searchPlaceholder: "Rechercher un parent...",
@@ -1419,6 +1477,7 @@ export default {
     },
   },
   services: {
+    connectingPayment: 'Connexion à la passerelle de paiement...',
     title: "Nos Services",
     description:
       "Découvrez nos conçus pour le soin et l'apprentissage de votre enfant.",

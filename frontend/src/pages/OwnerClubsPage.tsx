@@ -490,7 +490,7 @@ function OwnerClubsPage() {
 
               <ModalCloseButton
                 onClick={requestClose}
-                aria-label="Cerrar formulario"
+                aria-label={t("common.closeForm")}
               />
             </div>
 

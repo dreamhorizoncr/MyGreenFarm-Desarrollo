@@ -110,11 +110,11 @@ function AdminForumPage() {
         setPosts(result.content)
       }
     } catch {
-      setPostsError(isTeacher ? 'No se pudieron cargar tus publicaciones' : 'No se pudieron cargar los artículos')
+      setPostsError(isTeacher ? t('adminForum.loadOwnPostsError') : t('adminForum.loadPostsError'))
     } finally {
       setPostsLoading(false)
     }
-  }, [isTeacher, i18n.language])
+  }, [isTeacher, i18n.language, t])
 
   useEffect(() => {
     void refreshPosts(page, i18n.language)
@@ -163,7 +163,7 @@ function AdminForumPage() {
 
       closeForm()
     } catch {
-      notify.error('No se pudo guardar el artículo')
+      notify.error(t('adminForum.saveErrorToastTitle'))
     }
   }
 
@@ -212,7 +212,7 @@ function AdminForumPage() {
       await removeBlogPost(postToDelete.id)
       await refreshPosts(page, i18n.language)
     } catch (err) {
-      notify.error('No se pudo eliminar el artículo')
+      notify.error(t('adminForum.deleteErrorToastTitle'))
       throw err
     }
 

@@ -111,7 +111,7 @@ function NewsDetailModal({
         >
             <ModalCloseButton
                 onClick={requestClose}
-                aria-label="Cerrar noticia"
+                aria-label={t("newspage.closeNews")}
               className="absolute right-3 top-[26px] z-20"
             />
 

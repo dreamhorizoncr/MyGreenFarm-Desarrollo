@@ -39,7 +39,7 @@ export function useNewsletter() {
         setSuccessMessage(null)
         try {
             await newsletterService.unsubscribe(email)
-            setSuccessMessage('Te has desuscrito exitosamente del boletín.')
+            setSuccessMessage(i18n.t('home.join.unsubscribeSuccess'))
         } catch (err) {
             const message = getErrorMessage(err)
             setError(message)
@@ -55,7 +55,7 @@ export function useNewsletter() {
         setSuccessMessage(null)
         try {
             await newsletterService.unsubscribeParent(email)
-            setSuccessMessage('El padre se ha desuscrito del boletín.')
+            setSuccessMessage(i18n.t('home.join.parentUnsubscribed'))
         } catch (err) {
             const message = getErrorMessage(err)
             setError(message)
@@ -72,7 +72,7 @@ export function useNewsletter() {
         setSuccessMessage(null)
         try {
             await newsletterService.sendBroadcast(data)
-            setSuccessMessage('Correo masivo enviado exitosamente.')
+            setSuccessMessage(i18n.t('home.join.broadcastSuccess'))
         } catch (err) {
             const message = getErrorMessage(err)
             setError(message)

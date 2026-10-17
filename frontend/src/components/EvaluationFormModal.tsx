@@ -178,7 +178,7 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
 
             <ModalCloseButton
                 onClick={onClose}
-                aria-label="Cerrar"
+                aria-label={t("common.close")}
             />
             </div>
 

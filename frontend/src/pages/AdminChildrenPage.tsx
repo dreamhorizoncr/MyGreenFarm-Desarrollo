@@ -66,9 +66,9 @@ function AdminChildrenPage() {
 
       await fetchChildren(i18n.language)
 
-      notify.success('Niño eliminado correctamente')
+      notify.success(t("admin.children.deleteSuccess"))
     } catch (err) {
-      notify.error('No se pudo eliminar el niño')
+      notify.error(t("admin.children.deleteError"))
       throw err
     }
   }

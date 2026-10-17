@@ -95,8 +95,8 @@ function AdminParentsPage() {
               type="button"
               onClick={() => setIsCreateModalOpen(true)}
               className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-all duration-300 hover:scale-105 hover:bg-orange-600"
-              aria-label="Agregar padre"
-              title="Agregar padre"
+              aria-label={t("admin.parents.addTitle")}
+              title={t("admin.parents.addTitle")}
             >
               <span className="text-3xl font-light leading-none transition-transform duration-300 group-hover:rotate-90">
                 +
@@ -149,7 +149,7 @@ function AdminParentsPage() {
         {!loading && !error && parents.length === 0 && (
           <div className="mt-12 text-center">
             <p className="font-body text-body-text">
-              No hay padres de familia registrados.
+              {t("admin.parents.empty")}
             </p>
           </div>
         )}
@@ -161,7 +161,7 @@ function AdminParentsPage() {
           filteredParents.length === 0 && (
             <div className="mt-12 text-center">
               <p className="font-body text-body-text">
-                No se encontraron padres con esa búsqueda.
+                {t("admin.parents.noMatches")}
               </p>
             </div>
           )}

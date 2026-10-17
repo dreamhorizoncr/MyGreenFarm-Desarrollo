@@ -303,7 +303,7 @@ function AnnouncementsPage() {
 
               <ModalCloseButton
                 onClick={requestClose}
-                aria-label="Cerrar formulario"
+                aria-label={t("common.closeForm")}
               />
             </div>
 

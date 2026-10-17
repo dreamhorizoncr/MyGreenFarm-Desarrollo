@@ -121,8 +121,8 @@ function TestimonialsSection() {
               count={testimonials.length}
               activeIndex={activeIndex}
               onSelect={setActiveIndex}
-              ariaLabel="Navegación de testimonios"
-              getItemLabel={(index) => `Ir al testimonio ${index + 1}`}
+              ariaLabel={t('home.testimonials.navigation')}
+              getItemLabel={(index) => t('home.testimonials.goTo', { number: index + 1 })}
             />
           </div>
         </Container>

@@ -59,7 +59,7 @@ function BlogPostPage() {
   const comments = post ? getComments(post.id) : []
 
   if (isLoading || isDetailLoading) {
-    return <p className="p-lg font-body text-body-sm text-neutral-500">Cargando artículo...</p>
+    return <p className="p-lg font-body text-body-sm text-neutral-500">{t('forum.blog.loadingArticle')}</p>
   }
 
   if (!post) return <Navigate to="/forum" replace />

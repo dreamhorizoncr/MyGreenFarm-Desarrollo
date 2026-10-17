@@ -38,10 +38,10 @@ function CommunityPostPage() {
         setSourceComments(loadedComments)
         setComments(loadedComments)
       })
-      .catch(() => { if (active) setError('No se pudo cargar la publicación') })
+      .catch(() => { if (active) setError(i18n.t('forum.community.loadError')) })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
-  }, [id])
+  }, [id, i18n])
 
   // Traducción dinámica de los comentarios (cualquier idioma origen vía Cloud Translation).
   // El alias es nombre propio y nunca se traduce.

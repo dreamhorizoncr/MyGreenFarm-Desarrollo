@@ -24,7 +24,7 @@ function PhilosophySection() {
           <div className="grid w-full items-center gap-lg rounded-3xl bg-white p-lg md:grid-cols-2 md:gap-xl md:p-xl">
             <img
               src={nino}
-              alt="Niña con los brazos extendidos al aire libre"
+              alt={t('home.philosophy.imageAlt')}
               data-scroll-bg="green"
               className="h-full w-full rounded-2xl object-cover"
             />

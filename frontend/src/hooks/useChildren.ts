@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import i18n from '../i18n/index.ts'
 
 import { childService } from '../services/child'
 import { clubService } from '../services/clubs'
@@ -77,7 +78,7 @@ export function useChildren() {
             setChildren(data.content)
         }
         } catch {
-        setError('No se pudieron cargar los niños.')
+        setError(i18n.t('admin.children.loadError'))
         } finally {
         setLoading(false)
         }

@@ -103,8 +103,8 @@ function AdminExpedientsPage() {
               type="button"
               onClick={() => setIsCreateModalOpen(true)}
               className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-all duration-300 hover:scale-105 hover:bg-orange-600"
-              aria-label="Agregar expediente"
-              title="Agregar expediente"
+              aria-label={t("admin.expedients.addTitle")}
+              title={t("admin.expedients.addTitle")}
             >
               <span className="text-3xl font-light leading-none transition-transform duration-300 group-hover:rotate-90">
                 +
@@ -116,10 +116,10 @@ function AdminExpedientsPage() {
               <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
               <input
                 type="search"
-                placeholder="Buscar niño..."
+                placeholder={t("admin.children.searchPlaceholder")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                aria-label="Buscar niño..."
+                aria-label={t("admin.children.searchPlaceholder")}
                 className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
               />
             </div>
@@ -170,7 +170,7 @@ function AdminExpedientsPage() {
           filteredExpedients.length === 0 && (
             <div className="mt-12 text-center">
               <p className="font-body text-body-text">
-                No se encontraron expedientes con ese nombre.
+                {t("admin.expedients.noMatches")}
               </p>
             </div>
           )}

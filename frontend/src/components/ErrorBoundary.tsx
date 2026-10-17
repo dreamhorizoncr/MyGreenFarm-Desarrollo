@@ -1,5 +1,6 @@
 // ErrorBoundary.tsx
 import React from "react";
+import i18n from "../i18n/index.ts";
 
 interface Props {
   children: React.ReactNode;
@@ -25,9 +26,9 @@ export class ErrorBoundary extends React.Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div style={{ padding: "2rem", textAlign: "center" }}>
-          <h2>Algo salió mal</h2>
-          <p>Por favor recarga la página. Si el problema persiste, contáctanos.</p>
-          <button onClick={() => window.location.reload()}>Recargar</button>
+          <h2>{i18n.t("common.errorBoundary.title")}</h2>
+          <p>{i18n.t("common.errorBoundary.description")}</p>
+          <button onClick={() => window.location.reload()}>{i18n.t("common.errorBoundary.reload")}</button>
         </div>
       );
     }

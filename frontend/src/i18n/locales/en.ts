@@ -41,6 +41,7 @@ export default {
       heroAlt: "Cover image",
     },
     philosophy: {
+      imageAlt: 'Girl with her arms outstretched outdoors',
       title: "Our Philosophy",
       description:
         "At My Green Farm, we believe that childhood is learned by living it. That is why we offer quality education where every child has the opportunity to explore, discover, create, play, and learn through meaningful experiences...",
@@ -50,7 +51,6 @@ export default {
         paragraph3: "We work with specially selected materials, sensory experiences, and activities that awaken curiosity, creativity, autonomy, and the desire to learn. Our proposal draws on active methodologies and contributions from currents such as Montessori, Reggio Emilia, Waldorf, and constructivism, adapting them to the needs and characteristics of our children.",
         paragraph4: "More than teaching content, we seek to offer a childhood full of experiences, accompanied by teachers who respect each child's individual pace and ensure they feel safe, loved, heard, and happy while learning. My Green Farm: education, values, nature, languages, and experiences that leave a mark.",
       },
-      item: "A test sentence only testing is a test one",
       cta: "Read more",
       pillar1Title: "MEP Accreditation and Safety",
       pillar1Tag: "Official accreditation",
@@ -72,6 +72,8 @@ export default {
       modalClose: "Close",
     },
     testimonials: {
+      navigation: 'Testimonials navigation',
+      goTo: 'Go to testimonial {{number}}',
       title: "Testimonials",
       description:
         "Find here what the families in our community say about the experience of growing, learning, and living childhood at My Green Farm.",
@@ -126,6 +128,9 @@ export default {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     },
     join: {
+      unsubscribeSuccess: 'You have successfully unsubscribed from the newsletter.',
+      parentUnsubscribed: 'The parent has been unsubscribed from the newsletter.',
+      broadcastSuccess: 'Bulk email sent successfully.',
       title1: "Join our",
       title2: "educational revolution",
       description:
@@ -241,6 +246,7 @@ export default {
     },
   },
   newspage: {
+    closeNews: 'Close news',
     title: "News",
     description:
       "Stay informed about the latest news and updates from the educational center.",
@@ -256,6 +262,7 @@ export default {
     noImage: "No image available",
   },
   forum: {
+    loadError: 'The forum could not be loaded',
     title: "Forum",
     subtitle:
       "A space to share news, answer questions and talk with other families.",
@@ -269,6 +276,7 @@ export default {
       blog: "Blog",
     },
     community: {
+      loadError: 'The post could not be loaded',
       label: "Community posts",
       publish: "Post an experience",
       empty: "There are no posts yet.",
@@ -296,6 +304,7 @@ export default {
       toastDescription: "Your experience is now on the board.",
     },
     blog: {
+      loadingArticle: 'Loading article...',
       label: "Blog posts",
       empty: "There are no research posts yet.",
       searchPlaceholder: "Search the blog...",
@@ -388,6 +397,10 @@ export default {
     preview: "Preview",
   },
   adminForum: {
+    saveErrorToastTitle: 'The article could not be saved',
+    deleteErrorToastTitle: 'The article could not be deleted',
+    loadPostsError: 'The articles could not be loaded',
+    loadOwnPostsError: 'Your posts could not be loaded',
     title: "Forum",
     description:
       "Publish research for the blog and moderate community comments.",
@@ -604,6 +617,17 @@ export default {
     backToProfile: "Back to My profile",
   },
   common: {
+    errorBoundary: {
+      title: 'Something went wrong',
+      description: 'Please reload the page. If the problem persists, contact us.',
+      reload: 'Reload',
+    },
+    pagination: {
+      previous: 'Previous page',
+      next: 'Next page',
+    },
+    close: 'Close',
+    closeForm: 'Close form',
     error: "An error has occurred",
     timeout: "The connection is taking too long. Please try again.",
     calendarAvailabilityError: "Could not load availability. Please try again.",
@@ -686,6 +710,32 @@ export default {
     viewProfile: "View profile",
   },
   admin: {
+    teachersPage: {
+      title: 'Teacher management',
+      subtitle: "Manage My Green Farm's teachers.",
+      register: 'Register teacher',
+      edit: 'Edit teacher',
+      searchPlaceholder: 'Search teacher...',
+      searchLabel: 'Search teacher',
+      noMatches: 'No teachers found with that name.',
+      empty: 'There are no registered teachers yet.',
+      createdToast: 'Teacher registered successfully',
+      updatedToast: 'Teacher information updated',
+      photoUpdatedToast: 'Photo updated successfully',
+      photoDeletedToast: 'Photo deleted successfully',
+      deletedToast: 'Teacher deleted successfully',
+      photoAlt: 'Teacher photo',
+      changePhoto: 'Change photo',
+      addPhoto: 'Add photo',
+      removePhoto: 'Remove photo',
+      photoAfterRegister: 'You can add a photo after registering the teacher.',
+      invalidImage: 'Select a valid image file.',
+      imageTooLarge: 'The photo cannot exceed 5 MB.',
+      password: 'Password',
+      passwordRequired: 'Password is required.',
+      passwordMin: 'The password must be at least 8 characters long.',
+      passwordHint: 'At least 8 characters, including an uppercase letter, a lowercase letter, a number and a symbol.',
+    },
     docentesTitle: "User Management",
     docentesSubtitle: "View and manage the educational center users.",
     searchPlaceholder: "Search by name, last name, email or role",
@@ -1007,6 +1057,7 @@ export default {
       deleteErrorToastTitle: "Couldn't delete the plan",
     },
     expedients: {
+      noMatches: 'No records found with that name.',
       title: "Academic Records",
       description:
         "View the academic records of the children enrolled at the institution.",
@@ -1077,6 +1128,8 @@ export default {
     },
 
     parents: {
+      empty: 'There are no registered parents.',
+      noMatches: 'No parents match that search.',
       title: "Parents",
       description: "View and manage the information of parents registered at the institution.",
       searchPlaceholder: "Search for a parent...",
@@ -1411,6 +1464,7 @@ export default {
     },
   },
   services: {
+    connectingPayment: 'Connecting to the payment gateway...',
     title: "Our Services",
     description:
       "Discover our plans designed for the care and learning of your child.",

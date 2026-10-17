@@ -41,11 +41,8 @@ export default {
       heroAlt: "Imagen de portada",
     },
     philosophy: {
+      imageAlt: 'Niña con los brazos extendidos al aire libre',
       title: "Nuestra Filosofía",
-      item1: "Educación de calidad para explorar, descubrir, crear y jugar a través de experiencias significativas.",
-      item2: "Aprendizaje en la naturaleza y granja educativa con animales, inglés diario, francés y materias especiales.",
-      item3: "Metodologías activas que despiertan la curiosidad.",
-      item4: "Docentes que respetan el ritmo individual para que cada niño se sienta seguro, querido, escuchado y feliz.",
       description: "En My Green Farm creemos que la infancia se aprende viviéndola. Por eso, ofrecemos una educación de calidad donde cada niño tiene la oportunidad de explorar, descubrir, crear, jugar y aprender a través de experiencias significativas...",
       modalParagraph: {
         paragraph1: "En My Green Farm creemos que la infancia se aprende viviéndola. Por eso, ofrecemos una educación de calidad donde cada niño tiene la oportunidad de explorar, descubrir, crear, jugar y aprender a través de experiencias significativas.",
@@ -53,7 +50,6 @@ export default {
         paragraph3: "Trabajamos con materiales especialmente seleccionados, experiencias sensoriales y actividades que despiertan la curiosidad, la creatividad, la autonomía y el deseo de aprender. Nuestra propuesta se nutre de metodologías activas y de aportes de corrientes como Montessori, Reggio Emilia, Waldorf y el constructivismo, adaptándolos a las necesidades y características de nuestros niños.",
         paragraph4: "Más que enseñar contenidos, buscamos ofrecer una infancia llena de experiencias, acompañada por docentes que respetan el ritmo individual de cada niño y procuran que se sienta seguro, querido, escuchado y feliz mientras aprende. My Green Farm: educación, valores, naturaleza, idiomas y experiencias que dejan huella.",
       },
-      item: "Educación, valores, naturaleza, idiomas y experiencias que dejan huella.",
       cta: "Leer más",
       pillar1Title: "Acreditación MEP y Seguridad",
       pillar1Tag: "Acreditación oficial",
@@ -75,6 +71,8 @@ export default {
       modalClose: "Cerrar",
     },
     testimonials: {
+      navigation: 'Navegación de testimonios',
+      goTo: 'Ir al testimonio {{number}}',
       title: "Testimonios",
       description:
         "Encontrá lo que dicen las familias que forman parte de nuestra comunidad sobre la experiencia de crecer, aprender y vivir la infancia en My Green Farm.",
@@ -129,6 +127,9 @@ export default {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     },
     join: {
+      unsubscribeSuccess: 'Te has desuscrito exitosamente del boletín.',
+      parentUnsubscribed: 'El padre se ha desuscrito del boletín.',
+      broadcastSuccess: 'Correo masivo enviado exitosamente.',
       title1: "Únete a nuestra",
       title2: "revolución educativa",
       description:
@@ -244,6 +245,7 @@ export default {
     },
   },
   newspage: {
+    closeNews: 'Cerrar noticia',
     title: "Noticias",
     description:
       "Mantente informado sobre las últimas noticias y actualizaciones del centro educativo.",
@@ -259,6 +261,7 @@ export default {
     noImage: "Sin imagen disponible",
   },
   forum: {
+    loadError: 'No se pudo cargar el foro',
     title: "Foro",
     subtitle:
       "Un espacio para compartir novedades, resolver dudas y conversar con otras familias.",
@@ -272,6 +275,7 @@ export default {
       blog: "Blog",
     },
     community: {
+      loadError: 'No se pudo cargar la publicación',
       label: "Publicaciones de la comunidad",
       publish: "Publicar experiencia",
       empty: "Todavía no hay publicaciones.",
@@ -299,6 +303,7 @@ export default {
       toastDescription: "Tu experiencia ya está en el muro.",
     },
     blog: {
+      loadingArticle: 'Cargando artículo...',
       label: "Publicaciones del blog",
       empty: "Todavía no hay investigaciones.",
       searchPlaceholder: "Buscar en el blog...",
@@ -391,6 +396,10 @@ export default {
     preview: "Vista previa",
   },
   adminForum: {
+    saveErrorToastTitle: 'No se pudo guardar el artículo',
+    deleteErrorToastTitle: 'No se pudo eliminar el artículo',
+    loadPostsError: 'No se pudieron cargar los artículos',
+    loadOwnPostsError: 'No se pudieron cargar tus publicaciones',
     title: "Foro",
     description:
       "Publicá investigaciones para el Blog y moderá los comentarios de la comunidad.",
@@ -611,6 +620,17 @@ export default {
     backToProfile: "Regresar a Mi perfil",
   },
   common: {
+    errorBoundary: {
+      title: 'Algo salió mal',
+      description: 'Por favor recarga la página. Si el problema persiste, contáctanos.',
+      reload: 'Recargar',
+    },
+    pagination: {
+      previous: 'Página anterior',
+      next: 'Página siguiente',
+    },
+    close: 'Cerrar',
+    closeForm: 'Cerrar formulario',
     error: "Ha ocurrido un error",
     timeout: "La conexión está tardando demasiado. Inténtalo de nuevo.",
     calendarAvailabilityError:
@@ -693,6 +713,32 @@ export default {
     viewProfile: "Ver perfil",
   },
   admin: {
+    teachersPage: {
+      title: 'Gestión de docentes',
+      subtitle: 'Administra los docentes de My Green Farm.',
+      register: 'Registrar docente',
+      edit: 'Editar docente',
+      searchPlaceholder: 'Buscar docente...',
+      searchLabel: 'Buscar docente',
+      noMatches: 'No se encontraron docentes con ese nombre.',
+      empty: 'Todavía no hay docentes registrados.',
+      createdToast: 'Docente registrado correctamente',
+      updatedToast: 'Información del docente actualizada',
+      photoUpdatedToast: 'Fotografía actualizada correctamente',
+      photoDeletedToast: 'Fotografía eliminada correctamente',
+      deletedToast: 'Docente eliminado correctamente',
+      photoAlt: 'Fotografía del docente',
+      changePhoto: 'Cambiar fotografía',
+      addPhoto: 'Agregar fotografía',
+      removePhoto: 'Eliminar fotografía',
+      photoAfterRegister: 'Podrás agregar una fotografía después de registrar al docente.',
+      invalidImage: 'Selecciona un archivo de imagen válido.',
+      imageTooLarge: 'La fotografía no puede superar los 5 MB.',
+      password: 'Contraseña',
+      passwordRequired: 'La contraseña es obligatoria.',
+      passwordMin: 'La contraseña debe tener al menos 8 caracteres.',
+      passwordHint: 'Mínimo 8 caracteres, incluyendo mayúscula, minúscula, número y símbolo.',
+    },
     docentesTitle: "Gestión de Usuarios",
     docentesSubtitle:
       "Consulta y administra los usuarios del centro educativo.",
@@ -913,6 +959,7 @@ export default {
       deleteErrorToastTitle: "No se pudo eliminar el plan",
     },
     expedients: {
+      noMatches: 'No se encontraron expedientes con ese nombre.',
       title: "Expedientes Académicos",
       description:
         "Visualiza los expedientes académicos de los niños y niñas matriculados en la institución.",
@@ -983,6 +1030,8 @@ export default {
     },
 
     parents: {
+      empty: 'No hay padres de familia registrados.',
+      noMatches: 'No se encontraron padres con esa búsqueda.',
 
       title: "Padres de Familia",
       description: "Visualiza y administra la información de los padres de familia registrados en la institución.",
@@ -1426,6 +1475,7 @@ export default {
     },
   },
   services: {
+    connectingPayment: 'Conectando con la pasarela de pago...',
     title: "Nuestros Servicios",
     description:
       "Descubre nuestros planes diseñados para el cuidado y aprendizaje de tu hijo.",

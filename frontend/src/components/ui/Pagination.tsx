@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next'
+
 interface PaginationProps {
   currentPage: number
   totalPages: number
@@ -5,6 +7,7 @@ interface PaginationProps {
 }
 
 function Pagination({ currentPage, totalPages, onPageChange }: Readonly<PaginationProps>) {
+  const { t } = useTranslation()
   if (totalPages <= 1) return null
 
   const goToPage = (page: number) => {
@@ -23,7 +26,7 @@ function Pagination({ currentPage, totalPages, onPageChange }: Readonly<Paginati
         type="button"
         onClick={() => goToPage(Math.max(currentPage - 1, 1))}
         disabled={currentPage === 1}
-        aria-label="Página anterior"
+        aria-label={t('common.pagination.previous')}
         className="flex size-[38px] items-center justify-center rounded-full border border-neutral-200 bg-white font-body text-[18px] text-heading transition hover:border-green-500 disabled:cursor-not-allowed disabled:opacity-40"
       >
         ‹
@@ -53,7 +56,7 @@ function Pagination({ currentPage, totalPages, onPageChange }: Readonly<Paginati
         type="button"
         onClick={() => goToPage(Math.min(currentPage + 1, totalPages))}
         disabled={currentPage === totalPages}
-        aria-label="Página siguiente"
+        aria-label={t('common.pagination.next')}
         className="flex size-[38px] items-center justify-center rounded-full border border-neutral-200 bg-white font-body text-[18px] text-heading transition hover:border-green-500 disabled:cursor-not-allowed disabled:opacity-40"
       >
         ›

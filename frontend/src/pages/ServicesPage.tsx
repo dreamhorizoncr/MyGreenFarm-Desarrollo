@@ -222,7 +222,7 @@ function ServicesPage() {
     checkoutWindowRef.current = checkoutWindow
 
     const doc = checkoutWindow.document;
-    doc.title = 'Conectando con Pasarela de Pago...';
+    doc.title = t('services.connectingPayment');
     doc.body.style.cssText = `
       margin: 0;
       min-height: 100vh;

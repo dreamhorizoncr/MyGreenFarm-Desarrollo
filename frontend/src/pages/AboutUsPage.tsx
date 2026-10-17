@@ -368,7 +368,7 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
                                 </motion.h3>
 
                                 <p className="m-0 font-body text-body-sm leading-[1.6] text-body-text">
-                                {t(`aboutUsPage.team.roles.${teacher.role}`, {
+                                {t(`aboutUsPage.roles.${teacher.role}`, {
                                     defaultValue: teacher.role,
                                 })}
                                 </p>

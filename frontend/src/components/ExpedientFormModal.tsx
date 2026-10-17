@@ -243,7 +243,7 @@ function ExpedientFormModal({
                 placeholder={
                   loadingOptions
                     ? t("admin.expedients.loadingStudents")
-                    : t("admin.expedients.childNamePlaceholder") ?? "Buscar estudiante..."
+                    : t("admin.expedients.childNamePlaceholder")
                 }
                 disabled={isEditing || loadingOptions}
                 className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md pr-11 font-normal outline-none focus:border-heading disabled:cursor-not-allowed disabled:bg-neutral-100"

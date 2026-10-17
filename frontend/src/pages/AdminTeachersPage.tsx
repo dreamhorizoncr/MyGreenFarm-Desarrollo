@@ -1,6 +1,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { SearchIcon } from '@animateicons/react/lucide'
+import { useTranslation } from 'react-i18next'
 
 import AdminLayout from '../layout/AdminLayout.tsx'
 import TeacherCard from '../components/TeacherCard.tsx'
@@ -21,6 +22,7 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
     const PAGE_SIZE = 10
 
     function AdminTeachersPage() {
+    const { t } = useTranslation()
     const [teachers, setTeachers] = useState<UserInfo[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -101,7 +103,7 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
         await adminService.createTeacher(data)
         await fetchTeachers()
         setCurrentPage(1)
-        notify.success('Docente registrado correctamente')
+        notify.success(t('admin.teachersPage.createdToast'))
     }
 
     // Editar docente
@@ -116,7 +118,7 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
         ),
         )
 
-        notify.success('Información del docente actualizada')
+        notify.success(t('admin.teachersPage.updatedToast'))
     }
 
     // Subir fotografía
@@ -131,7 +133,7 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
         ),
         )
 
-        notify.success('Fotografía actualizada correctamente')
+        notify.success(t('admin.teachersPage.photoUpdatedToast'))
     }
 
     // Eliminar fotografía
@@ -146,7 +148,7 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
         ),
         )
 
-        notify.success('Fotografía eliminada correctamente')
+        notify.success(t('admin.teachersPage.photoDeletedToast'))
     }
 
     // Eliminar docente
@@ -159,7 +161,7 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
         )
 
         setTeacherToDelete(null)
-        notify.success('Docente eliminado correctamente')
+        notify.success(t('admin.teachersPage.deletedToast'))
         } catch (err) {
         notify.error(getErrorMessage(err))
         throw err
@@ -176,11 +178,11 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
                 <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
-                Gestión de docentes
+                {t('admin.teachersPage.title')}
                 </h1>
 
                 <p className="mt-2 font-body text-body text-neutral-500">
-                Administra los docentes de My Green Farm.
+                {t('admin.teachersPage.subtitle')}
                 </p>
             </div>
 
@@ -189,8 +191,8 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
                 <button
                 type="button"
                 onClick={() => setIsCreateModalOpen(true)}
-                title="Registrar docente"
-                aria-label="Registrar docente"
+                title={t('admin.teachersPage.register')}
+                aria-label={t('admin.teachersPage.register')}
                 className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition hover:bg-orange-600"
                 >
                 <span className="text-3xl font-light leading-none">+</span>
@@ -206,13 +208,13 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
                 <input
                     type="search"
-                    placeholder="Buscar docente..."
+                    placeholder={t('admin.teachersPage.searchPlaceholder')}
                     value={searchTerm}
                     onChange={(e) => {
                     setSearchTerm(e.target.value)
                     setCurrentPage(1)
                     }}
-                    aria-label="Buscar docente"
+                    aria-label={t('admin.teachersPage.searchLabel')}
                     className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
                 />
                 </div>
@@ -264,8 +266,8 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
             <div className="mt-12 text-center">
                 <p className="font-body text-body-text">
                 {searchTerm
-                    ? 'No se encontraron docentes con ese nombre.'
-                    : 'Todavía no hay docentes registrados.'}
+                    ? t('admin.teachersPage.noMatches')
+                    : t('admin.teachersPage.empty')}
                 </p>
             </div>
             )}
