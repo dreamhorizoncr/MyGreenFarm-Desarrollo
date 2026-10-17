@@ -1432,7 +1432,7 @@ export default {
   },
   moneda: {
     convertTo: "Afficher le prix en",
-    buyRate: "Taux d'achat",
+    buyRate: "Taux de change",
     todayRate: "Taux indicatif",
     priceDisclaimer: "Le prix converti est indicatif et peut varier selon le taux appliqué au moment du paiement.",
     title: "Convertisseur de devises",
