@@ -7,7 +7,7 @@ interface LatestPostsCardProps {
 }
 
 function LatestPostsCard({ blogPosts, onOpen }: Readonly<LatestPostsCardProps>) {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const latestPosts = [...blogPosts]
     .sort((first, second) => new Date(second.createdAt).getTime() - new Date(first.createdAt).getTime())
     .slice(0, 5)
