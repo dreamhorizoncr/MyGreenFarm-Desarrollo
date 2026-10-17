@@ -1426,7 +1426,7 @@ export default {
   moneda: {
     title: "Conversor de moneda",
     convertTo: "Mostrar precio en",
-    buyRate: "Tipo de cambio de compra",
+    buyRate: "Tipo de Cambio",
     todayRate: "Tasa de referencia",
     priceDisclaimer: "El precio convertido es aproximado y puede variar según el tipo de cambio aplicado al momento del pago.",
     description:

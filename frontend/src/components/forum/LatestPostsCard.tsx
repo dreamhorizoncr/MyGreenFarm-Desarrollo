@@ -14,31 +14,35 @@ function LatestPostsCard({ blogPosts, onOpen }: Readonly<LatestPostsCardProps>) 
 
   if (latestPosts.length === 0) return null
 
-  const dateFormatter = new Intl.DateTimeFormat(i18n.resolvedLanguage ?? i18n.language, {
-    day: 'numeric',
-    month: 'short',
-  })
-
   return (
     <section id="forum-latest" className="rounded-2xl border border-neutral-200 bg-white p-lg text-left">
       <h2 className="m-0 font-heading text-h6 font-bold text-heading">
         {t('forum.latest.title')}
       </h2>
 
-      <ul className="m-0 mt-md flex list-none flex-col gap-lg p-0">
+      <ul className="m-0 mt-md flex list-none flex-col p-0">
         {latestPosts.map((post) => {
           return (
-            <li key={post.id}>
+            <li key={post.id} className="border-b border-neutral-100 last:border-b-0">
               <button
                 type="button"
                 onClick={() => onOpen(post.id)}
-                className="flex w-full flex-col gap-2xs rounded-lg p-0 text-left transition-transform duration-150 origin-left hover:scale-[1.02]"
+                className="flex w-full items-start gap-sm rounded-lg py-sm text-left transition-colors hover:bg-neutral-50"
               >
-                <span className="line-clamp-2 font-body text-body-sm font-semibold text-body-text">
-                  {post.title}
-                </span>
-                <span className="font-body text-xs text-neutral-500">
-                  {t('forum.latest.blog')} · {dateFormatter.format(new Date(post.createdAt))}
+                {post.imageUrl && (
+                  <img
+                    src={post.imageUrl}
+                    alt={post.imageAlt || post.title}
+                    className="h-12 w-12 shrink-0 rounded-sm object-cover"
+                  />
+                )}
+                <span className="min-w-0 flex-1">
+                  <span
+                    className="line-clamp-2 block font-body text-body-sm font-semibold leading-[1.4] text-body-text"
+                    style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
+                  >
+                    {post.title}
+                  </span>
                 </span>
               </button>
             </li>
