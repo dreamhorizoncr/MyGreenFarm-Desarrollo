@@ -37,12 +37,10 @@ public class ExpedientService {
     public ExpedientResponse createExpedient(ExpedientRequest request, MultipartFile file) {
         String studentId = Sanitizer.requireClean("studentId", request.getStudentId());
 
-        // 1. Buscar el estudiante por su studentId
         Child child = childRepository.findByStudentId(studentId)
                 .orElseThrow(
                         () -> new EntityNotFoundException("Niño no encontrado con el carné/studentId: " + studentId));
 
-        // 2. Verificar que no tenga ya un expediente asignado
         if (expedientRepository.existsByChildStudentId(child.getStudentId())) {
             throw new IllegalStateException("Ya existe un expediente registrado para el niño: "
                     + child.getFirstName() + " " + child.getLastName());
@@ -72,7 +70,7 @@ public class ExpedientService {
     }
 
     public String getSignedPhotoUrl(String filePath) {
-        return storageService.getSignedUrl(expedientsBucket, filePath, 3600); // 1 hora de duración
+        return storageService.getSignedUrl(expedientsBucket, filePath, 3600);
     }
 
     @Transactional(readOnly = true)
@@ -109,8 +107,6 @@ public class ExpedientService {
 
         expedientRepository.delete(expedient);
     }
-
-    // Photo section
 
     @Transactional
     public ExpedientResponse uploadOrUpdatePhoto(UUID expedientId, ExpedientRequest request, MultipartFile file) {

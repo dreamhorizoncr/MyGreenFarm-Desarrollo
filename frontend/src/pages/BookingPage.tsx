@@ -587,7 +587,7 @@ function BookingPage() {
         error={fullNameErrorMessage}
       />
       <div className="flex flex-col gap-sm">
-        <label className="mb-[4px] block text-left font-body text-body text-body-text">
+        <label className="mb-[4px] block text-left font-body text-body-sm font-semibold text-heading">
           {t('booking.idType')}
         </label>
         <div className="flex flex-wrap gap-sm">
@@ -748,9 +748,7 @@ function BookingPage() {
       <main className="flex items-center justify-center px-[30px] py-[30px] md:px-6 md:py-10">
         <section className="relative flex w-full max-w-[333px] flex-col overflow-hidden rounded-[13px] bg-bg-card shadow md:max-w-[900px] md:rounded-2xl">
 
-          {/* Wizard */}
           <div className="flex w-full flex-col px-[30px] pb-[28px] pt-[40px] md:px-[50px] md:py-[40px]">
-            {/* Header */}
             <div className="mb-lg flex items-center gap-sm">
               <button
                 type="button"
@@ -760,19 +758,17 @@ function BookingPage() {
               >
                 <ArrowLeftIcon size={30} aria-hidden="true" />
               </button>
-              <h2 className="m-0 text-left font-heading text-[28px] leading-none text-heading md:text-[36px]">
+              <h2 className="m-0 text-left font-heading text-h1 leading-none text-heading">
                 {t('booking.title')}
               </h2>
             </div>
 
             <WizardProgress step={step} />
 
-            {/* Step content */}
             <div className="flex-1 overflow-y-auto">
               {stepContents[step]()}
             </div>
 
-            {/* Navigation buttons */}
             <div className="mt-lg flex items-center justify-between gap-sm">
               {step > 1 ? (
                 <button

@@ -10,7 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import taller.multimedia.backend.dto.announcement.AnnouncementRequest;
 import taller.multimedia.backend.dto.announcement.AnnouncementResponse;
+import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.model.announcement.Announcement;
+import taller.multimedia.backend.model.announcement.AnnouncementCategory;
+import taller.multimedia.backend.repository.announcement.AnnouncementCategoryRepository;
 import taller.multimedia.backend.repository.announcement.AnnouncementRepository;
 import taller.multimedia.backend.util.Sanitizer;
 
@@ -24,6 +27,9 @@ public class AnnouncementService {
 
     private final AnnouncementImageService announcementImageService;
     private final AnnouncementRepository announcementRepository;
+    private final AnnouncementCategoryRepository announcementCategoryRepository;
+
+    static final String FALLBACK_TYPE = "GENERAL";
 
     @Transactional
     public AnnouncementResponse create(AnnouncementRequest dto) {
@@ -38,38 +44,38 @@ public class AnnouncementService {
         Announcement announcement = new Announcement();
         announcement.setTitle(title);
         announcement.setContent(content);
-        announcement.setType(dto.getType());
+        applyCategory(announcement, dto.getCategoryId());
         announcement.setEventDate(dto.getEventDate());
         announcement.setLocation(location);
 
         Announcement saved = announcementRepository.save(announcement);
-        return mapToResponse(saved, "es"); // Por defecto se guarda/crea en español
+        return mapToResponse(saved, "es");
     }
 
-    // Este método recibe la inicial del idioma, ejemplo "en" y devuelve todos los
-    // anuncios en ese idioma
     @Transactional(readOnly = true)
     public Page<AnnouncementResponse> getAll(String lang, Pageable pageable) {
         return announcementRepository.findAll(pageable)
                 .map(announcement -> mapToResponse(announcement, lang));
     }
 
-    // Método auxiliar para transformar la entidad al DTO de respuesta y aplicar
-    // traducción si es necesario
     private AnnouncementResponse mapToResponse(Announcement announcement, String lang) {
         AnnouncementResponse response = new AnnouncementResponse();
         response.setId(announcement.getId());
-        response.setType(announcement.getType());
+        AnnouncementCategory category = announcement.getCategory();
+        if (category != null) {
+            response.setCategoryId(category.getId());
+            response.setCategoryTitle(category.getTitle());
+            response.setCategoryCode(category.getCode());
+        } else {
+            response.setCategoryCode(announcement.getType());
+        }
         response.setEventDate(announcement.getEventDate());
         response.setLocation(announcement.getLocation());
         response.setAiSummary(announcement.getAiSummary());
 
-        // Aquí es donde se inyecta la lógica: si 'lang' es 'en' o 'fr',
-        // busca el texto traducido en la tabla de traducciones, si es 'es', usa el
-        // original
         if ("en".equals(lang) || "fr".equals(lang)) {
-            response.setTitle(announcement.getTitle()); // Placeholder temporal
-            response.setContent(announcement.getContent()); // Placeholder temporal
+            response.setTitle(announcement.getTitle());
+            response.setContent(announcement.getContent());
         } else {
             response.setTitle(announcement.getTitle());
             response.setContent(announcement.getContent());
@@ -80,7 +86,6 @@ public class AnnouncementService {
 
     @Transactional
     public AnnouncementResponse update(UUID id, AnnouncementRequest dto) {
-        // 1. Busca si el anuncio existe; si no, lanza un error
         Announcement announcement = announcementRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Anuncio no encontrado con ID: " + id));
 
@@ -92,16 +97,21 @@ public class AnnouncementService {
             throw new IllegalArgumentException("Ya existe un anuncio con el título: " + title);
         }
 
-        // 2. Actualiza los campos con los nuevos datos
         announcement.setTitle(title);
         announcement.setContent(content);
-        announcement.setType(dto.getType());
+        applyCategory(announcement, dto.getCategoryId());
         announcement.setEventDate(dto.getEventDate());
         announcement.setLocation(location);
 
-        // 3. Guarda los cambios en la base de datos
         Announcement updated = announcementRepository.save(announcement);
         return mapToResponse(updated, "es");
+    }
+
+    private void applyCategory(Announcement announcement, UUID categoryId) {
+        AnnouncementCategory category = announcementCategoryRepository.findById(categoryId)
+                .orElseThrow(() -> new InvalidFieldException("categoryId", "La categoría seleccionada ya no existe."));
+        announcement.setCategory(category);
+        announcement.setType(category.getCode() != null ? category.getCode() : FALLBACK_TYPE);
     }
 
     @Transactional
@@ -109,11 +119,8 @@ public class AnnouncementService {
         Announcement announcement = announcementRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Anuncio no encontrado con ID: " + id));
 
-        // 1. Borrar primero los archivos físicos del bucket usando el servicio de
-        // imágenes
         announcementImageService.deleteAllImagesByAnnouncement(id);
 
-        // 2. Borrar el anuncio (y por cascada se limpian los registros de la BD)
         announcementRepository.delete(announcement);
     }
 
@@ -130,20 +137,16 @@ public class AnnouncementService {
     public void cleanupExpiredAnnouncements() {
         LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
         
-        // 1. Buscar todos los anuncios creados hace más de 30 días
         List<Announcement> expiredAnnouncements = announcementRepository.findByCreatedAtBefore(thirtyDaysAgo);
 
         if (expiredAnnouncements.isEmpty()) {
-            return; // Nada que limpiar
+            return;
         }
 
-        // 2. Eliminar uno por uno utilizando tu lógica existente de borrado total
         for (Announcement announcement : expiredAnnouncements) {
             try {
-                delete(announcement.getId()); // Esto borra buckets, imágenes, traducciones y el anuncio
+                delete(announcement.getId());
             } catch (Exception e) {
-                // Manejar o registrar el error si un archivo específico falla, 
-                // para evitar que detenga el ciclo completo de limpieza.
                 System.err.println("Error al eliminar anuncio expirado ID " + announcement.getId() + ": " + e.getMessage());
             }
         }

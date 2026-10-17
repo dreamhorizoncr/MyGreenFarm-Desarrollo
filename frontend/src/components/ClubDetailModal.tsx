@@ -56,7 +56,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                 />
 
                 <header className="mx-auto max-w-[850px] text-center">
-                    <h2 className="mt-[16px] font-heading text-[32px] font-bold leading-[1.15] text-heading md:text-h1">
+                    <h2 className="mt-[16px] font-heading text-h2 font-bold leading-[1.15] text-heading">
                         {club.name}
                     </h2>
                     <div className="mt-[16px] flex flex-wrap items-center justify-center gap-x-[18px] gap-y-[8px] font-body text-body-sm text-neutral-500">
@@ -77,7 +77,6 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                     </div>
                 </header>
 
-                {/* Imagen de portada */}
                 {coverUrl && (
                     <div className="mt-[40px] overflow-hidden rounded-[22px]">
                         <img
@@ -88,17 +87,15 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                     </div>
                 )}
 
-                {/* Descripción principal */}
                 <section className="mx-auto max-w-[950px] text-left mt-[40px]">
                     <p className="whitespace-pre-line font-body text-body-sm leading-[1.85] text-body-text md:text-body">
                         {club.description}
                     </p>
                 </section>
 
-                {/* Galería de imágenes */}
                 {galleryImages.length > 0 && (
                     <section className="mt-[60px]">
-                        <h3 className="mb-[18px] font-heading text-[26px] font-bold text-heading">
+                        <h3 className="mb-[18px] font-heading text-h4 font-bold text-heading">
                             {t('clubs.gallery')}
                         </h3>
                         <div className={`grid gap-[12px] ${galleryGridColumns}`}>

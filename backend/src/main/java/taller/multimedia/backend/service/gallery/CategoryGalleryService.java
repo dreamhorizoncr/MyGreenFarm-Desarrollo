@@ -60,12 +60,10 @@ public class CategoryGalleryService {
         CategoryGallery category = categoryGalleryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada con ID: " + id));
 
-        // 1. Borrar cada galería de la categoría (y sus imágenes del bucket)
         for (Gallery gallery : category.getGalleries()) {
             galleryService.delete(gallery.getId());
         }
 
-        // 2. Borrar la categoría
         categoryGalleryRepository.delete(category);
     }
 

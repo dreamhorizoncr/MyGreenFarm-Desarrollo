@@ -42,23 +42,19 @@ function AdminPlanCard({
 }: Readonly<AdminPlanCardProps>) {
   const { t, i18n } = useTranslation()
 
-  // 1. Obtener y limpiar la moneda base del plan de forma segura
   const getCleanCurrency = (curr?: string): Currency => {
     const upper = curr?.toUpperCase()
     return ['CRC', 'USD', 'EUR'].includes(upper ?? '') ? (upper as Currency) : 'CRC'
   }
 
-  // 2. Estado local inicial sincronizado con la moneda del plan
   const [currency, setCurrency] = useState<Currency>(() => getCleanCurrency(plan?.currency))
 
-  // 3. Forzar actualización si el plan cambia o termina de cargar con retraso
   useEffect(() => {
     if (plan?.currency) {
       setCurrency(getCleanCurrency(plan.currency))
     }
   }, [plan?.currency])
 
-  // 4. Calcular el precio usando la moneda real del plan
   const baseCurrency = getCleanCurrency(plan?.currency)
   const price = plan && exchangeRate
     ? convertCurrency(plan.price, baseCurrency, currency, 'buy', exchangeRate)
@@ -167,7 +163,6 @@ function AdminServicePlansPage() {
     void fetchAll(i18n.language)
   }, [fetchAll, i18n.language])
 
-  // El modal siempre edita el texto original, aunque la card muestre traducido
   const getSourcePlan = (id: string) => sourcePlans.find(p => p.id === id) ?? plans.find(p => p.id === id) ?? null
 
   const handleDelete = async (id: string) => {

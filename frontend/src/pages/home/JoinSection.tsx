@@ -57,7 +57,7 @@ function JoinSection() {
                 {t('home.join.title2')}
               </h2>
 
-              <p className="max-w-[30rem] font-body text-body-sm font-normal text-white">
+              <p className="max-w-[30rem] font-body text-body font-normal text-white">
                 {t('home.join.description')}
               </p>
 
@@ -72,7 +72,7 @@ function JoinSection() {
                   disabled={loading}
                   className="h-11 w-full rounded-full border border-neutral-200 bg-white px-md font-body text-body-sm text-body-text outline-none placeholder:text-[var(--grey-700)] focus:border-heading sm:flex-1"
                 />
-                <PillButton type="submit" disabled={loading} className="h-11 w-full bg-green-500 font-body text-button text-white disabled:opacity-70 sm:w-auto">
+                <PillButton type="submit" disabled={loading} className="h-11 w-full bg-green-500 font-body text-button font-bold text-white disabled:opacity-70 sm:w-auto">
                   {loading ? t('home.join.subscribing') : t('home.join.subscribe')}
                 </PillButton>
 

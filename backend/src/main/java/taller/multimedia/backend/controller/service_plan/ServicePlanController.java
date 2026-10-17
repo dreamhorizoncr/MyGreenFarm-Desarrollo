@@ -29,7 +29,6 @@ public class ServicePlanController {
     private final SpellingCorrectionAsyncService spellingCorrectionAsyncService;
     private final ObjectMapper objectMapper;
 
-    // Catálogo público: cualquier visitante puede ver los planes activos o todos
     @GetMapping
     public ResponseEntity<List<ServicePlan>> getAllPlans(@RequestParam(required = false) Boolean activeOnly) {
         List<ServicePlan> plans = (activeOnly != null && activeOnly)
@@ -38,7 +37,6 @@ public class ServicePlanController {
         return ResponseEntity.ok(plans);
     }
 
-    // Ideal para llenar el dropbox
     @GetMapping("/onvo-raw")
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<?> getOnvoPrices() {
@@ -46,14 +44,12 @@ public class ServicePlanController {
         return ResponseEntity.ok(onvoPrices);
     }
 
-    // Obtener un plan específico por ID (solo para la dueña)
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<ServicePlan> getPlanById(@PathVariable UUID id) {
         return ResponseEntity.ok(servicePlanService.getPlanById(id));
     }
 
-    // Crear un nuevo plan con su imagen y datos desde el panel de la dueña
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<ServicePlan> createPlan(
@@ -61,7 +57,6 @@ public class ServicePlanController {
             @RequestParam("file") MultipartFile file) {
 
         try {
-            // Convierte el texto JSON en tu DTO con la misma lógica que ya te funciona
             ServicePlanRequest dto = objectMapper.readValue(requestJson, ServicePlanRequest.class);
 
             ServicePlan created = servicePlanService.createPlan(dto, file);
@@ -74,15 +69,12 @@ public class ServicePlanController {
         }
     }
 
-    //Endpoint para que el cliente genere su enlace de pago en OnvoPay al hacer clic en un plan
-    
     @PostMapping("/{id}/checkout")
     public ResponseEntity<Map<String, String>> createCheckoutSession(@PathVariable UUID id) {
         Map<String, String> checkoutData = servicePlanService.createCheckoutSessionForPlan(id);
         return ResponseEntity.ok(checkoutData); 
     }
 
-    // Actualizar un plan existente
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<ServicePlan> updatePlan(
@@ -101,7 +93,6 @@ public class ServicePlanController {
         return ResponseEntity.ok(servicePlanService.deleteImage(id));
     }
 
-    // Eliminar un plan y su imagen asociada del bucket
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<?> deletePlan(@PathVariable UUID id) {

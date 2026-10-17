@@ -36,7 +36,7 @@ function ForumPendingReviewModal({ title, description, onClose }: Readonly<Forum
         />
 
         <div className="flex flex-col items-center gap-md px-[28px] pb-[32px] pt-[30px]">
-          <h2 className="m-0 text-center font-heading text-h1 font-bold leading-none text-heading">
+          <h2 className="m-0 text-center font-heading text-h2 font-bold leading-none text-heading">
             {title}
           </h2>
 

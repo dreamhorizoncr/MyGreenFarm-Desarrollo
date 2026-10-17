@@ -118,8 +118,6 @@ function App() {
         <Route path="/vacantes" element={<VacanciesPage />} />
         <Route path="/clubs" element={<ClubsPage />} />
         <Route path="/about-us" element={<AboutUsPage />} />
-        {/* <Route path="/news/:id" element={<NewsDetailPage />} /> */}
-        {/* Redirigir cualquier ruta no definida a la página de inicio */}
         <Route path="/signup" element={<Navigate to="/admin/users" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

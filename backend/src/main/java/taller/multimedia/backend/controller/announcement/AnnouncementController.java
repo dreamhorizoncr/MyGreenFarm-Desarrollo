@@ -64,7 +64,7 @@ public class AnnouncementController {
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         announcementService.delete(id);
-        return ResponseEntity.noContent().build(); // Retorna un código 204 No Content indicando éxito
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/resumen/regenerar")

@@ -1,5 +1,3 @@
-// Esto de aquí es para manejar el formulario de restablecer contraseña: guarda si está
-// cargando, si hubo error y si salió bien, y llama al servicio para cambiar la contraseña.
 
 import { useState } from 'react'
 import { authService } from '../services/auth.ts'

@@ -38,7 +38,6 @@ class SpellingCorrectionServiceTest {
         mockWebServer.shutdown();
     }
 
-    // Respuesta de Gemini cuyo texto es el JSON con los campos corregidos.
     private void enqueueCorrection(Map<String, String> corrected) {
         String text = objectMapper.writeValueAsString(corrected);
         String body = objectMapper.writeValueAsString(Map.of(

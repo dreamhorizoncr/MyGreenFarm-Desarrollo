@@ -25,11 +25,6 @@ import org.xml.sax.InputSource;
 
 import taller.multimedia.backend.dto.exchange_rate.ExchangeRates;
 
-/**
- * Adaptador a la fuente de tasas de BAC Credomatic. Es el único lugar del
- * proyecto que sabe que esa fuente existe: descarga el XML y lo traduce a
- * {@link ExchangeRates}. No toca la base de datos.
- */
 @Component
 public class BacExchangeRateClient {
 
@@ -56,11 +51,6 @@ public class BacExchangeRateClient {
         this.restTemplate = new RestTemplate(requestFactory);
     }
 
-    /**
-     * Descarga el XML crudo de la fuente. El XML declara ISO-8859-1 y así lo
-     * anuncia el header Content-Type, por eso el RestTemplate lo decodifica
-     * con ese charset y el parser recibe un String ya decodificado.
-     */
     public String downloadXml() {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.USER_AGENT, "Java/" + System.getProperty("java.version"));
@@ -69,11 +59,6 @@ public class BacExchangeRateClient {
         return restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class).getBody();
     }
 
-    /**
-     * Extrae las tasas de Costa Rica del XML. Lanza si el país no aparece o si
-     * alguna de las cuatro tasas viene vacía, para no guardar un registro con
-     * datos a medias.
-     */
     public ExchangeRates extractCostaRicaRates(String xml) {
         Document document;
         try {
@@ -107,10 +92,6 @@ public class BacExchangeRateClient {
         }
     }
 
-    /**
-     * Parser sin DTD ni entidades externas: el XML viene de un tercero y nunca
-     * necesita resolver referencias externas.
-     */
     private DocumentBuilderFactory createSecureParser() throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);

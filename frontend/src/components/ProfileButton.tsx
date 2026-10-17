@@ -3,12 +3,14 @@ import 'blobatar/motion.css'
 import { Link, useNavigate } from 'react-router-dom';
 import { userStorage } from '../utils/userStorage.ts'
 import { useCallback, useRef, useState } from 'react';
-import { UserIcon, LogOutIcon } from '@animateicons/react/lucide';
+import { LayoutDashboardIcon, LogOutIcon } from '@animateicons/react/lucide';
 import { useTranslation } from 'react-i18next';
 import { authService } from '../services/auth.ts';
 import { tokenStorage } from '../utils/token.ts'
 import { claimExclusiveOpen, releaseExclusiveOpen } from '../utils/exclusiveMenu.ts'
+import { AnimatePresence, motion } from 'motion/react'
 import useDismiss from '../hooks/useDismiss.ts'
+import { useDropdownMotion } from '../hooks/useDropdownMotion.ts'
 
 function ProfileButton() {
 
@@ -17,6 +19,7 @@ function ProfileButton() {
   const [menuOpen, setMenuOpen] = useState(false)
   const closeMenu = useCallback(() => setMenuOpen(false), [])
   const rootRef = useRef<HTMLDivElement>(null)
+  const dropdownMotion = useDropdownMotion()
   const dismissMenu = useCallback(() => {
     releaseExclusiveOpen(closeMenu)
     closeMenu()
@@ -57,27 +60,29 @@ function ProfileButton() {
         className="shrink-0 rounded-full"
       />
     </button>
+      <AnimatePresence>
       {menuOpen && (
-        <div className="absolute right-0 top-[calc(100%+var(--spacing-xs))] z-50 min-w-[190px] rounded-xl border border-neutral-200 bg-white p-xs shadow-lg animate-[language-switcher-in_0.15s_ease-out]">
+        <motion.div {...dropdownMotion} className="absolute right-0 top-[calc(100%+var(--spacing-xs))] z-50 w-max min-w-[190px] rounded-xl border border-neutral-200 bg-white p-xs shadow-lg">
           <Link
-            to="/profile"
+            to="/admin/dashboard"
             onClick={() => { releaseExclusiveOpen(closeMenu); closeMenu() }}
-            className="flex w-full items-center gap-2 rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100"
+            className="flex w-full items-center gap-2 whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100"
           >
-          <UserIcon size={18} className="shrink-0" />
-            {t('profile.viewProfile')}
+          <LayoutDashboardIcon size={18} className="shrink-0" />
+            {t('navbar.dashboard')}
           </Link>
 
           <button
             type="button"
             onClick={handleLogout}
-            className="flex w-full items-center gap-2 rounded-lg px-md py-sm text-left font-body text-body-sm text-danger transition-colors duration-150 hover:bg-danger-100"
+            className="flex w-full items-center gap-2 whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-body-sm text-danger transition-colors duration-150 hover:bg-danger-100"
           >
             <LogOutIcon size={18} className="shrink-0" />
               {t('profile.logout')}
           </button>
-  </div>
+  </motion.div>
       )}
+      </AnimatePresence>
   </div>
   )
 }

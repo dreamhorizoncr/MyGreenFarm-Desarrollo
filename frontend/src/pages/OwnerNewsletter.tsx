@@ -16,6 +16,7 @@ import { hasUnsafeText } from '../utils/validators.ts'
 import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
+import TabHighlight from '../components/ui/TabHighlight.tsx'
 
 interface SubscriberRowProps {
     item?: NewsletterRecipient
@@ -71,7 +72,6 @@ function SubscriberRow({ item, onUnsubscribe, disabled, loading = false }: Reado
 
 function AdminNewsletterPage() {
     const { t } = useTranslation()
-    // Asegúrate de que tu hook useNewsletter exponga también fetchSubscribers o similar si ya lo tienes implementado
     const { sendBroadcast, unsubscribe, unsubscribeParent, getSubscribers, loading: broadcastLoading } = useNewsletter()
     const [loadingSubscribers, setLoadingSubscribers] = useState(true)
 
@@ -96,7 +96,6 @@ function AdminNewsletterPage() {
         onClose: () => setIsSendMenuOpen(false),
     })
 
-    // Cargar los suscriptores y padres al montar el componente
     useEffect(() => {
         const fetchAudienceData = async () => {
             try {
@@ -114,22 +113,19 @@ function AdminNewsletterPage() {
     }, [getSubscribers])
 
     const filterClassName = (active: boolean) =>
-        `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${active
-            ? 'border-green-500 bg-green-500 text-white'
-            : 'border-green-500 bg-white text-heading hover:bg-green-50'
+        `relative rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${active
+            ? 'border-green-500 text-white'
+            : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
         }`
 
-    // Lógica de filtrado para Suscriptores y Padres + Búsqueda por texto
     const filteredItems = useMemo(() => {
         const term = searchTerm.trim().toLowerCase()
 
         return subscribers.filter((item) => {
-            // Filtro por tipo de audiencia seleccionado en las píldoras
             const matchesAudience =
                 (audienceFilter === 'SUBSCRIBERS' && item.type === 'SUBSCRIBER') ||
                 (audienceFilter === 'PARENTS' && item.type === 'PARENT')
 
-            // Filtro por término de búsqueda en el correo
             const matchesSearch = item.email.toLowerCase().includes(term)
 
             return matchesAudience && matchesSearch
@@ -189,7 +185,6 @@ function AdminNewsletterPage() {
                     {t('admin.newsletter.subtitle')}
                 </p>
 
-                {/* Barra de búsqueda y Botones de envío masivo para las 3 audiencias */}
                 <div className="mb-[var(--spacing-lg)] mt-[var(--spacing-xl)] flex flex-wrap items-center justify-between gap-md">
                     <div className="flex h-11 min-w-[240px] max-w-[420px] flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
                         <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
@@ -209,7 +204,7 @@ function AdminNewsletterPage() {
                             onClick={() => setIsSendMenuOpen((prev) => !prev)}
                             aria-expanded={isSendMenuOpen}
                             aria-haspopup="menu"
-                            className="inline-flex h-[44px] items-center gap-xs whitespace-nowrap rounded-full border bg-orange-500 hover:bg-orange-600 px-md font-body text-[15px] font-semibold text-white transition-colors"
+                            className="inline-flex h-[44px] items-center gap-xs whitespace-nowrap rounded-full border bg-orange-500 hover:bg-orange-600 px-md font-body text-body-sm font-semibold text-white transition-colors"
                         >
                             <SendIcon size={18} aria-hidden="true" />
                             <span>{t('admin.newsletter.sendBroadcast')}</span>
@@ -254,14 +249,14 @@ function AdminNewsletterPage() {
                     </div>
                 </div>
 
-                {/* Filtros de audiencia; al desactivar una opción se muestran ambas listas */}
-                <div className="-mt-sm mb-lg flex flex-wrap gap-sm">
+                <div className="isolate -mt-sm mb-lg flex flex-wrap gap-sm">
                     <button
                         type="button"
                         aria-pressed={audienceFilter === 'SUBSCRIBERS'}
                         onClick={() => setAudienceFilter('SUBSCRIBERS')}
                         className={filterClassName(audienceFilter === 'SUBSCRIBERS')}
                     >
+                        {audienceFilter === 'SUBSCRIBERS' && <TabHighlight layoutId="newsletter-audience-tab" className="bg-green-500" />}
                         {t('admin.newsletter.filterSubscribers')}
                     </button>
                     <button
@@ -270,11 +265,11 @@ function AdminNewsletterPage() {
                         onClick={() => setAudienceFilter('PARENTS')}
                         className={filterClassName(audienceFilter === 'PARENTS')}
                     >
+                        {audienceFilter === 'PARENTS' && <TabHighlight layoutId="newsletter-audience-tab" className="bg-green-500" />}
                         {t('admin.newsletter.filterParents')}
                     </button>
                 </div>
 
-                {/* Listado filtrado */}
                 {loadingSubscribers && (
                     <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
                         <SkeletonList count={skeletonCount}>{() => <SubscriberRow loading />}</SkeletonList>
@@ -314,7 +309,7 @@ function AdminNewsletterPage() {
                         className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${broadcastClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
                     >
                             <div className="flex items-center justify-between gap-md">
-                                <h2 id="newsletter-broadcast-title" className="m-0 font-heading text-2xl font-bold text-heading">
+                                <h2 id="newsletter-broadcast-title" className="m-0 font-heading text-h4 font-bold text-heading">
                                     {broadcastModalTitle}
                                 </h2>
 

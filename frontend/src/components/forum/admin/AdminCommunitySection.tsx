@@ -132,8 +132,8 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
   function renderPosts() {
     if (loading) {
       return (
-        <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
-          <SkeletonList count={skeletonCount}>{() => <li><CommunityPostCard loading /></li>}</SkeletonList>
+        <ul className="m-0 mt-lg grid list-none grid-cols-1 gap-xl p-0 lg:auto-rows-fr lg:grid-cols-2">
+          <SkeletonList count={skeletonCount}>{() => <li className="flex"><CommunityPostCard loading /></li>}</SkeletonList>
         </ul>
       )
     }
@@ -155,9 +155,9 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
     }
 
     return (
-      <ul className="m-0 mt-lg grid list-none grid-cols-1 items-start gap-xl p-0 lg:grid-cols-2">
+      <ul className="m-0 mt-lg grid list-none grid-cols-1 gap-xl p-0 lg:auto-rows-fr lg:grid-cols-2">
         {posts.map((post) => (
-          <li key={post.id}>
+          <li key={post.id} className="flex">
             <CommunityPostCard
               post={post}
               onOpenComments={openComments}

@@ -33,7 +33,6 @@ public class OnvoService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(onvoApiKey);
 
-        // Estructura del payload que pide Onvo
         Map<String, Object> body = Map.of(
             "price_id", priceId,
             "success_url", successUrl,
@@ -45,7 +44,6 @@ public class OnvoService {
         try {
             ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                // Extrae la URL de pago que devuelve Onvo
                 return (String) response.getBody().get("url");
             }
         } catch (Exception e) {

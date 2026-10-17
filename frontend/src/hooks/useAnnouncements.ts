@@ -26,7 +26,6 @@ export function useAnnouncements() {
     setError(null);
 
     try {
-      // Solicita al backend únicamente la página necesaria
       const data = await announcementService.getAnnouncements(
         SOURCE_LANG,
         page,

@@ -45,7 +45,7 @@ public ImageLikeResponse toggleLike(UUID imageId, String anonId) {
             imageLikeRepository.save(like);
             liked = true;
         } catch (DataIntegrityViolationException e) {
-            liked = true; // condición de carrera: ya existía
+            liked = true;
         }
     }
 

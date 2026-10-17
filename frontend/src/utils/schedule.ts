@@ -14,7 +14,6 @@ export const emptyScheduleBlock = (): ScheduleBlock => ({ days: [], start: '', e
 
 export const emptySchedule = (): ScheduleValue => [emptyScheduleBlock()]
 
-// Formato guardado en el backend: "1,2,3,4,5 07:00-17:00; 6 08:00-12:00" (1 = lunes, 7 = domingo).
 const BLOCK_PATTERN = /^([1-7](?:,[1-7])*) (\d{2}:\d{2})-(\d{2}:\d{2})$/
 const BLOCK_SEPARATOR = '; '
 
@@ -47,7 +46,6 @@ export function validateSchedule(schedule: ScheduleValue, t: TFunction): string 
   return null
 }
 
-// 2 de enero de 2023 fue lunes: sirve para obtener el nombre de cada día en el idioma actual.
 const dayDate = (day: number) => new Date(2023, 0, 1 + day)
 
 export function dayName(day: number, language: string, style: 'long' | 'short' | 'narrow' = 'long'): string {

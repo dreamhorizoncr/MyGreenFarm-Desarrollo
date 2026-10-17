@@ -10,11 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import taller.multimedia.backend.dto.exchange_rate.ExchangeRates;
 
-/**
- * El fixture es un fragmento real devuelto por
- * showXmlExchangeRate.do el 27/09/2026, con los nombres de país y etiquetas
- * que usa la fuente en producción.
- */
 class BacExchangeRateClientTest {
 
     private static final String XML_COSTA_RICA = """

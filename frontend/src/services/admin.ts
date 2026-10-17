@@ -24,13 +24,11 @@ export const adminService = {
     await apiClient.delete(`/users/${id}`)
   },
 
-  // Obtener todos los profesores
   async getTeachers(): Promise<UserInfo[]> {
     const response = await apiClient.get<UserInfo[]>('/users/teachers')
     return response.data
   },
 
-  // Registrar un profesor
   async createTeacher(data: CreateTeacherData): Promise<void> {
     await apiClient.post('/auth/signup', {
       ...data,
@@ -38,7 +36,6 @@ export const adminService = {
     })
   },
 
-  // Subir o actualizar fotografía
   async uploadTeacherPhoto(id: string, file: File): Promise<UserInfo> {
     const formData = new FormData()
     formData.append('file', file)
@@ -51,7 +48,6 @@ export const adminService = {
     return response.data
   },
 
-   // Eliminar fotografía
   async deleteTeacherPhoto(id: string): Promise<void> {
     await apiClient.delete(`/users/${id}/photo`)
   },

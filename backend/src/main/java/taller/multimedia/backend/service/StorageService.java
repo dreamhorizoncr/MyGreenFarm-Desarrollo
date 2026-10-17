@@ -33,7 +33,6 @@ public class StorageService {
 
     public String uploadFile(MultipartFile file, String bucketName, String folder) {
         try {
-            // Generar un nombre único para evitar que se sobrescriban archivos
             String fileName = folder + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
 
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
@@ -44,10 +43,6 @@ public class StorageService {
 
             s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
 
-            // BUCKET PÚBLICO: Se usa "/object/public/" para que las imágenes puedan
-            // cargarse directamente en el navegador ( tags <img>) sin necesidad de headers
-            // de autenticación. El bucket en Supabase debe estar configurado como público.
-            // NOTA: Si se requiriera privacidad, usar getSignedUrl() para generar URLs temporales.
             String baseUrl = endpoint.replace("/storage/v1/s3", "/storage/v1");
             return baseUrl + "/object/public/" + bucketName + "/" + fileName;
 
@@ -69,23 +64,19 @@ public class StorageService {
         }
     }
 
-    // Método adaptado a SDK v2 para generar URLs firmadas temporales seguras
     public String getSignedUrl(String bucketName, String filePath, int expirationInSeconds) {
         try {
-            // 1. Crear la solicitud de S3 indicando el bucket y la ruta del archivo
             GetObjectRequest getObjectRequest = 
                 software.amazon.awssdk.services.s3.model.GetObjectRequest.builder()
                     .bucket(bucketName)
                     .key(filePath)
                     .build();
 
-            // 2. Configurar la solicitud de firmado especificando el tiempo de expiración
             GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-                    .signatureDuration(Duration.ofSeconds(expirationInSeconds)) // 3600 para 1 hora
+                    .signatureDuration(Duration.ofSeconds(expirationInSeconds))
                     .getObjectRequest(getObjectRequest) 
                     .build();
 
-            // 3. Generar la URL firmada usando el s3Presigner
             PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(presignRequest);
             return presignedRequest.url().toString();
             

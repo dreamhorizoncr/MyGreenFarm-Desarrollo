@@ -34,7 +34,6 @@ public class ScheduleConfigService {
     @Autowired
     private AppointmentRepository appointmentRepository;
 
-    // Obtener los horarios disponibles en bloques de 60 minutos para una fecha dada
     public List<LocalTime> getAvailableSlotsForDate(LocalDate date) {
         DayOfWeek dayOfWeek = date.getDayOfWeek();
 
@@ -46,15 +45,14 @@ public class ScheduleConfigService {
         if (exceptionOpt.isPresent()) {
             ScheduleException exception = exceptionOpt.get();
             if (exception.isClosed()) {
-                return new ArrayList<>(); // Día completamente cerrado por excepción
+                return new ArrayList<>();
             }
             startTime = exception.getStartTime();
             endTime = exception.getEndTime();
         } else {
-            // Si no hay excepción, buscar regla semanal regular
             Optional<WeeklySchedule> scheduleOpt = weeklyRepo.findByDayOfWeek(dayOfWeek);
             if (scheduleOpt.isEmpty() || !scheduleOpt.get().isActive()) {
-                return new ArrayList<>(); // El día no labora por defecto
+                return new ArrayList<>();
             }
             WeeklySchedule regular = scheduleOpt.get();
             startTime = regular.getStartTime();
@@ -75,13 +73,11 @@ public class ScheduleConfigService {
         List<Appointment> existingAppointments = appointmentRepository.findByAppointmentDateBetween(startOfDay,
                 endOfDay);
 
-        // Obtiene los intervalos de las citas activas (PENDING o CONFIRMED)
         List<LocalDateTime> bookedAppointmentStarts = existingAppointments.stream()
                 .filter(a -> a.getStatus() == AppointmentStatus.PENDING || a.getStatus() == AppointmentStatus.CONFIRMED)
                 .map(Appointment::getAppointmentDate)
                 .toList();
 
-        // Oculta cualquier bloque de una hora que se cruce con una cita activa.
         slots.removeIf(slot -> {
             LocalDateTime slotStart = date.atTime(slot);
             LocalDateTime slotEnd = slotStart.plusHours(1);
@@ -117,19 +113,16 @@ public class ScheduleConfigService {
         return weekSlots;
     }
 
-    // Con este método se crea un día con hora, si ya tenia, se edita
     public WeeklySchedule saveWeeklySchedule(WeeklySchedule schedule) {
         Optional<WeeklySchedule> existingOpt = weeklyRepo.findByDayOfWeek(schedule.getDayOfWeek());
 
         if (existingOpt.isPresent()) {
-            // Si ya existe, actualizamos sus campos en lugar de insertar uno nuevo
             WeeklySchedule existing = existingOpt.get();
             existing.setStartTime(schedule.getStartTime());
             existing.setEndTime(schedule.getEndTime());
             existing.setActive(schedule.isActive());
             return weeklyRepo.save(existing);
         } else {
-            // Si no existe, lo creamos normalmente
             return weeklyRepo.save(schedule);
         }
     }
@@ -145,12 +138,10 @@ public class ScheduleConfigService {
         exceptionRepo.deleteById(id);
     }
 
-    // Obtiene todas las reglas semanales para el panel de la dueña
     public List<WeeklySchedule> getAllWeeklySchedules() {
         return weeklyRepo.findAll();
     }
 
-    // Obtiene todas las excepciones registradas
     public List<ScheduleException> getAllExceptions() {
         return exceptionRepo.findAll();
     }

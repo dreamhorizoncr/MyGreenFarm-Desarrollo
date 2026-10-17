@@ -93,10 +93,8 @@ public class GalleryService {
         Gallery gallery = galleryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Galería no encontrada con ID: " + id));
 
-        // Borrar primero los archivos físicos del bucket usando el servicio de imágenes
         galleryImageService.deleteAllImagesByGallery(id);
 
-        // Borrar la galería (y por cascada se limpian los registros de la BD)
         galleryRepository.delete(gallery);
     }
 

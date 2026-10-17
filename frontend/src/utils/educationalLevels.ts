@@ -1,7 +1,5 @@
 import type { EducationalLevel } from "../types/expedient.ts";
 
-// Relaciona los niveles del backend (enum) con las claves de traducción
-// admin.expedients.levels.* — i18n estático, no Cloud Translation.
 export const educationalLevelKeys = {
   LACTANTES: "lactantes",
   MATERNAL: "maternal",

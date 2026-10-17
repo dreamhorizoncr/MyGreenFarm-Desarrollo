@@ -15,13 +15,13 @@ import java.util.UUID;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
-    Optional<User> findByEmail(String email); // Method to find a user by email
+    Optional<User> findByEmail(String email);
 
-    Boolean existsByEmail(String email); // Method to check if a user with the given email already exists
+    Boolean existsByEmail(String email);
 
     Optional<User> findByResetPasswordToken(String token);
 
-    void deleteById(UUID id); // Method to delete a user by ID
+    void deleteById(UUID id);
 
     @Query("""
                 SELECT u FROM User u

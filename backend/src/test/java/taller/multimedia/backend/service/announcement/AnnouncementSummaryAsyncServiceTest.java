@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import taller.multimedia.backend.model.announcement.Announcement;
-import taller.multimedia.backend.model.announcement.AnnouncementType;
 import taller.multimedia.backend.repository.announcement.AnnouncementRepository;
 import taller.multimedia.backend.utils.HashUtils;
 
@@ -36,7 +35,7 @@ class AnnouncementSummaryAsyncServiceTest {
     @Test
     void doesNotCallApiWhenContentUnchanged() {
         UUID id = UUID.randomUUID();
-        Announcement announcement = new Announcement("Título", "Contenido sin cambios", AnnouncementType.NEWS);
+        Announcement announcement = new Announcement("Título", "Contenido sin cambios", null);
         announcement.setId(id);
         announcement.setAiSummaryContentHash(HashUtils.sha256("Contenido sin cambios"));
 
@@ -51,7 +50,7 @@ class AnnouncementSummaryAsyncServiceTest {
     @Test
     void generatesAndSavesSummaryWhenContentChanged() {
         UUID id = UUID.randomUUID();
-        Announcement announcement = new Announcement("Título", "Contenido nuevo", AnnouncementType.NEWS);
+        Announcement announcement = new Announcement("Título", "Contenido nuevo", null);
         announcement.setId(id);
         announcement.setAiSummaryContentHash(HashUtils.sha256("Contenido viejo"));
 
@@ -67,7 +66,7 @@ class AnnouncementSummaryAsyncServiceTest {
     @Test
     void forcesRegenerationEvenWhenContentUnchanged() {
         UUID id = UUID.randomUUID();
-        Announcement announcement = new Announcement("Título", "Contenido sin cambios", AnnouncementType.NEWS);
+        Announcement announcement = new Announcement("Título", "Contenido sin cambios", null);
         announcement.setId(id);
         announcement.setAiSummaryContentHash(HashUtils.sha256("Contenido sin cambios"));
 

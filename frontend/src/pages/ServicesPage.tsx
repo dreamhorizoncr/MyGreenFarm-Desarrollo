@@ -208,7 +208,6 @@ function ServicesPage() {
   }, [navigate])
 
   const handleSubscribe = async (plan: ServicePlan) => {
-    // 1. Abrimos la pestaña en blanco inmediatamente para evitar bloqueadores de pop-ups
     const checkoutWindow = window.open('', '_blank')
 
     if (!checkoutWindow) {
@@ -222,7 +221,7 @@ function ServicesPage() {
     checkoutWindowRef.current = checkoutWindow
 
     const doc = checkoutWindow.document;
-    doc.title = 'Conectando con Pasarela de Pago...';
+    doc.title = t('services.connectingPayment');
     doc.body.style.cssText = `
       margin: 0;
       min-height: 100vh;
@@ -326,7 +325,7 @@ function ServicesPage() {
 
       <section className="flex min-h-[280px] items-start bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
         <div className="mx-auto w-full max-w-[700px]">
-          <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-green-500 md:text-h1">
+          <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">
             {t('services.title')}
           </h1>
           <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">

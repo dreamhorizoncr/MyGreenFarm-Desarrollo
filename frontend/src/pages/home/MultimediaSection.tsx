@@ -32,7 +32,7 @@ function MultimediaSection() {
           <div className="h-1 w-12 rounded-full bg-white" aria-hidden="true" />
 
           <div className="flex w-full flex-col items-start gap-md md:flex-row md:items-center md:justify-between">
-            <p className="max-w-[25rem] font-body text-body-sm font-normal text-white">
+            <p className="max-w-[25rem] font-body text-body font-normal text-white">
               {t('home.multimedia.description')}
             </p>
 

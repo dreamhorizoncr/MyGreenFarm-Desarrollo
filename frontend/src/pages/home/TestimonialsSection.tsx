@@ -60,7 +60,7 @@ function TestimonialsSection() {
           </h2>
 
           <div className="flex w-full flex-col items-center gap-1200">
-            <p className="max-w-[30rem] text-center font-body text-body-sm font-normal text-body-text">
+            <p className="max-w-[30rem] text-center font-body text-body font-normal text-body-text">
               {t('home.testimonials.description')}
             </p>
 
@@ -101,8 +101,8 @@ function TestimonialsSection() {
                       <span className="flex items-center gap-3">
                         <Blobatar name={name} size={44} animate="always" title={name} palette={{ head: style.accent }} className="size-11 shrink-0 rounded-full" />
                         <span className="flex min-w-0 flex-col">
-                          <span className="font-body text-[15px] font-bold text-[var(--grey-800)]">{name}</span>
-                          <span className="font-body text-[13px] text-[var(--grey-500)]">{role}</span>
+                          <span className="font-body text-body-sm font-bold text-[var(--grey-800)]">{name}</span>
+                          <span className="font-body text-caption text-[var(--grey-500)]">{role}</span>
                           <span className="sr-only">{style.initials}</span>
                         </span>
                       </span>
@@ -121,8 +121,8 @@ function TestimonialsSection() {
               count={testimonials.length}
               activeIndex={activeIndex}
               onSelect={setActiveIndex}
-              ariaLabel="Navegación de testimonios"
-              getItemLabel={(index) => `Ir al testimonio ${index + 1}`}
+              ariaLabel={t('home.testimonials.navigation')}
+              getItemLabel={(index) => t('home.testimonials.goTo', { number: index + 1 })}
             />
           </div>
         </Container>
