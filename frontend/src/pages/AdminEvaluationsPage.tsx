@@ -1,24 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { SearchIcon } from "@animateicons/react/lucide";
 
 import AdminLayout from "../layout/AdminLayout";
+import ChildrenModuleTabs from "../components/ChildrenModuleTabs";
 import EvaluationCard from "../components/EvaluationCard";
 import EvaluationFormModal from "../components/EvaluationFormModal";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal";
+import Pagination from "../components/ui/Pagination";
 
 import { evaluationService } from "../services/evaluation";
 import { expedientService } from "../services/expedient";
-import { notify, notifyError } from "../utils/notifications";
+import { notify } from "../utils/notifications";
 import { useEvaluations } from "../hooks/useEvaluations";
+import { useClientPagination } from "../hooks/useClientPagination";
 
 import type { Evaluation } from "../types/evaluation";
 import type { Expedient } from "../types/expedient";
-import SkeletonList from "../components/ui/SkeletonList.tsx";
-import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
+import SkeletonList from "../components/ui/SkeletonList";
+import { useSkeletonCount } from "../hooks/useSkeletonCount";
 
-
-    function AdminEvaluationsPage() {
+function AdminEvaluationsPage() {
     const { t, i18n } = useTranslation();
     const {
         evaluations,
@@ -44,16 +46,15 @@ import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
         void fetchEvaluations(i18n.language);
 
         const loadExpedients = async () => {
-        try {
-            setLoadingExpedients(true);
-
-            const data = await expedientService.getExpedients(0, 100);
-            setExpedients(data.content);
-        } catch (err) {
-            notifyError(t("admin.evaluations.loadExpedientsError"), err);
-        } finally {
-            setLoadingExpedients(false);
-        }
+            try {
+                setLoadingExpedients(true);
+                const data = await expedientService.getExpedients(0, 100);
+                setExpedients(data.content);
+            } catch {
+                notify.error(t("admin.evaluations.loadExpedientsError"));
+            } finally {
+                setLoadingExpedients(false);
+            }
         };
 
         void loadExpedients();
@@ -61,33 +62,37 @@ import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
     const getExpedient = (expedientId: string) => {
         return expedients.find(
-        (expedient) => expedient.id === expedientId,
+            (expedient) => expedient.id === expedientId,
         );
     };
 
-    const filteredEvaluations = evaluations.filter((evaluation, index) => {
+    const filteredEvaluations = useMemo(() => {
         const search = searchTerm.trim().toLowerCase();
-        if (!search) return true;
+        return evaluations.filter((evaluation, index) => {
+            if (!search) return true;
 
-        const expedient = getExpedient(evaluation.expedientId);
-        const source = sourceEvaluations[index] ?? sourceEvaluations.find((item) => item.id === evaluation.id);
+            const expedient = getExpedient(evaluation.expedientId);
+            const source = sourceEvaluations[index] ?? sourceEvaluations.find((item) => item.id === evaluation.id);
 
-        return (
-        expedient?.childName.toLowerCase().includes(search) ||
-        expedient?.studentId.toLowerCase().includes(search) ||
-        evaluation.evaluationDate.toLowerCase().includes(search) ||
-        evaluation.communicationProgress.toLowerCase().includes(search) ||
-        evaluation.languageProgress.toLowerCase().includes(search) ||
-        evaluation.readingProgress.toLowerCase().includes(search) ||
-        evaluation.motorProgress.toLowerCase().includes(search) ||
-        evaluation.teacherObservation.toLowerCase().includes(search) ||
-        (source?.communicationProgress ?? '').toLowerCase().includes(search) ||
-        (source?.languageProgress ?? '').toLowerCase().includes(search) ||
-        (source?.readingProgress ?? '').toLowerCase().includes(search) ||
-        (source?.motorProgress ?? '').toLowerCase().includes(search) ||
-        (source?.teacherObservation ?? '').toLowerCase().includes(search)
-        );
-    });
+            return (
+                expedient?.childName.toLowerCase().includes(search) ||
+                expedient?.studentId.toLowerCase().includes(search) ||
+                evaluation.evaluationDate.toLowerCase().includes(search) ||
+                evaluation.communicationProgress.toLowerCase().includes(search) ||
+                evaluation.languageProgress.toLowerCase().includes(search) ||
+                evaluation.readingProgress.toLowerCase().includes(search) ||
+                evaluation.motorProgress.toLowerCase().includes(search) ||
+                evaluation.teacherObservation.toLowerCase().includes(search) ||
+                (source?.communicationProgress ?? '').toLowerCase().includes(search) ||
+                (source?.languageProgress ?? '').toLowerCase().includes(search) ||
+                (source?.readingProgress ?? '').toLowerCase().includes(search) ||
+                (source?.motorProgress ?? '').toLowerCase().includes(search) ||
+                (source?.teacherObservation ?? '').toLowerCase().includes(search)
+            );
+        });
+    }, [evaluations, sourceEvaluations, searchTerm, expedients]);
+
+    const { currentPage, setPage, totalPages, pageItems: pagedEvaluations } = useClientPagination(filteredEvaluations);
 
     const handleEdit = (evaluation: Evaluation) => {
         setSelectedEvaluation(evaluation);
@@ -102,14 +107,12 @@ import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
         if (!evaluationToDelete) return;
 
         try {
-        await evaluationService.delete(evaluationToDelete.id);
-
-        await fetchEvaluations(i18n.language);
-
-        notify.success(t("admin.evaluations.deleteSuccess"));
+            await evaluationService.delete(evaluationToDelete.id);
+            await fetchEvaluations(i18n.language);
+            notify.success(t("admin.evaluations.deleteSuccess"));
         } catch (err) {
-        notifyError(t("admin.evaluations.deleteError"), err);
-        throw err;
+            notify.error(t("admin.evaluations.deleteError"));
+            throw err;
         }
     };
 
@@ -119,137 +122,149 @@ import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
     const isLoading = loading || loadingExpedients;
 
-    const skeletonCount = useSkeletonCount("admin-evaluations", isLoading, filteredEvaluations.length, 2);
+    const skeletonCount = useSkeletonCount("admin-evaluations", loading, filteredEvaluations.length, 2);
 
     return (
         <AdminLayout>
+            <ChildrenModuleTabs />
             <section className="w-full">
-            <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-                <div>
-                <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
-                    {t("admin.evaluations.title")}
-                </h1>
+                <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                    <div>
+                        <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
+                            {t("admin.evaluations.title")}
+                        </h1>
 
-                <p className="mt-2 font-body text-body-text">
-                    {t("admin.evaluations.description")}
-                </p>
+                        <p className="mt-2 font-body text-body-text">
+                            {t("admin.evaluations.description")}
+                        </p>
+                    </div>
+
+                    <div className="flex w-full items-center gap-3 md:w-auto">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setSelectedEvaluation(null);
+                                setIsFormOpen(true);
+                            }}
+                            className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-all duration-300 hover:scale-105 hover:bg-orange-600"
+                            aria-label={t("admin.evaluations.registerEvaluation")}
+                            title={t("admin.evaluations.registerEvaluation")}
+                        >
+                            <span className="text-3xl font-light leading-none transition-transform duration-300 group-hover:rotate-90">
+                                +
+                            </span>
+                        </button>
+
+                        <div className="flex h-11 min-w-0 flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 md:w-[360px] md:flex-none">
+                            <SearchIcon
+                                size={18}
+                                className="shrink-0 text-neutral-500"
+                                aria-hidden="true"
+                            />
+
+                            <input
+                                type="search"
+                                placeholder={t("admin.evaluations.searchPlaceholder")}
+                                value={searchTerm}
+                                onChange={(event) => {
+                                    setSearchTerm(event.target.value);
+                                }}
+                                aria-label={t("admin.evaluations.searchAriaLabel")}
+                                className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
+                            />
+                        </div>
+                    </div>
                 </div>
 
-                <div className="flex w-full items-center gap-3 md:w-auto">
-                <button
-                    type="button"
-                    onClick={() => {
-                    setSelectedEvaluation(null);
-                    setIsFormOpen(true);
-                    }}
-                    className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-all duration-300 hover:scale-105 hover:bg-orange-600"
-                    aria-label={t("admin.evaluations.registerEvaluation")}
-                    title={t("admin.evaluations.registerEvaluation")}
-                >
-                    <span className="text-3xl font-light leading-none transition-transform duration-300 group-hover:rotate-90">
-                    +
-                    </span>
-                </button>
-
-                <div className="flex h-11 min-w-0 flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 md:w-[360px] md:flex-none">
-                    <SearchIcon
-                    size={18}
-                    className="shrink-0 text-neutral-500"
-                    aria-hidden="true"
-                    />
-
-                    <input
-                    type="search"
-                    placeholder={t("admin.evaluations.searchPlaceholder")}
-                    value={searchTerm}
-                    onChange={(event) => setSearchTerm(event.target.value)}
-                    aria-label={t("admin.evaluations.searchAriaLabel")}
-                    className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
-                    />
-                </div>
-                </div>
-            </div>
-
-            {isLoading && (
-                <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <SkeletonList count={skeletonCount}>{() => <EvaluationCard loading />}</SkeletonList>
-                </div>
-            )}
-
-            {!isLoading && error && (
-                <div className="mt-8 rounded-2xl border border-danger-100 bg-white p-6">
-                <p className="font-body text-body-sm text-danger">
-                    {error}
-                </p>
-                </div>
-            )}
-
-            {!isLoading &&
-                !error &&
-                filteredEvaluations.length > 0 && (
-                <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                    {filteredEvaluations.map((evaluation) => (
-                    <EvaluationCard
-                        key={evaluation.id}
-                        evaluation={evaluation}
-                        expedient={getExpedient(evaluation.expedientId)}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
-                    />
-                    ))}
-                </div>
+                {isLoading && (
+                    <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+                        <SkeletonList count={skeletonCount}>{() => <EvaluationCard loading />}</SkeletonList>
+                    </div>
                 )}
 
-            {!isLoading &&
-                !error &&
-                evaluations.length === 0 && (
-                <div className="mt-8 rounded-2xl border border-dashed border-neutral-200 bg-white px-6 py-16 text-center">
-                    <p className="font-body text-body text-body-text">
-                    {t("admin.evaluations.noEvaluations")}
-                    </p>
-                </div>
+                {!isLoading && error && (
+                    <div className="mt-8 rounded-2xl border border-danger-100 bg-white p-6">
+                        <p className="font-body text-body-sm text-danger">
+                            {error}
+                        </p>
+                    </div>
                 )}
 
-            {!isLoading &&
-                !error &&
-                evaluations.length > 0 &&
-                filteredEvaluations.length === 0 && (
-                <div className="mt-8 rounded-2xl border border-dashed border-neutral-200 bg-white px-6 py-16 text-center">
-                    <p className="font-body text-body text-body-text">
-                    {t("admin.evaluations.noResults")}
-                    </p>
-                </div>
-                )}
+                {!isLoading &&
+                    !error &&
+                    filteredEvaluations.length > 0 && (
+                        <>
+                            <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+                                {pagedEvaluations.map((evaluation: Evaluation) => (
+                                    <EvaluationCard
+                                        key={evaluation.id}
+                                        evaluation={evaluation}
+                                        expedient={getExpedient(evaluation.expedientId)}
+                                        onEdit={handleEdit}
+                                        onDelete={handleDelete}
+                                    />
+                                ))}
+                            </div>
+
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={setPage}
+                            />
+                        </>
+                    )}
+
+                {!isLoading &&
+                    !error &&
+                    evaluations.length === 0 && (
+                        <div className="mt-8 rounded-2xl border border-dashed border-neutral-200 bg-white px-6 py-16 text-center">
+                            <p className="font-body text-body text-body-text">
+                                {t("admin.evaluations.noEvaluations")}
+                            </p>
+                        </div>
+                    )}
+
+                {/* Búsqueda sin resultados */}
+                {!isLoading &&
+                    !error &&
+                    evaluations.length > 0 &&
+                    filteredEvaluations.length === 0 && (
+                        <div className="mt-8 rounded-2xl border border-dashed border-neutral-200 bg-white px-6 py-16 text-center">
+                            <p className="font-body text-body text-body-text">
+                                {t("admin.evaluations.noResults")}
+                            </p>
+                        </div>
+                    )}
             </section>
 
             <EvaluationFormModal
-            isOpen={isFormOpen}
-            evaluation={selectedEvaluation}
-            onClose={() => {
-                setIsFormOpen(false);
-                setSelectedEvaluation(null);
-            }}
-            onSaved={() => {
-                void fetchEvaluations(i18n.language);
-            }}
+                isOpen={isFormOpen}
+                evaluation={selectedEvaluation}
+                onClose={() => {
+                    setIsFormOpen(false);
+                    setSelectedEvaluation(null);
+                }}
+                onSaved={() => {
+                    void fetchEvaluations(i18n.language);
+                }}
             />
 
             {evaluationToDelete && (
-            <DeleteConfirmModal
-                title={t("admin.evaluations.deleteTitle")}
-                message={
-                    deletingExpedient
-                        ? t("admin.evaluations.deleteMessageWithChild", {
-                            date: evaluationToDelete.evaluationDate,
-                            childName: deletingExpedient.childName,
-                        })
-                        : t("admin.evaluations.deleteMessageWithoutChild", {
-                            date: evaluationToDelete.evaluationDate,
-                        })
-                }
-                onConfirm={confirmDelete}
-                onClose={() => setEvaluationToDelete(null)}
-            />
+                <DeleteConfirmModal
+                    title={t("admin.evaluations.deleteTitle")}
+                    message={
+                        deletingExpedient
+                            ? t("admin.evaluations.deleteMessageWithChild", {
+                                date: evaluationToDelete.evaluationDate,
+                                childName: deletingExpedient.childName,
+                            })
+                            : t("admin.evaluations.deleteMessageWithoutChild", {
+                                date: evaluationToDelete.evaluationDate,
+                            })
+                    }
+                    onConfirm={confirmDelete}
+                    onClose={() => setEvaluationToDelete(null)}
+                />
             )}
         </AdminLayout>
     );

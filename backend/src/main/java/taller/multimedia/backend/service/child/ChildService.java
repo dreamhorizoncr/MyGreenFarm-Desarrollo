@@ -49,6 +49,7 @@ public class ChildService {
         String medicalNotes = dto.getMedicalNotes() == null ? null
                 : Sanitizer.requireCleanPreserveLineBreaks("medicalNotes", dto.getMedicalNotes());
 
+        // 4. Reutiliza el carné anterior si quedó libre o genera uno nuevo secuencial
         String studentId = studentIdGeneratorService.generateNextStudentId();
 
         Child child = Child.builder()
@@ -59,6 +60,7 @@ public class ChildService {
                 .lastName(lastName)
                 .birthDate(dto.getBirthDate())
                 .medicalNotes(medicalNotes)
+                .isActive(dto.getIsActive() != null ? dto.getIsActive() : true) // 2. Soporte para isActive
                 .childClubs(new ArrayList<>())
                 .build();
 
@@ -120,7 +122,6 @@ public class ChildService {
                 : Sanitizer.requireCleanPreserveLineBreaks("medicalNotes", dto.getMedicalNotes());
 
         Set<Long> affectedClubIds = new HashSet<>();
-
         Set<Long> targetClubIds = dto.getClubIds() != null ? new HashSet<>(dto.getClubIds()) : new HashSet<>();
 
         List<ChildClub> currentChildClubs = childClubRepository.findByChildId(child.getId());
@@ -173,6 +174,10 @@ public class ChildService {
         child.setBirthDate(dto.getBirthDate());
         child.setMedicalNotes(medicalNotes);
 
+        if (dto.getIsActive() != null) {
+            child.setIsActive(dto.getIsActive());
+        }
+
         Child updated = childRepository.save(child);
         updateClubsAvailableSpots(affectedClubIds);
 
@@ -197,10 +202,18 @@ public class ChildService {
     public List<ChildOptionResponse> getChildrenOptions() {
         return childRepository.findAll()
                 .stream()
+                .filter(child -> Boolean.TRUE.equals(child.getIsActive()))
                 .map(child -> new ChildOptionResponse(
                         child.getId(),
                         child.getStudentId(),
                         child.getStudentId() + " - " + child.getFirstName() + " " + child.getLastName()))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChildResponse> getAvailableChildrenForExpedient() {
+        return childRepository.findAvailableChildrenForExpedient().stream()
+                .map(this::mapToResponse)
                 .toList();
     }
 
@@ -225,6 +238,7 @@ public class ChildService {
         response.setLastName(child.getLastName());
         response.setBirthDate(child.getBirthDate());
         response.setMedicalNotes(child.getMedicalNotes());
+        response.setIsActive(child.getIsActive());
         response.setClubNames(clubNames);
 
         return response;

@@ -9,6 +9,7 @@ import { useExchangeRate } from '../hooks/useExchangeRate.ts'
 import { ExchangeRateWidget } from '../components/currency/ExchangeRateWidget.tsx'
 import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
+import Pagination from '../components/ui/Pagination.tsx'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { notify, notifyError } from '../utils/notifications.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
@@ -166,15 +167,17 @@ function PlanCard({
 function ServicesPage() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
-  const { plans, loading, error, fetchPlans } = useServicePlans()
+
+  const { plans, loading, error, fetchPlans, totalPages } = useServicePlans()
+  const [currentPage, setCurrentPage] = useState(1)
+
   const { data: exchangeRate, loading: exchangeRateLoading, error: exchangeRateError, reload: reloadExchangeRate } = useExchangeRate()
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
   const checkoutWindowRef = useRef<Window | null>(null)
 
   useEffect(() => {
-    void fetchPlans(i18n.language)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [i18n.language])
+    void fetchPlans(currentPage - 1, i18n.language)
+  }, [currentPage, i18n.language])
 
   useEffect(() => {
     const handlePaymentReturn = (event: MessageEvent<{ type?: string }>) => {
@@ -273,7 +276,6 @@ function ServicesPage() {
     setCheckoutLoading(plan.id)
 
     try {
-
       const checkout = await servicePlanService.checkoutPlan(plan.id)
 
       checkoutWindow.location.replace(checkout.url)
@@ -281,7 +283,6 @@ function ServicesPage() {
       const pollInterval = setInterval(async () => {
         try {
           const statusResponse = await servicePlanService.checkPaymentStatus(checkout.gatewaySessionId)
-          console.log("Estado actual del pago:", statusResponse)
           if (statusResponse.isPaid) {
             clearInterval(pollInterval)
             clearInterval(closeCheckInterval)
@@ -341,36 +342,45 @@ function ServicesPage() {
           />
         </Container>
 
-        <Container className="grid grid-cols-1 gap-[20px] md:grid-cols-3">
-          {loading && (
-            <SkeletonList count={skeletonCount}>{() => <PlanCard loading />}</SkeletonList>
-          )}
+        <Container className="flex flex-col gap-[36px]">
+          <div className="grid grid-cols-1 gap-[20px] md:grid-cols-3">
+            {loading && (
+              <SkeletonList count={skeletonCount}>{() => <PlanCard loading />}</SkeletonList>
+            )}
 
-          {error && (
-            <p className="col-span-full p-xl text-center font-body text-body text-danger">
-              {error}
-            </p>
-          )}
+            {error && (
+              <p className="col-span-full p-xl text-center font-body text-body text-danger">
+                {error}
+              </p>
+            )}
 
-          {!loading && !error && plans.length === 0 && (
-            <p className="col-span-full p-xl text-center font-body text-body text-neutral-500">
-              {t('services.empty')}
-            </p>
-          )}
+            {!loading && !error && plans.length === 0 && (
+              <p className="col-span-full p-xl text-center font-body text-body text-neutral-500">
+                {t('services.empty')}
+              </p>
+            )}
 
-          {!loading && !error && plans.map(plan => (
-            <PlanCard
-              key={plan.id}
-              plan={plan}
-              onSubscribe={handleSubscribe}
-              isLoading={checkoutLoading === plan.id}
-              exchangeRate={exchangeRate}
-              idioma={i18n.language}
+            {!loading && !error && plans.map(plan => (
+              <PlanCard
+                key={plan.id}
+                plan={plan}
+                onSubscribe={handleSubscribe}
+                isLoading={checkoutLoading === plan.id}
+                exchangeRate={exchangeRate}
+                idioma={i18n.language}
+              />
+            ))}
+          </div>
+
+          {!loading && !error && plans.length > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
             />
-          ))}
+          )}
         </Container>
       </section>
-
     </div>
   )
 }

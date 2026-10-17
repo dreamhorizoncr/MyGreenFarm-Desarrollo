@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SearchIcon } from "@animateicons/react/lucide";
 
 import AdminLayout from "../layout/AdminLayout";
+import ChildrenModuleTabs from "../components/ChildrenModuleTabs";
 import ChildFormModal from "../components/ChildFormModal";
 import ChildCard from "../components/ChildCard";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal";
+import Pagination from "../components/ui/Pagination";
 
 import { childService } from "../services/child";
 import { notify, notifyError } from "../utils/notifications";
@@ -16,34 +18,37 @@ import SkeletonList from "../components/ui/SkeletonList.tsx";
 import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
 function AdminChildrenPage() {
-  const { children, sourceChildren, loading, error, fetchChildren } = useChildren();
+  const { children, sourceChildren, loading, error, fetchChildren, totalPages } = useChildren();
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [isFormOpen, setIsFormOpen] = useState(false)
-  const [selectedChild, setSelectedChild] = useState<Child | null>(null)
-  const [childToDelete, setChildToDelete] = useState<Child | null>(null)
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedChild, setSelectedChild] = useState<Child | null>(null);
+  const [childToDelete, setChildToDelete] = useState<Child | null>(null);
 
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    void fetchChildren(i18n.language);
-  }, [i18n.language]);
+    void fetchChildren(currentPage - 1, i18n.language);
+  }, [currentPage, i18n.language]);
 
-  const filteredChildren = children.filter((child, index) => {
-    const fullName = `${child.firstName} ${child.lastName}`.toLowerCase();
-    const search = searchTerm.trim().toLowerCase();
-    if (!search) return true;
+  const filteredChildren = useMemo(() => {
+    return children.filter((child, index) => {
+      const fullName = `${child.firstName} ${child.lastName}`.toLowerCase();
+      const search = searchTerm.trim().toLowerCase();
+      if (!search) return true;
 
-    const source = sourceChildren[index] ?? sourceChildren.find((item) => item.id === child.id);
+      const source = sourceChildren[index] ?? sourceChildren.find((item) => item.id === child.id);
 
-    return (
-      fullName.includes(search) ||
-      child.studentId.toLowerCase().includes(search) ||
-      child.parentName.toLowerCase().includes(search) ||
-      (child.medicalNotes ?? '').toLowerCase().includes(search) ||
-      (source?.medicalNotes ?? '').toLowerCase().includes(search)
-    );
-  });
+      return (
+        fullName.includes(search) ||
+        child.studentId.toLowerCase().includes(search) ||
+        child.parentName.toLowerCase().includes(search) ||
+        (child.medicalNotes ?? '').toLowerCase().includes(search) ||
+        (source?.medicalNotes ?? '').toLowerCase().includes(search)
+      );
+    });
+  }, [children, sourceChildren, searchTerm]);
 
   const getSourceChild = (id: number) => sourceChildren.find((item) => item.id === id) ?? children.find((item) => item.id === id) ?? null
 
@@ -53,18 +58,17 @@ function AdminChildrenPage() {
   }
 
   const handleDelete = (child: Child) => {
-  setChildToDelete(child)
-}
+    setChildToDelete(child)
+  }
 
   const confirmDelete = async () => {
     if (!childToDelete) return
 
     try {
       await childService.delete(childToDelete.id)
-
-      await fetchChildren(i18n.language)
-
+      await fetchChildren(currentPage - 1, i18n.language)
       notify.success(t("admin.children.deleteSuccess"))
+      setChildToDelete(null)
     } catch (err) {
       notifyError(t("admin.children.deleteError"), err)
       throw err
@@ -75,6 +79,7 @@ function AdminChildrenPage() {
 
   return (
     <AdminLayout>
+      <ChildrenModuleTabs />
       <section className="w-full">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
@@ -90,7 +95,7 @@ function AdminChildrenPage() {
           <div className="flex w-full items-center gap-3 md:w-auto">
             <button
               type="button"
-              onClick={()=>{
+              onClick={() => {
                 setSelectedChild(null)
                 setIsFormOpen(true)
               }}
@@ -134,47 +139,47 @@ function AdminChildrenPage() {
           </div>
         )}
 
-        {!loading && !error && filteredChildren.length > 0 && (
-          <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {filteredChildren.map((child) => (
-              <ChildCard
-                key={child.id}
-                child={child}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
-        )}
-
-        {!loading && !error && children.length === 0 && (
-          <div className="mt-8 rounded-2xl border border-dashed border-neutral-200 bg-white px-6 py-16 text-center">
-            <p className="font-body text-body text-body-text">
-              {t('admin.children.noResults')}
-            </p>
-          </div>
-        )}
-
-        {!loading &&
-          !error &&
-          children.length > 0 &&
-          filteredChildren.length === 0 && (
+        {!loading && !error && (
+          filteredChildren.length === 0 ? (
             <div className="mt-8 rounded-2xl border border-dashed border-neutral-200 bg-white px-6 py-16 text-center">
               <p className="font-body text-body text-body-text">
                 {t('admin.children.noResults')}
               </p>
             </div>
-          )}
+          ) : (
+            <>
+              <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+                {filteredChildren.map((child: Child) => (
+                  <ChildCard
+                    key={child.id}
+                    child={child}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                  />
+                ))}
+              </div>
+
+              {/* 💡 Componente de Paginación conectado al servidor */}
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </>
+          )
+        )}
       </section>
 
       <ChildFormModal
         isOpen={isFormOpen}
         child={selectedChild}
         onClose={() => {
-            setIsFormOpen(false)
-            setSelectedChild(null)
-          }}
-            onSaved={() => {void fetchChildren(i18n.language)}}
+          setIsFormOpen(false)
+          setSelectedChild(null)
+        }}
+        onSaved={() => {
+          void fetchChildren(currentPage - 1, i18n.language)
+        }}
       />
 
       {childToDelete && (
@@ -185,7 +190,6 @@ function AdminChildrenPage() {
           onClose={() => setChildToDelete(null)}
         />
       )}
-
     </AdminLayout>
   );
 }

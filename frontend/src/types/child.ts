@@ -17,6 +17,7 @@ export interface Child {
     birthDate: string
     medicalNotes: string | null
     clubNames: string[]
+    isActive: boolean
 }
 
 export interface ChildRequest {
@@ -27,6 +28,7 @@ export interface ChildRequest {
     birthDate: string
     medicalNotes: string
     clubIds: number[]
+    isActive: boolean
 }
 
 export interface ChildPage {

@@ -12,7 +12,7 @@ export function useAdmin() {
     setLoading(true)
     setError(null)
     try {
-      const data = await adminService.getUsers(0, 500)
+      const data = await adminService.getUsers(0, 10)
       setUsers(data.content)
     } catch (err) {
       setError(getErrorMessage(err))

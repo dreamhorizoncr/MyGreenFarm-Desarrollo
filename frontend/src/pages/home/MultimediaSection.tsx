@@ -21,7 +21,15 @@ function MultimediaSection() {
 
   return (
     <section id="multimedia" className="relative flex min-h-[100svh] w-full flex-col bg-pink-400">
-      <img src={nubeWhiteDown} alt="" aria-hidden="true" className="block w-full" />
+      <div className="relative w-full overflow-hidden leading-none">
+        <img
+          src={nubeWhiteDown}
+          alt=""
+          aria-hidden="true"
+          data-scroll-bg="green"
+          className="relative -mb-1 block w-[110vw] max-w-none -translate-x-1/2 left-1/2 object-cover"
+        />
+      </div>
 
       <div className="flex w-full flex-1 flex-col justify-center">
         <Container className="flex flex-col items-start gap-700 pt-1500 text-left">

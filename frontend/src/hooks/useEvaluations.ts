@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import { evaluationService } from "../services/evaluation";
@@ -13,6 +13,11 @@ const TRANSLATABLE_FIELDS = [
     "teacherObservation",
 ] as const;
 
+interface CacheData {
+    evaluations: Evaluation[];
+    sourceEvaluations: Evaluation[];
+}
+
 export function useEvaluations() {
     const { t } = useTranslation();
     const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
@@ -20,29 +25,42 @@ export function useEvaluations() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const cacheRef = useRef<Map<string, CacheData>>(new Map());
+
     const fetchEvaluations = async (lang?: string) => {
+        const targetLang = lang?.split('-')[0] || 'es';
+        const cacheKey = `${targetLang}`;
+
+        if (cacheRef.current.has(cacheKey)) {
+            const cached = cacheRef.current.get(cacheKey)!;
+            setSourceEvaluations(cached.sourceEvaluations);
+            setEvaluations(cached.evaluations);
+            return;
+        }
+
         try {
-        setLoading(true);
-        setError(null);
+            setLoading(true);
+            setError(null);
 
-        const data = await evaluationService.getAll();
-        setSourceEvaluations(data);
+            const data = await evaluationService.getAll();
+            const evaluationsList = data; 
+            setSourceEvaluations(evaluationsList);
 
-        const targetLang = lang?.split('-')[0];
-        const items = data.flatMap((evaluation) =>
-            TRANSLATABLE_FIELDS.flatMap((field) => {
-                const originalText = evaluation[field];
-                return originalText
-                    ? [{ entityId: evaluation.id, fieldName: field, originalText }]
-                    : [];
-            }),
-        );
+            const items = evaluationsList.flatMap((evaluation: Evaluation) =>
+                TRANSLATABLE_FIELDS.flatMap((field) => {
+                    const originalText = evaluation[field];
+                    return originalText
+                        ? [{ entityId: evaluation.id, fieldName: field, originalText }]
+                        : [];
+                }),
+            );
 
-        if (targetLang && items.length > 0) {
-            try {
-                const translated = await evaluationService.translateBatch(ENTITY_TYPE, targetLang, items);
-                setEvaluations(
-                    data.map((evaluation) => ({
+            let processedEvaluations = evaluationsList;
+
+            if (targetLang && items.length > 0) {
+                try {
+                    const translated = await evaluationService.translateBatch(ENTITY_TYPE, targetLang, items);
+                    processedEvaluations = evaluationsList.map((evaluation: Evaluation) => ({
                         ...evaluation,
                         communicationProgress:
                             translated[`${evaluation.id}:communicationProgress`] ?? evaluation.communicationProgress,
@@ -54,18 +72,24 @@ export function useEvaluations() {
                             translated[`${evaluation.id}:motorProgress`] ?? evaluation.motorProgress,
                         teacherObservation:
                             translated[`${evaluation.id}:teacherObservation`] ?? evaluation.teacherObservation,
-                    })),
-                );
-            } catch {
-                setEvaluations(data);
+                    }));
+                } catch {
+                    processedEvaluations = evaluationsList;
+                }
             }
-        } else {
-            setEvaluations(data);
-        }
-        } catch {
-        setError(t("admin.evaluations.loadError"));
+
+            setEvaluations(processedEvaluations);
+
+            cacheRef.current.set(cacheKey, {
+                evaluations: processedEvaluations,
+                sourceEvaluations: evaluationsList,
+            });
+
+        } catch (err) {
+            console.error("Error al cargar evaluaciones:", err);
+            setError(t("admin.evaluations.loadError"));
         } finally {
-        setLoading(false);
+            setLoading(false);
         }
     };
 

@@ -1156,6 +1156,8 @@ export default {
         'Are you sure you want to delete "{{name}}"? This action cannot be undone.',
       deleteConfirmFieldLabel: 'To confirm, type "{{name}}"',
       deleteConfirmPlaceholder: 'Type "{{name}}"',
+      isActive: "Active User",
+      isActiveDescription: "Defines whether the guardian is active in the system."
     },
 
     children: {
@@ -1218,6 +1220,8 @@ export default {
       updateErrorToastTitle: 'The child could not be updated',
 
       birthDatePlaceholder: 'Select the date of birth',
+      isActive: "Active Student",
+      isActiveDescription: "Defines whether the student is active in the system."
     },
 
     availability: {

@@ -1,19 +1,25 @@
 package taller.multimedia.backend.controller.parent;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.validation.annotation.Validated;
 import taller.multimedia.backend.dto.parent.ParentRequest;
 import taller.multimedia.backend.model.parent.Parent;
 import taller.multimedia.backend.service.parent.ParentService;
 
 import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("/api/parents")
 public class ParentController {
@@ -38,7 +44,8 @@ public class ParentController {
     @GetMapping
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<Page<Parent>> getAllParents(
-            @PageableDefault(size = 10, sort = "lastName") Pageable pageable) {
+        @RequestParam (defaultValue = "es") String lang,
+        @PageableDefault (size = 10, sort = "lastName") Pageable pageable) {
         Page<Parent> parents = parentService.getAllParents(pageable);
         return ResponseEntity.ok(parents);
     }

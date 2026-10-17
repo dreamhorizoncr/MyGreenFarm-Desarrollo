@@ -15,8 +15,10 @@ export interface TranslationItem {
 }
 
 export const childService = {
-  async getAll(): Promise<ChildPage> {
-    const response = await apiClient.get<ChildPage>("/child");
+  async getAll(page = 0, size = 10): Promise<ChildPage> {
+    const response = await apiClient.get<ChildPage>("/child", {
+      params: { page, size },
+    });
     return response.data;
   },
 
@@ -52,6 +54,20 @@ export const childService = {
     return response.data;
   },
 
+  async getAvailableForExpedient(): Promise<Child[]> {
+    const response = await apiClient.get<Child[]>("/child/available-for-expedient");
+    return response.data;
+  },
+
+  async getAvailableForExpedientOptions(): Promise<ChildOption[]> {
+    const response = await apiClient.get<Child[]>("/child/available-for-expedient");
+    return response.data.map((child) => ({
+      studentId: child.studentId,
+      childName: `${child.firstName} ${child.lastName}`,
+      fullName: `${child.firstName} ${child.lastName}`,
+    }));
+  },
+
   async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {
     if (items.length === 0) return {}
     const response = await apiClient.post<Record<string, string>>("/translations/batch", {
@@ -61,4 +77,6 @@ export const childService = {
     });
     return response.data;
   },
+
+
 };

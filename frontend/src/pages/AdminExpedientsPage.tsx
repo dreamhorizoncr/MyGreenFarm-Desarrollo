@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { SearchIcon } from "@animateicons/react/lucide";
 
 import AdminLayout from "../layout/AdminLayout";
+import ChildrenModuleTabs from "../components/ChildrenModuleTabs";
 
 import ExpedientFormModal from "../components/ExpedientFormModal";
 
@@ -76,6 +77,7 @@ function AdminExpedientsPage() {
 
   return (
     <AdminLayout>
+      <ChildrenModuleTabs />
       <section className="w-full">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
