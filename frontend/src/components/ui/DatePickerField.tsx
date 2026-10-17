@@ -4,7 +4,9 @@ import { CalendarDaysIcon } from '@animateicons/react/lucide'
 import { parseDate } from '@internationalized/date'
 import type { CalendarDate } from '@internationalized/date'
 import CalendarPanel from './CalendarPanel.tsx'
+import { AnimatePresence, motion } from 'motion/react'
 import { usePopoverPosition } from '../../hooks/usePopoverPosition.ts'
+import { useDropdownMotion } from '../../hooks/useDropdownMotion.ts'
 
 interface DatePickerFieldProps {
   value: string
@@ -47,6 +49,7 @@ function DatePickerField({
   const containerRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const position = usePopoverPosition({ triggerRef, open, width: PANEL_WIDTH, height: PANEL_HEIGHT })
+  const dropdownMotion = useDropdownMotion(position?.bottom !== undefined)
   const selected = toCalendarDate(value) ?? null
 
   useEffect(() => {
@@ -96,8 +99,10 @@ function DatePickerField({
         <CalendarDaysIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
       </button>
 
+      <AnimatePresence>
       {open && position && (
-        <dialog
+        <motion.dialog
+          {...dropdownMotion}
           open
           aria-label={ariaLabel}
           style={{ top: position.top, bottom: position.bottom, left: position.left, width: PANEL_WIDTH }}
@@ -113,8 +118,9 @@ function DatePickerField({
             compact
             className="shadow-lg"
           />
-        </dialog>
+        </motion.dialog>
       )}
+      </AnimatePresence>
     </div>
   )
 }

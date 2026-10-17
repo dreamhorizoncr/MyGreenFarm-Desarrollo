@@ -748,9 +748,7 @@ function BookingPage() {
       <main className="flex items-center justify-center px-[30px] py-[30px] md:px-6 md:py-10">
         <section className="relative flex w-full max-w-[333px] flex-col overflow-hidden rounded-[13px] bg-bg-card shadow md:max-w-[900px] md:rounded-2xl">
 
-          {/* Wizard */}
           <div className="flex w-full flex-col px-[30px] pb-[28px] pt-[40px] md:px-[50px] md:py-[40px]">
-            {/* Header */}
             <div className="mb-lg flex items-center gap-sm">
               <button
                 type="button"
@@ -767,12 +765,10 @@ function BookingPage() {
 
             <WizardProgress step={step} />
 
-            {/* Step content */}
             <div className="flex-1 overflow-y-auto">
               {stepContents[step]()}
             </div>
 
-            {/* Navigation buttons */}
             <div className="mt-lg flex items-center justify-between gap-sm">
               {step > 1 ? (
                 <button

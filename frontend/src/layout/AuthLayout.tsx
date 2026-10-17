@@ -29,11 +29,9 @@ function AuthLayout({
   <Navbar />
 
   <main className="flex items-center justify-center px-[30px] py-[30px] md:px-6 md:py-16">
-    {/* Contenedor Principal: crece con el contenido hasta el máximo */}
     <section
       className={`relative flex w-full max-w-[333px] flex-col rounded-[13px] bg-bg-card shadow md:min-h-[500px] md:max-h-[calc(100svh-8rem)] md:flex-row md:rounded-2xl ${scrollable ? "overflow-y-auto" : "overflow-hidden"} ${containerClassName}`}
     >
-      {/* Panel de Ilustración */}
       <div className="relative h-[205px] w-full shrink-0 overflow-hidden md:h-auto md:w-1/2">
         <img
           src={illustration}
@@ -48,9 +46,7 @@ function AuthLayout({
         </div>
       </div>
 
-      {/* Panel Derecho */}
       <div className="relative flex w-full flex-col bg-bg-card md:min-h-0 md:w-1/2">
-        {/* Botón cerrar (fijo, no se mueve con el scroll) */}
         <button
           type="button"
           onClick={() => navigate(closeTo)}
@@ -60,7 +56,6 @@ function AuthLayout({
           <XIcon size={20} aria-hidden="true" />
         </button>
 
-        {/* Zona con scroll: solo scrollea si el contenido no cabe */}
         <div
           className={`flex flex-col md:min-h-0 md:flex-1 md:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${rightPanelClassName}`}
         >

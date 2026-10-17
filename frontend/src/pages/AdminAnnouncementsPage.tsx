@@ -29,6 +29,7 @@ import CardActionButton from "../components/ui/CardActionButton.tsx";
 import ImagePickerButton from "../components/ui/ImagePickerButton.tsx";
 import ImageThumb, { ImageThumbList } from "../components/ui/ImageThumb.tsx";
 import ModalCloseButton from "../components/ui/ModalCloseButton.tsx";
+import TabHighlight from "../components/ui/TabHighlight.tsx";
 
 const emptyForm: AnnouncementRequest = {
   title: "",
@@ -499,76 +500,82 @@ function AnnouncementsPage() {
         </div>
       )}
 
-      <div className="mt-xl flex flex-wrap gap-sm">
+      <div className="isolate mt-xl flex flex-wrap gap-sm">
         <button
           type="button"
           onClick={() => handleCategoryChange("All")}
-          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
+          className={`relative rounded-full border px-md py-xs font-body text-body-sm transition duration-300 ${
             activeCategory === "All"
-              ? "border-green-500 bg-green-500 text-white"
-              : "border-green-500 bg-white text-heading hover:bg-green-50"
+              ? "border-green-500 text-white"
+              : "border-green-500 bg-transparent text-heading hover:bg-green-50"
           }`}
         >
+          {activeCategory === "All" && <TabHighlight layoutId="admin-news-category-tab" className="bg-green-500" />}
           {t("adminNews.filterAll")}
         </button>
 
         <button
           type="button"
           onClick={() => handleCategoryChange("NEWS")}
-          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
+          className={`relative rounded-full border px-md py-xs font-body text-body-sm transition duration-300 ${
             activeCategory === "NEWS"
-              ? "border-green-500 bg-green-500 text-white"
-              : "border-green-500 bg-white text-heading hover:bg-green-50"
+              ? "border-green-500 text-white"
+              : "border-green-500 bg-transparent text-heading hover:bg-green-50"
           }`}
         >
+          {activeCategory === "NEWS" && <TabHighlight layoutId="admin-news-category-tab" className="bg-green-500" />}
           {t("adminNews.typeNews")}
         </button>
 
         <button
           type="button"
           onClick={() => handleCategoryChange("EVENT")}
-          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
+          className={`relative rounded-full border px-md py-xs font-body text-body-sm transition duration-300 ${
             activeCategory === "EVENT"
-              ? "border-green-500 bg-green-500 text-white"
-              : "border-green-500 bg-white text-heading hover:bg-green-50"
+              ? "border-green-500 text-white"
+              : "border-green-500 bg-transparent text-heading hover:bg-green-50"
           }`}
         >
+          {activeCategory === "EVENT" && <TabHighlight layoutId="admin-news-category-tab" className="bg-green-500" />}
           {t("adminNews.typeEvent")}
         </button>
 
         <button
           type="button"
           onClick={() => handleCategoryChange("NOTICE")}
-          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
+          className={`relative rounded-full border px-md py-xs font-body text-body-sm transition duration-300 ${
             activeCategory === "NOTICE"
-              ? "border-green-500 bg-green-500 text-white"
-              : "border-green-500 bg-white text-heading hover:bg-green-50"
+              ? "border-green-500 text-white"
+              : "border-green-500 bg-transparent text-heading hover:bg-green-50"
           }`}
         >
+          {activeCategory === "NOTICE" && <TabHighlight layoutId="admin-news-category-tab" className="bg-green-500" />}
           {t("adminNews.typeNotice")}
         </button>
 
         <button
           type="button"
           onClick={() => handleCategoryChange("GENERAL")}
-          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
+          className={`relative rounded-full border px-md py-xs font-body text-body-sm transition duration-300 ${
             activeCategory === "GENERAL"
-              ? "border-green-500 bg-green-500 text-white"
-              : "border-green-500 bg-white text-heading hover:bg-green-50"
+              ? "border-green-500 text-white"
+              : "border-green-500 bg-transparent text-heading hover:bg-green-50"
           }`}
         >
+          {activeCategory === "GENERAL" && <TabHighlight layoutId="admin-news-category-tab" className="bg-green-500" />}
           {t("adminNews.typeGeneral")}
         </button>
 
         <button
           type="button"
           onClick={() => handleCategoryChange("TRANSPORT")}
-          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
+          className={`relative rounded-full border px-md py-xs font-body text-body-sm transition duration-300 ${
             activeCategory === "TRANSPORT"
-              ? "border-green-500 bg-green-500 text-white"
-              : "border-green-500 bg-white text-heading hover:bg-green-50"
+              ? "border-green-500 text-white"
+              : "border-green-500 bg-transparent text-heading hover:bg-green-50"
           }`}
         >
+          {activeCategory === "TRANSPORT" && <TabHighlight layoutId="admin-news-category-tab" className="bg-green-500" />}
           {t("adminNews.typeTransport")}
         </button>
       </div>
@@ -611,7 +618,6 @@ function AnnouncementsPage() {
         onPageChange={setCurrentPage}
       />
 
-        {/* Vista previa */}
       {previewing && (
         <NewsDetailModal
           announcement={previewing}

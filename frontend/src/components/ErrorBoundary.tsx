@@ -1,4 +1,3 @@
-// ErrorBoundary.tsx
 import React from "react";
 import i18n from "../i18n/index.ts";
 
@@ -19,7 +18,6 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
     console.error("Error capturado por ErrorBoundary:", error, info);
-    // Opcional: enviar a un servicio de logging/monitoreo
   }
 
   render() {

@@ -43,8 +43,6 @@ function CommunityPostPage() {
     return () => { active = false }
   }, [id, i18n])
 
-  // Traducción dinámica de los comentarios (cualquier idioma origen vía Cloud Translation).
-  // El alias es nombre propio y nunca se traduce.
   useEffect(() => {
     if (sourceComments.length === 0) return
     const language = (i18n.resolvedLanguage ?? i18n.language).split('-')[0]

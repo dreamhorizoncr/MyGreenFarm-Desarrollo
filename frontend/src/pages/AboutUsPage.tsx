@@ -87,7 +87,6 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
             <Navbar />
 
             <main className="flex min-w-0 flex-col bg-bg-page">
-            {/* Hero */}
             <section
                 data-scroll-bg="green"
                 className="flex min-h-[280px] items-center bg-green-500 px-[30px] py-[40px] text-center text-white xs:min-h-[320px]"
@@ -103,13 +102,11 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
                 </div>
             </section>
 
-            {/* Our Teachers */}
             <section
                 id="our-teachers"
                 className="relative w-full overflow-hidden"
             >
                 <Container className="relative flex flex-col items-center gap-xl py-1000 sm:py-1200 lg:py-1500">
-                {/* Encabezado */}
                 <div className="relative z-10 flex w-full max-w-[55rem] flex-col items-center gap-700 text-center">
                     <h2 className="m-0 font-heading text-h2 font-bold leading-tight text-heading">
                     {t('aboutUsPage.team.title')}
@@ -120,7 +117,6 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
                     </p>
                 </div>
 
-                {/* Loading */}
                 {teachersLoading && (
                     <div className="grid w-full grid-cols-1 justify-items-center gap-x-lg gap-y-xl sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                     <SkeletonList count={teacherSkeletonCount}>{() => (
@@ -133,7 +129,6 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
                     </div>
                 )}
 
-                {/* Error */}
                 {!teachersLoading && teachersError && (
                     <div className="relative z-10 w-full rounded-3xl bg-[var(--grey-100)] px-lg py-1000 text-center">
                     <p className="m-0 font-body text-body-sm text-body-text">
@@ -142,7 +137,6 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
                     </div>
                 )}
 
-                {/* Docentes */}
                 {!teachersLoading && !teachersError && teachers.length > 0 && (
                     <div className="relative z-10 w-full pt-md sm:pt-lg lg:pt-xl">
                     <div className="grid w-full grid-cols-1 justify-items-center gap-x-lg gap-y-xl sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-md xl:grid-cols-4 xl:gap-x-lg">
@@ -171,9 +165,7 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
                             transition={squishyTransition}
                             className="group relative z-0 flex w-full max-w-[19rem] min-w-0 flex-col items-center gap-md text-center hover:z-10"
                             >
-                            {/* Retrato y decoraciones */}
                             <div className="relative flex h-60 w-60 shrink-0 items-center justify-center sm:h-56 sm:w-56 lg:h-52 lg:w-52 xl:h-56 xl:w-56">
-                                {/* Efecto Squishy */}
                                 <motion.svg
                                 viewBox="0 0 220 220"
                                 fill="none"
@@ -231,7 +223,6 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
                                 />
                                 </motion.svg>
 
-                                {/* Flor */}
                                 <motion.div
                                 aria-hidden="true"
                                 className={`pointer-events-none absolute z-20 ${
@@ -260,7 +251,6 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
                                 </div>
                                 </motion.div>
 
-                                {/* Hoja */}
                                 <motion.div
                                 aria-hidden="true"
                                 className={`pointer-events-none absolute bottom-2 z-20 text-green-500 ${
@@ -283,7 +273,6 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
                                 <Leaf size={40} strokeWidth={1.7} />
                                 </motion.div>
 
-                                {/* Destello */}
                                 <motion.div
                                 aria-hidden="true"
                                 className="pointer-events-none absolute -right-1 top-1/2 z-20 text-link"
@@ -304,7 +293,6 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
                                 <Sparkles size={26} />
                                 </motion.div>
 
-                                {/* Fotografía circular */}
                                 <motion.div
                                 variants={{
                                     rest: {
@@ -350,7 +338,6 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
                                 </motion.div>
                             </div>
 
-                            {/* Información del docente */}
                             <div className="relative z-10 flex w-full min-w-0 flex-col items-center gap-sm">
                                 <motion.h3
                                 variants={{
@@ -380,7 +367,6 @@ const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
                     </div>
                 )}
 
-                {/* Sin docentes */}
                 {!teachersLoading &&
                     !teachersError &&
                     teachers.length === 0 && (

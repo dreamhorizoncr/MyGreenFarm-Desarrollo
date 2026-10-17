@@ -10,6 +10,8 @@ import {
 	XIcon,
 } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
+import { AnimatePresence, motion } from 'motion/react'
+import { useDropdownMotion } from '../hooks/useDropdownMotion.ts'
 import useDismiss from '../hooks/useDismiss.ts'
 import useEmblaCarousel from 'embla-carousel-react'
 import AdminLayout from '../layout/AdminLayout.tsx'
@@ -62,6 +64,7 @@ function YearDropdown({
 	const { t } = useTranslation()
 	const [open, setOpen] = useState(false)
 	const [adding, setAdding] = useState(false)
+	const dropdownMotion = useDropdownMotion()
 	const yearInputRef = useRef<HTMLInputElement>(null)
 	useEffect(() => {
 		if (adding) yearInputRef.current?.focus()
@@ -107,8 +110,9 @@ function YearDropdown({
 				/>
 			</button>
 
+			<AnimatePresence>
 			{open && (
-					<div className="absolute left-0 right-0 top-[calc(100%+6px)] z-20 overflow-hidden rounded-xl border border-neutral-200 bg-white p-xs shadow-lg">
+					<motion.div {...dropdownMotion} className="absolute left-0 right-0 top-[calc(100%+6px)] z-20 overflow-hidden rounded-xl border border-neutral-200 bg-white p-xs shadow-lg">
 						{categories.map((category) => (
 							<div
 								key={category.id}
@@ -203,8 +207,9 @@ function YearDropdown({
 								{t('admin.gallery.addNewYear')}
 							</button>
 						)}
-					</div>
+					</motion.div>
 			)}
+			</AnimatePresence>
 		</div>
 	)
 }
@@ -664,7 +669,6 @@ function AdminGalleryPage() {
 
 			{error && <p className="mt-lg rounded-xl bg-red-50 p-md text-body-sm text-red-700">{error}</p>}
 
-			{/* Formulario de álbum */}
 			{formOpen && (
 				<div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
 					<button
@@ -810,7 +814,6 @@ onCreateYear={handleCreateYear}
 				</div>
 			)}
 
-			{/* Álbumes agrupados por año */}
 			<section className="mt-xl border-t border-neutral-200 pt-xl">
 				<h2 className="font-heading text-2xl font-bold text-heading">
 					{t('admin.gallery.albumsSection')}

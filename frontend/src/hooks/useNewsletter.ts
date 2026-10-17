@@ -13,7 +13,6 @@ export function useNewsletter() {
     const [error, setError] = useState<string | null>(null)
     const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
-    // Acción para suscribir un correo
     const subscribe = useCallback(async (email: string) => {
         setLoading(true)
         setError(null)
@@ -65,7 +64,6 @@ export function useNewsletter() {
         }
     }, [])
 
-    // Acción para enviar el correo masivo (Broadcast)
     const sendBroadcast = useCallback(async (data: BroadcastEmail) => {
         setLoading(true)
         setError(null)

@@ -12,10 +12,8 @@ import java.util.UUID;
 public interface ExpedientRepository extends JpaRepository<Expedient, UUID> {
 
     boolean existsByChildId(Long childId);
-    // 2. Buscar expediente por el carné del niño
     Optional<Expedient> findByChildStudentId(String studentId);
 
-    // 3. Buscar expediente directamente por ID de niño
     Optional<Expedient> findByChildId(Long childId);
 
     boolean existsByChildStudentId(String studentId);

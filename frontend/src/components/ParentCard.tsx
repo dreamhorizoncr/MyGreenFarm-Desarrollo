@@ -10,7 +10,6 @@ interface ParentCardProps {
     loading?: boolean;
 }
 
-// Convierte el código del idioma a un texto más fácil de leer
 function getLanguageLabel(language: string) {
 
     if (language === "en") return "English";
@@ -28,9 +27,7 @@ function ParentCard({
   const { t } = useTranslation();
     return (
         <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm card-hover">
-        {/* Nombre y acciones */}
         <div className="flex items-start justify-between gap-4">
-        {/* Nombre completo */}
         {loading ? (
           <Skeleton shape="line" className="h-6 w-1/2" />
         ) : (
@@ -39,7 +36,6 @@ function ParentCard({
           </h2>
         )}
 
-        {/* Botones de editar y eliminar */}
         <div className="flex shrink-0 items-center gap-2">
             {loading ? (
               <>
@@ -56,7 +52,6 @@ function ParentCard({
         </div>
     </div>
 
-      {/* Información principal */}
         <div className="mt-4 space-y-2 font-body text-body-text">
             {loading ? (
               <>
@@ -78,9 +73,7 @@ function ParentCard({
             )}
         </div>
 
-      {/* Información adicional */}
         <div className="mt-6 flex flex-col gap-5 border-t border-neutral-100 pt-5 sm:flex-row">
-            {/* Correo */}
             <div className="min-w-0 flex-1">
             {loading ? (
               <>
@@ -100,7 +93,6 @@ function ParentCard({
             )}
             </div>
 
-        {/* Contacto */}
             <div className="min-w-0 flex-1">
             {loading ? (
               <>

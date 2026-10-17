@@ -208,7 +208,6 @@ function ServicesPage() {
   }, [navigate])
 
   const handleSubscribe = async (plan: ServicePlan) => {
-    // 1. Abrimos la pestaña en blanco inmediatamente para evitar bloqueadores de pop-ups
     const checkoutWindow = window.open('', '_blank')
 
     if (!checkoutWindow) {

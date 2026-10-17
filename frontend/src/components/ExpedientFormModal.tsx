@@ -27,7 +27,6 @@ interface ExpedientFormModalProps {
   expedient?: Expedient;
 }
 
-// Niveles educativos disponibles
 const educationalLevels: EducationalLevel[] = [
   "LACTANTES",
   "MATERNAL",
@@ -50,14 +49,11 @@ function ExpedientFormModal({
   const { t } = useTranslation();
   const { closing, requestClose } = useModalExit(onClose);
 
-  // Si existe un expediente, el modal está en modo edición
   const isEditing = Boolean(expedient);
 
-  // Lista de estudiantes para el dropdown
   const [childrenOptions, setChildrenOptions] = useState<ChildOption[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
 
-  // Selección de estudiante (studentId)
   const [studentId, setStudentId] = useState(expedient?.studentId ?? "");
 
   const [admisionDate, setAdmisionDate] = useState(
@@ -72,12 +68,10 @@ function ExpedientFormModal({
     expedient?.generalObservations ?? "",
   );
 
-  // Fotografía seleccionada
   const [file, setFile] = useState<File | undefined>();
   const [currentPhotoUrl, setCurrentPhotoUrl] = useState(expedient?.photoUrl ?? null);
   const [confirmPhotoDelete, setConfirmPhotoDelete] = useState(false);
 
-  // Estado del formulario
   const [saving, setSaving] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
@@ -90,7 +84,6 @@ function ExpedientFormModal({
 
   const [isOpen, setIsOpen] = useState(false);
 
-  // Sincronizar searchTerm cuando carga un expediente existente
   useEffect(() => {
     if (expedient && childrenOptions.length > 0) {
       const match = childrenOptions.find((opt) => opt.studentId === expedient.studentId);
@@ -100,7 +93,6 @@ function ExpedientFormModal({
     }
   }, [expedient, childrenOptions]);
 
-  // Opciones filtradas según la búsqueda
   const filteredOptions = childrenOptions.filter((option) => {
     const name = option.fullName ?? option.childName ?? "";
     const query = searchTerm.toLowerCase();
@@ -126,7 +118,6 @@ function ExpedientFormModal({
     void fetchOptions();
   }, []);
 
-  // Guarda o actualiza el expediente
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -154,15 +145,12 @@ function ExpedientFormModal({
     };
 
     try {
-      // Si existe un expediente, lo actualiza
       if (expedient) {
         await expedientService.update(expedient.id, data, file);
       } else {
-        // Si no existe, crea uno nuevo
         await expedientService.create(data, file);
       }
 
-      // Actualiza la lista de expedientes
       await onCreated();
 
       notify.success(
@@ -171,7 +159,6 @@ function ExpedientFormModal({
           : t("admin.expedients.createSuccessToastTitle"),
       );
 
-      // Cierra el modal
       requestClose();
     } catch (error) {
       console.error("Error al guardar el expediente:", error);
@@ -224,7 +211,6 @@ function ExpedientFormModal({
         </div>
 
         <div className="mt-lg grid gap-md md:grid-cols-2">
-          {/* Estudiante (Dropdown) */}
           <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
             {t("admin.expedients.childName")}
 
@@ -234,12 +220,12 @@ function ExpedientFormModal({
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
-                  setStudentId(""); // Resetea ID hasta que elija una opción válida
+                  setStudentId("");
                   setIsOpen(true);
                   if (studentError) setStudentError(null);
                 }}
                 onFocus={() => setIsOpen(true)}
-                onBlur={() => setTimeout(() => setIsOpen(false), 200)} // Delay para permitir click en opciones
+                onBlur={() => setTimeout(() => setIsOpen(false), 200)}
                 placeholder={
                   loadingOptions
                     ? t("admin.expedients.loadingStudents")
@@ -255,7 +241,6 @@ function ExpedientFormModal({
                 aria-hidden="true"
               />
 
-              {/* Desplegable de resultados */}
               {isOpen && !isEditing && (
                 <ul className="absolute z-50 mt-1 max-h-56 w-full overflow-auto rounded-xl border border-neutral-200 bg-white py-2 font-body text-body-sm shadow-lg">
                   {filteredOptions.length > 0 ? (
@@ -286,7 +271,6 @@ function ExpedientFormModal({
             )}
           </div>
 
-          {/* Fecha de admisión */}
           <div className="font-body text-body-sm font-semibold text-heading">
             {t("admin.expedients.admisiondate")}
             <DatePickerField
@@ -302,7 +286,6 @@ function ExpedientFormModal({
             )}
           </div>
 
-          {/* Nivel educativo */}
           <label className="font-body text-body-sm font-semibold text-heading">
             {t("admin.expedients.grade")}
             <div className="mt-xs">
@@ -321,7 +304,6 @@ function ExpedientFormModal({
             </div>
           </label>
 
-          {/* Observaciones */}
           <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
             {t("admin.expedients.notes")}
             <textarea
@@ -344,7 +326,6 @@ function ExpedientFormModal({
             )}
           </label>
 
-          {/* Fotografía */}
           <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
             <span className="block">{t("admin.expedients.photo")}</span>
 

@@ -12,7 +12,6 @@ export function useExpedients() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-  // Obtiene todos los expedientes del backend
     const [totalPages, setTotalPages] = useState(0);
     const fetchExpedients = async (page = 0, lang?: string) => {
         setLoading(true);
@@ -30,8 +29,6 @@ export function useExpedients() {
                 : [],
         );
 
-        // Siempre se llama al batch (como foro): el original puede venir en ES, EN o FR
-        // y debe traducirse a cualquier idioma destino. El backend cachea por hash.
         if (targetLang && items.length > 0) {
             try {
                 const translated = await expedientService.translateBatch(ENTITY_TYPE, targetLang, items);
@@ -43,7 +40,6 @@ export function useExpedients() {
                     })),
                 );
             } catch {
-                // Si falla la traducción se muestra el original
                 setExpedients(data.content);
             }
         } else {

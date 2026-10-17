@@ -1,5 +1,5 @@
 
-const TOKEN_KEY = 'mgf_token' // modificable
+const TOKEN_KEY = 'mgf_token'
 
 export const tokenStorage = {
   getToken(): string | null {

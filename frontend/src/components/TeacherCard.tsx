@@ -41,7 +41,6 @@ function TeacherCard({
   return (
     <article className="card-hover flex min-w-0 flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
 
-      {/* Fotografía */}
       {showPhoto && (
         <div className="mb-lg flex justify-center">
           {loading && (
@@ -70,7 +69,6 @@ function TeacherCard({
         </div>
       )}
 
-      {/* Información principal */}
       <header className="flex min-w-0 items-start justify-between gap-sm">
         {loading ? (
           <div className="min-w-0 flex-1">
@@ -96,7 +94,6 @@ function TeacherCard({
         )}
       </header>
 
-      {/* Información adicional */}
       {loading ? (
         <>
           <Skeleton
@@ -124,7 +121,6 @@ function TeacherCard({
         </>
       )}
 
-      {/* Acciones */}
       <div className="mt-auto flex justify-end gap-xs pt-lg">
         {loading ? (
           <>

@@ -24,6 +24,5 @@ export function useSkeletonCount(key: string, loading: boolean, visibleCount: nu
     if (!loading && visibleCount > 0) writeCount(key, visibleCount)
   }, [key, loading, visibleCount])
 
-  // Se lee al empezar cada carga para que el número no cambie mientras se muestran los skeletons.
   return useMemo(() => (loading ? readCount(key) ?? fallback : fallback), [key, loading, fallback])
 }

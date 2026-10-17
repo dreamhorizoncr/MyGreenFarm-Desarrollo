@@ -8,6 +8,7 @@ import { useCurriculums } from '../hooks/useCurriculums.ts'
 import { notify } from '../utils/notifications.ts'
 import type { Curriculum } from '../types/curriculum.ts'
 import type { VacancyInput } from '../types/vacancy.ts'
+import TabHighlight from '../components/ui/TabHighlight.tsx'
 
 type Tab = 'vacancies' | 'applications'
 
@@ -119,8 +120,8 @@ function AdminCurriculumsPage() {
   }
 
   const tabClassName = (tab: Tab) =>
-    `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
-      activeTab === tab ? 'border-green-500 bg-green-500 text-white' : 'border-green-500 bg-white text-heading hover:bg-green-50'
+    `relative rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
+      activeTab === tab ? 'border-green-500 text-white' : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
     }`
 
   return (
@@ -133,7 +134,7 @@ function AdminCurriculumsPage() {
           {t('admin.curriculums.subtitle')}
         </p>
 
-        <div className="mt-xl mb-lg flex gap-sm" role="tablist">
+        <div className="isolate mt-xl mb-lg flex gap-sm" role="tablist">
           <button
             type="button"
             role="tab"
@@ -141,6 +142,7 @@ function AdminCurriculumsPage() {
             onClick={() => setActiveTab('vacancies')}
             className={tabClassName('vacancies')}
           >
+            {activeTab === 'vacancies' && <TabHighlight layoutId="admin-curriculums-tab" className="bg-green-500" />}
             {t('vacancies.title')}
           </button>
           <button
@@ -150,6 +152,7 @@ function AdminCurriculumsPage() {
             onClick={() => setActiveTab('applications')}
             className={tabClassName('applications')}
           >
+            {activeTab === 'applications' && <TabHighlight layoutId="admin-curriculums-tab" className="bg-green-500" />}
             {t('admin.curriculums.applicationsTab')}
           </button>
         </div>

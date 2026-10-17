@@ -45,7 +45,6 @@ public class AnnouncementImageService {
         List<AnnouncementImage> existingImages = imageRepository.findByAnnouncementId(announcementId);
         long currentGalleryCount = existingImages.stream().filter(img -> !img.getIsCover()).count();
 
-        // Validar si con las nuevas imágenes se excede el límite de 4
         if (!isCover && (currentGalleryCount + files.size() > 4)) {
             throw new IllegalStateException(
                     "Límite excedido. Solo se permiten un máximo de 4 imágenes en la galería. Actualmente hay "
@@ -106,16 +105,13 @@ public class AnnouncementImageService {
         AnnouncementImage image = imageRepository.findById(imageId)
                 .orElseThrow(() -> new RuntimeException("Imagen no encontrada con ID: " + imageId));
 
-        // 1. Extraer la ruta relativa del archivo desde la URL completa de Supabase
         String fileUrl = image.getFileUrl();
         String filePath = extractPathFromUrl(fileUrl, announcementsBucket);
 
-        // 2. Borrar el archivo físico del bucket
         if (filePath != null && !filePath.isEmpty()) {
             storageService.deleteFile(announcementsBucket, filePath);
         }
 
-        // 3. Eliminar el registro de la base de datos
         imageRepository.delete(image);
     }
 
@@ -135,11 +131,8 @@ public class AnnouncementImageService {
         }
     }
 
-    // Método auxiliar para limpiar la URL y obtener la ruta interna del bucket
     private String extractPathFromUrl(String fileUrl, String bucketName) {
         try {
-            // Busca la posición donde aparece el nombre del bucket en la URL y toma todo lo
-            // que sigue
             String marker = "/" + bucketName + "/";
             int index = fileUrl.indexOf(marker);
             if (index != -1) {

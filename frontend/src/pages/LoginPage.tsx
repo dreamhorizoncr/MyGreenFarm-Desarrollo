@@ -32,7 +32,7 @@ function LoginPage() {
     if (emailValidationError) setEmailValidationError(validateEmail(email, t));
     if (passwordValidationError)
       setPasswordValidationError(validatePassword(password, t));
-  }, [i18n.language]); //Le lanza el error en el idioma que esté
+  }, [i18n.language]);
 
   const handleLogin = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -79,7 +79,6 @@ function LoginPage() {
       overtitle={t("login.overtitle")}
       contentClassName="max-w-[303px] md:max-w-[390px]"
     >
-      {/* Título */}
       <h2 className="mb-[35px] text-left font-heading text-[28px] leading-none text-heading md:mb-[55px] md:text-h1">
         {t("login.title")}
       </h2>
@@ -93,9 +92,7 @@ function LoginPage() {
         </p>
       )}
 
-      {/* Formulario */}
       <form onSubmit={handleLogin} noValidate>
-        {/* Correo */}
         <div className="mb-[22px] md:mb-[30px]">
           <TextField
             id="login-email"
@@ -113,7 +110,6 @@ function LoginPage() {
           />
         </div>
 
-        {/* Contraseña */}
         <TextField
           id="login-password"
           label={t("login.password")}
@@ -135,7 +131,6 @@ function LoginPage() {
           />
         </TextField>
 
-        {/* Recuperar contraseña */}
         <div className="mt-[12px] text-right md:mt-[15px]">
           <Link
             to="/forgot-password"
@@ -145,14 +140,12 @@ function LoginPage() {
           </Link>
         </div>
 
-        {/* Error de autenticación */}
         {error && (
           <p className="mt-4 text-center font-body text-body-sm text-danger">
             {error}
           </p>
         )}
 
-        {/* Botón */}
         <div className="mt-[28px] flex justify-center md:mt-[35px]">
           <Button
             type="submit"

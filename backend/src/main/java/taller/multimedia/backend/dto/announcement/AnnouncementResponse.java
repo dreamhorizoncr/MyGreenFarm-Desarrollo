@@ -9,8 +9,8 @@ import taller.multimedia.backend.model.announcement.AnnouncementType;
 @Data
 public class AnnouncementResponse {
         private UUID id;
-        private String title; // Ya traducido (ya sea en inglés u otro lenguaje que pidió el usuario)
-        private String content; // Ya traducido
+        private String title;
+        private String content;
         private AnnouncementType type;
         private LocalDateTime eventDate;
         private String location;

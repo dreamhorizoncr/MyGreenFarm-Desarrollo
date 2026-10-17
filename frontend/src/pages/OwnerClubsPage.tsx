@@ -70,7 +70,6 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
   const maxCap = club?.maxCapacity ?? 0;
   const isFull = available <= 0;
 
-  // Soporta tanto isPublished como published provenientes de la API
   const isPublishedValue = club?.isPublished ?? (club as unknown as { published?: boolean })?.published ?? false;
 
   return (
@@ -85,7 +84,6 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
         </span>
       </div>
 
-      {/* Imagen de portada */}
       <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
         {club?.coverImageUrl ? (
           <img
@@ -121,7 +119,6 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
 
         <div className="my-1 border-t border-neutral-200" />
 
-        {/* Detalles: Horario y Cupos Disponibles */}
         <div className="space-y-2.5 pt-xs text-left">
           {club?.schedule && (
             <div className="font-body text-body-sm leading-relaxed text-neutral-500">
@@ -154,7 +151,6 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
           </div>
         </div>
 
-        {/* Botones de Acción */}
         <div className="mt-auto flex justify-end gap-sm pt-sm">
           <CardActionButton action="edit" label={t("ownerClubs.editClub")} onClick={onEdit} />
           <CardActionButton action="delete" label={t("ownerClubs.deleteModalTitle")} onClick={onDelete} />
@@ -278,7 +274,6 @@ function OwnerClubsPage() {
     editImagesClubIdRef.current = club.id;
     setEditing(club);
 
-    // Leer isPublished soportando ambos nombres del backend
     const currentIsPublished = club.isPublished ?? (club as unknown as { published?: boolean }).published ?? false;
 
     setForm({
@@ -326,7 +321,6 @@ function OwnerClubsPage() {
 
     const publishedBool = Boolean(form.isPublished);
 
-    // Mandamos tanto isPublished como published para asegurar que Spring Boot/Jackson lo mapee en el backend
     const dataToSend: ClubRequest & { published?: boolean } = {
       name: form.name,
       description: form.description,
@@ -413,7 +407,6 @@ function OwnerClubsPage() {
 
   return (
     <AdminLayout>
-      {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-md">
         <div>
           <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
@@ -441,7 +434,6 @@ function OwnerClubsPage() {
         </p>
       )}
 
-      {/* Grid de Cards de Clubes */}
       <section className="mt-xl grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
         {loading && !formOpen && (
           <output className="contents">
@@ -466,7 +458,6 @@ function OwnerClubsPage() {
         </p>
       )}
 
-      {/* Modal Form */}
       {formOpen && (
         <div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
           <button
@@ -559,7 +550,6 @@ function OwnerClubsPage() {
                 />
               </div>
 
-              {/* Opción de Publicar / Visibilidad */}
               <div className="md:col-span-2 flex items-center gap-md rounded-xl border border-neutral-200 bg-neutral-50 p-md">
                 <label className="relative inline-flex items-center cursor-pointer">
                   <span className="sr-only">{t("ownerClubs.publishClubLabel")}</span>
@@ -659,7 +649,6 @@ function OwnerClubsPage() {
         </div>
       )}
 
-      {/* Modal de Confirmación de Eliminación */}
       {clubToDelete && (
         <DeleteConfirmModal
           title={t("ownerClubs.deleteModalTitle")}

@@ -159,7 +159,6 @@ function AdminSidebar() {
       }}
       className="w-full shrink-0 bg-bg-page p-md md:fixed md:bottom-0 md:left-0 md:top-16 md:z-30 md:flex md:w-[260px] md:flex-col md:gap-sm md:overflow-y-auto md:py-lg"
     >
-      {/*Menu Exclusivo de Admin*/}
       <div ref={mobileMenuRef} className="md:hidden">
         <button
           type="button"
@@ -183,7 +182,6 @@ function AdminSidebar() {
           />
         </button>
 
-        {/* Opciones al abrir */}
         {open && (
           <nav className="mt-sm flex flex-col gap-xs rounded-2xl bg-white p-sm shadow">
             {items.map(({ id, icon: Icon, path }) => {
@@ -246,7 +244,6 @@ function AdminSidebar() {
         )}
       </div>
 
-      {/*SideBar*/}
       <nav className="hidden flex-1 flex-col gap-sm md:flex">
         {items.map(({ id, icon: Icon, path }) => {
           const isActive = path === pathname;

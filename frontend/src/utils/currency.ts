@@ -8,21 +8,12 @@ const SYMBOL: Record<Currency, string> = {
 
 const DEFAULT_LOCALE = 'es-CR'
 
-/**
- * Colones que vale 1 unidad de la moneda dada. El colón no tiene tasa: es la
- * moneda pivote contra la que vienen publicadas todas las demás.
- */
 export function rateToColones(currency: Currency, side: RateSide, rates: ExchangeRate): number {
   if (currency === 'CRC') return 1
   if (currency === 'USD') return side === 'buy' ? rates.usdBuy : rates.usdSell
   return side === 'buy' ? rates.eurBuy : rates.eurSell
 }
 
-/**
- * Convierte pasando siempre por colones, así que entre USD y EUR el resultado
- * sale de dividir una tasa por la otra. Si ambos lados son la misma moneda
- * devuelve el monto intacto.
- */
 export function convertCurrency(
   amount: number,
   from: Currency,

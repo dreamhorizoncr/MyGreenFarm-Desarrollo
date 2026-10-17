@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Size;
 
 import lombok.Data;
 
-// DTO class for signup request payload
 @Data
 public class SignupRequest {
 @NotBlank(message = "Email is required")

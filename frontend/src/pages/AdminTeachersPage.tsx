@@ -36,7 +36,6 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
     const currentUser = userStorage.getUser()
 
-    // Obtener docentes
     const fetchTeachers = async () => {
         try {
         setError(null)
@@ -73,7 +72,6 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
         }
     }, [])
 
-    // Buscador
     const filteredTeachers = useMemo(() => {
         const term = searchTerm.trim().toLowerCase()
 
@@ -98,7 +96,6 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
         safeCurrentPage * PAGE_SIZE,
     )
 
-    // Registrar docente
     const handleCreate = async (data: CreateTeacherData) => {
         await adminService.createTeacher(data)
         await fetchTeachers()
@@ -106,7 +103,6 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
         notify.success(t('admin.teachersPage.createdToast'))
     }
 
-    // Editar docente
     const handleUpdate = async (id: string, data: UpdateUserData) => {
         const updated = await adminService.updateUser(id, data)
 
@@ -121,7 +117,6 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
         notify.success(t('admin.teachersPage.updatedToast'))
     }
 
-    // Subir fotografía
     const handleUploadPhoto = async (id: string, file: File) => {
         const updated = await adminService.uploadTeacherPhoto(id, file)
 
@@ -136,7 +131,6 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
         notify.success(t('admin.teachersPage.photoUpdatedToast'))
     }
 
-    // Eliminar fotografía
     const handleDeletePhoto = async (id: string) => {
         await adminService.deleteTeacherPhoto(id)
 
@@ -151,7 +145,6 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
         notify.success(t('admin.teachersPage.photoDeletedToast'))
     }
 
-    // Eliminar docente
     const handleDelete = async (id: string) => {
         try {
         await adminService.deleteUser(id)
@@ -174,7 +167,6 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
         <AdminLayout>
         <section className="w-full">
 
-            {/* Encabezado */}
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
                 <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
@@ -186,7 +178,6 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
                 </p>
             </div>
 
-            {/* Acciones */}
             <div className="flex w-full items-center gap-3 md:w-auto">
                 <button
                 type="button"
@@ -198,7 +189,6 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
                 <span className="text-3xl font-light leading-none">+</span>
                 </button>
 
-                {/* Buscador */}
                 <div className="flex h-11 min-w-0 flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 md:w-[360px] md:flex-none">
                 <SearchIcon
                     size={18}
@@ -221,21 +211,18 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
             </div>
             </div>
 
-            {/* Cargando */}
             {loading && (
             <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <SkeletonList count={skeletonCount}>{() => <TeacherCard loading showPhoto />}</SkeletonList>
             </div>
             )}
 
-            {/* Error */}
             {!loading && error && (
             <p className="mt-8 font-body text-danger">
                 {error}
             </p>
             )}
 
-            {/* Docentees */}
             {!loading && !error && filteredTeachers.length > 0 && (
             <>
                 <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -261,7 +248,6 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
             </>
             )}
 
-            {/* Sin docentes */}
             {!loading && !error && filteredTeachers.length === 0 && (
             <div className="mt-12 text-center">
                 <p className="font-body text-body-text">
@@ -272,7 +258,6 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
             </div>
             )}
 
-            {/* Registrar docente */}
             {isCreateModalOpen && (
             <TeacherFormModal
                 onCreate={handleCreate}
@@ -283,7 +268,6 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
             />
             )}
 
-            {/* Editar docente */}
             {teacherToEdit && (
             <TeacherFormModal
                 teacher={teacherToEdit}
@@ -295,7 +279,6 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
             />
             )}
 
-            {/* Eliminar docente */}
             {teacherToDelete && (
             <DeleteUserModal
                 user={teacherToDelete}

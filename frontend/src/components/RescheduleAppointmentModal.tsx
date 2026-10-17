@@ -8,6 +8,7 @@ import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import type { Appointment } from '../types/appointment.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
+import DatePickerField from './ui/DatePickerField.tsx'
 
 interface RescheduleAppointmentModalProps {
   appointment: Appointment
@@ -131,13 +132,12 @@ function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Readonl
                 <label htmlFor="reschedule-appointment-date" className="font-body text-body font-normal leading-[1.6] text-body-text">
                   {t('teacherAppointments.rescheduleDateLabel')}
                 </label>
-                <input
+                <DatePickerField
                   id="reschedule-appointment-date"
-                  type="date"
                   min={todayISO()}
                   value={date}
-                  onChange={(e) => handleDateChange(e.target.value)}
-                  className="h-[38px] w-full rounded-lg border border-neutral-200 bg-white px-md font-body text-body-sm text-body-text outline-none transition-colors focus:border-green-500"
+                  onChange={handleDateChange}
+                  ariaLabel={t('teacherAppointments.rescheduleDateLabel')}
                 />
 
                 {!date && (

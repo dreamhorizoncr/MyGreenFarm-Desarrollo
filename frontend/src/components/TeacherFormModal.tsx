@@ -155,7 +155,6 @@ import type { CreateTeacherData } from '../services/admin.ts'
             : 'animate-[modal-in_0.32s_ease-out]'
         }`}
         >
-        {/* Encabezado */}
         <div className="flex items-center justify-between gap-md">
             <h2 className="m-0 font-heading text-2xl font-bold text-heading">
             {isEditing ? t('admin.teachersPage.edit') : t('admin.teachersPage.register')}
@@ -169,7 +168,6 @@ import type { CreateTeacherData } from '../services/admin.ts'
             />
         </div>
 
-        {/* Fotografía */}
         <div className="mt-lg flex flex-col items-center gap-sm">
             <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-green-100 bg-green-50">
             {photoPreview || (teacher?.photoUrl && !removePhoto) ? (
@@ -226,7 +224,6 @@ import type { CreateTeacherData } from '../services/admin.ts'
             )}
         </div>
 
-        {/* Campos */}
         <div className="mt-lg grid gap-md md:grid-cols-2">
             <label className="font-body text-body-sm font-semibold text-heading">
             {t('admin.firstName')}
@@ -319,14 +316,12 @@ import type { CreateTeacherData } from '../services/admin.ts'
             )}
         </div>
 
-        {/* Errores */}
         {saveError && (
             <p className="mt-md rounded-xl bg-red-50 p-md font-body text-body-sm text-red-700">
             {saveError}
             </p>
         )}
 
-        {/* Acciones */}
         <div className="mt-lg flex flex-wrap justify-end gap-sm">
             <Button
             variant="secondary"

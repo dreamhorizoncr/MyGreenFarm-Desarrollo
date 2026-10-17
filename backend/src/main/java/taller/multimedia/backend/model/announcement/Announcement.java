@@ -25,7 +25,7 @@ import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "announcements")
-@Data // Lombok annotation to generate getters, setters, and other utility methods
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Announcement {

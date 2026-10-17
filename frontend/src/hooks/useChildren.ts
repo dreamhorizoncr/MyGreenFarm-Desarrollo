@@ -26,8 +26,6 @@ export function useChildren() {
         }
 
         try {
-            // 1. Notas médicas: texto libre del niño (entityType "child").
-            // Nombres, apellidos, studentId, fechas y relationship NO se traducen.
             const notesItems = data.content.flatMap((child) =>
                 child.medicalNotes
                     ? [{ entityId: String(child.id), fieldName: 'medicalNotes', originalText: child.medicalNotes }]
@@ -35,8 +33,6 @@ export function useChildren() {
             )
             const notesTranslated = await childService.translateBatch('child', targetLang, notesItems)
 
-            // 2. Clubes del niño: llegan como nombres sin id; se resuelven contra
-            // el catálogo y se traducen con entityType "club" (solo el nombre).
             const translatedClubName = new Map<string, string>()
             try {
                 const catalog = await clubService.getAll({ size: 50 })
@@ -74,7 +70,6 @@ export function useChildren() {
                 })),
             )
         } catch {
-            // Si falla la traducción se muestra el original
             setChildren(data.content)
         }
         } catch {

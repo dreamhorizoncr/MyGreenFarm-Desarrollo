@@ -23,23 +23,18 @@ function AdminParentsPage() {
 
   const { t } = useTranslation();
 
-  // Guarda lo que escribe el usuario en el buscador
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Controla la apertura del formulario para agregar un padre
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  // Guarda el padre que se está editando
   const [editingParent, setEditingParent] = useState<Parent | null>(null);
 
   const [parentToDelete, setParentToDelete] = useState<Parent | null>(null);
 
-  // Obtiene los padres cuando carga la página
   useEffect(() => {
     void fetchParents(currentPage - 1);
   }, [currentPage]);
 
-  // Filtra los padres por nombre, apellido, identificación o correo
   const normalizedSearchTerm = searchTerm.toLowerCase().trim();
 
   const filteredParents = parents.filter((parent) => {
@@ -58,7 +53,6 @@ function AdminParentsPage() {
     try {
       await parentService.delete(parentToDelete.id);
 
-      // Actualiza la lista después de eliminar
       await fetchParents();
 
       notify.success(t("admin.parents.deleteSuccessToastTitle"));
@@ -75,9 +69,7 @@ function AdminParentsPage() {
   return (
     <AdminLayout>
       <section className="w-full">
-        {/* Encabezado de la página */}
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          {/* Título y descripción */}
           <div>
             <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
               {t("admin.parents.title")}
@@ -88,9 +80,7 @@ function AdminParentsPage() {
             </p>
           </div>
 
-          {/* Acciones y buscador */}
           <div className="flex w-full items-center gap-3 md:w-auto">
-            {/* Botón para agregar un padre */}
             <button
               type="button"
               onClick={() => setIsCreateModalOpen(true)}
@@ -103,7 +93,6 @@ function AdminParentsPage() {
               </span>
             </button>
 
-            {/* Buscador de padres */}
             <div className="flex h-11 min-w-0 flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 md:w-[360px] md:flex-none">
               <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
               <input
@@ -118,17 +107,14 @@ function AdminParentsPage() {
           </div>
         </div>
 
-        {/* Estado de carga */}
         {loading && (
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
             <SkeletonList count={skeletonCount}>{() => <ParentCard loading />}</SkeletonList>
           </div>
         )}
 
-        {/* Error al cargar */}
         {error && <p className="mt-8 font-body text-red-500">Error: {error}</p>}
 
-        {/* Lista de padres */}
         {!loading && !error && filteredParents.length > 0 && (
           <>
             <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -145,7 +131,6 @@ function AdminParentsPage() {
           </>
         )}
 
-        {/* No existen padres */}
         {!loading && !error && parents.length === 0 && (
           <div className="mt-12 text-center">
             <p className="font-body text-body-text">
@@ -154,7 +139,6 @@ function AdminParentsPage() {
           </div>
         )}
 
-        {/* La búsqueda no encontró resultados */}
         {!loading &&
           !error &&
           parents.length > 0 &&
@@ -166,7 +150,6 @@ function AdminParentsPage() {
             </div>
           )}
 
-        {/* Modal para agregar un padre */}
         {isCreateModalOpen && (
           <ParentFormModal
             onClose={() => setIsCreateModalOpen(false)}
@@ -174,7 +157,6 @@ function AdminParentsPage() {
           />
         )}
 
-        {/* Modal para editar un padre */}
         {editingParent && (
           <ParentFormModal
             parent={editingParent}

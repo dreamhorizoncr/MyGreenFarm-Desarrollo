@@ -11,7 +11,6 @@ interface ExpedientCardProps {
   loading?: boolean;
 }
 
-// Convierte YYYY-MM-DD a DD/MM/YYYY
 function formatDate(date: string) {
   const [year, month, day] = date.split("-");
   return `${day}/${month}/${year}`;
@@ -22,9 +21,7 @@ function ExpedientCard({ expedient, onEdit, onDelete, loading = false }: Readonl
 
   return (
     <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm card-hover">
-      {/* Nombre y acciones */}
       <div className="flex items-start justify-between gap-4">
-        {/* Nombre */}
         {loading ? (
           <Skeleton shape="line" className="h-6 w-1/2" />
         ) : (
@@ -33,7 +30,6 @@ function ExpedientCard({ expedient, onEdit, onDelete, loading = false }: Readonl
           </h2>
         )}
 
-        {/* Botones de editar y eliminar */}
         <div className="flex shrink-0 items-center gap-2">
           {loading ? (
             <>
@@ -50,7 +46,6 @@ function ExpedientCard({ expedient, onEdit, onDelete, loading = false }: Readonl
         </div>
       </div>
 
-      {/* Información del expediente */}
       <div className="mt-4 space-y-2 font-body text-body-text">
         {loading ? (
           <>
@@ -72,9 +67,7 @@ function ExpedientCard({ expedient, onEdit, onDelete, loading = false }: Readonl
         )}
       </div>
 
-      {/* Fotografía y observaciones */}
       <div className="mt-6 flex flex-col gap-5 border-t border-neutral-100 pt-5 sm:flex-row">
-        {/* Fotografía */}
         {loading ? (
           <Skeleton shape="rect" className="h-40 w-full shrink-0 sm:w-40" />
         ) : (
@@ -93,7 +86,6 @@ function ExpedientCard({ expedient, onEdit, onDelete, loading = false }: Readonl
           </div>
         )}
 
-        {/* Observaciones */}
         <div className="min-w-0 flex-1">
           {loading ? (
             <>

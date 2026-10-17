@@ -50,7 +50,6 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
         Partial<Record<keyof EvaluationRequest, string | null>>
     >({});
 
-    // Cargar expedientes cuando se abre el modal
     useEffect(() => {
         if (!isOpen) return;
 
@@ -72,7 +71,6 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
         void loadExpedients();
     }, [isOpen, t]);
 
-    // Preparar formulario para crear o editar
     useEffect(() => {
         if (!isOpen) return;
 
@@ -189,7 +187,6 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
             )}
 
             <div className="mt-lg grid gap-md md:grid-cols-2">
-            {/* Expediente + fecha */}
             <label className="font-body text-body-sm font-semibold text-heading">
                 {t("admin.evaluations.formChildLabel")}
                 <div className="mt-xs">
@@ -225,7 +222,6 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
                 )}
             </div>
 
-            {/* Áreas de progreso */}
             <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
                 {t("admin.evaluations.formProgressTitle")}
                 <p className="mt-2xs font-normal text-neutral-500">
@@ -233,7 +229,6 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
                 </p>
             </div>
 
-            {/* Comunicación */}
             <label className="font-body text-body-sm font-semibold text-heading">
                 {t("admin.evaluations.formCommunicationLabel")}
                 <textarea
@@ -254,7 +249,6 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
                 )}
             </label>
 
-            {/* Lenguaje */}
             <label className="font-body text-body-sm font-semibold text-heading">
                 {t("admin.evaluations.formLanguageLabel")}
                 <textarea
@@ -272,7 +266,6 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
                 )}
             </label>
 
-            {/* Lectura */}
             <label className="font-body text-body-sm font-semibold text-heading">
                 {t("admin.evaluations.formReadingLabel")}
                 <textarea
@@ -290,7 +283,6 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
                 )}
             </label>
 
-            {/* Desarrollo motor */}
             <label className="font-body text-body-sm font-semibold text-heading">
                 {t("admin.evaluations.formMotorLabel")}
                 <textarea
@@ -308,7 +300,6 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
                 )}
             </label>
 
-            {/* Observación */}
             <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
                 {t("admin.evaluations.formObservationLabel")}
                 <textarea
@@ -327,7 +318,6 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
             </label>
             </div>
 
-            {/* Botones */}
             <div className="mt-lg flex flex-wrap justify-end gap-sm">
             <button
                 type="button"

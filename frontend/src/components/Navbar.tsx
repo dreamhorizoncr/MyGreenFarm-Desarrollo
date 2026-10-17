@@ -32,7 +32,6 @@ function Brand({ showName = true, linkRef, nameRef }: Readonly<BrandProps>) {
 
 const BRAND_GAP = 12
 
-// El nombre junto al logo se oculta solo cuando el menú no cabe completo en una línea.
 function useBrandNameFits(language: string, isAuthenticated: boolean) {
   const rowRef = useRef<HTMLDivElement>(null)
   const brandRef = useRef<HTMLAnchorElement>(null)
@@ -116,12 +115,10 @@ function Navbar() {
         isProtectedPage ? 'sticky top-0' : 'relative'
       }`}
     >
-      {/* Navbar desktop */}
       <nav className="hidden h-full w-full xl:flex">
         <div ref={rowRef} className="flex h-full w-full items-center justify-between px-[var(--scale-1100)]">
           <Brand showName={showName} linkRef={brandRef} nameRef={nameRef} />
 
-          {/* Menu */}
           <div ref={menuRef} className="flex items-center justify-center gap-6 px-6 font-link 2xl:gap-7">
             {navLinks.map((link) => (
               <Link
@@ -138,7 +135,6 @@ function Navbar() {
             ))}
           </div>
 
-          {/* Opciones */}
           <div ref={optionsRef} className="flex shrink-0 items-center gap-5 2xl:gap-7">
             <LanguageSwitcher />
 
@@ -158,7 +154,6 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* Navbar mobile */}
       <nav className="flex h-full w-full xl:hidden">
         <div
           className={`flex h-full w-full items-center justify-between ${
@@ -184,7 +179,6 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* Fondo */}
       {drawerOpen && (
         <button
           type="button"
@@ -195,13 +189,11 @@ function Navbar() {
         />
       )}
 
-      {/* Drawer */}
       <div
         className={`fixed right-0 top-0 z-[60] h-dvh w-[280px] overflow-y-auto bg-bg-page transition-transform duration-300 ${
           drawerOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4">
           <Brand />
 
@@ -215,7 +207,6 @@ function Navbar() {
           </button>
         </div>
 
-        {/* Menu publico */}
         {!isProtectedPage && (
           <nav className="flex flex-col items-center gap-6 px-6 pt-6 font-link">
             {navLinks.map((link) => (
@@ -233,7 +224,6 @@ function Navbar() {
               </Link>
             ))}
 
-            {/* Usuario */}
             {isAuthenticated && (
               <>
                 <Link
@@ -262,7 +252,6 @@ function Navbar() {
               </>
             )}
 
-            {/* Login */}
             {!isAuthenticated && (
               <Link
                 to="/login"
@@ -277,7 +266,6 @@ function Navbar() {
           </nav>
         )}
 
-            {/* Menu protegido */}
         {isAuthenticated && isProtectedPage && (
           <nav className="flex flex-col items-center gap-6 px-6 pt-6 font-link">
             <Link

@@ -5,6 +5,7 @@ import TermsSection from './TermsSection.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
+import TabHighlight from './ui/TabHighlight.tsx'
 
 type LegalTab = 'terms' | 'privacy'
 
@@ -46,8 +47,8 @@ function TermsModal({ onClose }: Readonly<TermsModalProps>) {
   ]
 
   const tabClassName = (tab: LegalTab) =>
-    `inline-flex h-11 flex-1 items-center justify-center gap-xs rounded-full px-lg font-body text-body-sm font-semibold transition-colors ${
-      activeTab === tab ? 'bg-orange-500 text-white' : 'bg-(--grey-100) text-body-text hover:bg-(--grey-200)'
+    `relative inline-flex h-11 flex-1 items-center justify-center gap-xs rounded-full px-lg font-body text-body-sm font-semibold transition-colors duration-300 ${
+      activeTab === tab ? 'text-white' : 'bg-(--grey-100) text-body-text hover:bg-(--grey-200)'
     }`
 
   return (
@@ -71,7 +72,7 @@ function TermsModal({ onClose }: Readonly<TermsModalProps>) {
         </div>
 
         <div className="flex flex-col gap-lg px-2 pb-4 pt-2.5 text-left md:px-5">
-          <div className="flex gap-sm" role="tablist">
+          <div className="isolate flex gap-sm" role="tablist">
             <button
               type="button"
               role="tab"
@@ -79,6 +80,7 @@ function TermsModal({ onClose }: Readonly<TermsModalProps>) {
               onClick={() => setActiveTab('terms')}
               className={tabClassName('terms')}
             >
+              {activeTab === 'terms' && <TabHighlight layoutId="legal-tab" />}
               <FileTextIcon size={16} aria-hidden="true" />
               {t('legalModal.tabTerms')}
             </button>
@@ -89,6 +91,7 @@ function TermsModal({ onClose }: Readonly<TermsModalProps>) {
               onClick={() => setActiveTab('privacy')}
               className={tabClassName('privacy')}
             >
+              {activeTab === 'privacy' && <TabHighlight layoutId="legal-tab" />}
               <LockIcon size={16} aria-hidden="true" />
               {t('legalModal.tabPrivacy')}
             </button>

@@ -1,10 +1,3 @@
-/**
- * Diccionario de textos de la aplicación en inglés.
- * Cada sección (app, signup, forgotPassword, etc.) agrupa las claves
- * de una pantalla o componente específico, para que los nombres de las claves
- * no se repitan en diferentes partes de la aplicación.
- */
-
 export default {
   teacherDashboard: {
     hello: "Hello",
