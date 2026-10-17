@@ -7,7 +7,6 @@ import {
   ChevronDownIcon,
   CreditCardIcon,
   FileTextIcon,
-  FolderOpenIcon,
   ImageIcon,
   LayoutDashboardIcon,
   LogOutIcon,
@@ -18,8 +17,7 @@ import {
   UserStarIcon,
   ContactRoundIcon,
   MailPlus,
-  SparklesIcon,
-  ClipboardIcon
+  SparklesIcon
 } from '@animateicons/react/lucide'
 import { useLogin } from '../hooks/useLogin.ts'
 import useDismiss from '../hooks/useDismiss.ts'
@@ -36,10 +34,8 @@ type SidebarItemId =
   | "galeria"
   | "cv"
   | "clubs"
-  | "expedientes"
   | "padres"
   | "niños"
-  | "evaluaciones"
   | "miPerfil"
   | "servicios"
   | "disponibilidad"
@@ -99,10 +95,8 @@ function AdminSidebar() {
     { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
     { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
     { id: 'clubs', icon: SparklesIcon, path: '/admin/clubs' },
-    { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
     { id: 'padres', icon: UsersIcon, path: '/admin/parents'},
     { id: 'niños', icon: UserStarIcon, path: '/admin/children' },
-    { id: 'evaluaciones', icon: ClipboardIcon, path: '/admin/evaluations' },
     { id: 'boletín', icon: MailPlus, path: '/admin/newsletter' },
     { id: 'miPerfil', icon: UserIcon, path: '/profile' },
   ]
@@ -114,23 +108,28 @@ function AdminSidebar() {
     { id: 'docentes', icon: ContactRoundIcon, path: '/admin/users' },
     { id: 'profesores', icon: BookOpenTextIcon, path: '/admin/teachers' },
     { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
-    { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
     { id: 'padres', icon: UsersIcon, path: '/admin/parents'},
     { id: 'niños', icon: UserStarIcon, path: '/admin/children' },
-    { id: 'evaluaciones', icon: ClipboardIcon, path: '/admin/evaluations' },
     { id: 'miPerfil', icon: UserIcon, path: '/profile' },
   ]
   const teacherItems: SidebarItem[] = [
     { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
-    { id: 'expedientes', icon: FolderOpenIcon, path: '/admin/expedients' },
-    { id: 'evaluaciones', icon: ClipboardIcon, path: '/admin/evaluations' },
+    { id: 'niños', icon: UserStarIcon, path: '/admin/expedients' },
     { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
     { id: 'miPerfil', icon: UserIcon, path: '/profile' },
   ]
   const itemsByRole: Record<string, SidebarItem[]> = { OWNER: ownerItems, ADMIN: adminItems }
   const items = itemsByRole[role ?? ''] ?? teacherItems
 
-  const activeItem = items.find((item) => item.path === pathname) ?? items[0]
+  const isChildrenModulePath = [
+    '/admin/children',
+    '/admin/expedients',
+    '/admin/evaluations',
+  ].includes(pathname)
+  const activeItem =
+    items.find((item) => item.path === pathname) ??
+    (isChildrenModulePath ? items.find((item) => item.id === 'niños') : undefined) ??
+    items[0]
   const ActiveIcon = activeItem.icon
 
   const handleLogout = async () => {
@@ -185,7 +184,7 @@ function AdminSidebar() {
         {open && (
           <nav className="mt-sm flex flex-col gap-xs rounded-2xl bg-white p-sm shadow">
             {items.map(({ id, icon: Icon, path }) => {
-              const isActive = path === pathname;
+              const isActive = path === pathname || (id === 'niños' && isChildrenModulePath);
               const label = t(`admin.sidebar.${id}`);
 
               return path ? (
@@ -246,7 +245,7 @@ function AdminSidebar() {
 
       <nav className="hidden flex-1 flex-col gap-sm md:flex">
         {items.map(({ id, icon: Icon, path }) => {
-          const isActive = path === pathname;
+          const isActive = path === pathname || (id === 'niños' && isChildrenModulePath);
           const label = t(`admin.sidebar.${id}`);
           const className = `${itemClasses}${
             isActive && filled ? " text-white" : " hover:bg-(--grey-100)"

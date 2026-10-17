@@ -27,7 +27,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import taller.multimedia.backend.model.club.Club;
 import taller.multimedia.backend.model.parent.Parent;
 
 @Entity 
@@ -65,6 +64,9 @@ public class Child {
 
     @Column(name = "medical_notes", columnDefinition = "TEXT")
     private String medicalNotes;
+
+    @Column(name = "is_active", nullable = false, columnDefinition = "boolean default true")
+    private Boolean isActive = true;
 
     @OneToMany(mappedBy = "child", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ChildClub> childClubs = new ArrayList<>();

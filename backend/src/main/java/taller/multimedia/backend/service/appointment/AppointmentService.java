@@ -405,4 +405,32 @@ public class AppointmentService {
             }
         }
     }
+
+    // Se ejecuta todos los días a la medianoche (00:00:00) para limpiar citas canceladas hace más de 30 días
+    @Scheduled(cron = "0 0 0 * * *")
+    @Transactional
+    public void deleteOldCancelledAppointments() {
+        LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
+
+        // Busca las citas canceladas cuya fecha ya pasó hace más de 30 días
+        List<Appointment> oldCancelledAppointments = appointmentRepository.findByStatusAndAppointmentDateBefore(
+                AppointmentStatus.CANCELLED, thirtyDaysAgo);
+
+        if (oldCancelledAppointments.isEmpty()) {
+            return;
+        }
+
+        for (Appointment appointment : oldCancelledAppointments) {
+            try {
+                // Opcional: Si necesitas borrar eventos en calendarios externos o hacer limpieza previa, hazlo aquí
+                
+                appointmentRepository.delete(appointment);
+                
+                log.info("Cita cancelada ID: {} eliminada permanentemente de la base de datos tras 30 días.", appointment.getId());
+
+            } catch (Exception e) {
+                log.error("Error al eliminar la cita cancelada {}: {}", appointment.getId(), e.getMessage());
+            }
+        }
+    }
 }

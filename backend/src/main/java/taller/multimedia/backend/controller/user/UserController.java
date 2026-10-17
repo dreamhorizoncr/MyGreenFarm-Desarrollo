@@ -18,16 +18,21 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Sort;
+import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import taller.multimedia.backend.dto.MessageResponse;
 import taller.multimedia.backend.dto.UpdateUserRequest;
 import taller.multimedia.backend.dto.UserInfoResponse;
 import taller.multimedia.backend.service.user.UserPhotoService;
 import taller.multimedia.backend.service.user.UserService;
 
+@Validated
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/users")
@@ -44,8 +49,10 @@ public class UserController {
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     @GetMapping
     public ResponseEntity<?> getAllUsers(
-            @PageableDefault(size = 10, sort = "lastName") Pageable pageable) {
+            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "10") @Min(1) @Max(10) int size) {
         try {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("lastName"));
             String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
             Page<UserInfoResponse> users = userService.getAllUsers(currentEmail, pageable);
             return ResponseEntity.ok(users);

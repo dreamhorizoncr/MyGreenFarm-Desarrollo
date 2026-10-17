@@ -23,12 +23,15 @@ function Footer() {
 
   return (
     <footer data-scroll-bg="green" className="w-full text-white">
-      <img
-        src={nubeFooter}
-        alt=""
-        aria-hidden="true"
-        className="relative z-10 block h-auto w-full"
-      />
+      <div className="relative w-full overflow-hidden leading-none">
+        <img
+          src={nubeFooter}
+          alt=""
+          aria-hidden="true"
+          data-scroll-bg="green"
+          className="relative -mb-1 block w-[100vw] max-w-none -translate-x-1/2 left-1/2 object-cover"
+        />
+      </div>
       <div className="relative z-20 -mt-[2px] flex w-full flex-col gap-1500 bg-[var(--green-500)] px-[var(--scale-1100)] py-1500 text-center md:px-[var(--scale-1600)] md:text-left">
         <div className="grid w-full gap-xl md:grid-cols-[1.5fr_1fr] md:items-start">
           <div className="flex flex-col items-center gap-md md:items-start">

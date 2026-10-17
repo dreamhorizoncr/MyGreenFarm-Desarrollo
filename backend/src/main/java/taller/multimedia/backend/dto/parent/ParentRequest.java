@@ -25,6 +25,8 @@ public class ParentRequest {
     @NotBlank(message = "El apellido es obligatorio")
     private String lastName;
 
+    private Boolean isActive = true;
+
     private String language;
 
     public String getIdentification() {

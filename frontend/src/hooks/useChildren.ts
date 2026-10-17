@@ -1,81 +1,122 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import i18n from '../i18n/index.ts'
 
 import { childService } from '../services/child'
 import { clubService } from '../services/clubs'
 import type { Child } from '../types/child'
 
+interface CacheData {
+    content: Child[]
+    totalPages: number
+}
+
 export function useChildren() {
     const [children, setChildren] = useState<Child[]>([])
     const [sourceChildren, setSourceChildren] = useState<Child[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [totalPages, setTotalPages] = useState(0)
 
-    const fetchChildren = async (lang?: string) => {
-        try {
-        setLoading(true)
-        setError(null)
+    const cacheRef = useRef<Map<string, CacheData>>(new Map())
 
-        const data = await childService.getAll()
-        setSourceChildren(data.content)
+    const fetchChildren = async (page = 0, lang?: string) => {
+        const targetLang = lang?.split('-')[0] || 'es'
+        const cacheKey = `${page}-${targetLang}`
 
-        const targetLang = lang?.split('-')[0]
-        if (!targetLang) {
-            setChildren(data.content)
+        if (cacheRef.current.has(cacheKey)) {
+            const cached = cacheRef.current.get(cacheKey)!
+            setSourceChildren(cached.content)
+            setChildren(cached.content)
+            setTotalPages(cached.totalPages)
             return
         }
 
         try {
-            const notesItems = data.content.flatMap((child) =>
-                child.medicalNotes
-                    ? [{ entityId: String(child.id), fieldName: 'medicalNotes', originalText: child.medicalNotes }]
-                    : [],
-            )
-            const notesTranslated = await childService.translateBatch('child', targetLang, notesItems)
+            setLoading(true)
+            setError(null)
 
-            const translatedClubName = new Map<string, string>()
+            const data = await childService.getAll(page, 10)
+            const rawContent = data.content
+            
+            setSourceChildren(rawContent)
+            setTotalPages(data.totalPages)
+            
+            setChildren(rawContent)
+
+            let processedContent = rawContent
+
             try {
-                const catalog = await clubService.getAll({ size: 50 })
-                const idByName = new Map(catalog.content.map((club) => [club.name, String(club.id)]))
-                const seen = new Set<string>()
-                const clubItems = data.content.flatMap((child) =>
-                    child.clubNames.flatMap((name) => {
-                        const clubId = idByName.get(name)
-                        if (!clubId || seen.has(clubId)) return []
-                        seen.add(clubId)
-                        return [{ entityId: clubId, fieldName: 'name', originalText: name }]
-                    }),
+                const notesItems = rawContent.flatMap((child) =>
+                    child.medicalNotes
+                        ? [{ entityId: String(child.id), fieldName: 'medicalNotes', originalText: child.medicalNotes }]
+                        : [],
                 )
-                const clubTranslated = await clubService.translateBatch('club', targetLang, clubItems)
-                for (const child of data.content) {
-                    for (const name of child.clubNames) {
-                        const clubId = idByName.get(name)
-                        if (clubId && !translatedClubName.has(name)) {
-                            translatedClubName.set(name, clubTranslated[`${clubId}:name`] ?? name)
+
+                const notesTranslated: Record<string, string> = notesItems.length > 0 
+                    ? await childService.translateBatch('child', targetLang, notesItems).catch(() => ({} as Record<string, string>))
+                    : {}
+
+                const translatedClubName = new Map<string, string>()
+                
+                try {
+                    const catalog = await clubService.getAll({ size: 50 })
+                    const idByName = new Map(catalog.content.map((club) => [club.name, String(club.id)]))
+                    const seen = new Set<string>()
+                    const clubItems = rawContent.flatMap((child) =>
+                        child.clubNames.flatMap((name) => {
+                            const clubId = idByName.get(name)
+                            if (!clubId || seen.has(clubId)) return []
+                            seen.add(clubId)
+                            return [{ entityId: clubId, fieldName: 'name', originalText: name }]
+                        }),
+                    )
+
+                    const clubTranslated: Record<string, string> = clubItems.length > 0
+                        ? await clubService.translateBatch('club', targetLang, clubItems).catch(() => ({} as Record<string, string>))
+                        : {}
+
+                    for (const child of rawContent) {
+                        for (const name of child.clubNames) {
+                            const clubId = idByName.get(name)
+                            if (clubId && !translatedClubName.has(name)) {
+                                translatedClubName.set(name, clubTranslated[`${clubId}:name`] ?? name)
+                            }
                         }
                     }
+                } catch {
                 }
-            } catch {
-                // Si falla el catálogo o su traducción, las pills quedan en original
-            }
 
-            setChildren(
-                data.content.map((child) => ({
+                processedContent = rawContent.map((child) => ({
                     ...child,
                     medicalNotes:
                         notesTranslated[`${child.id}:medicalNotes`] ?? child.medicalNotes,
                     clubNames: child.clubNames.map(
                         (name) => translatedClubName.get(name) ?? name,
                     ),
-                })),
-            )
-        } catch {
-            setChildren(data.content)
-        }
-        } catch {
-        setError(i18n.t('admin.children.loadError'))
+                }))
+
+                setChildren(processedContent)
+            } catch {
+                processedContent = rawContent
+            }
+
+            cacheRef.current.set(cacheKey, {
+                content: processedContent,
+                totalPages: data.totalPages,
+            })
+
+        } catch (err) {
+            if (cacheRef.current.has(cacheKey)) {
+                const cached = cacheRef.current.get(cacheKey)!
+                setSourceChildren(cached.content)
+                setChildren(cached.content)
+                setTotalPages(cached.totalPages)
+                setError(null)
+            } else {
+                setError(i18n.t('admin.children.loadError'))
+            }
         } finally {
-        setLoading(false)
+            setLoading(false)
         }
     }
 
@@ -85,5 +126,6 @@ export function useChildren() {
         loading,
         error,
         fetchChildren,
+        totalPages,
     }
 }

@@ -120,7 +120,7 @@ function ClubsPage() {
             try {
                 setLoading(true)
                 const languageCode = (i18n.resolvedLanguage ?? i18n.language ?? 'es').split('-')[0]
-                const data = await clubService.getAll({ lang: languageCode, size: 50 })
+                const data = await clubService.getAll({ lang: languageCode, size: 10 })
 
                 let clubsWithImages = await Promise.all(
                     data.content.map(async (club) => {
