@@ -11,7 +11,7 @@ import DeleteYearModal from '../components/DeleteYearModal.tsx'
 import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
 import { useGalleryAdmin } from '../hooks/useGalleryAdmin.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
-import { notify } from '../utils/notifications.ts'
+import { notify, notifyError } from '../utils/notifications.ts'
 import { validateMinLength, validateRequired, validateSafeText } from '../utils/validators.ts'
 import type { Gallery, GalleryCategory, GalleryImage, GalleryRequest } from '../types/gallery.ts'
 import ninos2 from '../assets/imgs/ninos2.svg'
@@ -21,6 +21,7 @@ import ImagePickerButton from '../components/ui/ImagePickerButton.tsx'
 import ImageThumb, { ImageThumbList } from '../components/ui/ImageThumb.tsx'
 import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
 import CreatableDropdown from '../components/ui/CreatableDropdown.tsx'
+import FieldHint from '../components/ui/FieldHint.tsx'
 
 const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'])
 const TITLE_MIN_LENGTH = 5
@@ -378,11 +379,8 @@ function AdminGalleryPage() {
 
 			requestClose()
 			void fetchAll(language)
-		} catch {
-			notify.error({
-				title: t('admin.gallery.albumSaveErrorTitle'),
-				description: t('admin.gallery.albumSaveErrorDescription'),
-			})
+		} catch (err) {
+			notifyError(t('admin.gallery.albumSaveErrorTitle'), err)
 		} finally {
 			setSubmitting(false)
 		}
@@ -396,8 +394,8 @@ function AdminGalleryPage() {
 				setFormError(null)
 				notify.success(t('admin.gallery.yearCreatedTitle'))
 			}
-		} catch {
-			notify.error(t('admin.gallery.yearCreateErrorTitle'))
+		} catch (err) {
+			notifyError(t('admin.gallery.yearCreateErrorTitle'), err)
 		}
 	}
 
@@ -410,7 +408,7 @@ function AdminGalleryPage() {
 				description: t('admin.gallery.albumDeletedDescription'),
 			})
 		} catch (err) {
-			notify.error(t('admin.gallery.albumDeleteErrorTitle'))
+			notifyError(t('admin.gallery.albumDeleteErrorTitle'), err)
 			throw err
 		}
 	}
@@ -423,7 +421,7 @@ function AdminGalleryPage() {
 			)
 			notify.success(t('admin.gallery.yearDeletedTitle'))
 		} catch (err) {
-			notify.error(t('admin.gallery.yearDeleteErrorTitle'))
+			notifyError(t('admin.gallery.yearDeleteErrorTitle'), err)
 			throw err
 		}
 	}
@@ -435,7 +433,7 @@ function AdminGalleryPage() {
 			setImages((prev) => prev.filter((image) => image.id !== imageToDelete))
 			notify.success(t('admin.gallery.imageDeletedTitle'))
 		} catch (err) {
-			notify.error(t('admin.gallery.imageDeleteErrorTitle'))
+			notifyError(t('admin.gallery.imageDeleteErrorTitle'), err)
 			throw err
 		}
 	}
@@ -456,8 +454,8 @@ function AdminGalleryPage() {
 					: t('admin.gallery.featuredAddedTitle'),
 			)
 			void fetchAll(language)
-		} catch {
-			notify.error(t('admin.gallery.featuredErrorTitle'))
+		} catch (err) {
+			notifyError(t('admin.gallery.featuredErrorTitle'), err)
 		}
 	}
 
@@ -511,10 +509,11 @@ function AdminGalleryPage() {
 						/>
 					</div>
 
-					<div className="mt-lg grid gap-md md:grid-cols-2">
+					<div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
 						<label className="font-body text-body-sm font-semibold text-heading">
 							{t('admin.gallery.albumTitle')}
 							<input
+								placeholder={t('fields.gallery.title.placeholder')}
 								maxLength={70}
 								value={form.title}
 								onChange={(e) => {
@@ -523,6 +522,7 @@ function AdminGalleryPage() {
 								}}
 								className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
 							/>
+							<FieldHint>{t('fields.gallery.title.hint')}</FieldHint>
 							{titleError && (
 								<p className="mt-xs block font-body text-body-sm font-normal text-danger">{titleError}</p>
 							)}
@@ -546,6 +546,7 @@ function AdminGalleryPage() {
 									delete: t('admin.gallery.deleteYear'),
 								}}
 							/>
+							<FieldHint>{t('fields.gallery.year.hint')}</FieldHint>
 							{formError && (
 								<p className="mt-xs block font-body text-body-sm font-normal text-danger">{formError}</p>
 							)}
@@ -554,6 +555,7 @@ function AdminGalleryPage() {
 						<label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
 							{t('admin.gallery.albumDescription')}
 							<textarea
+								placeholder={t('fields.gallery.description.placeholder')}
 								maxLength={200}
 								rows={4}
 								value={form.description}
@@ -563,6 +565,7 @@ function AdminGalleryPage() {
 								}}
 								className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
 							/>
+							<FieldHint>{t('fields.gallery.description.hint')}</FieldHint>
 							{descriptionError && (
 								<p className="mt-xs block font-body text-body-sm font-normal text-danger">{descriptionError}</p>
 							)}
@@ -621,7 +624,7 @@ function AdminGalleryPage() {
 						</ImageThumbList>
 					)}
 
-					<div className="mt-lg flex flex-wrap justify-end gap-sm">
+					<div className="mt-lg flex justify-end gap-md *:flex-1">
 						<button
 							type="button"
 							onClick={requestClose}
@@ -631,7 +634,7 @@ function AdminGalleryPage() {
 						</button>
 						<button
 							type="submit"
-							disabled={submitting}
+							disabled={submitting || !form.title.trim() || !form.description.trim() || !form.categoryId}
 							className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-60"
 						>
 							{submitting ? t('common.loading') : idleSubmitLabel}

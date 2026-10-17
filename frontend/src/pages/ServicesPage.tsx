@@ -11,7 +11,7 @@ import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
 import { servicePlanService } from '../services/servicePlan.ts'
-import { notify } from '../utils/notifications.ts'
+import { notify, notifyError } from '../utils/notifications.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
 import type { ExchangeRate, Currency } from '../types/exchangeRate.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
@@ -216,7 +216,7 @@ function ServicesPage() {
     if (!checkoutWindow) {
       notify.error({
         title: t('services.checkoutErrorToastTitle'),
-        description: t('services.checkoutErrorToastDescription'),
+        description: t('services.popupBlocked'),
       })
       return
     }
@@ -311,10 +311,7 @@ function ServicesPage() {
       console.error('Error creando la sesión de pago', error)
       checkoutWindow.close()
       setCheckoutLoading(null)
-      notify.error({
-        title: t('services.checkoutErrorToastTitle'),
-        description: t('services.checkoutErrorToastDescription'),
-      })
+      notifyError(t('services.checkoutErrorToastTitle'), error)
     }
   }
 

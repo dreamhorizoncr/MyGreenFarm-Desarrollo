@@ -5,7 +5,7 @@ import ForumCommentsModal from './ForumCommentsModal.tsx'
 import DeleteConfirmModal from '../../ui/DeleteConfirmModal.tsx'
 import Pagination from '../../ui/Pagination.tsx'
 import { forumService } from '../../../services/forum.ts'
-import { notify } from '../../../utils/notifications.ts'
+import { notify, notifyError } from '../../../utils/notifications.ts'
 import type { CommunityComment, CommunityPost } from '../../../types/forum.ts'
 import SkeletonList from '../../ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../../../hooks/useSkeletonCount.ts'
@@ -75,7 +75,7 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
     try {
       await forumService.deleteCommunityPost(postToDelete.id)
     } catch (err) {
-      notify.error(t('adminForum.community.deleteErrorToastTitle'))
+      notifyError(t('adminForum.community.deleteErrorToastTitle'), err)
       throw err
     }
 
@@ -113,7 +113,7 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
     try {
       await forumService.deleteCommunityComment(commentsPost.id, commentToDelete.id)
     } catch (err) {
-      notify.error(t('adminForum.commentDeleteErrorToastTitle'))
+      notifyError(t('adminForum.commentDeleteErrorToastTitle'), err)
       throw err
     } finally {
       setDeletingCommentId(null)

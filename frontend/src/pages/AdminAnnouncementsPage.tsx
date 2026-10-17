@@ -10,7 +10,7 @@ import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 import { useAnnouncements } from "../hooks/useAnnouncements.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
 import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
-import { notify } from "../utils/notifications.ts";
+import { notify, notifyError } from "../utils/notifications.ts";
 import { validateMinLength, validateRequired, validateSafeText } from "../utils/validators.ts";
 import type {
   Announcement,
@@ -31,6 +31,7 @@ import TabHighlight from "../components/ui/TabHighlight.tsx";
 import CreatableDropdown, { type CreatableOption } from "../components/ui/CreatableDropdown.tsx";
 import { useAnnouncementCategories } from "../hooks/useAnnouncementCategories.ts";
 import { getErrorMessage } from "../utils/error.ts";
+import FieldHint from "../components/ui/FieldHint.tsx";
 
 const emptyForm: AnnouncementRequest = {
   title: "",
@@ -176,11 +177,8 @@ function AnnouncementsPage() {
       });
 
       requestClose();
-    } catch {
-      notify.error({
-        title: t("adminNews.saveErrorToastTitle"),
-        description: t("adminNews.saveErrorToastDescription"),
-      });
+    } catch (err) {
+      notifyError(t("adminNews.saveErrorToastTitle"), err)
     }
   };
 
@@ -203,7 +201,7 @@ function AnnouncementsPage() {
         description: t("adminNews.deletedToastDescription"),
       });
     } catch (err) {
-      notify.error(t("adminNews.deleteErrorToastTitle"));
+      notifyError(t("adminNews.deleteErrorToastTitle"), err);
       throw err;
     }
   };
@@ -216,7 +214,7 @@ function AnnouncementsPage() {
       setImages((current) => current.filter((item) => item.id !== imageToDelete.id));
       notify.success(t("adminNews.imageDeletedToastTitle"));
     } catch (err) {
-      notify.error(t("adminNews.imageDeleteErrorToastTitle"));
+      notifyError(t("adminNews.imageDeleteErrorToastTitle"), err);
       throw err;
     }
   };
@@ -243,7 +241,7 @@ function AnnouncementsPage() {
       await fetchAnnouncements(i18n.language, currentPage - 1, 10);
       notify.success(t("adminNews.categoryDeletedToast"));
     } catch (err) {
-      notify.error(t("adminNews.categoryDeleteErrorToast"));
+      notifyError(t("adminNews.categoryDeleteErrorToast"), err);
       throw err;
     }
   };
@@ -322,11 +320,12 @@ function AnnouncementsPage() {
               />
             </div>
 
-            <div className="mt-lg grid gap-md md:grid-cols-2">
+            <div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
               <label className="font-body text-body-sm font-semibold text-heading">
                 {t("adminNews.newsTitle")}
 
                 <input
+                  placeholder={t("fields.news.title.placeholder")}
                   value={form.title}
                   onChange={(e) => {
                     setForm({
@@ -338,6 +337,7 @@ function AnnouncementsPage() {
                   maxLength={70}
                   className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                 />
+                <FieldHint>{t("fields.news.title.hint")}</FieldHint>
                 {titleError && (
                   <span className="mt-xs block font-body text-body-sm font-normal text-danger">{titleError}</span>
                 )}
@@ -363,6 +363,7 @@ function AnnouncementsPage() {
                     delete: t("adminNews.deleteCategory"),
                   }}
                 />
+                <FieldHint>{t("fields.news.category.hint")}</FieldHint>
                 {categoryError && (
                   <span className="mt-xs block font-body text-body-sm font-normal text-danger">{categoryError}</span>
                 )}
@@ -372,6 +373,7 @@ function AnnouncementsPage() {
                 {t("adminNews.newscontent")}
 
                 <textarea
+                  placeholder={t("fields.news.content.placeholder")}
                   rows={6}
                   value={form.content}
                   onChange={(e) => {
@@ -384,6 +386,7 @@ function AnnouncementsPage() {
                   maxLength={4000}
                   className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                 />
+                <FieldHint>{t("fields.news.content.hint")}</FieldHint>
                 {contentError && (
                   <span className="mt-xs block font-body text-body-sm font-normal text-danger">{contentError}</span>
                 )}
@@ -393,6 +396,7 @@ function AnnouncementsPage() {
                 {t("adminNews.newslocation")}
 
                 <input
+                  placeholder={t("fields.news.location.placeholder")}
                   value={form.location}
                   onChange={(e) =>
                     setForm({
@@ -402,6 +406,7 @@ function AnnouncementsPage() {
                   }
                   className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                 />
+                <FieldHint>{t("fields.news.location.hint")}</FieldHint>
                 {locationError && (
                   <span className="mt-xs block font-body text-body-sm font-normal text-danger">{locationError}</span>
                 )}
@@ -437,6 +442,7 @@ function AnnouncementsPage() {
                     />
                   </div>
                 </div>
+                <FieldHint>{t("fields.news.eventDate.hint")}</FieldHint>
               </div>
 
               <div className="font-body text-body-sm font-semibold text-heading">
@@ -497,7 +503,7 @@ function AnnouncementsPage() {
               </ImageThumbList>
             )}
 
-            <div className="mt-lg flex flex-wrap justify-end gap-sm">
+            <div className="mt-lg flex justify-end gap-md *:flex-1">
               <button
                 type="button"
                 onClick={requestClose}
@@ -508,7 +514,7 @@ function AnnouncementsPage() {
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !form.title.trim() || !form.content.trim() || !form.categoryId}
                 className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-60"
               >
                 {loading ? t("adminNews.newssaving") : idleSubmitLabel}

@@ -8,6 +8,7 @@ import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import DatePickerField from './ui/DatePickerField.tsx'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
+import FieldHint from './ui/FieldHint.tsx'
 
 interface EditUserModalProps {
   userToEdit: UserInfo
@@ -85,10 +86,11 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
         />
       </div>
 
-      <div className="mt-lg grid gap-md md:grid-cols-2">
+      <div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
         <label className="font-body text-body-sm font-semibold text-heading">
           {t('admin.firstName')}
           <input
+            placeholder={t('fields.person.firstName.placeholder')}
             type="text"
             value={firstName}
             onChange={(e) => {
@@ -97,6 +99,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
             }}
             className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
           />
+          <FieldHint>{t('fields.person.firstName.hint')}</FieldHint>
           {firstNameValidationError && (
             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{firstNameValidationError}</span>
           )}
@@ -105,6 +108,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
         <label className="font-body text-body-sm font-semibold text-heading">
           {t('admin.lastName')}
           <input
+            placeholder={t('fields.person.lastName.placeholder')}
             type="text"
             value={lastName}
             onChange={(e) => {
@@ -113,6 +117,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
             }}
             className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
           />
+          <FieldHint>{t('fields.person.lastName.hint')}</FieldHint>
           {lastNameValidationError && (
             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{lastNameValidationError}</span>
           )}
@@ -121,6 +126,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
         <label className="font-body text-body-sm font-semibold text-heading">
           {t('admin.email')}
           <input
+            placeholder={t('fields.person.email.placeholder')}
             type="email"
             value={email}
             onChange={(e) => {
@@ -141,6 +147,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
         <div className="font-body text-body-sm font-semibold text-heading">
           {t('admin.birthday')}
           <DatePickerField value={birthday} onChange={setBirthday} ariaLabel={t('admin.birthday')} />
+          <FieldHint>{t('fields.person.birthday.hint')}</FieldHint>
         </div>
       </div>
 
@@ -148,7 +155,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
         <p className="mt-md rounded-xl bg-red-50 p-md font-body text-body-sm text-red-700">{saveError}</p>
       )}
 
-      <div className="mt-lg flex flex-wrap justify-end gap-sm">
+      <div className="mt-lg flex justify-end gap-md *:flex-1">
         <Button
           variant="secondary"
           onClick={requestClose}

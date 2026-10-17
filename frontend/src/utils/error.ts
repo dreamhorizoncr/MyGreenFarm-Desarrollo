@@ -46,7 +46,7 @@ function messageFromBody(data: unknown): string | undefined {
     const fromCode = messageFromCode(data)
     if (fromCode !== undefined) return fromCode
 
-    const message = 'message' in data ? data.message : undefined
+    const message = 'message' in data ? data.message : 'error' in data ? data.error : undefined
     if (typeof message === 'string') return translateKnownMessage(message)
   }
 
@@ -77,7 +77,19 @@ export function getErrorMessage(error: unknown): string {
     }
   }
 
-  return error instanceof Error
+  if (axios.isAxiosError(error)) {
+    if (!error.response) return i18n.t('common.errors.network')
+    const status = error.response.status
+    if (status === 401) return i18n.t('common.sessionExpired')
+    if (status === 403) return i18n.t('common.errors.forbidden')
+    if (status === 404) return i18n.t('common.errors.notFound')
+    if (status === 409) return i18n.t('common.errors.conflict')
+    if (status === 413) return i18n.t('common.errors.fileTooLarge')
+    if (status >= 500) return i18n.t('common.errors.server')
+    return i18n.t('common.errors.invalidData')
+  }
+
+  return error instanceof Error && error.message
     ? error.message
     : i18n.t('common.error')
 }

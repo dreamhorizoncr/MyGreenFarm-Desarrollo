@@ -8,6 +8,7 @@ import { validateRequired, validateSafeText } from '../../../utils/validators.ts
 import ImagePickerButton from '../../ui/ImagePickerButton.tsx'
 import ImageThumb, { ImageThumbList } from '../../ui/ImageThumb.tsx'
 import ModalCloseButton from '../../ui/ModalCloseButton.tsx'
+import FieldHint from '../../ui/FieldHint.tsx'
 
 const ALLOWED_IMAGE_TYPES = new Set([
   'image/png',
@@ -64,8 +65,6 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
   const [imageError, setImageError] = useState('')
   const [altError, setAltError] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string | null>>({})
-  const [pendingChanges, setPendingChanges] = useState<BlogPostInput | null>(null)
-  const [confirmationText, setConfirmationText] = useState('')
 
   const clearFieldError = (field: string) => {
     setFieldErrors((current) => {
@@ -153,11 +152,6 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
       removeImage: form.removeImage,
     }
 
-    if (post) {
-      setPendingChanges(input)
-      return
-    }
-
     onSubmit(input)
   }
 
@@ -189,7 +183,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
           />
         </div>
 
-        <div className="mt-lg grid gap-md md:grid-cols-2">
+        <div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
           <label className="font-body text-body-sm font-semibold text-heading">
             {t('adminForum.postTitle')}
 
@@ -200,9 +194,10 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
                 setForm({ ...form, title: event.target.value })
                 clearFieldError('title')
               }}
-              placeholder={t('adminForum.postTitlePlaceholder')}
+              placeholder={t('fields.post.title.placeholder')}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            <FieldHint>{t('fields.post.title.hint')}</FieldHint>
             {fieldErrors.title && (
               <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.title}</span>
             )}
@@ -218,9 +213,10 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
                 setForm({ ...form, topic: event.target.value })
                 clearFieldError('topic')
               }}
-              placeholder={t('adminForum.postTopicPlaceholder')}
+              placeholder={t('fields.post.topic.placeholder')}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            <FieldHint>{t('fields.post.topic.hint')}</FieldHint>
             {fieldErrors.topic && (
               <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.topic}</span>
             )}
@@ -229,6 +225,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
           <label className="font-body text-body-sm font-semibold text-heading">
             {t('adminForum.authorName')}
             <input
+              placeholder={t('fields.post.authorName.placeholder')}
               maxLength={120}
               value={form.authorName ?? ''}
               onChange={(event) => {
@@ -237,6 +234,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
               }}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            <FieldHint>{t('fields.post.authorName.hint')}</FieldHint>
             {fieldErrors.authorName && (
               <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.authorName}</span>
             )}
@@ -245,6 +243,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
           <label className="font-body text-body-sm font-semibold text-heading">
             {t('adminForum.authorRole')}
             <input
+              placeholder={t('fields.post.authorRole.placeholder')}
               maxLength={40}
               value={form.authorRole ?? ''}
               onChange={(event) => {
@@ -253,6 +252,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
               }}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            <FieldHint>{t('fields.post.authorRole.hint')}</FieldHint>
             {fieldErrors.authorRole && (
               <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.authorRole}</span>
             )}
@@ -269,7 +269,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
                 setForm({ ...form, content: event.target.value })
                 clearFieldError('content')
               }}
-              placeholder={t('adminForum.postContentPlaceholder')}
+              placeholder={t('fields.post.content.placeholder')}
               className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
             />
             {fieldErrors.content && (
@@ -329,9 +329,10 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
                 setAltError('')
                 setForm({ ...form, imageAlt: event.target.value })
               }}
-              placeholder={t('adminForum.imageAltPlaceholder')}
+              placeholder={t('fields.post.imageAlt.placeholder')}
               className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
             />
+            <FieldHint>{t('fields.post.imageAlt.hint')}</FieldHint>
 
             {altError && (
               <span className="mt-xs block text-caption font-normal text-danger">
@@ -341,7 +342,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
           </label>
         </div>
 
-        <div className="mt-xl flex flex-wrap justify-end gap-sm">
+        <div className="mt-xl flex justify-end gap-md *:flex-1">
           <Button
             type="button"
             variant="secondary"
@@ -353,86 +354,14 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
 
           <Button
             type="submit"
+            disabled={!form.title.trim() || !form.topic.trim() || !(form.authorName ?? '').trim() || !(form.authorRole ?? '').trim() || !form.content.trim()}
             className="h-11 w-auto rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
           >
             {post ? t('adminForum.saveChanges') : t('adminForum.publish')}
           </Button>
         </div>
       </form>
-
-      {pendingChanges && (
-        <ConfirmPublishDialog
-          confirmationText={confirmationText}
-          onConfirmationTextChange={setConfirmationText}
-          onCancel={() => { setPendingChanges(null); setConfirmationText('') }}
-          onConfirm={() => onSubmit(pendingChanges)}
-        />
-      )}
     </div>
-  )
-}
-
-interface ConfirmPublishDialogProps {
-  confirmationText: string
-  onConfirmationTextChange: (value: string) => void
-  onCancel: () => void
-  onConfirm: () => void
-}
-
-function ConfirmPublishDialog({ confirmationText, onConfirmationTextChange, onCancel, onConfirm }: Readonly<ConfirmPublishDialogProps>) {
-  const { t } = useTranslation()
-  const { closing, requestClose } = useModalExit(onCancel)
-
-  return (
-        <dialog
-          ref={(el) => {
-            if (el && !el.open) el.showModal()
-          }}
-          onClose={requestClose}
-          aria-label={t('adminForum.confirmChangesTitle')}
-          className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
-        >
-          <div className="relative p-[28px_22px_30px]">
-            <ModalCloseButton
-              onClick={requestClose}
-              aria-label={t('adminForum.close')}
-              className="absolute right-3 top-[26px] z-20"
-            />
-            <h3 className="m-0 text-center font-heading text-h1 font-bold leading-none text-heading">
-              {t('adminForum.confirmChangesTitle')}
-            </h3>
-            <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px]">
-              <p className="m-0 text-left font-body text-body text-neutral-500">
-                {t('adminForum.confirmChangesDescription', { word: t('adminForum.confirmWord') })}
-              </p>
-              <input
-                autoFocus
-                value={confirmationText}
-                onChange={(event) => onConfirmationTextChange(event.target.value)}
-                aria-label={t('adminForum.confirmWord')}
-                className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-body text-body-sm text-body-text outline-none transition-colors focus:border-heading"
-              />
-              <div className="mt-sm flex gap-md">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={requestClose}
-                  className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50"
-                >
-                  {t('adminForum.cancel')}
-                </Button>
-                <Button
-                  type="button"
-                  disabled={confirmationText.trim().toLocaleUpperCase() !== t('adminForum.confirmWord').toLocaleUpperCase()}
-                  onClick={onConfirm}
-                  className="h-11 flex-1 rounded-full font-body text-button font-bold uppercase tracking-wide text-white disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {t('adminForum.confirmChanges')}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </dialog>
   )
 }
 

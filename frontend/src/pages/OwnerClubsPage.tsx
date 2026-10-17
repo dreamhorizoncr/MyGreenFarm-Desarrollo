@@ -12,7 +12,7 @@ import Skeleton from "../components/ui/Skeleton.tsx";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 import Pagination from "../components/ui/Pagination.tsx";
 import { clubService, type TranslationItem } from "../services/clubs.ts";
-import { notify } from "../utils/notifications.ts";
+import { notify, notifyError } from "../utils/notifications.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
 import type {
   ClubRequest,
@@ -28,6 +28,7 @@ import ScheduleField from "../components/ui/ScheduleField.tsx";
 import { emptySchedule, formatSchedule, parseSchedule, serializeSchedule, validateSchedule, type ScheduleValue } from "../utils/schedule.ts";
 import SkeletonList from "../components/ui/SkeletonList.tsx";
 import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
+import FieldHint from "../components/ui/FieldHint.tsx";
 
 const emptyForm: ClubRequest = {
   name: "",
@@ -365,7 +366,7 @@ function OwnerClubsPage() {
       await fetchClubs();
     } catch (err) {
       console.error(err);
-      notify.error(t("ownerClubs.saveErrorToastTitle"));
+      notifyError(t("ownerClubs.saveErrorToastTitle"), err);
     }
   };
 
@@ -387,7 +388,7 @@ function OwnerClubsPage() {
       await fetchClubs();
     } catch (err) {
       console.error(err);
-      notify.error(t("ownerClubs.deleteErrorToastTitle"));
+      notifyError(t("ownerClubs.deleteErrorToastTitle"), err);
       throw err;
     }
   };
@@ -401,7 +402,7 @@ function OwnerClubsPage() {
       notify.success(t("ownerClubs.imageDeletedToastTitle"));
     } catch (err) {
       console.error(err);
-      notify.error(t("ownerClubs.imageDeleteErrorToastTitle"));
+      notifyError(t("ownerClubs.imageDeleteErrorToastTitle"), err);
       throw err;
     }
   };
@@ -511,7 +512,7 @@ function OwnerClubsPage() {
               />
             </div>
 
-            <div className="mt-lg grid gap-md md:grid-cols-2">
+            <div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
               <label className="font-body text-body-sm font-semibold text-heading">
                 {t("ownerClubs.clubName")}
                 <input
@@ -520,9 +521,10 @@ function OwnerClubsPage() {
                   maxLength={150}
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  placeholder={t("ownerClubs.clubNamePlaceholder")}
+                  placeholder={translate("fields.club.name.placeholder")}
                   className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                 />
+                <FieldHint>{translate("fields.club.name.hint")}</FieldHint>
                 {clubFieldErrors.name && (
                   <span className="mt-xs block font-body text-body-sm font-normal text-danger">{clubFieldErrors.name}</span>
                 )}
@@ -541,9 +543,10 @@ function OwnerClubsPage() {
                       maxCapacity: e.target.value ? Number(e.target.value) : undefined,
                     })
                   }
-                  placeholder={t("ownerClubs.capacityPlaceholder")}
+                  placeholder={translate("fields.club.capacity.placeholder")}
                   className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                 />
+                <FieldHint>{translate("fields.club.capacity.hint")}</FieldHint>
               </label>
 
               <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
@@ -555,9 +558,10 @@ function OwnerClubsPage() {
                   rows={5}
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder={t("ownerClubs.descriptionPlaceholder")}
+                  placeholder={translate("fields.club.description.placeholder")}
                   className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                 />
+                <FieldHint>{translate("fields.club.description.hint")}</FieldHint>
                 {clubFieldErrors.description && (
                   <span className="mt-xs block font-body text-body-sm font-normal text-danger">{clubFieldErrors.description}</span>
                 )}
@@ -574,6 +578,7 @@ function OwnerClubsPage() {
                   }}
                   error={clubFieldErrors.schedule}
                 />
+                <FieldHint>{translate("fields.club.schedule.hint")}</FieldHint>
               </div>
 
               <div className="md:col-span-2 flex items-center gap-md rounded-xl border border-neutral-200 bg-neutral-50 p-md">
@@ -655,7 +660,7 @@ function OwnerClubsPage() {
               </ImageThumbList>
             )}
 
-            <div className="mt-lg flex flex-wrap justify-end gap-sm">
+            <div className="mt-lg flex justify-end gap-md *:flex-1">
               <button
                 type="button"
                 onClick={requestClose}
@@ -666,7 +671,8 @@ function OwnerClubsPage() {
 
               <button
                 type="submit"
-                className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
+                disabled={!form.name?.trim() || !form.description?.trim() || !schedule.every((block) => block.days.length > 0 && block.start && block.end)}
+                className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {idleSubmitLabel}
               </button>

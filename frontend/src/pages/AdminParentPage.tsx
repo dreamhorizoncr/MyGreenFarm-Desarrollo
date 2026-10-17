@@ -9,7 +9,7 @@ import Pagination from "../components/ui/Pagination.tsx";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 
 import { parentService } from "../services/parent";
-import { notify } from "../utils/notifications";
+import { notify, notifyError } from "../utils/notifications";
 import { useParents } from "../hooks/useParents";
 
 import type { Parent } from "../types/parent";

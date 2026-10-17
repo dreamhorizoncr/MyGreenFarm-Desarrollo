@@ -13,6 +13,7 @@ import { validateEmail, validateRequired } from '../utils/validators.ts'
 
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 import type { CreateTeacherData } from '../services/admin.ts'
+import FieldHint from './ui/FieldHint.tsx'
 
     interface TeacherFormModalProps {
     teacher?: UserInfo | null
@@ -224,10 +225,11 @@ import type { CreateTeacherData } from '../services/admin.ts'
             )}
         </div>
 
-        <div className="mt-lg grid gap-md md:grid-cols-2">
+        <div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
             <label className="font-body text-body-sm font-semibold text-heading">
             {t('admin.firstName')}
             <input
+                placeholder={t('fields.person.firstName.placeholder')}
                 type="text"
                 value={firstName}
                 onChange={(e) => {
@@ -237,6 +239,7 @@ import type { CreateTeacherData } from '../services/admin.ts'
                 disabled={saving}
                 className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading disabled:opacity-50"
             />
+            <FieldHint>{t('fields.person.firstName.hint')}</FieldHint>
             {firstNameError && (
                 <span className="mt-xs block font-normal text-danger">{firstNameError}</span>
             )}
@@ -245,6 +248,7 @@ import type { CreateTeacherData } from '../services/admin.ts'
             <label className="font-body text-body-sm font-semibold text-heading">
             {t('admin.lastName')}
             <input
+                placeholder={t('fields.person.lastName.placeholder')}
                 type="text"
                 value={lastName}
                 onChange={(e) => {
@@ -254,6 +258,7 @@ import type { CreateTeacherData } from '../services/admin.ts'
                 disabled={saving}
                 className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading disabled:opacity-50"
             />
+            <FieldHint>{t('fields.person.lastName.hint')}</FieldHint>
             {lastNameError && (
                 <span className="mt-xs block font-normal text-danger">{lastNameError}</span>
             )}
@@ -262,6 +267,7 @@ import type { CreateTeacherData } from '../services/admin.ts'
             <label className="font-body text-body-sm font-semibold text-heading">
             {t('admin.email')}
             <input
+                placeholder={t('fields.person.email.placeholder')}
                 type="email"
                 value={email}
                 onChange={(e) => {
@@ -290,12 +296,14 @@ import type { CreateTeacherData } from '../services/admin.ts'
                 disabled={saving}
                 ariaLabel={t('admin.birthday')}
             />
+            <FieldHint>{t('fields.person.birthday.hint')}</FieldHint>
             </div>
 
             {!isEditing && (
             <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
                 {t('admin.teachersPage.password')}
                 <input
+                placeholder={t('fields.person.password.placeholder')}
                 type="password"
                 value={password}
                 onChange={(e) => {
@@ -322,7 +330,7 @@ import type { CreateTeacherData } from '../services/admin.ts'
             </p>
         )}
 
-        <div className="mt-lg flex flex-wrap justify-end gap-sm">
+        <div className="mt-lg flex justify-end gap-md *:flex-1">
             <Button
             variant="secondary"
             onClick={requestClose}

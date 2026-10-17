@@ -14,7 +14,7 @@ import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 
 import { expedientService } from "../services/expedient";
 
-import { notify } from "../utils/notifications.ts";
+import { notify, notifyError } from "../utils/notifications.ts";
 
 import { useExpedients } from "../hooks/useExpedients";
 
@@ -68,7 +68,7 @@ function AdminExpedientsPage() {
     } catch (error) {
       console.error("Error al eliminar el expediente:", error);
 
-      notify.error(t("admin.expedients.deleteErrorToastTitle"));
+      notifyError(t("admin.expedients.deleteErrorToastTitle"), error);
       throw error;
     }
   };
@@ -111,7 +111,7 @@ function AdminExpedientsPage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 aria-label={t("admin.children.searchPlaceholder")}
-                className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
+                className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
               />
             </div>
           </div>

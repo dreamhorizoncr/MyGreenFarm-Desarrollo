@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import { validateRequired, validateSafeText } from "../utils/validators.ts";
 import i18n from "../i18n/index.ts";
 import ModalCloseButton from "./ui/ModalCloseButton.tsx";
+import FieldHint from "./ui/FieldHint.tsx";
 
 interface ChildFormModalProps {
     isOpen: boolean;
@@ -265,7 +266,7 @@ function ChildFormModal({
                     </p>
                 )}
 
-                <div className="mt-lg grid gap-md md:grid-cols-2">
+                <div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
                     <label className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.children.firstName")}
                         <input
@@ -275,9 +276,10 @@ function ChildFormModal({
                                 setForm({ ...form, firstName: e.target.value });
                                 clearFieldError("firstName");
                             }}
-                            placeholder={t("admin.children.firstNamePlaceholder")}
+                            placeholder={t("fields.child.firstName.placeholder")}
                             className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                         />
+                        <FieldHint>{t("fields.child.firstName.hint")}</FieldHint>
                         {fieldErrors.firstName && (
                             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.firstName}</span>
                         )}
@@ -292,9 +294,10 @@ function ChildFormModal({
                                 setForm({ ...form, lastName: e.target.value });
                                 clearFieldError("lastName");
                             }}
-                            placeholder={t("admin.children.lastNamePlaceholder")}
+                            placeholder={t("fields.child.lastName.placeholder")}
                             className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
                         />
+                        <FieldHint>{t("fields.child.lastName.hint")}</FieldHint>
                         {fieldErrors.lastName && (
                             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.lastName}</span>
                         )}
@@ -324,6 +327,7 @@ function ChildFormModal({
                                 className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
                                 aria-label={t("admin.children.parent")}
                             />
+                            <FieldHint>{t("fields.child.parent.hint")}</FieldHint>
                         </div>
                         {fieldErrors.parentIdentification && (
                             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.parentIdentification}</span>
@@ -345,6 +349,7 @@ function ChildFormModal({
                                 className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
                                 aria-label={t("admin.children.relationship")}
                             />
+                            <FieldHint>{t("fields.child.relationship.hint")}</FieldHint>
                         </div>
                     </label>
 
@@ -358,6 +363,7 @@ function ChildFormModal({
                             }
                             ariaLabel={t("admin.children.birthDate")}
                         />
+                        <FieldHint>{t("fields.child.birthDate.hint")}</FieldHint>
                     </div>
 
                     <div className="font-body text-body-sm font-semibold text-heading">
@@ -396,16 +402,17 @@ function ChildFormModal({
                             onChange={(e) =>
                                 setForm({ ...form, medicalNotes: e.target.value })
                             }
-                            placeholder={t("admin.children.medicalNotesPlaceholder")}
+                            placeholder={t("fields.child.medicalNotes.placeholder")}
                             className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                         />
+                        <FieldHint>{t("fields.child.medicalNotes.hint")}</FieldHint>
                         {fieldErrors.medicalNotes && (
                             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.medicalNotes}</span>
                         )}
                     </label>
                 </div>
 
-                <div className="mt-lg flex flex-wrap justify-end gap-sm">
+                <div className="mt-lg flex justify-end gap-md *:flex-1">
                     <button
                         type="button"
                         onClick={onClose}
@@ -417,7 +424,7 @@ function ChildFormModal({
 
                     <button
                         type="submit"
-                        disabled={saving}
+                        disabled={saving || !form.firstName.trim() || !form.lastName.trim() || !form.parentIdentification}
                         className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         {submitLabel}

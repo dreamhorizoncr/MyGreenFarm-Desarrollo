@@ -11,7 +11,7 @@ import Pagination from "../components/ui/Pagination";
 
 import { evaluationService } from "../services/evaluation";
 import { expedientService } from "../services/expedient";
-import { notify } from "../utils/notifications";
+import { notify, notifyError } from "../utils/notifications";
 import { useEvaluations } from "../hooks/useEvaluations";
 import { useClientPagination } from "../hooks/useClientPagination";
 

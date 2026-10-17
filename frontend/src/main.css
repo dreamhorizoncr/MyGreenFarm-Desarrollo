@@ -94,11 +94,12 @@
 .testimonial-carousel__arrow--right { right: max(1rem, calc(50% - 470px)); }
 
 @media (max-width: 767px) {
-  .testimonial-carousel { min-height: 480px; }
+  .testimonial-carousel { min-height: 550px; }
+  .testimonial-card__quote { font-size: var(--text-body); }
   .testimonial-card { width: calc(100% - 2rem); min-height: 360px; padding: 24px; }
   .testimonial-card[data-position="left"] { transform: translateX(calc(-50% - 20px)) scale(0.92) rotateY(5deg); }
   .testimonial-card[data-position="right"] { transform: translateX(calc(-50% + 20px)) scale(0.92) rotateY(-5deg); }
-  .testimonial-carousel__arrow { top: auto; bottom: -12px; }
+  .testimonial-carousel__arrow { top: auto; bottom: 0; }
   .testimonial-carousel__arrow--left { left: calc(50% - 52px); }
   .testimonial-carousel__arrow--right { right: calc(50% - 52px); }
 }

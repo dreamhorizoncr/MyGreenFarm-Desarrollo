@@ -385,7 +385,6 @@ export default {
     updatedToastTitle: "Actualité mise à jour",
     updatedToastDescription: "Les modifications ont été enregistrées avec succès.",
     saveErrorToastTitle: "Impossible d'enregistrer l'actualité",
-    saveErrorToastDescription: "Réessayez dans quelques secondes.",
     deletedToastTitle: "Actualité supprimée",
     deletedToastDescription: "L'actualité a été supprimée avec succès.",
     deleteErrorToastTitle: "Impossible de supprimer l'actualité",
@@ -401,10 +400,6 @@ export default {
     loadPostsError: "Les articles n'ont pas pu être chargés",
     loadOwnPostsError: "Vos publications n'ont pas pu être chargées",
     deleteConfirmFieldLabel: 'Pour confirmer, saisissez le titre « {{title}} »',
-    confirmChangesTitle: 'Confirmer les modifications',
-    confirmChangesDescription: 'Saisissez « {{word}} » pour enregistrer les modifications.',
-    confirmWord: 'CONFIRMER',
-    confirmChanges: 'Confirmer les modifications',
     title: "Gestion du Forum",
     description:
       "Publiez des recherches pour le blog et modérez les commentaires de la communauté.",
@@ -414,15 +409,12 @@ export default {
     newPost: "Nouvelle recherche",
     editPost: "Modifier la recherche",
     postTitle: "Titre",
-    postTitlePlaceholder: "Par exemple : Le jardin comme classe",
     postTopic: "Thème",
-    postTopicPlaceholder: "Par exemple : Jardin scolaire",
     authorName: "Nom de l'auteur",
     authorRole: "Rôle de l'auteur",
     defaultRole: "Enseignant de My Green Farm",
     defaultOwnerRole: "Administration de My Green Farm",
     postContent: "Contenu",
-    postContentPlaceholder: "Rédigez la recherche complète.",
     contentHint:
       "Laissez une ligne vide entre les paragraphes pour qu'ils se séparent à la lecture.",
     postImage: "Image",
@@ -431,7 +423,6 @@ export default {
     removeImage: "Retirer l'image",
     invalidImageType: "Ce fichier n'est pas une image valide.",
     imageAlt: "Texte alternatif de l'image",
-    imageAltPlaceholder: "Décrivez l'image pour les personnes qui ne la voient pas.",
     imageAltRequired: "Si vous publiez une image, décrivez-la.",
     publish: "Ajouter",
     saveChanges: "Enregistrer les modifications",
@@ -622,6 +613,15 @@ export default {
     backToProfile: "Retour à mon profil",
   },
   common: {
+    errors: {
+      network: 'Impossible de se connecter au serveur. Vérifiez votre connexion et réessayez.',
+      forbidden: "Vous n'avez pas l'autorisation d'effectuer cette action.",
+      notFound: "L'élément n'existe plus. Quelqu'un l'a peut-être supprimé ; rechargez la page.",
+      conflict: 'Un enregistrement avec ces données existe déjà ou entre en conflit avec un autre.',
+      fileTooLarge: 'Le fichier est trop volumineux. Choisissez-en un plus léger.',
+      server: 'Un problème est survenu sur le serveur. Réessayez dans quelques minutes.',
+      invalidData: 'Vérifiez les données saisies et réessayez.',
+    },
     errorBoundary: {
       title: "Une erreur s'est produite",
       description: 'Veuillez recharger la page. Si le problème persiste, contactez-nous.',
@@ -872,12 +872,9 @@ export default {
       newClub: "Nouveau Club",
       editClub: "Modifier le Club",
       clubName: "Nom du Club",
-      clubNamePlaceholder: "Ex. Club de Robotique",
       descriptionLabel: "Description",
-      descriptionPlaceholder: "Détaillez les activités du club...",
       schedule: "Horaire",
       maxCapacity: "Capacité maximale",
-      capacityPlaceholder: "Ex. 20",
       capacityLabel: "places",
       capacityUnit: "places.",
       availableSpots: "Capacité maximale",
@@ -948,16 +945,10 @@ export default {
       formProgressTitle: "Domaines de progrès",
       formProgressHint: "Décrivez les progrès observés dans chaque domaine.",
       formCommunicationLabel: "Communication",
-      formCommunicationPlaceholder: "Décrivez les progrès en communication...",
       formLanguageLabel: "Langage",
-      formLanguagePlaceholder: "Décrivez les progrès en langage...",
       formReadingLabel: "Lecture",
-      formReadingPlaceholder: "Décrivez les progrès en lecture...",
       formMotorLabel: "Développement moteur",
-      formMotorPlaceholder: "Décrivez les progrès moteurs...",
       formObservationLabel: "Observation de l'enseignant",
-      formObservationPlaceholder:
-        "Ajoutez des observations générales sur les performances de l'enfant...",
       formCancel: "Annuler",
       formSaving: "Enregistrement...",
       formSaveChanges: "Enregistrer les modifications",
@@ -1015,7 +1006,6 @@ export default {
       albumUpdatedTitle: "Album mis à jour",
       albumUpdatedDescription: "Les modifications ont été enregistrées avec succès.",
       albumSaveErrorTitle: "Impossible d'enregistrer l'album",
-      albumSaveErrorDescription: "Réessayez dans quelques secondes.",
       albumDeletedTitle: "Album supprimé",
       albumDeletedDescription: "L'album et ses photos ont été supprimés avec succès.",
       albumDeleteErrorTitle: "Impossible de supprimer l'album",
@@ -1042,7 +1032,6 @@ export default {
       selectPlan: "Sélectionner un plan OnvoPay",
       scheduleLabel: "Horaire",
       includesLabel: "Ce qui est inclus",
-      includesPlaceholder: "Décrivez les avantages du plan...",
       image: "Image",
       chooseImage: "Choisir une image",
       imageSelected: "Image sélectionnée",
@@ -1062,7 +1051,6 @@ export default {
       updatedToastTitle: "Plan mis à jour",
       updatedToastDescription: "Les modifications ont été enregistrées avec succès.",
       saveErrorToastTitle: "Impossible d'enregistrer le plan",
-      saveErrorToastDescription: "Réessayez dans quelques secondes.",
       deletedToastTitle: "Plan supprimé",
       deletedToastDescription: "Le plan a été supprimé avec succès.",
       deleteErrorToastTitle: "Impossible de supprimer le plan",
@@ -1088,7 +1076,6 @@ export default {
       childName: "Nom de l’enfant",
       childNamePlaceholder: "Nom complet",
 
-      observationsPlaceholder: "Saisissez les observations générales...",
 
       photo: "Photo",
       optionalPhoto: "La photo est facultative.",
@@ -1150,18 +1137,12 @@ export default {
       addDescription: "Saisissez les informations du parent ou du tuteur.",
       editDescription: "Modifiez les informations du parent ou du tuteur.",
       firstName: "Prénom",
-      firstNamePlaceholder: "Saisissez le prénom",
       lastName: "Nom",
-      lastNamePlaceholder: "Saisissez le nom",
       identification: "Identification",
-      identificationPlaceholder: "Saisissez l'identification",
       email: "Adresse e-mail",
-      emailPlaceholder: "exemple@gmail.com",
       contact: "Contact",
       phoneNumber: "Numéro de téléphone",
-      phonePlaceholder: "Saisissez le numéro de téléphone",
       address: "Adresse",
-      addressPlaceholder: "Saisissez l'adresse",
       language: "Langue",
       languages: {
         es: "Espagnol",
@@ -1214,8 +1195,6 @@ export default {
       relationship: 'Lien de parenté',
       birthDateLabel: 'Date de naissance',
       medicalNotesLabel: 'Notes médicales',
-      medicalNotesPlaceholder:
-        'Allergies, médicaments, conditions médicales ou autres informations importantes...',
       noClubs: 'Aucun club disponible.',
       loadingOptions: 'Chargement des informations...',
 
@@ -1250,8 +1229,6 @@ export default {
       createErrorToastTitle: 'Impossible d’inscrire l’enfant',
       updateErrorToastTitle: 'Impossible de modifier l’enfant',
 
-      firstNamePlaceholder: 'Saisissez le prénom',
-      lastNamePlaceholder: 'Saisissez le nom',
       birthDatePlaceholder: 'Sélectionnez la date de naissance',
       isActive: "Élève actif",
       isActiveDescription: "Définit si l'élève est actif dans le système."
@@ -1304,7 +1281,6 @@ export default {
         customOption: "Disponible uniquement sur une plage horaire",
         reasonLabel: "Motif",
         reasonOptional: "(facultatif)",
-        reasonPlaceholder: "Ex. Rendez-vous médical ou jour férié",
         cancel: "Annuler",
         saveChanges: "Enregistrer les modifications",
         add: "Ajouter",
@@ -1384,7 +1360,6 @@ export default {
       "Nous avons bien reçu votre CV. Nous vous contacterons si votre profil correspond à l'offre.",
     gotIt: "Compris",
     applyErrorToastTitle: "Impossible d'envoyer votre candidature",
-    applyErrorToastDescription: "Réessayez dans quelques secondes.",
     createdToastTitle: "Offre publiée",
     createdToastDescription: "L'offre est maintenant visible pour les candidats.",
     createErrorToastTitle: "Impossible de publier l'offre",
@@ -1425,7 +1400,6 @@ export default {
     rescheduleLoadingSlots: "Chargement des horaires...",
     rescheduleNoSlots: "Aucun créneau disponible pour cette date.",
     rejectNoteLabel: "Conclusion",
-    rejectNotePlaceholder: "Motif du refus",
     save: "Enregistrer",
     continue: "Continuer",
     back: "Retour",
@@ -1484,6 +1458,7 @@ export default {
     },
   },
   services: {
+    popupBlocked: 'Le navigateur a bloqué la fenêtre de paiement. Autorisez les fenêtres contextuelles pour ce site et réessayez.',
     connectingPayment: 'Connexion à la passerelle de paiement...',
     title: "Nos Services",
     description:
@@ -1507,7 +1482,6 @@ export default {
     includes: "Ce qui est inclus",
     empty: "Aucun service disponible pour le moment.",
     checkoutErrorToastTitle: "Impossible de démarrer le paiement",
-    checkoutErrorToastDescription: "Veuillez réessayer dans quelques minutes.",
   },
   paymentSuccess: {
     title: "Paiement réussi !",
@@ -1522,5 +1496,321 @@ export default {
   reactions: {
     errorTitle: "Votre réaction n'a pas pu être enregistrée",
     loggedIn: "Les réactions sont réservées aux visiteurs et vous êtes connecté. Déconnectez-vous pour réagir.",
+  },
+  fields: {
+    news: {
+      title: {
+        placeholder: "Ex. : Foire scientifique 2026",
+        hint: "Reste bref ; il apparaît sur la carte de l’actualité.",
+      },
+      category: {
+        hint: "Choisissez un type existant ou saisissez-en un nouveau pour le créer.",
+      },
+      content: {
+        placeholder: "Ex. : Nous invitons toutes les familles à célébrer avec nous…",
+        hint: "Expliquez ce qui se passe, à qui cela s’adresse et les détails importants.",
+      },
+      location: {
+        placeholder: "Ex. : Salle principale de Green Farm",
+        hint: "Facultatif. Indiquez où aura lieu l’activité.",
+      },
+      eventDate: {
+        hint: "Facultatif. Ajoutez la date et l’heure si l’actualité annonce un événement.",
+      },
+    },
+    gallery: {
+      title: {
+        placeholder: "Ex. : Journée de la famille",
+        hint: "C’est ainsi que l’album apparaîtra dans la galerie.",
+      },
+      year: {
+        hint: "Choisissez l’année de l’album ou saisissez-en une nouvelle.",
+      },
+      description: {
+        placeholder: "Ex. : Photos de la fête avec les familles au potager.",
+        hint: "Une ou deux phrases sur le contenu de l’album.",
+      },
+    },
+    comment: {
+      name: {
+        placeholder: "Ex. : Ana Rodríguez",
+        hint: "Affiché à côté de votre réponse.",
+      },
+      content: {
+        placeholder: "Partagez votre avis ou posez une question…",
+        hint: "Votre réponse sera visible par tous les visiteurs.",
+      },
+    },
+    booking: {
+      childName: {
+        placeholder: "Ex. : Sofía Vargas Mora",
+        hint: "Prénom et nom de l’enfant.",
+      },
+      reason: {
+        placeholder: "Ex. : J’aimerais connaître le programme d’éveil précoce.",
+        hint: "Dites-nous brièvement ce que vous souhaitez aborder.",
+      },
+      referral: {
+        hint: "Nous aide à savoir comment les familles découvrent Green Farm.",
+      },
+      referralOther: {
+        placeholder: "Ex. : Une amie me l’a recommandé",
+        hint: "Dites-nous où ou par qui vous nous avez connus.",
+      },
+      fullName: {
+        placeholder: "Ex. : María Fernández Solís",
+        hint: "Responsable légal de l’enfant.",
+      },
+      idNumber: {
+        placeholder: "Ex. : 112345678",
+        hint: "Cédula : 9 ou 10 chiffres sans tirets. Autres documents : 6 à 20 caractères.",
+      },
+      email: {
+        placeholder: "Ex. : nom@courriel.com",
+        hint: "Nous vous enverrons la confirmation du rendez-vous à cette adresse.",
+      },
+      phone: {
+        placeholder: "Ex. : 8888 8888",
+        hint: "Nous appellerons ce numéro si le rendez-vous change.",
+      },
+      occupation: {
+        placeholder: "Ex. : Enseignant",
+        hint: "Votre profession ou votre métier actuel.",
+      },
+    },
+    auth: {
+      email: {
+        placeholder: "Ex. : nom@courriel.com",
+        hint: "Utilisez l’adresse avec laquelle vous vous êtes inscrit.",
+      },
+      password: {
+        placeholder: "••••••••",
+        hint: "Respectez les majuscules et les minuscules.",
+      },
+      newPassword: {
+        placeholder: "••••••••",
+        hint: "Au moins 8 caractères, avec majuscule, minuscule, chiffre et symbole.",
+      },
+      confirmPassword: {
+        placeholder: "••••••••",
+        hint: "Saisissez à nouveau le même mot de passe.",
+      },
+    },
+    club: {
+      name: {
+        placeholder: "Ex. : Club de robotique",
+        hint: "Le nom que verront les familles.",
+      },
+      capacity: {
+        placeholder: "Ex. : 15",
+        hint: "Nombre maximum d’enfants pouvant s’inscrire.",
+      },
+      description: {
+        placeholder: "Ex. : Nous explorons la robotique avec des jeux et des défis en équipe.",
+        hint: "Décrivez les activités et la tranche d’âge.",
+      },
+      schedule: {
+        hint: "Ajoutez les jours et les horaires du club.",
+      },
+    },
+    newsletter: {
+      subject: {
+        placeholder: "Ex. : Les nouvelles d’octobre à Green Farm",
+        hint: "C’est la première chose que verront les abonnés.",
+      },
+      message: {
+        placeholder: "Ex. : Ce mois-ci, nous avons célébré la Journée de la famille et…",
+        hint: "Il sera envoyé par courriel à tous les abonnés actifs.",
+      },
+    },
+    apply: {
+      name: {
+        placeholder: "Ex. : Laura Jiménez Castro",
+        hint: "Tel qu’il figure sur votre pièce d’identité.",
+      },
+      email: {
+        placeholder: "Ex. : nom@courriel.com",
+        hint: "Nous vous contacterons à cette adresse au sujet de votre candidature.",
+      },
+      phone: {
+        placeholder: "Ex. : 8888 8888",
+        hint: "Un numéro où nous pouvons vous joindre.",
+      },
+    },
+    appointment: {
+      conclusion: {
+        placeholder: "Ex. : Une évaluation du langage est recommandée.",
+        hint: "Résumez l’échange ou la raison du changement de statut.",
+      },
+    },
+    child: {
+      firstName: {
+        placeholder: "Ex. : Sofía",
+        hint: "Prénom uniquement.",
+      },
+      lastName: {
+        placeholder: "Ex. : Vargas Mora",
+        hint: "Les deux noms de famille, le cas échéant.",
+      },
+      parent: {
+        hint: "S’il n’apparaît pas, ajoutez-le d’abord dans Parents.",
+      },
+      relationship: {
+        hint: "Lien du responsable avec l’enfant.",
+      },
+      birthDate: {
+        hint: "Sert à calculer l’âge de l’enfant.",
+      },
+      medicalNotes: {
+        placeholder: "Ex. : Allergie aux arachides ; utilise un inhalateur.",
+        hint: "Facultatif. Informations de santé que le personnel doit connaître.",
+      },
+    },
+    plan: {
+      onvo: {
+        hint: "Produit OnvoPay utilisé pour facturer ce forfait.",
+      },
+      schedule: {
+        hint: "Ajoutez les jours et horaires inclus dans le forfait.",
+      },
+      includes: {
+        placeholder: "Ex. : 2 séances par semaine, matériel inclus",
+        hint: "Énumérez les principaux avantages du forfait.",
+      },
+    },
+    person: {
+      firstName: {
+        placeholder: "Ex. : Ana",
+        hint: "Tel qu’il figure sur sa pièce d’identité.",
+      },
+      lastName: {
+        placeholder: "Ex. : Rodríguez Mora",
+        hint: "Les deux noms de famille, le cas échéant.",
+      },
+      email: {
+        placeholder: "Ex. : nom@courriel.com",
+        hint: "Il servira à se connecter.",
+      },
+      password: {
+        placeholder: "••••••••",
+        hint: "Au moins 8 caractères, avec majuscule, minuscule, chiffre et symbole.",
+      },
+      birthday: {
+        hint: "Facultatif. Nous permet de nous souvenir de son anniversaire.",
+      },
+    },
+    vacancy: {
+      title: {
+        placeholder: "Ex. : Enseignant de maternelle",
+        hint: "L’intitulé du poste que verront les candidats.",
+      },
+      description: {
+        placeholder: "Ex. : Nous recherchons un enseignant expérimenté en petite enfance…",
+      },
+    },
+    evaluation: {
+      child: {
+        hint: "Choisissez le dossier de l’enfant à évaluer.",
+      },
+      communication: {
+        placeholder: "Ex. : Exprime ses besoins avec des phrases courtes.",
+        hint: "Comment il exprime ses idées, besoins et émotions.",
+      },
+      language: {
+        placeholder: "Ex. : A enrichi son vocabulaire de nouveaux mots.",
+        hint: "Vocabulaire, prononciation et compréhension.",
+      },
+      reading: {
+        placeholder: "Ex. : Reconnaît les voyelles et son prénom écrit.",
+        hint: "Reconnaissance des lettres, des sons et des mots.",
+      },
+      motor: {
+        placeholder: "Ex. : Découpe en suivant des lignes droites.",
+        hint: "Coordination, équilibre et motricité fine.",
+      },
+      observation: {
+        placeholder: "Ex. : Montre beaucoup d’intérêt pour les activités du potager.",
+        hint: "Commentaires généraux pour la famille et l’équipe.",
+      },
+    },
+    expedient: {
+      child: {
+        hint: "Saisissez pour rechercher et choisissez l’enfant dans la liste.",
+      },
+      admissionDate: {
+        hint: "Le jour où l’enfant est entré au centre.",
+      },
+      grade: {
+        hint: "Le niveau actuellement suivi.",
+      },
+      notes: {
+        placeholder: "Ex. : S’adapte bien au groupe et aime jouer dehors.",
+      },
+    },
+    post: {
+      title: {
+        placeholder: "Ex. : Le potager comme salle de classe",
+        hint: "Affiché comme titre de l’article.",
+      },
+      topic: {
+        placeholder: "Ex. : Potager scolaire",
+        hint: "Regroupe les articles liés dans le forum.",
+      },
+      authorName: {
+        placeholder: "Ex. : Laura Méndez",
+        hint: "Affiché comme signature de l’article.",
+      },
+      authorRole: {
+        placeholder: "Ex. : Enseignante de maternelle",
+        hint: "Poste ou spécialité de l’auteur.",
+      },
+      content: {
+        placeholder: "Rédigez l’article ici…",
+      },
+      imageAlt: {
+        placeholder: "Ex. : Des enfants arrosent les plantes du potager",
+        hint: "Décrivez l’image pour les utilisateurs de lecteurs d’écran.",
+      },
+    },
+    experience: {
+      name: {
+        placeholder: "Ex. : Ana Rodríguez",
+        hint: "Affiché à côté de votre publication.",
+      },
+      content: {
+        placeholder: "Ex. : Ma fille a appris à planter des tomates et maintenant…",
+        hint: "Racontez-nous ce que vous avez vécu et appris.",
+      },
+    },
+    parent: {
+      identification: {
+        placeholder: "Ex. : 112345678",
+        hint: "Cédula, DIMEX ou passeport.",
+      },
+      phone: {
+        placeholder: "Ex. : 8888 8888",
+        hint: "Numéro de contact principal.",
+      },
+      email: {
+        placeholder: "Ex. : nom@courriel.com",
+        hint: "Les avis du centre seront envoyés ici.",
+      },
+      address: {
+        placeholder: "Ex. : San José, Escazú, 200 m au nord de l’église",
+        hint: "Province, canton et indications.",
+      },
+      language: {
+        hint: "Langue des courriels reçus.",
+      },
+    },
+    exception: {
+      date: {
+        hint: "Le jour où votre horaire habituel change.",
+      },
+      reason: {
+        placeholder: "Ex. : Rendez-vous médical ou jour férié",
+        hint: "Vous aide à vous rappeler pourquoi l’horaire a changé.",
+      },
+    },
   },
 };

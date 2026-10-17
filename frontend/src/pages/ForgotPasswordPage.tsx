@@ -67,6 +67,8 @@ function ForgotPasswordPage() {
 
       <form onSubmit={handleForgotPassword} noValidate>
         <TextField
+          hint={t("fields.auth.email.hint")}
+          placeholder={t("fields.auth.email.placeholder")}
           id="forgot-password-email"
           type="email"
           value={email}
@@ -94,7 +96,7 @@ function ForgotPasswordPage() {
         )}
 
         <div className="mx-auto mt-[30px] w-[209px] md:mt-[55px] md:w-[72%]">
-          <AuthButton loading={loading}>
+          <AuthButton loading={loading} disabled={!email.trim()}>
             {loading
               ? t("forgotPassword.loading")
               : t("forgotPassword.buttonLabel")}
