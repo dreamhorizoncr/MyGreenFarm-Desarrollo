@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useLayoutEffect, useRef, useState, type RefObject } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { LockIcon, MenuIcon, XIcon } from '@animateicons/react/lucide'
@@ -9,26 +9,82 @@ import logo from '../assets/imgs/Logo.svg'
 import { authService } from '../services/auth.ts'
 import { tokenStorage } from '../utils/token.ts'
 
-function Brand() {
+interface BrandProps {
+  showName?: boolean
+  linkRef?: RefObject<HTMLAnchorElement | null>
+  nameRef?: RefObject<HTMLSpanElement | null>
+}
+
+function Brand({ showName = true, linkRef, nameRef }: Readonly<BrandProps>) {
   const isAdminSection = useLocation().pathname.startsWith('/admin')
 
   return (
     <Link
+      ref={linkRef}
       to={isAdminSection ? '/admin/dashboard' : '/'}
-      className="flex items-center gap-3 no-underline"
+      className="flex shrink-0 items-center gap-3 no-underline"
     >
       <img src={logo} alt="My Green Farm" className="h-12 w-auto max-w-[48px] object-contain" />
-      <span className="font-heading text-h6 text-heading">My Green Farm</span>
+      {showName && <span ref={nameRef} className="whitespace-nowrap font-heading text-h6 text-heading">My Green Farm</span>}
     </Link>
   )
 }
 
+const BRAND_GAP = 12
+
+// El nombre junto al logo se oculta solo cuando el menú no cabe completo en una línea.
+function useBrandNameFits(language: string, isAuthenticated: boolean) {
+  const rowRef = useRef<HTMLDivElement>(null)
+  const brandRef = useRef<HTMLAnchorElement>(null)
+  const nameRef = useRef<HTMLSpanElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+  const optionsRef = useRef<HTMLDivElement>(null)
+  const nameWidthRef = useRef(0)
+  const [showName, setShowName] = useState(true)
+
+  useLayoutEffect(() => {
+    const row = rowRef.current
+    if (!row) return
+
+    const measure = () => {
+      const brand = brandRef.current
+      const menu = menuRef.current
+      const options = optionsRef.current
+      if (!brand || !menu || !options || row.clientWidth === 0) return
+
+      if (nameRef.current) nameWidthRef.current = nameRef.current.offsetWidth
+      const nameWidth = nameRef.current ? 0 : nameWidthRef.current + BRAND_GAP
+
+      const rowStyle = getComputedStyle(row)
+      const menuStyle = getComputedStyle(menu)
+      const links = Array.from(menu.children) as HTMLElement[]
+      const menuWidth =
+        links.reduce((total, link) => total + link.offsetWidth, 0) +
+        parseFloat(menuStyle.columnGap || '0') * Math.max(0, links.length - 1) +
+        parseFloat(menuStyle.paddingLeft) +
+        parseFloat(menuStyle.paddingRight)
+      const available = row.clientWidth - parseFloat(rowStyle.paddingLeft) - parseFloat(rowStyle.paddingRight)
+
+      setShowName(brand.offsetWidth + nameWidth + menuWidth + options.offsetWidth <= available)
+    }
+
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(row)
+    void document.fonts?.ready.then(measure)
+    return () => observer.disconnect()
+  }, [language, isAuthenticated])
+
+  return { rowRef, brandRef, nameRef, menuRef, optionsRef, showName }
+}
+
 function Navbar() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const isAuthenticated = Boolean(userStorage.getUser())
+  const { rowRef, brandRef, nameRef, menuRef, optionsRef, showName } = useBrandNameFits(i18n.language, isAuthenticated)
   const isProtectedPage =
     pathname === '/profile' ||
     pathname.startsWith('/admin')
@@ -62,16 +118,16 @@ function Navbar() {
     >
       {/* Navbar desktop */}
       <nav className="hidden h-full w-full xl:flex">
-        <div className="flex h-full w-full items-center px-[var(--scale-1100)]">
-          <Brand />
+        <div ref={rowRef} className="flex h-full w-full items-center justify-between px-[var(--scale-1100)]">
+          <Brand showName={showName} linkRef={brandRef} nameRef={nameRef} />
 
           {/* Menu */}
-          <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-7 font-link">
+          <div ref={menuRef} className="flex items-center justify-center gap-6 px-6 font-link 2xl:gap-7">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
-                className={`relative font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-full after:origin-center after:bg-green-500 after:transition-transform after:duration-300 after:content-[''] ${
+                className={`relative whitespace-nowrap font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-full after:origin-center after:bg-green-500 after:transition-transform after:duration-300 after:content-[''] ${
                   pathname === link.to
                     ? 'after:scale-x-100'
                     : 'after:scale-x-0 hover:after:scale-x-100'
@@ -83,19 +139,10 @@ function Navbar() {
           </div>
 
           {/* Opciones */}
-          <div className="ml-auto flex items-center gap-7">
+          <div ref={optionsRef} className="flex shrink-0 items-center gap-5 2xl:gap-7">
             <LanguageSwitcher />
 
-            {isAuthenticated && !isProtectedPage && (
-              <Link
-                to="/admin/dashboard"
-                className="font-body text-body-sm font-normal text-body-text-dark transition-colors hover:text-heading"
-              >
-                {t('navbar.dashboard')}
-              </Link>
-            )}
-
-            {isAuthenticated && !isProtectedPage && <ProfileButton />}
+            {isAuthenticated && <ProfileButton />}
 
             {!isAuthenticated && (
               <Link
@@ -107,8 +154,6 @@ function Navbar() {
                 <LockIcon size={18} aria-hidden="true" />
               </Link>
             )}
-
-            {isAuthenticated && isProtectedPage && <ProfileButton />}
           </div>
         </div>
       </nav>
