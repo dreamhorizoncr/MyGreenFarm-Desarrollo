@@ -1,7 +1,6 @@
 import { apiClient } from "./api";
 
 import type { Child, ChildPage, ChildRequest } from "../types/child";
-import type { ClubResponse } from "../types/clubs";
 
 export interface ChildOption {
   studentId: string;

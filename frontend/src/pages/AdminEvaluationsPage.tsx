@@ -11,14 +11,14 @@ import Pagination from "../components/ui/Pagination";
 
 import { evaluationService } from "../services/evaluation";
 import { expedientService } from "../services/expedient";
-import { notify, notifyError } from "../utils/notifications";
+import { notify } from "../utils/notifications";
 import { useEvaluations } from "../hooks/useEvaluations";
 import { useClientPagination } from "../hooks/useClientPagination";
 
 import type { Evaluation } from "../types/evaluation";
 import type { Expedient } from "../types/expedient";
-import SkeletonList from "../components/ui/SkeletonList.tsx";
-import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
+import SkeletonList from "../components/ui/SkeletonList";
+import { useSkeletonCount } from "../hooks/useSkeletonCount";
 
 function AdminEvaluationsPage() {
     const { t, i18n } = useTranslation();
@@ -92,7 +92,6 @@ function AdminEvaluationsPage() {
         });
     }, [evaluations, sourceEvaluations, searchTerm, expedients]);
 
-    // 💡 Usamos useClientPagination al igual que en citas y niños
     const { currentPage, setPage, totalPages, pageItems: pagedEvaluations } = useClientPagination(filteredEvaluations);
 
     const handleEdit = (evaluation: Evaluation) => {
@@ -123,7 +122,7 @@ function AdminEvaluationsPage() {
 
     const isLoading = loading || loadingExpedients;
 
-    const skeletonCount = useSkeletonCount("admin-evaluations", isLoading, filteredEvaluations.length, 2);
+    const skeletonCount = useSkeletonCount("admin-children", loading, filteredEvaluations.length, 2);
 
     return (
         <AdminLayout>
@@ -179,8 +178,7 @@ function AdminEvaluationsPage() {
 
                 {isLoading && (
                     <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                        <EvaluationCard loading />
-                        <EvaluationCard loading />
+                        <SkeletonList count={skeletonCount}>{() => <EvaluationCard loading />}</SkeletonList>
                     </div>
                 )}
 
@@ -216,7 +214,6 @@ function AdminEvaluationsPage() {
                         </>
                     )}
 
-                {/* No hay evaluaciones */}
                 {!isLoading &&
                     !error &&
                     evaluations.length === 0 && (
