@@ -31,7 +31,7 @@ function HeaderSection() {
 
               <BlobButton
                 variant="filled"
-                className="h-11 w-fit px-lg font-heading text-h6"
+                className="h-11 w-fit px-lg font-body text-button font-bold"
                 onClick={() => navigate('/booking')}
               >
                 {t('home.header.cta')}

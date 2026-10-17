@@ -32,9 +32,9 @@ import taller.multimedia.backend.util.Sanitizer;
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder encoder; // Password encoder for hashing passwords
-    private final AuthenticationManager authenticationManager; // Authentication manager for handling authentication
-    private final JwtUtils jwtUtils; // Utility class for generating and validating JWT tokens
+    private final PasswordEncoder encoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
     private final EmailService emailService;
     private final CalendarSyncAsyncService calendarSyncAsyncService;
 
@@ -60,9 +60,8 @@ public class AuthService {
             throw new RuntimeException("Error: Email is already in use!");
         }
 
-        Role role = resolveRole(request.getRole()); // defaults to USER if not provided
+        Role role = resolveRole(request.getRole());
 
-        // Birthday is optional, but only teachers can have one
         if (birthday != null && role != Role.TEACHER) {
             throw new RuntimeException("Error: Birthday is only allowed for TEACHER role!");
         }
@@ -83,8 +82,6 @@ public class AuthService {
         }
     }
 
-    // Sincroniza con Google Calendar solo después de que se confirme el guardado en
-    // la BD
     private void scheduleBirthdaySync(UUID userId) {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
@@ -94,7 +91,6 @@ public class AuthService {
         });
     }
 
-    // Authenticate user and return user info
     public AuthResult authenticateUser(LoginRequest request) {
         String email = Sanitizer.requireClean("email", request.getEmail());
         Authentication authentication = authenticationManager
@@ -115,17 +111,14 @@ public class AuthService {
         return new AuthResult(userInfo, userDetails);
     }
 
-    // Generate JWT cookie for authenticated user
     public ResponseCookie generateJwtCookie(UserDetailsImpl userDetails) {
         return jwtUtils.generateJwtCookie(userDetails);
     }
 
-    // Clear JWT cookie on logout
     public ResponseCookie logoutUser() {
         return jwtUtils.getCleanJwtCookie();
     }
 
-    // Resolve role from string, default to TEACHER if not provided or invalid
     private Role resolveRole(String strRole) {
         if (strRole == null) {
             return Role.TEACHER;

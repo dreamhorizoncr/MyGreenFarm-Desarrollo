@@ -333,18 +333,15 @@ public class EmailService {
     @Async
     public void sendSemiannualEvaluationSummaryEmail(String parentEmail, String childName, String summaryText, String period, String parentLanguage) {
         try {
-            // Normalizar el idioma recibido (por defecto 'es')
             String lang = normalizeNewsletterLanguage(parentLanguage);
             Locale locale = Locale.forLanguageTag(lang);
 
-            // Pasar la Locale al contexto de Thymeleaf para soporte i18n
             Context context = createBaseContext(locale);
             context.setVariable("childName", childName);
             context.setVariable("summaryText", summaryText);
             context.setVariable("period", period);
             context.setVariable("supportEmail", supportEmail);
 
-            // Asuntos según el idioma
             String subject;
             switch (lang) {
                 case "en":

@@ -11,9 +11,7 @@ import taller.multimedia.backend.model.exchange_rate.ExchangeRate;
 @Repository
 public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Long> {
 
-    // Para el upsert: revisar si ya existe un registro de hoy antes de crear uno nuevo
     Optional<ExchangeRate> findByRateDate(LocalDate rateDate);
 
-    // El más reciente, para el endpoint que consume el frontend
     Optional<ExchangeRate> findTopByOrderByRateDateDesc();
 }

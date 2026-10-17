@@ -68,7 +68,7 @@ function useForumFeed() {
         setSourceCommunityPosts(communityWithLikes)
         setCommunityPosts(communityWithLikes)
       } catch {
-        if (active) setError('No se pudo cargar el foro')
+        if (active) setError(i18n.t('forum.loadError'))
       } finally {
         if (active) setIsLoading(false)
       }
@@ -78,7 +78,7 @@ function useForumFeed() {
     return () => {
       active = false
     }
-  }, [])
+  }, [i18n])
 
   useEffect(() => {
     const language = (i18n.resolvedLanguage ?? i18n.language).split('-')[0]

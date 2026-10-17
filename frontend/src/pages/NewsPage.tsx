@@ -12,25 +12,10 @@ import Pagination from "../components/ui/Pagination.tsx";
 
 import { useAnnouncements } from "../hooks/useAnnouncements";
 import { useAnnouncementImages } from "../hooks/useAnnouncementImages";
-import type { Announcement, AnnouncementType } from "../types/announcement.ts";
+import type { Announcement } from "../types/announcement.ts";
+import { useAnnouncementCategories } from "../hooks/useAnnouncementCategories.ts";
+import TabHighlight from "../components/ui/TabHighlight.tsx";
 
-
-type NewsCategory = "All" | "NEWS" | "EVENT" | "NOTICE" | "TRANSPORT";
-
-const TYPE_LABEL_KEY: Record<
-  AnnouncementType,
-  | "newspage.category2"
-  | "newspage.category3"
-  | "newspage.category4"
-  | "newspage.category5"
-  | "newspage.category6"
-> = {
-  NEWS: "newspage.category2",
-  EVENT: "newspage.category3",
-  NOTICE: "newspage.category4",
-  GENERAL: "newspage.category5",
-  TRANSPORT: "newspage.category6"
-};
 
 function NewsPage() {
   const { t, i18n } = useTranslation();
@@ -42,7 +27,8 @@ function NewsPage() {
     fetchImages,
     getCoverImage,
   } = useAnnouncementImages();
-  const [activeCategory, setActiveCategory] = useState<NewsCategory>("All");
+  const [activeCategory, setActiveCategory] = useState<string>("All");
+  const { categories, labelFor } = useAnnouncementCategories();
   const [selectedAnnouncement, setSelectedAnnouncement] =
     useState<Announcement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,18 +40,14 @@ function NewsPage() {
 
   useEffect(() => {
     void fetchImages(announcements.map((announcement) => announcement.id));
-    // fetchImages is stable for the lifetime of this hook instance.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [announcements]);
 
-  // Filtra las noticias de la página actual según la categoría seleccionada
 const cards = announcements.filter(
-  (a) => activeCategory === "All" || activeCategory === a.type,
+  (a) => activeCategory === "All" || activeCategory === a.categoryId,
 );
 
-  //Se guardan las noticias en filas para mostrarlas de dos en dos
   const rows: Announcement[][] = [];
-  //Recorre las noticias de la página actual y las agrupa en filas de dos.
   for (let i = 0; i < cards.length; i += 2) {
     rows.push(cards.slice(i, i + 2));
   }
@@ -77,10 +59,9 @@ const cards = announcements.filter(
     <div id="news-page" className="min-h-screen bg-bg-page">
       <Navbar />
 
-      {/* Hero de Noticias */}
       <section data-scroll-bg="green" className="flex min-h-[280px] items-start bg-green-500 px-[30px] pt-[48px] pb-[40px] text-center text-white md:min-h-[320px] md:pt-[72px]">
         <div className="mx-auto w-full max-w-[700px]">
-          <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
+          <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-white">
             {t("newspage.title")}
           </h1>
 
@@ -88,72 +69,39 @@ const cards = announcements.filter(
             {t("newspage.description")}
           </p>
 
-          {/* Filtros */}
-          <div className="mt-[24px] flex flex-wrap justify-center gap-[10px]">
+          <div className="isolate mt-[24px] flex flex-wrap justify-center gap-[10px]">
             <button
               type="button"
               onClick={() => setActiveCategory("All")}
-              className={`rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
+              className={`relative rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
                 activeCategory === "All"
-                  ? "border-orange-500 bg-orange-500 text-white"
+                  ? "border-orange-500 text-white"
                   : "border-white bg-transparent text-white hover:bg-white/10"
               }`}
             >
+              {activeCategory === "All" && <TabHighlight layoutId="news-category-tab" className="bg-orange-500" />}
               {t("newspage.category1")}
             </button>
 
-            <button
-              type="button"
-              onClick={() => setActiveCategory("NEWS")}
-              className={`rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
-                activeCategory === "NEWS"
-                  ? "border-orange-500 bg-orange-500 text-white"
-                  : "border-white bg-transparent text-white hover:bg-white/10"
-              }`}
-            >
-              {t("newspage.category2")}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveCategory("EVENT")}
-              className={`rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
-                activeCategory === "EVENT"
-                  ? "border-orange-500 bg-orange-500 text-white"
-                  : "border-white bg-transparent text-white hover:bg-white/10"
-              }`}
-            >
-              {t("newspage.category3")}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveCategory("NOTICE")}
-              className={`rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
-                activeCategory === "NOTICE"
-                  ? "border-orange-500 bg-orange-500 text-white"
-                  : "border-white bg-transparent text-white hover:bg-white/10"
-              }`}
-            >
-              {t("newspage.category4")}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveCategory("TRANSPORT")}
-              className={`rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
-                activeCategory === "TRANSPORT"
-                  ? "border-orange-500 bg-orange-500 text-white"
-                  : "border-white bg-transparent text-white hover:bg-white/10"
-              }`}
-            >
-              {t("newspage.category6")}
-</button>
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                type="button"
+                onClick={() => setActiveCategory(category.id)}
+                className={`relative rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
+                  activeCategory === category.id
+                    ? "border-orange-500 text-white"
+                    : "border-white bg-transparent text-white hover:bg-white/10"
+                }`}
+              >
+                {activeCategory === category.id && <TabHighlight layoutId="news-category-tab" className="bg-orange-500" />}
+                {labelFor(category)}
+              </button>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Sección de Noticias */}
       <main>
         <Container className="py-10 md:py-12">
           {(loading || imagesLoading) && (
@@ -195,7 +143,7 @@ const cards = announcements.filter(
                           big={isBig}
                           className={isBig ? "md:col-span-8" : "md:col-span-4"}
                           announcement={a}
-                          typeLabel={t(TYPE_LABEL_KEY[a.type])}
+                          typeLabel={labelFor({ id: a.categoryId, code: a.categoryCode ?? a.type, title: a.categoryTitle })}
                           formattedDate={formatNewsDate(a.eventDate, i18n.language)}
                           coverImage={getCoverImage(a.id)}
                           onReadMore={() => setSelectedAnnouncement(a)}
@@ -206,7 +154,6 @@ const cards = announcements.filter(
                 ))}
               </div>
 
-              {/* Paginación */}
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
@@ -217,10 +164,10 @@ const cards = announcements.filter(
         </Container>
       </main>
 
-      {/* Modal con el detalle completo de la noticia */}
       {selectedAnnouncement && (
         <NewsDetailModal
           announcement={selectedAnnouncement}
+          typeLabel={labelFor({ id: selectedAnnouncement.categoryId, code: selectedAnnouncement.categoryCode ?? selectedAnnouncement.type, title: selectedAnnouncement.categoryTitle })}
           onClose={() => setSelectedAnnouncement(null)}
         />
       )}

@@ -9,7 +9,6 @@ export function useParents() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-  // Obtiene todos los padres del backend
     const [totalPages, setTotalPages] = useState(0);
     const fetchParents = async (page = 0) => {
         setLoading(true);

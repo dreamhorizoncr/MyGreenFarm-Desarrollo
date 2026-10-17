@@ -24,7 +24,7 @@ public class BroadcastService {
 
     private final NewsletterSubscriberRepository newsletterRepository;
     private final ParentRepository parentRepository;
-    private final EmailService emailService; // Tu servicio de envío de correos (JavaMailSender o similar)
+    private final EmailService emailService;
 
     public BroadcastService(NewsletterSubscriberRepository newsletterRepository, ParentRepository parentRepository, EmailService emailService) {
         this.newsletterRepository = newsletterRepository;

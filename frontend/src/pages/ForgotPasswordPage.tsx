@@ -23,7 +23,7 @@ function ForgotPasswordPage() {
     if (emailValidationError) {
       setEmailValidationError(validateEmail(email, t));
     }
-  }, [i18n.language]); //Le lanza el error en el idioma que esté
+  }, [i18n.language]);
 
   const handleForgotPassword = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -57,19 +57,15 @@ function ForgotPasswordPage() {
       closeTo={isAuthenticated ? "/profile" : "/login"}
       contentClassName="max-w-[303px] md:max-w-[430px]"
     >
-      {/* Título */}
-      <h2 className="mb-[28px] text-left font-heading text-[28px] leading-none text-heading md:mb-[45px] md:text-h1">
+      <h2 className="mb-[28px] text-left font-heading text-h1 leading-none text-heading md:mb-[45px]">
         {t("forgotPassword.title")}
       </h2>
 
-      {/* Descripción */}
       <p className="mb-[36px] text-left font-body text-body-sm leading-[1.5] text-body-text md:mb-[50px] md:text-body-sm md:leading-[1.7]">
         {t("forgotPassword.description")}
       </p>
 
-      {/* Formulario */}
       <form onSubmit={handleForgotPassword} noValidate>
-        {/* Correo */}
         <TextField
           id="forgot-password-email"
           type="email"
@@ -85,21 +81,18 @@ function ForgotPasswordPage() {
           error={emailValidationError}
         />
 
-        {/* Error del backend */}
         {error && (
           <p className="mt-4 text-center font-body text-body-sm text-danger">
             {error}
           </p>
         )}
 
-        {/* Mensaje de éxito */}
         {success && (
           <p className="mt-4 text-center font-body text-body-sm text-body-text">
             {t("forgotPassword.success")}
           </p>
         )}
 
-        {/* Botón */}
         <div className="mx-auto mt-[30px] w-[209px] md:mt-[55px] md:w-[72%]">
           <AuthButton loading={loading}>
             {loading

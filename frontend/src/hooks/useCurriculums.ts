@@ -37,10 +37,10 @@ export function useCurriculums() {
     }
   }
 
-  const setCurriculumStatus = async (id: string, status: CurriculumStatus) => {
+  const setCurriculumStatus = async (id: string, status: CurriculumStatus, vacancyId?: string) => {
     setError(null)
     try {
-      const updated = await curriculumService.setCurriculumStatus(id, status, currentLang())
+      const updated = await curriculumService.setCurriculumStatus(id, status, currentLang(), vacancyId)
       setCurriculums((prev) => prev.map((c) => (c.id === id ? updated : c)))
     } catch (err) {
       setError(getErrorMessage(err))

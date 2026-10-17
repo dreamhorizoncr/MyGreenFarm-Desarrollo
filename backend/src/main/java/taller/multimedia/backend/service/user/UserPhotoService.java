@@ -53,7 +53,6 @@ public class UserPhotoService {
             }
         }
 
-        // Guardar la foto en la carpeta 'teachers' dentro del bucket
         String fileUrl = storageService.uploadFile(file, usersBucket, "teachers");
         user.setPhotoUrl(fileUrl);
 

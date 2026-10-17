@@ -5,7 +5,6 @@ import tools.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import okhttp3.*;
 
-// import org.hibernate.mapping.Array;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -157,7 +156,6 @@ public class TranslationService {
             UUID translationEntityId = translationEntityId(entityType, item.entityId());
             result.put(responseKey(item.entityId(), item.fieldName()), translated);
 
-            // Upsert: busca si ya existe justo antes de guardar
             EntityTranslation translation = repository
                     .findByEntityTypeAndEntityIdAndFieldNameAndLanguageCode(
                             entityType,

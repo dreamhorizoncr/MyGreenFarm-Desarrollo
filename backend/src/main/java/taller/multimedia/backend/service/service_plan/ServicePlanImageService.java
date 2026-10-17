@@ -71,14 +71,12 @@ public class ServicePlanImageService {
         existing.setSchedule(Sanitizer.requireClean("schedule", dto.getSchedule()));
         existing.setIncludes(Sanitizer.requireClean("includes", dto.getIncludes()));
 
-        // Si el usuario subió una nueva imagen, reemplazamos la anterior
         if (file != null && !file.isEmpty()) {
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
                 throw new IllegalArgumentException("Formato no permitido. Solo se permiten PNG, JPG, JPEG, SVG.");
             }
 
-            // Borrar la imagen vieja del bucket si existe
             if (existing.getImageUrl() != null && !existing.getImageUrl().isEmpty()) {
                 String oldPath = extractPathFromUrl(existing.getImageUrl(), servicePlansBucket);
                 if (oldPath != null) {
@@ -92,7 +90,6 @@ public class ServicePlanImageService {
                 }
             }
 
-            // Subir la nueva imagen
             long uploadStart = System.currentTimeMillis();
             String newImageUrl = storageService.uploadFile(file, servicePlansBucket, "service_images");
             log.info("Subir nueva imagen de plan de servicio tardó: {} ms", System.currentTimeMillis() - uploadStart);
@@ -107,7 +104,6 @@ public class ServicePlanImageService {
         ServicePlan plan = servicePlanRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Configuración de plan no encontrada con ID: " + id));
 
-        // Borrar el archivo físico del bucket de Supabase
         if (plan.getImageUrl() != null && !plan.getImageUrl().isEmpty()) {
             String filePath = extractPathFromUrl(plan.getImageUrl(), servicePlansBucket);
             if (filePath != null && !filePath.isEmpty()) {

@@ -14,7 +14,6 @@ public class EvaluationSummaryScheduler {
     private static final Logger log = LoggerFactory.getLogger(EvaluationSummaryScheduler.class);
     private final EvaluationSummaryService evaluationSummaryService;
 
-    // Se ejecuta el 30 de junio y el 15 de diciembre a las 08:00 AM
     @Scheduled(cron = "0 0 8 30 6,12 ?")
     public void processSemiannualSummaries() {
         log.info("Iniciando tarea programada: Generación y envío de resúmenes semestrales de evaluación.");

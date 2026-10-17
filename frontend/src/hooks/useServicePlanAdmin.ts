@@ -24,8 +24,6 @@ export function useServicePlanAdmin() {
       setSourcePlans(dbPlans)
       setOnvoPlans(rawPlans)
 
-      // Traducción dinámica como en el catálogo público (foro/services).
-      // Las cards visibles muestran traducido; el modal edita el original (sourcePlans).
       const targetLang = lang?.split('-')[0]
       const items = dbPlans.flatMap((plan) => [
         ...(plan.name ? [{ entityId: plan.id, fieldName: 'name', originalText: plan.name }] : []),
@@ -46,7 +44,6 @@ export function useServicePlanAdmin() {
             })),
           )
         } catch {
-          // Si falla la traducción se muestra el original
           setPlans(dbPlans)
         }
       } else {

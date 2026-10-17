@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ClockIcon } from '@animateicons/react/lucide'
+import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } from 'motion/react'
 import { usePopoverPosition } from '../../hooks/usePopoverPosition.ts'
+import { useDropdownMotion } from '../../hooks/useDropdownMotion.ts'
 
 interface TimePickerFieldProps {
   value: string
@@ -22,6 +24,8 @@ const PANEL_HEIGHT = 290
 const NUMBER_RADIUS = 76
 const HOUR_LABELS = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 const MINUTE_LABELS = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]
+
+const HAND_EASE = [0.16, 1, 0.3, 1] as const
 
 const pad = (value: number) => String(value).padStart(2, '0')
 
@@ -54,6 +58,7 @@ function TimePickerField({
   const containerRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const position = usePopoverPosition({ triggerRef, open, width: PANEL_WIDTH, height: PANEL_HEIGHT, align: 'end' })
+  const dropdownMotion = useDropdownMotion(position?.bottom !== undefined)
   const clockRef = useRef<HTMLDivElement>(null)
 
   const { hours, minutes } = parseTime(value)
@@ -114,7 +119,20 @@ function TimePickerField({
     else setOpen(false)
   }
 
-  const handPoint = view === 'hours' ? pointAt(hours12 % 12, 12) : pointAt(minutes, 60)
+  const handAngle = view === 'hours' ? (hours12 % 12) * 30 : minutes * 6
+  const handRotation = useMotionValue(handAngle)
+  const reduceMotion = useReducedMotion()
+
+  useEffect(() => {
+    const current = handRotation.get()
+    const target = current + ((((handAngle - current) % 360) + 540) % 360) - 180
+    if (dragging || reduceMotion) {
+      handRotation.set(target)
+      return
+    }
+    const controls = animate(handRotation, target, { duration: 0.4, ease: HAND_EASE })
+    return () => controls.stop()
+  }, [handAngle, dragging, reduceMotion, handRotation])
   const handOnLabel = view === 'hours' || minutes % 5 === 0
 
   const label = value
@@ -146,8 +164,10 @@ function TimePickerField({
         <ClockIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
       </button>
 
+      <AnimatePresence>
       {open && position && (
-        <dialog
+        <motion.dialog
+          {...dropdownMotion}
           open
           aria-label={ariaLabel}
           style={{ top: position.top, bottom: position.bottom, left: position.left, width: PANEL_WIDTH }}
@@ -185,13 +205,24 @@ function TimePickerField({
               onPointerUp={finishSelection}
               onPointerCancel={() => setDragging(false)}
             >
-              <svg width={CLOCK_SIZE} height={CLOCK_SIZE} className="pointer-events-none absolute inset-0" aria-hidden="true">
-                <line x1={CENTER} y1={CENTER} x2={handPoint.x} y2={handPoint.y} className="stroke-orange-500" strokeWidth={2} />
+              <motion.div style={{ rotate: handRotation }} className="pointer-events-none absolute inset-0" aria-hidden="true">
+              <svg width={CLOCK_SIZE} height={CLOCK_SIZE}>
+                <line x1={CENTER} y1={CENTER} x2={CENTER} y2={CENTER - NUMBER_RADIUS} className="stroke-orange-500" strokeWidth={2} />
                 <circle cx={CENTER} cy={CENTER} r={4} className="fill-orange-500" />
-                <circle cx={handPoint.x} cy={handPoint.y} r={15} className="fill-orange-500" />
-                {!handOnLabel && <circle cx={handPoint.x} cy={handPoint.y} r={3} className="fill-white" />}
+                <circle cx={CENTER} cy={CENTER - NUMBER_RADIUS} r={15} className="fill-orange-500" />
+                {!handOnLabel && <circle cx={CENTER} cy={CENTER - NUMBER_RADIUS} r={3} className="fill-white" />}
               </svg>
+              </motion.div>
 
+              <AnimatePresence initial={false}>
+              <motion.div
+                key={view}
+                initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.88 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 1.08 }}
+                transition={{ duration: 0.28, ease: HAND_EASE }}
+                className="pointer-events-none absolute inset-0"
+              >
               {(view === 'hours' ? HOUR_LABELS : MINUTE_LABELS).map((number, index) => {
                 const point = pointAt(index, 12)
                 const selected = view === 'hours' ? number === hours12 : number === minutes
@@ -220,10 +251,13 @@ function TimePickerField({
                   </button>
                 )
               })}
+              </motion.div>
+              </AnimatePresence>
             </div>
           </div>
-        </dialog>
+        </motion.dialog>
       )}
+      </AnimatePresence>
     </div>
   )
 }

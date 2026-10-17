@@ -76,7 +76,7 @@ function ScheduleField({ id, label, value, onChange, error }: Readonly<ScheduleF
               </div>
 
               <div className="mt-sm grid grid-cols-2 gap-sm">
-                <label htmlFor={`${blockId}-start`} className="font-body text-body-sm font-normal text-neutral-500">
+                <label htmlFor={`${blockId}-start`} className="font-body text-body-sm font-semibold text-heading">
                   {t('common.schedule.from')}
                   <TimePickerField
                     id={`${blockId}-start`}
@@ -85,7 +85,7 @@ function ScheduleField({ id, label, value, onChange, error }: Readonly<ScheduleF
                     ariaLabel={`${label} — ${t('common.schedule.from')}`}
                   />
                 </label>
-                <label htmlFor={`${blockId}-end`} className="font-body text-body-sm font-normal text-neutral-500">
+                <label htmlFor={`${blockId}-end`} className="font-body text-body-sm font-semibold text-heading">
                   {t('common.schedule.to')}
                   <TimePickerField
                     id={`${blockId}-end`}

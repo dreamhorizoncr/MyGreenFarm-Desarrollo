@@ -70,7 +70,6 @@ import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
         if (!search) return true;
 
         const expedient = getExpedient(evaluation.expedientId);
-        // Búsqueda dual: coincide si el término está en el original O en el traducido
         const source = sourceEvaluations[index] ?? sourceEvaluations.find((item) => item.id === evaluation.id);
 
         return (
@@ -125,7 +124,6 @@ import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
     return (
         <AdminLayout>
             <section className="w-full">
-            {/* Header */}
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                 <div>
                 <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
@@ -137,7 +135,6 @@ import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
                 </p>
                 </div>
 
-                {/* Acciones + buscador */}
                 <div className="flex w-full items-center gap-3 md:w-auto">
                 <button
                     type="button"
@@ -173,14 +170,12 @@ import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
                 </div>
             </div>
 
-            {/* Loading */}
             {isLoading && (
                 <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <SkeletonList count={skeletonCount}>{() => <EvaluationCard loading />}</SkeletonList>
                 </div>
             )}
 
-            {/* Error */}
             {!isLoading && error && (
                 <div className="mt-8 rounded-2xl border border-danger-100 bg-white p-6">
                 <p className="font-body text-body-sm text-danger">
@@ -189,7 +184,6 @@ import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
                 </div>
             )}
 
-            {/* Evaluaciones */}
             {!isLoading &&
                 !error &&
                 filteredEvaluations.length > 0 && (
@@ -206,7 +200,6 @@ import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
                 </div>
                 )}
 
-            {/* No hay evaluaciones */}
             {!isLoading &&
                 !error &&
                 evaluations.length === 0 && (
@@ -217,7 +210,6 @@ import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
                 </div>
                 )}
 
-            {/* Búsqueda sin resultados */}
             {!isLoading &&
                 !error &&
                 evaluations.length > 0 &&
@@ -230,7 +222,6 @@ import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
                 )}
             </section>
 
-            {/* Crear / editar */}
             <EvaluationFormModal
             isOpen={isFormOpen}
             evaluation={selectedEvaluation}
@@ -243,7 +234,6 @@ import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
             }}
             />
 
-            {/* Eliminar */}
             {evaluationToDelete && (
             <DeleteConfirmModal
                 title={t("admin.evaluations.deleteTitle")}

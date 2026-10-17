@@ -34,7 +34,6 @@ import CardActionButton from "./ui/CardActionButton.tsx";
 
     return (
         <div className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm card-hover">
-        {/* Encabezado */}
         <div className="flex items-start justify-between gap-md">
             {loading ? (
               <div className="min-w-0 flex-1">
@@ -44,7 +43,7 @@ import CardActionButton from "./ui/CardActionButton.tsx";
               </div>
             ) : (
               <div className="min-w-0">
-                <h3 className="m-0 font-heading text-h4 font-bold text-heading">
+                <h3 className="m-0 font-heading text-h5 font-bold text-heading">
                     {expedient?.childName ?? t("admin.evaluations.cardDefaultExpedient")}
                 </h3>
 
@@ -58,7 +57,6 @@ import CardActionButton from "./ui/CardActionButton.tsx";
               </div>
             )}
 
-            {/* Acciones */}
             <div className="flex shrink-0 items-center gap-3">
               {loading ? (
                 <>
@@ -85,7 +83,6 @@ import CardActionButton from "./ui/CardActionButton.tsx";
             </div>
         </div>
 
-        {/* Progresos */}
         <div className="mt-lg grid grid-cols-1 gap-md sm:grid-cols-2">
             {progressFields.map(({ label, value }) => (
               <div key={label}>
@@ -109,7 +106,6 @@ import CardActionButton from "./ui/CardActionButton.tsx";
             ))}
         </div>
 
-        {/* Observación */}
         <div className="mt-lg border-t border-neutral-100 pt-md">
             {loading ? (
               <>

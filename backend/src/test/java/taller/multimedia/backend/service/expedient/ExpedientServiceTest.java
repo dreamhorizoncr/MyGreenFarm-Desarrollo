@@ -60,15 +60,12 @@ class ExpedientServiceTest {
         mockChild.setLastName("Pérez");
         mockChild.setStudentId(studentId);
 
-        // Simular que el niño sí existe buscando por su studentId
         when(childRepository.findByStudentId(studentId)).thenReturn(Optional.of(mockChild));
 
         ExpedientRequest request = requestWith(studentId, maliciousObservations);
 
-        // Verifica que la llamada lance InvalidFieldException debido al Sanitizer
         assertThrows(InvalidFieldException.class, () -> expedientService.createExpedient(request, null));
 
-        // Garantiza que nunca se intente persistir en el repositorio
         verify(expedientRepository, never()).save(any());
     }
 }

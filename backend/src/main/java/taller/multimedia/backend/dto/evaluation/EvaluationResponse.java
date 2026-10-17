@@ -27,7 +27,6 @@ public class EvaluationResponse {
         this.teacherObservation = teacherObservation;
     }
 
-    // Getters
     public UUID getId() {
         return id;
     }

@@ -125,24 +125,21 @@ public class ChildService {
 
         List<ChildClub> currentChildClubs = childClubRepository.findByChildId(child.getId());
 
-        // Mapear los IDs de los clubes que el niño tiene actualmente
         Set<Long> existingClubIds = currentChildClubs.stream()
                 .map(cc -> cc.getClub().getId())
                 .collect(Collectors.toSet());
 
         affectedClubIds.addAll(existingClubIds);
 
-        // 4. ELIMINAR solo las relaciones que el usuario desmarcó
         List<ChildClub> toRemove = currentChildClubs.stream()
                 .filter(cc -> !targetClubIds.contains(cc.getClub().getId()))
                 .toList();
 
         if (!toRemove.isEmpty()) {
             childClubRepository.deleteAll(toRemove);
-            childClubRepository.flush(); // Se fuerza la eliminación inmediata en Postgres
+            childClubRepository.flush();
         }
 
-        // 5. INSERTAR solo los clubes verdaderamente NUEVOS
         Set<Long> newClubIds = targetClubIds.stream()
                 .filter(clubId -> !existingClubIds.contains(clubId))
                 .collect(Collectors.toSet());
@@ -152,7 +149,6 @@ public class ChildService {
             List<ChildClub> newChildClubs = new ArrayList<>();
 
             for (Club club : newClubs) {
-                // Validar si hay cupo en el club nuevo
                 long enrolled = childClubRepository.countByClubId(club.getId());
                 if (club.getMaxCapacity() != null && enrolled >= club.getMaxCapacity()) {
                     throw new IllegalArgumentException(
@@ -194,7 +190,6 @@ public class ChildService {
 
         childRepository.delete(child);
 
-        // Recalcular los cupos disponibles tras eliminar al niño
         updateClubsAvailableSpots(affectedClubIds);
     }
 

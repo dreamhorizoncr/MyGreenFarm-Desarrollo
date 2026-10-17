@@ -26,7 +26,7 @@ public class PaymentController {
     @PostMapping("/create-checkout-session")
     public ResponseEntity<?> createCheckoutSession(@RequestBody Map<String, Object> request) {
         Double amount = Double.valueOf(request.get("amount").toString());
-        String currency = (String) request.get("currency"); // "USD", "CRC", "EUR"
+        String currency = (String) request.get("currency");
         String customerEmail = (String) request.get("customerEmail");
         String customerName = (String) request.get("customerName");
 

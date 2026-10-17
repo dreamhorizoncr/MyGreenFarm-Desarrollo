@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next'
 import { CheckIcon, ChevronDownIcon, SearchIcon } from '@animateicons/react/lucide'
 import { getCountryCallingCode, type Country } from 'react-phone-number-input'
 import useDismiss from '../../hooks/useDismiss.ts'
+import { AnimatePresence, motion } from 'motion/react'
 import { useMenuPosition } from '../../hooks/useMenuPosition.ts'
+import { useDropdownMotion } from '../../hooks/useDropdownMotion.ts'
 
 interface CountryOption {
   value?: Country
@@ -82,6 +84,8 @@ function CountrySelect({
 
   const selectedLabel = options.find((option) => option.value === value)?.label ?? ''
 
+  const dropdownMotion = useDropdownMotion(position?.bottom !== undefined)
+
   return (
     <div ref={rootRef} className="relative mr-xs flex items-center self-stretch">
       <button
@@ -100,10 +104,12 @@ function CountrySelect({
         <ChevronDownIcon size={14} aria-hidden="true" className={`shrink-0 text-neutral-500 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
       </button>
 
+      <AnimatePresence>
       {open && position && (
-        <div
+        <motion.div
+          {...dropdownMotion}
           style={{ top: position.top, bottom: position.bottom, left: position.left, width: position.width, maxHeight: position.maxHeight }}
-          className="fixed z-[10000] flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg animate-[language-switcher-in_0.15s_ease-out]"
+          className="fixed z-[10000] flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg"
         >
           <div className="flex shrink-0 items-center gap-xs border-b border-neutral-100 px-md py-xs">
             <SearchIcon size={16} aria-hidden="true" className="shrink-0 text-neutral-400" />
@@ -150,8 +156,9 @@ function CountrySelect({
               </li>
             ))}
           </ul>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </div>
   )
 }

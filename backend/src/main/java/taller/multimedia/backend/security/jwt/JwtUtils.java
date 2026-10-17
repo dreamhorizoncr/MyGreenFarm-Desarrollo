@@ -23,16 +23,15 @@ public class JwtUtils {
   private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
   @Value("${mygreenfarm.app.jwtSecret}")
-  private String jwtSecret; // The secret key for signing the JWT tokens
+  private String jwtSecret;
 
   @Value("${mygreenfarm.app.jwtExpirationMs}")
-  private int jwtExpirationMs;  // The expiration time for the JWT tokens in milliseconds
+  private int jwtExpirationMs;
 
   public String generateJwtToken(UserDetailsImpl userPrincipal) {
     return generateTokenFromUsername(userPrincipal.getUsername());
   }
 
-  // Generate a JWT token based on the provided username
   public String generateTokenFromUsername(String username) {
     return Jwts.builder()
         .subject(username)
@@ -42,7 +41,6 @@ public class JwtUtils {
         .compact();
   }
 
-  // Retrieve the username from the provided JWT token
   public String getUserNameFromJwtToken(String token) {
     return Jwts.parser()
         .verifyWith(key())
@@ -52,12 +50,10 @@ public class JwtUtils {
         .getSubject();
   }
 
-  // Validate the provided JWT token and return true if it is valid, false otherwise
   private SecretKey key() {
     return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
   }
 
-  // Generate a JWT cookie for the authenticated user
   public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
     String jwt = generateJwtToken(userPrincipal);
     return ResponseCookie.from("jwt", jwt)
@@ -67,7 +63,6 @@ public class JwtUtils {
         .build();
   }
 
-  // Generate a clean JWT cookie to clear the authentication token
   public ResponseCookie getCleanJwtCookie() {
     return ResponseCookie.from("jwt", "")
         .path("/")
@@ -76,14 +71,13 @@ public class JwtUtils {
         .build();
   }
 
-  // Validate the provided JWT token and return true if it is valid, false otherwise
   public boolean validateJwtToken(String authToken) {
     try {
       Jwts.parser().verifyWith(key()).build().parse(authToken);
       return true;
     } catch (ExpiredJwtException e) {
       logger.error("Expired Token JWT: {}", e.getMessage());
-      throw e; // el AuthTokenFilter la captura y marca SESSION_EXPIRED
+      throw e;
     } catch (MalformedJwtException e) {
       logger.error("Invalid Token JWT: {}", e.getMessage());
     } catch (UnsupportedJwtException e) {

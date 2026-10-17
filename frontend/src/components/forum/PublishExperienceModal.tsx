@@ -108,7 +108,7 @@ function PublishExperienceModal({
         />
 
         <div className="px-[22px] pb-[30px] pt-[34px] md:px-[40px] md:pb-[36px] md:pt-[40px]">
-          <h2 className="m-0 pr-[50px] font-heading text-[24px] font-bold text-heading md:text-[28px]">
+          <h2 className="m-0 pr-[50px] font-heading text-h4 font-bold text-heading">
             {t('forum.community.modalTitle')}
           </h2>
 

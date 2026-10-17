@@ -34,7 +34,6 @@ function AdminChildrenPage() {
     const search = searchTerm.trim().toLowerCase();
     if (!search) return true;
 
-    // Búsqueda dual: nombres (nunca se traducen) + notas en original Y traducido
     const source = sourceChildren[index] ?? sourceChildren.find((item) => item.id === child.id);
 
     return (
@@ -46,7 +45,6 @@ function AdminChildrenPage() {
     );
   });
 
-  // El modal siempre edita el texto original, aunque la card muestre traducido
   const getSourceChild = (id: number) => sourceChildren.find((item) => item.id === id) ?? children.find((item) => item.id === id) ?? null
 
   const handleEdit = (child: Child) => {
@@ -66,9 +64,9 @@ function AdminChildrenPage() {
 
       await fetchChildren(i18n.language)
 
-      notify.success('Niño eliminado correctamente')
+      notify.success(t("admin.children.deleteSuccess"))
     } catch (err) {
-      notify.error('No se pudo eliminar el niño')
+      notify.error(t("admin.children.deleteError"))
       throw err
     }
   }

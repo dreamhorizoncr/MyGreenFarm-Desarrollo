@@ -13,6 +13,7 @@ import { userStorage } from '../utils/userStorage.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
+import TabHighlight from '../components/ui/TabHighlight.tsx'
 
 const PAGE_SIZE = 10
 const ROLE_OPTIONS = ['ALL', 'OWNER', 'ADMIN', 'TEACHER']
@@ -60,8 +61,8 @@ function AdminUsersPage() {
   }
 
   const roleFilterClassName = (active: boolean) =>
-    `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
-      active ? 'border-green-500 bg-green-500 text-white' : 'border-green-500 bg-white text-heading hover:bg-green-50'
+    `relative rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
+      active ? 'border-green-500 text-white' : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
     }`
 
   const handleSave = async (id: string, data: UpdateUserData) => {
@@ -117,7 +118,7 @@ function AdminUsersPage() {
           </button>
         </div>
 
-        <div className="-mt-sm mb-lg flex flex-wrap gap-sm">
+        <div className="isolate -mt-sm mb-lg flex flex-wrap gap-sm">
           {ROLE_OPTIONS.map((role) => (
             <button
               key={role}
@@ -126,6 +127,7 @@ function AdminUsersPage() {
               onClick={() => setRoleFilter(role)}
               className={roleFilterClassName(roleFilter === role)}
             >
+              {roleFilter === role && <TabHighlight layoutId="admin-users-role-tab" className="bg-green-500" />}
               {role === 'ALL' ? t('admin.allRoles') : roleLabels[role] ?? role}
             </button>
           ))}

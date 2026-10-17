@@ -29,7 +29,7 @@ public class ClubService {
     @Transactional
     public ClubResponse create(ClubRequest dto) {
         Club saved = createClub(dto);
-        return mapToResponse(saved, "es"); // Por defecto se crea en español
+        return mapToResponse(saved, "es");
     }
 
     @Transactional
@@ -147,8 +147,6 @@ public class ClubService {
         }
     }
 
-    // Método auxiliar para transformar la entidad al DTO de respuesta y cargar sus
-    // imágenes
     private ClubResponse mapToResponse(Club club, String lang) {
         ClubResponse response = new ClubResponse();
         response.setId(club.getId());
@@ -156,9 +154,8 @@ public class ClubService {
         response.setMaxCapacity(club.getMaxCapacity());
         response.setPublished(club.isPublished());
 
-        // Lógica de traducción de contenido
         if ("en".equals(lang) || "fr".equals(lang)) {
-            response.setName(club.getName()); // Placeholder temporal para i18n
+            response.setName(club.getName());
             response.setDescription(club.getDescription());
         } else {
             response.setName(club.getName());
@@ -167,7 +164,6 @@ public class ClubService {
 
         long enrolledChildren = childRepository.countByClubId(club.getId());
 
-        // 2. Calcular o asignar los cupos disponibles reales (maxCapacity - inscritos)
         if (club.getMaxCapacity() != null) {
             int calculatedSpots = (int) (club.getMaxCapacity() - enrolledChildren);
             response.setAvailableSpots(Math.max(0, calculatedSpots));
@@ -175,7 +171,6 @@ public class ClubService {
             response.setAvailableSpots(null);
         }
 
-        // Obtener la galería de imágenes correspondiente al club
         List<ClubImageResponse> images = clubImageService.getImagesByClub(club.getId());
         response.setImages(images);
 

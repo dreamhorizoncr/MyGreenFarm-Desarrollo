@@ -83,8 +83,6 @@ export const clubService = {
         await apiClient.delete(`/clubs/${id}`)
     },
 
-    // --- IMÁGENES ---
-
     async getImagesByClub(clubId: number): Promise<ClubImageResponse[]> {
         const response = await apiClient.get<ClubImageResponse[]>(`/clubs/${clubId}/images`)
         return response.data

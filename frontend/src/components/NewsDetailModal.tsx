@@ -5,28 +5,14 @@ import { useTranslation } from 'react-i18next';
 import { useAnnouncementImages } from '../hooks/useAnnouncementImages.ts';
 import { useModalExit } from '../hooks/useModalExit.ts';
 
-import type { Announcement, AnnouncementType } from '../types/announcement.ts';
+import type { Announcement } from '../types/announcement.ts';
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface NewsDetailModalProps{
     announcement: Announcement;
+    typeLabel: string;
     onClose: () => void;
 }
-
-const TYPE_LABEL_KEY: Record<AnnouncementType,
-    |'newspage.category1'
-    |'newspage.category2'
-    |'newspage.category3'
-    |'newspage.category4'
-    |'newspage.category5'
-    |'newspage.category6'
-    > = {
-        NEWS: 'newspage.category2',
-        EVENT: 'newspage.category3',
-        NOTICE: 'newspage.category4',
-        GENERAL: 'newspage.category5',
-        TRANSPORT: 'newspage.category6',
-    };
 
 function formatDate(
     iso: string|null|undefined,
@@ -43,6 +29,7 @@ function formatDate(
 
 function NewsDetailModal({
     announcement,
+    typeLabel,
     onClose,
 }: Readonly<NewsDetailModalProps>) {
     const { t, i18n } = useTranslation();
@@ -111,7 +98,7 @@ function NewsDetailModal({
         >
             <ModalCloseButton
                 onClick={requestClose}
-                aria-label="Cerrar noticia"
+                aria-label={t("newspage.closeNews")}
               className="absolute right-3 top-[26px] z-20"
             />
 
@@ -120,9 +107,9 @@ function NewsDetailModal({
             <header className="mx-auto max-w-[850px] text-center">
 
             <span className="inline-flex rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
-                    {t(TYPE_LABEL_KEY[announcement.type])}
+                    {typeLabel}
             </span>
-            <h2 className="mt-[16px] font-heading text-[32px] font-bold leading-[1.15] text-heading md:text-h1">
+            <h2 className="mt-[16px] font-heading text-h2 font-bold leading-[1.15] text-heading">
                 {announcement.title}
             </h2>
             <div className="mt-[16px] flex flex-wrap items-center justify-center gap-x-[18px] gap-y-[8px] font-body text-body-sm text-neutral-500">
@@ -195,7 +182,7 @@ function NewsDetailModal({
                 {!loading && galleryImages.length > 0 && (
                     <section className="mt-[60px]">
 
-                <h3 className="mb-[18px] font-heading text-[26px] font-bold text-heading">
+                <h3 className="mb-[18px] font-heading text-h4 font-bold text-heading">
                     {t("newspage.gallery")}
                 </h3>
 

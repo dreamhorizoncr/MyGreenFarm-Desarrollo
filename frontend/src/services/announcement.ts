@@ -2,6 +2,7 @@ import { apiClient } from './api.ts'
 import { sanitizeFileName } from '../utils/sanitizeFileName.ts'
 import type {
     Announcement,
+    AnnouncementCategory,
     AnnouncementImageResponse,
     AnnouncementRequest,
 } from '../types/announcement.ts'
@@ -23,6 +24,20 @@ export interface AnnouncementPage{
 }
 
 export const announcementService = {
+    async getCategories(): Promise<AnnouncementCategory[]> {
+        const response = await apiClient.get<AnnouncementCategory[]>('/announcements/categories')
+        return response.data
+    },
+
+    async createCategory(title: string): Promise<AnnouncementCategory> {
+        const response = await apiClient.post<AnnouncementCategory>('/announcements/categories', { title })
+        return response.data
+    },
+
+    async deleteCategory(id: string): Promise<void> {
+        await apiClient.delete(`/announcements/categories/${id}`)
+    },
+
     async getAnnouncements(lang: string, page: number = 0, size: number = 10,): Promise<AnnouncementPage> {
         const response = await apiClient.get<AnnouncementPage>('/announcements',{params:{lang,page,size}})
         return response.data

@@ -15,10 +15,6 @@ import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Tasa de cambio de un día, publicada por un banco. Solo se guarda un registro
- * por fecha: el job scheduled hace upsert sobre el registro del día.
- */
 @Entity
 @Table(name = "exchange_rate")
 @Data

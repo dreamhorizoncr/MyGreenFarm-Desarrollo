@@ -38,8 +38,6 @@ export function useEvaluations() {
             }),
         );
 
-        // Siempre batch (como foro): el original puede estar en ES, EN o FR.
-        // Se excluyen nombres/fechas/ids: solo los 5 textos pedagógicos.
         if (targetLang && items.length > 0) {
             try {
                 const translated = await evaluationService.translateBatch(ENTITY_TYPE, targetLang, items);
@@ -59,7 +57,6 @@ export function useEvaluations() {
                     })),
                 );
             } catch {
-                // Si falla la traducción se muestra el original
                 setEvaluations(data);
             }
         } else {

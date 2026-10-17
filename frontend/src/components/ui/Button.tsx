@@ -1,5 +1,3 @@
-/** Boton con diferentes variantes y tamaños */
-
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { tv } from 'tailwind-variants'
 

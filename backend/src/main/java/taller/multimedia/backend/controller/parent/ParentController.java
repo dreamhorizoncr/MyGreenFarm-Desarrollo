@@ -24,7 +24,6 @@ public class ParentController {
         this.parentService = parentService;
     }
 
-    // Endpoint para que el owner registre un nuevo padre/madre
     @PostMapping
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<?> createParent(@Valid @RequestBody ParentRequest dto) {
@@ -36,7 +35,6 @@ public class ParentController {
         }
     }
 
-    // Endpoint para listar todos los padres en el panel de administración
     @GetMapping
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<Page<Parent>> getAllParents(
@@ -45,7 +43,6 @@ public class ParentController {
         return ResponseEntity.ok(parents);
     }
 
-    // Endpoint para buscar un padre/madre
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<?> getParentById(@PathVariable Integer id) {
@@ -57,7 +54,6 @@ public class ParentController {
         }
     }
 
-    // Endpoint para actualizar un padre/madre
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<?> updateParent(@PathVariable Integer id, @Valid @RequestBody ParentRequest dto) {
@@ -80,7 +76,6 @@ public class ParentController {
         }
     }
 
-    // Endpoint para eliminar un padre/madre
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<String> deleteParent(@PathVariable Integer id) {

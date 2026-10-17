@@ -15,14 +15,15 @@ import { userStorage } from '../utils/userStorage.ts'
 import { forumService } from '../services/forum.ts'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
+import TabHighlight from '../components/ui/TabHighlight.tsx'
 
 type ForumAdminTab = 'posts' | 'community'
 
 const FORUM_ADMIN_TABS: ForumAdminTab[] = ['posts', 'community']
 
 const tabClassName = (active: boolean) =>
-  `rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors ${
-    active ? 'border-green-500 bg-green-500 text-white' : 'border-green-500 bg-white text-heading hover:bg-green-50'
+  `relative rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
+    active ? 'border-green-500 text-white' : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
   }`
 
 function AdminForumPage() {
@@ -68,8 +69,6 @@ function AdminForumPage() {
       setTotalPages(result.totalPages)
       setPostsError('')
 
-      // Traducción dinámica (Cloud Translation, cualquier idioma origen).
-      // El form de crear/editar usa el original (sourcePosts); la lista muestra traducido.
       const targetLang = (lang ?? i18n.language).split('-')[0]
       const items = result.content.flatMap((post) => [
         { entityId: post.id, fieldName: 'title', originalText: post.title },
@@ -110,18 +109,17 @@ function AdminForumPage() {
         setPosts(result.content)
       }
     } catch {
-      setPostsError(isTeacher ? 'No se pudieron cargar tus publicaciones' : 'No se pudieron cargar los artículos')
+      setPostsError(isTeacher ? t('adminForum.loadOwnPostsError') : t('adminForum.loadPostsError'))
     } finally {
       setPostsLoading(false)
     }
-  }, [isTeacher, i18n.language])
+  }, [isTeacher, i18n.language, t])
 
   useEffect(() => {
     void refreshPosts(page, i18n.language)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTeacher, page, i18n.language])
 
-  // El modal de crear/editar siempre trabaja con el texto original
   const getSourcePost = (id: string) => sourcePosts.find((item) => item.id === id) ?? posts.find((item) => item.id === id) ?? null
 
   const visiblePosts = posts
@@ -163,7 +161,7 @@ function AdminForumPage() {
 
       closeForm()
     } catch {
-      notify.error('No se pudo guardar el artículo')
+      notify.error(t('adminForum.saveErrorToastTitle'))
     }
   }
 
@@ -212,7 +210,7 @@ function AdminForumPage() {
       await removeBlogPost(postToDelete.id)
       await refreshPosts(page, i18n.language)
     } catch (err) {
-      notify.error('No se pudo eliminar el artículo')
+      notify.error(t('adminForum.deleteErrorToastTitle'))
       throw err
     }
 
@@ -296,7 +294,7 @@ function AdminForumPage() {
         )}
       </div>
 
-      <div role="tablist" aria-label={t('adminForum.tabs.label')} className="mt-xl flex flex-wrap gap-sm">
+      <div role="tablist" aria-label={t('adminForum.tabs.label')} className="isolate mt-xl flex flex-wrap gap-sm">
         {FORUM_ADMIN_TABS.map((tab) => (
           <button
             key={tab}
@@ -306,6 +304,7 @@ function AdminForumPage() {
             onClick={() => setActiveTab(tab)}
             className={tabClassName(activeTab === tab)}
           >
+            {activeTab === tab && <TabHighlight layoutId="admin-forum-tab" className="bg-green-500" />}
             {t(`adminForum.tabs.${tab}`)}
           </button>
         ))}

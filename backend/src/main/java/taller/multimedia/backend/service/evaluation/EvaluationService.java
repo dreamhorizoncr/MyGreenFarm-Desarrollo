@@ -26,7 +26,6 @@ public class EvaluationService {
 
     @Transactional
     public Evaluation createEvaluation(EvaluationRequest request) {
-        // Verificar que el Expediente exista antes de asociarlo
         Expedient expedient = expedientRepository.findById(request.getExpedientId())
                 .orElseThrow(() -> new RuntimeException("Expediente no encontrado con ID: " + request.getExpedientId()));
 

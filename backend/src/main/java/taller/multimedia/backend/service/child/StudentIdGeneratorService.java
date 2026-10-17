@@ -23,7 +23,7 @@ public class StudentIdGeneratorService {
         char decadePrefix = getDecadePrefix(currentYear); 
         int yearDigit = currentYear % 10;                 
         
-        String prefix = String.format("%c%d", decadePrefix, yearDigit); // "A6"
+        String prefix = String.format("%c%d", decadePrefix, yearDigit);
 
         String lastStudentId = childRepository.findLastStudentIdByPrefix(prefix + "%");
 

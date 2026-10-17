@@ -38,13 +38,11 @@ function CommunityPostPage() {
         setSourceComments(loadedComments)
         setComments(loadedComments)
       })
-      .catch(() => { if (active) setError('No se pudo cargar la publicación') })
+      .catch(() => { if (active) setError(i18n.t('forum.community.loadError')) })
       .finally(() => { if (active) setLoading(false) })
     return () => { active = false }
-  }, [id])
+  }, [id, i18n])
 
-  // Traducción dinámica de los comentarios (cualquier idioma origen vía Cloud Translation).
-  // El alias es nombre propio y nunca se traduce.
   useEffect(() => {
     if (sourceComments.length === 0) return
     const language = (i18n.resolvedLanguage ?? i18n.language).split('-')[0]
@@ -123,7 +121,7 @@ function CommunityPostPage() {
           <PostAvatar name={post.name} />
           <p className="m-0 min-w-0 truncate font-heading text-h6 font-bold text-heading">{post.name}</p>
         </header>
-        <p className="m-0 mt-md whitespace-pre-line break-words text-left font-body text-[16px] leading-[1.6] text-body-text">{post.content}</p>
+        <p className="m-0 mt-md whitespace-pre-line break-words text-left font-body text-body leading-[1.6] text-body-text">{post.content}</p>
       </article>}
       <section id="comments" className="mt-md scroll-mt-24 rounded-2xl border border-neutral-200 bg-white p-lg">
         <h1 className="m-0 border-b border-neutral-200 pb-md text-left font-heading text-h5 font-bold !text-heading">{t('forum.blog.commentsTitle')}</h1>
@@ -132,8 +130,8 @@ function CommunityPostPage() {
           {comments.map((comment) => <div key={comment.id} className="flex items-start gap-md">
             <PostAvatar name={comment.alias} size={32} />
             <div className="min-w-0 flex-1 text-left">
-              <p className="m-0 text-left font-heading text-[16px] font-bold !text-heading">{comment.alias}</p>
-              <p className="m-0 mt-3xs whitespace-pre-line break-words text-left font-body text-[16px] leading-[1.55] text-body-text">{comment.content}</p>
+              <p className="m-0 text-left font-heading text-body-sm font-bold !text-heading">{comment.alias}</p>
+              <p className="m-0 mt-3xs whitespace-pre-line break-words text-left font-body text-body leading-[1.55] text-body-text">{comment.content}</p>
             </div>
           </div>)}
         </div>
@@ -143,8 +141,8 @@ function CommunityPostPage() {
           {formOpen ? t('forum.community.cancel') : t('forum.community.addComment')}
         </button>
         {formOpen && <form onSubmit={submitComment} className="mt-md flex w-full flex-col gap-md rounded-2xl border border-neutral-200 bg-white p-lg">
-          <input value={name} onChange={(event) => setName(event.target.value)} maxLength={40} required aria-label={t('forum.community.commentNameLabel')} placeholder={t('forum.community.commentNameLabel')} className="h-11 w-full rounded-xl border border-neutral-300 bg-white px-md font-body text-[15px] text-body-text outline-none focus:border-heading" />
-          <textarea value={content} onChange={(event) => setContent(event.target.value)} maxLength={4000} rows={5} required aria-label={t('forum.community.commentContentLabel')} placeholder={t('forum.community.commentContentLabel')} className="min-h-[130px] w-full resize-y rounded-xl border border-neutral-300 bg-white p-md font-body text-[15px] text-body-text outline-none focus:border-heading" />
+          <input value={name} onChange={(event) => setName(event.target.value)} maxLength={40} required aria-label={t('forum.community.commentNameLabel')} placeholder={t('forum.community.commentNameLabel')} className="h-11 w-full rounded-xl border border-neutral-300 bg-white px-md font-body text-body-sm text-body-text outline-none focus:border-heading" />
+          <textarea value={content} onChange={(event) => setContent(event.target.value)} maxLength={4000} rows={5} required aria-label={t('forum.community.commentContentLabel')} placeholder={t('forum.community.commentContentLabel')} className="min-h-[130px] w-full resize-y rounded-xl border border-neutral-300 bg-white p-md font-body text-body-sm text-body-text outline-none focus:border-heading" />
           <Button type="submit" className="h-11 rounded-full bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600">{t('forum.community.commentSubmit')}</Button>
         </form>}
       </div>

@@ -49,14 +49,11 @@ public class GoogleCalendarService {
     private Calendar getCalendarService() throws IOException, GeneralSecurityException {
         InputStream credentialsStream;
 
-        // 1. Verificar si existe la variable de entorno en Render
         String credentialsJson = System.getenv("GOOGLE_CREDENTIALS_JSON");
 
         if (credentialsJson != null && !credentialsJson.trim().isEmpty()) {
-            // Carga desde la variable de entorno (para producción en Render)
             credentialsStream = new ByteArrayInputStream(credentialsJson.getBytes(StandardCharsets.UTF_8));
         } else if (credentialsResource != null && credentialsResource.exists()) {
-            // Carga desde el archivo local (para desarrollo)
             long start = System.currentTimeMillis();
             credentialsStream = credentialsResource.getInputStream();
             log.info("Cargar calendario tardó: {} ms", System.currentTimeMillis() - start);
@@ -65,7 +62,6 @@ public class GoogleCalendarService {
                     "No se encontraron credenciales de Google Calendar ni en variable de entorno ni en archivo local.");
         }
 
-        // Carga las credenciales desde el archivo JSON de la cuenta de servicio
         GoogleCredentials credentials = GoogleCredentials
                 .fromStream(credentialsStream)
                 .createScoped(List.of("https://www.googleapis.com/auth/calendar"));
@@ -87,38 +83,12 @@ public class GoogleCalendarService {
                 .build();
     }
 
-    // public List<String> getAvailableSlots(LocalDate date) {
-    //     try {
-    //         Calendar service = getCalendarService();
 
-    //         String timeMin = date.atTime(7, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toString();
-    //         String timeMax = date.atTime(17, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toString();
 
-    //         FreeBusyRequest requestBody = new FreeBusyRequest();
-    //         requestBody.setTimeMin(new com.google.api.client.util.DateTime(timeMin));
-    //         requestBody.setTimeMax(new com.google.api.client.util.DateTime(timeMax));
 
-    //         FreeBusyRequestItem item = new FreeBusyRequestItem();
-    //         item.setId(calendarId);
-    //         requestBody.setItems(List.of(item));
 
-    //         FreeBusyResponse response = service.freebusy().query(requestBody).execute();
 
-    //         if (response.getCalendars() == null || response.getCalendars().get(calendarId) == null) {
-    //             log.error("No se pudo acceder al calendario con ID: {}", calendarId);
-    //             throw new CalendarServiceException("No se pudo cargar la disponibilidad en este momento");
-    //         }
 
-    //         List<TimePeriod> busyPeriods = response.getCalendars().get(calendarId).getBusy();
-    //         return calculateFreeSlots(date, busyPeriods);
-
-    //     } catch (CalendarServiceException e) {
-    //         throw e;
-    //     } catch (Exception e) {
-    //         log.error("Error al consultar disponibilidad para la fecha {}", date, e);
-    //         throw new CalendarServiceException("No se pudo cargar la disponibilidad en este momento");
-    //     }
-    // }
 
     private List<String> calculateFreeSlots(LocalDate date, List<TimePeriod> busyPeriods) {
         List<String> freeSlots = new ArrayList<>();
@@ -145,7 +115,6 @@ public class GoogleCalendarService {
                     Instant busyStartInstant = Instant.parse(period.getStart().toString());
                     Instant busyEndInstant = Instant.parse(period.getEnd().toString());
 
-                    // Verificar si hay solapamiento exacto entre el slot y el evento ocupado
                     if (slotStartInstant.isBefore(busyEndInstant) && slotEndInstant.isAfter(busyStartInstant)) {
                         isBusy = true;
                         break;
@@ -227,10 +196,8 @@ public class GoogleCalendarService {
             event.setStart(new EventDateTime().setDateTime(new DateTime(startIso)));
             event.setEnd(new EventDateTime().setDateTime(new DateTime(endIso)));
 
-            // Ejecutamos la inserción y guardamos el evento devuelto por Google
             Event createdEvent = service.events().insert(calendarId, event).execute();
 
-            // Guardamos el ID único de Google en la cita
             appointment.setGoogleEventId(createdEvent.getId());
 
         } catch (Exception e) {
@@ -240,19 +207,15 @@ public class GoogleCalendarService {
 
     public void removeAppointmentFromCalendar(Appointment appointment) {
         try {
-            // Si por alguna razón la cita no tiene ID de Google asociado, no intentamos
-            // borrar nada
             if (appointment.getGoogleEventId() == null || appointment.getGoogleEventId().isEmpty()) {
                 return;
             }
 
             Calendar service = getCalendarService();
 
-            // Borramos el evento usando el calendario y el ID del evento
             service.events().delete(calendarId, appointment.getGoogleEventId()).execute();
 
         } catch (Exception e) {
-            // Maneja el error según prefieras (puedes lanzar excepción o solo loguearlo)
             throw new RuntimeException("Error al eliminar la cita de Google Calendar", e);
         }
     }
@@ -265,13 +228,10 @@ public class GoogleCalendarService {
 
             Calendar service = getCalendarService();
 
-            // Buscamos el evento existente en Google
             Event event = service.events().get(calendarId, appointment.getGoogleEventId()).execute();
 
-            // Actualizamos el resumen/título
             event.setSummary(newPrefix + appointment.getChildName());
 
-            // Guardamos los cambios en Google
             service.events().update(calendarId, appointment.getGoogleEventId(), event).execute();
 
         } catch (Exception e) {
@@ -281,7 +241,6 @@ public class GoogleCalendarService {
 
     public void rescheduleAppointmentInCalendar(Appointment appointment, LocalDateTime newStartDateTime) {
         try {
-            // 1. Verificar si la cita tiene un ID de Google válido
             if (appointment.getGoogleEventId() == null || appointment.getGoogleEventId().trim().isEmpty()) {
                 log.warn("La cita ID {} no tiene un googleEventId asociado. Se intentará crear como nuevo evento.",
                         appointment.getId());
@@ -290,7 +249,6 @@ public class GoogleCalendarService {
 
             Calendar service = getCalendarService();
 
-            // 2. Intentar obtener el evento existente
             Event event;
             try {
                 event = service.events().get(calendarId, appointment.getGoogleEventId()).execute();
@@ -301,7 +259,6 @@ public class GoogleCalendarService {
                 return;
             }
 
-            // 3. Calcular fechas en formato ISO con la zona horaria correcta
             LocalDateTime newEndDateTime = newStartDateTime.plusMinutes(59);
             String startIso = newStartDateTime.atZone(ZoneId.systemDefault()).toInstant().toString();
             String endIso = newEndDateTime.atZone(ZoneId.systemDefault()).toInstant().toString();
@@ -309,12 +266,10 @@ public class GoogleCalendarService {
             event.setStart(new EventDateTime().setDateTime(new DateTime(startIso)));
             event.setEnd(new EventDateTime().setDateTime(new DateTime(endIso)));
 
-            // 4. Actualizar descripción
             event.setDescription("Cita Reprogramada\nPadre/Madre: " + appointment.getParentName() +
                     "\nTel: " + appointment.getParentPhone() +
                     "\nEmail: " + appointment.getParentEmail());
 
-            // 5. Ejecutar la actualización en Google Calendar
             service.events().update(calendarId, appointment.getGoogleEventId(), event).execute();
             System.out.println(
                     "Evento de Google Calendar actualizado exitosamente para la cita ID: " + appointment.getId());
@@ -332,7 +287,6 @@ public class GoogleCalendarService {
         return created.getId();
     }
 
-    // Devuelve el id del evento (cambia si hubo que recrearlo)
     public String updateBirthdayEvent(User teacher) throws IOException, GeneralSecurityException {
         Calendar service = getCalendarService();
         try {
@@ -341,7 +295,6 @@ public class GoogleCalendarService {
                     .execute();
             return teacher.getBirthdayEventId();
         } catch (GoogleJsonResponseException e) {
-            // Si lo borraron a mano en Google, se vuelve a crear
             if (e.getStatusCode() == 404 || e.getStatusCode() == 410) {
                 return createBirthdayEvent(teacher);
             }
@@ -354,7 +307,6 @@ public class GoogleCalendarService {
         try {
             service.events().delete(calendarId, eventId).execute();
         } catch (GoogleJsonResponseException e) {
-            // Si ya no existe en Google, no hay nada que borrar
             if (e.getStatusCode() != 404 && e.getStatusCode() != 410)
                 throw e;
         }

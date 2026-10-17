@@ -48,11 +48,9 @@ public class NewsletterController {
         return ResponseEntity.ok(parentRepository.findAllActiveParentEmails());
     }
 
-    // Endpoint para que los usuarios se suscriban desde la nueva sección
     @PostMapping("/subscribe")
     public ResponseEntity<?> subscribe(@Valid @RequestBody SubscriberInfo dto) {
         try {
-            // Delegamos toda la lógica, limpieza y validación al servicio
             NewsletterSubscriber saved = newsletterService.subscribe(dto.getEmail(), dto.getLanguage());
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (RuntimeException e) {
@@ -60,7 +58,6 @@ public class NewsletterController {
         }
     }
 
-    // Endpoint para no recibir más correos
     @DeleteMapping("/unsubscribe")
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<String> unsubscribe(@RequestParam String email) {
@@ -72,7 +69,6 @@ public class NewsletterController {
         }
     }
 
-    // Endpoint para disparar el envío masivo
     @PostMapping("/broadcast")
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<String> sendBroadcast(@Valid @RequestBody BroadcastEmail dto) {

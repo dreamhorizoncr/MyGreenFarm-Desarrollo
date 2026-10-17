@@ -80,7 +80,7 @@ function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverIm
   const footer = (
     <>
       {previewLinkLabel === undefined ? (
-        <BlobButton onClick={onReadMore} className="h-11 w-fit px-lg font-body text-caption uppercase">
+        <BlobButton onClick={onReadMore} className="h-11 w-fit px-lg font-body text-button font-bold">
           {t("newspage.readMore")}
         </BlobButton>
       ) : (
@@ -112,7 +112,7 @@ function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverIm
             {formattedDate}
           </span>
 
-          <h2 className="mt-[10px] line-clamp-2 font-heading text-[24px] font-bold text-heading">
+          <h2 className="mt-[10px] line-clamp-2 font-heading text-h4 font-bold text-heading">
             {announcement!.title}
           </h2>
 
@@ -143,7 +143,7 @@ function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverIm
           {formattedDate}
         </span>
 
-        <h2 className="mt-[8px] line-clamp-1 font-heading text-[24px] font-bold text-heading">
+        <h2 className="mt-[8px] line-clamp-1 font-heading text-h4 font-bold text-heading">
           {announcement!.title}
         </h2>
 

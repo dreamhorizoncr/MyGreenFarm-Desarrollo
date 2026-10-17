@@ -21,7 +21,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 @Entity 
 @Table(name = "gallery_images")
-@Data // Lombok annotation to generate getters, setters, and other utility methods
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class GalleryImages {

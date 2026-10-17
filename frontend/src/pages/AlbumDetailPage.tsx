@@ -68,7 +68,6 @@ function AlbumDetailPage() {
   const album: Gallery | undefined = albumEntry?.[1].find((gallery) => gallery.id === id)
   const category = categories.find((candidate) => candidate.id === albumEntry?.[0])
 
-  // inicializa likes cuando el álbum ya tiene imágenes cargadas
   useEffect(() => {
     if (album && album.galleryImages.length > 0) {
       void galleryService.getMyLikes().then((likedImageIds) => {
@@ -84,7 +83,6 @@ function AlbumDetailPage() {
     <div id="album-detail-page" className="min-h-screen bg-bg-page">
       <Navbar />
 
-      {/* Encabezado del álbum */}
       <section className="bg-white py-[50px] md:py-[70px]">
         <Container>
           <nav
@@ -116,7 +114,7 @@ function AlbumDetailPage() {
 
           {album && (
             <header className="mx-auto mt-[32px] max-w-[760px] text-center">
-              <h1 className="mt-0 font-heading text-[30px] font-bold leading-tight text-green-500 md:text-h1">
+              <h1 className="mt-0 font-heading text-h1 font-bold leading-tight text-green-500">
                 {album.title}
               </h1>
 
@@ -128,7 +126,6 @@ function AlbumDetailPage() {
         </Container>
       </section>
 
-      {/* Fotos del álbum */}
       <main>
         <Container className="py-[60px] md:py-[80px]">
           {loading && (

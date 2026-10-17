@@ -65,7 +65,7 @@ function ForumCommentsModal<T extends ForumCommentItem>({
       <div className={`relative mx-auto max-h-full modal-scroll w-full max-w-[680px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}>
         <div className="flex items-center justify-between gap-md">
           <div className="min-w-0">
-            <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+            <h2 className="m-0 font-heading text-h4 font-bold text-heading">
               {t('adminForum.commentsModalTitle')}
             </h2>
             <p className="m-0 mt-2xs truncate font-body text-body-sm text-neutral-500">

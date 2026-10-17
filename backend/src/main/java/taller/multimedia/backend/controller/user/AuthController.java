@@ -22,8 +22,6 @@ import taller.multimedia.backend.security.jwt.JwtUtils;
 import taller.multimedia.backend.security.services.UserDetailsImpl;
 import taller.multimedia.backend.service.user.AuthService;
 
-//Controller class for handling authentication-related endpoints
-
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -36,12 +34,10 @@ public class AuthController {
         this.jwtUtils = jwtUtils;
     }
 
-    // Endpoint for user authentication (login)
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         AuthResult result = authService.authenticateUser(loginRequest);
 
-        // Get the authenticated user details to generate JWT cookie
         UserDetailsImpl userDetails = result.getUserDetails();
 
         String token = jwtUtils.generateJwtToken(userDetails);
@@ -56,7 +52,6 @@ public class AuthController {
                 .body(new SigninResponse(token, result.getUserInfo()));
     }
 
-    // Endpoint for user registration (signup) - only ADMIN can register new users
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
@@ -70,7 +65,6 @@ public class AuthController {
         }
     }
 
-    // Endpoint for user logout (signout)
     @PostMapping("/signout")
     public ResponseEntity<?> logoutUser() {
         ResponseCookie cookie = authService.logoutUser();
@@ -79,13 +73,9 @@ public class AuthController {
                 .body(new MessageResponse("You've been signed out!"));
     }
 
-    // Endpoint para solicitar la recuperación de contraseña
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
         try {
-            // 1. Generar token único de recuperación
-            // 2. Guardarlo en base de datos con expiración
-            // 3. Enviar el correo inmediatamente al usuario específico
             authService.forgotPassword(request.getEmail());
 
             return ResponseEntity.ok(new MessageResponse("Correo de recuperación enviado con éxito."));
@@ -94,7 +84,6 @@ public class AuthController {
         }
     }
 
-    // Endpoint para restablecer la contraseña con el token
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         try {

@@ -23,17 +23,11 @@ public class ExchangeRateService {
     private final ExchangeRateRepository exchangeRateRepository;
     private final BacExchangeRateClient bacExchangeRateClient;
 
-    /** Actualiza una vez al terminar el arranque, además de la tarea periódica. */
     @EventListener(ApplicationReadyEvent.class)
     public void onStartup() {
         updateExchangeRate();
     }
 
-    /**
-     * Corre cada 6 horas (00:00, 06:00, 12:00 y 18:00, hora de Costa Rica)
-     * para detectar si el banco cambia la tasa a media jornada. Si la fuente
-     * falla se queda la última tasa buena guardada y el backend sigue arriba.
-     */
     @Scheduled(cron = "${exchange-rate.cron:0 0 0,6,12,18 * * *}", zone = "America/Costa_Rica")
     public void updateExchangeRate() {
         try {
@@ -45,10 +39,6 @@ public class ExchangeRateService {
         }
     }
 
-    /**
-     * Guarda las tasas del día. Si ya había un registro para esa fecha lo
-     * actualiza en vez de duplicarlo.
-     */
     @Transactional
     public ExchangeRate saveDailyRates(ExchangeRates rates) {
         ExchangeRate record = exchangeRateRepository.findByRateDate(rates.rateDate())

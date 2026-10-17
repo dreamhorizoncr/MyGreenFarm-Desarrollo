@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { CheckIcon, ChevronDownIcon } from '@animateicons/react/lucide'
+import { AnimatePresence, motion } from 'motion/react'
 import { useMenuPosition } from '../../hooks/useMenuPosition.ts'
+import { useDropdownMotion } from '../../hooks/useDropdownMotion.ts'
 
 export interface SelectOption {
   value: string
@@ -71,6 +73,8 @@ function Select({
 
   const selected = options.find((option) => option.value === value)
 
+  const dropdownMotion = useDropdownMotion(position?.bottom !== undefined)
+
   return (
     <div className="relative" ref={rootRef}>
       <button
@@ -94,11 +98,13 @@ function Select({
         />
       </button>
 
+      <AnimatePresence>
       {open && position && (
-        <ul
+        <motion.ul
+          {...dropdownMotion}
           ref={menuRef}
           style={{ top: position.top, bottom: position.bottom, left: position.left, width: position.width, maxHeight: position.maxHeight }}
-          className={`fixed z-[10000] m-0 list-none overflow-y-auto rounded-xl border border-neutral-200 bg-white p-xs shadow-lg animate-[language-switcher-in_0.15s_ease-out] ${menuClassName}`}
+          className={`fixed z-[10000] m-0 list-none overflow-y-auto rounded-xl border border-neutral-200 bg-white p-xs shadow-lg ${menuClassName}`}
           role="listbox"
         >
           {options.map((option) => (
@@ -120,8 +126,9 @@ function Select({
               </button>
             </li>
           ))}
-        </ul>
+        </motion.ul>
       )}
+      </AnimatePresence>
     </div>
   );
 }

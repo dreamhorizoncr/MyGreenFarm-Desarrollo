@@ -73,7 +73,6 @@ function ChildFormModal({
 
         let isMounted = true;
 
-        // 1. Mostrar de inmediato los datos que ya tenemos del niño
         if (child) {
             setForm({
                 parentIdentification: child.parentIdentification ?? "",
@@ -90,7 +89,6 @@ function ChildFormModal({
 
         setError(null);
 
-        // 2. Cargar padres y clubes en paralelo sin bloquear la renderización del formulario
         const loadOptions = async () => {
             try {
                 if (isMounted) setLoadingOptions(true);
@@ -110,7 +108,6 @@ function ChildFormModal({
                 setParents(loadedParents);
                 setClubs(loadedClubs);
 
-                // Mapear los clubIds en cuanto tengamos la lista de clubes disponibles
                 if (child?.clubNames) {
                     const selectedIds = loadedClubs
                         .filter((club) => child.clubNames.includes(club.name))
@@ -130,7 +127,7 @@ function ChildFormModal({
         return () => {
             isMounted = false;
         };
-    }, [isOpen, child]); // 👈 Únicamente depender de isOpen y child
+    }, [isOpen, child]);
 
     const handleClubChange = (clubId: number) => {
         setForm((current) => ({
@@ -248,7 +245,7 @@ function ChildFormModal({
                 className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
             >
                 <div className="flex items-center justify-between gap-md">
-                    <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+                    <h2 className="m-0 font-heading text-h4 font-bold text-heading">
                         {child
                             ? `${t("admin.children.editTitle")}`
                             : `${t("admin.children.createTitle")}`}
@@ -267,7 +264,6 @@ function ChildFormModal({
                 )}
 
                 <div className="mt-lg grid gap-md md:grid-cols-2">
-                    {/* Nombre */}
                     <label className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.children.firstName")}
                         <input
@@ -285,7 +281,6 @@ function ChildFormModal({
                         )}
                     </label>
 
-                    {/* Apellidos */}
                     <label className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.children.lastName")}
                         <input
@@ -303,7 +298,6 @@ function ChildFormModal({
                         )}
                     </label>
 
-                    {/* Padre/Tutor */}
                     <label className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.children.parent")}
                         <div className="mt-xs">
@@ -334,7 +328,6 @@ function ChildFormModal({
                         )}
                     </label>
 
-                    {/* Parentesco */}
                     <label className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.children.relationship")}
                         <div className="mt-xs">
@@ -353,7 +346,6 @@ function ChildFormModal({
                         </div>
                     </label>
 
-                    {/* Fecha de Nacimiento */}
                     <div className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.children.birthDate")}
                         <DatePickerField
@@ -366,7 +358,6 @@ function ChildFormModal({
                         />
                     </div>
 
-                    {/* Clubes */}
                     <div className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.children.clubs")}
                         <div className="mt-xs rounded-xl border border-neutral-200 p-md">
@@ -374,7 +365,6 @@ function ChildFormModal({
                         </div>
                     </div>
 
-                    {/* Notas Médicas */}
                     <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
                         {t("admin.children.medicalNotes")}
                         <textarea

@@ -6,7 +6,6 @@ import {
 import AdminLayout from "../layout/AdminLayout.tsx";
 import SkeletonList from "../components/ui/SkeletonList.tsx";
 import Pagination from "../components/ui/Pagination.tsx";
-import Select from "../components/ui/Select.tsx";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 import { useAnnouncements } from "../hooks/useAnnouncements.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
@@ -17,7 +16,6 @@ import type {
   Announcement,
   AnnouncementImageResponse,
   AnnouncementRequest,
-  AnnouncementType,
 } from "../types/announcement.ts";
 import NewsDetailModal from "../components/NewsDetailModal.tsx";
 import NewsCard from "../components/NewsCard.tsx";
@@ -29,40 +27,21 @@ import CardActionButton from "../components/ui/CardActionButton.tsx";
 import ImagePickerButton from "../components/ui/ImagePickerButton.tsx";
 import ImageThumb, { ImageThumbList } from "../components/ui/ImageThumb.tsx";
 import ModalCloseButton from "../components/ui/ModalCloseButton.tsx";
+import TabHighlight from "../components/ui/TabHighlight.tsx";
+import CreatableDropdown, { type CreatableOption } from "../components/ui/CreatableDropdown.tsx";
+import { useAnnouncementCategories } from "../hooks/useAnnouncementCategories.ts";
+import { getErrorMessage } from "../utils/error.ts";
 
 const emptyForm: AnnouncementRequest = {
   title: "",
   content: "",
-  type: "NEWS",
+  categoryId: "",
   eventDate: "",
   location: "",
 };
 
 const TITLE_MIN_LENGTH = 5;
 const CONTENT_MIN_LENGTH = 20;
-
-const typeLabels: Record<
-  AnnouncementType,
-  | "adminNews.typeNews"
-  | "adminNews.typeEvent"
-  | "adminNews.typeNotice"
-  | "adminNews.typeGeneral"
-  | "adminNews.typeTransport"
-> = {
-  NEWS: "adminNews.typeNews",
-  EVENT: "adminNews.typeEvent",
-  NOTICE: "adminNews.typeNotice",
-  GENERAL: "adminNews.typeGeneral",
-  TRANSPORT: "adminNews.typeTransport",
-};
-
-type AdminNewsCategory =
-  | "All"
-  | "NEWS"
-  | "EVENT"
-  | "NOTICE"
-  | "GENERAL"
-  | "TRANSPORT";
 
 function AnnouncementsPage() {
   const {
@@ -85,8 +64,9 @@ function AnnouncementsPage() {
   const [titleError, setTitleError] = useState<string | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [contentError, setContentError] = useState<string | null>(null);
-  const [activeCategory, setActiveCategory] =
-    useState<AdminNewsCategory>("All");
+  const [activeCategory, setActiveCategory] = useState<string>("All");
+  const [categoryError, setCategoryError] = useState<string | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<CreatableOption | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [cover, setCover] = useState<File | null>(null);
   const [gallery, setGallery] = useState<File[]>([]);
@@ -96,6 +76,7 @@ function AnnouncementsPage() {
   const [imageToDelete, setImageToDelete] =
     useState<AnnouncementImageResponse | null>(null);
   const { t, i18n } = useTranslation();
+  const { categories, labelFor, createCategory, deleteCategory } = useAnnouncementCategories();
 
   useEffect(() => {
     void fetchAnnouncements(i18n.language, currentPage - 1, 10);
@@ -111,7 +92,8 @@ function AnnouncementsPage() {
 
   const openCreate = () => {
     setEditing(null);
-    setForm(emptyForm);
+    setForm({ ...emptyForm, categoryId: activeCategory !== "All" ? activeCategory : categories[0]?.id ?? "" });
+    setCategoryError(null);
     setTitleError(null);
     setContentError(null);
     setCover(null);
@@ -125,7 +107,7 @@ function AnnouncementsPage() {
     setForm({
       title: announcement.title,
       content: announcement.content,
-      type: announcement.type,
+      categoryId: announcement.categoryId ?? "",
       eventDate: announcement.eventDate?.slice(0, 16) ?? "",
       location: announcement.location ?? "",
     });
@@ -159,12 +141,16 @@ function AnnouncementsPage() {
       validateMinLength(form.content, CONTENT_MIN_LENGTH, t) ??
       validateSafeText(form.content, t);
     const locationErrorMessage = validateSafeText(form.location, t);
+    const categoryErrorMessage = form.categoryId
+      ? null
+      : t("validation.fieldRequired", { field: t("adminNews.newstype") });
 
     setTitleError(titleErrorMessage);
     setContentError(contentErrorMessage);
     setLocationError(locationErrorMessage);
+    setCategoryError(categoryErrorMessage);
 
-    if (titleErrorMessage || contentErrorMessage || locationErrorMessage) return;
+    if (titleErrorMessage || contentErrorMessage || locationErrorMessage || categoryErrorMessage) return;
 
     const data: AnnouncementRequest = {
       ...form,
@@ -235,14 +221,43 @@ function AnnouncementsPage() {
     }
   };
 
-  const handleCategoryChange = (category: AdminNewsCategory) => {
+  const handleCreateCategory = async (title: string) => {
+    try {
+      const created = await createCategory(title);
+      setForm((current) => ({ ...current, categoryId: created.id }));
+      setCategoryError(null);
+      notify.success(t("adminNews.categoryCreatedToast"));
+    } catch (err) {
+      notify.error({ title: t("adminNews.categoryCreateErrorToast"), description: getErrorMessage(err) });
+      throw err;
+    }
+  };
+
+  const confirmDeleteCategory = async () => {
+    if (!categoryToDelete) return;
+
+    try {
+      await deleteCategory(categoryToDelete.id);
+      if (activeCategory === categoryToDelete.id) setActiveCategory("All");
+      setForm((current) => (current.categoryId === categoryToDelete.id ? { ...current, categoryId: "" } : current));
+      await fetchAnnouncements(i18n.language, currentPage - 1, 10);
+      notify.success(t("adminNews.categoryDeletedToast"));
+    } catch (err) {
+      notify.error(t("adminNews.categoryDeleteErrorToast"));
+      throw err;
+    }
+  };
+
+  const categoryOptions = categories.map((category) => ({ id: category.id, label: labelFor(category) }));
+
+  const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
     setCurrentPage(1);
   };
 
   const filteredAnnouncements = announcements.filter(
     (announcement) =>
-      activeCategory === "All" || announcement.type === activeCategory,
+      activeCategory === "All" || announcement.categoryId === activeCategory,
   );
   const listLoading = loading || coversLoading;
   const skeletonCount = useSkeletonCount("admin-news", listLoading, filteredAnnouncements.length);
@@ -297,13 +312,13 @@ function AnnouncementsPage() {
             className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
           >
             <div className="flex items-center justify-between gap-md">
-              <h2 className="m-0 font-heading text-2xl font-bold text-heading">
+              <h2 className="m-0 font-heading text-h4 font-bold text-heading">
                 {editing ? t("adminNews.editNews") : t("adminNews.newnews")}
               </h2>
 
               <ModalCloseButton
                 onClick={requestClose}
-                aria-label="Cerrar formulario"
+                aria-label={t("common.closeForm")}
               />
             </div>
 
@@ -328,26 +343,30 @@ function AnnouncementsPage() {
                 )}
               </label>
 
-              <label className="font-body text-body-sm font-semibold text-heading">
+              <div className="font-body text-body-sm font-semibold text-heading">
                 {t("adminNews.newstype")}
 
-                <div className="mt-xs">
-                  <Select
-                    value={form.type}
-                    onChange={(value) =>
-                      setForm({
-                        ...form,
-                        type: value as AnnouncementType,
-                      })
-                    }
-                    options={Object.entries(typeLabels).map(([value, label]) => ({
-                      value,
-                      label: t(label),
-                    }))}
-                    aria-label={t("adminNews.newstype")}
-                  />
-                </div>
-              </label>
+                <CreatableDropdown
+                  options={categoryOptions}
+                  value={form.categoryId}
+                  onChange={(categoryId) => {
+                    setForm({ ...form, categoryId });
+                    setCategoryError(null);
+                  }}
+                  onCreate={handleCreateCategory}
+                  onDelete={setCategoryToDelete}
+                  maxLength={40}
+                  labels={{
+                    placeholder: t("adminNews.selectCategory"),
+                    add: t("adminNews.addCategory"),
+                    newPlaceholder: t("adminNews.newCategoryPlaceholder"),
+                    delete: t("adminNews.deleteCategory"),
+                  }}
+                />
+                {categoryError && (
+                  <span className="mt-xs block font-body text-body-sm font-normal text-danger">{categoryError}</span>
+                )}
+              </div>
 
               <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
                 {t("adminNews.newscontent")}
@@ -499,78 +518,35 @@ function AnnouncementsPage() {
         </div>
       )}
 
-      <div className="mt-xl flex flex-wrap gap-sm">
+      <div className="isolate mt-xl flex flex-wrap gap-sm">
         <button
           type="button"
           onClick={() => handleCategoryChange("All")}
-          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
+          className={`relative rounded-full border px-md py-xs font-body text-body-sm transition duration-300 ${
             activeCategory === "All"
-              ? "border-green-500 bg-green-500 text-white"
-              : "border-green-500 bg-white text-heading hover:bg-green-50"
+              ? "border-green-500 text-white"
+              : "border-green-500 bg-transparent text-heading hover:bg-green-50"
           }`}
         >
+          {activeCategory === "All" && <TabHighlight layoutId="admin-news-category-tab" className="bg-green-500" />}
           {t("adminNews.filterAll")}
         </button>
 
-        <button
-          type="button"
-          onClick={() => handleCategoryChange("NEWS")}
-          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
-            activeCategory === "NEWS"
-              ? "border-green-500 bg-green-500 text-white"
-              : "border-green-500 bg-white text-heading hover:bg-green-50"
-          }`}
-        >
-          {t("adminNews.typeNews")}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleCategoryChange("EVENT")}
-          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
-            activeCategory === "EVENT"
-              ? "border-green-500 bg-green-500 text-white"
-              : "border-green-500 bg-white text-heading hover:bg-green-50"
-          }`}
-        >
-          {t("adminNews.typeEvent")}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleCategoryChange("NOTICE")}
-          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
-            activeCategory === "NOTICE"
-              ? "border-green-500 bg-green-500 text-white"
-              : "border-green-500 bg-white text-heading hover:bg-green-50"
-          }`}
-        >
-          {t("adminNews.typeNotice")}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleCategoryChange("GENERAL")}
-          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
-            activeCategory === "GENERAL"
-              ? "border-green-500 bg-green-500 text-white"
-              : "border-green-500 bg-white text-heading hover:bg-green-50"
-          }`}
-        >
-          {t("adminNews.typeGeneral")}
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleCategoryChange("TRANSPORT")}
-          className={`rounded-full border px-md py-xs font-body text-body-sm transition ${
-            activeCategory === "TRANSPORT"
-              ? "border-green-500 bg-green-500 text-white"
-              : "border-green-500 bg-white text-heading hover:bg-green-50"
-          }`}
-        >
-          {t("adminNews.typeTransport")}
-        </button>
+        {categories.map((category) => (
+          <button
+            key={category.id}
+            type="button"
+            onClick={() => handleCategoryChange(category.id)}
+            className={`relative rounded-full border px-md py-xs font-body text-body-sm transition duration-300 ${
+              activeCategory === category.id
+                ? "border-green-500 text-white"
+                : "border-green-500 bg-transparent text-heading hover:bg-green-50"
+            }`}
+          >
+            {activeCategory === category.id && <TabHighlight layoutId="admin-news-category-tab" className="bg-green-500" />}
+            {labelFor(category)}
+          </button>
+        ))}
       </div>
 
       <section className="mt-xl grid grid-cols-1 gap-lg md:grid-cols-2 xl:grid-cols-3">
@@ -584,7 +560,7 @@ function AnnouncementsPage() {
           <NewsCard
             key={announcement.id}
             announcement={announcement}
-            typeLabel={t(typeLabels[announcement.type])}
+            typeLabel={labelFor({ id: announcement.categoryId, code: announcement.categoryCode ?? announcement.type, title: announcement.categoryTitle })}
             formattedDate={formatNewsDate(announcement.eventDate, i18n.language)}
             coverImage={getCoverImage(announcement.id)}
             onReadMore={() => setPreviewing(announcement)}
@@ -611,11 +587,20 @@ function AnnouncementsPage() {
         onPageChange={setCurrentPage}
       />
 
-        {/* Vista previa */}
       {previewing && (
         <NewsDetailModal
           announcement={previewing}
+          typeLabel={labelFor({ id: previewing.categoryId, code: previewing.categoryCode ?? previewing.type, title: previewing.categoryTitle })}
           onClose={() => setPreviewing(null)}
+        />
+      )}
+
+      {categoryToDelete && (
+        <DeleteConfirmModal
+          title={t("adminNews.deleteCategoryTitle")}
+          message={t("adminNews.deleteCategoryMessage", { name: categoryToDelete.label })}
+          onConfirm={confirmDeleteCategory}
+          onClose={() => setCategoryToDelete(null)}
         />
       )}
 

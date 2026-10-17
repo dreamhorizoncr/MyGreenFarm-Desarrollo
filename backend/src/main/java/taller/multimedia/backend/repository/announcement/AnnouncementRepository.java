@@ -21,4 +21,6 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, UUID
 
     boolean existsByTitleAndIdNot(String title, UUID id);
 
+    List<Announcement> findByCategoryId(UUID categoryId);
+
 }

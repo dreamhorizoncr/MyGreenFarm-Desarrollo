@@ -52,7 +52,7 @@ function VacancyCard({ title, description, onApply, loading = false }: Readonly<
 
   return (
     <article className="group flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow card-hover">
-      <h2 className="m-0 font-heading text-xl font-bold leading-snug text-heading">
+      <h2 className="m-0 font-heading text-h4 font-bold leading-snug text-heading">
         {title}
       </h2>
 
@@ -126,7 +126,7 @@ function VacanciesPage() {
 
       <section className="flex min-h-[280px] items-start bg-green-500 px-[30px] pt-[48px] pb-[40px] text-center text-white md:min-h-[320px] md:pt-[72px]">
         <div className="mx-auto w-full max-w-175">
-          <h1 className="m-0 font-heading text-page-title font-bold leading-tight text-white md:text-h1">
+          <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-white">
             {t('vacancies.title')}
           </h1>
           <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-white md:text-body-sm">
@@ -151,7 +151,7 @@ function VacanciesPage() {
                   {t('vacancies.noVacancies')}
                 </p>
 
-                <h2 className="mt-lg font-heading text-xl font-bold leading-snug text-heading">
+                <h2 className="mt-lg font-heading text-h4 font-bold leading-snug text-heading">
                   {t('vacancies.spontaneousTitle')}
                 </h2>
                 <p className="mt-sm font-body text-body-sm text-body-text">
@@ -206,7 +206,7 @@ function VacanciesPage() {
         >
           <div className="relative p-xl">
             <ModalCloseButton onClick={requestCloseSent} aria-label={t('legalModal.close')} className="absolute right-3 top-[26px] z-20" />
-            <h2 className="m-0 px-xl font-heading text-2xl font-bold text-heading">{t('vacancies.applicationSentTitle')}</h2>
+            <h2 className="m-0 px-xl font-heading text-h4 font-bold text-heading">{t('vacancies.applicationSentTitle')}</h2>
             <p className="mt-sm font-body text-body-sm text-body-text">{t('vacancies.applicationSentMessage')}</p>
             <button
               type="button"
