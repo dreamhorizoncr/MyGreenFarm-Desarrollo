@@ -1,4 +1,4 @@
-import { useState} from 'react'
+import { useState } from 'react'
 import { CirclePlusIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import pollitos from '../../assets/imgs/pollitos.svg'
@@ -28,7 +28,15 @@ function JoinSection() {
 
   return (
     <section id="join" className="relative flex min-h-[100svh] w-full flex-col">
-      <img src={nubesPink} alt="" aria-hidden="true" className="block w-full" />
+      <div className="relative w-full overflow-hidden leading-none">
+        <img
+          src={nubesPink}
+          alt=""
+          aria-hidden="true"
+          data-scroll-bg="green"
+          className="relative -mb-1 block w-[110vw] max-w-none -translate-x-1/2 left-1/2 object-cover"
+        />
+      </div>
 
       <div className="flex w-full flex-1 flex-col justify-center">
         <Container className="py-1500">
@@ -78,7 +86,7 @@ function JoinSection() {
                   {loading ? t('home.join.subscribing') : t('home.join.subscribe')}
                 </PillButton>
 
-                
+
               </form>
 
             </div>

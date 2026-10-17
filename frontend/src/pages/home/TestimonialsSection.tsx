@@ -57,7 +57,7 @@ function TestimonialsSection() {
           alt=""
           aria-hidden="true"
           data-scroll-bg="green"
-          className="relative -mb-1 block w-[100vw] max-w-none -translate-x-1/2 left-1/2 object-cover"
+          className="relative -mb-1 block w-[110vw] max-w-none -translate-x-1/2 left-1/2 object-cover"
         />
       </div>
 
