@@ -1,12 +1,97 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { CalendarDaysIcon, MapPinIcon, SparklesIcon } from '@animateicons/react/lucide'
 ;
 import { useTranslation } from 'react-i18next';
+import { ZoomIn } from 'lucide-react'
+import { useController, useNavigationState } from 'yet-another-react-lightbox'
 import { useAnnouncementImages } from '../hooks/useAnnouncementImages.ts';
 import { useModalExit } from '../hooks/useModalExit.ts';
 
 import type { Announcement } from '../types/announcement.ts';
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
+import Lightbox from 'yet-another-react-lightbox'
+import Zoom from 'yet-another-react-lightbox/plugins/zoom'
+import 'yet-another-react-lightbox/styles.css'
+
+interface NewsLightboxNavigationProps {
+    activeIndex: number
+    total: number
+    labels: { previous: string; next: string }
+}
+
+function NewsLightboxNavigation({ activeIndex, total, labels }: Readonly<NewsLightboxNavigationProps>) {
+    const { prev, next } = useController()
+    const { prevDisabled, nextDisabled } = useNavigationState()
+    const [imageBounds, setImageBounds] = useState<{ left: number; rightButtonLeft: number; top: number } | null>(null)
+
+    useEffect(() => {
+        let frame = 0
+        const measureImage = () => {
+            cancelAnimationFrame(frame)
+            frame = requestAnimationFrame(() => {
+                const images = Array.from(document.querySelectorAll<HTMLImageElement>('.yarl__slide_image'))
+                    .filter((image) => image.getBoundingClientRect().width > 0)
+                const viewportCenter = window.innerWidth / 2
+                const image = images.reduce<HTMLImageElement | null>((closest, candidate) => {
+                    if (!closest) return candidate
+                    const closestRect = closest.getBoundingClientRect()
+                    const candidateRect = candidate.getBoundingClientRect()
+                    return Math.abs(candidateRect.left + candidateRect.width / 2 - viewportCenter)
+                        < Math.abs(closestRect.left + closestRect.width / 2 - viewportCenter)
+                        ? candidate
+                        : closest
+                }, null)
+
+                if (!image) return
+                const rect = image.getBoundingClientRect()
+                const nextBounds = {
+                    left: Math.max(8, rect.left - 56),
+                    rightButtonLeft: Math.min(window.innerWidth - 52, rect.right + 12),
+                    top: rect.top + rect.height / 2,
+                }
+                setImageBounds((current) =>
+                    current && Math.abs(current.left - nextBounds.left) < 2
+                        && Math.abs(current.rightButtonLeft - nextBounds.rightButtonLeft) < 2
+                        && Math.abs(current.top - nextBounds.top) < 2
+                        ? current
+                        : nextBounds,
+                )
+            })
+        }
+
+        measureImage()
+        window.addEventListener('resize', measureImage)
+        window.addEventListener('news-gallery-zoom', measureImage)
+        document.addEventListener('load', measureImage, true)
+        const positionSync = window.setInterval(measureImage, 40)
+        return () => {
+            cancelAnimationFrame(frame)
+            window.clearInterval(positionSync)
+            window.removeEventListener('resize', measureImage)
+            window.removeEventListener('news-gallery-zoom', measureImage)
+            document.removeEventListener('load', measureImage, true)
+        }
+    }, [activeIndex])
+
+    if (total < 2 || !imageBounds) return null
+
+    const buttonClass = 'fixed z-[10000] flex size-[36px] -translate-y-1/2 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-[left,top,scale,opacity] duration-200 ease-out enabled:hover:scale-105 enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 md:size-[44px]'
+
+    return (
+        <>
+            <button type="button" onClick={() => prev()} disabled={prevDisabled} aria-label={labels.previous} className={buttonClass} style={{ left: imageBounds.left, top: imageBounds.top }}>
+                <svg viewBox="0 0 24 24" aria-hidden="true" className="size-[40%] rotate-180">
+                    <polygon points="7,4 20,12 7,20" fill="currentColor" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
+                </svg>
+            </button>
+            <button type="button" onClick={() => next()} disabled={nextDisabled} aria-label={labels.next} className={buttonClass} style={{ left: imageBounds.rightButtonLeft, top: imageBounds.top }}>
+                <svg viewBox="0 0 24 24" aria-hidden="true" className="size-[40%]">
+                    <polygon points="7,4 20,12 7,20" fill="currentColor" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
+                </svg>
+            </button>
+        </>
+    )
+}
 
 interface NewsDetailModalProps{
     announcement: Announcement;
@@ -33,6 +118,7 @@ function NewsDetailModal({
     onClose,
 }: Readonly<NewsDetailModalProps>) {
     const { t, i18n } = useTranslation();
+    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
     const { closing, requestClose } = useModalExit(onClose);
 
@@ -51,7 +137,7 @@ function NewsDetailModal({
 
     useEffect(() => {
         const handleEscape = (event: KeyboardEvent) => {
-        if (event.key === "Escape") {
+        if (event.key === "Escape" && lightboxIndex === null) {
             requestClose();
         }
     };
@@ -65,7 +151,7 @@ function NewsDetailModal({
         document.removeEventListener("keydown", handleEscape);
         document.body.style.overflow = previousOverflow;
         };
-    }, [requestClose]);
+    }, [requestClose, lightboxIndex]);
 
     const announcementImages = images[announcement.id] ?? [];
 
@@ -150,11 +236,17 @@ function NewsDetailModal({
             )}
 
                 {!loading && coverImage && (
-                    <div className="mt-[40px] overflow-hidden rounded-[22px]">
+                    <div className="relative mx-auto mt-[40px] flex h-[260px] max-w-[950px] items-center justify-center overflow-hidden rounded-[22px] bg-black sm:h-[360px] md:h-[480px]">
+                        <img
+                            src={coverImage.fileUrl}
+                            alt=""
+                            aria-hidden="true"
+                            className="absolute inset-0 h-full w-full scale-125 object-cover opacity-60 blur-2xl"
+                        />
                         <img
                             src={coverImage.fileUrl}
                             alt={announcement.title}
-                            className="h-[260px] w-full object-cover sm:h-[360px] md:h-[480px]"
+                            className="relative z-10 h-full w-full object-contain"
                         />
                     </div>
                 )}
@@ -189,16 +281,26 @@ function NewsDetailModal({
                 <div
                     className={`grid gap-[12px] ${galleryGridColumns}`}
                 >
-                    {galleryImages.map((image) => (
+                    {galleryImages.map((image, index) => (
                     <div
                         key={image.id}
-                        className="overflow-hidden rounded-2xl"
+                        className="relative overflow-hidden rounded-2xl"
                     >
                         <img
-                        src={image.fileUrl}
-                        alt=""
-                        className="h-[220px] w-full object-cover transition duration-300 hover:scale-[1.03]"
+                            src={image.fileUrl}
+                            alt={announcement.title}
+                            className="h-[220px] w-full object-cover transition-transform duration-300 hover:scale-105"
                         />
+                        <button
+                            type="button"
+                            onClick={() => setLightboxIndex(index)}
+                            aria-label={`${t('newspage.gallery')}: ${announcement.title}`}
+                            className="absolute inset-0 flex cursor-zoom-in items-end justify-end p-3 focus-visible:outline-2 focus-visible:outline-white"
+                        >
+                            <span className="flex size-10 items-center justify-center rounded-full bg-black/55 text-white shadow transition hover:scale-105 hover:bg-black/70">
+                                <ZoomIn size={20} aria-hidden="true" />
+                            </span>
+                        </button>
                     </div>
                     ))}
                 </div>
@@ -208,6 +310,32 @@ function NewsDetailModal({
 
             </div>
         </article>
+        <Lightbox
+            open={lightboxIndex !== null}
+            close={() => setLightboxIndex(null)}
+            index={lightboxIndex ?? 0}
+            slides={galleryImages.map((image) => ({ src: image.fileUrl, alt: announcement.title }))}
+            plugins={[Zoom]}
+            carousel={{ finite: false }}
+            controller={{ closeOnBackdropClick: true }}
+            on={{
+                view: ({ index }) => setLightboxIndex(index),
+                zoom: () => window.dispatchEvent(new Event('news-gallery-zoom')),
+            }}
+            render={{
+                buttonZoom: () => null,
+                buttonPrev: () => null,
+                buttonNext: () => null,
+                controls: () => (
+                    <NewsLightboxNavigation
+                        activeIndex={lightboxIndex ?? 0}
+                        total={galleryImages.length}
+                        labels={{ previous: t('home.galeria.prevPhoto'), next: t('home.galeria.nextPhoto') }}
+                    />
+                ),
+            }}
+            styles={{ root: { '--yarl__color_backdrop': 'rgba(0, 0, 0, 0.5)' } }}
+        />
     </div>
     );
 }

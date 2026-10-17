@@ -1418,7 +1418,7 @@ export default {
   },
   moneda: {
     convertTo: "Show price in",
-    buyRate: "Buying exchange rate",
+    buyRate: "Exchange rate",
     todayRate: "Reference rate",
     priceDisclaimer: "Converted prices are estimates and may vary based on the exchange rate applied at payment.",
     title: "Currency converter",
