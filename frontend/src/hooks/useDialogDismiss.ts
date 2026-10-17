@@ -2,6 +2,16 @@ import { useEffect, type RefObject } from 'react'
 
 export function useDialogDismiss(dialogRef: RefObject<HTMLDialogElement | null>, onDismiss: () => void, enabled = true) {
   useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      const dialog = dialogRef.current
+      if (!dialog?.open || !(document.activeElement instanceof HTMLButtonElement) || !dialog.contains(document.activeElement)) return
+      dialog.tabIndex = -1
+      dialog.focus({ preventScroll: true })
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [dialogRef])
+
+  useEffect(() => {
     const dialog = dialogRef.current
     if (!dialog) return
 

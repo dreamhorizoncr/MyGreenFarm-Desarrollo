@@ -100,7 +100,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
             <p className="m-0 font-body text-body-sm text-body-text">{t('home.philosophy.modalParagraph.paragraph3')}</p>
             <p className="m-0 font-body text-body-sm text-body-text">{t('home.philosophy.modalParagraph.paragraph4')}</p>
 
-            <div className="grid gap-md md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-md md:grid-cols-2">
               {pillars.map((pillar) => (
                 <PhilosophyPillarItem key={pillar.title} {...pillar} />
               ))}

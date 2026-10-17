@@ -88,6 +88,8 @@ function ResetPasswordPage() {
       ) : (
         <form onSubmit={handleResetPassword} noValidate>
           <TextField
+            hint={t('fields.auth.newPassword.hint')}
+            placeholder={t('fields.auth.newPassword.placeholder')}
             id="reset-password-new"
             type="password"
             value={newPassword}
@@ -104,6 +106,8 @@ function ResetPasswordPage() {
 
           <div className="mt-[35px]">
             <TextField
+              hint={t('fields.auth.confirmPassword.hint')}
+              placeholder={t('fields.auth.confirmPassword.placeholder')}
               id="reset-password-confirm"
               type="password"
               value={confirmPassword}
@@ -133,7 +137,7 @@ function ResetPasswordPage() {
 
           {!success && (
             <div className="mx-auto mt-[50px] w-[72%]">
-              <AuthButton loading={loading}>
+              <AuthButton loading={loading} disabled={!newPassword || !confirmPassword}>
                 {loading
                   ? t('resetPassword.loading')
                   : t('resetPassword.buttonLabel')}

@@ -120,7 +120,7 @@ function CountrySelect({
               onChange={(event) => setQuery(event.target.value)}
               placeholder={t('common.countrySearch.placeholder')}
               aria-label={t('common.countrySearch.placeholder')}
-              className="h-9 min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text outline-none placeholder:text-neutral-400"
+              className="h-9 min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
             />
           </div>
 

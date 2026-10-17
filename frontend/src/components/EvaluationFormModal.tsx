@@ -9,6 +9,7 @@ import { useModalVisibility } from "../hooks/useModalExit.ts";
 import DatePickerField from "./ui/DatePickerField.tsx";
 import { validateRequired, validateSafeText } from "../utils/validators.ts";
 import ModalCloseButton from "./ui/ModalCloseButton.tsx";
+import FieldHint from "./ui/FieldHint.tsx";
 
     import type {
     Evaluation,
@@ -186,7 +187,7 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
             </p>
             )}
 
-            <div className="mt-lg grid gap-md md:grid-cols-2">
+            <div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
             <label className="font-body text-body-sm font-semibold text-heading">
                 {t("admin.evaluations.formChildLabel")}
                 <div className="mt-xs">
@@ -202,6 +203,7 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
                     className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
                     aria-label={t("admin.evaluations.formChildLabel")}
                 />
+                <FieldHint>{t("fields.evaluation.child.hint")}</FieldHint>
                 </div>
                 {fieldErrors.expedientId && (
                     <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.expedientId}</span>
@@ -241,9 +243,10 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
                 }
                 maxLength={2000}
                 rows={5}
-                placeholder={t("admin.evaluations.formCommunicationPlaceholder")}
+                placeholder={t("fields.evaluation.communication.placeholder")}
                 className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                 />
+                <FieldHint>{t("fields.evaluation.communication.hint")}</FieldHint>
                 {fieldErrors.communicationProgress && (
                     <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.communicationProgress}</span>
                 )}
@@ -258,9 +261,10 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
                 }
                 maxLength={2000}
                 rows={5}
-                placeholder={t("admin.evaluations.formLanguagePlaceholder")}
+                placeholder={t("fields.evaluation.language.placeholder")}
                 className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                 />
+                <FieldHint>{t("fields.evaluation.language.hint")}</FieldHint>
                 {fieldErrors.languageProgress && (
                     <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.languageProgress}</span>
                 )}
@@ -275,9 +279,10 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
                 }
                 maxLength={2000}
                 rows={5}
-                placeholder={t("admin.evaluations.formReadingPlaceholder")}
+                placeholder={t("fields.evaluation.reading.placeholder")}
                 className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                 />
+                <FieldHint>{t("fields.evaluation.reading.hint")}</FieldHint>
                 {fieldErrors.readingProgress && (
                     <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.readingProgress}</span>
                 )}
@@ -292,9 +297,10 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
                 }
                 maxLength={2000}
                 rows={5}
-                placeholder={t("admin.evaluations.formMotorPlaceholder")}
+                placeholder={t("fields.evaluation.motor.placeholder")}
                 className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                 />
+                <FieldHint>{t("fields.evaluation.motor.hint")}</FieldHint>
                 {fieldErrors.motorProgress && (
                     <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.motorProgress}</span>
                 )}
@@ -309,16 +315,17 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
                 }
                 maxLength={3000}
                 rows={5}
-                placeholder={t("admin.evaluations.formObservationPlaceholder")}
+                placeholder={t("fields.evaluation.observation.placeholder")}
                 className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                 />
+                <FieldHint>{t("fields.evaluation.observation.hint")}</FieldHint>
                 {fieldErrors.teacherObservation && (
                     <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.teacherObservation}</span>
                 )}
             </label>
             </div>
 
-            <div className="mt-lg flex flex-wrap justify-end gap-sm">
+            <div className="mt-lg flex justify-end gap-md *:flex-1">
             <button
                 type="button"
                 onClick={onClose}
@@ -330,7 +337,7 @@ import ModalCloseButton from "./ui/ModalCloseButton.tsx";
 
             <button
                 type="submit"
-                disabled={saving || loadingOptions}
+                disabled={saving || loadingOptions || !form.expedientId || !form.evaluationDate || !form.communicationProgress.trim() || !form.languageProgress.trim() || !form.readingProgress.trim() || !form.motorProgress.trim() || !form.teacherObservation.trim()}
                 className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
             >
                 {submitLabel}

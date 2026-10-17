@@ -164,7 +164,7 @@ export default {
     tabPrivacy: "Política de Privacidad",
     close: "Cerrar",
     termsIntro:
-      "Al utilizar los servicios de My Green Farm, las familias y estudiantes aceptan los siguientes términos. Si tenés alguna duda, podés escribirnos a mygreenfarmcr@gmail.com.",
+      "Al utilizar los servicios de My Green Farm, las familias y estudiantes aceptan los siguientes términos. Si tienes alguna duda, puedes escribirnos a mygreenfarmcr@gmail.com.",
     terms1Title: "Uso del Servicio",
     terms1Body:
       "My Green Farm brinda servicios educativos y de cuido para niños y niñas de acuerdo con los lineamientos del Ministerio de Educación Pública (MEP). El registro y uso de nuestras plataformas está destinado a madres, padres, tutores legales y personal autorizado.",
@@ -187,7 +187,7 @@ export default {
       "Usamos esta información únicamente para gestionar la matrícula, las citas, la comunicación con las familias y la administración del centro educativo. No vendemos ni compartimos tus datos con terceros con fines comerciales.",
     privacy3Title: "Uso de Fotografías",
     privacy3Body:
-      "Las fotos y videos tomados durante actividades pueden usarse en nuestra galería y redes sociales con fines educativos y de difusión. Si preferís que tu hijo o hija no aparezca, podés indicarlo directamente con la administración.",
+      "Las fotos y videos tomados durante actividades pueden usarse en nuestra galería y redes sociales con fines educativos y de difusión. Si prefieres que tu hijo o hija no aparezca, puedes indicarlo directamente con la administración.",
     privacy4Title: "Tus Derechos",
     privacy4Body:
       "Podés solicitar en cualquier momento acceder, corregir o eliminar la información que tenemos sobre tu familia, escribiéndonos a mygreenfarmcr@gmail.com.",
@@ -274,9 +274,9 @@ export default {
       empty: "Todavía no hay publicaciones.",
       modalTitle: "Publicar una experiencia",
       nameLabel: "Nombre",
-      nameRequired: "Escribí tu nombre para publicar.",
+      nameRequired: "Escribe tu nombre para publicar.",
       contentLabel: "Tu experiencia",
-      contentRequired: "Escribí algo para publicar.",
+      contentRequired: "Escribe algo para publicar.",
       cancel: "Cancelar",
       submit: "Enviar",
       toastTitle: "Publicación enviada",
@@ -306,9 +306,9 @@ export default {
       commentsTitle: "Respuestas",
       commentsEmpty: "Todavía no hay respuestas.",
       commentNameLabel: "Nombre",
-      commentNameRequired: "Escribí tu nombre para responder.",
+      commentNameRequired: "Escribe tu nombre para responder.",
       commentContentLabel: "Tu respuesta",
-      commentContentRequired: "Escribí algo para responder.",
+      commentContentRequired: "Escribe algo para responder.",
       commentSubmit: "Enviar respuesta",
       commentPendingTitle: "¡Enviado!",
       commentPendingDescription: "Tu comentario se envió a revisión. Te avisaremos cuando esté publicado.",
@@ -383,7 +383,6 @@ export default {
     updatedToastTitle: "Noticia actualizada",
     updatedToastDescription: "Los cambios se guardaron correctamente.",
     saveErrorToastTitle: "No se pudo guardar la noticia",
-    saveErrorToastDescription: "Intentá de nuevo en unos segundos.",
     deletedToastTitle: "Noticia eliminada",
     deletedToastDescription: "La noticia se eliminó correctamente.",
     deleteErrorToastTitle: "No se pudo eliminar la noticia",
@@ -407,24 +406,20 @@ export default {
     newPost: "Nueva investigación",
     editPost: "Editar investigación",
     postTitle: "Título",
-    postTitlePlaceholder: "Por ejemplo: El huerto como aula",
     postTopic: "Tema",
-    postTopicPlaceholder: "Por ejemplo: Huerto escolar",
     authorName: "Nombre del autor",
     authorRole: "Rol del autor",
     defaultRole: "Docente de My Green Farm",
     defaultOwnerRole: "Administración de My Green Farm",
     postContent: "Contenido",
-    postContentPlaceholder: "Escribí la investigación completa.",
     contentHint:
-      "Dejá una línea en blanco entre párrafos para que se separen al leerla.",
+      "Deja una línea en blanco entre párrafos para separarlos.",
     postImage: "Imagen",
     chooseImage: "Elegir imagen",
     currentImage: "Imagen actual",
     removeImage: "Quitar imagen",
     invalidImageType: "Ese archivo no es una imagen válida.",
     imageAlt: "Texto alternativo de la imagen",
-    imageAltPlaceholder: "Describí la imagen para quienes no pueden verla.",
     imageAltRequired: "Si publicás una imagen, describila.",
     publish: "Agregar",
     saveChanges: "Guardar cambios",
@@ -437,11 +432,7 @@ export default {
     deleteTitle: "Eliminar investigación",
     deleteDescription:
       "La investigación {{title}} va a desaparecer del blog del foro.",
-    deleteConfirmFieldLabel: 'Para confirmar, escribí el título "{{title}}"',
-    confirmChangesTitle: "Confirmar cambios",
-    confirmChangesDescription: 'Escribí "{{word}}" para guardar los cambios.',
-    confirmWord: "CONFIRMAR",
-    confirmChanges: "Confirmar cambios",
+    deleteConfirmFieldLabel: 'Para confirmar, escribe el título "{{title}}"',
     createdToastTitle: "Investigación publicada",
     createdToastDescription: "Ya está disponible en el blog del foro.",
     updatedToastTitle: "Investigación actualizada",
@@ -607,7 +598,7 @@ export default {
     buttonLabel: "Cambiar contraseña",
     loading: "Cambiando...",
     success:
-      "¡Tu contraseña fue actualizada! Ya podés iniciar sesión con la nueva.",
+      "¡Tu contraseña fue actualizada! Ya puedes iniciar sesión con la nueva.",
     successToastTitle: "Contraseña actualizada",
     errorToastTitle: "No se pudo cambiar la contraseña",
     errorToastDescription: "El enlace pudo haber expirado. Solicitá uno nuevo e intentá de nuevo.",
@@ -618,6 +609,15 @@ export default {
     backToProfile: "Regresar a Mi perfil",
   },
   common: {
+    errors: {
+      network: 'No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.',
+      forbidden: 'No tienes permiso para realizar esta acción.',
+      notFound: 'El elemento ya no existe. Puede que otra persona lo haya eliminado; recarga la página.',
+      conflict: 'Ya existe un registro con esos datos o entra en conflicto con otro.',
+      fileTooLarge: 'El archivo es demasiado grande. Elige uno más liviano.',
+      server: 'Ocurrió un problema en el servidor. Inténtalo de nuevo en unos minutos.',
+      invalidData: 'Revisa los datos ingresados e inténtalo de nuevo.',
+    },
     errorBoundary: {
       title: 'Algo salió mal',
       description: 'Por favor recarga la página. Si el problema persiste, contáctanos.',
@@ -759,7 +759,7 @@ export default {
     edit: "Editar",
     save: "Guardar cambios",
     cancel: "Cancelar",
-    emailLockedHint: "Solo podés editar tu propio correo",
+    emailLockedHint: "Solo puedes editar tu propio correo",
     delete: "Eliminar",
     deleteConfirmTitle: "Eliminar usuario",
     deleteConfirmMessage:
@@ -892,13 +892,13 @@ export default {
       confirmDeleteAlbum:
         "¿Seguro que deseas eliminar este álbum y sus imágenes?",
       deleteAlbumTitle: "Eliminar álbum",
-      deleteConfirmFieldLabel: "Escribí «{{title}}» para confirmar",
+      deleteConfirmFieldLabel: "Escribe «{{title}}» para confirmar",
       deleteConfirmPlaceholder: "Título del álbum",
       deleteYearTitle: "Eliminar año",
       confirmDeleteYear:
         "¿Seguro que deseas eliminar el año {{year}}? Se borrarán todos sus álbumes y fotos. Esta acción no se puede deshacer.",
       deleteYear: "Eliminar año",
-      deleteYearConfirmFieldLabel: "Escribí «{{year}}» para confirmar",
+      deleteYearConfirmFieldLabel: "Escribe «{{year}}» para confirmar",
       deleteYearConfirmPlaceholder: "Año",
       featured: "Destacado",
       toggleFeatured: "Marcar como destacado",
@@ -908,7 +908,6 @@ export default {
       albumUpdatedTitle: "Álbum actualizado",
       albumUpdatedDescription: "Los cambios se guardaron correctamente.",
       albumSaveErrorTitle: "No se pudo guardar el álbum",
-      albumSaveErrorDescription: "Intentá de nuevo en unos segundos.",
       albumDeletedTitle: "Álbum eliminado",
       albumDeletedDescription: "El álbum y sus fotos se eliminaron correctamente.",
       albumDeleteErrorTitle: "No se pudo eliminar el álbum",
@@ -935,7 +934,6 @@ export default {
       selectPlan: "Selecciona un plan de OnvoPay",
       scheduleLabel: "Horario",
       includesLabel: "Qué incluye",
-      includesPlaceholder: "Describe los beneficios del plan...",
       image: "Imagen",
       chooseImage: "Elegir imagen",
       imageSelected: "Imagen seleccionada",
@@ -946,7 +944,7 @@ export default {
       deleteTitle: "Eliminar plan",
       deleteConfirm:
         '¿Seguro que deseas eliminar el plan "{{name}}"? Esta acción no se puede deshacer.',
-      deleteConfirmField: 'Escribí "{{name}}" para confirmar',
+      deleteConfirmField: 'Escribe "{{name}}" para confirmar',
       deletePlaceholder: "Nombre del plan",
       empty: "No hay planes de servicio configurados.",
       noOnvoPlans: "No hay productos de OnvoPay disponibles para vincular.",
@@ -955,7 +953,6 @@ export default {
       updatedToastTitle: "Plan actualizado",
       updatedToastDescription: "Los cambios se guardaron correctamente.",
       saveErrorToastTitle: "No se pudo guardar el plan",
-      saveErrorToastDescription: "Intentá de nuevo en unos segundos.",
       deletedToastTitle: "Plan eliminado",
       deletedToastDescription: "El plan se eliminó correctamente.",
       deleteErrorToastTitle: "No se pudo eliminar el plan",
@@ -980,7 +977,6 @@ export default {
       childName: "Nombre del niño o niña",
       childNamePlaceholder: "Nombre completo",
 
-      observationsPlaceholder: "Escribe las observaciones generales...",
 
       photo: "Fotografía",
       optionalPhoto: "La fotografía es opcional.",
@@ -1043,18 +1039,12 @@ export default {
       addDescription: "Ingresa la información del padre, madre o encargado.",
       editDescription: "Modifica la información del padre, madre o encargado.",
       firstName: "Nombre",
-      firstNamePlaceholder: "Ingresa el nombre",
       lastName: "Apellido",
-      lastNamePlaceholder: "Ingresa el apellido",
       identification: "Identificación",
-      identificationPlaceholder: "Ingresa la identificación",
       email: "Correo electrónico",
-      emailPlaceholder: "ejemplo@gmail.com",
       contact: "Contacto",
       phoneNumber: "Número de teléfono",
-      phonePlaceholder: "Ingresa el número de teléfono",
       address: "Dirección",
-      addressPlaceholder: "Ingresa la dirección",
       language: "Idioma",
 
       languages: {
@@ -1108,8 +1098,6 @@ export default {
       relationship: 'Parentesco',
       birthDateLabel: 'Fecha de nacimiento',
       medicalNotesLabel: 'Notas médicas',
-      medicalNotesPlaceholder:
-        'Alergias, medicamentos, condiciones médicas u otra información importante...',
       noClubs: 'No hay clubes disponibles.',
       loadingOptions: 'Cargando información...',
 
@@ -1144,8 +1132,6 @@ export default {
       createErrorToastTitle: 'No se pudo registrar el niño',
       updateErrorToastTitle: 'No se pudo actualizar el niño',
 
-      firstNamePlaceholder: 'Ingresa el nombre del niño',
-      lastNamePlaceholder: 'Ingresa el apellido del niño',
       birthDatePlaceholder: 'Selecciona la fecha de nacimiento',
     },
 
@@ -1196,7 +1182,6 @@ export default {
         customOption: "Atiende solo en un horario",
         reasonLabel: "Motivo",
         reasonOptional: "(opcional)",
-        reasonPlaceholder: "Ej. Cita médica o feriado",
         cancel: "Cancelar",
         saveChanges: "Guardar cambios",
         add: "Agregar",
@@ -1223,12 +1208,9 @@ export default {
       newClub: "Nuevo Club",
       editClub: "Editar Club",
       clubName: "Nombre del Club",
-      clubNamePlaceholder: "Ej. Club de Robótica",
       descriptionLabel: "Descripción",
-      descriptionPlaceholder: "Detalla las actividades del club...",
       schedule: "Horario",
       maxCapacity: "Capacidad máxima",
-      capacityPlaceholder: "Ej. 20",
       capacityLabel: "cupos",
       capacityUnit: "cupos.",
       availableSpots: "Capacidad máxima",
@@ -1299,16 +1281,10 @@ export default {
       formProgressTitle: "Áreas de progreso",
       formProgressHint: "Describe el avance observado en cada área.",
       formCommunicationLabel: "Comunicación",
-      formCommunicationPlaceholder: "Describe el progreso en comunicación...",
       formLanguageLabel: "Lenguaje",
-      formLanguagePlaceholder: "Describe el progreso en lenguaje...",
       formReadingLabel: "Lectura",
-      formReadingPlaceholder: "Describe el progreso en lectura...",
       formMotorLabel: "Desarrollo motor",
-      formMotorPlaceholder: "Describe el progreso motor...",
       formObservationLabel: "Observación del profesor",
-      formObservationPlaceholder:
-        "Agrega observaciones generales sobre el desempeño del niño...",
       formCancel: "Cancelar",
       formSaving: "Guardando...",
       formSaveChanges: "Guardar cambios",
@@ -1336,7 +1312,7 @@ export default {
     noVacancies: "No hay vacantes disponibles por el momento.",
     spontaneousTitle: "¿No ves una vacante que te interese?",
     spontaneousDescription:
-      "Aun así podés enviarnos tu currículum y lo tendremos en cuenta para futuras oportunidades.",
+      "Aun así puedes enviarnos tu currículum y lo tendremos en cuenta para futuras oportunidades.",
     spontaneousCta: "Enviar mi CV",
     spontaneousApplyTitle: "Postulación espontánea",
     statusOpen: "Abierta",
@@ -1377,7 +1353,6 @@ export default {
       "Recibimos tu currículum correctamente. Nos pondremos en contacto si tu perfil encaja con la vacante.",
     gotIt: "Entendido",
     applyErrorToastTitle: "No se pudo enviar tu postulación",
-    applyErrorToastDescription: "Intentá de nuevo en unos segundos.",
     createdToastTitle: "Vacante publicada",
     createdToastDescription: "La vacante ya está visible para los postulantes.",
     createErrorToastTitle: "No se pudo publicar la vacante",
@@ -1418,7 +1393,6 @@ export default {
     rescheduleLoadingSlots: "Cargando horarios...",
     rescheduleNoSlots: "No hay horarios disponibles para esta fecha.",
     rejectNoteLabel: "Conclusión",
-    rejectNotePlaceholder: "Motivo del rechazo",
     save: "Guardar",
     continue: "Continuar",
     back: "Volver",
@@ -1477,6 +1451,7 @@ export default {
     },
   },
   services: {
+    popupBlocked: 'El navegador bloqueó la ventana de pago. Permite las ventanas emergentes para este sitio e inténtalo de nuevo.',
     connectingPayment: 'Conectando con la pasarela de pago...',
     title: "Nuestros Servicios",
     description:
@@ -1500,7 +1475,6 @@ export default {
     includes: "Qué incluye",
     empty: "No hay servicios disponibles actualmente.",
     checkoutErrorToastTitle: "No se pudo iniciar el pago",
-    checkoutErrorToastDescription: "Inténtalo de nuevo en unos minutos.",
   },
   paymentSuccess: {
     title: "¡Pago exitoso!",
@@ -1514,6 +1488,322 @@ export default {
   },
   reactions: {
     errorTitle: "No se pudo registrar tu reacción",
-    loggedIn: "Las reacciones son solo para visitantes y tenés la sesión iniciada. Cerrá sesión para poder reaccionar.",
+    loggedIn: "Las reacciones son solo para visitantes y tienes la sesión iniciada. Cierra sesión para poder reaccionar.",
+  },
+  fields: {
+    news: {
+      title: {
+        placeholder: "Ej.: Feria de ciencias 2026",
+        hint: "Usa un título corto; aparecerá en la tarjeta de la noticia.",
+      },
+      category: {
+        hint: "Elige un tipo existente o escribe uno nuevo para crearlo.",
+      },
+      content: {
+        placeholder: "Ej.: Invitamos a todas las familias a celebrar con nosotros…",
+        hint: "Cuenta qué pasa, a quién va dirigido y cualquier detalle importante.",
+      },
+      location: {
+        placeholder: "Ej.: Salón principal de Green Farm",
+        hint: "Opcional. Indica dónde se realizará la actividad.",
+      },
+      eventDate: {
+        hint: "Opcional. Agrega la fecha y la hora si la noticia anuncia un evento.",
+      },
+    },
+    gallery: {
+      title: {
+        placeholder: "Ej.: Día de la familia",
+        hint: "Así se mostrará el álbum en la galería.",
+      },
+      year: {
+        hint: "Elige el año del álbum o escribe uno nuevo.",
+      },
+      description: {
+        placeholder: "Ej.: Fotos de la celebración con las familias en el huerto.",
+        hint: "Una o dos frases que cuenten de qué trata el álbum.",
+      },
+    },
+    comment: {
+      name: {
+        placeholder: "Ej.: Ana Rodríguez",
+        hint: "Se mostrará junto a tu respuesta.",
+      },
+      content: {
+        placeholder: "Comparte tu opinión o pregunta…",
+        hint: "Tu respuesta será visible para todos los visitantes.",
+      },
+    },
+    booking: {
+      childName: {
+        placeholder: "Ej.: Sofía Vargas Mora",
+        hint: "Nombre y apellidos del niño o niña.",
+      },
+      reason: {
+        placeholder: "Ej.: Quiero conocer el programa de estimulación temprana.",
+        hint: "Cuéntanos brevemente qué te gustaría consultar.",
+      },
+      referral: {
+        hint: "Nos ayuda a saber cómo llegan las familias a Green Farm.",
+      },
+      referralOther: {
+        placeholder: "Ej.: Me lo recomendó una amiga",
+        hint: "Cuéntanos dónde o por quién nos conociste.",
+      },
+      fullName: {
+        placeholder: "Ej.: María Fernández Solís",
+        hint: "Persona responsable legal del niño o niña.",
+      },
+      idNumber: {
+        placeholder: "Ej.: 112345678",
+        hint: "Cédula: 9 o 10 dígitos sin guiones. Otros documentos: de 6 a 20 caracteres.",
+      },
+      email: {
+        placeholder: "Ej.: nombre@correo.com",
+        hint: "Te enviaremos la confirmación de la cita a este correo.",
+      },
+      phone: {
+        placeholder: "Ej.: 8888 8888",
+        hint: "Te llamaremos a este número si hay cambios en la cita.",
+      },
+      occupation: {
+        placeholder: "Ej.: Docente",
+        hint: "Tu profesión u oficio actual.",
+      },
+    },
+    auth: {
+      email: {
+        placeholder: "Ej.: nombre@correo.com",
+        hint: "Usa el correo con el que te registraste.",
+      },
+      password: {
+        placeholder: "••••••••",
+        hint: "Distingue entre mayúsculas y minúsculas.",
+      },
+      newPassword: {
+        placeholder: "••••••••",
+        hint: "Mínimo 8 caracteres, con mayúscula, minúscula, número y símbolo.",
+      },
+      confirmPassword: {
+        placeholder: "••••••••",
+        hint: "Escribe la misma contraseña otra vez.",
+      },
+    },
+    club: {
+      name: {
+        placeholder: "Ej.: Club de robótica",
+        hint: "Nombre visible para las familias.",
+      },
+      capacity: {
+        placeholder: "Ej.: 15",
+        hint: "Número máximo de niños que pueden inscribirse.",
+      },
+      description: {
+        placeholder: "Ej.: Exploramos la robótica con juegos y retos en equipo.",
+        hint: "Describe las actividades y para qué edades es.",
+      },
+      schedule: {
+        hint: "Agrega los días y el horario en que se reúne el club.",
+      },
+    },
+    newsletter: {
+      subject: {
+        placeholder: "Ej.: Novedades de octubre en Green Farm",
+        hint: "Es lo primero que verán los suscriptores en su bandeja.",
+      },
+      message: {
+        placeholder: "Ej.: Este mes celebramos el Día de la familia y…",
+        hint: "Se enviará por correo a todos los suscriptores activos.",
+      },
+    },
+    apply: {
+      name: {
+        placeholder: "Ej.: Laura Jiménez Castro",
+        hint: "Tal como aparece en tu identificación.",
+      },
+      email: {
+        placeholder: "Ej.: nombre@correo.com",
+        hint: "Te contactaremos a este correo sobre tu postulación.",
+      },
+      phone: {
+        placeholder: "Ej.: 8888 8888",
+        hint: "Un número donde podamos llamarte.",
+      },
+    },
+    appointment: {
+      conclusion: {
+        placeholder: "Ej.: Se recomienda una evaluación de lenguaje.",
+        hint: "Resume lo conversado o el motivo del cambio de estado.",
+      },
+    },
+    child: {
+      firstName: {
+        placeholder: "Ej.: Sofía",
+        hint: "Solo el nombre, sin apellidos.",
+      },
+      lastName: {
+        placeholder: "Ej.: Vargas Mora",
+        hint: "Ambos apellidos, si los tiene.",
+      },
+      parent: {
+        hint: "Si no aparece, regístralo primero en Padres.",
+      },
+      relationship: {
+        hint: "Relación del encargado con el niño o niña.",
+      },
+      birthDate: {
+        hint: "Se usa para calcular la edad del niño o niña.",
+      },
+      medicalNotes: {
+        placeholder: "Ej.: Alergia al maní; usa inhalador.",
+        hint: "Opcional. Información de salud que el personal debe conocer.",
+      },
+    },
+    plan: {
+      onvo: {
+        hint: "Producto de OnvoPay con el que se cobrará este plan.",
+      },
+      schedule: {
+        hint: "Agrega los días y horarios incluidos en el plan.",
+      },
+      includes: {
+        placeholder: "Ej.: 2 sesiones por semana y materiales incluidos",
+        hint: "Enumera los beneficios principales del plan.",
+      },
+    },
+    person: {
+      firstName: {
+        placeholder: "Ej.: Ana",
+        hint: "Como aparece en su identificación.",
+      },
+      lastName: {
+        placeholder: "Ej.: Rodríguez Mora",
+        hint: "Ambos apellidos, si los tiene.",
+      },
+      email: {
+        placeholder: "Ej.: nombre@correo.com",
+        hint: "Lo usará para iniciar sesión.",
+      },
+      password: {
+        placeholder: "••••••••",
+        hint: "Mínimo 8 caracteres, con mayúscula, minúscula, número y símbolo.",
+      },
+      birthday: {
+        hint: "Opcional. Nos permite recordar su cumpleaños.",
+      },
+    },
+    vacancy: {
+      title: {
+        placeholder: "Ej.: Docente de preescolar",
+        hint: "Nombre del puesto como lo verán los postulantes.",
+      },
+      description: {
+        placeholder: "Ej.: Buscamos docente con experiencia en educación inicial…",
+      },
+    },
+    evaluation: {
+      child: {
+        hint: "Elige el expediente del niño o niña que vas a evaluar.",
+      },
+      communication: {
+        placeholder: "Ej.: Expresa sus necesidades con frases cortas.",
+        hint: "Cómo expresa ideas, necesidades y emociones.",
+      },
+      language: {
+        placeholder: "Ej.: Incorporó palabras nuevas a su vocabulario.",
+        hint: "Vocabulario, pronunciación y comprensión.",
+      },
+      reading: {
+        placeholder: "Ej.: Reconoce las vocales y su nombre escrito.",
+        hint: "Reconocimiento de letras, sonidos y palabras.",
+      },
+      motor: {
+        placeholder: "Ej.: Recorta siguiendo líneas rectas.",
+        hint: "Coordinación, equilibrio y motricidad fina.",
+      },
+      observation: {
+        placeholder: "Ej.: Muestra mucho interés en las actividades del huerto.",
+        hint: "Comentarios generales para la familia y el equipo.",
+      },
+    },
+    expedient: {
+      child: {
+        hint: "Escribe para buscar y elige al niño o niña de la lista.",
+      },
+      admissionDate: {
+        hint: "Día en que el niño o niña ingresó al centro.",
+      },
+      grade: {
+        hint: "Nivel que cursa actualmente.",
+      },
+      notes: {
+        placeholder: "Ej.: Se adapta bien al grupo y disfruta el juego al aire libre.",
+      },
+    },
+    post: {
+      title: {
+        placeholder: "Ej.: El huerto como aula",
+        hint: "Aparece como encabezado del artículo.",
+      },
+      topic: {
+        placeholder: "Ej.: Huerto escolar",
+        hint: "Agrupa los artículos relacionados en el foro.",
+      },
+      authorName: {
+        placeholder: "Ej.: Laura Méndez",
+        hint: "Se muestra como firma del artículo.",
+      },
+      authorRole: {
+        placeholder: "Ej.: Docente de preescolar",
+        hint: "Cargo o especialidad del autor.",
+      },
+      content: {
+        placeholder: "Escribe aquí el contenido del artículo…",
+      },
+      imageAlt: {
+        placeholder: "Ej.: Niños regando plantas en el huerto",
+        hint: "Describe la imagen para quienes usan lectores de pantalla.",
+      },
+    },
+    experience: {
+      name: {
+        placeholder: "Ej.: Ana Rodríguez",
+        hint: "Se mostrará junto a tu publicación.",
+      },
+      content: {
+        placeholder: "Ej.: Mi hija aprendió a sembrar tomates y ahora…",
+        hint: "Cuéntanos qué vivieron y qué aprendieron.",
+      },
+    },
+    parent: {
+      identification: {
+        placeholder: "Ej.: 112345678",
+        hint: "Cédula, DIMEX o pasaporte.",
+      },
+      phone: {
+        placeholder: "Ej.: 8888 8888",
+        hint: "Número principal de contacto.",
+      },
+      email: {
+        placeholder: "Ej.: nombre@correo.com",
+        hint: "Recibirá aquí los avisos del centro.",
+      },
+      address: {
+        placeholder: "Ej.: San José, Escazú, 200 m norte de la iglesia",
+        hint: "Provincia, cantón y señas.",
+      },
+      language: {
+        hint: "Idioma en que recibirá los correos.",
+      },
+    },
+    exception: {
+      date: {
+        hint: "Día en que cambia tu horario habitual.",
+      },
+      reason: {
+        placeholder: "Ej.: Cita médica o feriado",
+        hint: "Te ayuda a recordar por qué cambió el horario.",
+      },
+    },
   },
 };

@@ -37,7 +37,7 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
   const { t } = useTranslation()
 
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm card-hover">
+    <article className="rounded-2xl border border-neutral-200 bg-white p-md shadow-sm card-hover sm:p-lg">
       <div className="flex items-center justify-between gap-sm">
         {loading ? (
           <div className="flex min-w-0 flex-1 items-center gap-sm">
@@ -51,10 +51,10 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
           <button
             type="button"
             onClick={onToggleExpand}
-            className="flex min-w-0 flex-1 items-center gap-sm text-left focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+            className="flex min-w-0 flex-1 flex-col items-start gap-xs text-left focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 sm:flex-row sm:items-center sm:gap-sm"
             aria-expanded={isExpanded}
           >
-            <div className="min-w-0 flex-1">
+            <div className="w-full min-w-0 flex-1">
               <h3 className="m-0 font-heading text-h5 font-bold leading-snug text-heading">
                 {application!.applicantName}
               </h3>
@@ -113,12 +113,12 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
 
           <CertificatesCarousel certificates={application!.certificates} />
 
-          <div className="mt-md flex flex-wrap justify-end gap-md">
+          <div className="mt-md flex justify-end gap-sm sm:gap-md">
             <button
               type="button"
               onClick={onApprove}
               disabled={application!.status !== 'PENDING'}
-              className="inline-flex h-11 min-w-35 items-center justify-center whitespace-nowrap rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold uppercase tracking-wide text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-11 min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-full border border-green-500 px-sm sm:px-lg font-body text-body-sm font-semibold uppercase tracking-wide text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:min-w-35 sm:flex-none"
             >
               {t('admin.curriculums.approve')}
             </button>
@@ -126,7 +126,7 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
               type="button"
               onClick={onReject}
               disabled={application!.status !== 'PENDING'}
-              className="inline-flex h-11 min-w-35 items-center justify-center whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold uppercase tracking-wide text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex h-11 min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-full bg-orange-500 px-sm sm:px-lg font-body text-body-sm font-semibold uppercase tracking-wide text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:min-w-35 sm:flex-none"
             >
               {t('admin.curriculums.reject')}
             </button>

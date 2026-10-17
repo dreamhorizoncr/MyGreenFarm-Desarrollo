@@ -12,6 +12,7 @@ import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 import { getErrorMessage } from '../utils/error.ts'
 import { notify } from '../utils/notifications.ts'
 import { hasUnsafeText } from '../utils/validators.ts'
+import FieldHint from '../components/ui/FieldHint.tsx'
 
 function CommunityPostPage() {
   const { t, i18n } = useTranslation()
@@ -141,9 +142,13 @@ function CommunityPostPage() {
           {formOpen ? t('forum.community.cancel') : t('forum.community.addComment')}
         </button>
         {formOpen && <form onSubmit={submitComment} className="mt-md flex w-full flex-col gap-md rounded-2xl border border-neutral-200 bg-white p-lg">
-          <input value={name} onChange={(event) => setName(event.target.value)} maxLength={40} required aria-label={t('forum.community.commentNameLabel')} placeholder={t('forum.community.commentNameLabel')} className="h-11 w-full rounded-xl border border-neutral-300 bg-white px-md font-body text-body-sm text-body-text outline-none focus:border-heading" />
-          <textarea value={content} onChange={(event) => setContent(event.target.value)} maxLength={4000} rows={5} required aria-label={t('forum.community.commentContentLabel')} placeholder={t('forum.community.commentContentLabel')} className="min-h-[130px] w-full resize-y rounded-xl border border-neutral-300 bg-white p-md font-body text-body-sm text-body-text outline-none focus:border-heading" />
-          <Button type="submit" className="h-11 rounded-full bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600">{t('forum.community.commentSubmit')}</Button>
+          <div>
+            <input value={name} onChange={(event) => setName(event.target.value)} maxLength={40} required aria-label={t('forum.community.commentNameLabel')} placeholder={t('forum.community.commentNameLabel')} className="h-11 w-full rounded-xl border border-neutral-300 bg-white px-md font-body text-body-sm text-body-text-dark outline-none focus:border-heading" />
+            <FieldHint>{t('fields.comment.name.hint')}</FieldHint>
+          </div>          <div>
+            <textarea value={content} onChange={(event) => setContent(event.target.value)} maxLength={4000} rows={5} required aria-label={t('forum.community.commentContentLabel')} placeholder={t('forum.community.commentContentLabel')} className="min-h-[130px] w-full resize-y rounded-xl border border-neutral-300 bg-white p-md font-body text-body-sm text-body-text-dark outline-none focus:border-heading" />
+            <FieldHint>{t('fields.comment.content.hint')}</FieldHint>
+          </div>          <Button type="submit" disabled={!name.trim() || !content.trim()} className="h-11 rounded-full bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600">{t('forum.community.commentSubmit')}</Button>
         </form>}
       </div>
     </main>

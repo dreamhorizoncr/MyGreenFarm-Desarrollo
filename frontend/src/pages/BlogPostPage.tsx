@@ -10,6 +10,7 @@ import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 import { notify } from '../utils/notifications.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import { hasUnsafeText } from '../utils/validators.ts'
+import FieldHint from '../components/ui/FieldHint.tsx'
 
 const MAX_CONTENT = 4000
 
@@ -247,9 +248,10 @@ function BlogPostPage() {
                   onChange={(event) => setName(event.target.value)}
                   maxLength={40}
                   aria-label={t('forum.blog.commentNameLabel')}
-                  placeholder={t('forum.blog.commentNameLabel')}
-                  className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md text-left font-body text-body-sm text-body-text outline-none focus:border-heading"
+                  placeholder={t('fields.comment.name.placeholder')}
+                  className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md text-left font-body text-body-sm text-body-text-dark outline-none focus:border-heading"
                 />
+                <FieldHint>{t('fields.comment.name.hint')}</FieldHint>
 
                 <textarea
                   id="blog-comment-content"
@@ -258,9 +260,10 @@ function BlogPostPage() {
                   maxLength={MAX_CONTENT}
                   rows={4}
                   aria-label={t('forum.blog.commentContentLabel')}
-                  placeholder={t('forum.blog.commentContentLabel')}
-                  className="mt-md w-full resize-y rounded-xl border border-neutral-200 bg-white p-md text-left font-body text-body-sm text-body-text outline-none focus:border-heading"
+                  placeholder={t('fields.comment.content.placeholder')}
+                  className="mt-md w-full resize-y rounded-xl border border-neutral-200 bg-white p-md text-left font-body text-body-sm text-body-text-dark outline-none focus:border-heading"
                 />
+                <FieldHint>{t('fields.comment.content.hint')}</FieldHint>
 
                 <p className="m-0 mt-xs text-right font-body text-caption text-body-text">
                   {content.length}/{MAX_CONTENT}
@@ -268,6 +271,7 @@ function BlogPostPage() {
 
                 <Button
                   onClick={handleSubmit}
+                  disabled={!name.trim() || !content.trim()}
                   className="mt-md h-11 rounded-full bg-orange-500 font-body text-button font-normal text-white"
                 >
                   {t('forum.blog.commentSubmit')}
