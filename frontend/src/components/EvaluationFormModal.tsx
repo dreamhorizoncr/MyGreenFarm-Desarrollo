@@ -161,174 +161,6 @@ function EvaluationFormModal({
 
     return (
         <div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
-        <button
-            type="button"
-            tabIndex={-1}
-            aria-label={t("admin.evaluations.formCloseAriaLabel")}
-            className="absolute inset-0 size-full cursor-default"
-            onClick={onClose}
-        />
-
-        <form
-            onSubmit={handleSubmit}
-            className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
-        >
-            <div className="flex items-center justify-between gap-md">
-            <h2 className="m-0 font-heading text-h4 font-bold text-heading">
-                {evaluation ? t("admin.evaluations.formEditTitle") : t("admin.evaluations.registerEvaluation")}
-            </h2>
-
-            <ModalCloseButton
-                onClick={onClose}
-                aria-label={t("common.close")}
-            />
-            </div>
-
-            {error && (
-            <p className="mt-md rounded-xl bg-red-50 p-md font-body text-body-sm text-red-700">
-                {error}
-            </p>
-            )}
-
-            <div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
-            <label className="font-body text-body-sm font-semibold text-heading">
-                {t("admin.evaluations.formChildLabel")}
-                <div className="mt-xs">
-                <Select
-                    value={form.expedientId}
-                    onChange={(value) => handleChange("expedientId", value)}
-                    disabled={loadingOptions}
-                    placeholder={loadingOptions ? t("admin.evaluations.formChildLoadingPlaceholder") : t("admin.evaluations.formChildPlaceholder")}
-                    options={expedients.map((expedient) => ({
-                        value: expedient.id,
-                        label: `${expedient.childName} — ${expedient.studentId}`,
-                    }))}
-                    className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
-                    aria-label={t("admin.evaluations.formChildLabel")}
-                />
-                <FieldHint>{t("fields.evaluation.child.hint")}</FieldHint>
-                </div>
-                {fieldErrors.expedientId && (
-                    <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.expedientId}</span>
-                )}
-            </label>
-
-            <div className="font-body text-body-sm font-semibold text-heading">
-                {t("admin.evaluations.formDateLabel")}
-                <DatePickerField
-                value={form.evaluationDate}
-                onChange={(value) =>
-                    handleChange("evaluationDate", value)
-                }
-                ariaLabel={t("admin.evaluations.formDateLabel")}
-                />
-                {fieldErrors.evaluationDate && (
-                    <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.evaluationDate}</span>
-                )}
-            </div>
-
-            <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
-                {t("admin.evaluations.formProgressTitle")}
-                <p className="mt-2xs font-normal text-neutral-500">
-                {t("admin.evaluations.formProgressHint")}
-                </p>
-            </div>
-
-            <label className="font-body text-body-sm font-semibold text-heading">
-                {t("admin.evaluations.formCommunicationLabel")}
-                <textarea
-                value={form.communicationProgress}
-                onChange={(event) =>
-                    handleChange(
-                        "communicationProgress",
-                        event.target.value,
-                    )
-                }
-                maxLength={2000}
-                rows={5}
-                placeholder={t("fields.evaluation.communication.placeholder")}
-                className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
-                />
-                <FieldHint>{t("fields.evaluation.communication.hint")}</FieldHint>
-                {fieldErrors.communicationProgress && (
-                    <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.communicationProgress}</span>
-                )}
-            </label>
-
-            <label className="font-body text-body-sm font-semibold text-heading">
-                {t("admin.evaluations.formLanguageLabel")}
-                <textarea
-                value={form.languageProgress}
-                onChange={(event) =>
-                    handleChange("languageProgress", event.target.value)
-                }
-                maxLength={2000}
-                rows={5}
-                placeholder={t("fields.evaluation.language.placeholder")}
-                className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
-                />
-                <FieldHint>{t("fields.evaluation.language.hint")}</FieldHint>
-                {fieldErrors.languageProgress && (
-                    <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.languageProgress}</span>
-                )}
-            </label>
-
-            <label className="font-body text-body-sm font-semibold text-heading">
-                {t("admin.evaluations.formReadingLabel")}
-                <textarea
-                value={form.readingProgress}
-                onChange={(event) =>
-                    handleChange("readingProgress", event.target.value)
-                }
-                maxLength={2000}
-                rows={5}
-                placeholder={t("fields.evaluation.reading.placeholder")}
-                className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
-                />
-                <FieldHint>{t("fields.evaluation.reading.hint")}</FieldHint>
-                {fieldErrors.readingProgress && (
-                    <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.readingProgress}</span>
-                )}
-            </label>
-
-            <label className="font-body text-body-sm font-semibold text-heading">
-                {t("admin.evaluations.formMotorLabel")}
-                <textarea
-                value={form.motorProgress}
-                onChange={(event) =>
-                    handleChange("motorProgress", event.target.value)
-                }
-                maxLength={2000}
-                rows={5}
-                placeholder={t("fields.evaluation.motor.placeholder")}
-                className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
-                />
-                <FieldHint>{t("fields.evaluation.motor.hint")}</FieldHint>
-                {fieldErrors.motorProgress && (
-                    <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.motorProgress}</span>
-                )}
-            </label>
-
-            <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
-                {t("admin.evaluations.formObservationLabel")}
-                <textarea
-                value={form.teacherObservation}
-                onChange={(event) =>
-                    handleChange("teacherObservation", event.target.value)
-                }
-                maxLength={3000}
-                rows={5}
-                placeholder={t("fields.evaluation.observation.placeholder")}
-                className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
-                />
-                <FieldHint>{t("fields.evaluation.observation.hint")}</FieldHint>
-                {fieldErrors.teacherObservation && (
-                    <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.teacherObservation}</span>
-                )}
-            </label>
-            </div>
-
-            <div className="mt-lg flex justify-end gap-md *:flex-1">
             <button
                 type="button"
                 tabIndex={-1}
@@ -358,7 +190,7 @@ function EvaluationFormModal({
                     </p>
                 )}
 
-                <div className="mt-lg grid gap-md md:grid-cols-2">
+                <div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
                     <label className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.evaluations.formChildLabel")}
                         <div className="mt-xs">
@@ -374,6 +206,7 @@ function EvaluationFormModal({
                                 className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
                                 aria-label={t("admin.evaluations.formChildLabel")}
                             />
+                            <FieldHint>{t("fields.evaluation.child.hint")}</FieldHint>
                         </div>
                         {fieldErrors.expedientId && (
                             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.expedientId}</span>
@@ -414,9 +247,10 @@ function EvaluationFormModal({
                             }
                             maxLength={2000}
                             rows={5}
-                            placeholder={t("admin.evaluations.formCommunicationPlaceholder")}
+                            placeholder={t("fields.evaluation.communication.placeholder")}
                             className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                         />
+                        <FieldHint>{t("fields.evaluation.communication.hint")}</FieldHint>
                         {fieldErrors.communicationProgress && (
                             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.communicationProgress}</span>
                         )}
@@ -431,9 +265,10 @@ function EvaluationFormModal({
                             }
                             maxLength={2000}
                             rows={5}
-                            placeholder={t("admin.evaluations.formLanguagePlaceholder")}
+                            placeholder={t("fields.evaluation.language.placeholder")}
                             className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                         />
+                        <FieldHint>{t("fields.evaluation.language.hint")}</FieldHint>
                         {fieldErrors.languageProgress && (
                             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.languageProgress}</span>
                         )}
@@ -448,9 +283,10 @@ function EvaluationFormModal({
                             }
                             maxLength={2000}
                             rows={5}
-                            placeholder={t("admin.evaluations.formReadingPlaceholder")}
+                            placeholder={t("fields.evaluation.reading.placeholder")}
                             className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                         />
+                        <FieldHint>{t("fields.evaluation.reading.hint")}</FieldHint>
                         {fieldErrors.readingProgress && (
                             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.readingProgress}</span>
                         )}
@@ -465,9 +301,10 @@ function EvaluationFormModal({
                             }
                             maxLength={2000}
                             rows={5}
-                            placeholder={t("admin.evaluations.formMotorPlaceholder")}
+                            placeholder={t("fields.evaluation.motor.placeholder")}
                             className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                         />
+                        <FieldHint>{t("fields.evaluation.motor.hint")}</FieldHint>
                         {fieldErrors.motorProgress && (
                             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.motorProgress}</span>
                         )}
@@ -482,9 +319,10 @@ function EvaluationFormModal({
                             }
                             maxLength={3000}
                             rows={5}
-                            placeholder={t("admin.evaluations.formObservationPlaceholder")}
+                            placeholder={t("fields.evaluation.observation.placeholder")}
                             className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
                         />
+                        <FieldHint>{t("fields.evaluation.observation.hint")}</FieldHint>
                         {fieldErrors.teacherObservation && (
                             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.teacherObservation}</span>
                         )}
