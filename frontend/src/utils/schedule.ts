@@ -72,7 +72,12 @@ function capitalize(text: string): string {
   return text.charAt(0).toLocaleUpperCase() + text.slice(1)
 }
 
-function formatBlock({ days, start, end }: ScheduleBlock, t: TFunction, language: string): string {
+export interface ScheduleEntry {
+  days: string
+  hours: string
+}
+
+function formatBlock({ days, start, end }: ScheduleBlock, t: TFunction, language: string): ScheduleEntry {
   const parts = dayRuns(days).flatMap((run) =>
     run.length >= 3
       ? [t('common.schedule.dayRange', { from: dayName(run[0], language), to: dayName(run.at(-1)!, language) })]
@@ -80,15 +85,34 @@ function formatBlock({ days, start, end }: ScheduleBlock, t: TFunction, language
   )
   const dayText = capitalize(new Intl.ListFormat(language, { style: 'long', type: 'conjunction' }).format(parts))
   const hours = t('common.schedule.timeRange', { from: formatTime(start, language), to: formatTime(end, language) })
-  return `${dayText}, ${hours}`
+  return { days: dayText, hours }
+}
+
+// Une los bloques que comparten horario (p. ej. jueves y viernes de 12 a 1) para no repetir líneas
+function mergeSameHours(schedule: ScheduleValue): ScheduleValue {
+  const byHours = new Map<string, ScheduleBlock>()
+  for (const block of schedule) {
+    const key = `${block.start}-${block.end}`
+    const current = byHours.get(key)
+    byHours.set(key, current ? { ...current, days: sortDays([...current.days, ...block.days]) } : block)
+  }
+  return [...byHours.values()].sort((a, b) => a.days[0] - b.days[0] || a.start.localeCompare(b.start))
+}
+
+export function formatScheduleEntries(value: string | null | undefined, t: TFunction, language: string): ScheduleEntry[] {
+  const schedule = parseSchedule(value)
+  if (!schedule) return value ? [{ days: value, hours: '' }] : []
+  return mergeSameHours(schedule).map((block) => formatBlock(block, t, language))
+}
+
+// Cuántos días distintos de la semana cubre el horario (para el resumen «N días a la semana»)
+export function countScheduleDays(value: string | null | undefined): number {
+  const schedule = parseSchedule(value)
+  return schedule ? new Set(schedule.flatMap((block) => block.days)).size : 0
 }
 
 export function formatScheduleLines(value: string | null | undefined, t: TFunction, language: string): string[] {
-  const schedule = parseSchedule(value)
-  if (!schedule) return value ? [value] : []
-  return [...schedule]
-    .sort((a, b) => a.days[0] - b.days[0])
-    .map((block) => formatBlock(block, t, language))
+  return formatScheduleEntries(value, t, language).map(({ days, hours }) => (hours ? `${days}, ${hours}` : days))
 }
 
 export function formatSchedule(value: string | null | undefined, t: TFunction, language: string): string {

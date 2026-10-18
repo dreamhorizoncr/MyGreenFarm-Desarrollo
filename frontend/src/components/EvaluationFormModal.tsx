@@ -230,7 +230,7 @@ function EvaluationFormModal({
 
                     <div className="font-body text-body-sm font-semibold text-heading md:col-span-2">
                         {t("admin.evaluations.formProgressTitle")}
-                        <p className="mt-2xs font-normal text-neutral-500">
+                        <p className="mt-2xs font-body text-caption font-normal text-neutral-500">
                             {t("admin.evaluations.formProgressHint")}
                         </p>
                     </div>
@@ -341,7 +341,7 @@ function EvaluationFormModal({
 
                     <button
                         type="submit"
-                        disabled={saving || loadingOptions}
+                        disabled={saving || loadingOptions || !form.expedientId || !form.evaluationDate || !form.communicationProgress.trim() || !form.languageProgress.trim() || !form.readingProgress.trim() || !form.motorProgress.trim() || !form.teacherObservation.trim()}
                         className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         {saving

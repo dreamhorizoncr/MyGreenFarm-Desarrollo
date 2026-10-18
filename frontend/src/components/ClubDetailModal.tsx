@@ -1,11 +1,13 @@
-import { useEffect, useRef } from 'react'
-import { ClockIcon, UsersIcon } from '@animateicons/react/lucide'
+import { useEffect, useRef, useState } from 'react'
+import { UsersIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
-import { formatSchedule } from '../utils/schedule.ts'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import type { ClubResponse } from '../types/clubs.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
+import SchedulePopover from './SchedulePopover.tsx'
+import PhotoLightbox from './PhotoLightbox.tsx'
+import { ZoomIn } from 'lucide-react'
 
 interface ClubDetailModalProps {
     club: ClubResponse
@@ -13,7 +15,7 @@ interface ClubDetailModalProps {
 }
 
 function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
-    const { t: translate, i18n } = useTranslation()
+    const { t: translate } = useTranslation()
     const translateKey = translate as (key: string, options?: Record<string, unknown>) => string
     const t = (key: string, options?: Record<string, unknown>): string => {
         if (key.startsWith("clubs.") || key.startsWith("common.") || key.startsWith("newspage.")) {
@@ -23,8 +25,11 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
     }
 
     const dialogRef = useRef<HTMLDialogElement>(null)
+    const [scheduleOpen, setScheduleOpen] = useState(false)
+    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
     const { closing, requestClose } = useModalExit(onClose)
-    useDialogDismiss(dialogRef, requestClose)
+    // Con el horario abierto, Escape y el clic afuera cierran solo el mini modal y no el detalle
+    useDialogDismiss(dialogRef, requestClose, !scheduleOpen)
 
     useEffect(() => {
         dialogRef.current?.showModal()
@@ -60,20 +65,15 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                         {club.name}
                     </h2>
                     <div className="mt-[16px] flex flex-wrap items-center justify-center gap-x-[18px] gap-y-[8px] font-body text-body-sm text-neutral-500">
-                        {club.schedule && (
-                            <div className="flex items-center gap-[6px]">
-                                <ClockIcon size={16} className="text-orange-500" />
-                                <span className="whitespace-pre-line">{formatSchedule(club.schedule, translate, i18n.resolvedLanguage ?? i18n.language)}</span>
-                            </div>
-                        )}
                         {club.maxCapacity !== undefined && (
                             <div className="flex items-center gap-[6px]">
-                                <UsersIcon size={16} className="text-orange-500" />
+                                <UsersIcon size={16} className="text-pink-400" />
                                 <span>
                                     {club.maxCapacity} {t('ownerClubs.capacityLabel')}
                                 </span>
                             </div>
                         )}
+                        <SchedulePopover schedule={club.schedule} onOpenChange={setScheduleOpen} />
                     </div>
                 </header>
 
@@ -99,19 +99,38 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                             {t('clubs.gallery')}
                         </h3>
                         <div className={`grid gap-[12px] ${galleryGridColumns}`}>
-                            {galleryImages.map((image) => (
-                                <div key={image.id} className="overflow-hidden rounded-2xl">
+                            {galleryImages.map((image, index) => (
+                                <div key={image.id} className="relative overflow-hidden rounded-2xl">
                                     <img
                                         src={image.fileUrl}
-                                        alt=""
-                                        className="h-[220px] w-full object-cover transition duration-300 hover:scale-[1.03]"
+                                        alt={club.name}
+                                        className="h-[220px] w-full object-cover transition-transform duration-300 hover:scale-105"
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setLightboxIndex(index)}
+                                        aria-label={`${t('clubs.gallery')}: ${club.name}`}
+                                        className="absolute inset-0 flex cursor-zoom-in items-end justify-end p-3 focus-visible:outline-2 focus-visible:outline-white"
+                                    >
+                                        <span className="flex size-10 items-center justify-center rounded-full bg-black/55 text-white shadow transition hover:scale-105 hover:bg-black/70">
+                                            <ZoomIn size={20} aria-hidden="true" />
+                                        </span>
+                                    </button>
                                 </div>
                             ))}
                         </div>
                     </section>
                 )}
             </div>
+
+            {lightboxIndex !== null && galleryImages[lightboxIndex] && (
+                <PhotoLightbox
+                    images={galleryImages.map((image) => ({ id: String(image.id), fileUrl: image.fileUrl }))}
+                    initialIndex={lightboxIndex}
+                    alt={club.name}
+                    onClose={() => setLightboxIndex(null)}
+                />
+            )}
         </dialog>
     )
 }

@@ -1217,7 +1217,7 @@ export default {
       capacityLabel: "cupos",
       capacityUnit: "cupos.",
       availableSpots: "Capacidad máxima",
-      noSpotsAvailable: "Sin cupos disponibles",
+      noSpotsShort: "Sin cupos",
       closeClubDetails: "Cerrar detalles del club",
       published: "Publicado",
       draft: "Oculto",
@@ -1299,6 +1299,10 @@ export default {
     }
   },
   clubs: {
+    weeklySchedule: "Horario semanal",
+    daysPerWeek_one: "{{count}} día a la semana",
+    daysPerWeek_other: "{{count}} días a la semana",
+    showSchedule: "Ver horarios",
     title: "Clubes",
     subtitle: "Espacios para aprender, compartir y crecer en comunidad.",
     comingSoonTitle: "¡Próximamente!",
@@ -1454,6 +1458,8 @@ export default {
     },
   },
   services: {
+    priceLabel: "Precio",
+    approxPrice: "Monto aproximado según el tipo de cambio del día.",
     popupBlocked: 'El navegador bloqueó la ventana de pago. Permite las ventanas emergentes para este sitio e inténtalo de nuevo.',
     connectingPayment: 'Conectando con la pasarela de pago...',
     title: "Nuestros Servicios",

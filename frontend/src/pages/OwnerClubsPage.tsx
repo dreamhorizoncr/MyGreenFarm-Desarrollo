@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  ClockIcon,
   EyeIcon,
   EyeOffIcon,
   PlusIcon,
@@ -25,7 +24,7 @@ import ImageThumb, { ImageThumbList } from "../components/ui/ImageThumb.tsx";
 import { validateSafeText } from "../utils/validators.ts";
 import ModalCloseButton from "../components/ui/ModalCloseButton.tsx";
 import ScheduleField from "../components/ui/ScheduleField.tsx";
-import { emptySchedule, formatSchedule, parseSchedule, serializeSchedule, validateSchedule, type ScheduleValue } from "../utils/schedule.ts";
+import { emptySchedule, parseSchedule, serializeSchedule, validateSchedule, type ScheduleValue } from "../utils/schedule.ts";
 import SkeletonList from "../components/ui/SkeletonList.tsx";
 import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 import FieldHint from "../components/ui/FieldHint.tsx";
@@ -48,7 +47,7 @@ interface ClubCardProps {
 }
 
 function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCardProps>) {
-  const { t: translate, i18n } = useTranslation();
+  const { t: translate } = useTranslation();
   const translateKey = translate as (key: string, options?: Record<string, unknown>) => string;
   const t = (key: string, options?: Record<string, unknown>): string =>
     translateKey(key.startsWith("admin.") ? key : `admin.${key}`, options);
@@ -71,7 +70,6 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
   }
 
   const available = club?.availableSpots ?? club?.maxCapacity ?? 0;
-  const maxCap = club?.maxCapacity ?? 0;
   const isFull = available <= 0;
 
   const isPublishedValue = club?.isPublished ?? (club as unknown as { published?: boolean })?.published ?? false;
@@ -102,6 +100,12 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
             </span>
           </div>
         )}
+        {club?.maxCapacity !== undefined && (
+          <span className="absolute bottom-sm left-sm flex items-center gap-1 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
+            <UsersIcon size={12} />
+            {isFull ? t("ownerClubs.noSpotsShort") : <>{available} {t("ownerClubs.capacityLabel")}</>}
+          </span>
+        )}
       </div>
 
       <div className="flex flex-1 flex-col gap-sm px-lg pb-lg pt-md">
@@ -109,53 +113,11 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
           <h3 className="m-0 min-w-0 flex-1 text-left font-heading text-h4 font-bold text-green-500 line-clamp-2">
             {club?.name}
           </h3>
-          {club?.maxCapacity !== undefined && (
-            <span className="w-fit shrink-0 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white flex items-center gap-1">
-              <UsersIcon size={12} />
-              {available} {t("ownerClubs.capacityLabel")}
-            </span>
-          )}
         </div>
 
-        <p className="m-0 min-h-[48px] text-left font-body text-body-sm leading-relaxed text-neutral-600 line-clamp-2">
+        <p className="-mt-xs mb-0 min-h-[2lh] text-left font-body text-body-sm leading-relaxed text-neutral-600 line-clamp-2">
           {club?.description}
         </p>
-
-        <div className="my-1 border-t border-neutral-200" />
-
-        <div className="space-y-2.5 pt-xs text-left">
-          {club?.schedule && (
-            <div className="font-body text-body-sm leading-relaxed text-neutral-500">
-              <div className="flex items-center gap-2">
-                <ClockIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
-                <span className="font-semibold text-neutral-600">
-                  {t("ownerClubs.schedule")}
-                </span>
-              </div>
-              <p className="m-0 mt-2xs whitespace-pre-line px-1 text-left text-body-sm">{formatSchedule(club.schedule, translate, i18n.resolvedLanguage ?? i18n.language)}</p>
-            </div>
-          )}
-
-          <div className="font-body text-body-sm leading-relaxed text-neutral-500">
-            <div className="flex items-center gap-2">
-              <UsersIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
-              <span className="font-semibold text-neutral-600">
-                {t("ownerClubs.availableSpots")}
-              </span>
-            </div>
-            <p className="m-0 mt-2xs px-1 text-left text-body-sm">
-              {isFull ? (
-                <span className="text-red-500">
-                  {t("ownerClubs.noSpotsAvailable")}
-                </span>
-              ) : (
-                <>
-                  <span>{maxCap}{" "}{t("ownerClubs.capacityUnit")}</span>
-                </>
-              )}
-            </p>
-          </div>
-        </div>
 
         <div className="mt-auto flex justify-end gap-sm pt-sm">
           <CardActionButton action="edit" label={t("ownerClubs.editClub")} onClick={onEdit} />

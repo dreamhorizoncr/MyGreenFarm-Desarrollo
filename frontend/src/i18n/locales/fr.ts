@@ -878,7 +878,7 @@ export default {
       capacityLabel: "places",
       capacityUnit: "places.",
       availableSpots: "Capacité maximale",
-      noSpotsAvailable: "Plus de places disponibles",
+      noSpotsShort: "Complet",
       closeClubDetails: "Fermer les détails du club",
       published: "Publié",
       draft: "Masqué",
@@ -1302,6 +1302,10 @@ export default {
     },
   },
   clubs: {
+    weeklySchedule: "Horaire hebdomadaire",
+    daysPerWeek_one: "{{count}} jour par semaine",
+    daysPerWeek_other: "{{count}} jours par semaine",
+    showSchedule: "Voir les horaires",
       title: "Clubs",
       subtitle: "Des espaces pour apprendre, partager et grandir en communauté.",
       comingSoonTitle: "Bientôt disponible !",
@@ -1458,6 +1462,8 @@ export default {
     },
   },
   services: {
+    priceLabel: "Prix",
+    approxPrice: "Montant approximatif selon le taux de change du jour.",
     popupBlocked: 'Le navigateur a bloqué la fenêtre de paiement. Autorisez les fenêtres contextuelles pour ce site et réessayez.',
     connectingPayment: 'Connexion à la passerelle de paiement...',
     title: "Nos Services",

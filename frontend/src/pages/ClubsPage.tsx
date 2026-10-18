@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import { formatSchedule, parseSchedule } from '../utils/schedule.ts'
+import { parseSchedule } from '../utils/schedule.ts'
 import { useTranslation } from 'react-i18next'
-import { UsersIcon, SparklesIcon, ClockIcon } from '@animateicons/react/lucide'
+import { UsersIcon, SparklesIcon } from '@animateicons/react/lucide'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import ClubDetailModal from '../components/ClubDetailModal.tsx'
@@ -17,13 +17,12 @@ interface PublicClubCardProps {
 }
 
 function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
-    const { t: translate, i18n } = useTranslation()
+    const { t: translate } = useTranslation()
     const translateKey = translate as (key: string, options?: Record<string, unknown>) => string
     const t = (key: string, options?: Record<string, unknown>): string =>
         translateKey(key.startsWith("admin.") ? key : `admin.${key}`, options)
 
     const available = club.availableSpots ?? club.maxCapacity ?? 0
-    const maxCap = club.maxCapacity ?? 0
     const isFull = available <= 0
 
     return (
@@ -42,6 +41,12 @@ function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
                         </span>
                     </div>
                 )}
+                {club.maxCapacity !== undefined && (
+                    <span className="absolute bottom-sm left-sm flex items-center gap-1 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
+                        <UsersIcon size={12} />
+                        {isFull ? t("ownerClubs.noSpotsShort") : <><span>{available}</span> {t("ownerClubs.capacityLabel")}</>}
+                    </span>
+                )}
             </div>
 
             <div className="flex flex-1 flex-col gap-sm px-lg pb-lg pt-md">
@@ -49,59 +54,20 @@ function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
                     <h3 className="m-0 min-w-0 flex-1 text-left font-heading text-h4 font-bold text-green-500 line-clamp-2">
                         {club.name}
                     </h3>
-                    {club.maxCapacity !== undefined && (
-                        <span className="w-fit shrink-0 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white flex items-center gap-1">
-                            <UsersIcon size={12} />
-                            <span>{available}</span> {t("ownerClubs.capacityLabel")}
-                        </span>
-                    )}
                 </div>
 
-                <p className="m-0 min-h-[48px] text-left font-body text-body-sm leading-relaxed text-neutral-600 line-clamp-2">
+                <p className="-mt-xs mb-0 min-h-[2lh] text-left font-body text-body-sm leading-relaxed text-neutral-600 line-clamp-2">
                     {club.description}
                 </p>
-
-                <div className="my-1 border-t border-neutral-200" />
-
-                <div className="space-y-2xs pt-xs text-left">
-                    {club.schedule && (
-                        <div className="font-body text-body-sm leading-relaxed text-neutral-500">
-                            <div className="flex items-center gap-2">
-                                <ClockIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
-                                <span className="font-semibold text-neutral-600">
-                                    {t("ownerClubs.schedule")}
-                                </span>
-                            </div>
-                            <p className="m-0 mt-2xs whitespace-pre-line px-1 text-left text-body-sm">{formatSchedule(club.schedule, translate, i18n.resolvedLanguage ?? i18n.language)}</p>
-                        </div>
-                    )}
-
-                    <div className="font-body text-body-sm leading-relaxed text-neutral-500">
-                        <div className="flex items-center gap-2">
-                            <UsersIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
-                            <span className="font-semibold text-neutral-600">
-                                {t("ownerClubs.availableSpots")}
-                            </span>
-                        </div>
-                        <p className="m-0 mt-2xs px-1 text-left text-body-sm">
-                            {isFull ? (
-                                <span className="text-red-500">
-                                    {t("ownerClubs.noSpotsAvailable")}
-                                </span>
-                            ) : (
-                                <span>{maxCap} {t("ownerClubs.capacityUnit")}</span>
-                            )}
-                        </p>
-                    </div>
-                </div>
 
                 <div className="mt-auto pt-md">
                     <button
                         type="button"
                         onClick={onSelect}
-                        className="inline-flex w-full items-center justify-center gap-xs rounded-full bg-orange-500 px-lg py-sm font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
+                        disabled={isFull}
+                        className="inline-flex w-full items-center justify-center gap-xs rounded-full bg-orange-500 px-lg py-sm font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-orange-500"
                     >
-                        {translateKey("clubs.moreInfo")}
+                        {isFull ? t("ownerClubs.noSpotsShort") : translateKey("clubs.moreInfo")}
                     </button>
                 </div>
             </div>
