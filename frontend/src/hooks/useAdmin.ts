@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { adminService } from '../services/admin.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
@@ -7,19 +7,23 @@ export function useAdmin() {
   const [users, setUsers] = useState<UserInfo[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalElements, setTotalElements] = useState(0)
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async (page = 0, role?: string) => {
     setLoading(true)
     setError(null)
     try {
-      const data = await adminService.getUsers(0, 10)
+      const data = await adminService.getUsers(page, 10, role)
       setUsers(data.content)
+      setTotalPages(data.totalPages)
+      setTotalElements(data.totalElements)
     } catch (err) {
       setError(getErrorMessage(err))
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   const updateUser = async (id: string, data: UpdateUserData) => {
     setError(null)
@@ -45,5 +49,5 @@ export function useAdmin() {
     }
   }
 
-  return { users, loading, error, fetchUsers, updateUser, deleteUser }
+  return { users, loading, error, totalPages, totalElements, fetchUsers, updateUser, deleteUser }
 }

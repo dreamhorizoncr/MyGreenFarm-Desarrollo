@@ -117,6 +117,7 @@ public class GalleryImageService {
 
         imageRepository.delete(image);
     }
+    
 
     @Transactional
     public void deleteAllImagesByGallery(UUID galleryId) {
@@ -148,6 +149,24 @@ public class GalleryImageService {
         }
         return null;
     }
+
+    // En GalleryImageService
+public List<String> getFilePaths(List<GalleryImages> images) {
+    return images.stream()
+            .map(img -> extractPathFromUrl(img.getFileUrl(), galleryBucket))
+            .filter(path -> path != null && !path.isEmpty())
+            .collect(Collectors.toList());
+}
+
+public void deleteFiles(List<String> filePaths) {
+    for (String path : filePaths) {
+        try {
+            storageService.deleteFile(galleryBucket, path);
+        } catch (Exception e) {
+            log.warn("No se pudo borrar el archivo {}: {}", path, e.getMessage());
+        }
+    }
+}
 
     private GalleryImageResponse mapToResponse(GalleryImages image, long likeCount) {
         return GalleryImageResponse.builder()
