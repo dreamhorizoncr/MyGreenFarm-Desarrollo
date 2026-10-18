@@ -18,6 +18,7 @@ import SkeletonList from '../components/ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import TabHighlight from '../components/ui/TabHighlight.tsx'
 import FieldHint from '../components/ui/FieldHint.tsx'
+import { tabCarouselClass, useTabCarousel } from '../hooks/useTabCarousel.ts'
 
 interface SubscriberRowProps {
     item?: NewsletterRecipient
@@ -79,6 +80,7 @@ function AdminNewsletterPage() {
     const [subscribers, setSubscribers] = useState<NewsletterRecipient[]>([])
     const [searchTerm, setSearchTerm] = useState('')
     const [audienceFilter, setAudienceFilter] = useState<'SUBSCRIBERS' | 'PARENTS'>('SUBSCRIBERS')
+    const tabRowRef = useTabCarousel(audienceFilter)
 
     const [isBroadcastModalOpen, setIsBroadcastModalOpen] = useState(false)
     const { closing: broadcastClosing, requestClose: closeBroadcastModal } = useModalExit(() => setIsBroadcastModalOpen(false))
@@ -250,7 +252,7 @@ function AdminNewsletterPage() {
                     </div>
                 </div>
 
-                <div className="isolate -mt-sm mb-lg flex flex-wrap gap-sm">
+                <div ref={tabRowRef} className={`${tabCarouselClass} -mt-[calc(var(--spacing-sm)+4px)] mb-[calc(var(--spacing-lg)-4px)]`}>
                     <button
                         type="button"
                         aria-pressed={audienceFilter === 'SUBSCRIBERS'}

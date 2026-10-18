@@ -122,7 +122,7 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
           <legend className="mb-xs font-body text-body-sm font-semibold text-heading">
             {t('vacancies.formFieldsSectionTitle')}
           </legend>
-          <p className="mb-sm font-body text-body-sm text-neutral-500">
+          <p className="mb-sm font-body text-caption font-normal text-neutral-500">
             {t('vacancies.formFieldsSectionHint')}
           </p>
 

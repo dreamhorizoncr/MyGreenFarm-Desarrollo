@@ -14,6 +14,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import TabHighlight from '../components/ui/TabHighlight.tsx'
+import { tabCarouselClass, useTabCarousel } from '../hooks/useTabCarousel.ts'
 
 const PAGE_SIZE = 10
 const ROLE_OPTIONS = ['ALL', 'OWNER', 'ADMIN', 'TEACHER']
@@ -28,6 +29,7 @@ function AdminUsersPage() {
   const [userToDelete, setUserToDelete] = useState<UserInfo | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState<string>('ALL')
+  const tabRowRef = useTabCarousel(roleFilter)
   const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
@@ -118,7 +120,7 @@ function AdminUsersPage() {
           </button>
         </div>
 
-        <div className="isolate -mt-sm mb-lg flex flex-wrap gap-sm">
+        <div ref={tabRowRef} className={`${tabCarouselClass} -mt-[calc(var(--spacing-sm)+4px)] mb-[calc(var(--spacing-lg)-4px)]`}>
           {ROLE_OPTIONS.map((role) => (
             <button
               key={role}

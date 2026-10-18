@@ -144,7 +144,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
                 <span>{t('vacancies.chooseFile')}</span>
               </button>
 
-              <p className="mt-2xs font-body text-body-sm text-neutral-500">
+              <p className="mt-2xs font-body text-caption font-normal text-neutral-500">
                 {form.file ? form.file.name : t('vacancies.noFileChosen')}
               </p>
 
@@ -181,7 +181,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
               </button>
 
               {form.certificates.length === 0 ? (
-                <p className="mt-2xs font-body text-body-sm text-neutral-500">
+                <p className="mt-2xs font-body text-caption font-normal text-neutral-500">
                   {t('vacancies.noCertificatesChosen')}
                 </p>
               ) : (

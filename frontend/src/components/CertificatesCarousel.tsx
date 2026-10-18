@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronLeftIcon, ChevronRightIcon } from '@animateicons/react/lucide'
 import type { CertificateFile } from '../types/curriculum.ts'
+import PdfViewer from './ui/PdfViewer.tsx'
 
 interface CertificatesCarouselProps {
   certificates: CertificateFile[]
@@ -26,41 +27,27 @@ function CertificatesCarousel({ certificates }: Readonly<CertificatesCarouselPro
         {t('admin.curriculums.certificates')}
       </p>
 
-      <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-sm">
-        <div className="flex items-center gap-sm">
-          <button
-            type="button"
-            onClick={goPrev}
-            disabled={!hasMultiple}
-            aria-label={t('admin.curriculums.certificatePrev')}
-            className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-body-text shadow-sm transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-          >
+      {isImage ? (
+        <div className="h-90 w-full overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 p-sm">
+          <img src={current.fileUrl} alt={current.fileName} className="h-full w-full object-contain" />
+        </div>
+      ) : (
+        <PdfViewer key={current.id} url={current.fileUrl} fileName={current.fileName} title={current.fileName} className="h-90" />
+      )}
+
+      {hasMultiple && (
+        <div className="mt-sm flex items-center justify-between gap-sm">
+          <button type="button" onClick={goPrev} aria-label={t('admin.curriculums.certificatePrev')} className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-500 transition-colors hover:bg-(--grey-100) hover:text-heading focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2">
             <ChevronLeftIcon size={18} aria-hidden="true" />
           </button>
-
-          <div className="h-70 flex-1 overflow-hidden rounded-lg border border-neutral-200 bg-white">
-            {isImage ? (
-              <img src={current.fileUrl} alt={current.fileName} className="h-full w-full object-contain" />
-            ) : (
-              <iframe src={current.fileUrl} title={current.fileName} className="h-full w-full" />
-            )}
-          </div>
-
-          <button
-            type="button"
-            onClick={goNext}
-            disabled={!hasMultiple}
-            aria-label={t('admin.curriculums.certificateNext')}
-            className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-white text-body-text shadow-sm transition-opacity hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-          >
+          <p className="m-0 min-w-0 truncate text-center font-body text-caption font-semibold text-neutral-500">
+            {t('admin.curriculums.certificateCounter', { current: index + 1, total: certificates.length })}
+          </p>
+          <button type="button" onClick={goNext} aria-label={t('admin.curriculums.certificateNext')} className="inline-flex size-9 shrink-0 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-500 transition-colors hover:bg-(--grey-100) hover:text-heading focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2">
             <ChevronRightIcon size={18} aria-hidden="true" />
           </button>
         </div>
-
-        <p className="m-0 mt-xs truncate text-center font-body text-caption text-neutral-500">
-          {current.fileName} · {t('admin.curriculums.certificateCounter', { current: index + 1, total: certificates.length })}
-        </p>
-      </div>
+      )}
     </div>
   )
 }

@@ -137,7 +137,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
             className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading disabled:cursor-not-allowed disabled:bg-neutral-100"
           />
           {!isEditingSelf && (
-            <span className="mt-xs block font-body text-body-sm font-normal text-neutral-500">{t('admin.emailLockedHint')}</span>
+            <span className="mt-xs block font-body text-caption font-normal text-neutral-500">{t('admin.emailLockedHint')}</span>
           )}
           {emailValidationError && (
             <span className="mt-xs block font-body text-body-sm font-normal text-danger">{emailValidationError}</span>

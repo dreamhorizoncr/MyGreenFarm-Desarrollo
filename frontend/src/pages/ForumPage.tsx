@@ -14,6 +14,7 @@ import PublishButtonCard from '../components/forum/PublishButtonCard.tsx'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
+import ForumSectionTabs from '../components/forum/ForumSectionTabs.tsx'
 
 function ForumPage() {
   const { t } = useTranslation()
@@ -92,17 +93,7 @@ function ForumPage() {
                     className="h-full min-w-0 flex-1 bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
                   />
                 </label>
-                <nav aria-label={t('forum.sidebarLabel')} className="mt-sm flex gap-xs overflow-x-auto [scrollbar-width:none] lg:hidden">
-                  <a href="#forum-about" className="flex-auto shrink-0 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-sm py-2xs text-center font-body text-caption font-semibold text-neutral-500 transition-colors">
-                    {t('forum.about.title')}
-                  </a>
-                  <a href="#forum-latest" className="flex-auto shrink-0 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-sm py-2xs text-center font-body text-caption font-semibold text-neutral-500 transition-colors">
-                    {t('forum.latest.title')}
-                  </a>
-                  <a href="#forum-popular" className="flex-auto shrink-0 whitespace-nowrap rounded-full border border-neutral-300 bg-white px-sm py-2xs text-center font-body text-caption font-semibold text-neutral-500 transition-colors">
-                    {t('forum.popular.title')}
-                  </a>
-                </nav>
+                <ForumSectionTabs />
               </div>
             )}
             {activeTab === 'community' && (

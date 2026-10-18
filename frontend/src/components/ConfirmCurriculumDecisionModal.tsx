@@ -87,7 +87,7 @@ function ConfirmCurriculumDecisionModal({ application, action, onConfirm, vacanc
                   aria-label={t('admin.curriculums.assignVacancyLabel')}
                 />
               </div>
-              <p className="m-0 mt-xs font-normal text-neutral-500">
+              <p className="m-0 mt-xs font-body text-caption font-normal text-neutral-500">
                 {vacancyOptions.length === 0 ? t('admin.curriculums.noOpenVacancies') : t('admin.curriculums.assignVacancyHint')}
               </p>
             </div>
