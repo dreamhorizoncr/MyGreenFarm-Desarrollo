@@ -9,7 +9,7 @@ import ModalCloseButton from './ui/ModalCloseButton.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { getErrorMessage } from '../utils/error.ts'
-import { validateEmail, validateRequired } from '../utils/validators.ts'
+import { validateEmail, validateRequired, validateSafeText } from '../utils/validators.ts'
 
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 import type { CreateTeacherData } from '../services/admin.ts'
@@ -93,8 +93,8 @@ import FieldHint from './ui/FieldHint.tsx'
     }
 
     const handleSave = async () => {
-        const firstError = validateRequired(firstName, t('admin.firstName'), t)
-        const lastError = validateRequired(lastName, t('admin.lastName'), t)
+        const firstError = validateRequired(firstName, t('admin.firstName'), t) ?? validateSafeText(firstName, t)
+        const lastError = validateRequired(lastName, t('admin.lastName'), t) ?? validateSafeText(lastName, t)
         const mailError = validateEmail(email, t)
 
         let passError: string | null = null

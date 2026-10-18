@@ -1,5 +1,6 @@
 package taller.multimedia.backend.service.newsletter_subscriber;
 
+import taller.multimedia.backend.util.Sanitizer;
 import org.springframework.stereotype.Service;
 import taller.multimedia.backend.model.newsletter_subscriber.NewsletterSubscriber;
 import taller.multimedia.backend.repository.newsletter_subscriber.NewsletterSubscriberRepository;
@@ -53,7 +54,7 @@ public class NewsletterService {
             throw new RuntimeException("El correo electrónico es obligatorio.");
         }
         
-        String cleanEmail = email.toLowerCase().trim();
+        String cleanEmail = Sanitizer.requireClean("email", email).toLowerCase().trim();
         
         if (!cleanEmail.contains("@") || !cleanEmail.contains(".")) {
             throw new RuntimeException("El formato del correo electrónico no es válido.");
