@@ -1217,7 +1217,7 @@ export default {
       capacityLabel: "cupos",
       capacityUnit: "cupos.",
       availableSpots: "Capacidad máxima",
-      noSpotsAvailable: "Sin cupos disponibles",
+      noSpotsShort: "Sin cupos",
       closeClubDetails: "Cerrar detalles del club",
       published: "Publicado",
       draft: "Oculto",
@@ -1299,6 +1299,10 @@ export default {
     }
   },
   clubs: {
+    weeklySchedule: "Horario semanal",
+    daysPerWeek_one: "{{count}} día a la semana",
+    daysPerWeek_other: "{{count}} días a la semana",
+    showSchedule: "Ver horarios",
     title: "Clubes",
     subtitle: "Espacios para aprender, compartir y crecer en comunidad.",
     comingSoonTitle: "¡Próximamente!",
