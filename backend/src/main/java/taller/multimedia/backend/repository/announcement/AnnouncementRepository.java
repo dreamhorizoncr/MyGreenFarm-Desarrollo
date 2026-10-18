@@ -23,4 +23,6 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, UUID
 
     List<Announcement> findByCategoryId(UUID categoryId);
 
+    Page<Announcement> findByCategoryId(UUID categoryId, Pageable pageable);
+
 }

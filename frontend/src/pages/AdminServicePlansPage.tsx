@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { formatSchedule } from '../utils/schedule.ts'
-import { CircleCheckIcon, ClockIcon, PlusIcon } from '@animateicons/react/lucide'
+import { PlusIcon } from '@animateicons/react/lucide'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import CreateServicePlanModal from '../components/CreateServicePlanModal.tsx'
@@ -9,6 +8,7 @@ import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
 import { useServicePlanAdmin } from '../hooks/useServicePlanAdmin.ts'
 import { useClientPagination } from '../hooks/useClientPagination.ts'
+import { useGridPageSize } from '../hooks/useGridPageSize.ts'
 import { notify, notifyError } from '../utils/notifications.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
@@ -40,7 +40,7 @@ function AdminPlanCard({
   language,
   loading = false,
 }: Readonly<AdminPlanCardProps>) {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
 
   const getCleanCurrency = (curr?: string): Currency => {
     const upper = curr?.toUpperCase()
@@ -91,6 +91,9 @@ function AdminPlanCard({
             <span className="font-body text-body-sm text-neutral-400">{t('admin.servicios.chooseImage')}</span>
           </div>
         )}
+        <span className="absolute bottom-sm left-sm flex items-center gap-1 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
+          {getPlanTypeLabel(plan!.type, t as never)}
+        </span>
       </div>
 
       <div className="flex flex-1 flex-col gap-sm px-lg pb-lg pt-md">
@@ -98,18 +101,13 @@ function AdminPlanCard({
           <h3 className="m-0 min-w-0 flex-1 text-left font-heading text-h4 font-bold text-green-500 line-clamp-2">
             {plan!.name}
           </h3>
-          <span className="w-fit shrink-0 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
-            {getPlanTypeLabel(plan!.type, t as any)}
-          </span>
         </div>
 
-        <p className="m-0 min-h-[48px] text-left font-body text-body-sm leading-relaxed text-body-text-dark line-clamp-2">
+        <p className="-mt-xs mb-0 min-h-[2lh] text-left font-body text-body-sm leading-relaxed text-body-text-dark line-clamp-2">
           {plan!.description}
         </p>
 
-        <div className="my-1 border-t border-neutral-100" />
-
-        <div className="flex flex-col items-start gap-2xs">
+        <div className="mt-auto flex flex-col items-start gap-2xs pt-xs [&>div:first-child]:justify-start">
           <CurrencyToggle value={currency} onChange={setCurrency} hasExchangeRate={Boolean(exchangeRate)} />
           <span className="text-left font-heading text-h2 font-bold text-green-500">
             <AnimatedNumber
@@ -119,29 +117,7 @@ function AdminPlanCard({
           </span>
         </div>
 
-        <div className="space-y-2xs pt-xs text-left">
-          {plan!.schedule && (
-            <div className="font-body text-body-sm leading-relaxed text-neutral-500">
-              <div className="flex items-center gap-2">
-                <ClockIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
-                <span className="font-semibold text-neutral-600">{t('admin.servicios.scheduleLabel')}</span>
-              </div>
-              <p className="m-0 mt-2xs whitespace-pre-line px-1 py-2xs text-left text-body-sm">{formatSchedule(plan!.schedule, t, i18n.resolvedLanguage ?? i18n.language)}</p>
-            </div>
-          )}
-
-          {plan!.includes && (
-            <div className="font-body text-body-sm leading-relaxed text-neutral-500">
-              <div className="flex items-center gap-2">
-                <CircleCheckIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
-                <span className="font-semibold text-neutral-600">{t('admin.servicios.includesLabel')}</span>
-              </div>
-              <p className="m-0 mt-2xs px-1 py-2xs text-left text-body-sm line-clamp-2">{plan!.includes}</p>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-auto flex justify-end gap-sm pt-sm">
+        <div className="flex justify-end gap-sm pt-sm">
           <CardActionButton action="edit" label={t('admin.edit')} onClick={onEdit} />
           <CardActionButton action="delete" label={t('admin.delete')} disabled={deleting} onClick={onDelete} />
         </div>
@@ -181,7 +157,11 @@ function AdminServicePlansPage() {
     }
   }
 
-  const { currentPage, setPage, totalPages, pageItems: pagedPlans } = useClientPagination(plans)
+  // Múltiplo de las columnas visibles (1 / 2 / 3) para no dejar huecos en la última fila
+
+  const pageSize = useGridPageSize({ base: 1, md: 2, lg: 3 })
+
+  const { currentPage, setPage, totalPages, pageItems: pagedPlans } = useClientPagination(plans, pageSize)
 
   const planToDelete = plans.find(p => p.id === confirmDeleteId)
   console.log('onvoPlans actuales:', onvoPlans);
@@ -192,16 +172,16 @@ console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
   return (
     <AdminLayout>
       <div className="flex flex-col gap-lg">
-        <div>
-          <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
-            {t('admin.servicios.title')}
-          </h1>
-          <p className="mt-2 font-body text-body text-neutral-500">
-            {t('admin.servicios.subtitle')}
-          </p>
-        </div>
+        <div className="flex flex-wrap items-center justify-between gap-md">
+          <div>
+            <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
+              {t('admin.servicios.title')}
+            </h1>
+            <p className="mt-2 font-body text-body text-neutral-500">
+              {t('admin.servicios.subtitle')}
+            </p>
+          </div>
 
-        <div className="flex justify-end">
           <button
             type="button"
             onClick={() => setShowCreateModal(true)}

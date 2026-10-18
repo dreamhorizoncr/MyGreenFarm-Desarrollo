@@ -9,6 +9,7 @@ import { notify, notifyError } from '../utils/notifications.ts'
 import type { Curriculum } from '../types/curriculum.ts'
 import type { VacancyInput } from '../types/vacancy.ts'
 import TabHighlight from '../components/ui/TabHighlight.tsx'
+import { PlusIcon } from '@animateicons/react/lucide'
 
 type Tab = 'vacancies' | 'applications'
 
@@ -34,6 +35,7 @@ function AdminCurriculumsPage() {
   } = useCurriculums()
 
   const [activeTab, setActiveTab] = useState<Tab>('vacancies')
+  const [showCreateVacancy, setShowCreateVacancy] = useState(false)
 
   useEffect(() => {
     void fetchVacancies(i18n.language)
@@ -128,12 +130,27 @@ function AdminCurriculumsPage() {
   return (
     <div id="admin-curriculums">
       <AdminLayout>
-        <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
-          {t('admin.curriculums.title')}
-        </h1>
-        <p className="mt-2 font-body text-body text-neutral-500">
-          {t('admin.curriculums.subtitle')}
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-md">
+          <div>
+            <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
+              {t('admin.curriculums.title')}
+            </h1>
+            <p className="mt-2 font-body text-body text-neutral-500">
+              {t('admin.curriculums.subtitle')}
+            </p>
+          </div>
+
+          {activeTab === 'vacancies' && (
+            <button
+              type="button"
+              onClick={() => setShowCreateVacancy(true)}
+              className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+            >
+              <PlusIcon size={18} aria-hidden="true" />
+              {t('vacancies.publish')}
+            </button>
+          )}
+        </div>
 
         <div className="isolate mt-xl mb-lg flex gap-sm" role="tablist">
           <button
@@ -165,6 +182,8 @@ function AdminCurriculumsPage() {
             error={vacanciesError}
             applicantNameById={applicantNameById}
             onCreate={handleCreateVacancy}
+            showCreateModal={showCreateVacancy}
+            onCloseCreateModal={() => setShowCreateVacancy(false)}
             onSetOpen={handleSetVacancyOpen}
             onRelease={handleReleaseVacancy}
             onDelete={handleDeleteVacancy}

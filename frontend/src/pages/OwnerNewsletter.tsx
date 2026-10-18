@@ -181,24 +181,14 @@ function AdminNewsletterPage() {
     return (
         <div id="admin-newsletter">
             <AdminLayout>
-                <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
-                    {t('admin.newsletter.title')}
-                </h1>
-                <p className="mt-2 font-body text-body text-neutral-500">
-                    {t('admin.newsletter.subtitle')}
-                </p>
-
-                <div className="mb-[var(--spacing-lg)] mt-[var(--spacing-xl)] flex flex-wrap items-center justify-between gap-md">
-                    <div className="flex h-11 w-full min-w-0 max-w-[420px] flex-1 basis-full items-center sm:min-w-[240px] sm:basis-auto gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
-                        <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
-                        <input
-                            type="search"
-                            className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
-                            placeholder={t('admin.newsletter.searchPlaceholder')}
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            aria-label={t('admin.newsletter.searchPlaceholder')}
-                        />
+                <div className="flex flex-wrap items-center justify-between gap-md">
+                    <div>
+                        <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
+                            {t('admin.newsletter.title')}
+                        </h1>
+                        <p className="mt-2 font-body text-body text-neutral-500">
+                            {t('admin.newsletter.subtitle')}
+                        </p>
                     </div>
 
                     <div className="relative inline-flex" ref={sendMenuRef}>
@@ -220,7 +210,7 @@ function AdminNewsletterPage() {
 
                         {isSendMenuOpen && (
                             <div
-                                className="absolute left-0 top-[calc(100%+var(--spacing-2xs))] z-30 min-w-[220px] sm:left-auto sm:right-0 rounded-xl border border-neutral-200 bg-white p-xs shadow animate-[admin-row-menu-in_0.12s_ease-out]"
+                                className="absolute right-0 top-[calc(100%+var(--spacing-2xs))] z-30 min-w-[220px] rounded-xl border border-neutral-200 bg-white p-xs shadow animate-[admin-row-menu-in_0.12s_ease-out]"
                                 role="menu"
                             >
                                 <button
@@ -252,25 +242,40 @@ function AdminNewsletterPage() {
                     </div>
                 </div>
 
-                <div ref={tabRowRef} className={`${tabCarouselClass} -mt-[calc(var(--spacing-sm)+4px)] mb-[calc(var(--spacing-lg)-4px)]`}>
-                    <button
-                        type="button"
-                        aria-pressed={audienceFilter === 'SUBSCRIBERS'}
-                        onClick={() => setAudienceFilter('SUBSCRIBERS')}
-                        className={filterClassName(audienceFilter === 'SUBSCRIBERS')}
-                    >
-                        {audienceFilter === 'SUBSCRIBERS' && <TabHighlight layoutId="newsletter-audience-tab" className="bg-green-500" />}
-                        {t('admin.newsletter.filterSubscribers')}
-                    </button>
-                    <button
-                        type="button"
-                        aria-pressed={audienceFilter === 'PARENTS'}
-                        onClick={() => setAudienceFilter('PARENTS')}
-                        className={filterClassName(audienceFilter === 'PARENTS')}
-                    >
-                        {audienceFilter === 'PARENTS' && <TabHighlight layoutId="newsletter-audience-tab" className="bg-green-500" />}
-                        {t('admin.newsletter.filterParents')}
-                    </button>
+                {/* Pestañas a la izquierda y buscador a la derecha; en móvil el buscador va arriba */}
+                <div className="mb-lg mt-xl flex flex-col-reverse gap-md md:flex-row md:items-center md:justify-between">
+                    <div ref={tabRowRef} className={`${tabCarouselClass} -my-1 min-w-0 md:flex-1`}>
+                        <button
+                            type="button"
+                            aria-pressed={audienceFilter === 'SUBSCRIBERS'}
+                            onClick={() => setAudienceFilter('SUBSCRIBERS')}
+                            className={filterClassName(audienceFilter === 'SUBSCRIBERS')}
+                        >
+                            {audienceFilter === 'SUBSCRIBERS' && <TabHighlight layoutId="newsletter-audience-tab" className="bg-green-500" />}
+                            {t('admin.newsletter.filterSubscribers')}
+                        </button>
+                        <button
+                            type="button"
+                            aria-pressed={audienceFilter === 'PARENTS'}
+                            onClick={() => setAudienceFilter('PARENTS')}
+                            className={filterClassName(audienceFilter === 'PARENTS')}
+                        >
+                            {audienceFilter === 'PARENTS' && <TabHighlight layoutId="newsletter-audience-tab" className="bg-green-500" />}
+                            {t('admin.newsletter.filterParents')}
+                        </button>
+                    </div>
+
+                    <div className="flex h-11 w-full min-w-0 shrink-0 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 md:w-[360px]">
+                        <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
+                        <input
+                            type="search"
+                            className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
+                            placeholder={t('admin.newsletter.searchPlaceholder')}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            aria-label={t('admin.newsletter.searchPlaceholder')}
+                        />
+                    </div>
                 </div>
 
                 {loadingSubscribers && (

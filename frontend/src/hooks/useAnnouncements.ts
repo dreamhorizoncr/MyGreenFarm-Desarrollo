@@ -21,6 +21,7 @@ export function useAnnouncements() {
     lang: string,
     page: number = 0,
     size: number = 10,
+    categoryId?: string,
   ) => {
     setLoading(true);
     setError(null);
@@ -30,6 +31,7 @@ export function useAnnouncements() {
         SOURCE_LANG,
         page,
         size,
+        categoryId,
       );
 
       setAnnouncements(data.content);

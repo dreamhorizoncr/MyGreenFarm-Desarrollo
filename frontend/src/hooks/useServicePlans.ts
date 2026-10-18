@@ -19,9 +19,9 @@ export function useServicePlans() {
 
   const cacheRef = useRef<Map<string, CacheData>>(new Map())
 
-  const fetchPlans = useCallback(async (page = 0, lang?: string) => {
+  const fetchPlans = useCallback(async (page = 0, lang?: string, size = 10) => {
     const targetLang = lang?.split('-')[0] || 'es'
-    const cacheKey = `${page}-${targetLang}`
+    const cacheKey = `${page}-${size}-${targetLang}`
 
     if (cacheRef.current.has(cacheKey)) {
       const cached = cacheRef.current.get(cacheKey)!
@@ -34,7 +34,7 @@ export function useServicePlans() {
     setError(null)
     
     try {
-      const data = await servicePlanService.getActivePlans(page)
+      const data = await servicePlanService.getActivePlans(page, size)
       const rawPlans = data.content ?? data 
       const calculatedTotalPages = data.totalPages ?? 1
 

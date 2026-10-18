@@ -27,6 +27,7 @@ import ScheduleField from "../components/ui/ScheduleField.tsx";
 import { emptySchedule, parseSchedule, serializeSchedule, validateSchedule, type ScheduleValue } from "../utils/schedule.ts";
 import SkeletonList from "../components/ui/SkeletonList.tsx";
 import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
+import { useGridPageSize } from "../hooks/useGridPageSize.ts";
 import FieldHint from "../components/ui/FieldHint.tsx";
 
 const emptyForm: ClubRequest = {
@@ -37,7 +38,6 @@ const emptyForm: ClubRequest = {
   isPublished: false,
 };
 
-const PAGE_SIZE = 10;
 
 interface ClubCardProps {
   club?: ClubResponse;
@@ -139,6 +139,8 @@ function OwnerClubsPage() {
   const [error, setError] = useState<string | null>(null);
   const [clubFieldErrors, setClubFieldErrors] = useState<Record<string, string | null>>({});
   const [currentPage, setCurrentPage] = useState(1);
+  // Múltiplo de las columnas visibles (1 / 2 / 3) para no dejar huecos en la última fila
+  const pageSize = useGridPageSize({ base: 1, sm: 2, lg: 3 });
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<ClubResponse | null>(null);
@@ -375,14 +377,14 @@ function OwnerClubsPage() {
 
   const totalPages = Math.max(
     1,
-    Math.ceil(clubs.length / PAGE_SIZE),
+    Math.ceil(clubs.length / pageSize),
   );
 
   const safeCurrentPage = Math.min(currentPage, totalPages);
 
   const pagedClubs = clubs.slice(
-    (safeCurrentPage - 1) * PAGE_SIZE,
-    safeCurrentPage * PAGE_SIZE,
+    (safeCurrentPage - 1) * pageSize,
+    safeCurrentPage * pageSize,
   );
   const skeletonCount = useSkeletonCount("admin-clubs", loading, clubs.length, 3);
 
