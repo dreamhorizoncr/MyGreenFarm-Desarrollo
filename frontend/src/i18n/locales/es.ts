@@ -1458,6 +1458,8 @@ export default {
     },
   },
   services: {
+    priceLabel: "Precio",
+    approxPrice: "Monto aproximado según el tipo de cambio del día.",
     popupBlocked: 'El navegador bloqueó la ventana de pago. Permite las ventanas emergentes para este sitio e inténtalo de nuevo.',
     connectingPayment: 'Conectando con la pasarela de pago...',
     title: "Nuestros Servicios",

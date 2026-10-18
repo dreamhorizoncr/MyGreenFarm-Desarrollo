@@ -1448,6 +1448,8 @@ export default {
     },
   },
   services: {
+    priceLabel: "Price",
+    approxPrice: "Approximate amount based on today's exchange rate.",
     popupBlocked: 'The browser blocked the payment window. Allow pop-ups for this site and try again.',
     connectingPayment: 'Connecting to the payment gateway...',
     title: "Our Services",

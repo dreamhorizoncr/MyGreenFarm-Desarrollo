@@ -1462,6 +1462,8 @@ export default {
     },
   },
   services: {
+    priceLabel: "Prix",
+    approxPrice: "Montant approximatif selon le taux de change du jour.",
     popupBlocked: 'Le navigateur a bloqué la fenêtre de paiement. Autorisez les fenêtres contextuelles pour ce site et réessayez.',
     connectingPayment: 'Connexion à la passerelle de paiement...',
     title: "Nos Services",
