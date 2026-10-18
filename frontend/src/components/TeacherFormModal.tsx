@@ -278,7 +278,7 @@ import FieldHint from './ui/FieldHint.tsx'
                 className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading disabled:cursor-not-allowed disabled:bg-neutral-100"
             />
             {isEditing && (
-                <span className="mt-xs block font-body text-body-sm font-normal text-neutral-500">
+                <span className="mt-xs block font-body text-caption font-normal text-neutral-500">
                 {t('admin.emailLockedHint')}
                 </span>
             )}
@@ -314,7 +314,7 @@ import FieldHint from './ui/FieldHint.tsx'
                 autoComplete="new-password"
                 className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading disabled:opacity-50"
                 />
-                <span className="mt-xs block font-body text-body-sm font-normal text-neutral-500">
+                <span className="mt-xs block font-body text-caption font-normal text-neutral-500">
                 {t('admin.teachersPage.passwordHint')}
                 </span>
                 {passwordError && (
