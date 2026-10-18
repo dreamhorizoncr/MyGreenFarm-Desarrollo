@@ -6,6 +6,8 @@ import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.model.user.User;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -33,4 +35,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     List<User> findTeachersWithBirthdayOn(@Param("month") int month, @Param("day") int day);
 
     List<User> findByRole(Role role);
+
+    Page<User> findByRole(Role role, Pageable pageable);
 }

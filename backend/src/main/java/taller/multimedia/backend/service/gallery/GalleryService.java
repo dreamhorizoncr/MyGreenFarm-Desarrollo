@@ -7,6 +7,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import taller.multimedia.backend.dto.gallery.GalleryImageResponse;
@@ -89,14 +91,23 @@ public class GalleryService {
     }
 
     @Transactional
-    public void delete(UUID id) {
-        Gallery gallery = galleryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Galería no encontrada con ID: " + id));
+public void delete(UUID id) {
+    Gallery gallery = galleryRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Galería no encontrada con ID: " + id));
 
-        galleryImageService.deleteAllImagesByGallery(id);
+     List<String> filePaths = galleryImageService.getFilePaths(gallery.getGalleryImages());
 
-        galleryRepository.delete(gallery);
-    }
+    // 2. Borra en la BD (el cascade se encarga de imágenes y likes)
+    galleryRepository.delete(gallery);
+    galleryRepository.flush(); // si hay otra FK bloqueando, falla aquí y no se toca el bucket
+
+    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+        @Override
+        public void afterCommit() {
+            galleryImageService.deleteFiles(filePaths);
+        }
+    });
+}
 
     @Transactional(readOnly = true)
     public List<GalleryResponse> getFeaturedGalleries() {

@@ -16,12 +16,11 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import TabHighlight from '../components/ui/TabHighlight.tsx'
 import { tabCarouselClass, useTabCarousel } from '../hooks/useTabCarousel.ts'
 
-const PAGE_SIZE = 10
 const ROLE_OPTIONS = ['ALL', 'OWNER', 'ADMIN', 'TEACHER']
 
 function AdminUsersPage() {
   const { t } = useTranslation()
-  const { users, loading, error, fetchUsers, updateUser, deleteUser } = useAdmin()
+  const { users, loading, error, totalPages, totalElements, fetchUsers, updateUser, deleteUser } = useAdmin()
 
   const currentUser = userStorage.getUser()
   const [showCreateModal, setShowCreateModal] = useState(false)
@@ -33,9 +32,8 @@ function AdminUsersPage() {
   const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
-    void fetchUsers()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    void fetchUsers(currentPage - 1, roleFilter)
+  }, [currentPage, fetchUsers, roleFilter])
 
   const filteredUsers = useMemo(() => {
     const term = searchTerm.trim().toLowerCase()
@@ -47,14 +45,6 @@ function AdminUsersPage() {
       )
     })
   }, [users, searchTerm, roleFilter])
-
-  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / PAGE_SIZE))
-
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [searchTerm, roleFilter])
-
-  const pagedUsers = filteredUsers.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   const roleLabels: Record<string, string> = {
     OWNER: t('admin.roles.OWNER'),
@@ -85,7 +75,7 @@ function AdminUsersPage() {
     setUserToDelete(user)
   }
 
-  const skeletonCount = useSkeletonCount('admin-users', loading, pagedUsers.length, 4)
+  const skeletonCount = useSkeletonCount('admin-users', loading, filteredUsers.length, 4)
 
   return (
     <div id="admin-users">
@@ -105,7 +95,10 @@ function AdminUsersPage() {
               className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
               placeholder={t('admin.searchPlaceholder')}
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value)
+                setCurrentPage(1)
+              }}
               aria-label={t('admin.searchPlaceholder')}
             />
           </div>
@@ -126,7 +119,10 @@ function AdminUsersPage() {
               key={role}
               type="button"
               aria-pressed={roleFilter === role}
-              onClick={() => setRoleFilter(role)}
+              onClick={() => {
+                setRoleFilter(role)
+                setCurrentPage(1)
+              }}
               className={roleFilterClassName(roleFilter === role)}
             >
               {roleFilter === role && <TabHighlight layoutId="admin-users-role-tab" className="bg-green-500" />}
@@ -151,7 +147,7 @@ function AdminUsersPage() {
           ) : (
             <>
               <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
-                {pagedUsers.map((user) => (
+                {filteredUsers.map((user) => (
                   <TeacherCard
                     key={user.id}
                     user={user}
@@ -161,14 +157,19 @@ function AdminUsersPage() {
                   />
                 ))}
               </div>
-              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+              {!searchTerm.trim() && totalElements > 10 && (
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+              )}
             </>
           )
         )}
       </AdminLayout>
 
       {showCreateModal && (
-        <CreateUserModal onCreated={() => fetchUsers()} onClose={() => setShowCreateModal(false)} />
+        <CreateUserModal
+          onCreated={() => fetchUsers(currentPage - 1, roleFilter)}
+          onClose={() => setShowCreateModal(false)}
+        />
       )}
 
       {userToEdit && currentUser && (
@@ -186,6 +187,7 @@ function AdminUsersPage() {
           onConfirm={async (id) => {
             try {
               await deleteUser(id)
+              await fetchUsers(currentPage - 1, roleFilter)
               notify.success(t('admin.deleteDocenteToastTitle'))
             } catch (err) {
               notifyError(t('admin.deleteDocenteErrorToastTitle'), err)
