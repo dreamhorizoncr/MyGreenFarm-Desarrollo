@@ -185,12 +185,12 @@ function ClubsPage() {
         <div id="clubs-page" className="flex min-h-screen flex-col bg-bg-page">
             <Navbar />
 
-            <section className="flex min-h-[280px] items-start bg-green-500 px-[30px] pt-[48px] pb-[40px] text-center text-white md:min-h-[320px] md:pt-[72px]">
+            <section className="flex min-h-[280px] items-start bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
                 <div className="mx-auto w-full max-w-175">
-                    <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-white">
+                    <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">
                         {t('clubs.title')}
                     </h1>
-                    <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-white md:text-body-sm">
+                    <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">
                         {t('clubs.subtitle')}
                     </p>
                 </div>

@@ -90,13 +90,13 @@ function Navbar() {
 
   const navLinks = [
     { to: '/', label: t('navbar.home') },
-    { to: '/about-us', label: t('navbar.aboutUs') },
     { to: '/news', label: t('navbar.news') },
     { to: '/multimedia', label: t('navbar.multimedia') },
     { to: '/forum', label: t('navbar.forum') },
     { to: '/services', label: t('navbar.services') },
     { to: '/vacantes', label: t('navbar.vacancies') },
     { to: '/clubs', label: t('navbar.clubs') },
+    { to: '/about-us', label: t('navbar.aboutUs') },
   ]
 
   const handleLogout = async () => {
@@ -234,13 +234,6 @@ function Navbar() {
                   {t('navbar.dashboard')}
                 </Link>
 
-                <Link
-                  to="/profile"
-                  onClick={() => setDrawerOpen(false)}
-                  className="font-body text-body-sm font-normal text-body-text-dark transition-colors hover:text-heading"
-                >
-                  {t('profile.viewProfile')}
-                </Link>
 
                 <button
                   type="button"
@@ -292,17 +285,6 @@ function Navbar() {
               {t('navbar.dashboard')}
             </Link>
 
-            <Link
-              to="/profile"
-              onClick={() => setDrawerOpen(false)}
-              className={`relative w-fit font-normal text-body-text-dark transition-colors hover:text-heading after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:w-full after:origin-center after:bg-green-500 after:transition-transform after:duration-300 after:content-[''] ${
-                pathname === '/profile'
-                  ? 'after:scale-x-100'
-                  : 'after:scale-x-0 hover:after:scale-x-100'
-              }`}
-            >
-              {t('profile.viewProfile')}
-            </Link>
 
             <button
               type="button"

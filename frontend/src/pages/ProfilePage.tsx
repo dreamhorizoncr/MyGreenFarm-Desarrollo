@@ -111,11 +111,11 @@ function ProfilePage() {
           </div>
         </div>
 
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-5 grid grid-cols-1 gap-y-5 md:grid-cols-2 md:gap-x-8">
           <button
             type="button"
             onClick={() => setShowResetPasswordModal(true)}
-            className="flex h-11 w-full items-center justify-center rounded-full border border-green-500 px-5 font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 sm:w-auto"
+            className="flex h-11 w-full items-center justify-center rounded-full border border-green-500 px-5 font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:w-auto md:justify-self-start"
           >
             {t('profile.resetPassword')}
           </button>
@@ -127,7 +127,7 @@ function ProfilePage() {
             onMouseLeave={() => setLogoutHovered(false)}
             onFocus={() => setLogoutHovered(true)}
             onBlur={() => setLogoutHovered(false)}
-            className="h-11 w-full rounded-full bg-danger px-5 font-body text-body-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 sm:w-auto"
+            className="h-11 w-full rounded-full bg-danger px-5 font-body text-body-sm font-semibold text-white transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:w-auto md:justify-self-end"
           >
             {t('profile.logout')}
           </button>
