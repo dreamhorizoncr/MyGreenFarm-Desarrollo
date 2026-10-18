@@ -63,7 +63,7 @@ export default function AccessibilityMenu() {
                 aria-label={t('accessibility.menuAria', { defaultValue: 'Menú de accesibilidad' })}
                 aria-expanded={isOpen}
                 aria-controls="accessibility-panel"
-                className="flex size-12 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+                className="flex size-12 items-center justify-center rounded-full border border-neutral-200 bg-white text-heading shadow-lg transition-all duration-300 hover:scale-105 hover:bg-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
             >
                 <Accessibility size={22} isAnimated={false} aria-hidden="true" />
             </button>
@@ -124,7 +124,7 @@ export default function AccessibilityMenu() {
                         <button
                             type="button"
                             onClick={resetAccessibility}
-                            className="mt-md h-11 w-full rounded-full border border-green-500 font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+                            className="mt-md h-11 w-full rounded-full bg-orange-500 font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
                         >
                             {t('accessibility.reset', { defaultValue: 'Restablecer configuración' })}
                         </button>
