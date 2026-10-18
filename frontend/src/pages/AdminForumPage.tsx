@@ -16,6 +16,7 @@ import { forumService } from '../services/forum.ts'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import TabHighlight from '../components/ui/TabHighlight.tsx'
+import { tabCarouselClass, useTabCarousel } from '../hooks/useTabCarousel.ts'
 
 type ForumAdminTab = 'posts' | 'community'
 
@@ -44,6 +45,7 @@ function AdminForumPage() {
   } = useForumFeedContext()
 
   const [activeTab, setActiveTab] = useState<ForumAdminTab>('posts')
+  const tabRowRef = useTabCarousel(activeTab)
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<BlogPost | null>(null)
   const [postToDelete, setPostToDelete] = useState<BlogPost | null>(null)
@@ -294,7 +296,7 @@ function AdminForumPage() {
         )}
       </div>
 
-      <div role="tablist" aria-label={t('adminForum.tabs.label')} className="isolate mt-xl flex flex-wrap gap-sm">
+      <div role="tablist" aria-label={t('adminForum.tabs.label')} ref={tabRowRef} className={`${tabCarouselClass} mt-[calc(var(--spacing-xl)-4px)] -mb-1`}>
         {FORUM_ADMIN_TABS.map((tab) => (
           <button
             key={tab}

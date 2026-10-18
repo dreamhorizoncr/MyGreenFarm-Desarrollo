@@ -32,6 +32,7 @@ import CreatableDropdown, { type CreatableOption } from "../components/ui/Creata
 import { useAnnouncementCategories } from "../hooks/useAnnouncementCategories.ts";
 import { getErrorMessage } from "../utils/error.ts";
 import FieldHint from "../components/ui/FieldHint.tsx";
+import { tabCarouselClass, useTabCarousel } from "../hooks/useTabCarousel.ts";
 
 const emptyForm: AnnouncementRequest = {
   title: "",
@@ -66,6 +67,7 @@ function AnnouncementsPage() {
   const [locationError, setLocationError] = useState<string | null>(null);
   const [contentError, setContentError] = useState<string | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>("All");
+  const tabRowRef = useTabCarousel(activeCategory);
   const [categoryError, setCategoryError] = useState<string | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<CreatableOption | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -524,7 +526,7 @@ function AnnouncementsPage() {
         </div>
       )}
 
-      <div className="isolate mt-xl flex flex-wrap gap-sm">
+      <div ref={tabRowRef} className={`${tabCarouselClass} mt-[calc(var(--spacing-xl)-4px)] -mb-1`}>
         <button
           type="button"
           onClick={() => handleCategoryChange("All")}

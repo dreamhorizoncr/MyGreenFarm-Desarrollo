@@ -141,7 +141,7 @@ function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Readonl
                 />
 
                 {!date && (
-                  <p className="m-0 text-left font-body text-body-sm text-neutral-500">
+                  <p className="m-0 text-left font-body text-caption font-normal text-neutral-500">
                     {t('teacherAppointments.rescheduleSelectDateHint')}
                   </p>
                 )}

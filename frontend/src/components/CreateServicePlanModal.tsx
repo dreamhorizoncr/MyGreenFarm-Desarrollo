@@ -174,7 +174,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
             <FieldHint>{t('fields.plan.onvo.hint')}</FieldHint>
           </div>
           {availablePlans.length === 0 && !isEditing && (
-            <span className="mt-xs block font-body text-body-sm font-normal text-neutral-500">
+            <span className="mt-xs block font-body text-caption font-normal text-neutral-500">
               {t('admin.servicios.noOnvoPlans')}
             </span>
           )}

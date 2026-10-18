@@ -18,6 +18,7 @@ import { notify, notifyError } from '../utils/notifications.ts'
 import type { Appointment, AppointmentStatus } from '../types/appointment.ts'
 import { useAvailability } from '../hooks/useAvailability.ts'
 import TabHighlight from './ui/TabHighlight.tsx'
+import { tabCarouselClass, useTabCarousel } from '../hooks/useTabCarousel.ts'
 
 type StatusFilter = 'ALL' | 'BY_DATE' | AppointmentStatus
 
@@ -133,6 +134,7 @@ function AppointmentsSection() {
   }, [loadExceptions, i18n.language])
 
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('BY_DATE')
+  const tabRowRef = useTabCarousel(statusFilter)
   const [selectedDate, setSelectedDate] = useState<CalendarDate | null>(today(getLocalTimeZone()))
   const [searchTerm, setSearchTerm] = useState('')
   const [appointmentToEdit, setAppointmentToEdit] = useState<Appointment | null>(null)
@@ -250,7 +252,7 @@ function AppointmentsSection() {
           />
         </div>
 
-        <div className="isolate flex flex-wrap items-center gap-sm">
+        <div ref={tabRowRef} className={`${tabCarouselClass} -my-1 w-[calc(100%+0.5rem)] min-w-0 items-center md:w-auto`}>
           {STATUS_FILTERS.map((filter) => (
             <button
               key={filter}

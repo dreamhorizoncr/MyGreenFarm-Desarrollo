@@ -100,9 +100,9 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
       ref={dialogRef}
       onClose={onClose}
       aria-labelledby="exception-modal-title"
-      className="text-left m-0 mt-auto max-h-[92vh] w-full max-w-none modal-scroll rounded-t-[20px] bg-bg-card p-xl backdrop:bg-scrim md:m-auto md:w-[min(560px,92vw)] md:rounded-[20px]"
+      className="text-left fixed inset-0 m-auto max-h-[90vh] w-[min(560px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card p-lg backdrop:bg-scrim md:p-xl"
     >
-      <div className="relative p-xl">
+      <div className="relative">
         <div className="flex items-center justify-between gap-md">
           <h2 id="exception-modal-title" className="m-0 font-heading text-h4 font-bold text-heading">
             {exception ? t('admin.availability.modal.editTitle') : t('admin.availability.modal.addTitle')}

@@ -15,6 +15,7 @@ import { useAnnouncementImages } from "../hooks/useAnnouncementImages";
 import type { Announcement } from "../types/announcement.ts";
 import { useAnnouncementCategories } from "../hooks/useAnnouncementCategories.ts";
 import TabHighlight from "../components/ui/TabHighlight.tsx";
+import { tabCarouselClass, useTabCarousel } from "../hooks/useTabCarousel.ts";
 
 
 function NewsPage() {
@@ -28,6 +29,7 @@ function NewsPage() {
     getCoverImage,
   } = useAnnouncementImages();
   const [activeCategory, setActiveCategory] = useState<string>("All");
+  const tabRowRef = useTabCarousel(activeCategory);
   const { categories, labelFor } = useAnnouncementCategories();
   const [selectedAnnouncement, setSelectedAnnouncement] =
     useState<Announcement | null>(null);
@@ -69,7 +71,7 @@ const cards = announcements.filter(
             {t("newspage.description")}
           </p>
 
-          <div className="isolate mt-[24px] flex flex-wrap justify-center gap-[10px]">
+          <div ref={tabRowRef} className={`${tabCarouselClass} mt-[20px] -mb-1 md:justify-center`}>
             <button
               type="button"
               onClick={() => setActiveCategory("All")}
