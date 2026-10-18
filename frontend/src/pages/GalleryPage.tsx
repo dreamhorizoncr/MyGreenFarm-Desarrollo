@@ -38,6 +38,14 @@ function GalleryPage() {
   }, [emblaApi])
 
   const visibleGalleries = activeCategory ? getGalleriesByCategory(activeCategory) : allGalleries
+  const galleriesInYearOrder = [...categories]
+    .sort((a, b) => b.title.localeCompare(a.title, undefined, { numeric: true }))
+    .map((category) => ({
+      category,
+      galleries: getGalleriesByCategory(category.id),
+    }))
+    .filter((group) => group.galleries.length > 0)
+    .flatMap((group) => group.galleries)
 
   const selectCategory = (categoryId: string | null) => {
     setActiveCategory(categoryId)
@@ -108,9 +116,11 @@ function GalleryPage() {
             </p>
           </Container>
 
-          <Container className="grid grid-cols-1 gap-[24px] md:grid-cols-3">
+          <Container className="flex flex-col gap-[32px]">
             {loading && (
-              <SkeletonList count={skeletonCount}>{() => <MultimediaCard loading />}</SkeletonList>
+              <div className="grid grid-cols-1 gap-[24px] md:grid-cols-3">
+                <SkeletonList count={skeletonCount}>{() => <MultimediaCard loading />}</SkeletonList>
+              </div>
             )}
 
             {error && (
@@ -125,19 +135,21 @@ function GalleryPage() {
               </p>
             )}
 
-            {!loading &&
-              !error &&
-              visibleGalleries.map((gallery) => (
-                <MultimediaCard
-                  key={gallery.id}
-                  imageSrc={gallery.galleryImages[0]?.fileUrl ?? ninos2}
-                  alt={gallery.title}
-                  badge={t('home.galeria.photoCount', { count: gallery.galleryImages.length })}
-                  title={gallery.title}
-                  description={gallery.description}
-                  onClick={() => navigate(`/albumes/${gallery.id}`)}
-                />
-              ))}
+            {!loading && !error && (
+              <div className="grid grid-cols-1 gap-[24px] md:grid-cols-3">
+                {(activeCategory ? visibleGalleries : galleriesInYearOrder).map((gallery) => (
+                  <MultimediaCard
+                    key={gallery.id}
+                    imageSrc={gallery.galleryImages[0]?.fileUrl ?? ninos2}
+                    alt={gallery.title}
+                    badge={t('home.galeria.photoCount', { count: gallery.galleryImages.length })}
+                    title={gallery.title}
+                    description={gallery.description}
+                    onClick={() => navigate(`/albumes/${gallery.id}`)}
+                  />
+                ))}
+              </div>
+            )}
           </Container>
         </div>
       </section>
