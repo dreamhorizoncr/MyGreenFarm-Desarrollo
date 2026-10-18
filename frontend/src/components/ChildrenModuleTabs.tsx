@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { userStorage } from '../utils/userStorage.ts'
 import TabHighlight from './ui/TabHighlight.tsx'
+import { tabCarouselClass, useTabCarousel } from '../hooks/useTabCarousel.ts'
 
 const moduleSections = [
   { path: '/admin/children', labelKey: 'admin.children.title', adminOnly: true },
@@ -14,11 +15,13 @@ function ChildrenModuleTabs() {
   const { t } = useTranslation()
   const role = userStorage.getUser()?.role
   const isAdmin = role === 'OWNER' || role === 'ADMIN'
+  const navRef = useTabCarousel<HTMLElement>(pathname)
 
   return (
     <nav
+      ref={navRef}
       aria-label={t('admin.sidebar.niños')}
-      className="isolate mb-8 flex w-full max-w-full gap-sm overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:w-fit"
+      className={`${tabCarouselClass} mt-[calc(var(--spacing-lg)-4px)]`}
     >
       {moduleSections
         .filter((section) => isAdmin || !section.adminOnly)
