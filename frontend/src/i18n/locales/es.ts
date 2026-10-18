@@ -1809,4 +1809,14 @@ export default {
       },
     },
   },
+  pdfViewer: {
+    pageCounter: "Página {{current}} de {{total}}",
+    pageLabel: "Página {{page}}",
+    zoomIn: "Acercar",
+    zoomOut: "Alejar",
+    open: "Abrir en otra pestaña",
+    download: "Descargar",
+    loading: "Cargando documento…",
+    error: "No se pudo mostrar el documento aquí.",
+  },
 };

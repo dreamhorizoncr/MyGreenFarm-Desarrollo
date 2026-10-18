@@ -4,6 +4,7 @@ import CertificatesCarousel from './CertificatesCarousel.tsx'
 import Skeleton from './ui/Skeleton.tsx'
 import type { Curriculum } from '../types/curriculum.ts'
 import CardActionButton from './ui/CardActionButton.tsx'
+import PdfViewer from './ui/PdfViewer.tsx'
 
 interface CurriculumCardProps {
   application?: Curriculum
@@ -102,13 +103,12 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
           )}
 
           {application!.fileUrl && (
-            <div className="h-105 w-full overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50">
-              <iframe
-                src={application!.fileUrl}
-                title={`${t('admin.curriculums.view')} - ${application!.applicantName}`}
-                className="h-full w-full"
-              />
-            </div>
+            <PdfViewer
+              url={application!.fileUrl}
+              fileName={application!.fileName}
+              title={`${t('admin.curriculums.view')} - ${application!.applicantName}`}
+              className="h-105 sm:h-130"
+            />
           )}
 
           <CertificatesCarousel certificates={application!.certificates} />

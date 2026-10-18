@@ -1799,4 +1799,14 @@ export default {
       },
     },
   },
+  pdfViewer: {
+    pageCounter: "Page {{current}} of {{total}}",
+    pageLabel: "Page {{page}}",
+    zoomIn: "Zoom in",
+    zoomOut: "Zoom out",
+    open: "Open in new tab",
+    download: "Download",
+    loading: "Loading document…",
+    error: "The document could not be displayed here.",
+  },
 };

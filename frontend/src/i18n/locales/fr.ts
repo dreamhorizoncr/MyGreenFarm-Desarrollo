@@ -1813,4 +1813,14 @@ export default {
       },
     },
   },
+  pdfViewer: {
+    pageCounter: "Page {{current}} sur {{total}}",
+    pageLabel: "Page {{page}}",
+    zoomIn: "Zoom avant",
+    zoomOut: "Zoom arrière",
+    open: "Ouvrir dans un nouvel onglet",
+    download: "Télécharger",
+    loading: "Chargement du document…",
+    error: "Impossible d’afficher le document ici.",
+  },
 };
