@@ -43,7 +43,7 @@ public class TranslationService {
             String originalText, String targetLanguage) throws IOException {
 
         Optional<EntityTranslation> existing = repository
-                .findByEntityTypeAndEntityIdAndFieldNameAndLanguageCode(entityType, entityId, fieldName,
+                .findFirstByEntityTypeAndEntityIdAndFieldNameAndLanguageCode(entityType, entityId, fieldName,
                         targetLanguage);
 
         String sourceTextHash = HashUtils.sha256(originalText);
@@ -157,7 +157,7 @@ public class TranslationService {
             result.put(responseKey(item.entityId(), item.fieldName()), translated);
 
             EntityTranslation translation = repository
-                    .findByEntityTypeAndEntityIdAndFieldNameAndLanguageCode(
+                    .findFirstByEntityTypeAndEntityIdAndFieldNameAndLanguageCode(
                             entityType,
                             translationEntityId,
                             item.fieldName(),

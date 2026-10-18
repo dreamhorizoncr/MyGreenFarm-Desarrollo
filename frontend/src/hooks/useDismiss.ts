@@ -29,7 +29,10 @@ function useDismiss({
     if (!isOpen) return
 
     const handleKeydown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
+      if (event.key !== 'Escape') return
+      // Evita que el mismo Escape cierre también el <dialog> que contiene al desplegable
+      event.preventDefault()
+      onClose()
     }
     document.addEventListener('keydown', handleKeydown)
     return () => document.removeEventListener('keydown', handleKeydown)

@@ -167,7 +167,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
               <p className="mb-2xs font-body text-body-sm font-semibold text-heading">
                 {t('vacancies.certificates')}
               </p>
-              <p className="mb-xs font-body text-body-sm text-neutral-500">
+              <p className="mb-xs font-body text-caption font-normal text-neutral-500">
                 {t('vacancies.certificatesHint')}
               </p>
 

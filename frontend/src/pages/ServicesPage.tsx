@@ -1,80 +1,66 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { formatSchedule } from '../utils/schedule.ts'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import { useServicePlans } from '../hooks/useServicePlans.ts'
 import { useExchangeRate } from '../hooks/useExchangeRate.ts'
 import { ExchangeRateWidget } from '../components/currency/ExchangeRateWidget.tsx'
-import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
+import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
+import CurrencyToggle from '../components/currency/CurrencyToggle.tsx'
+import type { Currency, ExchangeRate } from '../types/exchangeRate.ts'
+import { convertCurrency, currencySymbol, formatCurrency } from '../utils/currency.ts'
+import ServiceDetailModal from '../components/ServiceDetailModal.tsx'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { notify, notifyError } from '../utils/notifications.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
-import type { ExchangeRate, Currency } from '../types/exchangeRate.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
-import { convertCurrency, formatCurrency, currencySymbol } from '../utils/currency.ts'
-import { CircleCheckIcon, ClockIcon } from '@animateicons/react/lucide'
-import CurrencyToggle from '../components/currency/CurrencyToggle.tsx'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
+const cleanCurrency = (value?: string): Currency => {
+  const upper = value?.toUpperCase()
+  return upper === 'USD' || upper === 'EUR' ? upper : 'CRC'
+}
+
 function PlanCard({
   plan,
-  onSubscribe,
-  isLoading,
+  onSelect,
   exchangeRate,
-  idioma,
   loading = false,
 }: Readonly<{
   plan?: ServicePlan
-  onSubscribe?: (plan: ServicePlan) => void
-  isLoading?: boolean
+  onSelect?: (currency: Currency) => void
   exchangeRate?: ExchangeRate | null
-  idioma?: string
   loading?: boolean
 }>) {
   const { t, i18n } = useTranslation()
-
-  const getCleanCurrency = (curr?: string): Currency => {
-    const upper = curr?.toUpperCase()
-    return ['CRC', 'USD', 'EUR'].includes(upper ?? '') ? (upper as Currency) : 'CRC'
-  }
-
-  const [currency, setCurrency] = useState<Currency>(() => getCleanCurrency(plan?.currency))
-
-  useEffect(() => {
-    if (plan?.currency) {
-      setCurrency(getCleanCurrency(plan.currency))
-    }
-  }, [plan?.currency])
+  const [currency, setCurrency] = useState<Currency>(() => cleanCurrency(plan?.currency))
 
   const price = plan && exchangeRate
-    ? convertCurrency(plan.price, getCleanCurrency(plan.currency), currency, 'buy', exchangeRate)
+    ? convertCurrency(plan.price, cleanCurrency(plan.currency), currency, 'buy', exchangeRate)
     : plan?.price ?? 0
 
   if (loading) {
     return (
       <article className="flex h-full flex-col overflow-hidden rounded-3xl border border-neutral-200 bg-white">
-        <Skeleton shape="rect" className="h-[200px] w-full rounded-none" />
+        <Skeleton shape="rect" className="h-[180px] w-full rounded-none" />
 
         <div className="flex flex-1 flex-col gap-sm p-lg">
           <Skeleton shape="line" className="h-5 w-3/4" />
           <Skeleton shape="line" className="h-4 w-full" />
           <Skeleton shape="line" className="h-4 w-2/3" />
 
-          <div className="flex flex-col items-center gap-sm py-sm">
-            <Skeleton shape="line" className="h-8 w-24" />
+          <div className="flex flex-col gap-xs py-xs">
             <div className="flex gap-xs">
               <Skeleton shape="pill" className="h-6 w-12" />
               <Skeleton shape="pill" className="h-6 w-12" />
               <Skeleton shape="pill" className="h-6 w-12" />
             </div>
+            <Skeleton shape="line" className="h-8 w-28" />
           </div>
-
-          <Skeleton shape="line" className="h-3 w-3/5" />
 
           <div className="mt-auto pt-sm">
             <Skeleton shape="pill" className="h-11 w-full" />
@@ -98,6 +84,9 @@ function PlanCard({
             <span className="font-body text-body-sm text-neutral-400">{plan!.name}</span>
           </div>
         )}
+        <span className="absolute bottom-sm left-sm flex items-center gap-1 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
+          {getPlanTypeLabel(plan!.type, t as never)}
+        </span>
       </div>
 
       <div className="flex flex-1 flex-col gap-sm px-lg pb-lg pt-md">
@@ -106,57 +95,29 @@ function PlanCard({
             {plan!.name}
           </h3>
 
-          <span className="w-fit shrink-0 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
-            {getPlanTypeLabel(plan!.type, t as any)}
-          </span>
         </div>
 
-        <p className="m-0 min-h-[48px] text-left font-body text-body-sm leading-relaxed text-body-text-dark line-clamp-2">
+        <p className="-mt-xs mb-0 min-h-[2lh] text-left font-body text-body-sm leading-relaxed text-body-text-dark line-clamp-2">
           {plan!.description}
         </p>
 
-        <div className="my-1 border-t border-neutral-100" />
-
-        <div className="flex flex-col items-start gap-2xs">
+        <div className="mt-auto flex flex-col items-start gap-2xs pt-xs [&>div:first-child]:justify-start">
           <CurrencyToggle value={currency} onChange={setCurrency} hasExchangeRate={Boolean(exchangeRate)} />
           <span className="text-left font-heading text-h2 font-bold text-green-500">
             <AnimatedNumber
               value={price}
-              format={(n) => `${currencySymbol(currency)}${formatCurrency(n, currency, idioma)}`}
+              format={(n) => `${currencySymbol(currency)}${formatCurrency(n, currency, i18n.language)}`}
             />
           </span>
         </div>
 
-        <div className="space-y-2xs pt-xs text-left">
-          {plan!.schedule && (
-            <div className="font-body text-body-sm leading-relaxed text-neutral-500">
-              <div className="flex items-center gap-2">
-                <ClockIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
-                <span className="font-semibold text-neutral-600">{t('services.schedule')}</span>
-              </div>
-              <p className="m-0 mt-2xs whitespace-pre-line px-1 py-2xs text-left text-body-sm">{formatSchedule(plan!.schedule, t, i18n.resolvedLanguage ?? i18n.language)}</p>
-            </div>
-          )}
-
-          {plan!.includes && (
-            <div className="font-body text-body-sm leading-relaxed text-neutral-500">
-              <div className="flex items-center gap-2">
-                <CircleCheckIcon size={18} className="shrink-0 text-orange-500" aria-hidden="true" />
-                <span className="font-semibold text-neutral-600">{t('services.includes')}</span>
-              </div>
-              <p className="m-0 mt-2xs px-1 py-2xs text-left text-body-sm line-clamp-2">{plan!.includes}</p>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-auto pt-sm">
+        <div className="pt-sm">
           <button
             type="button"
-            onClick={() => onSubscribe!(plan!)}
-            disabled={isLoading}
-            className="h-11 w-full rounded-full bg-orange-500 font-body text-body-sm font-semibold text-white transition hover:bg-orange-600 disabled:opacity-60"
+            onClick={() => onSelect?.(currency)}
+            className="h-11 w-full rounded-full bg-orange-500 font-body text-body-sm font-semibold text-white transition hover:bg-orange-600"
           >
-            {isLoading ? t('common.loading') : t('services.subscribe')}
+            {t('clubs.moreInfo')}
           </button>
         </div>
       </div>
@@ -173,6 +134,7 @@ function ServicesPage() {
 
   const { data: exchangeRate, loading: exchangeRateLoading, error: exchangeRateError, reload: reloadExchangeRate } = useExchangeRate()
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
+  const [selectedPlan, setSelectedPlan] = useState<{ plan: ServicePlan; currency: Currency } | null>(null)
   const checkoutWindowRef = useRef<Window | null>(null)
 
   useEffect(() => {
@@ -364,10 +326,8 @@ function ServicesPage() {
               <PlanCard
                 key={plan.id}
                 plan={plan}
-                onSubscribe={handleSubscribe}
-                isLoading={checkoutLoading === plan.id}
+                onSelect={(currency) => setSelectedPlan({ plan, currency })}
                 exchangeRate={exchangeRate}
-                idioma={i18n.language}
               />
             ))}
           </div>
@@ -381,6 +341,17 @@ function ServicesPage() {
           )}
         </Container>
       </section>
+
+      {selectedPlan && (
+        <ServiceDetailModal
+          plan={selectedPlan.plan}
+          initialCurrency={selectedPlan.currency}
+          exchangeRate={exchangeRate}
+          isLoading={checkoutLoading === selectedPlan.plan.id}
+          onSubscribe={handleSubscribe}
+          onClose={() => setSelectedPlan(null)}
+        />
+      )}
     </div>
   )
 }

@@ -12,8 +12,8 @@ interface ScheduleFieldProps {
 }
 
 const dayClassName = (active: boolean) =>
-  `flex h-10 min-w-0 items-center justify-center rounded-full border px-0 font-body text-caption font-semibold capitalize sm:text-body-sm transition-colors focus-visible:outline-2 focus-visible:outline-link disabled:cursor-not-allowed disabled:border-neutral-100 disabled:bg-neutral-50 disabled:text-neutral-300 ${
-    active ? 'border-green-500 bg-green-500 text-white' : 'border-neutral-200 bg-white text-heading hover:border-green-500'
+  `flex h-10 min-w-0 items-center justify-center rounded-full border px-0 font-body text-caption font-semibold capitalize sm:text-body-sm transition duration-300 focus-visible:outline-2 focus-visible:outline-link disabled:cursor-not-allowed disabled:border-neutral-100 disabled:bg-neutral-50 disabled:text-neutral-300 ${
+    active ? 'border-green-500 bg-green-500 text-white' : 'border-green-500 bg-white text-heading hover:bg-green-50'
   }`
 
 function ScheduleField({ id, label, value, onChange, error }: Readonly<ScheduleFieldProps>) {

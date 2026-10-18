@@ -8,11 +8,15 @@ import 'swiper/css'
 import 'swiper/css/zoom'
 import CarouselDots from './ui/CarouselDots.tsx'
 import type { GalleryImage } from '../types/gallery.ts'
+
+// Galería y noticias comparten el visor: basta con id y url (el título es opcional)
+type LightboxImage = Pick<GalleryImage, 'id' | 'fileUrl'> & { title?: string }
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock.ts'
 import CarouselArrowIcon from './ui/CarouselArrowIcon.tsx'
 
 interface PhotoLightboxProps {
-  images: GalleryImage[]
+  images: LightboxImage[]
   initialIndex: number
   alt?: string
   onClose: () => void
@@ -32,14 +36,10 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
   const [photoHalfWidth, setPhotoHalfWidth] = useState(0)
   const total = images.length
 
+  useBodyScrollLock()
+
   useEffect(() => {
     dialogRef.current?.showModal()
-
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = previousOverflow
-    }
   }, [])
 
   const measurePhoto = (current: SwiperInstance | null) => {
