@@ -29,6 +29,7 @@ import jakarta.validation.constraints.Min;
 import taller.multimedia.backend.dto.MessageResponse;
 import taller.multimedia.backend.dto.UpdateUserRequest;
 import taller.multimedia.backend.dto.UserInfoResponse;
+import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.service.user.UserPhotoService;
 import taller.multimedia.backend.service.user.UserService;
 
@@ -50,11 +51,12 @@ public class UserController {
     @GetMapping
     public ResponseEntity<?> getAllUsers(
             @RequestParam(defaultValue = "0") @Min(0) int page,
-            @RequestParam(defaultValue = "10") @Min(1) @Max(10) int size) {
+            @RequestParam(defaultValue = "10") @Min(1) @Max(10) int size,
+            @RequestParam(required = false) Role role) {
         try {
             Pageable pageable = PageRequest.of(page, size, Sort.by("lastName"));
             String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-            Page<UserInfoResponse> users = userService.getAllUsers(currentEmail, pageable);
+            Page<UserInfoResponse> users = userService.getAllUsers(currentEmail, pageable, role);
             return ResponseEntity.ok(users);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));

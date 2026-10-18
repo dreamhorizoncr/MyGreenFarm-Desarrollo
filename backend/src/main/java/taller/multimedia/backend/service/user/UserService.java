@@ -31,6 +31,10 @@ public class UserService {
     }
 
     public Page<UserInfoResponse> getAllUsers(String currentEmail, Pageable pageable) {
+        return getAllUsers(currentEmail, pageable, null);
+    }
+
+    public Page<UserInfoResponse> getAllUsers(String currentEmail, Pageable pageable, Role role) {
         User currentUser = userRepository.findByEmail(currentEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -38,7 +42,10 @@ public class UserService {
             throw new RuntimeException("Only owners and admins can list users");
         }
 
-        return userRepository.findAll(pageable).map(this::toResponse);
+        Page<User> users = role == null
+                ? userRepository.findAll(pageable)
+                : userRepository.findByRole(role, pageable);
+        return users.map(this::toResponse);
     }
 
     public UserInfoResponse getUser(UUID targetId, String currentEmail) {

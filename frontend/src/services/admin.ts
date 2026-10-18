@@ -10,8 +10,10 @@ export interface CreateTeacherData {
 }
 
 export const adminService = {
-  async getUsers(page = 0, size = 10): Promise<PageResponse<UserInfo>> {
-    const response = await apiClient.get<PageResponse<UserInfo>>('/users', { params: { page, size } })
+  async getUsers(page = 0, size = 10, role?: string): Promise<PageResponse<UserInfo>> {
+    const response = await apiClient.get<PageResponse<UserInfo>>('/users', {
+      params: { page, size, ...(role && role !== 'ALL' ? { role } : {}) },
+    })
     return response.data
   },
 
