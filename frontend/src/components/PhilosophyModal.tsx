@@ -110,7 +110,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
               <Button
                 variant="primary"
                 onClick={handleCtaClick}
-                className="h-11 w-full rounded-full bg-orange-500 font-body text-button font-normal uppercase tracking-wide text-white hover:bg-orange-600 md:w-auto md:px-lg"
+                className="h-11 w-full rounded-full bg-orange-500 font-body text-button font-semibold tracking-wide text-white hover:bg-orange-600 md:w-auto md:px-lg"
               >
                 {t('home.philosophy.modalCta')}
               </Button>

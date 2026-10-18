@@ -159,6 +159,18 @@ export default {
     rights: "All rights reserved.",
     developedBy: "Website developed by",
   },
+  accessibility: {
+    title: "Accessibility",
+    menuAria: "Accessibility menu",
+    fontSize: "Text size",
+    enableContrast: "High contrast",
+    disableContrast: "Disable high contrast",
+    enableGrayscale: "Grayscale",
+    disableGrayscale: "Normal color",
+    reset: "Reset settings",
+    enableLinks: "Highlight links",
+    disableLinks: "Remove link highlighting"
+  },
   legalModal: {
     title: "Terms, Conditions and Privacy Policy",
     tabTerms: "Terms and Conditions",

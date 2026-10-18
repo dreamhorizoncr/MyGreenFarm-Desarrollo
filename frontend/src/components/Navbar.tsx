@@ -16,12 +16,10 @@ interface BrandProps {
 }
 
 function Brand({ showName = true, linkRef, nameRef }: Readonly<BrandProps>) {
-  const isAdminSection = useLocation().pathname.startsWith('/admin')
-
   return (
     <Link
       ref={linkRef}
-      to={isAdminSection ? '/admin/dashboard' : '/'}
+      to='/'
       className="flex shrink-0 items-center gap-3 no-underline"
     >
       <img src={logo} alt="My Green Farm" className="h-12 w-auto max-w-[48px] object-contain" />

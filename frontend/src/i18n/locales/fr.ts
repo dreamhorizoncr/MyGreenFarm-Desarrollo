@@ -159,6 +159,18 @@ export default {
     rights: "Tous droits réservés.",
     developedBy: "Site développé par",
   },
+  accessibility: {
+    title: "Accessibilité",
+    menuAria: "Menu d'accessibilité",
+    fontSize: "Taille du texte",
+    enableContrast: "Contraste élevé",
+    disableContrast: "Désactiver le contraste élevé",
+    enableGrayscale: "Niveau de gris",
+    disableGrayscale: "Couleur normale",
+    reset: "Réinitialiser les paramètres",
+    enableLinks: "Surligner les liens",
+    disableLinks: "Retirer le surlignage"
+  },
   legalModal: {
     title: "Termes, Conditions et Politique de Confidentialité",
     tabTerms: "Termes et Conditions",

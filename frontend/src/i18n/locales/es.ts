@@ -158,6 +158,18 @@ export default {
     rights: "Todos los derechos reservados.",
     developedBy: "Sitio desarrollado por",
   },
+  accessibility: {
+    title: "Accesibilidad",
+    menuAria: "Menú de accesibilidad",
+    fontSize: "Tamaño del texto",
+    enableContrast: "Alto contraste",
+    disableContrast: "Desactivar alto contraste",
+    enableGrayscale: "Escala de grises",
+    disableGrayscale: "Color normal",
+    reset: "Restablecer configuración",
+    enableLinks: "Resaltar enlaces",
+    disableLinks: "Quitar resaltado de enlaces"
+  },
   legalModal: {
     title: "Términos, Condiciones y Política de Privacidad",
     tabTerms: "Términos y Condiciones",
