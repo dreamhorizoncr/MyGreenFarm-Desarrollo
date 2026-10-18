@@ -23,6 +23,7 @@ import {
 } from '../utils/validators.ts'
 import type { ReferralSource } from '../types/appointment.ts'
 import FieldHint from '../components/ui/FieldHint.tsx'
+import { tabCarouselClass, useTabCarousel } from '../hooks/useTabCarousel.ts'
 
 function BookingPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return (
@@ -165,6 +166,7 @@ function BookingPage() {
 
   const availableDates = Object.keys(availability).filter(isBookableWeekday)
   const effectiveDay = day && availableDates.includes(day) ? day : availableDates[0] ?? null
+  const dayRowRef = useTabCarousel(effectiveDay)
   const effectiveTime =
     time ??
     (effectiveDay ? availability[effectiveDay]?.slots[0]?.slice(0, 5) ?? null : null)
@@ -482,14 +484,14 @@ function BookingPage() {
 
       {!slotsLoading && !slotsError && availableDates.length > 0 && (
         <>
-          <div className="grid grid-cols-2 gap-sm sm:grid-cols-3 md:grid-cols-5">
+          <div ref={dayRowRef} className={`${tabCarouselClass} -my-1 md:my-0 md:grid md:grid-cols-5 md:p-0 md:mx-0`}>
             {availableDates.map((date) => (
               <button
                 key={date}
                 type="button"
                 aria-pressed={effectiveDay === date}
                 onClick={() => selectDay(date)}
-                className={`${selectableClassName(effectiveDay === date)} inline-flex h-11 w-full items-center justify-center whitespace-nowrap text-caption sm:text-body-sm`}
+                className={`${selectableClassName(effectiveDay === date)} inline-flex h-11 items-center justify-center whitespace-nowrap md:w-full`}
               >
                 {dayLabel(date)}
               </button>

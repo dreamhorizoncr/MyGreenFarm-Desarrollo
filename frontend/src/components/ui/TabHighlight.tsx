@@ -11,6 +11,7 @@ function TabHighlight({ layoutId, className = 'bg-orange-500' }: Readonly<TabHig
   return (
     <motion.span
       layoutId={layoutId}
+      data-tab-highlight=""
       aria-hidden="true"
       transition={reduceMotion ? { duration: 0 } : { type: 'spring', bounce: 0, duration: 0.55 }}
       className={`pointer-events-none absolute -inset-px -z-10 rounded-[inherit] ${className}`}
