@@ -36,18 +36,22 @@ function NewsPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    void fetchAnnouncements(i18n.language, currentPage -1, 10);
+    void fetchAnnouncements(i18n.language, currentPage - 1, 10, activeCategory === "All" ? undefined : activeCategory);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [i18n.language,currentPage]);
+  }, [i18n.language, currentPage, activeCategory]);
 
   useEffect(() => {
     void fetchImages(announcements.map((announcement) => announcement.id));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [announcements]);
 
-const cards = announcements.filter(
-  (a) => activeCategory === "All" || activeCategory === a.categoryId,
-);
+  const cards = announcements;
+
+  // Al cambiar de categoría se vuelve a la primera página de esa categoría
+  const selectCategory = (category: string) => {
+    setActiveCategory(category);
+    setCurrentPage(1);
+  };
 
   const rows: Announcement[][] = [];
   for (let i = 0; i < cards.length; i += 2) {
@@ -74,7 +78,7 @@ const cards = announcements.filter(
           <div ref={tabRowRef} className={`${tabCarouselClass} mt-[20px] -mb-1 md:justify-center`}>
             <button
               type="button"
-              onClick={() => setActiveCategory("All")}
+              onClick={() => selectCategory("All")}
               className={`relative rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
                 activeCategory === "All"
                   ? "border-orange-500 text-white"
@@ -89,7 +93,7 @@ const cards = announcements.filter(
               <button
                 key={category.id}
                 type="button"
-                onClick={() => setActiveCategory(category.id)}
+                onClick={() => selectCategory(category.id)}
                 className={`relative rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
                   activeCategory === category.id
                     ? "border-orange-500 text-white"
