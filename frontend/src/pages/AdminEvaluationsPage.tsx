@@ -122,7 +122,7 @@ function AdminEvaluationsPage() {
 
     const isLoading = loading || loadingExpedients;
 
-    const skeletonCount = useSkeletonCount("admin-evaluations", loading, filteredEvaluations.length, 2);
+    const skeletonCount = useSkeletonCount("admin-evaluations", loading, filteredEvaluations.length, 10);
 
     return (
         <AdminLayout>

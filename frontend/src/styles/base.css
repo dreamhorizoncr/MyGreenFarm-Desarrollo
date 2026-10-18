@@ -356,3 +356,114 @@ dialog:focus {
     zoom: 0.84;
   }
 }
+
+html.text-normal {
+  font-size: 100%;
+}
+
+html.text-large {
+  font-size: 112.5%;
+}
+
+html.text-xlarge {
+  font-size: 125%;
+}
+
+html.text-large p,
+html.text-large span,
+html.text-large a,
+html.text-large button,
+html.text-large input,
+html.text-large textarea,
+html.text-large label {
+  font-size: 1.1em !important;
+}
+
+html.text-xlarge p,
+html.text-xlarge span,
+html.text-xlarge a,
+html.text-xlarge button,
+html.text-xlarge input,
+html.text-xlarge textarea,
+html.text-xlarge label {
+  font-size: 1.10em !important;
+}
+
+html.text-large h1,
+html.text-large h2,
+html.text-large h3,
+html.text-large h4,
+html.text-large h5,
+html.text-large h6,
+html.text-large .text-h1,
+html.text-large .text-page-title {
+  font-size: calc(var(--base-size, 2rem) + 0.8rem) !important;
+  transform: scale(1.02);
+  transform-origin: left;
+}
+
+html.text-xlarge h1,
+html.text-xlarge h2,
+html.text-xlarge h3,
+html.text-xlarge h4,
+html.text-xlarge h5,
+html.text-xlarge h6,
+html.text-xlarge .text-h1,
+html.text-xlarge .text-page-title {
+  font-size: calc(var(--base-size, 2rem) + 0.9rem) !important;
+  transform: scale(1.08);
+  transform-origin: left;
+}
+
+tml.high-contrast {
+  --bg-page: #ffffff;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+html.high-contrast p,
+html.high-contrast span,
+html.high-contrast label,
+html.high-contrast li,
+html.high-contrast input,
+html.high-contrast textarea,
+html.high-contrast td,
+html.high-contrast th {
+  color: #0f172a !important;
+}
+
+html.high-contrast [class*="border"],
+html.high-contrast border,
+html.high-contrast input,
+html.high-contrast select,
+html.high-contrast textarea {
+  border-color: #64748b !important;
+}
+
+html.high-contrast h1,
+html.high-contrast h2,
+html.high-contrast h3,
+html.high-contrast h4,
+html.high-contrast h5,
+html.high-contrast h6 {
+  color: #020617 !important;
+}
+
+html.high-contrast .bg-white {
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 1px #64748b !important;
+}
+
+html.grayscale-mode {
+  filter: grayscale(100%) !important;
+}
+
+html.highlight-links-mode a {
+  background-color: #fef08a !important;
+  color: #1e293b !important;
+  text-decoration: underline !important;
+  font-weight: 700 !important;
+
+  border-radius: 4px !important;
+  border: 1px dashed #ca8a04 !important;
+}
