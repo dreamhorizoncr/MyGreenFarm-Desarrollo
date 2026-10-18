@@ -33,6 +33,7 @@ import { useAnnouncementCategories } from "../hooks/useAnnouncementCategories.ts
 import { getErrorMessage } from "../utils/error.ts";
 import FieldHint from "../components/ui/FieldHint.tsx";
 import { tabCarouselClass, useTabCarousel } from "../hooks/useTabCarousel.ts";
+import { useGridPageSize } from "../hooks/useGridPageSize.ts";
 
 const emptyForm: AnnouncementRequest = {
   title: "",
@@ -71,6 +72,13 @@ function AnnouncementsPage() {
   const [categoryError, setCategoryError] = useState<string | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<CreatableOption | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  // Múltiplo de las columnas visibles (1 / 2 / 3) para no dejar huecos en la última fila
+  const pageSize = useGridPageSize({ base: 1, md: 2, xl: 3 });
+  const [lastPageSize, setLastPageSize] = useState(pageSize);
+  if (lastPageSize !== pageSize) {
+    setLastPageSize(pageSize);
+    setCurrentPage(1);
+  }
   const [cover, setCover] = useState<File | null>(null);
   const [gallery, setGallery] = useState<File[]>([]);
   const [images, setImages] = useState<AnnouncementImageResponse[]>([]);
@@ -81,10 +89,14 @@ function AnnouncementsPage() {
   const { t, i18n } = useTranslation();
   const { categories, labelFor, createCategory, deleteCategory } = useAnnouncementCategories();
 
+  // Recarga la página actual con la categoría elegida (el filtro lo hace el backend)
+  const reloadList = () =>
+    fetchAnnouncements(i18n.language, currentPage - 1, pageSize, activeCategory === "All" ? undefined : activeCategory);
+
   useEffect(() => {
-    void fetchAnnouncements(i18n.language, currentPage - 1, 10);
+    void reloadList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [i18n.language, currentPage]);
+  }, [i18n.language, currentPage, activeCategory, pageSize]);
 
   const { loading: coversLoading, fetchImages: fetchCovers, getCoverImage } = useAnnouncementImages();
 
@@ -168,6 +180,7 @@ function AnnouncementsPage() {
 
       if (cover) await uploadImages(saved.id, [cover], true);
       if (gallery.length) await uploadImages(saved.id, gallery, false);
+      void reloadList();
 
       notify.success({
         title: editing
@@ -193,6 +206,7 @@ function AnnouncementsPage() {
 
     try {
       await deleteAnnouncement(announcementToDelete.id);
+      void reloadList();
 
       if (editing?.id === announcementToDelete.id) {
         requestClose();
@@ -238,9 +252,14 @@ function AnnouncementsPage() {
 
     try {
       await deleteCategory(categoryToDelete.id);
-      if (activeCategory === categoryToDelete.id) setActiveCategory("All");
       setForm((current) => (current.categoryId === categoryToDelete.id ? { ...current, categoryId: "" } : current));
-      await fetchAnnouncements(i18n.language, currentPage - 1, 10);
+      if (activeCategory === categoryToDelete.id) {
+        // el efecto vuelve a cargar al cambiar de categoría
+        setActiveCategory("All");
+        setCurrentPage(1);
+      } else {
+        await reloadList();
+      }
       notify.success(t("adminNews.categoryDeletedToast"));
     } catch (err) {
       notifyError(t("adminNews.categoryDeleteErrorToast"), err);
@@ -255,10 +274,7 @@ function AnnouncementsPage() {
     setCurrentPage(1);
   };
 
-  const filteredAnnouncements = announcements.filter(
-    (announcement) =>
-      activeCategory === "All" || announcement.categoryId === activeCategory,
-  );
+  const filteredAnnouncements = announcements;
   const listLoading = loading || coversLoading;
   const skeletonCount = useSkeletonCount("admin-news", listLoading, filteredAnnouncements.length);
 

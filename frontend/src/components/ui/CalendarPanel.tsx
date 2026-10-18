@@ -23,7 +23,7 @@ const SIZES = {
     card: 'max-w-[420px] p-md gap-4 sm:p-lg',
     header: 'pb-4',
     gridHeader: 'mb-3',
-    grid: 'min-h-[280px]',
+    grid: '',
     headCell: 'w-10 h-10 text-md',
     cell: 'h-9 w-9 text-md my-0.5',
     footer: 'pt-4',

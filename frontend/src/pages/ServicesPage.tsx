@@ -8,6 +8,7 @@ import { useExchangeRate } from '../hooks/useExchangeRate.ts'
 import { ExchangeRateWidget } from '../components/currency/ExchangeRateWidget.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
+import { useGridPageSize } from '../hooks/useGridPageSize.ts'
 import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
 import CurrencyToggle from '../components/currency/CurrencyToggle.tsx'
 import type { Currency, ExchangeRate } from '../types/exchangeRate.ts'
@@ -131,6 +132,13 @@ function ServicesPage() {
 
   const { plans, loading, error, fetchPlans, totalPages } = useServicePlans()
   const [currentPage, setCurrentPage] = useState(1)
+  // Múltiplo de las columnas visibles (1 / 3) para no dejar huecos en la última fila
+  const pageSize = useGridPageSize({ base: 1, md: 3 })
+  const [lastPageSize, setLastPageSize] = useState(pageSize)
+  if (lastPageSize !== pageSize) {
+    setLastPageSize(pageSize)
+    setCurrentPage(1)
+  }
 
   const { data: exchangeRate, loading: exchangeRateLoading, error: exchangeRateError, reload: reloadExchangeRate } = useExchangeRate()
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
@@ -138,8 +146,8 @@ function ServicesPage() {
   const checkoutWindowRef = useRef<Window | null>(null)
 
   useEffect(() => {
-    void fetchPlans(currentPage - 1, i18n.language)
-  }, [currentPage, i18n.language])
+    void fetchPlans(currentPage - 1, i18n.language, pageSize)
+  }, [currentPage, i18n.language, pageSize])
 
   useEffect(() => {
     const handlePaymentReturn = (event: MessageEvent<{ type?: string }>) => {

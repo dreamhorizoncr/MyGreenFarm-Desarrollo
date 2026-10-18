@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,9 +46,11 @@ public class AnnouncementController {
     public ResponseEntity<Page<AnnouncementResponse>> getAll(
             @RequestParam(name = "lang", defaultValue = "es") String lang, 
             @RequestParam(defaultValue = "0") @Min(0) int page,
-            @RequestParam(defaultValue = "10") @Min(1) @Max(10) int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<AnnouncementResponse> announcements = announcementService.getAll(lang,pageable);
+            @RequestParam(defaultValue = "10") @Min(1) @Max(10) int size,
+            @RequestParam(required = false) UUID categoryId) {
+        // Orden fijo (más recientes primero; el id desempata) para que las páginas no repitan ni salten noticias
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("id")));
+        Page<AnnouncementResponse> announcements = announcementService.getAll(lang, categoryId, pageable);
         return ResponseEntity.ok(announcements);
     }
 

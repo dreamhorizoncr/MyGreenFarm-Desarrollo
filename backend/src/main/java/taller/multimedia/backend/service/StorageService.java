@@ -1,5 +1,6 @@
 package taller.multimedia.backend.service;
 
+import taller.multimedia.backend.util.Sanitizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +34,8 @@ public class StorageService {
 
     public String uploadFile(MultipartFile file, String bucketName, String folder) {
         try {
-            String fileName = folder + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+            // El nombre original viene del usuario: se limpia antes de usarlo en la ruta y en la URL pública
+            String fileName = folder + "/" + UUID.randomUUID() + "_" + Sanitizer.safeFileName(file.getOriginalFilename());
 
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)

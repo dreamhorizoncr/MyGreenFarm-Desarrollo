@@ -77,7 +77,6 @@ function AdminExpedientsPage() {
 
   return (
     <AdminLayout>
-      <ChildrenModuleTabs />
       <section className="w-full">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
@@ -116,6 +115,8 @@ function AdminExpedientsPage() {
             </div>
           </div>
         </div>
+
+        <ChildrenModuleTabs />
 
         {loading && (
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">

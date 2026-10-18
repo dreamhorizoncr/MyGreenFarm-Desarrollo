@@ -80,15 +80,47 @@ function AdminUsersPage() {
   return (
     <div id="admin-users">
       <AdminLayout>
-        <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
-          {t('admin.docentesTitle')}
-        </h1>
-        <p className="mt-2 font-body text-body text-neutral-500">
-          {t('admin.docentesSubtitle')}
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-md">
+          <div>
+            <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
+              {t('admin.docentesTitle')}
+            </h1>
+            <p className="mt-2 font-body text-body text-neutral-500">
+              {t('admin.docentesSubtitle')}
+            </p>
+          </div>
 
-        <div className="mb-[var(--spacing-lg)] mt-[var(--spacing-xl)] flex flex-wrap items-center justify-between gap-md">
-          <div className="flex h-11 w-full min-w-0 max-w-[420px] flex-1 sm:min-w-[240px] items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
+          <button
+            type="button"
+            onClick={() => setShowCreateModal(true)}
+            className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-[var(--scale-600)] font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+          >
+            <PlusIcon size={18} aria-hidden="true" />
+            <span>{t('admin.addDocente')}</span>
+          </button>
+        </div>
+
+        {/* Pestañas de rol a la izquierda y buscador a la derecha; en móvil el buscador va arriba */}
+        <div className="mb-lg mt-xl flex flex-col-reverse gap-md md:flex-row md:items-center md:justify-between">
+          <div ref={tabRowRef} className={`${tabCarouselClass} -my-1 min-w-0 md:flex-1`}>
+            {ROLE_OPTIONS.map((role) => (
+              <button
+                key={role}
+                type="button"
+                aria-pressed={roleFilter === role}
+                onClick={() => {
+                  setRoleFilter(role)
+                  setCurrentPage(1)
+                }}
+                className={roleFilterClassName(roleFilter === role)}
+              >
+                {roleFilter === role && <TabHighlight layoutId="admin-users-role-tab" className="bg-green-500" />}
+                {role === 'ALL' ? t('admin.allRoles') : roleLabels[role] ?? role}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex h-11 w-full min-w-0 shrink-0 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 md:w-[360px]">
             <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
             <input
               type="search"
@@ -102,33 +134,6 @@ function AdminUsersPage() {
               aria-label={t('admin.searchPlaceholder')}
             />
           </div>
-
-          <button
-            type="button"
-            onClick={() => setShowCreateModal(true)}
-            className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-[var(--scale-600)] font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-          >
-            <PlusIcon size={18} aria-hidden="true" />
-            <span>{t('admin.addDocente')}</span>
-          </button>
-        </div>
-
-        <div ref={tabRowRef} className={`${tabCarouselClass} -mt-[calc(var(--spacing-sm)+4px)] mb-[calc(var(--spacing-lg)-4px)]`}>
-          {ROLE_OPTIONS.map((role) => (
-            <button
-              key={role}
-              type="button"
-              aria-pressed={roleFilter === role}
-              onClick={() => {
-                setRoleFilter(role)
-                setCurrentPage(1)
-              }}
-              className={roleFilterClassName(roleFilter === role)}
-            >
-              {roleFilter === role && <TabHighlight layoutId="admin-users-role-tab" className="bg-green-500" />}
-              {role === 'ALL' ? t('admin.allRoles') : roleLabels[role] ?? role}
-            </button>
-          ))}
         </div>
 
         {loading && (

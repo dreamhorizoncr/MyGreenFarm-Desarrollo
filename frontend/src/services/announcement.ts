@@ -38,8 +38,9 @@ export const announcementService = {
         await apiClient.delete(`/announcements/categories/${id}`)
     },
 
-    async getAnnouncements(lang: string, page: number = 0, size: number = 10,): Promise<AnnouncementPage> {
-        const response = await apiClient.get<AnnouncementPage>('/announcements',{params:{lang,page,size}})
+    // categoryId filtra en el backend, así el paginador cuenta solo las noticias de esa categoría
+    async getAnnouncements(lang: string, page: number = 0, size: number = 10, categoryId?: string): Promise<AnnouncementPage> {
+        const response = await apiClient.get<AnnouncementPage>('/announcements',{params:{lang,page,size,categoryId}})
         return response.data
     },
 

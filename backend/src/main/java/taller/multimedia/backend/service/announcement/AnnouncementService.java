@@ -53,8 +53,11 @@ public class AnnouncementService {
     }
 
     @Transactional(readOnly = true)
-    public Page<AnnouncementResponse> getAll(String lang, Pageable pageable) {
-        return announcementRepository.findAll(pageable)
+    public Page<AnnouncementResponse> getAll(String lang, UUID categoryId, Pageable pageable) {
+        Page<Announcement> page = categoryId == null
+                ? announcementRepository.findAll(pageable)
+                : announcementRepository.findByCategoryId(categoryId, pageable);
+        return page
                 .map(announcement -> mapToResponse(announcement, lang));
     }
 

@@ -2,6 +2,9 @@ import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, StarIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import useEmblaCarousel from 'embla-carousel-react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
+import TabHighlight from '../components/ui/TabHighlight.tsx'
+import { tabCarouselClass, useTabCarousel } from '../hooks/useTabCarousel.ts'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
@@ -104,22 +107,35 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading =
 	)
 }
 
-interface AdminAlbumCarouselProps {
-	categoryTitle: string
-	galleries: Gallery[]
+interface AdminAlbumsByYearProps {
+	categories: GalleryCategory[]
+	galleriesByCategory: Record<string, Gallery[]>
 	onEdit: (gallery: Gallery) => void
 	onDelete: (gallery: Gallery) => void
 	onToggleFeatured: (gallery: Gallery) => void
 }
 
-function AdminAlbumCarousel({
-	categoryTitle,
-	galleries,
+const ALL_YEARS = 'all'
+
+// Pestañas siempre en una sola línea (se deslizan de lado si no caben)
+const yearTabsClass = tabCarouselClass.replace(' md:flex-wrap md:overflow-visible', '')
+
+// Un año a la vez: pestañas con los años y, en la misma fila, las flechas del carrusel de ese año
+function AdminAlbumsByYear({
+	categories,
+	galleriesByCategory,
 	onEdit,
 	onDelete,
 	onToggleFeatured,
-}: Readonly<AdminAlbumCarouselProps>) {
+}: Readonly<AdminAlbumsByYearProps>) {
 	const { t } = useTranslation()
+	const reduceMotion = useReducedMotion()
+	const years = categories.filter((category) => (galleriesByCategory[category.id] ?? []).length > 0)
+	// «Todos» va primero y junta los álbumes de cada año en el mismo orden de las pestañas
+	const tabs = [{ id: ALL_YEARS, title: t('home.galeria.filterAll') }, ...years]
+	const [selectedId, setSelectedId] = useState<string>(ALL_YEARS)
+	const activeId = tabs.some((tab) => tab.id === selectedId) ? selectedId : ALL_YEARS
+	const tabRowRef = useTabCarousel(activeId)
 	const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start' })
 	const [prevEnabled, setPrevEnabled] = useState(false)
 	const [nextEnabled, setNextEnabled] = useState(false)
@@ -139,12 +155,34 @@ function AdminAlbumCarousel({
 		}
 	}, [emblaApi])
 
+	if (years.length === 0) return null
+	const galleries = activeId === ALL_YEARS
+		? years.flatMap((category) => galleriesByCategory[category.id] ?? [])
+		: (galleriesByCategory[activeId] ?? [])
+
 	return (
-		<div className="mt-xl">
-			<div className="flex items-center justify-between gap-md">
-				<h3 className="inline-flex rounded-full border border-green-700 bg-green-700 px-md py-xs font-body text-body-sm font-semibold text-white">
-					{categoryTitle}
-				</h3>
+		<div className="mt-sm">
+			<div className="flex items-center gap-md">
+				<div ref={tabRowRef} role="tablist" aria-label={t('admin.gallery.albumYear')} className={`${yearTabsClass} min-w-0 flex-1`}>
+					{tabs.map((category) => {
+						const isActive = category.id === activeId
+						return (
+							<button
+								key={category.id}
+								type="button"
+								role="tab"
+								aria-selected={isActive}
+								onClick={() => setSelectedId(category.id)}
+								className={`relative rounded-full border border-green-500 px-md py-xs font-body text-body-sm transition duration-300 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
+									isActive ? 'text-white' : 'bg-transparent text-heading hover:bg-green-50'
+								}`}
+							>
+								{isActive && <TabHighlight layoutId="admin-gallery-year-tab" className="bg-green-500" />}
+								{category.title}
+							</button>
+						)
+					})}
+				</div>
 				{(prevEnabled || nextEnabled) && (
 					<div className="flex shrink-0 gap-sm">
 						<button
@@ -169,8 +207,17 @@ function AdminAlbumCarousel({
 				)}
 			</div>
 
-			<div className="mt-md">
-				<div className="overflow-hidden" ref={emblaRef}>
+			<AnimatePresence mode="wait" initial={false}>
+				<motion.div
+					key={activeId}
+					role="tabpanel"
+					initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+					animate={{ opacity: 1, y: 0 }}
+					exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
+					transition={{ duration: 0.22, ease: 'easeOut' }}
+					className="mt-sm overflow-hidden"
+					ref={emblaRef}
+				>
 					<div className="flex gap-md py-md">
 						{galleries.map((gallery) => (
 							<div key={gallery.id} className="min-w-0 flex-[0_0_260px] md:flex-[0_0_280px]">
@@ -183,8 +230,8 @@ function AdminAlbumCarousel({
 							</div>
 						))}
 					</div>
-				</div>
-			</div>
+				</motion.div>
+			</AnimatePresence>
 		</div>
 	)
 }
@@ -462,7 +509,6 @@ function AdminGalleryPage() {
 	const idleSubmitLabel = editing ? t('admin.save') : t('admin.gallery.publish')
 
 	const visibleAlbumRows = categories.map((category) => galleriesByCategory[category.id]?.length ?? 0).filter((count) => count > 0)
-	const rowSkeletonCount = useSkeletonCount('admin-gallery-rows', loading, visibleAlbumRows.length, 2)
 	const albumSkeletonCount = useSkeletonCount('admin-gallery-albums', loading, Math.min(4, Math.max(0, ...visibleAlbumRows)), 3)
 
 	return (
@@ -644,14 +690,10 @@ function AdminGalleryPage() {
 				</div>
 			)}
 
-			<section className="mt-xl border-t border-neutral-200 pt-xl">
-				<h2 className="font-heading text-h4 font-bold text-heading">
-					{t('admin.gallery.albumsSection')}
-				</h2>
-
+			<section className="mt-xl">
 				{loading && !formOpen && (
 					<output className="contents" aria-label={t('common.loading')}>
-						<SkeletonList count={rowSkeletonCount}>{() => <AlbumCarouselSkeleton albums={albumSkeletonCount} />}</SkeletonList>
+						<AlbumCarouselSkeleton albums={albumSkeletonCount} />
 					</output>
 				)}
 
@@ -661,22 +703,15 @@ function AdminGalleryPage() {
 					</p>
 				)}
 
-				{!loading &&
-					categories.map((category) => {
-						const galleries = galleriesByCategory[category.id] ?? []
-						if (galleries.length === 0) return null
-
-						return (
-							<AdminAlbumCarousel
-								key={category.id}
-								categoryTitle={category.title}
-								galleries={galleries}
-								onEdit={(gallery) => openEdit(gallery)}
-								onDelete={(gallery) => setDeleteTarget(gallery)}
-								onToggleFeatured={handleToggleFeatured}
-							/>
-						)
-					})}
+				{!loading && (
+					<AdminAlbumsByYear
+						categories={categories}
+						galleriesByCategory={galleriesByCategory}
+						onEdit={(gallery) => openEdit(gallery)}
+						onDelete={(gallery) => setDeleteTarget(gallery)}
+						onToggleFeatured={handleToggleFeatured}
+					/>
+				)}
 			</section>
 
 			{deleteTarget && (

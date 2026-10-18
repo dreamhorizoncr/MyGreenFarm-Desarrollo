@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { PlusIcon } from '@animateicons/react/lucide'
 import CreateVacancyModal from './CreateVacancyModal.tsx'
 import DeleteConfirmModal from './ui/DeleteConfirmModal.tsx'
 import Skeleton from './ui/Skeleton.tsx'
@@ -96,6 +95,9 @@ interface VacancyManagementSectionProps {
   error: string | null
   applicantNameById: Map<string, string>
   onCreate: (data: VacancyInput) => Promise<void>
+  // El botón para crear vive en el encabezado de la página; aquí solo se muestra el modal
+  showCreateModal: boolean
+  onCloseCreateModal: () => void
   onSetOpen: (id: string, isOpen: boolean) => void
   onRelease: (id: string) => void
   onDelete: (id: string) => Promise<void>
@@ -106,9 +108,8 @@ function statusDotClass(vacancy: Vacancy) {
   return vacancy.isOpen ? 'bg-green-500' : 'bg-neutral-300'
 }
 
-function VacancyManagementSection({ vacancies, loading, error, applicantNameById, onCreate, onSetOpen, onRelease, onDelete,}: Readonly<VacancyManagementSectionProps>) {
+function VacancyManagementSection({ vacancies, loading, error, applicantNameById, onCreate, showCreateModal, onCloseCreateModal, onSetOpen, onRelease, onDelete,}: Readonly<VacancyManagementSectionProps>) {
   const { t } = useTranslation()
-  const [showCreateModal, setShowCreateModal] = useState(false)
   const [vacancyToDelete, setVacancyToDelete] = useState<Vacancy | null>(null)
   const { currentPage, setPage, totalPages, pageItems: pagedVacancies } = useClientPagination(vacancies)
 
@@ -116,17 +117,6 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
 
   return (
     <>
-      <div className="mb-lg flex justify-end">
-        <button
-          type="button"
-          onClick={() => setShowCreateModal(true)}
-          className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-md font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-        >
-          <PlusIcon size={18} aria-hidden="true" />
-          <span>{t('vacancies.publish')}</span>
-        </button>
-      </div>
-
       {loading && (
         <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
           <SkeletonList count={skeletonCount}>{() => <AdminVacancyCard loading />}</SkeletonList>
@@ -159,7 +149,7 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
       )}
 
       {showCreateModal && (
-        <CreateVacancyModal onCreate={onCreate} onClose={() => setShowCreateModal(false)} />
+        <CreateVacancyModal onCreate={onCreate} onClose={onCloseCreateModal} />
       )}
 
       {vacancyToDelete && (
