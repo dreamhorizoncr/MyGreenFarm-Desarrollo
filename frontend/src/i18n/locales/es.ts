@@ -68,7 +68,7 @@ export default {
       goTo: 'Ir al testimonio {{number}}',
       title: "Testimonios",
       description:
-        "Encontrá lo que dicen las familias que forman parte de nuestra comunidad sobre la experiencia de crecer, aprender y vivir la infancia en My Green Farm.",
+        "Descubre lo que dicen las familias que forman parte de nuestra comunidad sobre la experiencia de crecer, aprender y vivir la infancia en My Green Farm.",
       card1: {
         quote: "Llevar a mi hijo a My Green Farm ha sido la mejor decisión. Ver cómo disfruta interactuando con los animales de la granja y aprende inglés de forma tan natural nos llena de alegría todos los días.",
         author: "María José Alfaro — Madre de estudiante"

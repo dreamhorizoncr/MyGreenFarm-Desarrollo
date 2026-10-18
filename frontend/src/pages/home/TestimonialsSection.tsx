@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Blobatar } from '@blobatar/react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import nubesDown from '../../assets/imgs/nubesDown.svg'
 import Container from '../../components/home/Container.tsx'
 import CarouselDots from '../../components/ui/CarouselDots.tsx'
+import CarouselArrowIcon from '../../components/ui/CarouselArrowIcon.tsx'
 
 const testimonialStyles = [
   { accent: '#F37B25', initials: 'MJA' },
@@ -118,11 +118,11 @@ function TestimonialsSection() {
                   </button>
                 )
               })}
-              <button type="button" aria-label="Anterior" onClick={() => move(-1)} className="testimonial-carousel__arrow testimonial-carousel__arrow--left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--green-500)]">
-                <ChevronLeft size={22} aria-hidden="true" />
+              <button type="button" aria-label="Anterior" onClick={() => move(-1)} className="testimonial-carousel__arrow testimonial-carousel__arrow--left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--orange-500)]">
+                <CarouselArrowIcon flip />
               </button>
-              <button type="button" aria-label="Siguiente" onClick={() => move(1)} className="testimonial-carousel__arrow testimonial-carousel__arrow--right focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--green-500)]">
-                <ChevronRight size={22} aria-hidden="true" />
+              <button type="button" aria-label="Siguiente" onClick={() => move(1)} className="testimonial-carousel__arrow testimonial-carousel__arrow--right focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--orange-500)]">
+                <CarouselArrowIcon />
               </button>
             </div>
             <CarouselDots
