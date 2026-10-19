@@ -869,6 +869,27 @@ export default {
       deletedToastTitle: "Application deleted",
       deleteErrorToastTitle: "Couldn't delete the application",
     },
+    
+    teachers: {
+      title: 'Teacher Management',
+      description: 'Manage My Green Farm teachers.',
+      searchPlaceholder: 'Search for a teacher...',
+      searchLabel: 'Search for a teacher',
+      noSearchResults: 'No teachers were found matching that name.',
+      empty: 'No teachers have been registered yet.',
+      editTitle: 'Edit Teacher',
+      photoAlt: 'Teacher photo',
+      addPhoto: 'Add photo',
+      changePhoto: 'Change photo',
+      deletePhoto: 'Delete photo',
+      invalidPhoto: 'Please select a valid image file.',
+      photoTooLarge: 'The photo must not exceed 5 MB.',
+      updateSuccess: 'Teacher information updated successfully',
+      uploadPhotoSuccess: 'Photo updated successfully',
+      deletePhotoSuccess: 'Photo deleted successfully',
+      deleteSuccess: 'Teacher deleted successfully',
+    },
+
     ownerClubs: {
       title: "Club Management",
       description: "Create and manage extracurricular activity clubs.",
