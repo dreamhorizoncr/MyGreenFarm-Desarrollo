@@ -69,7 +69,7 @@ function PdfViewer({ url, fileName, title, className = 'h-105' }: Readonly<PdfVi
   // Al cambiar de documento, quien lo usa remonta el visor con otra key
   useEffect(() => {
     let cancelled = false
-    const task = getDocument(url)
+    const task = getDocument({url})
     task.promise
       .then((doc) => { if (!cancelled) setPdf(doc) })
       .catch(() => { if (!cancelled) setError(true) })
