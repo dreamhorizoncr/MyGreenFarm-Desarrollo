@@ -173,31 +173,43 @@ function BlogPostCard({
       </div>
 
       <div className="flex-1 p-lg">
-        <div className="flex flex-wrap items-center gap-md">
-          <PostAvatar
-            name={post!.authorName}
-            src={post!.authorAvatarUrl}
-            size={32}
-          />
+        <div className="flex items-center gap-md">
+          {post!.authorName && post!.authorRole && (
+            <>
+              <PostAvatar
+                name={post!.authorName}
+                src={post!.authorAvatarUrl}
+                size={32}
+              />
 
-          <div className="min-w-0 flex-1">
-            <p className="m-0 truncate font-heading text-body-sm font-bold text-heading">
-              {post!.authorName}
-            </p>
+              <div className="min-w-0 flex-1">
+                <p className="m-0 truncate font-heading text-body-sm font-bold text-heading">
+                  {post!.authorName}
+                </p>
 
-            <p className="m-0 truncate font-body text-body-sm text-neutral-500">
-              {post!.authorRole}
-            </p>
-          </div>
+                <p className="m-0 truncate font-body text-body-sm text-neutral-500">
+                  {post!.authorRole}
+                </p>
+              </div>
+            </>
+          )}
+        </div>
 
-          <span className="ml-auto shrink-0 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
+        {post!.authorName && post!.authorRole && (
+          <span className="mt-sm inline-block max-w-full rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
             {post!.topic}
           </span>
-        </div>
+        )}
 
         <h2 className="m-0 mt-md min-h-[2.4em] text-left font-heading text-h4 font-bold leading-tight text-heading line-clamp-2">
           {post!.title}
         </h2>
+
+        {!(post!.authorName && post!.authorRole) && (
+          <span className="mt-sm inline-block max-w-full rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
+            {post!.topic}
+          </span>
+        )}
 
         <p className="m-0 mt-xs min-h-[4.8em] line-clamp-3 break-words text-left font-body text-body-sm leading-[1.6] text-body-text">
           {post!.content}

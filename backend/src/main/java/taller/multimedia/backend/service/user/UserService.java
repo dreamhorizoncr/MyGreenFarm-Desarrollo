@@ -15,6 +15,7 @@ import taller.multimedia.backend.dto.UpdateUserRequest;
 import taller.multimedia.backend.dto.UserInfoResponse;
 import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.model.user.User;
+import taller.multimedia.backend.repository.forum.ForumArticleRepository;
 import taller.multimedia.backend.repository.user.UserRepository;
 import taller.multimedia.backend.service.appointment.CalendarSyncAsyncService;
 import taller.multimedia.backend.util.Sanitizer;
@@ -24,10 +25,13 @@ public class UserService {
 
     private final CalendarSyncAsyncService calendarSyncAsyncService;
     private final UserRepository userRepository;
+    private final ForumArticleRepository forumArticleRepository;
 
-    public UserService(UserRepository userRepository, CalendarSyncAsyncService calendarSyncAsyncService) {
+    public UserService(UserRepository userRepository, CalendarSyncAsyncService calendarSyncAsyncService,
+            ForumArticleRepository forumArticleRepository) {
         this.userRepository = userRepository;
         this.calendarSyncAsyncService = calendarSyncAsyncService;
+        this.forumArticleRepository = forumArticleRepository;
     }
 
     public Page<UserInfoResponse> getAllUsers(String currentEmail, Pageable pageable) {
@@ -141,6 +145,7 @@ public class UserService {
 
     }
 
+    @Transactional
     public void deleteUser(UUID targetId, String currentEmail) {
         User currentUser = userRepository.findByEmail(currentEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -158,6 +163,7 @@ public class UserService {
             throw new RuntimeException("You do not have permission to delete this user");
         }
 
+        forumArticleRepository.unlinkAuthor(targetUser.getId());
         userRepository.delete(targetUser);
     }
 

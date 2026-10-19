@@ -7,6 +7,7 @@ import taller.multimedia.backend.model.child.Child;
 import taller.multimedia.backend.model.expedient.Expedient;
 import taller.multimedia.backend.repository.child.ChildRepository;
 import taller.multimedia.backend.repository.expedient.ExpedientRepository;
+import taller.multimedia.backend.repository.evaluation.EvaluationRepository;
 import taller.multimedia.backend.service.StorageService;
 import taller.multimedia.backend.util.Sanitizer;
 
@@ -27,6 +28,7 @@ public class ExpedientService {
 
     private final ExpedientRepository expedientRepository;
     private final ChildRepository childRepository;
+    private final EvaluationRepository evaluationRepository;
 
     private final StorageService storageService;
 
@@ -85,7 +87,7 @@ public class ExpedientService {
 
     @Transactional(readOnly = true)
     public Page<ExpedientResponse> getAllExpedients(Pageable pageable) {
-        return expedientRepository.findAll(pageable).map(this::mapToResponse);
+        return expedientRepository.findByChildIsActiveTrue(pageable).map(this::mapToResponse);
     }
 
     @Transactional(readOnly = true)
@@ -115,6 +117,7 @@ public class ExpedientService {
             }
         }
 
+        evaluationRepository.deleteAll(evaluationRepository.findByExpedientIdId(expedient.getId()));
         expedientRepository.delete(expedient);
     }
 

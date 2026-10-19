@@ -14,12 +14,16 @@ public class ForumMapper {
             long reactionCount,
             boolean reacted,
             long commentCount) {
+        boolean authorExists = article.getAuthor() != null;
+
         return ForumArticleResponse.builder()
                 .id(article.getId())
                 .title(article.getTitle())
                 .topic(article.getTopic())
-                .authorName(StringEscapeUtils.unescapeHtml4(article.getAuthorName()))
-                .authorRole(article.getAuthorRole())
+                .authorName(authorExists
+                        ? StringEscapeUtils.unescapeHtml4(article.getAuthorName())
+                        : null)
+                .authorRole(authorExists ? article.getAuthorRole() : null)
                 .content(article.getContent())
                 .imageUrl(article.getImageUrl())
                 .imageAlt(article.getImageAlt())

@@ -14,8 +14,8 @@ export interface BlogPost {
   id: string
   title: string
   topic: string
-  authorName: string
-  authorRole: string
+  authorName?: string | null
+  authorRole?: string | null
   authorAvatarUrl?: string
   createdAt: string
   content: string
@@ -57,8 +57,8 @@ export interface ForumArticleResponse {
   id: string
   title: string
   topic: string
-  authorName: string
-  authorRole: string
+  authorName?: string | null
+  authorRole?: string | null
   content: string
   imageUrl?: string
   imageAlt?: string
