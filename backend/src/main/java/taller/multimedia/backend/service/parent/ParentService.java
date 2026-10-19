@@ -6,6 +6,13 @@ import org.springframework.data.domain.Pageable;
 import taller.multimedia.backend.dto.parent.ParentRequest;
 import taller.multimedia.backend.model.parent.Parent;
 import taller.multimedia.backend.repository.parent.ParentRepository;
+import taller.multimedia.backend.repository.child.ChildClubRepository;
+import taller.multimedia.backend.repository.child.ChildRepository;
+import taller.multimedia.backend.model.child.Child;
+import taller.multimedia.backend.model.club.Club;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.HashSet;
+import java.util.Set;
 import taller.multimedia.backend.util.Sanitizer;
 
 import java.util.List;
@@ -14,9 +21,14 @@ import java.util.List;
 public class ParentService {
 
     private final ParentRepository parentRepository;
+    private final ChildRepository childRepository;
+    private final ChildClubRepository childClubRepository;
 
-    public ParentService(ParentRepository parentRepository) {
+    public ParentService(ParentRepository parentRepository, ChildRepository childRepository,
+            ChildClubRepository childClubRepository) {
         this.parentRepository = parentRepository;
+        this.childRepository = childRepository;
+        this.childClubRepository = childClubRepository;
     }
 
     public Parent createParent(ParentRequest dto) {
@@ -40,7 +52,7 @@ public class ParentService {
     }
 
     public Page<Parent> getAllParents(Pageable pageable) {
-        return parentRepository.findAll(pageable);
+        return parentRepository.findByIsActiveTrue(pageable);
     }
 
     private String resolverLangCode(String lang) {
@@ -129,9 +141,27 @@ public class ParentService {
         return parentRepository.save(existingParent);
     }
 
+    @Transactional
     public void deleteParent(Integer id) {
         Parent parent = getParentById(id);
-        parentRepository.delete(parent);
+        List<Child> children = childRepository.findByParentId(parent.getId().longValue());
+        Set<Club> affectedClubs = new HashSet<>();
+
+        for (Child child : children) {
+            child.getChildClubs().forEach(childClub -> affectedClubs.add(childClub.getClub()));
+            child.getChildClubs().clear();
+            child.setIsActive(false);
+        }
+
+        childClubRepository.flush();
+        parent.setIsActive(false);
+
+        affectedClubs.forEach(club -> {
+            long enrolled = childClubRepository.countByClubId(club.getId());
+            if (club.getMaxCapacity() != null) {
+                club.setAvailableSpots((int) Math.max(0, club.getMaxCapacity() - enrolled));
+            }
+        });
     }
 
     public void unsubscribeFromNewsletter(String email) {
