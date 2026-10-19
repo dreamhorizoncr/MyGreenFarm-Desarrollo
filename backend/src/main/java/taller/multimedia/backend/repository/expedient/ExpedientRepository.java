@@ -1,6 +1,8 @@
 package taller.multimedia.backend.repository.expedient;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import taller.multimedia.backend.model.expedient.Expedient;
@@ -17,4 +19,6 @@ public interface ExpedientRepository extends JpaRepository<Expedient, UUID> {
     Optional<Expedient> findByChildId(Long childId);
 
     boolean existsByChildStudentId(String studentId);
+
+    Page<Expedient> findByChildIsActiveTrue(Pageable pageable);
 }

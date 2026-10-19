@@ -42,8 +42,8 @@ public class ForumArticle {
     @Column(nullable = false, length = 60)
     private String topic;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "author_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
     private User author;
 
     @Column(name = "author_name", nullable = false, length = 120)

@@ -46,7 +46,13 @@ function ForumPage() {
 
     return blogPosts.filter((post) =>
       normalizeSearchText(
-        [post.title, post.topic, post.authorName, post.authorRole, post.content].join(' '),
+        [
+          post.title,
+          post.topic,
+          post.authorName ?? '',
+          post.authorRole ?? '',
+          post.content,
+        ].join(' '),
       ).includes(query),
     )
   }, [blogPosts, blogSearch])

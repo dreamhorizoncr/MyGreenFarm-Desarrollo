@@ -19,6 +19,10 @@ public interface ChildRepository extends JpaRepository<Child, Long> {
 
     List<Child> findByParentId(Long parentId);
 
+    Page<Child> findByIsActiveTrue(Pageable pageable);
+
+    Page<Child> findByParentIdAndIsActiveTrue(Long parentId, Pageable pageable);
+
     @Query("SELECT c.studentId FROM Child c WHERE c.studentId LIKE :prefix ORDER BY c.studentId DESC LIMIT 1")
     String findLastStudentIdByPrefix(@Param("prefix") String prefix);
 

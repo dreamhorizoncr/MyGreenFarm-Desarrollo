@@ -92,12 +92,12 @@ public class ChildService {
 
     @Transactional(readOnly = true)
     public Page<ChildResponse> getAll(Pageable pageable) {
-        return childRepository.findAll(pageable).map(this::mapToResponse);
+        return childRepository.findByIsActiveTrue(pageable).map(this::mapToResponse);
     }
 
     @Transactional(readOnly = true)
     public Page<ChildResponse> getByParentId(Long parentId, Pageable pageable) {
-        return childRepository.findByParentId(parentId, pageable).map(this::mapToResponse);
+        return childRepository.findByParentIdAndIsActiveTrue(parentId, pageable).map(this::mapToResponse);
     }
 
     @Transactional(readOnly = true)
@@ -193,7 +193,9 @@ public class ChildService {
             child.getChildClubs().forEach(cc -> affectedClubIds.add(cc.getClub().getId()));
         }
 
-        childRepository.delete(child);
+        child.getChildClubs().clear();
+        child.setIsActive(false);
+        childClubRepository.flush();
 
         updateClubsAvailableSpots(affectedClubIds);
     }

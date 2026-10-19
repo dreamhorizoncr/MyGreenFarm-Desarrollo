@@ -45,8 +45,8 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
         title: post.title,
         topic: post.topic,
         content: post.content,
-        authorName: post.authorName,
-        authorRole: post.authorRole,
+        authorName: post.authorName ?? '',
+        authorRole: post.authorRole ?? '',
         imageUrl: post.imageUrl,
         imageAlt: post.imageAlt,
       }
