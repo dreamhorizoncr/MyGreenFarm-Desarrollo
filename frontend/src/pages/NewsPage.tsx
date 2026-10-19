@@ -135,7 +135,7 @@ function NewsPage() {
               <div className="flex flex-col gap-[18px]">
                 {rows.map((row, rowIndex) => (
                   <div
-                    key={row.map((a) => a.id).join('-')}
+                    key={row.map((a) => a.id).join('-')}  
                     className="grid grid-cols-1 gap-[18px] md:grid-cols-12"
                   >
                     {row.map((a, colIndex) => {

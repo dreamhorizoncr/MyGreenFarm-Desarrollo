@@ -6,14 +6,20 @@ import { UserRoundIcon } from '@animateicons/react/lucide'
 import Button from './ui/Button.tsx'
 import DatePickerField from './ui/DatePickerField.tsx'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
+import FieldHint from './ui/FieldHint.tsx'
+
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
+
 import { getErrorMessage } from '../utils/error.ts'
-import { validateEmail, validateRequired, validateSafeText } from '../utils/validators.ts'
+import {
+  validateEmail,
+  validateRequired,
+  validateSafeText,
+} from '../utils/validators.ts'
 
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 import type { CreateTeacherData } from '../services/admin.ts'
-import FieldHint from './ui/FieldHint.tsx'
 
     interface TeacherFormModalProps {
     teacher?: UserInfo | null
@@ -33,8 +39,10 @@ import FieldHint from './ui/FieldHint.tsx'
     onClose,
     }: Readonly<TeacherFormModalProps>) {
     const { t } = useTranslation()
+
     const dialogRef = useRef<HTMLDialogElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
+
     const { closing, requestClose } = useModalExit(onClose)
 
     const isEditing = Boolean(teacher)
@@ -50,7 +58,6 @@ import FieldHint from './ui/FieldHint.tsx'
     const [removePhoto, setRemovePhoto] = useState(false)
 
     const [saving, setSaving] = useState(false)
-    useDialogDismiss(dialogRef, requestClose, !saving)
     const [saveError, setSaveError] = useState<string | null>(null)
 
     const [firstNameError, setFirstNameError] = useState<string | null>(null)
@@ -58,10 +65,14 @@ import FieldHint from './ui/FieldHint.tsx'
     const [emailError, setEmailError] = useState<string | null>(null)
     const [passwordError, setPasswordError] = useState<string | null>(null)
 
+    useDialogDismiss(dialogRef, requestClose, !saving)
+
+    // Abrir modal
     useEffect(() => {
         dialogRef.current?.showModal()
     }, [])
 
+    // Vista previa de fotografía
     useEffect(() => {
         if (!selectedPhoto) {
         setPhotoPreview(null)
@@ -69,21 +80,23 @@ import FieldHint from './ui/FieldHint.tsx'
         }
 
         const url = URL.createObjectURL(selectedPhoto)
+
         setPhotoPreview(url)
 
         return () => URL.revokeObjectURL(url)
     }, [selectedPhoto])
 
+    // Seleccionar fotografía
     const handlePhotoChange = (file?: File) => {
         if (!file) return
 
         if (!file.type.startsWith('image/')) {
-        setSaveError(t('admin.teachersPage.invalidImage'))
+        setSaveError(t('admin.teachers.invalidPhoto'))
         return
         }
 
         if (file.size > 5 * 1024 * 1024) {
-        setSaveError(t('admin.teachersPage.imageTooLarge'))
+        setSaveError(t('admin.teachers.photoTooLarge'))
         return
         }
 
@@ -92,21 +105,34 @@ import FieldHint from './ui/FieldHint.tsx'
         setSaveError(null)
     }
 
+    // Guardar profesor
     const handleSave = async () => {
-        const firstError = validateRequired(firstName, t('admin.firstName'), t) ?? validateSafeText(firstName, t)
-        const lastError = validateRequired(lastName, t('admin.lastName'), t) ?? validateSafeText(lastName, t)
+        const firstError =
+        validateRequired(firstName, t('admin.firstName'), t) ??
+        validateSafeText(firstName, t)
+
+        const lastError =
+        validateRequired(lastName, t('admin.lastName'), t) ??
+        validateSafeText(lastName, t)
+
         const mailError = validateEmail(email, t)
 
         let passError: string | null = null
-        if (!isEditing && !password.trim()) passError = t('admin.teachersPage.passwordRequired')
-        else if (!isEditing && password.length < 8) passError = t('admin.teachersPage.passwordMin')
+
+        if (!isEditing && !password.trim()) {
+        passError = t('admin.teachersPage.passwordRequired')
+        } else if (!isEditing && password.length < 8) {
+        passError = t('admin.teachersPage.passwordMin')
+        }
 
         setFirstNameError(firstError)
         setLastNameError(lastError)
         setEmailError(mailError)
         setPasswordError(passError)
 
-        if (firstError || lastError || mailError || passError) return
+        if (firstError || lastError || mailError || passError) {
+        return
+        }
 
         setSaving(true)
         setSaveError(null)
@@ -149,16 +175,23 @@ import FieldHint from './ui/FieldHint.tsx'
         <dialog
         ref={dialogRef}
         onClose={requestClose}
-        aria-label={isEditing ? t('admin.teachersPage.edit') : t('admin.teachersPage.register')}
+        aria-label={
+            isEditing
+            ? t('admin.teachers.editTitle')
+            : t('admin.teachersPage.register')
+        }
         className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${
             closing
             ? 'animate-[modal-out_0.32s_ease-in]'
             : 'animate-[modal-in_0.32s_ease-out]'
         }`}
         >
+        {/* Encabezado */}
         <div className="flex items-center justify-between gap-md">
             <h2 className="m-0 font-heading text-h4 font-bold text-heading">
-            {isEditing ? t('admin.teachersPage.edit') : t('admin.teachersPage.register')}
+            {isEditing
+                ? t('admin.teachers.editTitle')
+                : t('admin.teachersPage.register')}
             </h2>
 
             <ModalCloseButton
@@ -169,16 +202,20 @@ import FieldHint from './ui/FieldHint.tsx'
             />
         </div>
 
+        {/* Fotografía */}
         <div className="mt-lg flex flex-col items-center gap-sm">
             <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-4 border-green-100 bg-green-50">
             {photoPreview || (teacher?.photoUrl && !removePhoto) ? (
                 <img
                 src={photoPreview || teacher?.photoUrl || ''}
-                alt={t('admin.teachersPage.photoAlt')}
+                alt={t('admin.teachers.photoAlt')}
                 className="h-full w-full object-cover"
                 />
             ) : (
-                <UserRoundIcon size={44} className="text-green-500" />
+                <UserRoundIcon
+                size={44}
+                className="text-green-500"
+                />
             )}
             </div>
 
@@ -189,7 +226,9 @@ import FieldHint from './ui/FieldHint.tsx'
                 type="file"
                 accept="image/*"
                 className="hidden"
-                onChange={(e) => handlePhotoChange(e.target.files?.[0])}
+                onChange={(e) =>
+                    handlePhotoChange(e.target.files?.[0])
+                }
                 />
 
                 <div className="flex flex-wrap justify-center gap-sm">
@@ -199,7 +238,9 @@ import FieldHint from './ui/FieldHint.tsx'
                     onClick={() => fileInputRef.current?.click()}
                     className="rounded-full border border-green-500 px-md py-xs font-body text-body-sm font-semibold text-green-600 transition hover:bg-green-50 disabled:opacity-50"
                 >
-                    {teacher?.photoUrl ? t('admin.teachersPage.changePhoto') : t('admin.teachersPage.addPhoto')}
+                    {teacher?.photoUrl && !removePhoto
+                    ? t('admin.teachers.changePhoto')
+                    : t('admin.teachers.addPhoto')}
                 </button>
 
                 {(teacher?.photoUrl || selectedPhoto) && (
@@ -209,11 +250,14 @@ import FieldHint from './ui/FieldHint.tsx'
                     onClick={() => {
                         setSelectedPhoto(null)
                         setRemovePhoto(true)
-                        if (fileInputRef.current) fileInputRef.current.value = ''
+
+                        if (fileInputRef.current) {
+                        fileInputRef.current.value = ''
+                        }
                     }}
                     className="rounded-full border border-red-300 px-md py-xs font-body text-body-sm font-semibold text-danger transition hover:bg-red-50 disabled:opacity-50"
                     >
-                    {t('admin.teachersPage.removePhoto')}
+                    {t('admin.teachers.deletePhoto')}
                     </button>
                 )}
                 </div>
@@ -225,9 +269,13 @@ import FieldHint from './ui/FieldHint.tsx'
             )}
         </div>
 
+        {/* Campos */}
         <div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
+
+            {/* Nombre */}
             <label className="font-body text-body-sm font-semibold text-heading">
             {t('admin.firstName')}
+
             <input
                 placeholder={t('fields.person.firstName.placeholder')}
                 type="text"
@@ -239,14 +287,22 @@ import FieldHint from './ui/FieldHint.tsx'
                 disabled={saving}
                 className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading disabled:opacity-50"
             />
-            <FieldHint>{t('fields.person.firstName.hint')}</FieldHint>
+
+            <FieldHint>
+                {t('fields.person.firstName.hint')}
+            </FieldHint>
+
             {firstNameError && (
-                <span className="mt-xs block font-normal text-danger">{firstNameError}</span>
+                <span className="mt-xs block font-normal text-danger">
+                {firstNameError}
+                </span>
             )}
             </label>
 
+            {/* Apellido */}
             <label className="font-body text-body-sm font-semibold text-heading">
             {t('admin.lastName')}
+
             <input
                 placeholder={t('fields.person.lastName.placeholder')}
                 type="text"
@@ -258,14 +314,22 @@ import FieldHint from './ui/FieldHint.tsx'
                 disabled={saving}
                 className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading disabled:opacity-50"
             />
-            <FieldHint>{t('fields.person.lastName.hint')}</FieldHint>
+
+            <FieldHint>
+                {t('fields.person.lastName.hint')}
+            </FieldHint>
+
             {lastNameError && (
-                <span className="mt-xs block font-normal text-danger">{lastNameError}</span>
+                <span className="mt-xs block font-normal text-danger">
+                {lastNameError}
+                </span>
             )}
             </label>
 
+            {/* Correo */}
             <label className="font-body text-body-sm font-semibold text-heading">
             {t('admin.email')}
+
             <input
                 placeholder={t('fields.person.email.placeholder')}
                 type="email"
@@ -277,18 +341,24 @@ import FieldHint from './ui/FieldHint.tsx'
                 disabled={saving || isEditing}
                 className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading disabled:cursor-not-allowed disabled:bg-neutral-100"
             />
+
             {isEditing && (
                 <span className="mt-xs block font-body text-caption font-normal text-neutral-500">
                 {t('admin.emailLockedHint')}
                 </span>
             )}
+
             {emailError && (
-                <span className="mt-xs block font-normal text-danger">{emailError}</span>
+                <span className="mt-xs block font-normal text-danger">
+                {emailError}
+                </span>
             )}
             </label>
 
+            {/* Fecha de nacimiento */}
             <div className="font-body text-body-sm font-semibold text-heading">
             {t('admin.birthday')}
+
             <DatePickerField
                 value={birthday}
                 onChange={setBirthday}
@@ -296,12 +366,17 @@ import FieldHint from './ui/FieldHint.tsx'
                 disabled={saving}
                 ariaLabel={t('admin.birthday')}
             />
-            <FieldHint>{t('fields.person.birthday.hint')}</FieldHint>
+
+            <FieldHint>
+                {t('fields.person.birthday.hint')}
+            </FieldHint>
             </div>
 
+            {/* Contraseña */}
             {!isEditing && (
             <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
                 {t('admin.teachersPage.password')}
+
                 <input
                 placeholder={t('fields.person.password.placeholder')}
                 type="password"
@@ -314,23 +389,29 @@ import FieldHint from './ui/FieldHint.tsx'
                 autoComplete="new-password"
                 className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading disabled:opacity-50"
                 />
+
                 <span className="mt-xs block font-body text-caption font-normal text-neutral-500">
                 {t('admin.teachersPage.passwordHint')}
                 </span>
+
                 {passwordError && (
-                <span className="mt-xs block font-normal text-danger">{passwordError}</span>
+                <span className="mt-xs block font-normal text-danger">
+                    {passwordError}
+                </span>
                 )}
             </label>
             )}
         </div>
 
+        {/* Errores */}
         {saveError && (
             <p className="mt-md rounded-xl bg-red-50 p-md font-body text-body-sm text-red-700">
             {saveError}
             </p>
         )}
 
-        <div className="mt-lg flex justify-end gap-md *:flex-1">
+        {/* Acciones */}
+        <div className="mt-lg flex flex-wrap justify-end gap-md *:flex-1">
             <Button
             variant="secondary"
             onClick={requestClose}
@@ -344,7 +425,13 @@ import FieldHint from './ui/FieldHint.tsx'
             variant="success"
             onClick={handleSave}
             loading={saving}
-            disabled={saving || !firstName.trim() || !lastName.trim() || !email.trim() || (!isEditing && !password)}
+            disabled={
+                saving ||
+                !firstName.trim() ||
+                !lastName.trim() ||
+                !email.trim() ||
+                (!isEditing && !password)
+            }
             className="h-11 w-auto rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
             >
             {saving ? t('common.loading') : t('admin.save')}
@@ -352,6 +439,6 @@ import FieldHint from './ui/FieldHint.tsx'
         </div>
         </dialog>
     )
-    }
+}
 
 export default TeacherFormModal

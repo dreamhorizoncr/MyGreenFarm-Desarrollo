@@ -1,28 +1,30 @@
 
 import { useEffect, useMemo, useState } from 'react'
-import { SearchIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
+import { SearchIcon } from '@animateicons/react/lucide'
 
 import AdminLayout from '../layout/AdminLayout.tsx'
 import TeacherCard from '../components/TeacherCard.tsx'
 import TeacherFormModal from '../components/TeacherFormModal.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
 import DeleteUserModal from '../components/DeleteUserModal.tsx'
+import SkeletonList from '../components/ui/SkeletonList.tsx'
+
+import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 import { adminService } from '../services/admin.ts'
-import type { CreateTeacherData } from '../services/admin.ts'
 import { notify } from '../utils/notifications.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import { userStorage } from '../utils/userStorage.ts'
 
+import type { CreateTeacherData } from '../services/admin.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
-import SkeletonList from '../components/ui/SkeletonList.tsx'
-import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
     const PAGE_SIZE = 10
 
     function AdminTeachersPage() {
     const { t } = useTranslation()
+
     const [teachers, setTeachers] = useState<UserInfo[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -36,18 +38,23 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
     const currentUser = userStorage.getUser()
 
+    // Obtener profesores
     const fetchTeachers = async () => {
         try {
         setError(null)
 
         const data = await adminService.getTeachers()
-        setTeachers(data.filter((user) => user.role === 'TEACHER'))
+
+        setTeachers(
+            data.filter((user) => user.role === 'TEACHER')
+        )
         } catch (err) {
         setError(getErrorMessage(err))
         throw err
         }
     }
 
+    // Cargar profesores
     useEffect(() => {
         let active = true
 
@@ -56,12 +63,18 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
             const data = await adminService.getTeachers()
 
             if (active) {
-            setTeachers(data.filter((user) => user.role === 'TEACHER'))
+            setTeachers(
+                data.filter((user) => user.role === 'TEACHER')
+            )
             }
         } catch (err) {
-            if (active) setError(getErrorMessage(err))
+            if (active) {
+            setError(getErrorMessage(err))
+            }
         } finally {
-            if (active) setLoading(false)
+            if (active) {
+            setLoading(false)
+            }
         }
         }
 
@@ -72,37 +85,47 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
         }
     }, [])
 
+    // Filtrar profesores
     const filteredTeachers = useMemo(() => {
         const term = searchTerm.trim().toLowerCase()
 
         if (!term) return teachers
 
         return teachers.filter((teacher) =>
-        [teacher.firstName, teacher.lastName, teacher.email].some((field) =>
-            field.toLowerCase().includes(term),
-        ),
+        [
+            teacher.firstName,
+            teacher.lastName,
+            teacher.email,
+        ].some((field) =>
+            field.toLowerCase().includes(term)
+        )
         )
     }, [teachers, searchTerm])
 
+    // Paginación
     const totalPages = Math.max(
         1,
-        Math.ceil(filteredTeachers.length / PAGE_SIZE),
+        Math.ceil(filteredTeachers.length / PAGE_SIZE)
     )
 
     const safeCurrentPage = Math.min(currentPage, totalPages)
 
     const pagedTeachers = filteredTeachers.slice(
         (safeCurrentPage - 1) * PAGE_SIZE,
-        safeCurrentPage * PAGE_SIZE,
+        safeCurrentPage * PAGE_SIZE
     )
 
+    // Registrar profesor
     const handleCreate = async (data: CreateTeacherData) => {
         await adminService.createTeacher(data)
         await fetchTeachers()
+
         setCurrentPage(1)
+
         notify.success(t('admin.teachersPage.createdToast'))
     }
 
+    // Actualizar profesor
     const handleUpdate = async (id: string, data: UpdateUserData) => {
         const updated = await adminService.updateUser(id, data)
 
@@ -110,13 +133,14 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
         prev.map((teacher) =>
             teacher.id === id
             ? { ...teacher, ...updated }
-            : teacher,
-        ),
+            : teacher
+        )
         )
 
-        notify.success(t('admin.teachersPage.updatedToast'))
+        notify.success(t('admin.teachers.updateSuccess'))
     }
 
+    // Subir fotografía
     const handleUploadPhoto = async (id: string, file: File) => {
         const updated = await adminService.uploadTeacherPhoto(id, file)
 
@@ -124,13 +148,14 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
         prev.map((teacher) =>
             teacher.id === id
             ? { ...teacher, ...updated }
-            : teacher,
-        ),
+            : teacher
+        )
         )
 
-        notify.success(t('admin.teachersPage.photoUpdatedToast'))
+        notify.success(t('admin.teachers.uploadPhotoSuccess'))
     }
 
+    // Eliminar fotografía
     const handleDeletePhoto = async (id: string) => {
         await adminService.deleteTeacherPhoto(id)
 
@@ -138,47 +163,59 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
         prev.map((teacher) =>
             teacher.id === id
             ? { ...teacher, photoUrl: null }
-            : teacher,
-        ),
+            : teacher
+        )
         )
 
-        notify.success(t('admin.teachersPage.photoDeletedToast'))
+        notify.success(t('admin.teachers.deletePhotoSuccess'))
     }
 
+    // Eliminar profesor
     const handleDelete = async (id: string) => {
         try {
         await adminService.deleteUser(id)
 
         setTeachers((prev) =>
-            prev.filter((teacher) => teacher.id !== id),
+            prev.filter((teacher) => teacher.id !== id)
         )
 
         setTeacherToDelete(null)
-        notify.success(t('admin.teachersPage.deletedToast'))
+
+        notify.success(t('admin.teachers.deleteSuccess'))
         } catch (err) {
         notify.error(getErrorMessage(err))
         throw err
         }
     }
 
-    const skeletonCount = useSkeletonCount('admin-teachers', loading, filteredTeachers.length, 4)
+    // Skeletons
+    const skeletonCount = useSkeletonCount(
+        'admin-teachers',
+        loading,
+        filteredTeachers.length,
+        4
+    )
 
     return (
         <AdminLayout>
         <section className="w-full">
 
+            {/* Encabezado */}
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div>
                 <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
-                {t('admin.teachersPage.title')}
+                {t('admin.teachers.title')}
                 </h1>
 
                 <p className="mt-2 font-body text-body text-neutral-500">
-                {t('admin.teachersPage.subtitle')}
+                {t('admin.teachers.description')}
                 </p>
             </div>
 
+            {/* Acciones */}
             <div className="flex w-full items-center gap-3 md:w-auto">
+
+                {/* Registrar profesor */}
                 <button
                 type="button"
                 onClick={() => setIsCreateModalOpen(true)}
@@ -186,9 +223,12 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
                 aria-label={t('admin.teachersPage.register')}
                 className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition hover:bg-orange-600"
                 >
-                <span className="text-3xl font-light leading-none">+</span>
+                <span className="text-3xl font-light leading-none">
+                    +
+                </span>
                 </button>
 
+                {/* Buscador */}
                 <div className="flex h-11 min-w-0 flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 md:w-[360px] md:flex-none">
                 <SearchIcon
                     size={18}
@@ -198,31 +238,36 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
                 <input
                     type="search"
-                    placeholder={t('admin.teachersPage.searchPlaceholder')}
+                    placeholder={t('admin.teachers.searchPlaceholder')}
                     value={searchTerm}
                     onChange={(e) => {
                     setSearchTerm(e.target.value)
                     setCurrentPage(1)
                     }}
-                    aria-label={t('admin.teachersPage.searchLabel')}
+                    aria-label={t('admin.teachers.searchLabel')}
                     className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
                 />
                 </div>
             </div>
             </div>
 
+            {/* Cargando */}
             {loading && (
             <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <SkeletonList count={skeletonCount}>{() => <TeacherCard loading showPhoto />}</SkeletonList>
+                <SkeletonList count={skeletonCount}>
+                {() => <TeacherCard loading showPhoto />}
+                </SkeletonList>
             </div>
             )}
 
+            {/* Error */}
             {!loading && error && (
             <p className="mt-8 font-body text-danger">
                 {error}
             </p>
             )}
 
+            {/* Lista de profesores */}
             {!loading && !error && filteredTeachers.length > 0 && (
             <>
                 <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -238,6 +283,7 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
                 ))}
                 </div>
 
+                {/* Paginación */}
                 {totalPages > 1 && (
                 <Pagination
                     currentPage={safeCurrentPage}
@@ -248,16 +294,18 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
             </>
             )}
 
+            {/* Estado vacío */}
             {!loading && !error && filteredTeachers.length === 0 && (
             <div className="mt-12 text-center">
                 <p className="font-body text-body-text">
                 {searchTerm
-                    ? t('admin.teachersPage.noMatches')
-                    : t('admin.teachersPage.empty')}
+                    ? t('admin.teachers.noSearchResults')
+                    : t('admin.teachers.empty')}
                 </p>
             </div>
             )}
 
+            {/* Registrar profesor */}
             {isCreateModalOpen && (
             <TeacherFormModal
                 onCreate={handleCreate}
@@ -268,6 +316,7 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
             />
             )}
 
+            {/* Editar profesor */}
             {teacherToEdit && (
             <TeacherFormModal
                 teacher={teacherToEdit}
@@ -279,6 +328,7 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
             />
             )}
 
+            {/* Eliminar profesor */}
             {teacherToDelete && (
             <DeleteUserModal
                 user={teacherToDelete}
@@ -286,9 +336,10 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
                 onClose={() => setTeacherToDelete(null)}
             />
             )}
+
         </section>
         </AdminLayout>
     )
-    }
+}
 
 export default AdminTeachersPage
