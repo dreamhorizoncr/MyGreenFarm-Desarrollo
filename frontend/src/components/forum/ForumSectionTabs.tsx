@@ -57,7 +57,7 @@ function ForumSectionTabs() {
     <nav
       ref={navRef}
       aria-label={t('forum.sidebarLabel')}
-      className="isolate -mx-1 mt-[calc(var(--spacing-sm)-4px)] flex gap-sm overflow-x-auto p-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:hidden"
+      className="isolate -mx-1 mt-[calc(var(--spacing-sm)-4px)] flex flex-col gap-sm overflow-visible p-1 lg:hidden"
     >
       {SECTIONS.map(({ id, labelKey }) => {
         const isActive = id === active
@@ -71,7 +71,7 @@ function ForumSectionTabs() {
               lockUntil.current = Date.now() + 900
               setActive(id)
             }}
-            className={`relative shrink-0 whitespace-nowrap rounded-full border border-green-500 px-md py-xs font-body text-body-sm transition duration-300 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
+            className={`relative w-full whitespace-normal rounded-full border border-green-500 px-md py-xs text-left font-body text-body-sm transition duration-300 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
               isActive ? 'text-white' : 'bg-transparent text-heading hover:bg-green-50'
             }`}
           >
