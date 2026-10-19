@@ -132,21 +132,25 @@ function BlogPostPage() {
           <article className="flex flex-col gap-md">
             <header className="rounded-2xl border border-neutral-200 bg-white p-lg">
               <div className="flex flex-wrap items-center gap-md">
-                <PostAvatar
-                  name={post.authorName}
-                  src={post.authorAvatarUrl}
-                  size={44}
-                />
+                {post.authorName && post.authorRole && (
+                  <>
+                    <PostAvatar
+                      name={post.authorName}
+                      src={post.authorAvatarUrl}
+                      size={44}
+                    />
 
-                <div className="min-w-0 flex-1">
-                  <p className="m-0 truncate text-left font-heading text-body-sm font-bold text-heading">
-                    {post.authorName}
-                  </p>
+                    <div className="min-w-0 flex-1">
+                      <p className="m-0 truncate text-left font-heading text-body-sm font-bold text-heading">
+                        {post.authorName}
+                      </p>
 
-                    <p className="m-0 mt-3xs truncate text-left font-body text-body-sm text-neutral-500">
-                    {post.authorRole}
-                  </p>
-                </div>
+                      <p className="m-0 mt-3xs truncate text-left font-body text-body-sm text-neutral-500">
+                        {post.authorRole}
+                      </p>
+                    </div>
+                  </>
+                )}
 
                 <span className="shrink-0 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
                   {post.topic}

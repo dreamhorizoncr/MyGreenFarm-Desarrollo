@@ -180,7 +180,8 @@ public class ForumArticleService {
 
     private void ensureCanManage(ForumArticle article, User currentUser) {
         boolean owner = currentUser.getRole() == Role.OWNER;
-        boolean ownArticle = article.getAuthor().getId().equals(currentUser.getId());
+        boolean ownArticle = article.getAuthor() != null
+                && article.getAuthor().getId().equals(currentUser.getId());
         boolean teacherOwnArticle = currentUser.getRole() == Role.TEACHER && ownArticle;
 
         if (!owner && !teacherOwnArticle) {

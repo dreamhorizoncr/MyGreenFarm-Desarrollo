@@ -174,21 +174,25 @@ function BlogPostCard({
 
       <div className="flex-1 p-lg">
         <div className="flex flex-wrap items-center gap-md">
-          <PostAvatar
-            name={post!.authorName}
-            src={post!.authorAvatarUrl}
-            size={32}
-          />
+          {post!.authorName && post!.authorRole && (
+            <>
+              <PostAvatar
+                name={post!.authorName}
+                src={post!.authorAvatarUrl}
+                size={32}
+              />
 
-          <div className="min-w-0 flex-1">
-            <p className="m-0 truncate font-heading text-body-sm font-bold text-heading">
-              {post!.authorName}
-            </p>
+              <div className="min-w-0 flex-1">
+                <p className="m-0 truncate font-heading text-body-sm font-bold text-heading">
+                  {post!.authorName}
+                </p>
 
-            <p className="m-0 truncate font-body text-body-sm text-neutral-500">
-              {post!.authorRole}
-            </p>
-          </div>
+                <p className="m-0 truncate font-body text-body-sm text-neutral-500">
+                  {post!.authorRole}
+                </p>
+              </div>
+            </>
+          )}
 
           <span className="ml-auto shrink-0 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
             {post!.topic}
