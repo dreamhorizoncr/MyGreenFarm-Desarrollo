@@ -28,7 +28,7 @@ function ScheduleField({ id, label, value, onChange, error }: Readonly<ScheduleF
   const toggleDay = (index: number, day: number) => {
     const block = value[index]
     const days = block.days.includes(day) ? block.days.filter((item) => item !== day) : [...block.days, day]
-    updateBlock(index, { ...block, days: days.sort((a, b) => a - b) })
+    updateBlock(index, { ...block, days: days.toSorted((a, b) => a - b) })
   }
 
   const removeBlock = (index: number) => onChange(value.filter((_, position) => position !== index))

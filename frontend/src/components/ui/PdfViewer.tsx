@@ -27,7 +27,8 @@ function PdfPage({ pdf, pageNumber, width, label }: Readonly<{ pdf: PDFDocumentP
   useEffect(() => {
     let cancelled = false
     let task: { cancel: () => void; promise: Promise<void> } | null = null
-    void pdf.getPage(pageNumber).then((page) => {
+    const renderPage = async () => {
+      const page = await pdf.getPage(pageNumber)
       const canvas = canvasRef.current
       if (cancelled || !canvas || width <= 0) return
       const base = page.getViewport({ scale: 1 })
@@ -37,8 +38,10 @@ function PdfPage({ pdf, pageNumber, width, label }: Readonly<{ pdf: PDFDocumentP
       canvas.width = Math.floor(viewport.width)
       canvas.height = Math.floor(viewport.height)
       task = page.render({ canvas, viewport })
-      task.promise.catch(() => undefined)
-    })
+      await task.promise
+    }
+    // Cancelar el render al cambiar de zoom rechaza la promesa; no es un error
+    renderPage().catch(() => undefined)
     return () => {
       cancelled = true
       task?.cancel()
@@ -46,14 +49,16 @@ function PdfPage({ pdf, pageNumber, width, label }: Readonly<{ pdf: PDFDocumentP
   }, [pdf, pageNumber, width])
 
   return (
-    <canvas
-      ref={canvasRef}
-      data-page={pageNumber}
-      aria-label={label}
-      role="img"
-      style={{ width, height: width * ratio }}
-      className="mx-auto block rounded-lg bg-white shadow-[0_2px_12px_rgb(0_0_0/0.08)]"
-    />
+    <>
+      <span className="sr-only">{label}</span>
+      <canvas
+        ref={canvasRef}
+        data-page={pageNumber}
+        aria-hidden="true"
+        style={{ width, height: width * ratio }}
+        className="mx-auto block rounded-lg bg-white shadow-[0_2px_12px_rgb(0_0_0/0.08)]"
+      />
+    </>
   )
 }
 
@@ -154,9 +159,9 @@ function PdfViewer({ url, fileName, title, className = 'h-105' }: Readonly<PdfVi
         )}
 
         {!error && !pdf && (
-          <div className="mx-auto flex flex-col gap-md" style={{ width: pageWidth || '100%' }} role="status" aria-label={t('pdfViewer.loading')}>
+          <output className="mx-auto flex flex-col gap-md" style={{ width: pageWidth || '100%' }} aria-label={t('pdfViewer.loading')}>
             <Skeleton className="aspect-[1/1.294] w-full rounded-lg" />
-          </div>
+          </output>
         )}
 
         {pdf && pageWidth > 0 && (

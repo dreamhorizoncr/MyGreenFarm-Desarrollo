@@ -741,7 +741,7 @@ export default {
       photoAfterRegister: 'You can add a photo after registering the teacher.',
       invalidImage: 'Select a valid image file.',
       imageTooLarge: 'The photo cannot exceed 5 MB.',
-      password: 'Password',
+      passwordLabel: 'Password',
       passwordRequired: 'Password is required.',
       passwordMin: 'The password must be at least 8 characters long.',
       passwordHint: 'At least 8 characters, including an uppercase letter, a lowercase letter, a number and a symbol.',

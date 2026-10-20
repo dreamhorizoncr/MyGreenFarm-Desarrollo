@@ -57,10 +57,10 @@ function useBrandNameFits(language: string, isAuthenticated: boolean) {
       const links = Array.from(menu.children) as HTMLElement[]
       const menuWidth =
         links.reduce((total, link) => total + link.offsetWidth, 0) +
-        parseFloat(menuStyle.columnGap || '0') * Math.max(0, links.length - 1) +
-        parseFloat(menuStyle.paddingLeft) +
-        parseFloat(menuStyle.paddingRight)
-      const available = row.clientWidth - parseFloat(rowStyle.paddingLeft) - parseFloat(rowStyle.paddingRight)
+        Number.parseFloat(menuStyle.columnGap || '0') * Math.max(0, links.length - 1) +
+        Number.parseFloat(menuStyle.paddingLeft) +
+        Number.parseFloat(menuStyle.paddingRight)
+      const available = row.clientWidth - Number.parseFloat(rowStyle.paddingLeft) - Number.parseFloat(rowStyle.paddingRight)
 
       setShowName(brand.offsetWidth + nameWidth + menuWidth + options.offsetWidth <= available)
     }

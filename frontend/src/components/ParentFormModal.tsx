@@ -269,6 +269,7 @@ function ParentFormModal({
           {/* Switch estilizado para Activo / Inactivo */}
           <div className="md:col-span-2 flex items-center gap-md rounded-xl border border-neutral-200 bg-neutral-50 p-md">
             <label className="relative inline-flex items-center cursor-pointer">
+              <span className="sr-only">{t("admin.parents.isActive")}</span>
               <input
                 type="checkbox"
                 autoComplete="off"

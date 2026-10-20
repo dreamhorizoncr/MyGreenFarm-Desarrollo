@@ -159,6 +159,10 @@ function EvaluationFormModal({
     const { shouldRender, closing } = useModalVisibility(isOpen);
     if (!shouldRender) return null;
 
+    let submitLabel = t("admin.evaluations.formAdd");
+    if (saving) submitLabel = t("admin.evaluations.formSaving");
+    else if (evaluation) submitLabel = t("admin.evaluations.formSaveChanges");
+
     return (
         <div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
             <button
@@ -344,11 +348,7 @@ function EvaluationFormModal({
                         disabled={saving || loadingOptions || !form.expedientId || !form.evaluationDate || !form.communicationProgress.trim() || !form.languageProgress.trim() || !form.readingProgress.trim() || !form.motorProgress.trim() || !form.teacherObservation.trim()}
                         className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                        {saving
-                            ? t("admin.evaluations.formSaving")
-                            : evaluation
-                            ? t("admin.evaluations.formSaveChanges")
-                            : t("admin.evaluations.formAdd")}
+                        {submitLabel}
                     </button>
                 </div>
             </form>

@@ -375,6 +375,7 @@ function ChildFormModal({
 
                     <div className="md:col-span-2 flex items-center gap-md rounded-xl border border-neutral-200 bg-neutral-50 p-md">
                         <label className="relative inline-flex items-center cursor-pointer">
+                            <span className="sr-only">{t("admin.children.isActive", { defaultValue: "Estudiante activo" })}</span>
                             <input
                                 type="checkbox"
                                 checked={form.isActive ?? true}

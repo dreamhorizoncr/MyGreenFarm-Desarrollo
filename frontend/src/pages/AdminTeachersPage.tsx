@@ -37,7 +37,7 @@ function AdminTeachersPage() {
 
     const currentUser = userStorage.getUser()
 
-    {/* Cargar docentes */}
+    // Cargar docentes
     useEffect(() => {
         let active = true
 
@@ -69,7 +69,7 @@ function AdminTeachersPage() {
         }
     }, [])
 
-    {/* Filtrar docentes */}
+    // Filtrar docentes
     const filteredTeachers = useMemo(() => {
         const term = searchTerm.trim().toLowerCase()
 
@@ -86,7 +86,7 @@ function AdminTeachersPage() {
         )
     }, [teachers, searchTerm])
 
-    {/* Paginación */}
+    // Paginación
     const totalPages = Math.max(
         1,
         Math.ceil(filteredTeachers.length / PAGE_SIZE)
@@ -99,14 +99,13 @@ function AdminTeachersPage() {
         safeCurrentPage * PAGE_SIZE
     )
 
-    {/* Registro deshabilitado */}
-    const handleCreateDisabled = async (
+    // Registro deshabilitado
+    const handleCreateDisabled = (
         _data: CreateTeacherData
-    ): Promise<void> => {
-        throw new Error('El registro de docentes no está disponible.')
-    }
+    ): Promise<void> =>
+        Promise.reject(new Error('El registro de docentes no está disponible.'))
 
-    {/* Actualizar docente */}
+    // Actualizar docente
     const handleUpdate = async (id: string, data: UpdateUserData) => {
         const updated = await adminService.updateUser(id, data)
 
@@ -121,7 +120,7 @@ function AdminTeachersPage() {
         notify.success(t('admin.teachers.updateSuccess'))
     }
 
-    {/* Subir fotografía */}
+    // Subir fotografía
     const handleUploadPhoto = async (id: string, file: File) => {
         const updated = await adminService.uploadTeacherPhoto(id, file)
 
@@ -136,7 +135,7 @@ function AdminTeachersPage() {
         notify.success(t('admin.teachers.uploadPhotoSuccess'))
     }
 
-    {/* Eliminar fotografía */}
+    // Eliminar fotografía
     const handleDeletePhoto = async (id: string) => {
         await adminService.deleteTeacherPhoto(id)
 
@@ -151,7 +150,7 @@ function AdminTeachersPage() {
         notify.success(t('admin.teachers.deletePhotoSuccess'))
     }
 
-    {/* Eliminar docente */}
+    // Eliminar docente
     const handleDelete = async (id: string) => {
         try {
             await adminService.deleteUser(id)
@@ -169,7 +168,7 @@ function AdminTeachersPage() {
         }
     }
 
-    {/* Skeletons */}
+    // Skeletons
     const skeletonCount = useSkeletonCount(
         'admin-teachers',
         loading,

@@ -744,7 +744,7 @@ export default {
       photoAfterRegister: 'Podrás agregar una fotografía después de registrar al docente.',
       invalidImage: 'Selecciona un archivo de imagen válido.',
       imageTooLarge: 'La fotografía no puede superar los 5 MB.',
-      password: 'Contraseña',
+      passwordLabel: 'Contraseña',
       passwordRequired: 'La contraseña es obligatoria.',
       passwordMin: 'La contraseña debe tener al menos 8 caracteres.',
       passwordHint: 'Mínimo 8 caracteres, incluyendo mayúscula, minúscula, número y símbolo.',
