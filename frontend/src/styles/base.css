@@ -45,6 +45,18 @@ html [data-sileo-description] {
   text-align: right;
 }
 
+/* El contenedor de notificaciones se abre como popover (ver notifications.ts): sin los estilos de popover del navegador */
+:where([data-sileo-viewport][popover]) {
+  inset: auto;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  overflow: visible;
+  width: auto;
+  height: auto;
+}
+
 html [data-sileo-button][data-state] {
   --sileo-btn-color: var(--white);
   --sileo-btn-bg: color-mix(in oklch, var(--white) 20%, transparent);

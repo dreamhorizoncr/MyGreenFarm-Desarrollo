@@ -61,7 +61,7 @@ export default {
       pillar4Tag: "Farm life",
       pillar4Body:
         "Growing up in contact with the soil, plants and animals sparks curiosity and respect for the environment — values children carry with them well beyond daycare.",
-      modalCta: "See our services",
+      modalCta: "Services",
       modalClose: "Close",
     },
     testimonials: {
@@ -639,6 +639,12 @@ export default {
     close: 'Close',
     closeForm: 'Close form',
     error: "An error has occurred",
+    notifyTitles: {
+      success: "Done",
+      error: "Error",
+      warning: "Warning",
+      info: "Information",
+    },
     timeout: "The connection is taking too long. Please try again.",
     calendarAvailabilityError: "Could not load availability. Please try again.",
     loading: "Loading...",
@@ -696,6 +702,7 @@ export default {
     idNumberCostarricenseInvalid: "Costa Rican ID must contain 9 or 10 digits",
     idNumberForeignInvalid:
       "Foreign ID must be 6 to 20 characters (letters, numbers or dashes)",
+    identificationInvalid: "Enter a national ID or DIMEX of 9 to 12 digits, or a passport of 6 to 20 letters or numbers",
     countryRequired: "Select the country (flag) of the phone number",
     phoneInvalid: "Enter a valid phone number",
     unsafeText: "HTML tags and characters like “<” followed by letters are not allowed.",
