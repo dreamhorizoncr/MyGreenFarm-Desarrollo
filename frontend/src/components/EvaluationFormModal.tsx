@@ -4,7 +4,8 @@ import { useTranslation } from "react-i18next";
 import Select from "./ui/Select.tsx";
 import { evaluationService } from "../services/evaluation";
 import { expedientService } from "../services/expedient";
-import { notify } from "../utils/notifications";
+import { notify, notifyError } from "../utils/notifications";
+import { getErrorField, getErrorMessage } from "../utils/error.ts";
 import { useModalVisibility } from "../hooks/useModalExit.ts";
 import DatePickerField from "./ui/DatePickerField.tsx";
 import { validateRequired, validateSafeText } from "../utils/validators.ts";
@@ -133,7 +134,6 @@ function EvaluationFormModal({
 
         try {
             setSaving(true);
-            setError(null);
 
             if (evaluation) {
                 await evaluationService.update(evaluation.id, form);
@@ -145,11 +145,13 @@ function EvaluationFormModal({
 
             onSaved();
             onClose();
-        } catch {
-            setError(
-                evaluation
-                    ? t("admin.evaluations.formUpdateError")
-                    : t("admin.evaluations.formCreateError"),
+        } catch (err) {
+            const field = getErrorField(err);
+            if (field) setFieldErrors((current) => ({ ...current, [field]: getErrorMessage(err) }));
+
+            notifyError(
+                evaluation ? t("admin.evaluations.formUpdateError") : t("admin.evaluations.formCreateError"),
+                err,
             );
         } finally {
             setSaving(false);

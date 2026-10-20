@@ -62,6 +62,14 @@ function messageFromBody(data: unknown): string | undefined {
   return undefined
 }
 
+// Nombre del campo que rechazó el backend, si lo indica
+export function getErrorField(error: unknown): string | undefined {
+  if (!axios.isAxiosError(error)) return undefined
+  const data: unknown = error.response?.data
+  if (typeof data !== 'object' || data === null || !('field' in data)) return undefined
+  return typeof data.field === 'string' ? data.field : undefined
+}
+
 function isFeaturedGalleryConflict(error: AxiosError): boolean {
   const requestUrl = error.config?.url ?? ''
   const isGalleryUpdate = error.config?.method?.toLowerCase() === 'put' && requestUrl.includes('/gallery/')
