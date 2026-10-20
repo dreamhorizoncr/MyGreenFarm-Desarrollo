@@ -1,11 +1,17 @@
-import { useState } from "react";
+import { useState, type InputHTMLAttributes } from "react";
 import { useTranslation } from "react-i18next";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
 import Select from "./ui/Select.tsx";
+import CountrySelect from "./ui/CountrySelect.tsx";
+import { phoneLabels } from "../utils/phoneLabels.ts";
+import { normalizeIdentification, toInternationalPhone } from "../utils/contactFormat.ts";
 
 import { parentService } from "../services/parent";
-import { notify } from "../utils/notifications.ts";
+import { notify, notifyError } from "../utils/notifications.ts";
+import { getErrorField, getErrorMessage } from "../utils/error.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
-import { validateEmail, validateRequired, validateSafeText } from "../utils/validators.ts";
+import { validateEmail, validateIdentification, validatePhoneNumber, validateRequired, validateSafeText } from "../utils/validators.ts";
 
 import type { Parent, ParentLanguage, ParentRequest } from "../types/parent";
 import ModalCloseButton from "./ui/ModalCloseButton.tsx";
@@ -19,12 +25,21 @@ interface ParentFormModalProps {
 
 const languages: ParentLanguage[] = ["es", "en", "fr"];
 
+function ParentPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      {...props}
+      className="h-full w-full bg-transparent pl-2 font-body text-body-sm font-normal text-body-text-dark outline-none"
+    />
+  );
+}
+
 function ParentFormModal({
   onClose,
   onCreated,
   parent,
 }: Readonly<ParentFormModalProps>) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { closing, requestClose } = useModalExit(onClose);
 
   const isEditing = Boolean(parent);
@@ -35,7 +50,9 @@ function ParentFormModal({
     parent?.identification ?? "",
   );
   const [email, setEmail] = useState(parent?.email ?? "");
-  const [phoneNumber, setPhoneNumber] = useState(parent?.phoneNumber ?? "");
+  const [initialPhone] = useState(() => toInternationalPhone(parent?.phoneNumber));
+  const [phoneNumber, setPhoneNumber] = useState(initialPhone.value);
+  const [phoneCountry, setPhoneCountry] = useState<string | undefined>(initialPhone.country);
   const [address, setAddress] = useState(parent?.address ?? "");
   const [language, setLanguage] = useState<ParentLanguage>(
     parent?.language ?? "es",
@@ -44,7 +61,6 @@ function ParentFormModal({
   const [isActive, setIsActive] = useState<boolean>(parent?.isActive ?? true);
 
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string | null>>({});
 
   const clearFieldError = (field: string) => {
@@ -57,11 +73,15 @@ function ParentFormModal({
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const cleanIdentification = normalizeIdentification(identification);
+    setIdentification(cleanIdentification);
+
     const errors: Record<string, string | null> = {
       firstName: validateRequired(firstName, t("admin.parents.firstName"), t) ?? validateSafeText(firstName, t),
       lastName: validateRequired(lastName, t("admin.parents.lastName"), t) ?? validateSafeText(lastName, t),
-      identification: validateRequired(identification, t("admin.parents.identification"), t) ?? validateSafeText(identification, t),
-      phoneNumber: validateRequired(phoneNumber, t("admin.parents.phoneNumber"), t) ?? validateSafeText(phoneNumber, t),
+      identification: validateRequired(cleanIdentification, t("admin.parents.identification"), t) ?? validateIdentification(cleanIdentification, t),
+      phoneNumber: validateRequired(phoneNumber, t("admin.parents.phoneNumber"), t)
+        ?? (phoneCountry ? validatePhoneNumber(phoneNumber, t) : t("validation.countryRequired")),
       email: validateRequired(email, t("admin.parents.email"), t) ?? validateEmail(email, t),
       address: validateRequired(address, t("admin.parents.address"), t) ?? validateSafeText(address, t),
     };
@@ -71,10 +91,9 @@ function ParentFormModal({
     if (Object.values(errors).some((message) => message !== null)) return;
 
     setSaving(true);
-    setError(null);
 
     const data: ParentRequest = {
-      identification,
+      identification: cleanIdentification,
       email,
       phoneNumber,
       address,
@@ -103,18 +122,13 @@ function ParentFormModal({
     } catch (error) {
       console.error("Error al guardar el padre:", error);
 
-      const errorMessage = isEditing
-        ? t("admin.parents.updateError")
-        : t("admin.parents.createError");
+      const field = getErrorField(error);
+      if (field) setFieldErrors((current) => ({ ...current, [field]: getErrorMessage(error) }));
 
-      setError(errorMessage);
-
-      notify.error({
-        title: isEditing
-          ? t("admin.parents.updateErrorToastTitle")
-          : t("admin.parents.createErrorToastTitle"),
-        description: errorMessage,
-      });
+      notifyError(
+        isEditing ? t("admin.parents.updateErrorToastTitle") : t("admin.parents.createErrorToastTitle"),
+        error,
+      );
     } finally {
       setSaving(false);
     }
@@ -201,21 +215,25 @@ function ParentFormModal({
             )}
           </label>
 
-          <label className="font-body text-body-sm font-semibold text-heading">
-            {t("admin.parents.phoneNumber")}
-            <input
-              type="tel"
+          <div className="font-body text-body-sm font-semibold text-heading">
+            <label htmlFor="parent-phone">{t("admin.parents.phoneNumber")}</label>
+            <PhoneInput
+              id="parent-phone"
               autoComplete="off"
-              value={phoneNumber}
-              onChange={(e) => { setPhoneNumber(e.target.value); clearFieldError("phoneNumber"); }}
               placeholder={t("fields.parent.phone.placeholder")}
-              className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+              className="mt-xs h-11 rounded-xl border border-neutral-200 bg-white px-md focus-within:border-heading"
+              value={phoneNumber}
+              onChange={(next = "") => { setPhoneNumber(next); clearFieldError("phoneNumber"); }}
+              onCountryChange={(country) => { setPhoneCountry(country); clearFieldError("phoneNumber"); }}
+              inputComponent={ParentPhoneInput}
+              countrySelectComponent={CountrySelect}
+              labels={phoneLabels(i18n.language)}
             />
             <FieldHint>{t("fields.parent.phone.hint")}</FieldHint>
             {fieldErrors.phoneNumber && (
               <span className="mt-xs block font-body text-body-sm font-normal text-danger">{fieldErrors.phoneNumber}</span>
             )}
-          </label>
+          </div>
 
           <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
             {t("admin.parents.email")}
@@ -289,12 +307,6 @@ function ParentFormModal({
             </div>
           </div>
         </div>
-
-        {error && (
-          <p className="mt-md rounded-xl bg-red-50 p-md font-body text-body-sm text-red-700">
-            {error}
-          </p>
-        )}
 
         <div className="mt-lg flex justify-end gap-md *:flex-1">
           <button
