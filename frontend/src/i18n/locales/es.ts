@@ -60,7 +60,7 @@ export default {
       pillar4Tag: "Vida en la granja",
       pillar4Body:
         "Crecer en contacto con la tierra, las plantas y los animales despierta la curiosidad y el respeto por el entorno — valores que los niños llevan consigo mucho más allá de la guardería.",
-      modalCta: "Conocer nuestros servicios",
+      modalCta: "Servicios",
       modalClose: "Cerrar",
     },
     testimonials: {
@@ -642,6 +642,12 @@ export default {
     close: 'Cerrar',
     closeForm: 'Cerrar formulario',
     error: "Ha ocurrido un error",
+    notifyTitles: {
+      success: "Listo",
+      error: "Error",
+      warning: "Atención",
+      info: "Información",
+    },
     timeout: "La conexión está tardando demasiado. Inténtalo de nuevo.",
     calendarAvailabilityError:
       "No se pudo cargar la disponibilidad. Inténtalo de nuevo.",
@@ -701,6 +707,7 @@ export default {
       "La cédula costarricense debe contener 9 o 10 dígitos",
     idNumberForeignInvalid:
       "La identificación extranjera debe tener entre 6 y 20 caracteres (letras, números o guiones)",
+    identificationInvalid: "Ingresa una cédula o DIMEX de 9 a 12 dígitos, o un pasaporte de 6 a 20 letras o números",
     countryRequired: "Selecciona el país (bandera) del número telefónico",
     phoneInvalid: "Ingresa un número telefónico válido",
     unsafeText: "No se permiten etiquetas HTML ni caracteres como «<» seguidos de letras.",
@@ -744,7 +751,7 @@ export default {
       photoAfterRegister: 'Podrás agregar una fotografía después de registrar al docente.',
       invalidImage: 'Selecciona un archivo de imagen válido.',
       imageTooLarge: 'La fotografía no puede superar los 5 MB.',
-      password: 'Contraseña',
+      passwordLabel: 'Contraseña',
       passwordRequired: 'La contraseña es obligatoria.',
       passwordMin: 'La contraseña debe tener al menos 8 caracteres.',
       passwordHint: 'Mínimo 8 caracteres, incluyendo mayúscula, minúscula, número y símbolo.',

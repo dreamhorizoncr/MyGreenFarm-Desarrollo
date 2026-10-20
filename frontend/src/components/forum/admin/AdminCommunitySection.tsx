@@ -58,7 +58,7 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
         if (!cancelled) setLoading(false)
       }
     }
-    loadPosts()
+    void loadPosts()
     return () => {
       cancelled = true
     }

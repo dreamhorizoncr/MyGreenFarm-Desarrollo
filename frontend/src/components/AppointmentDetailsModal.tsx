@@ -78,24 +78,21 @@ function AppointmentDetailsModal({ appointment, onClose }: Readonly<AppointmentD
       aria-labelledby="appointment-details-title"
       className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(720px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
-      <div className="relative p-[28px_22px_30px]">
-        <ModalCloseButton
-          onClick={requestClose}
-          aria-label={t('admin.cancel')}
-          className="absolute right-3 top-[26px] z-20"
-        />
-
-        <div className="mb-lg px-[28px] pr-10">
-          <span className="inline-flex rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
-            {statusLabel}
-          </span>
-          <h2 id="appointment-details-title" className="m-0 mt-sm font-heading text-h4 font-bold leading-tight text-heading">
-            {appointment.childName}
-          </h2>
-          <p className="m-0 mt-2xs font-body text-body-sm text-neutral-500">{appointmentDate}</p>
+      <div className="relative p-lg md:p-xl">
+        <div className="mb-lg flex items-start justify-between gap-md">
+          <div className="min-w-0">
+            <span className="inline-flex rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
+              {statusLabel}
+            </span>
+            <h2 id="appointment-details-title" className="m-0 mt-sm font-heading text-h4 font-bold leading-tight text-heading">
+              {appointment.childName}
+            </h2>
+            <p className="m-0 mt-2xs font-body text-body-sm text-neutral-500">{appointmentDate}</p>
+          </div>
+          <ModalCloseButton onClick={requestClose} aria-label={t('admin.cancel')} />
         </div>
 
-        <dl className="grid grid-cols-1 gap-x-lg gap-y-md px-[28px] sm:grid-cols-2">
+        <dl className="grid grid-cols-1 gap-x-lg gap-y-md sm:grid-cols-2">
           {infoRows.map(({ label, value }) => (
             <div key={label}>
               <dt className="font-body text-caption font-semibold uppercase tracking-[0.4px] text-neutral-default">{label}</dt>

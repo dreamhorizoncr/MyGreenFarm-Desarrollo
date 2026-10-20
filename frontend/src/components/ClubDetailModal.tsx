@@ -57,7 +57,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                 <ModalCloseButton
                     onClick={requestClose}
                     aria-label={t('ownerClubs.closeClubDetails')}
-                    className="absolute right-3 top-[26px] z-20"
+                    className="absolute right-[22px] top-[40px] z-20 md:right-[55px] md:top-[55px]"
                 />
 
                 <header className="mx-auto max-w-[850px] text-center">

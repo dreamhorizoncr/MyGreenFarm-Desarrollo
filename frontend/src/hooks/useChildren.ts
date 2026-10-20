@@ -10,6 +10,42 @@ interface CacheData {
     totalPages: number
 }
 
+// Traduce los nombres de club de los niños; si el catálogo falla se muestran sin traducir
+async function translateClubNames(children: Child[], targetLang: string): Promise<Map<string, string>> {
+    const translatedClubName = new Map<string, string>()
+
+    try {
+        const catalog = await clubService.getAll({ size: 50 })
+        const idByName = new Map(catalog.content.map((club) => [club.name, String(club.id)]))
+        const seen = new Set<string>()
+        const clubItems = children.flatMap((child) =>
+            child.clubNames.flatMap((name) => {
+                const clubId = idByName.get(name)
+                if (!clubId || seen.has(clubId)) return []
+                seen.add(clubId)
+                return [{ entityId: clubId, fieldName: 'name', originalText: name }]
+            }),
+        )
+
+        const clubTranslated: Record<string, string> = clubItems.length > 0
+            ? await clubService.translateBatch('club', targetLang, clubItems).catch(() => ({} as Record<string, string>))
+            : {}
+
+        for (const child of children) {
+            for (const name of child.clubNames) {
+                const clubId = idByName.get(name)
+                if (clubId && !translatedClubName.has(name)) {
+                    translatedClubName.set(name, clubTranslated[`${clubId}:name`] ?? name)
+                }
+            }
+        }
+    } catch {
+        // Sin catálogo de clubes se conservan los nombres originales
+    }
+
+    return translatedClubName
+}
+
 export function useChildren() {
     const [children, setChildren] = useState<Child[]>([])
     const [sourceChildren, setSourceChildren] = useState<Child[]>([])
@@ -56,35 +92,7 @@ export function useChildren() {
                     ? await childService.translateBatch('child', targetLang, notesItems).catch(() => ({} as Record<string, string>))
                     : {}
 
-                const translatedClubName = new Map<string, string>()
-                
-                try {
-                    const catalog = await clubService.getAll({ size: 50 })
-                    const idByName = new Map(catalog.content.map((club) => [club.name, String(club.id)]))
-                    const seen = new Set<string>()
-                    const clubItems = rawContent.flatMap((child) =>
-                        child.clubNames.flatMap((name) => {
-                            const clubId = idByName.get(name)
-                            if (!clubId || seen.has(clubId)) return []
-                            seen.add(clubId)
-                            return [{ entityId: clubId, fieldName: 'name', originalText: name }]
-                        }),
-                    )
-
-                    const clubTranslated: Record<string, string> = clubItems.length > 0
-                        ? await clubService.translateBatch('club', targetLang, clubItems).catch(() => ({} as Record<string, string>))
-                        : {}
-
-                    for (const child of rawContent) {
-                        for (const name of child.clubNames) {
-                            const clubId = idByName.get(name)
-                            if (clubId && !translatedClubName.has(name)) {
-                                translatedClubName.set(name, clubTranslated[`${clubId}:name`] ?? name)
-                            }
-                        }
-                    }
-                } catch {
-                }
+                const translatedClubName = await translateClubNames(rawContent, targetLang)
 
                 processedContent = rawContent.map((child) => ({
                     ...child,
@@ -97,6 +105,7 @@ export function useChildren() {
 
                 setChildren(processedContent)
             } catch {
+                // Si la traducción falla se guardan los datos sin traducir
                 processedContent = rawContent
             }
 
@@ -105,7 +114,7 @@ export function useChildren() {
                 totalPages: data.totalPages,
             })
 
-        } catch (err) {
+        } catch {
             if (cacheRef.current.has(cacheKey)) {
                 const cached = cacheRef.current.get(cacheKey)!
                 setSourceChildren(cached.content)

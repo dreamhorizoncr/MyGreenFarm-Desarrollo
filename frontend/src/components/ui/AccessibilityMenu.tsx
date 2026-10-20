@@ -78,10 +78,10 @@ export default function AccessibilityMenu() {
                         className="absolute bottom-16 right-0 w-[min(20rem,calc(100vw-48px))] origin-bottom-right rounded-[20px] border border-neutral-200 bg-bg-card p-lg shadow-lg"
                     >
                         <div className="flex items-center justify-between gap-md">
-                            {/* Encabezado sin etiqueta h*: las reglas globales de A+/A++ agrandan h1-h6 y fuerzan 1.1em en p/span; un div conserva su tamaño en rem */}
-                            <div role="heading" aria-level={2} className="m-0 min-w-0 font-heading text-[1.375rem] font-bold leading-tight text-heading">
+                            {/* Tamaño en línea: las reglas globales de A+/A++ agrandan h1-h6 y un estilo en línea las supera */}
+                            <h2 style={{ fontSize: '1.375rem', transform: 'none' }} className="m-0 min-w-0 font-heading font-bold leading-tight text-heading">
                                 {t('accessibility.title')}
-                            </div>
+                            </h2>
                             <ModalCloseButton onClick={close} aria-label={t('common.close')} />
                         </div>
 

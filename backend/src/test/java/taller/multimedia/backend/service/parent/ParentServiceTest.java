@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -13,6 +14,7 @@ import taller.multimedia.backend.dto.parent.ParentRequest;
 import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.repository.parent.ParentRepository;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -62,5 +64,16 @@ class ParentServiceTest {
         assertThrows(InvalidFieldException.class, () -> parentService.createParent(request));
 
         verify(parentRepository, never()).save(any());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "3-0987-6542, 309876542",
+            "'1 2345 6789', 123456789",
+            "' 604440555 ', 604440555",
+            "AB-123456, AB-123456",
+    })
+    void normalizeIdentification_keepsOnlyDigitsForNumericIds(String input, String expected) {
+        assertEquals(expected, ParentService.normalizeIdentification(input));
     }
 }

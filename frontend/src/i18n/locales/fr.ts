@@ -61,7 +61,7 @@ export default {
       pillar4Tag: "Vie à la ferme",
       pillar4Body:
         "Grandir en contact avec la terre, les plantes et les animaux éveille la curiosité et le respect de l’environnement — des valeurs que les enfants gardent bien au-delà de la garderie.",
-      modalCta: "Découvrir nos services",
+      modalCta: "Services",
       modalClose: "Fermer",
     },
     testimonials: {
@@ -646,6 +646,12 @@ export default {
     close: 'Fermer',
     closeForm: 'Fermer le formulaire',
     error: "Une erreur est survenue",
+    notifyTitles: {
+      success: "Terminé",
+      error: "Erreur",
+      warning: "Attention",
+      info: "Information",
+    },
     timeout: "La connexion prend trop de temps. Veuillez réessayer.",
     calendarAvailabilityError:
       "Impossible de charger les disponibilités. Veuillez réessayer.",
@@ -705,6 +711,7 @@ export default {
       "La cédula costaricienne doit contenir 9 ou 10 chiffres",
     idNumberForeignInvalid:
       "L'identification étrangère doit contenir entre 6 et 20 caractères (lettres, chiffres ou tirets)",
+    identificationInvalid: "Saisissez une pièce d'identité ou DIMEX de 9 à 12 chiffres, ou un passeport de 6 à 20 lettres ou chiffres",
     countryRequired: "Sélectionnez le pays (drapeau) du numéro de téléphone",
     phoneInvalid: "Saisissez un numéro de téléphone valide",
     unsafeText: "Les balises HTML et les caractères comme « < » suivis de lettres ne sont pas autorisés.",
@@ -750,7 +757,7 @@ export default {
       photoAfterRegister: "Vous pourrez ajouter une photo après avoir inscrit l'enseignant.",
       invalidImage: 'Sélectionnez un fichier image valide.',
       imageTooLarge: 'La photo ne peut pas dépasser 5 Mo.',
-      password: 'Mot de passe',
+      passwordLabel: 'Mot de passe',
       passwordRequired: 'Le mot de passe est obligatoire.',
       passwordMin: 'Le mot de passe doit contenir au moins 8 caractères.',
       passwordHint: 'Au moins 8 caractères, dont une majuscule, une minuscule, un chiffre et un symbole.',
