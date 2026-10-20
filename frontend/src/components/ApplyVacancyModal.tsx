@@ -60,23 +60,20 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
       aria-label={heading}
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
-      <div className="relative p-[28px_22px_30px]">
-        <ModalCloseButton
-          onClick={requestClose}
-          aria-label={t('admin.cancel')}
-          className="absolute right-3 top-[26px] z-20"
-        />
-
-        <div className="relative mb-lg text-center">
-          <h2 className="m-0 font-heading text-h4 font-bold leading-tight text-heading">
-            {heading}
-          </h2>
-          {vacancyId !== null && (
-            <p className="m-0 mt-2xs font-body text-body-sm text-neutral-500">{title}</p>
-          )}
+      <div className="relative p-lg md:p-xl">
+        <div className="mb-lg flex items-start justify-between gap-md">
+          <div className="min-w-0 text-left">
+            <h2 className="m-0 font-heading text-h4 font-bold leading-tight text-heading">
+              {heading}
+            </h2>
+            {vacancyId !== null && (
+              <p className="m-0 mt-2xs font-body text-body-sm text-neutral-500">{title}</p>
+            )}
+          </div>
+          <ModalCloseButton onClick={requestClose} aria-label={t('admin.cancel')} />
         </div>
 
-        <div className="flex flex-col gap-md px-7 pb-8 pt-2.5 text-left">
+        <div className="flex flex-col gap-md text-left">
           <TextField
             hint={t('fields.apply.name.hint')}
             placeholder={t('fields.apply.name.placeholder')}

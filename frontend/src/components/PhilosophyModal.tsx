@@ -75,7 +75,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
         <ModalCloseButton
           onClick={requestClose}
           aria-label={t('home.philosophy.modalClose')}
-          className="absolute right-3 top-[26px] z-20"
+          className="absolute right-lg top-lg z-20 md:right-xl md:top-xl"
         />
 
         <img
@@ -86,7 +86,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
           className="h-64 w-full rounded-t-[20px] object-cover md:h-80"
         />
 
-        <div className="p-[22px_22px_30px] md:p-[26px_28px_32px]">
+        <div className="p-lg md:p-xl">
           <div className="relative mb-lg text-center">
             <h2 className="m-0 font-heading text-h4 font-bold leading-tight text-heading">
               {t('home.philosophy.title')}
@@ -94,7 +94,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
             <div className="mx-auto mt-xs h-1 w-12 rounded-full bg-[var(--pink-400)]" aria-hidden="true" />
           </div>
 
-          <div className="flex flex-col gap-lg px-2 pb-4 pt-2.5 text-left md:px-5">
+          <div className="flex flex-col gap-lg text-left">
             <p className="m-0 font-body text-body-sm text-body-text">{t('home.philosophy.modalParagraph.paragraph1')}</p>
             <p className="m-0 font-body text-body-sm text-body-text">{t('home.philosophy.modalParagraph.paragraph2')}</p>
             <p className="m-0 font-body text-body-sm text-body-text">{t('home.philosophy.modalParagraph.paragraph3')}</p>
@@ -106,11 +106,18 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
               ))}
             </div>
 
-            <div className="mt-sm flex justify-center">
+            <div className="mt-sm flex gap-md *:flex-1">
+              <button
+                type="button"
+                onClick={requestClose}
+                className="h-11 rounded-full border border-green-500 px-lg font-body text-button font-semibold text-heading transition-colors hover:bg-green-50"
+              >
+                {t('common.close')}
+              </button>
               <Button
                 variant="primary"
                 onClick={handleCtaClick}
-                className="h-11 w-full rounded-full bg-orange-500 font-body text-button font-semibold tracking-wide text-white hover:bg-orange-600 md:w-auto md:px-lg"
+                className="h-11 rounded-full bg-orange-500 px-lg font-body text-button font-semibold tracking-wide text-white hover:bg-orange-600"
               >
                 {t('home.philosophy.modalCta')}
               </Button>

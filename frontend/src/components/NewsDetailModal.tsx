@@ -100,7 +100,7 @@ function NewsDetailModal({
             <ModalCloseButton
                 onClick={requestClose}
                 aria-label={t("newspage.closeNews")}
-              className="absolute right-3 top-[26px] z-20"
+              className="absolute right-[22px] top-[40px] z-20 md:right-[55px] md:top-[55px]"
             />
 
         <div className="px-[22px] pb-[45px] pt-[40px] md:px-[55px] md:pb-[60px] md:pt-[55px]">
