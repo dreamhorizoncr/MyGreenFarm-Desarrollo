@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidFieldException.class)
     public ResponseEntity<MessageResponse> handleInvalidField(InvalidFieldException exception) {
-        return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage()));
+        return ResponseEntity.badRequest().body(new MessageResponse(exception.getMessage(), exception.getField()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -4,7 +4,8 @@ import Select from "./ui/Select.tsx";
 import { childService } from "../services/child";
 import { parentService } from "../services/parent";
 import { clubService } from "../services/clubs";
-import { notify } from "../utils/notifications.ts";
+import { notify, notifyError } from "../utils/notifications.ts";
+import { getErrorField, getErrorMessage } from "../utils/error.ts";
 import { useModalVisibility } from "../hooks/useModalExit.ts";
 import DatePickerField from "./ui/DatePickerField.tsx";
 
@@ -157,7 +158,6 @@ function ChildFormModal({
 
         try {
             setSaving(true);
-            setError(null);
 
             if (child) {
                 await childService.update(child.id, form);
@@ -173,19 +173,14 @@ function ChildFormModal({
 
             onSaved();
             onClose();
-        } catch {
-            const errorMessage = child
-                ? t("admin.children.updateError")
-                : t("admin.children.createError");
+        } catch (err) {
+            const field = getErrorField(err);
+            if (field) setFieldErrors((current) => ({ ...current, [field]: getErrorMessage(err) }));
 
-            setError(errorMessage);
-
-            notify.error({
-                title: child
-                    ? t("admin.children.updateErrorToastTitle")
-                    : t("admin.children.createErrorToastTitle"),
-                description: errorMessage,
-            });
+            notifyError(
+                child ? t("admin.children.updateErrorToastTitle") : t("admin.children.createErrorToastTitle"),
+                err,
+            );
         } finally {
             setSaving(false);
         }
@@ -368,13 +363,14 @@ function ChildFormModal({
 
                     <div className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.children.clubs")}
-                        <div className="mt-xs rounded-xl border border-neutral-200 p-md">
+                        <div className="mt-xs flex min-h-11 flex-col justify-center rounded-xl border border-neutral-200 px-md py-sm">
                             {renderClubs()}
                         </div>
                     </div>
 
                     <div className="md:col-span-2 flex items-center gap-md rounded-xl border border-neutral-200 bg-neutral-50 p-md">
                         <label className="relative inline-flex items-center cursor-pointer">
+                            <span className="sr-only">{t("admin.children.isActive", { defaultValue: "Estudiante activo" })}</span>
                             <input
                                 type="checkbox"
                                 checked={form.isActive ?? true}

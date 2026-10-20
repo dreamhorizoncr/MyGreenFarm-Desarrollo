@@ -5,6 +5,7 @@ import Select from "./ui/Select.tsx";
 
 import { expedientService } from "../services/expedient";
 import { notify, notifyError } from "../utils/notifications.ts";
+import { getErrorField, getErrorMessage } from "../utils/error.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
 import DatePickerField from "./ui/DatePickerField.tsx";
 import { validateRequired, validateSafeText } from "../utils/validators.ts";
@@ -75,7 +76,6 @@ function ExpedientFormModal({
 
   const [saving, setSaving] = useState(false);
 
-  const [error, setError] = useState<string | null>(null);
 
   const [studentError, setStudentError] = useState<string | null>(null);
   const [dateError, setDateError] = useState<string | null>(null);
@@ -136,7 +136,6 @@ function ExpedientFormModal({
     if (studentErrorMessage || dateErrorMessage || observationsErrorMessage) return;
 
     setSaving(true);
-    setError(null);
 
     const data: ExpedientRequest = {
       studentId,
@@ -164,17 +163,19 @@ function ExpedientFormModal({
     } catch (error) {
       console.error("Error al guardar el expediente:", error);
 
-      const errorMessage = isEditing
-        ? t("admin.expedients.updateError")
-        : t("admin.expedients.createError");
+      const message = getErrorMessage(error);
+      const fieldSetters: Record<string, (value: string) => void> = {
+        studentId: setStudentError,
+        admisionDate: setDateError,
+        generalObservations: setObservationsError,
+      };
+      const field = getErrorField(error);
+      if (field) fieldSetters[field]?.(message);
 
-      setError(errorMessage);
-      notify.error({
-        title: isEditing
-          ? t("admin.expedients.updateErrorToastTitle")
-          : t("admin.expedients.createErrorToastTitle"),
-        description: errorMessage,
-      });
+      notifyError(
+        isEditing ? t("admin.expedients.updateErrorToastTitle") : t("admin.expedients.createErrorToastTitle"),
+        error,
+      );
     } finally {
       setSaving(false);
     }
@@ -359,11 +360,6 @@ function ExpedientFormModal({
           </div>
         </div>
 
-        {error && (
-          <p className="mt-md rounded-xl bg-red-50 p-md font-body text-body-sm text-red-700">
-            {error}
-          </p>
-        )}
 
         <div className="mt-lg flex justify-end gap-md *:flex-1">
           <button

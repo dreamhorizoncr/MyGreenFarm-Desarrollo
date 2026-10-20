@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 type FontSize = "normal" | "large" | "xlarge";
 
@@ -17,7 +17,7 @@ interface AccessibilityContextType {
 const AccessibilityContext = createContext<AccessibilityContextType | undefined>(undefined);
 
 export function AccessibilityProvider({ children }: Readonly<{ children: ReactNode }>) {
-    const [fontSize, setFontSizeState] = useState<FontSize>(() => {
+    const [fontSize, setFontSize] = useState<FontSize>(() => {
         return (localStorage.getItem("a11y_font") as FontSize) || "normal";
     });
 
@@ -65,37 +65,33 @@ export function AccessibilityProvider({ children }: Readonly<{ children: ReactNo
         }
     }, [fontSize, highContrast, grayscale, highlightLinks]);
 
-    const setFontSize = (size: FontSize) => setFontSizeState(size);
-    const toggleHighContrast = () => setHighContrast((prev) => !prev);
-    const toggleGrayscale = () => setGrayscale((prev) => !prev);
-    const toggleHighlightLinks = () => setHighlightLinks((prev) => !prev);
-
-    const resetAccessibility = () => {
-        setFontSize("normal");
-        setHighContrast(false);
-        setGrayscale(false);
-        setHighlightLinks(false);
-        localStorage.removeItem("a11y_font");
-        localStorage.removeItem("a11y_contrast");
-        localStorage.removeItem("a11y_grayscale");
-        localStorage.removeItem("a11y_sepia");
-        localStorage.removeItem("a11y_links");
-    };
+    const value = useMemo<AccessibilityContextType>(
+        () => ({
+            fontSize,
+            setFontSize,
+            highContrast,
+            toggleHighContrast: () => setHighContrast((prev) => !prev),
+            grayscale,
+            toggleGrayscale: () => setGrayscale((prev) => !prev),
+            highlightLinks,
+            toggleHighlightLinks: () => setHighlightLinks((prev) => !prev),
+            resetAccessibility: () => {
+                setFontSize("normal");
+                setHighContrast(false);
+                setGrayscale(false);
+                setHighlightLinks(false);
+                localStorage.removeItem("a11y_font");
+                localStorage.removeItem("a11y_contrast");
+                localStorage.removeItem("a11y_grayscale");
+                localStorage.removeItem("a11y_sepia");
+                localStorage.removeItem("a11y_links");
+            },
+        }),
+        [fontSize, highContrast, grayscale, highlightLinks],
+    );
 
     return (
-        <AccessibilityContext.Provider
-            value={{
-                fontSize,
-                setFontSize,
-                highContrast,
-                toggleHighContrast,
-                grayscale,
-                toggleGrayscale,
-                highlightLinks,
-                toggleHighlightLinks,
-                resetAccessibility,
-            }}
-        >
+        <AccessibilityContext.Provider value={value}>
             {children}
         </AccessibilityContext.Provider>
     );

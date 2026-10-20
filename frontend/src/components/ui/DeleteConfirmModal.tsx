@@ -53,7 +53,7 @@ function DeleteConfirmModal({
       aria-label={title}
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
-      <div className="relative p-[28px_22px_30px]">
+      <div className="relative p-lg md:p-xl">
         <div className="flex items-center justify-between gap-md">
           <h2 className="m-0 font-heading text-h4 font-bold text-heading">
             {title}

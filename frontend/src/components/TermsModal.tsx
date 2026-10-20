@@ -57,20 +57,15 @@ function TermsModal({ onClose }: Readonly<TermsModalProps>) {
       aria-label={t('legalModal.title')}
       className={`fixed inset-0 m-auto h-[min(90vh,800px)] max-h-[90vh] w-[min(680px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
-      <div className="relative p-[28px_22px_30px]">
-        <ModalCloseButton
-          onClick={requestClose}
-          aria-label={t('legalModal.close')}
-          className="absolute right-3 top-[26px] z-20"
-        />
-
-        <div className="relative mb-lg px-10 text-center">
+      <div className="relative p-lg md:p-xl">
+        <div className="mb-lg flex items-center justify-between gap-md">
           <h2 className="m-0 font-heading text-h5 font-bold leading-tight text-heading sm:text-h4">
             {t('legalModal.title')}
           </h2>
+          <ModalCloseButton onClick={requestClose} aria-label={t('legalModal.close')} />
         </div>
 
-        <div className="flex flex-col gap-lg pb-4 pt-2.5 text-left md:px-5">
+        <div className="flex flex-col gap-lg text-left">
           <div className="isolate grid grid-cols-2 gap-sm" role="tablist">
             <button
               type="button"

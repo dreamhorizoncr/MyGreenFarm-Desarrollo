@@ -13,12 +13,15 @@ import taller.multimedia.backend.model.club.Club;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.Set;
+import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.util.Sanitizer;
 
 import java.util.List;
 
 @Service
 public class ParentService {
+
+    private static final String EMAIL_FIELD = "email";
 
     private final ParentRepository parentRepository;
     private final ChildRepository childRepository;
@@ -35,11 +38,11 @@ public class ParentService {
         String cleanEmail = sanitizeEmail(dto.getEmail());
 
         if (parentRepository.findByEmail(cleanEmail).isPresent()) {
-            throw new RuntimeException("Ya existe un padre registrado con este correo.");
+            throw new InvalidFieldException(EMAIL_FIELD, "Ya existe un padre registrado con este correo.");
         }
 
         Parent parent = new Parent();
-        parent.setIdentification(Sanitizer.requireClean("identification", dto.getIdentification()));
+        parent.setIdentification(normalizeIdentification(Sanitizer.requireClean("identification", dto.getIdentification())));
         parent.setEmail(cleanEmail);
         parent.setPhoneNumber(Sanitizer.requireClean("phoneNumber", dto.getPhoneNumber()));
         parent.setAddress(Sanitizer.requireClean("address", dto.getAddress()));
@@ -53,6 +56,12 @@ public class ParentService {
 
     public Page<Parent> getAllParents(Pageable pageable) {
         return parentRepository.findByIsActiveTrue(pageable);
+    }
+
+    // Cédula o DIMEX escritos con guiones o espacios se guardan solo con dígitos; un pasaporte queda igual
+    static String normalizeIdentification(String identification) {
+        String trimmed = identification == null ? "" : identification.trim();
+        return trimmed.matches("[\\d\\s-]+") ? trimmed.replaceAll("\\D", "") : trimmed;
     }
 
     private String resolverLangCode(String lang) {
@@ -69,19 +78,19 @@ public class ParentService {
 
     private String sanitizeEmail(String email) {
         if (email == null || email.isBlank()) {
-            throw new RuntimeException("El correo electrónico es obligatorio.");
+            throw new InvalidFieldException(EMAIL_FIELD, "El correo electrónico es obligatorio.");
         }
 
         String cleanEmail = email.toLowerCase().trim();
 
         if (!cleanEmail.contains("@") || !cleanEmail.contains(".")) {
-            throw new RuntimeException("El formato del correo electrónico no es válido.");
+            throw new InvalidFieldException(EMAIL_FIELD, "El formato del correo electrónico no es válido.");
         }
 
         String domain = cleanEmail.substring(cleanEmail.lastIndexOf("@") + 1);
 
         if (domain.isBlank() || !domain.contains(".")) {
-            throw new RuntimeException("El dominio del correo no es válido.");
+            throw new InvalidFieldException(EMAIL_FIELD, "El dominio del correo no es válido.");
         }
 
         List<String> allowedDomains = List.of(
@@ -91,7 +100,7 @@ public class ParentService {
                 "ucr.ac.cr");
 
         if (!allowedDomains.contains(domain)) {
-            throw new RuntimeException(
+            throw new InvalidFieldException(EMAIL_FIELD,
                     "Solo se permiten correos de proveedores comunes (Gmail, Hotmail, Outlook, etc.).");
         }
 
@@ -103,7 +112,7 @@ public class ParentService {
                 "example.com");
 
         if (blockedDomains.contains(domain)) {
-            throw new RuntimeException("No se permiten correos temporales o de prueba.");
+            throw new InvalidFieldException(EMAIL_FIELD, "No se permiten correos temporales o de prueba.");
         }
 
         return cleanEmail;
@@ -119,13 +128,11 @@ public class ParentService {
 
         parentRepository.findByEmail(dto.getEmail()).ifPresent(parent -> {
             if (!parent.getId().equals(id)) {
-                throw new RuntimeException("Ya existe otro padre registrado con este correo.");
+                throw new InvalidFieldException(EMAIL_FIELD, "Ya existe otro padre registrado con este correo.");
             }
         });
 
-        this.sanitizeEmail(existingParent.getEmail());
-
-        existingParent.setIdentification(Sanitizer.requireClean("identification", dto.getIdentification()));
+        existingParent.setIdentification(normalizeIdentification(Sanitizer.requireClean("identification", dto.getIdentification())));
         existingParent.setEmail(sanitizeEmail(dto.getEmail()));
         existingParent.setPhoneNumber(Sanitizer.requireClean("phoneNumber", dto.getPhoneNumber()));
         existingParent.setAddress(Sanitizer.requireClean("address", dto.getAddress()));

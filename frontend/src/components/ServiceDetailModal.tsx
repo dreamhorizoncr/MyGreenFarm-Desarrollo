@@ -57,7 +57,7 @@ function ServiceDetailModal({ plan, initialCurrency, exchangeRate, isLoading = f
                 <ModalCloseButton
                     onClick={requestClose}
                     aria-label={t('common.close')}
-                    className="absolute right-3 top-[26px] z-20"
+                    className="absolute right-[22px] top-[40px] z-20 md:right-[55px] md:top-[55px]"
                 />
 
                 <header className="mx-auto max-w-[850px] text-center">
@@ -88,25 +88,26 @@ function ServiceDetailModal({ plan, initialCurrency, exchangeRate, isLoading = f
                         {plan.description}
                     </p>
 
-                    {plan.includes && (
-                        <div className="mt-xl">
-                            <h3 className="m-0 flex items-center gap-xs font-heading text-h5 font-bold text-heading">
-                                <CircleCheckIcon size={18} className="text-pink-400" aria-hidden="true" />
-                                {t('services.includes')}
-                            </h3>
-                            <p className="m-0 mt-xs whitespace-pre-line font-body text-body-sm leading-[1.85] text-body-text md:text-body">
-                                {plan.includes}
-                            </p>
-                        </div>
-                    )}
+                    {/* Qué incluye arriba y el precio debajo */}
+                    <div className="mt-xl flex flex-col gap-xl">
+                        {plan.includes && (
+                            <div className="min-w-0">
+                                <h3 className="m-0 flex items-center gap-xs font-heading text-h5 font-bold text-heading">
+                                    <CircleCheckIcon size={18} className="text-pink-400" aria-hidden="true" />
+                                    {t('services.includes')}
+                                </h3>
+                                <p className="m-0 mt-xs whitespace-pre-line font-body text-body-sm leading-[1.85] text-body-text md:text-body">
+                                    {plan.includes}
+                                </p>
+                            </div>
+                        )}
 
-                    <div className="mt-xl">
-                        <h3 className="m-0 flex items-center gap-xs font-heading text-h5 font-bold text-heading">
-                            <BanknoteIcon size={18} className="text-pink-400" aria-hidden="true" />
-                            {t('services.priceLabel')}
-                        </h3>
-                        <div className="mt-xs flex flex-col gap-xl sm:flex-row sm:items-end sm:justify-between sm:gap-md">
-                            <div className="flex min-w-0 flex-col items-start gap-xs [&>div:first-child]:justify-start">
+                        <div className="min-w-0">
+                            <h3 className="m-0 flex items-center gap-xs font-heading text-h5 font-bold text-heading">
+                                <BanknoteIcon size={18} className="text-pink-400" aria-hidden="true" />
+                                {t('services.priceLabel')}
+                            </h3>
+                            <div className="mt-xs flex min-w-0 flex-col items-start gap-xs [&>div:first-child]:justify-start">
                                 <CurrencyToggle value={currency} onChange={setCurrency} hasExchangeRate={Boolean(exchangeRate)} />
                                 <span className="font-heading text-h2 font-bold leading-none text-green-500">
                                     <AnimatedNumber
@@ -116,16 +117,26 @@ function ServiceDetailModal({ plan, initialCurrency, exchangeRate, isLoading = f
                                 </span>
                                 <span className="font-body text-caption text-neutral-500">{t('services.approxPrice')}</span>
                             </div>
-                            <button
-                                type="button"
-                                onClick={() => onSubscribe(plan)}
-                                disabled={isLoading}
-                                className="group inline-flex h-12 w-full items-center justify-center gap-xs rounded-full bg-orange-500 px-xl font-body text-body font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:min-w-[220px]"
-                            >
-                                {isLoading ? t('common.loading') : t('services.subscribe')}
-                                {!isLoading && <ArrowRightIcon size={18} aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1" />}
-                            </button>
                         </div>
+                    </div>
+
+                    <div className="mt-xl flex gap-md *:flex-1">
+                        <button
+                            type="button"
+                            onClick={requestClose}
+                            className="h-12 rounded-full border border-green-500 px-lg font-body text-body font-semibold text-heading transition-colors hover:bg-green-50"
+                        >
+                            {t('common.close')}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => onSubscribe(plan)}
+                            disabled={isLoading}
+                            className="group inline-flex h-12 items-center justify-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            {isLoading ? t('common.loading') : t('services.subscribe')}
+                            {!isLoading && <ArrowRightIcon size={18} aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1" />}
+                        </button>
                     </div>
                 </section>
             </div>

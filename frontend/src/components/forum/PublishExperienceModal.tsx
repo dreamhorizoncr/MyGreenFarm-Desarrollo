@@ -102,16 +102,13 @@ function PublishExperienceModal({
       <article
         className="relative mx-auto max-h-full modal-scroll w-full max-w-[640px] rounded-[20px] bg-white"
       >
-        <ModalCloseButton
-          onClick={onClose}
-          aria-label={t('forum.community.cancel')}
-          className="absolute right-3 top-[26px] z-20"
-        />
-
-        <div className="px-[22px] pb-[30px] pt-[34px] md:px-[40px] md:pb-[36px] md:pt-[40px]">
-          <h2 className="m-0 pr-[50px] font-heading text-h4 font-bold text-heading">
-            {t('forum.community.modalTitle')}
-          </h2>
+        <div className="p-lg md:p-xl">
+          <div className="flex items-center justify-between gap-md">
+            <h2 className="m-0 font-heading text-h4 font-bold text-heading">
+              {t('forum.community.modalTitle')}
+            </h2>
+            <ModalCloseButton onClick={onClose} aria-label={t('forum.community.cancel')} />
+          </div>
 
           <input
             id="community-name"
