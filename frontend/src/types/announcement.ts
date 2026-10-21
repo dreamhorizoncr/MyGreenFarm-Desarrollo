@@ -29,5 +29,6 @@ export interface AnnouncementImageResponse {
     id: string
     announcementId: string
     fileUrl: string
+    altText?: string | null
     isCover: boolean
 }

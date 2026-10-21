@@ -10,6 +10,7 @@ export interface ClubImageResponse {
     id: number;
     clubId?: number;
     fileUrl: string;
+    altText?: string | null;
     isCover: boolean;
     sortOrder?: number;
 }

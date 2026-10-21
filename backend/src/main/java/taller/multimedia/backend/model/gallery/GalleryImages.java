@@ -43,6 +43,10 @@ public class GalleryImages {
     @Column (nullable = false)
     private String fileUrl;
 
+    // Texto alternativo para lectores de pantalla
+    @Column(name = "alt_text", length = 140)
+    private String altText;
+
     @CreationTimestamp
     @Column (nullable = false, updatable = false)
     private LocalDateTime createdAt;

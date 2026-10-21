@@ -81,7 +81,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                     <div className="mt-[40px] overflow-hidden rounded-[22px]">
                         <img
                             src={coverUrl}
-                            alt={club.name}
+                            alt={coverImage?.altText || club.name}
                             className="h-[260px] w-full object-cover sm:h-[360px] md:h-[480px]"
                         />
                     </div>
@@ -103,7 +103,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                                 <div key={image.id} className="relative overflow-hidden rounded-2xl">
                                     <img
                                         src={image.fileUrl}
-                                        alt={club.name}
+                                        alt={image.altText || club.name}
                                         className="h-[220px] w-full object-cover transition-transform duration-300 hover:scale-105"
                                     />
                                     <button
@@ -125,7 +125,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
 
             {lightboxIndex !== null && galleryImages[lightboxIndex] && (
                 <PhotoLightbox
-                    images={galleryImages.map((image) => ({ id: String(image.id), fileUrl: image.fileUrl }))}
+                    images={galleryImages.map((image) => ({ id: String(image.id), fileUrl: image.fileUrl, altText: image.altText }))}
                     initialIndex={lightboxIndex}
                     alt={club.name}
                     onClose={() => setLightboxIndex(null)}

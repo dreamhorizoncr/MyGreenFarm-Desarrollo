@@ -33,14 +33,15 @@ public class ClubService {
     }
 
     @Transactional
-    public ClubResponse createWithImages(ClubRequest dto, MultipartFile coverImage, List<MultipartFile> contentImages) {
+    public ClubResponse createWithImages(ClubRequest dto, MultipartFile coverImage, List<MultipartFile> contentImages,
+            String coverAlt, List<String> contentAlts) {
         Club saved = createClub(dto);
 
         if (coverImage != null && !coverImage.isEmpty()) {
-            clubImageService.uploadImages(saved.getId(), List.of(coverImage), true);
+            clubImageService.uploadImages(saved.getId(), List.of(coverImage), true, coverAlt == null ? List.of() : List.of(coverAlt));
         }
         if (contentImages != null && !contentImages.isEmpty()) {
-            clubImageService.uploadImages(saved.getId(), contentImages, false);
+            clubImageService.uploadImages(saved.getId(), contentImages, false, contentAlts);
         }
 
         return mapToResponse(saved, "es");

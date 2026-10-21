@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { XIcon } from "@animateicons/react/lucide";
+import { useTranslation } from "react-i18next";
+import ModalCloseButton from "../components/ui/ModalCloseButton.tsx";
 import illustration from "../assets/imgs/portadaTemporal.jpeg";
 import Navbar from "../components/Navbar.tsx";
 
@@ -24,6 +25,7 @@ function AuthLayout({
   children,
 }: Readonly<AuthLayoutProps>) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-bg-page">
   <Navbar />
@@ -47,14 +49,12 @@ function AuthLayout({
       </div>
 
       <div className="relative flex w-full flex-col bg-bg-card md:min-h-0 md:w-1/2">
-        <button
-          type="button"
+        {/* Mismo botón de cerrar que los modales */}
+        <ModalCloseButton
           onClick={() => navigate(closeTo)}
-          className="absolute right-[15px] top-[30px] z-20 inline-flex size-8 items-center justify-center rounded-full text-heading focus-visible:outline-2 focus-visible:outline-green-500 focus-visible:outline-offset-2 md:right-[30px] md:top-[25px]"
-          aria-label="Close"
-        >
-          <XIcon size={20} aria-hidden="true" />
-        </button>
+          aria-label={t("common.close")}
+          className="absolute right-[15px] top-[26px] z-20 md:right-[30px] md:top-[22px]"
+        />
 
         <div
           className={`flex flex-col md:min-h-0 md:flex-1 md:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${rightPanelClassName}`}
