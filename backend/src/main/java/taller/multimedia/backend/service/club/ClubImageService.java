@@ -1,6 +1,7 @@
 package taller.multimedia.backend.service.club;
 
 import lombok.RequiredArgsConstructor;
+import taller.multimedia.backend.util.ImageAltText;
 import taller.multimedia.backend.dto.club.ClubImageResponse;
 import taller.multimedia.backend.model.club.Club;
 import taller.multimedia.backend.model.club.ClubImage;
@@ -32,7 +33,7 @@ public class ClubImageService {
     private String clubsBucket;
 
     @Transactional
-    public List<ClubImageResponse> uploadImages(Long clubId, List<MultipartFile> files, boolean isCover) {
+    public List<ClubImageResponse> uploadImages(Long clubId, List<MultipartFile> files, boolean isCover, List<String> altTexts) {
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new EntityNotFoundException("Club no encontrado con ID: " + clubId));
 
@@ -68,7 +69,8 @@ public class ClubImageService {
         List<ClubImageResponse> responses = new ArrayList<>();
         String folder = isCover ? "cover_images" : "images_content";
 
-        for (MultipartFile file : files) {
+        for (int index = 0; index < files.size(); index++) {
+            MultipartFile file = files.get(index);
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
                 throw new IllegalArgumentException(
@@ -81,6 +83,7 @@ public class ClubImageService {
             image.setClub(club);
             image.setFileUrl(fileUrl);
             image.setIsCover(isCover);
+            image.setAltText(ImageAltText.at(altTexts, index));
 
             ClubImage saved = imageRepository.save(image);
             responses.add(mapToResponse(saved));
@@ -162,6 +165,14 @@ public class ClubImageService {
         ClubImage updated = imageRepository.save(image);
 
         return mapToResponse(updated);
+    }
+
+    @Transactional
+    public void updateAltText(Long imageId, String altText) {
+        ClubImage image = imageRepository.findById(imageId)
+                .orElseThrow(() -> new RuntimeException("Imagen no encontrada con ID: " + imageId));
+        image.setAltText(ImageAltText.clean(altText));
+        imageRepository.save(image);
     }
 
     private boolean isValidImageFormat(String contentType) {
@@ -249,6 +260,7 @@ public class ClubImageService {
                 .id(image.getId())
                 .clubId(image.getClub().getId())
                 .fileUrl(image.getFileUrl())
+                .altText(image.getAltText())
                 .isCover(image.getIsCover())
                 .sortOrder(image.getSortOrder())
                 .build();

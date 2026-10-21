@@ -10,7 +10,7 @@ import CarouselDots from './ui/CarouselDots.tsx'
 import type { GalleryImage } from '../types/gallery.ts'
 
 // Galería y noticias comparten el visor: basta con id y url (el título es opcional)
-type LightboxImage = Pick<GalleryImage, 'id' | 'fileUrl'> & { title?: string }
+type LightboxImage = Pick<GalleryImage, 'id' | 'fileUrl'> & { title?: string; altText?: string | null }
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock.ts'
 import CarouselArrowIcon from './ui/CarouselArrowIcon.tsx'
@@ -57,7 +57,7 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
     <dialog
       ref={dialogRef}
       onClose={onClose}
-      aria-label={image?.title || alt}
+      aria-label={image?.altText || image?.title || alt}
       className="inset-0 m-0 flex h-full w-full max-h-none max-w-none items-center justify-center bg-transparent p-[16px] backdrop:bg-black/90 md:p-[30px]"
     >
       <button
@@ -108,7 +108,7 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
             {images.map((item) => (
               <SwiperSlide key={item.id}>
                 <div className="swiper-zoom-container">
-                  <img src={item.fileUrl} alt={item.title || alt || ''} onLoad={() => measurePhoto(swiper)} className="rounded-2xl" />
+                  <img src={item.fileUrl} alt={item.altText || item.title || alt || ''} onLoad={() => measurePhoto(swiper)} className="rounded-2xl" />
                 </div>
               </SwiperSlide>
             ))}

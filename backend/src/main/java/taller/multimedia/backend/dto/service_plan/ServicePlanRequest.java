@@ -44,6 +44,17 @@ public class ServicePlanRequest {
     @Size(max = 300, message = "El payment URL deben tener como máximo 300 caracteres")
     private String paymentUrl;
 
+    @Size(max = 140, message = "El texto alternativo debe tener como máximo 140 caracteres")
+    private String imageAlt;
+
+    public String getImageAlt() {
+        return imageAlt;
+    }
+
+    public void setImageAlt(String imageAlt) {
+        this.imageAlt = imageAlt;
+    }
+
     public String getName() {
         return name;
     }

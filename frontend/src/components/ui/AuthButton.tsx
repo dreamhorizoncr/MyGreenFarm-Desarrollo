@@ -14,7 +14,7 @@ function AuthButton({ loading, disabled = false, children }: Readonly<AuthButton
       loading={loading}
       disabled={disabled}
       variant="success"
-      className="h-[55px] w-full rounded-full bg-green-500 font-body text-button font-normal text-white"
+      className="h-11 w-full rounded-full bg-orange-500 font-body text-button font-semibold text-white hover:bg-orange-600"
     >
       {children}
     </Button>

@@ -8,6 +8,8 @@ import SkeletonList from "../components/ui/SkeletonList.tsx";
 import Pagination from "../components/ui/Pagination.tsx";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal.tsx";
 import { useAnnouncements } from "../hooks/useAnnouncements.ts";
+import { useImageAlts } from "../hooks/useImageAlts.ts";
+import { announcementService } from "../services/announcement.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
 import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 import { notify, notifyError } from "../utils/notifications.ts";
@@ -82,6 +84,7 @@ function AnnouncementsPage() {
   const [cover, setCover] = useState<File | null>(null);
   const [gallery, setGallery] = useState<File[]>([]);
   const [images, setImages] = useState<AnnouncementImageResponse[]>([]);
+  const imageAlts = useImageAlts();
   const [announcementToDelete, setAnnouncementToDelete] =
     useState<Announcement | null>(null);
   const [imageToDelete, setImageToDelete] =
@@ -98,7 +101,7 @@ function AnnouncementsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i18n.language, currentPage, activeCategory, pageSize]);
 
-  const { loading: coversLoading, fetchImages: fetchCovers, getCoverImage } = useAnnouncementImages();
+  const { loading: coversLoading, fetchImages: fetchCovers, getCoverImage, getCoverAlt } = useAnnouncementImages();
 
   useEffect(() => {
     void fetchCovers(announcements.map((announcement) => announcement.id));
@@ -114,6 +117,7 @@ function AnnouncementsPage() {
     setCover(null);
     setGallery([]);
     setImages([]);
+    imageAlts.reset();
     setFormOpen(true);
   };
 
@@ -128,6 +132,7 @@ function AnnouncementsPage() {
     });
     setCover(null);
     setGallery([]);
+    imageAlts.reset();
     setImages(await getImages(announcement.id));
     setTitleError(null);
     setContentError(null);
@@ -165,7 +170,10 @@ function AnnouncementsPage() {
     setLocationError(locationErrorMessage);
     setCategoryError(categoryErrorMessage);
 
-    if (titleErrorMessage || contentErrorMessage || locationErrorMessage || categoryErrorMessage) return;
+    const newImages = [...(cover ? [cover] : []), ...gallery];
+    const altsValid = imageAlts.validate(newImages, images, t);
+
+    if (titleErrorMessage || contentErrorMessage || locationErrorMessage || categoryErrorMessage || !altsValid) return;
 
     const data: AnnouncementRequest = {
       ...form,
@@ -178,8 +186,11 @@ function AnnouncementsPage() {
         ? await updateAnnouncement(editing.id, data)
         : await createAnnouncement(data);
 
-      if (cover) await uploadImages(saved.id, [cover], true);
-      if (gallery.length) await uploadImages(saved.id, gallery, false);
+      if (cover) await uploadImages(saved.id, [cover], true, imageAlts.altsFor([cover]));
+      if (gallery.length) await uploadImages(saved.id, gallery, false, imageAlts.altsFor(gallery));
+      for (const { id, altText } of imageAlts.changed(images)) {
+        await announcementService.updateImageAlt(String(id), altText);
+      }
       void reloadList();
 
       notify.success({
@@ -475,7 +486,17 @@ function AnnouncementsPage() {
 
                 {cover && (
                   <ImageThumbList className="mt-sm">
-                    <ImageThumb file={cover} label={cover.name} onDelete={() => setCover(null)} deleteLabel={t("adminNews.deleteImage")} />
+                    <ImageThumb
+                        file={cover}
+                        label={cover.name}
+                        onDelete={() => setCover(null)}
+                        deleteLabel={t("adminNews.deleteImage")}
+                        altText={imageAlts.newValue(cover)}
+                        onAltChange={(value) => imageAlts.setNewValue(cover, value)}
+                        altError={imageAlts.newError(cover)}
+                        altLabel={t("common.imageAltLabel")}
+                        altPlaceholder={t("common.imageAltPlaceholder")}
+                    />
                   </ImageThumbList>
                 )}
               </div>
@@ -500,6 +521,11 @@ function AnnouncementsPage() {
                         label={file.name}
                         onDelete={() => setGallery((current) => current.filter((_, i) => i !== index))}
                         deleteLabel={t("adminNews.deleteImage")}
+                        altText={imageAlts.newValue(file)}
+                        onAltChange={(value) => imageAlts.setNewValue(file, value)}
+                        altError={imageAlts.newError(file)}
+                        altLabel={t("common.imageAltLabel")}
+                        altPlaceholder={t("common.imageAltPlaceholder")}
                       />
                     ))}
                   </ImageThumbList>
@@ -516,6 +542,11 @@ function AnnouncementsPage() {
                     label={image.isCover ? t("adminNews.newscover") : t("adminNews.newsgallery")}
                     onDelete={() => setImageToDelete(image)}
                     deleteLabel={t("adminNews.deleteImage")}
+                    altText={imageAlts.existingValue(image)}
+                        onAltChange={(value) => imageAlts.setExistingValue(image.id, value)}
+                        altError={imageAlts.existingError(image.id)}
+                        altLabel={t("common.imageAltLabel")}
+                        altPlaceholder={t("common.imageAltPlaceholder")}
                   />
                 ))}
               </ImageThumbList>
@@ -587,6 +618,7 @@ function AnnouncementsPage() {
             typeLabel={labelFor({ id: announcement.categoryId, code: announcement.categoryCode ?? announcement.type, title: announcement.categoryTitle })}
             formattedDate={formatNewsDate(announcement.eventDate, i18n.language)}
             coverImage={getCoverImage(announcement.id)}
+            coverAlt={getCoverAlt(announcement.id)}
             onReadMore={() => setPreviewing(announcement)}
             previewLinkLabel={t("adminNews.preview")}
             actions={

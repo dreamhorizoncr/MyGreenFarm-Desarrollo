@@ -93,14 +93,14 @@ function ConfirmCurriculumDecisionModal({ application, action, onConfirm, vacanc
           )}
 
           <div className="flex gap-md mt-sm">
-            <Button variant="secondary" onClick={requestClose} className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50">
+            <Button variant="secondary" onClick={requestClose} className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold text-heading hover:bg-green-50">
               {t('admin.cancel')}
             </Button>
             <Button
               variant="success"
               onClick={handleConfirm}
               loading={submitting}
-              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold uppercase tracking-wide text-white hover:bg-orange-600"
+              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
             >
               {submitting ? t('common.loading') : confirmLabel}
             </Button>

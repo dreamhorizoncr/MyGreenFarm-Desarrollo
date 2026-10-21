@@ -31,8 +31,8 @@ interface CreateServicePlanModalProps {
   onvoPlans: OnvoRawPlan[]
   existingPlans: ServicePlan[]
   planToEdit?: ServicePlan | null
-  onSave: (data: { schedule: string; includes: string; gatewayPriceId: string }, file: File) => Promise<unknown>
-  onUpdate?: (id: string, data: { schedule: string; includes: string; gatewayPriceId: string }, file?: File) => Promise<unknown>
+  onSave: (data: { schedule: string; includes: string; gatewayPriceId: string; imageAlt?: string }, file: File) => Promise<unknown>
+  onUpdate?: (id: string, data: { schedule: string; includes: string; gatewayPriceId: string; imageAlt?: string }, file?: File) => Promise<unknown>
   onClose: () => void
   onImageDeleted?: () => void | Promise<void>
 }
@@ -57,6 +57,8 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
   const [includesError, setIncludesError] = useState<string | null>(null)
   const [onvoError, setOnvoError] = useState<string | null>(null)
   const [imageError, setImageError] = useState<string | null>(null)
+  const [imageAlt, setImageAlt] = useState(planToEdit?.imageAlt ?? '')
+  const [imageAltError, setImageAltError] = useState<string | null>(null)
 
   useEffect(() => {
     dialogRef.current?.showModal()
@@ -114,11 +116,19 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
       setImageError(null)
     }
 
+    // Una imagen nueva necesita texto alternativo; la actual solo se revisa si se escribió algo
+    const altValue = imageAlt.trim()
+    let altMessage: string | null = null
+    if (altValue) altMessage = validateSafeText(altValue, t)
+    else if (selectedImage) altMessage = t('common.imageAltRequired')
+    setImageAltError(altMessage)
+    if (altMessage) hasError = true
+
     if (hasError) return
 
     setSaving(true)
     try {
-      const data = { schedule: serializeSchedule(schedule), includes: includes.trim(), gatewayPriceId }
+      const data = { schedule: serializeSchedule(schedule), includes: includes.trim(), gatewayPriceId, imageAlt: imageAlt.trim() }
       if (isEditing && onUpdate) {
         await onUpdate(planToEdit.id, data, selectedImage?.file)
       } else {
@@ -235,6 +245,14 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
                   setSelectedImage(null)
                 }}
                 deleteLabel={t('admin.cancel')}
+                altText={imageAlt}
+                onAltChange={(value) => {
+                  setImageAlt(value)
+                  if (imageAltError) setImageAltError(null)
+                }}
+                altError={imageAltError}
+                altLabel={t('common.imageAltLabel')}
+                altPlaceholder={t('common.imageAltPlaceholder')}
               />
             </ImageThumbList>
           )}
@@ -245,6 +263,14 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
                 label={t('admin.servicios.image')}
                 onDelete={() => setConfirmImageDelete(true)}
                 deleteLabel={t('common.deleteImageTitle')}
+                altText={imageAlt}
+                onAltChange={(value) => {
+                  setImageAlt(value)
+                  if (imageAltError) setImageAltError(null)
+                }}
+                altError={imageAltError}
+                altLabel={t('common.imageAltLabel')}
+                altPlaceholder={t('common.imageAltPlaceholder')}
               />
             </ImageThumbList>
           )}

@@ -208,7 +208,7 @@ function VacanciesPage() {
             <button
               type="button"
               onClick={requestCloseSent}
-              className="mt-lg inline-flex h-11 w-full items-center justify-center rounded-full bg-green-500 font-body text-body-sm font-semibold uppercase tracking-wide text-white"
+              className="mt-lg inline-flex h-11 w-full items-center justify-center rounded-full bg-green-500 font-body text-body-sm font-semibold text-white"
             >
               {t('vacancies.gotIt')}
             </button>

@@ -72,7 +72,7 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
         }}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
-        className="inline-flex items-center gap-sm rounded-full border border-green-500 bg-green-500 px-lg py-sm font-body text-body-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-green-500"
+        className="inline-flex h-11 items-center gap-xs rounded-full border border-green-500 bg-white px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
       >
         <BanknoteIcon size={20} aria-hidden="true" />
         <span>{t('moneda.buyRate')}</span>

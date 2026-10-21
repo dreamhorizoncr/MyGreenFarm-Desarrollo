@@ -8,6 +8,8 @@ import taller.multimedia.backend.dto.club.ClubRequest;
 import taller.multimedia.backend.dto.club.ClubResponse;
 import taller.multimedia.backend.service.club.ClubService;
 import taller.multimedia.backend.service.spelling.SpellingCorrectionAsyncService;
+import taller.multimedia.backend.util.ImageAltText;
+import tools.jackson.databind.ObjectMapper;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +34,7 @@ public class ClubController {
 
     private final ClubService clubService;
     private final SpellingCorrectionAsyncService spellingCorrectionAsyncService;
+    private final ObjectMapper objectMapper;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('OWNER')")
@@ -46,8 +49,11 @@ public class ClubController {
     public ResponseEntity<ClubResponse> createWithImages(
             @Valid @ModelAttribute ClubRequest request,
             @RequestParam(name = "coverImage", required = false) MultipartFile coverImage,
-            @RequestParam(name = "contentImages", required = false) List<MultipartFile> contentImages) {
-        ClubResponse createdClub = clubService.createWithImages(request, coverImage, contentImages);
+            @RequestParam(name = "contentImages", required = false) List<MultipartFile> contentImages,
+            @RequestParam(name = "coverAlt", required = false) String coverAlt,
+            @RequestParam(name = "contentAlts", required = false) String contentAltsJson) {
+        ClubResponse createdClub = clubService.createWithImages(request, coverImage, contentImages,
+                coverAlt, ImageAltText.parseList(objectMapper, contentAltsJson));
         spellingCorrectionAsyncService.correctClub(createdClub.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdClub);
     }

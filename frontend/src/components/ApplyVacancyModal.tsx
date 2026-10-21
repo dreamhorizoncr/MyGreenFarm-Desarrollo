@@ -135,7 +135,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="inline-flex w-fit items-center gap-xs whitespace-nowrap rounded-full border border-neutral-300 bg-white px-md py-sm font-body text-body-sm font-semibold text-heading transition-colors hover:border-green-500 hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+                className="inline-flex w-fit items-center gap-xs whitespace-nowrap h-11 rounded-full border border-green-500 bg-white px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
               >
                 <FileTextIcon size={17} aria-hidden="true" />
                 <span>{t('vacancies.chooseFile')}</span>
@@ -171,7 +171,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
               <button
                 type="button"
                 onClick={() => certificatesInputRef.current?.click()}
-                className="inline-flex w-fit items-center gap-xs whitespace-nowrap rounded-full border border-neutral-300 bg-white px-md py-sm font-body text-body-sm font-semibold text-heading transition-colors hover:border-green-500 hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+                className="inline-flex w-fit items-center gap-xs whitespace-nowrap h-11 rounded-full border border-green-500 bg-white px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
               >
                 <FileTextIcon size={17} aria-hidden="true" />
                 <span>{t('vacancies.chooseCertificates')}</span>
@@ -216,7 +216,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
             <Button
               variant="secondary"
               onClick={requestClose}
-              className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50"
+              className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold text-heading hover:bg-green-50"
             >
               {t('admin.cancel')}
             </Button>
@@ -225,7 +225,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
               onClick={handleSubmitClick}
               loading={form.submitting}
               disabled={!form.name.trim() || !form.email.trim() || (form.showPhone && !form.phone.trim()) || (form.showFile && !form.file)}
-              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold uppercase tracking-wide text-white hover:bg-orange-600"
+              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
             >
               {form.submitting ? t('common.loading') : t('vacancies.submitApplication')}
             </Button>

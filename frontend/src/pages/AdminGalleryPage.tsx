@@ -22,6 +22,8 @@ import CardActionButton from '../components/ui/CardActionButton.tsx'
 import CheckboxField from '../components/ui/CheckboxField.tsx'
 import ImagePickerButton from '../components/ui/ImagePickerButton.tsx'
 import ImageThumb, { ImageThumbList } from '../components/ui/ImageThumb.tsx'
+import { useImageAlts } from '../hooks/useImageAlts.ts'
+import { galleryService } from '../services/gallery.ts'
 import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
 import CreatableDropdown from '../components/ui/CreatableDropdown.tsx'
 import FieldHint from '../components/ui/FieldHint.tsx'
@@ -284,6 +286,8 @@ function AdminGalleryPage() {
 	const [files, setFiles] = useState<SelectedImage[]>([])
 	const [fileError, setFileError] = useState<string | null>(null)
 	const [images, setImages] = useState<GalleryImage[]>([])
+	const imageAlts = useImageAlts()
+	const missingAltCount = images.filter((image) => !imageAlts.existingValue(image).trim()).length
 	const [submitting, setSubmitting] = useState(false)
 	const filesRef = useRef<SelectedImage[]>([])
 
@@ -310,6 +314,7 @@ function AdminGalleryPage() {
 		setDescriptionError(null)
 		resetSelectedFiles()
 		setImages([])
+		imageAlts.reset()
 		setFormOpen(true)
 	}
 
@@ -330,6 +335,7 @@ function AdminGalleryPage() {
 		setDescriptionError(null)
 		resetSelectedFiles()
 		setImages([...gallery.galleryImages])
+		imageAlts.reset()
 		setFormOpen(true)
 	}
 
@@ -399,7 +405,9 @@ function AdminGalleryPage() {
 		setTitleError(titleErrorMessage)
 		setDescriptionError(descriptionErrorMessage)
 
-		if (titleErrorMessage || descriptionErrorMessage) return
+		const altsValid = imageAlts.validate(files.map(({ file }) => file), images, t)
+
+		if (titleErrorMessage || descriptionErrorMessage || !altsValid) return
 
 		const data: GalleryRequest = {
 			categoryId: form.categoryId,
@@ -414,8 +422,13 @@ function AdminGalleryPage() {
 				? await updateGallery(editing.id, data)
 				: await createGallery(data)
 
-			if (files.length)
-				await uploadImages(saved.id, files.map(({ file }) => file), data.title)
+			if (files.length) {
+				const newFiles = files.map(({ file }) => file)
+				await uploadImages(saved.id, newFiles, data.title, imageAlts.altsFor(newFiles))
+			}
+			for (const { id, altText } of imageAlts.changed(images)) {
+				await galleryService.updateImageAlt(String(id), altText)
+			}
 
 			notify.success({
 				title: editing ? t('admin.gallery.albumUpdatedTitle') : t('admin.gallery.albumCreatedTitle'),
@@ -649,6 +662,11 @@ function AdminGalleryPage() {
 											label={selected.file.name}
 											onDelete={() => removeSelectedFile(index)}
 											deleteLabel={`${t('admin.delete')}: ${selected.file.name}`}
+											altText={imageAlts.newValue(selected.file)}
+											onAltChange={(value) => imageAlts.setNewValue(selected.file, value)}
+											altError={imageAlts.newError(selected.file)}
+											altLabel={t('common.imageAltLabel')}
+											altPlaceholder={t('common.imageAltPlaceholder')}
 										/>
 									))}
 								</ImageThumbList>
@@ -657,7 +675,15 @@ function AdminGalleryPage() {
 					</div>
 
 					{images.length > 0 && (
-						<ImageThumbList title={t('admin.gallery.currentImages')}>
+						<ImageThumbList
+							title={t('admin.gallery.currentImages')}
+							collapsible
+							summary={[
+								t('admin.gallery.currentImagesCount', { count: images.length }),
+								missingAltCount > 0 ? t('admin.gallery.currentImagesMissingAlt', { count: missingAltCount }) : null,
+							].filter(Boolean).join(' · ')}
+							forceOpen={images.some((image) => imageAlts.existingError(image.id))}
+						>
 							{images.map((image) => (
 								<ImageThumb
 									key={image.id}
@@ -665,6 +691,11 @@ function AdminGalleryPage() {
 									label={t('admin.gallery.photoTag')}
 									onDelete={() => setImageToDelete(image.id)}
 									deleteLabel={t('admin.delete')}
+									altText={imageAlts.existingValue(image)}
+									onAltChange={(value) => imageAlts.setExistingValue(image.id, value)}
+									altError={imageAlts.existingError(image.id)}
+									altLabel={t('common.imageAltLabel')}
+									altPlaceholder={t('common.imageAltPlaceholder')}
 								/>
 							))}
 						</ImageThumbList>

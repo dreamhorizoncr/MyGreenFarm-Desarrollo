@@ -13,5 +13,6 @@ public class GalleryImageResponse {
     private UUID galleryId;
     private String title;
     private String fileUrl;
+    private String altText;
     private Integer likeCount;
 }

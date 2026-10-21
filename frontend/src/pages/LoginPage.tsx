@@ -79,7 +79,7 @@ function LoginPage() {
       overtitle={t("login.overtitle")}
       contentClassName="max-w-[303px] md:max-w-[390px]"
     >
-      <h2 className="mb-[35px] text-left font-heading text-h1 leading-none text-heading md:mb-[55px]">
+      <h2 className="mb-[35px] text-left font-heading text-h3 leading-tight text-heading md:mb-[55px]">
         {t("login.title")}
       </h2>
 
@@ -156,7 +156,7 @@ function LoginPage() {
             loading={loading}
             disabled={!email.trim() || !password}
             variant="success"
-            className="h-11 w-full rounded-full bg-green-500 font-body text-button font-normal uppercase tracking-wide text-white"
+            className="h-11 w-full rounded-full bg-orange-500 font-body text-button font-semibold text-white hover:bg-orange-600"
           >
             {loading ? t("login.loading") : t("login.buttonLabel")}
           </Button>

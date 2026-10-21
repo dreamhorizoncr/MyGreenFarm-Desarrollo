@@ -160,7 +160,7 @@ function NewsDetailModal({
                         />
                         <img
                             src={coverImage.fileUrl}
-                            alt={announcement.title}
+                            alt={coverImage.altText || announcement.title}
                             className="relative z-10 h-full w-full object-contain"
                         />
                     </div>
@@ -203,7 +203,7 @@ function NewsDetailModal({
                     >
                         <img
                             src={image.fileUrl}
-                            alt={announcement.title}
+                            alt={image.altText || announcement.title}
                             className="h-[220px] w-full object-cover transition-transform duration-300 hover:scale-105"
                         />
                         <button
