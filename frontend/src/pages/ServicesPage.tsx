@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar.tsx'
@@ -14,8 +14,6 @@ import CurrencyToggle from '../components/currency/CurrencyToggle.tsx'
 import type { Currency, ExchangeRate } from '../types/exchangeRate.ts'
 import { convertCurrency, currencySymbol, formatCurrency } from '../utils/currency.ts'
 import ServiceDetailModal from '../components/ServiceDetailModal.tsx'
-import { servicePlanService } from '../services/servicePlan.ts'
-import { notify, notifyError } from '../utils/notifications.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
@@ -95,7 +93,6 @@ function PlanCard({
           <h3 className="m-0 min-w-0 flex-1 text-left font-heading text-h4 font-bold text-green-500 line-clamp-2">
             {plan!.name}
           </h3>
-
         </div>
 
         <p className="-mt-xs mb-0 min-h-[2lh] text-left font-body text-body-sm leading-relaxed text-body-text-dark line-clamp-2">
@@ -132,7 +129,7 @@ function ServicesPage() {
 
   const { plans, loading, error, fetchPlans, totalPages } = useServicePlans()
   const [currentPage, setCurrentPage] = useState(1)
-  // Múltiplo de las columnas visibles (1 / 3) para no dejar huecos en la última fila
+  
   const pageSize = useGridPageSize({ base: 1, md: 3 })
   const [lastPageSize, setLastPageSize] = useState(pageSize)
   if (lastPageSize !== pageSize) {
@@ -141,148 +138,22 @@ function ServicesPage() {
   }
 
   const { data: exchangeRate, loading: exchangeRateLoading, error: exchangeRateError, reload: reloadExchangeRate } = useExchangeRate()
-  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null)
   const [selectedPlan, setSelectedPlan] = useState<{ plan: ServicePlan; currency: Currency } | null>(null)
-  const checkoutWindowRef = useRef<Window | null>(null)
 
   useEffect(() => {
     void fetchPlans(currentPage - 1, i18n.language, pageSize)
   }, [currentPage, i18n.language, pageSize])
 
-  useEffect(() => {
-    const handlePaymentReturn = (event: MessageEvent<{ type?: string }>) => {
-      if (event.origin !== window.location.origin || event.source !== checkoutWindowRef.current) return
-
-      if (event.data?.type === 'payment-success') {
-        navigate('/payment-success')
-      } else if (event.data?.type === 'payment-failed') {
-        navigate('/payment-failed')
-      } else {
-        return
-      }
-
-      checkoutWindowRef.current = null
-    }
-
-    const paymentChannel = new BroadcastChannel('payment_channel')
-    paymentChannel.onmessage = (event: MessageEvent<string>) => {
-      if (event.data === 'PAYMENT_SUCCESS') {
-        navigate('/payment-success')
-      } else if (event.data === 'PAYMENT_FAILED') {
-        navigate('/payment-failed')
-      }
-    }
-
-    window.addEventListener('message', handlePaymentReturn)
-    return () => {
-      window.removeEventListener('message', handlePaymentReturn)
-      paymentChannel.close()
-    }
-  }, [navigate])
-
-  const handleSubscribe = async (plan: ServicePlan) => {
-    const checkoutWindow = window.open('', '_blank')
-
-    if (!checkoutWindow) {
-      notify.error({
-        title: t('services.checkoutErrorToastTitle'),
-        description: t('services.popupBlocked'),
-      })
-      return
-    }
-
-    checkoutWindowRef.current = checkoutWindow
-
-    const doc = checkoutWindow.document;
-    doc.title = t('services.connectingPayment');
-    doc.body.style.cssText = `
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: #f6f8f5;
-      color: #263b2f;
-      font-family: system-ui, -apple-system, sans-serif;
-    `;
-
-    doc.body.innerHTML = `
-      <style>
-        @keyframes pulse-soft {
-          0%, 100% { opacity: 0.4; transform: scale(0.98); }
-          50% { opacity: 1; transform: scale(1); }
-        }
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-        .loader-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 16px;
-        }
-        .spinner {
-          width: 40px;
-          height: 40px;
-          border: 3px solid #d8e2dc;
-          border-top-color: #3b5d50;
-          border-radius: 50%;
-          animation: spin 0.8s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite;
-        }
-        .text {
-          font-size: 16px;
-          font-weight: 500;
-          letter-spacing: -0.01em;
-          animation: pulse-soft 2s ease-in-out infinite;
-        }
-      </style>
-      <div class="loader-container">
-        <div class="spinner"></div>
-        <p class="text">Preparando pago seguro...</p>
-      </div>
-    `;
-
-    setCheckoutLoading(plan.id)
-
-    try {
-      const checkout = await servicePlanService.checkoutPlan(plan.id)
-
-      checkoutWindow.location.replace(checkout.url)
-
-      const pollInterval = setInterval(async () => {
-        try {
-          const statusResponse = await servicePlanService.checkPaymentStatus(checkout.gatewaySessionId)
-          if (statusResponse.isPaid) {
-            clearInterval(pollInterval)
-            clearInterval(closeCheckInterval)
-            setCheckoutLoading(null)
-            navigate('/payment-success')
-          } else if (statusResponse.isFailed) {
-            clearInterval(pollInterval)
-            clearInterval(closeCheckInterval)
-            setCheckoutLoading(null)
-            navigate('/payment-failed')
-          }
-        } catch (err) {
-          console.error("Error consultando el estado del pago", err)
-        }
-      }, 3000)
-
-      const closeCheckInterval = setInterval(() => {
-        if (checkoutWindow.closed) {
-          clearInterval(closeCheckInterval)
-          clearInterval(pollInterval)
-          setCheckoutLoading(null)
-        }
-      }, 1500)
-
-    } catch (error) {
-      console.error('Error creando la sesión de pago', error)
-      checkoutWindow.close()
-      setCheckoutLoading(null)
-      notifyError(t('services.checkoutErrorToastTitle'), error)
-    }
+  // Función que se ejecuta al presionar "Suscribirse" en el Modal de Detalles
+  const handleSubscribe = (plan: ServicePlan, currency: Currency, price: number) => {
+    setSelectedPlan(null) // Cierra el modal
+    navigate('/checkout', {
+      state: {
+        plan,
+        currency,
+        price,
+      },
+    })
   }
 
   const skeletonCount = useSkeletonCount('services', loading, plans.length, 3)
@@ -355,7 +226,6 @@ function ServicesPage() {
           plan={selectedPlan.plan}
           initialCurrency={selectedPlan.currency}
           exchangeRate={exchangeRate}
-          isLoading={checkoutLoading === selectedPlan.plan.id}
           onSubscribe={handleSubscribe}
           onClose={() => setSelectedPlan(null)}
         />

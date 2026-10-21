@@ -26,3 +26,9 @@ export interface ServicePlanRequest {
   includes: string
   gatewayPriceId: string
 }
+
+export interface ConfirmSinpePayload {
+  paymentIntentId: string
+  phoneNumber: string
+  sinpeReference: string
+}

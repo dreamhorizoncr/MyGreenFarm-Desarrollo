@@ -1,5 +1,5 @@
 import { apiClient } from './api.ts'
-import type { ServicePlan, ServicePlanRequest, OnvoRawPlan } from '../types/servicePlan.ts'
+import type { ServicePlan, ServicePlanRequest, OnvoRawPlan, ConfirmSinpePayload } from '../types/servicePlan.ts'
 import type { TranslationItem } from './announcement.ts'
 
 export interface PageResponse<T> {
@@ -83,5 +83,20 @@ export const servicePlanService = {
   async checkPaymentStatus(gatewaySessionId: string): Promise<{ isPaid: boolean; isFailed: boolean; status: string }> {
     const response = await apiClient.get(`/service-plans/status/${gatewaySessionId}`);
     return response.data;
+  },
+
+  async createPaymentIntent(data: { priceId: string; customerEmail: string; description: string }): Promise<any> {
+    const response = await apiClient.post('/webhooks/create-intent', data)
+    return response.data
+  },
+
+  async confirmPayment(data: { paymentIntentId: string; cardNumber: string; expMonth: number; expYear: number; cvc: string; cardHolder: string; }) {
+    const response = await apiClient.post('/webhooks/confirm', data);
+    return response.data;
+  },
+
+  async confirmSinpePayment(payload: ConfirmSinpePayload) {
+    const response = await apiClient.post('/webhooks/confirm-sinpe', payload)
+    return response.data
   }
 }

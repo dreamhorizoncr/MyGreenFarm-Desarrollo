@@ -9,12 +9,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import taller.multimedia.backend.dto.onvo.ConfirmPaymentRequest;
+import taller.multimedia.backend.dto.onvo.ConfirmSinpeRequest;
+import taller.multimedia.backend.dto.onvo.PricePaymentRequest;
+import taller.multimedia.backend.service.onvo.OnvoService;
 
 @RestController
 @RequestMapping("/api/webhooks")
 @RequiredArgsConstructor
 public class OnvoWebhookController {
 
+    private final OnvoService onvoService;
 
     @PostMapping("/onvo")
     public ResponseEntity<String> handleOnvoWebhook(@RequestBody Map<String, Object> payload) {
@@ -51,5 +56,38 @@ public class OnvoWebhookController {
         }
 
         return ResponseEntity.ok("Received");
+    }
+
+    @PostMapping("/create-intent")
+    public ResponseEntity<Map<String, Object>> createIntentFromPrice(@RequestBody PricePaymentRequest request) {
+        Map<String, Object> paymentIntent = onvoService.createPaymentIntentFromPrice(
+            request.getPriceId(), 
+            request.getCustomerEmail(), 
+            request.getDescription()
+        );
+        return ResponseEntity.ok(paymentIntent);
+    }
+
+    @PostMapping("/confirm")
+    public ResponseEntity<Map<String, Object>> confirmPayment(@RequestBody ConfirmPaymentRequest request) {
+        Map<String, Object> result = onvoService.confirmPaymentIntentWithCard(
+            request.getPaymentIntentId(), 
+            request.getCardNumber(),
+            request.getExpMonth(),
+            request.getExpYear(),
+            request.getCvc(),
+            request.getCardHolder()
+        );
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/confirm-sinpe")
+    public ResponseEntity<Map<String, Object>> confirmSinpePayment(@RequestBody ConfirmSinpeRequest request) {
+        Map<String, Object> result = onvoService.confirmPaymentIntentWithSinpe(
+            request.getPaymentIntentId(),
+            request.getPhoneNumber(),
+            request.getSinpeReference()
+        );
+        return ResponseEntity.ok(result);
     }
 }

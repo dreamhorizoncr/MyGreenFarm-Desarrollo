@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowRightIcon, BanknoteIcon, CalendarDaysIcon, CircleCheckIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import type { ServicePlan } from '../types/servicePlan.ts'
@@ -14,11 +15,10 @@ import SchedulePopover from './SchedulePopover.tsx'
 
 interface ServiceDetailModalProps {
     plan: ServicePlan
-    // Moneda que el usuario ya eligió en la tarjeta
     initialCurrency?: Currency
     exchangeRate?: ExchangeRate | null
     isLoading?: boolean
-    onSubscribe: (plan: ServicePlan) => void
+    onSubscribe?: (plan: ServicePlan, currency: Currency, calculatedPrice: number) => void
     onClose: () => void
 }
 
@@ -27,31 +27,58 @@ const cleanCurrency = (value?: string): Currency => {
     return upper === 'USD' || upper === 'EUR' ? upper : 'CRC'
 }
 
-function ServiceDetailModal({ plan, initialCurrency, exchangeRate, isLoading = false, onSubscribe, onClose }: Readonly<ServiceDetailModalProps>) {
+function ServiceDetailModal({
+    plan,
+    initialCurrency,
+    exchangeRate,
+    isLoading = false,
+    onSubscribe,
+    onClose
+}: Readonly<ServiceDetailModalProps>) {
     const { t, i18n } = useTranslation()
+    const navigate = useNavigate()
     const dialogRef = useRef<HTMLDialogElement>(null)
+
     const [scheduleOpen, setScheduleOpen] = useState(false)
     const [currency, setCurrency] = useState<Currency>(() => initialCurrency ?? cleanCurrency(plan.currency))
+
     const { closing, requestClose } = useModalExit(onClose)
-    // Con el horario abierto, Escape y el clic afuera cierran solo el mini modal y no el detalle
     useDialogDismiss(dialogRef, requestClose, !scheduleOpen)
 
     useEffect(() => {
         dialogRef.current?.showModal()
     }, [])
 
+    // Cálculo del precio según la moneda seleccionada en el Toggle
     const price = exchangeRate
         ? convertCurrency(plan.price, cleanCurrency(plan.currency), currency, 'buy', exchangeRate)
         : plan.price
+
+    const handleProceedToCheckout = () => {
+        // Si pasaste una función personalizada
+        if (onSubscribe) {
+            onSubscribe(plan, currency, price)
+            return
+        }
+
+        // Redirección directa al formulario de pago de Tarjeta / SINPE
+        requestClose()
+        navigate('/payment', {
+            state: {
+                plan,
+                currency,
+                price,
+            },
+        })
+    }
 
     return (
         <dialog
             ref={dialogRef}
             onClose={requestClose}
             aria-label={plan.name}
-            className={`fixed inset-0 m-auto max-h-[90vh] w-[min(1100px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-page backdrop:bg-black/50 ${
-                closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'
-            }`}
+            className={`fixed inset-0 m-auto max-h-[90vh] w-[min(1100px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-page backdrop:bg-black/50 ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'
+                }`}
         >
             <div className="relative px-[22px] pb-[45px] pt-[40px] md:px-[55px] md:pb-[60px] md:pt-[55px]">
                 <ModalCloseButton
@@ -88,7 +115,6 @@ function ServiceDetailModal({ plan, initialCurrency, exchangeRate, isLoading = f
                         {plan.description}
                     </p>
 
-                    {/* Qué incluye arriba y el precio debajo */}
                     <div className="mt-xl flex flex-col gap-xl">
                         {plan.includes && (
                             <div className="min-w-0">
@@ -120,6 +146,7 @@ function ServiceDetailModal({ plan, initialCurrency, exchangeRate, isLoading = f
                         </div>
                     </div>
 
+                    {/* Botones de acción */}
                     <div className="mt-xl flex gap-md *:flex-1">
                         <button
                             type="button"
@@ -128,14 +155,21 @@ function ServiceDetailModal({ plan, initialCurrency, exchangeRate, isLoading = f
                         >
                             {t('common.close')}
                         </button>
+
                         <button
                             type="button"
-                            onClick={() => onSubscribe(plan)}
+                            onClick={handleProceedToCheckout}
                             disabled={isLoading}
                             className="group inline-flex h-12 items-center justify-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             {isLoading ? t('common.loading') : t('services.subscribe')}
-                            {!isLoading && <ArrowRightIcon size={18} aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1" />}
+                            {!isLoading && (
+                                <ArrowRightIcon
+                                    size={18}
+                                    aria-hidden="true"
+                                    className="transition-transform duration-300 group-hover:translate-x-1"
+                                />
+                            )}
                         </button>
                     </div>
                 </section>
