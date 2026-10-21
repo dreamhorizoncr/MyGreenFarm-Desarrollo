@@ -15,6 +15,7 @@ public class ClubImageResponse {
     private Long id;
     private Long clubId;
     private String fileUrl;
+    private String altText;
     private Boolean isCover;
     @JsonProperty("sortOrder")
     private Integer sortOrder;

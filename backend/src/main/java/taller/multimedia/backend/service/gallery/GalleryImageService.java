@@ -1,6 +1,7 @@
 package taller.multimedia.backend.service.gallery;
 
 import lombok.RequiredArgsConstructor;
+import taller.multimedia.backend.util.ImageAltText;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -40,7 +41,7 @@ public class GalleryImageService {
     private static final String FOLDER = "images_content";
 
     @Transactional
-    public List<GalleryImageResponse> uploadImages(UUID galleryId, List<MultipartFile> files, String title) {
+    public List<GalleryImageResponse> uploadImages(UUID galleryId, List<MultipartFile> files, String title, List<String> altTexts) {
         Gallery gallery = galleryRepository.findById(galleryId)
                 .orElseThrow(() -> new RuntimeException("Galería no encontrada con ID: " + galleryId));
 
@@ -56,7 +57,8 @@ public class GalleryImageService {
 
         List<GalleryImageResponse> responses = new ArrayList<>();
 
-        for (MultipartFile file : files) {
+        for (int index = 0; index < files.size(); index++) {
+            MultipartFile file = files.get(index);
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
                 throw new IllegalArgumentException(
@@ -71,12 +73,21 @@ public class GalleryImageService {
             image.setGallery(gallery);
             image.setTitle(cleanTitle);
             image.setFileUrl(fileUrl);
+            image.setAltText(ImageAltText.at(altTexts, index));
 
             GalleryImages saved = imageRepository.save(image);
             responses.add(mapToResponse(saved, 0L));
         }
 
         return responses;
+    }
+
+    @Transactional
+    public void updateAltText(UUID imageId, String altText) {
+        GalleryImages image = imageRepository.findById(imageId)
+                .orElseThrow(() -> new RuntimeException("Imagen no encontrada con ID: " + imageId));
+        image.setAltText(ImageAltText.clean(altText));
+        imageRepository.save(image);
     }
 
     private boolean isValidImageFormat(String contentType) {
@@ -174,6 +185,7 @@ public void deleteFiles(List<String> filePaths) {
                 .galleryId(image.getGallery().getId())
                 .title(image.getTitle())
                 .fileUrl(image.getFileUrl())
+                .altText(image.getAltText())
                 .likeCount((int) likeCount)
                 .build();
     }

@@ -20,6 +20,10 @@ public class AnnouncementImage {
     @Column(name = "file_url", nullable = false)
     private String fileUrl;
 
+    // Texto alternativo para lectores de pantalla
+    @Column(name = "alt_text", length = 140)
+    private String altText;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "announcement_id", nullable = false)
     private Announcement announcement;
