@@ -45,6 +45,8 @@ export const clubService = {
         data: ClubRequest,
         coverImage?: File,
         contentImages?: File[],
+        coverAlt?: string,
+        contentAlts?: string[],
     ): Promise<ClubResponse> {
         const formData = new FormData()
 
@@ -60,12 +62,14 @@ export const clubService = {
                 type: coverImage.type,
             })
             formData.append('coverImage', sanitizedCover)
+            if (coverAlt) formData.append('coverAlt', coverAlt)
         }
 
         if (contentImages && contentImages.length > 0) {
             contentImages
                 .map((file) => new File([file], sanitizeFileName(file.name), { type: file.type }))
                 .forEach((file) => formData.append('contentImages', file))
+            if (contentAlts?.length) formData.append('contentAlts', JSON.stringify(contentAlts))
         }
 
         const response = await apiClient.post<ClubResponse>('/clubs', formData, {
@@ -99,11 +103,13 @@ export const clubService = {
         clubId: number,
         files: File[],
         isCover: boolean = false,
+        altTexts?: string[],
     ): Promise<ClubImageResponse[]> {
         const formData = new FormData()
         files
             .map((file) => new File([file], sanitizeFileName(file.name), { type: file.type }))
             .forEach((file) => formData.append('files', file))
+        if (altTexts?.length) formData.append('altTexts', JSON.stringify(altTexts))
 
         const response = await apiClient.post<ClubImageResponse[]>(
             `/clubs/${clubId}/images`,
@@ -118,6 +124,10 @@ export const clubService = {
 
     async deleteImage(imageId: number): Promise<void> {
         await apiClient.delete(`/clubs/images/${imageId}`)
+    },
+
+    async updateImageAlt(imageId: number, altText: string): Promise<void> {
+        await apiClient.patch(`/clubs/images/${imageId}/alt`, { altText })
     },
 
     async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {

@@ -21,6 +21,7 @@ import type {
 import CardActionButton from "../components/ui/CardActionButton.tsx";
 import ImagePickerButton from "../components/ui/ImagePickerButton.tsx";
 import ImageThumb, { ImageThumbList } from "../components/ui/ImageThumb.tsx";
+import { useImageAlts } from "../hooks/useImageAlts.ts";
 import { validateSafeText } from "../utils/validators.ts";
 import ModalCloseButton from "../components/ui/ModalCloseButton.tsx";
 import ScheduleField from "../components/ui/ScheduleField.tsx";
@@ -90,7 +91,7 @@ function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCard
         {club?.coverImageUrl ? (
           <img
             src={club.coverImageUrl}
-            alt={club.name}
+            alt={club.images?.find((image) => image.isCover)?.altText || club.name}
             className="h-full w-full object-cover"
           />
         ) : (
@@ -150,6 +151,7 @@ function OwnerClubsPage() {
   const [cover, setCover] = useState<File | null>(null);
   const [gallery, setGallery] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<ClubImageResponse[]>([]);
+  const imageAlts = useImageAlts();
 
   const [clubToDelete, setClubToDelete] = useState<ClubResponse | null>(null);
   const [imageToDelete, setImageToDelete] = useState<ClubImageResponse | null>(null);
@@ -237,6 +239,7 @@ function OwnerClubsPage() {
     setCover(null);
     setGallery([]);
     setExistingImages([]);
+    imageAlts.reset();
     setFormOpen(true);
   };
 
@@ -257,6 +260,7 @@ function OwnerClubsPage() {
     setSchedule(parseSchedule(sourceClub.schedule) ?? emptySchedule());
     setCover(null);
     setGallery([]);
+    imageAlts.reset();
     setExistingImages(club.images ?? []);
     setFormOpen(true);
 
@@ -288,7 +292,8 @@ function OwnerClubsPage() {
       schedule: validateSchedule(schedule, translate),
     };
     setClubFieldErrors(fieldErrors);
-    if (Object.values(fieldErrors).some(Boolean)) return;
+    const altsValid = imageAlts.validate([...(cover ? [cover] : []), ...gallery], existingImages, translate);
+    if (Object.values(fieldErrors).some(Boolean) || !altsValid) return;
 
     const publishedBool = Boolean(form.isPublished);
 
@@ -306,16 +311,21 @@ function OwnerClubsPage() {
         const savedClub = await clubService.update(editing.id, dataToSend);
 
         if (cover) {
-          await clubService.uploadImages(savedClub.id, [cover], true);
+          await clubService.uploadImages(savedClub.id, [cover], true, imageAlts.altsFor([cover]));
         }
         if (gallery.length > 0) {
-          await clubService.uploadImages(savedClub.id, gallery, false);
+          await clubService.uploadImages(savedClub.id, gallery, false, imageAlts.altsFor(gallery));
+        }
+        for (const { id, altText } of imageAlts.changed(existingImages)) {
+          await clubService.updateImageAlt(Number(id), altText);
         }
       } else {
         await clubService.createWithImages(
           dataToSend,
           cover || undefined,
-          gallery.length > 0 ? gallery : undefined
+          gallery.length > 0 ? gallery : undefined,
+          cover ? imageAlts.altsFor([cover])[0] : undefined,
+          imageAlts.altsFor(gallery)
         );
       }
 
@@ -578,7 +588,17 @@ function OwnerClubsPage() {
 
                 {cover && (
                   <ImageThumbList className="mt-sm">
-                    <ImageThumb file={cover} label={cover.name} onDelete={() => setCover(null)} deleteLabel={t("ownerClubs.deleteImage")} />
+                    <ImageThumb
+                      file={cover}
+                      label={cover.name}
+                      onDelete={() => setCover(null)}
+                      deleteLabel={t("ownerClubs.deleteImage")}
+                      altText={imageAlts.newValue(cover)}
+                      onAltChange={(value) => imageAlts.setNewValue(cover, value)}
+                      altError={imageAlts.newError(cover)}
+                      altLabel={translateKey("common.imageAltLabel")}
+                      altPlaceholder={translateKey("common.imageAltPlaceholder")}
+                    />
                   </ImageThumbList>
                 )}
               </div>
@@ -603,6 +623,11 @@ function OwnerClubsPage() {
                         label={file.name}
                         onDelete={() => setGallery((current) => current.filter((_, i) => i !== index))}
                         deleteLabel={t("ownerClubs.deleteImage")}
+                        altText={imageAlts.newValue(file)}
+                        onAltChange={(value) => imageAlts.setNewValue(file, value)}
+                        altError={imageAlts.newError(file)}
+                        altLabel={translateKey("common.imageAltLabel")}
+                        altPlaceholder={translateKey("common.imageAltPlaceholder")}
                       />
                     ))}
                   </ImageThumbList>
@@ -619,6 +644,11 @@ function OwnerClubsPage() {
                     label={image.isCover ? t("ownerClubs.coverTag") : t("ownerClubs.galleryTag")}
                     onDelete={() => setImageToDelete(image)}
                     deleteLabel={t("ownerClubs.deleteImage")}
+                    altText={imageAlts.existingValue(image)}
+                    onAltChange={(value) => imageAlts.setExistingValue(image.id, value)}
+                    altError={imageAlts.existingError(image.id)}
+                    altLabel={translateKey("common.imageAltLabel")}
+                    altPlaceholder={translateKey("common.imageAltPlaceholder")}
                   />
                 ))}
               </ImageThumbList>

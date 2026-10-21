@@ -85,7 +85,7 @@ function AdminPlanCard({
     <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white card-hover">
       <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
         {plan!.imageUrl ? (
-          <img src={plan!.imageUrl} alt={plan!.name} className="h-full w-full object-cover" />
+          <img src={plan!.imageUrl} alt={plan!.imageAlt || plan!.name} className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
             <span className="font-body text-body-sm text-neutral-400">{t('admin.servicios.chooseImage')}</span>

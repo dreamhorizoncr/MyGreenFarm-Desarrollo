@@ -35,7 +35,7 @@ export const servicePlanService = {
 
   async createPlan(data: ServicePlanRequest, file: File): Promise<ServicePlan> {
     const formData = new FormData()
-    formData.append('data', JSON.stringify({ schedule: data.schedule, includes: data.includes, gatewayPriceId: data.gatewayPriceId }))
+    formData.append('data', JSON.stringify({ schedule: data.schedule, includes: data.includes, gatewayPriceId: data.gatewayPriceId, imageAlt: data.imageAlt }))
     formData.append('file', file)
 
     const response = await apiClient.post<ServicePlan>('/service-plans', formData, {
@@ -49,6 +49,7 @@ export const servicePlanService = {
     formData.append('schedule', data.schedule)
     formData.append('includes', data.includes)
     formData.append('gatewayPriceId', data.gatewayPriceId)
+    formData.append('imageAlt', data.imageAlt ?? '')
     if (file) formData.append('file', file)
 
     const response = await apiClient.put<ServicePlan>(`/service-plans/${id}`, formData, {

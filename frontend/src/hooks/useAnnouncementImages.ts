@@ -44,5 +44,10 @@ export function useAnnouncementImages() {
     );
   };
 
-  return { images, loading, error, fetchImages, getCoverImage };
+  const getCoverAlt = (announcementId: string) => {
+    const announcementImages = images[announcementId] ?? [];
+    return (announcementImages.find((image) => image.isCover) ?? announcementImages[0])?.altText ?? undefined;
+  };
+
+  return { images, loading, error, fetchImages, getCoverImage, getCoverAlt };
 }

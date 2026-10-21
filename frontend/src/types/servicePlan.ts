@@ -6,6 +6,7 @@ export interface ServicePlan {
   currency?: string;
   type: string
   imageUrl: string
+  imageAlt?: string | null
   price: number
   schedule: string
   includes: string
@@ -25,4 +26,5 @@ export interface ServicePlanRequest {
   schedule: string
   includes: string
   gatewayPriceId: string
+  imageAlt?: string
 }

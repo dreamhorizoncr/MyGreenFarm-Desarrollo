@@ -77,7 +77,7 @@ function ServiceDetailModal({ plan, initialCurrency, exchangeRate, isLoading = f
                     <div className="mt-[40px] overflow-hidden rounded-[22px]">
                         <img
                             src={plan.imageUrl}
-                            alt={plan.name}
+                            alt={plan.imageAlt || plan.name}
                             className="h-[260px] w-full object-cover sm:h-[360px] md:h-[480px]"
                         />
                     </div>
