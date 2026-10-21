@@ -54,4 +54,8 @@ public class AppointmentRequest {
     private String referralOtherDetail;
     
     private String language;
+
+    // Identificador del apartado temporal del horario (ver SlotHoldService); opcional
+    @Size(max = 64)
+    private String holdId;
 }

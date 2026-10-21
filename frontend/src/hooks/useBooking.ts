@@ -36,12 +36,12 @@ export function useBooking() {
     try {
       await appointmentService.createAppointment(request)
       setSuccess(true)
-      return { ok: true as const, message: null }
+      return { ok: true as const, message: null, slotTaken: false }
     } catch (err) {
       setSubmitError(getErrorMessage(err))
       const status = axios.isAxiosError(err) ? err.response?.status : undefined
       const message = status !== undefined && status < 500 ? getErrorMessage(err) : null
-      return { ok: false as const, message }
+      return { ok: false as const, message, slotTaken: status === 409 }
     } finally {
       setSubmitting(false)
     }
