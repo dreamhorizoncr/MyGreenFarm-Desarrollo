@@ -33,14 +33,14 @@ function PasswordInput({
         onChange={onChange}
         placeholder={placeholder}
         autoComplete={autoComplete}
-        className={`${className} pr-10`}
+        className={`${className} pr-11`}
       />
 
       <button
         type="button"
         onClick={() => setVisible((v) => !v)}
         aria-label={visible ? hideAriaLabel : showAriaLabel}
-        className="absolute right-1 top-1/2 flex -translate-y-1/2 items-center justify-center p-1 text-grey-500 transition-colors focus-visible:outline-2 focus-visible:outline-link"
+        className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center justify-center p-1 text-grey-500 transition-colors focus-visible:outline-2 focus-visible:outline-link"
       >
         {visible ? <EyeOffIcon size={18} /> : <EyeIcon size={18} />}
       </button>
