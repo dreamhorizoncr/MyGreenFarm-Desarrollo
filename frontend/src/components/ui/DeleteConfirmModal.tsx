@@ -78,7 +78,7 @@ function DeleteConfirmModal({
             <Button
               variant="secondary"
               onClick={requestClose}
-              className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50"
+              className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold text-heading hover:bg-green-50"
             >
               {t('admin.cancel')}
             </Button>
@@ -86,7 +86,7 @@ function DeleteConfirmModal({
               variant="success"
               onClick={() => void handleConfirm()}
               loading={deleting}
-              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold uppercase tracking-wide text-white hover:bg-orange-600"
+              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
             >
               {deleting ? t('common.loading') : confirmLabel ?? t('admin.delete')}
             </Button>
