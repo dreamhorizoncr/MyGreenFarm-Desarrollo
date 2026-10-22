@@ -48,7 +48,6 @@ public class AnnouncementController {
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "10") @Min(1) @Max(10) int size,
             @RequestParam(required = false) UUID categoryId) {
-        // Orden fijo (más recientes primero; el id desempata) para que las páginas no repitan ni salten noticias
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("id")));
         Page<AnnouncementResponse> announcements = announcementService.getAll(lang, categoryId, pageable);
         return ResponseEntity.ok(announcements);

@@ -22,7 +22,6 @@ interface ToggleRowProps {
     onChange: () => void
 }
 
-// Fila con el mismo interruptor que se usa en el resto del panel (p. ej. «Publicar club»)
 function ToggleRow({ label, checked, onChange }: Readonly<ToggleRowProps>) {
     return (
         <label className="flex cursor-pointer items-center justify-between gap-md py-sm">
@@ -78,7 +77,6 @@ export default function AccessibilityMenu() {
                         className="absolute bottom-16 right-0 w-[min(20rem,calc(100vw-48px))] origin-bottom-right rounded-[20px] border border-neutral-200 bg-bg-card p-lg shadow-lg"
                     >
                         <div className="flex items-center justify-between gap-md">
-                            {/* Tamaño en línea: las reglas globales de A+/A++ agrandan h1-h6 y un estilo en línea las supera */}
                             <h2 style={{ fontSize: '1.375rem', transform: 'none' }} className="m-0 min-w-0 font-heading font-bold leading-tight text-heading">
                                 {t('accessibility.title')}
                             </h2>

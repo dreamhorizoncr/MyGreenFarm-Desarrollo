@@ -49,7 +49,6 @@ function AuthLayout({
       </div>
 
       <div className="relative flex w-full flex-col bg-bg-card md:min-h-0 md:w-1/2">
-        {/* Mismo botón de cerrar que los modales */}
         <ModalCloseButton
           onClick={() => navigate(closeTo)}
           aria-label={t("common.close")}

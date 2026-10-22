@@ -119,10 +119,8 @@ interface AdminAlbumsByYearProps {
 
 const ALL_YEARS = 'all'
 
-// Pestañas siempre en una sola línea (se deslizan de lado si no caben)
 const yearTabsClass = tabCarouselClass.replace(' md:flex-wrap md:overflow-visible', '')
 
-// Un año a la vez: pestañas con los años y, en la misma fila, las flechas del carrusel de ese año
 function AdminAlbumsByYear({
 	categories,
 	galleriesByCategory,
@@ -133,7 +131,6 @@ function AdminAlbumsByYear({
 	const { t } = useTranslation()
 	const reduceMotion = useReducedMotion()
 	const years = categories.filter((category) => (galleriesByCategory[category.id] ?? []).length > 0)
-	// «Todos» va primero y junta los álbumes de cada año en el mismo orden de las pestañas
 	const tabs = [{ id: ALL_YEARS, title: t('home.galeria.filterAll') }, ...years]
 	const [selectedId, setSelectedId] = useState<string>(ALL_YEARS)
 	const activeId = tabs.some((tab) => tab.id === selectedId) ? selectedId : ALL_YEARS
@@ -647,7 +644,6 @@ function AdminGalleryPage() {
 								multiple
 								onSelect={handleFilesSelected}
 							/>
-
 
 							{fileError && (
 								<p className="mt-xs block font-body text-body-sm font-normal text-danger">{fileError}</p>

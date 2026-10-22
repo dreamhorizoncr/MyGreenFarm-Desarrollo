@@ -195,7 +195,6 @@ public class ForumModerationService {
 
             try (Response response = httpClient.newCall(request).execute()) {
                 if (response.code() == 429 && withSearchGrounding) {
-                    // El plan gratuito de Gemini no incluye la búsqueda de Google: se modera sin ella
                     log.warn("Gemini rechazó la búsqueda de Google por cuota (429); se modera sin búsqueda");
                     return callGemini(fieldName, prompt, false);
                 }

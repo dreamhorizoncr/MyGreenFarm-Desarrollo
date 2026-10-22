@@ -39,7 +39,6 @@ const emptyForm: ClubRequest = {
   isPublished: false,
 };
 
-
 interface ClubCardProps {
   club?: ClubResponse;
   onEdit?: () => void;
@@ -140,7 +139,6 @@ function OwnerClubsPage() {
   const [error, setError] = useState<string | null>(null);
   const [clubFieldErrors, setClubFieldErrors] = useState<Record<string, string | null>>({});
   const [currentPage, setCurrentPage] = useState(1);
-  // Múltiplo de las columnas visibles (1 / 2 / 3) para no dejar huecos en la última fila
   const pageSize = useGridPageSize({ base: 1, sm: 2, lg: 3 });
 
   const [formOpen, setFormOpen] = useState(false);

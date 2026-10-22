@@ -28,7 +28,6 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
     const [scheduleOpen, setScheduleOpen] = useState(false)
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
     const { closing, requestClose } = useModalExit(onClose)
-    // Con el horario abierto, Escape y el clic afuera cierran solo el mini modal y no el detalle
     useDialogDismiss(dialogRef, requestClose, !scheduleOpen)
 
     useEffect(() => {

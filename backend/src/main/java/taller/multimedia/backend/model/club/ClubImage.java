@@ -30,7 +30,6 @@ public class ClubImage {
     @Column(name = "file_url", nullable = false, length = 500)
     private String fileUrl;
 
-    // Texto alternativo para lectores de pantalla
     @Column(name = "alt_text", length = 140)
     private String altText;
 

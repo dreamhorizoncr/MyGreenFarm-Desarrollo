@@ -22,14 +22,10 @@ import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.exception.SlotUnavailableException;
 import taller.multimedia.backend.service.appointment.SlotEventService.SlotStatus;
 
-// Aparta en memoria un horario de cita mientras una persona llena el formulario, y serializa
-// la reserva de cada horario para que dos solicitudes simultáneas no creen dos citas.
-// Vive en memoria: sirve mientras el backend corra en una sola instancia.
 @Service
 public class SlotHoldService {
 
     public static final Duration HOLD_DURATION = Duration.ofMinutes(10);
-    // Un mismo navegador o red no puede apartar más horarios que esto a la vez
     static final int MAX_HOLDS_PER_CLIENT = 3;
 
     static final String HELD_BY_OTHER_MESSAGE =
@@ -63,7 +59,6 @@ public class SlotHoldService {
         return slot.truncatedTo(ChronoUnit.MINUTES);
     }
 
-    // Aparta el horario para holderId; si ya lo tenía, renueva el tiempo. Libera el horario anterior de esa persona.
     public HoldResult hold(LocalDateTime requestedSlot, String holderId, String clientKey) {
         validateHolderId(holderId);
         LocalDateTime slot = normalize(requestedSlot);
@@ -118,8 +113,6 @@ public class SlotHoldService {
         released.forEach(slot -> slotEventService.publish(slot, SlotStatus.RELEASED));
     }
 
-    // Ejecuta la reserva con el horario bloqueado: nadie más puede reservarlo hasta que termine (y se confirme en la BD).
-    // Falla si otra persona lo tiene apartado; si lo tenía holderId, el apartado se elimina al reservar.
     public <T> T bookExclusively(LocalDateTime requestedSlot, String holderId, Supplier<T> booking) {
         LocalDateTime slot = normalize(requestedSlot);
         ReentrantLock lock = slotLocks.computeIfAbsent(slot, key -> new ReentrantLock());

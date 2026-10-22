@@ -69,7 +69,6 @@ public class AppointmentService {
 
         List<LocalTime> availableSlots = scheduleConfigService.getAvailableSlotsForDate(requestedStart.toLocalDate());
 
-        // La lista ya excluye los horarios reservados, así que también cubre el caso de horario ocupado
         if (!availableSlots.contains(requestedTime)) {
             throw new SlotUnavailableException(
                     "Lo sentimos, el horario seleccionado ya no está disponible. Elige otro horario.");

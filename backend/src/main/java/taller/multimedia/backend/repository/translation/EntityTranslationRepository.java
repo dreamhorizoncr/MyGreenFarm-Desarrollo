@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface EntityTranslationRepository extends JpaRepository<EntityTranslation, UUID> {
 
-    // findFirst: la tabla puede tener filas repetidas de peticiones simultáneas; no debe fallar por eso
     Optional<EntityTranslation> findFirstByEntityTypeAndEntityIdAndFieldNameAndLanguageCode(
         String entityType, UUID entityId, String fieldName, String languageCode
     );

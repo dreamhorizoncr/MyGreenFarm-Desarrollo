@@ -7,7 +7,6 @@ interface ClubScheduleCardProps {
     className?: string
 }
 
-// Horario del club: semana con los días activos resaltados y una fila por cada franja horaria
 function ClubScheduleCard({ schedule, className = '' }: Readonly<ClubScheduleCardProps>) {
     const { t, i18n } = useTranslation()
     const language = i18n.resolvedLanguage ?? i18n.language
