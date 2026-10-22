@@ -59,7 +59,7 @@ function ImagePickerButton({
         type="button"
         disabled={disabled}
         onClick={() => inputRef.current?.click()}
-        className="mt-xs inline-flex items-center gap-xs rounded-full border border-neutral-300 bg-white px-md py-sm font-body text-body-sm font-semibold text-heading transition-colors hover:border-green-500 hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-xs inline-flex items-center gap-xs h-11 rounded-full border border-green-500 bg-white px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link disabled:cursor-not-allowed disabled:opacity-50"
       >
         <FileImageIcon size={17} aria-hidden="true" />
         {label}

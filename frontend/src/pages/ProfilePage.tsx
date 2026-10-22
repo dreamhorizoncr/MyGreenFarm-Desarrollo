@@ -111,7 +111,7 @@ function ProfilePage() {
           </div>
         </div>
 
-        <div className="mt-5 grid grid-cols-1 gap-y-5 md:grid-cols-2 md:gap-x-8">
+        <div className="mt-10 grid grid-cols-1 gap-y-5 md:grid-cols-2 md:gap-x-8">
           <button
             type="button"
             onClick={() => setShowResetPasswordModal(true)}

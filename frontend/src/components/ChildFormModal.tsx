@@ -363,7 +363,7 @@ function ChildFormModal({
 
                     <div className="font-body text-body-sm font-semibold text-heading">
                         {t("admin.children.clubs")}
-                        <div className="mt-xs flex min-h-11 flex-col justify-center rounded-xl border border-neutral-200 px-md py-sm">
+                        <div className="mt-xs flex min-h-11 flex-col justify-center rounded-xl border border-neutral-200 px-md py-2">
                             {renderClubs()}
                         </div>
                     </div>

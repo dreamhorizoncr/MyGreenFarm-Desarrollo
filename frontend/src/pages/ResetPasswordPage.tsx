@@ -68,7 +68,7 @@ function ResetPasswordPage() {
 
   return (
     <AuthLayout overtitle={t('resetPassword.overtitle')} closeTo={isAuthenticated ? '/profile' : '/login'}>
-      <h2 className="mb-[50px] text-left font-heading text-h1 leading-none text-heading">
+      <h2 className="mb-[50px] text-left font-heading text-h3 leading-tight text-heading">
         {t('resetPassword.title')}
       </h2>
 
@@ -136,7 +136,7 @@ function ResetPasswordPage() {
           )}
 
           {!success && (
-            <div className="mx-auto mt-[50px] w-[72%]">
+            <div className="mt-[28px] w-full md:mt-[35px]">
               <AuthButton loading={loading} disabled={!newPassword || !confirmPassword}>
                 {loading
                   ? t('resetPassword.loading')

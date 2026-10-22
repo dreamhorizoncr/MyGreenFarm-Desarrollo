@@ -26,7 +26,6 @@ function MultimediaSection() {
           src={nubeWhiteDown}
           alt=""
           aria-hidden="true"
-          data-scroll-bg="green"
           className="relative -mb-1 block w-[110vw] max-w-none -translate-x-1/2 left-1/2 object-cover"
         />
       </div>
@@ -46,7 +45,7 @@ function MultimediaSection() {
 
             <Link
               to="/multimedia"
-              className="inline-flex items-center gap-xs whitespace-nowrap font-link text-body-sm uppercase tracking-wide text-white underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
+              className="inline-flex items-center gap-xs whitespace-nowrap font-link text-body-sm text-white underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
             >
               {t('home.multimedia.viewMore')}
               <ArrowRightIcon size={16} aria-hidden="true" />

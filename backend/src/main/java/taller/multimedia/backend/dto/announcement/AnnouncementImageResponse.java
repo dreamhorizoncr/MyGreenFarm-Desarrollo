@@ -12,6 +12,7 @@ public class AnnouncementImageResponse {
     private UUID id;
     private UUID announcementId;
     private String fileUrl;
+    private String altText;
 
     @JsonProperty("isCover")
     private boolean isCover;

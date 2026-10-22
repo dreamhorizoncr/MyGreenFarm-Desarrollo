@@ -46,7 +46,7 @@ function BookingSuccessModal({ onClose }: Readonly<BookingSuccessModalProps>) {
         <div className="flex justify-center">
           <Button
             onClick={requestClose}
-            className="h-11 w-40 rounded-full bg-green-500 font-body text-button font-normal uppercase tracking-wide text-white"
+            className="h-11 w-40 rounded-full bg-green-500 font-body text-button font-normal text-white"
           >
             {t('booking.close')}
           </Button>

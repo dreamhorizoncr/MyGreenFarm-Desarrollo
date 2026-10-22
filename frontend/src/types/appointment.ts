@@ -14,6 +14,7 @@ export interface AppointmentRequest {
   referralSource: ReferralSource
   referralOtherDetail?: string
   language: string
+  holdId?: string
 }
 
 export interface Appointment {

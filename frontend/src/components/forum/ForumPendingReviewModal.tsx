@@ -48,7 +48,7 @@ function ForumPendingReviewModal({ title, description, onClose }: Readonly<Forum
         <div className="flex justify-center">
           <Button
             onClick={requestClose}
-            className="h-11 w-40 rounded-full bg-orange-500 font-body text-button font-normal uppercase tracking-wide text-white hover:bg-orange-600"
+            className="h-11 w-40 rounded-full bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600"
           >
             {t('booking.close')}
           </Button>

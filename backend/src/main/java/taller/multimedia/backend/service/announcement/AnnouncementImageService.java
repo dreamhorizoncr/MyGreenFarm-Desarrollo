@@ -1,6 +1,7 @@
 package taller.multimedia.backend.service.announcement;
 
 import lombok.RequiredArgsConstructor;
+import taller.multimedia.backend.util.ImageAltText;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +31,7 @@ public class AnnouncementImageService {
 
     @Transactional
     public List<AnnouncementImageResponse> uploadImages(UUID announcementId, List<MultipartFile> files,
-            boolean isCover) {
+            boolean isCover, List<String> altTexts) {
         Announcement announcement = announcementRepository.findById(announcementId)
                 .orElseThrow(() -> new RuntimeException("Anuncio no encontrado con ID: " + announcementId));
 
@@ -65,7 +66,8 @@ public class AnnouncementImageService {
         List<AnnouncementImageResponse> responses = new java.util.ArrayList<>();
         String folder = isCover ? "cover_images" : "images_content";
 
-        for (MultipartFile file : files) {
+        for (int index = 0; index < files.size(); index++) {
+            MultipartFile file = files.get(index);
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
                 throw new IllegalArgumentException(
@@ -78,12 +80,21 @@ public class AnnouncementImageService {
             image.setAnnouncement(announcement);
             image.setFileUrl(fileUrl);
             image.setIsCover(isCover);
+            image.setAltText(ImageAltText.at(altTexts, index));
 
             AnnouncementImage saved = imageRepository.save(image);
             responses.add(mapToResponse(saved));
         }
 
         return responses;
+    }
+
+    @Transactional
+    public void updateAltText(UUID imageId, String altText) {
+        AnnouncementImage image = imageRepository.findById(imageId)
+                .orElseThrow(() -> new RuntimeException("Imagen no encontrada con ID: " + imageId));
+        image.setAltText(ImageAltText.clean(altText));
+        imageRepository.save(image);
     }
 
     private boolean isValidImageFormat(String contentType) {
@@ -149,6 +160,7 @@ public class AnnouncementImageService {
                 .id(image.getId())
                 .announcementId(image.getAnnouncement().getId())
                 .fileUrl(image.getFileUrl())
+                .altText(image.getAltText())
                 .isCover(image.getIsCover())
                 .build();
     }

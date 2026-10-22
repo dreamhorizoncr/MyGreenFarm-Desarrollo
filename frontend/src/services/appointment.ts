@@ -22,6 +22,23 @@ export const appointmentService = {
     return response.data
   },
 
+  async holdSlot(slot: string, holderId: string): Promise<{ slot: string; expiresAt: string }> {
+    const response = await apiClient.post<{ slot: string; expiresAt: string }>('/appointments/holds', { slot, holderId })
+    return response.data
+  },
+
+  async releaseHold(holderId: string): Promise<void> {
+    await apiClient.post('/appointments/holds/release', null, { params: { holderId } })
+  },
+
+  releaseHoldUrl(holderId: string): string {
+    return `${apiClient.defaults.baseURL}/appointments/holds/release?holderId=${encodeURIComponent(holderId)}`
+  },
+
+  slotEventsUrl(): string {
+    return `${apiClient.defaults.baseURL}/appointments/holds/stream`
+  },
+
   async createAppointment(data: AppointmentRequest): Promise<Appointment> {
     const response = await apiClient.post<Appointment>('/appointments', data)
     return response.data

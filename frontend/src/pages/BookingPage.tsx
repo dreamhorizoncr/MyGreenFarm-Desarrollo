@@ -11,6 +11,7 @@ import Select from '../components/ui/Select.tsx'
 import CountrySelect from '../components/ui/CountrySelect.tsx'
 import { phoneLabels } from '../utils/phoneLabels.ts'
 import { useBooking } from '../hooks/useBooking.ts'
+import { slotKey, useSlotHolds } from '../hooks/useSlotHolds.ts'
 import { appointmentService } from '../services/appointment.ts'
 import { notify } from '../utils/notifications.ts'
 import {
@@ -133,6 +134,8 @@ function BookingPage() {
     submit,
     setSuccess,
   } = useBooking()
+  const slotHolds = useSlotHolds()
+  const releaseSlotHold = slotHolds.release
 
   const [step, setStep] = useState(1)
 
@@ -167,9 +170,13 @@ function BookingPage() {
   const availableDates = Object.keys(availability).filter(isBookableWeekday)
   const effectiveDay = day && availableDates.includes(day) ? day : availableDates[0] ?? null
   const dayRowRef = useTabCarousel(effectiveDay)
-  const effectiveTime =
-    time ??
-    (effectiveDay ? availability[effectiveDay]?.slots[0]?.slice(0, 5) ?? null : null)
+  // Un horario que otra persona aparta o reserva deja de estar disponible: se pasa al siguiente libre
+  const isSlotFree = (date: string, start: string) => !slotHolds.isUnavailable(slotKey(date, start))
+  const firstFreeTime = effectiveDay
+    ? availability[effectiveDay]?.slots.map((slot) => slot.slice(0, 5)).find((start) => isSlotFree(effectiveDay, start)) ?? null
+    : null
+  const effectiveTime = time && effectiveDay && isSlotFree(effectiveDay, time) ? time : firstFreeTime
+  const holdsSelection = Boolean(effectiveDay && effectiveTime && slotHolds.myHold?.key === slotKey(effectiveDay, effectiveTime))
   const selectedDay = effectiveDay ? availability[effectiveDay] : null
 
   const [eventNames, setEventNames] = useState<Record<string, string>>({})
@@ -291,10 +298,32 @@ function BookingPage() {
     }
   })()
 
-  const handleNext = () => {
-    if (validateStep(step) && step < 5) {
-      setStep(step + 1)
+  // Aparta (o renueva) el horario elegido; si alguien más lo tomó, vuelve al paso de horarios
+  const holdSelectedSlot = async () => {
+    if (!effectiveDay || !effectiveTime) return false
+    const result = await slotHolds.hold(slotKey(effectiveDay, effectiveTime))
+    if (!result.ok) {
+      notify.error({ title: t('booking.slotUnavailableTitle'), description: result.message })
+      setTime(null)
+      setStep(1)
     }
+    return result.ok
+  }
+
+  const handleSelectTime = (start: string) => {
+    setTime(start)
+    if (!effectiveDay) return
+    void slotHolds.hold(slotKey(effectiveDay, start)).then((result) => {
+      if (result.ok) return
+      notify.error({ title: t('booking.slotUnavailableTitle'), description: result.message })
+      setTime(null)
+    })
+  }
+
+  const handleNext = async () => {
+    if (!validateStep(step) || step >= 5) return
+    if (!(await holdSelectedSlot())) return
+    setStep(step + 1)
   }
 
   const handleBack = () => {
@@ -319,9 +348,16 @@ function BookingPage() {
       referralSource: referralSource as ReferralSource,
       referralOtherDetail: referralSource === 'OTHER' ? referralOtherDetail.trim() : undefined,
       language: (i18n.language ?? 'es').split('-')[0],
+      holdId: slotHolds.holderId,
     })
     if (result.ok) {
+      slotHolds.forget()
       resetForm()
+    } else if (result.slotTaken) {
+      notify.error({ title: t('booking.slotUnavailableTitle'), description: result.message ?? t('booking.submitError') })
+      setTime(null)
+      setStep(1)
+      void fetchWeek(toISODate(getTomorrow()))
     } else {
       notify.error({
         title: t('booking.submitErrorToastTitle'),
@@ -345,6 +381,7 @@ function BookingPage() {
     setReferralOtherDetail('')
     setDay(null)
     setTime(null)
+    releaseSlotHold()
     setFullNameError(false)
     setIdNumberError(false)
     setEmailError(false)
@@ -354,7 +391,7 @@ function BookingPage() {
     setReasonError(false)
     setReferralSourceError(false)
     setReferralOtherDetailError(false)
-  }, [])
+  }, [releaseSlotHold])
 
   const selectableClassName = (active: boolean) =>
     `rounded-full border px-md py-sm font-body text-body-sm font-semibold transition-colors ${
@@ -420,17 +457,23 @@ function BookingPage() {
   const renderSlots = (slots: Slot[]) =>
     slots.length > 0 ? (
       <div className="grid grid-cols-2 gap-sm sm:grid-cols-3 md:grid-cols-5">
-        {slots.map((slot) => (
-          <button
-            key={slot.start}
-            type="button"
-            aria-pressed={effectiveTime === slot.start}
-            onClick={() => setTime(slot.start)}
-            className={`${selectableClassName(effectiveTime === slot.start)} inline-flex h-11 w-full items-center justify-center whitespace-nowrap`}
-          >
-            {slot.start}
-          </button>
-        ))}
+        {slots.map((slot) => {
+          const unavailable = effectiveDay ? !isSlotFree(effectiveDay, slot.start) : false
+          return (
+            <button
+              key={slot.start}
+              type="button"
+              aria-pressed={effectiveTime === slot.start}
+              disabled={unavailable}
+              title={unavailable ? t('booking.slotHeldByOther') : undefined}
+              onClick={() => handleSelectTime(slot.start)}
+              className={`${selectableClassName(effectiveTime === slot.start)} inline-flex h-11 w-full flex-col items-center justify-center whitespace-nowrap leading-tight disabled:cursor-not-allowed disabled:border-neutral-200 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:hover:bg-neutral-100`}
+            >
+              {slot.start}
+              {unavailable && <span className="text-[0.65rem] font-normal">{t('booking.slotHeldByOther')}</span>}
+            </button>
+          )
+        })}
       </div>
     ) : (
       <p className="m-0 text-left font-body text-body-sm text-body-text">
@@ -511,6 +554,10 @@ function BookingPage() {
             </h4>
             {renderSlots(afternoonSlots)}
           </div>
+
+          {holdsSelection && (
+            <p className="m-0 text-left font-body text-body-sm text-neutral-500">{t('booking.slotHeldNote')}</p>
+          )}
         </>
       )}
     </div>
@@ -795,7 +842,7 @@ function BookingPage() {
               >
                 <ArrowLeftIcon size={30} aria-hidden="true" />
               </button>
-              <h2 className="m-0 text-left font-heading text-h1 leading-none text-heading">
+              <h2 className="m-0 text-left font-heading text-h3 leading-tight text-heading">
                 {t('booking.title')}
               </h2>
             </div>
@@ -823,7 +870,7 @@ function BookingPage() {
               {step < 5 ? (
                 <button
                   type="button"
-                  onClick={handleNext}
+                  onClick={() => void handleNext()}
                   disabled={!stepFilled}
                   className="flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-orange-500"
                 >

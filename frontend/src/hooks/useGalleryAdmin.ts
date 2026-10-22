@@ -215,9 +215,9 @@ const deleteGallery = async (id: string) => {
 	}
 }
 
-const uploadImages = async (galleryId: string, files: File[], title: string) => {
+const uploadImages = async (galleryId: string, files: File[], title: string, altTexts?: string[]) => {
 	try {
-		const uploaded: GalleryImage[] = await galleryService.uploadImages(galleryId, files, title)
+		const uploaded: GalleryImage[] = await galleryService.uploadImages(galleryId, files, title, altTexts)
 		setGalleriesByCategory((prev) => {
 			const next: Record<string, Gallery[]> = {}
 			for (const [categoryId, galleries] of Object.entries(prev)) {

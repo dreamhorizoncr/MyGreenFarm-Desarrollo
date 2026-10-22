@@ -75,7 +75,7 @@ function PlanCard({
         {plan!.imageUrl ? (
           <img
             src={plan!.imageUrl}
-            alt={plan!.name}
+            alt={plan!.imageAlt || plan!.name}
             className="h-full w-full object-cover"
           />
         ) : (

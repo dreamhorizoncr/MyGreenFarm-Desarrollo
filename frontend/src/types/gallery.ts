@@ -3,6 +3,7 @@ export interface GalleryImage {
 	galleryId: string
 	title: string
 	fileUrl: string
+	altText?: string | null
 	likeCount?: number
 }
 

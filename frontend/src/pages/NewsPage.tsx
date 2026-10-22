@@ -27,6 +27,7 @@ function NewsPage() {
     error: imagesError,
     fetchImages,
     getCoverImage,
+    getCoverAlt,
   } = useAnnouncementImages();
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const tabRowRef = useTabCarousel(activeCategory);
@@ -152,6 +153,7 @@ function NewsPage() {
                           typeLabel={labelFor({ id: a.categoryId, code: a.categoryCode ?? a.type, title: a.categoryTitle })}
                           formattedDate={formatNewsDate(a.eventDate, i18n.language)}
                           coverImage={getCoverImage(a.id)}
+                          coverAlt={getCoverAlt(a.id)}
                           onReadMore={() => setSelectedAnnouncement(a)}
                         />
                       );

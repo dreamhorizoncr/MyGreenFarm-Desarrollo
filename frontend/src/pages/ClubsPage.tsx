@@ -31,7 +31,7 @@ function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
                 {club.coverImageUrl ? (
                     <img
                         src={club.coverImageUrl}
-                        alt={club.name}
+                        alt={club.images?.find((image) => image.isCover)?.altText || club.name}
                         className="h-full w-full object-cover"
                     />
                 ) : (
