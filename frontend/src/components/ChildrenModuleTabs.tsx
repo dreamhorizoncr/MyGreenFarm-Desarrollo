@@ -5,9 +5,9 @@ import TabHighlight from './ui/TabHighlight.tsx'
 import { tabCarouselClass, useTabCarousel } from '../hooks/useTabCarousel.ts'
 
 const moduleSections = [
-  { path: '/admin/children', labelKey: 'admin.children.title', adminOnly: true },
-  { path: '/admin/expedients', labelKey: 'admin.expedients.title', adminOnly: false },
-  { path: '/admin/evaluations', labelKey: 'admin.evaluations.title', adminOnly: false },
+  { path: '/admin/children', labelKey: 'admin.children.tabLabel', adminOnly: true },
+  { path: '/admin/expedients', labelKey: 'admin.expedients.tabLabel', adminOnly: false },
+  { path: '/admin/evaluations', labelKey: 'admin.evaluations.tabLabel', adminOnly: false },
 ] as const
 
 function ChildrenModuleTabs() {
