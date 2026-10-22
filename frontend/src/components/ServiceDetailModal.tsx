@@ -14,7 +14,6 @@ import SchedulePopover from './SchedulePopover.tsx'
 
 interface ServiceDetailModalProps {
     plan: ServicePlan
-    // Moneda que el usuario ya eligió en la tarjeta
     initialCurrency?: Currency
     exchangeRate?: ExchangeRate | null
     isLoading?: boolean
@@ -33,7 +32,6 @@ function ServiceDetailModal({ plan, initialCurrency, exchangeRate, isLoading = f
     const [scheduleOpen, setScheduleOpen] = useState(false)
     const [currency, setCurrency] = useState<Currency>(() => initialCurrency ?? cleanCurrency(plan.currency))
     const { closing, requestClose } = useModalExit(onClose)
-    // Con el horario abierto, Escape y el clic afuera cierran solo el mini modal y no el detalle
     useDialogDismiss(dialogRef, requestClose, !scheduleOpen)
 
     useEffect(() => {
@@ -88,7 +86,6 @@ function ServiceDetailModal({ plan, initialCurrency, exchangeRate, isLoading = f
                         {plan.description}
                     </p>
 
-                    {/* Qué incluye arriba y el precio debajo */}
                     <div className="mt-xl flex flex-col gap-xl">
                         {plan.includes && (
                             <div className="min-w-0">

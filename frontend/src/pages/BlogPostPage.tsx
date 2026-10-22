@@ -202,13 +202,13 @@ function BlogPostPage() {
                   aria-label={t('forum.likes.label')}
                   className={`flex items-center gap-xs font-body text-body-sm transition ${
                     isLiked(post.id)
-                      ? 'text-danger'
-                      : 'text-neutral-500 hover:text-danger'
+                      ? 'text-pink-400'
+                      : 'text-neutral-500 hover:text-pink-400'
                   }`}
                 >
                   <HeartIcon
                     size={20}
-                    className={isLiked(post.id) ? 'fill-current' : ''}
+                    className={isLiked(post.id) ? '[&_svg]:fill-current' : ''}
                   />
                   <span>{getLikeCount(post.id)}</span>
                 </button>

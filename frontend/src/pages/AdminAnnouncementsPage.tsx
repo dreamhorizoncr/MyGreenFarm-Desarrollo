@@ -74,7 +74,6 @@ function AnnouncementsPage() {
   const [categoryError, setCategoryError] = useState<string | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<CreatableOption | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  // Múltiplo de las columnas visibles (1 / 2 / 3) para no dejar huecos en la última fila
   const pageSize = useGridPageSize({ base: 1, md: 2, xl: 3 });
   const [lastPageSize, setLastPageSize] = useState(pageSize);
   if (lastPageSize !== pageSize) {
@@ -92,7 +91,6 @@ function AnnouncementsPage() {
   const { t, i18n } = useTranslation();
   const { categories, labelFor, createCategory, deleteCategory } = useAnnouncementCategories();
 
-  // Recarga la página actual con la categoría elegida (el filtro lo hace el backend)
   const reloadList = () =>
     fetchAnnouncements(i18n.language, currentPage - 1, pageSize, activeCategory === "All" ? undefined : activeCategory);
 
@@ -265,7 +263,6 @@ function AnnouncementsPage() {
       await deleteCategory(categoryToDelete.id);
       setForm((current) => (current.categoryId === categoryToDelete.id ? { ...current, categoryId: "" } : current));
       if (activeCategory === categoryToDelete.id) {
-        // el efecto vuelve a cargar al cambiar de categoría
         setActiveCategory("All");
         setCurrentPage(1);
       } else {

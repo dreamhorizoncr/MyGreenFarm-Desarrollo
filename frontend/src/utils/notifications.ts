@@ -7,14 +7,12 @@ type NotifyInput = string | SileoOptions
 type SileoKind = 'success' | 'error' | 'warning' | 'info'
 
 const DEFAULT_DURATION = 4000
-// Sileo muestra el título en una sola línea; más largo que esto se sale de la pantalla en móvil
 const MAX_TITLE_LENGTH = 36
 
 function toOptions(input: NotifyInput): SileoOptions {
   return typeof input === 'string' ? { title: input } : input
 }
 
-// Un título largo pasa a la descripción (que sí salta de línea) bajo un título corto según el tipo
 function fitTitle(options: SileoOptions, kind: SileoKind): SileoOptions {
   const { title, description } = options
   if (typeof title !== 'string' || title.length <= MAX_TITLE_LENGTH) return options
@@ -31,10 +29,6 @@ function withPeriod(text: string): string {
   return /[.!?]$/.test(text) ? text : `${text}.`
 }
 
-// Los modales <dialog> se abren en la capa superior del navegador y tapan cualquier z-index.
-// Como popover, el contenedor de notificaciones también entra en esa capa, encima del fondo oscuro.
-// Solo se vuelve a abrir (para quedar sobre el último modal) cuando se abrió un modal después,
-// porque reabrirlo reinicia las animaciones de las notificaciones visibles.
 let modalOpenedSinceRaise = false
 
 function raiseViewport(viewport: HTMLElement, restack: boolean) {

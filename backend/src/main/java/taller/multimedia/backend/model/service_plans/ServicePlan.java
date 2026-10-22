@@ -38,7 +38,6 @@ public class ServicePlan {
     @Column(nullable = false)
     private String imageUrl;
 
-    // Texto alternativo para lectores de pantalla
     @Column(name = "image_alt", length = 140)
     private String imageAlt;
 

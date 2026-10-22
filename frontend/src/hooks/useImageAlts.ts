@@ -11,7 +11,6 @@ interface ImageWithAlt {
 
 const fileKey = (file: File) => `${file.name}-${file.size}-${file.lastModified}`
 
-// Textos alternativos de las imágenes de un formulario: las nuevas (obligatorio) y las ya subidas (editable)
 export function useImageAlts() {
   const [newAlts, setNewAlts] = useState<Record<string, string>>({})
   const [editedAlts, setEditedAlts] = useState<Record<string, string>>({})
@@ -41,7 +40,6 @@ export function useImageAlts() {
   }
   const existingError = (id: string | number) => errors[`old:${id}`] ?? null
 
-  // Las imágenes nuevas necesitan texto; en las ya subidas solo se revisa lo que se escribió
   const validate = (files: File[], images: ImageWithAlt[], t: TFunction) => {
     const next: Record<string, string | null> = {}
     for (const file of files) {

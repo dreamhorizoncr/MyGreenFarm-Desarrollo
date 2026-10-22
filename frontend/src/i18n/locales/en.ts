@@ -380,7 +380,7 @@ export default {
     noNews: "There are no published news yet.",
     newsgallery: "Gallery",
     deleteImage: "Delete image",
-    deleteModalTitle: "Delete news?",
+    deleteModalTitle: "Delete news",
     deleteModalMessage: "Are you sure you want to delete this news item?",
     deleteModalCancel: "Cancel",
     deleteModalConfirm: "Delete",
@@ -949,6 +949,7 @@ export default {
     },
     evaluations: {
       title: "Evaluation Management",
+      tabLabel: "Evaluations",
       description: "Record, review, and manage children's progress.",
       registerEvaluation: "Register evaluation",
       searchPlaceholder: "Search evaluations...",
@@ -1097,6 +1098,7 @@ export default {
     expedients: {
       noMatches: 'No records found with that name.',
       title: "Academic Record Management",
+      tabLabel: "Academic records",
       description:
         "View the academic records of the children enrolled at the institution.",
       searchbutton: "Search child",
@@ -1210,6 +1212,7 @@ export default {
 
     children: {
       title: "Children Management",
+      tabLabel: "Children",
       description: 'Manage the children registered in My Green Farm.',
       searchPlaceholder: 'Search children...',
       addChild: 'Register child',

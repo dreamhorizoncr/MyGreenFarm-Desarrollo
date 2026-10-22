@@ -62,7 +62,6 @@ function messageFromBody(data: unknown): string | undefined {
   return undefined
 }
 
-// Nombre del campo que rechazó el backend, si lo indica
 export function getErrorField(error: unknown): string | undefined {
   if (!axios.isAxiosError(error)) return undefined
   const data: unknown = error.response?.data

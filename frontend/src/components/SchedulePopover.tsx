@@ -9,11 +9,9 @@ import ClubScheduleCard from './ClubScheduleCard.tsx'
 
 interface SchedulePopoverProps {
     schedule: string | null | undefined
-    // Avisa al modal que lo contiene para que Escape/clic afuera cierren primero el horario
     onOpenChange?: (open: boolean) => void
 }
 
-// «N días a la semana · Ver horarios»: el enlace despliega la tarjeta del horario en un mini modal
 function SchedulePopover({ schedule, onOpenChange }: Readonly<SchedulePopoverProps>) {
     const { t, i18n } = useTranslation()
     const popoverId = useId()
@@ -28,7 +26,6 @@ function SchedulePopover({ schedule, onOpenChange }: Readonly<SchedulePopoverPro
     const close = useCallback(() => changeOpen(false), [changeOpen])
     useDismiss({ ref: rootRef, isOpen: open, onClose: close })
 
-    // Si el horario queda cortado por el borde del modal, desplaza hasta que se vea completo
     useEffect(() => {
         if (!open) return
         const timer = window.setTimeout(() => {

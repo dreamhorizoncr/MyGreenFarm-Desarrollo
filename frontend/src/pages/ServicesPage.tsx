@@ -132,7 +132,6 @@ function ServicesPage() {
 
   const { plans, loading, error, fetchPlans, totalPages } = useServicePlans()
   const [currentPage, setCurrentPage] = useState(1)
-  // Múltiplo de las columnas visibles (1 / 3) para no dejar huecos en la última fila
   const pageSize = useGridPageSize({ base: 1, md: 3 })
   const [lastPageSize, setLastPageSize] = useState(pageSize)
   if (lastPageSize !== pageSize) {

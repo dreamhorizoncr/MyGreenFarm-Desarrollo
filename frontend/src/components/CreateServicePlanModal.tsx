@@ -116,7 +116,6 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
       setImageError(null)
     }
 
-    // Una imagen nueva necesita texto alternativo; la actual solo se revisa si se escribió algo
     const altValue = imageAlt.trim()
     let altMessage: string | null = null
     if (altValue) altMessage = validateSafeText(altValue, t)

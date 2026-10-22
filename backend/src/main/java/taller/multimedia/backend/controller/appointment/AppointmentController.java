@@ -63,7 +63,6 @@ public class AppointmentController {
         return ResponseEntity.ok(newAppointment);
     }
 
-    // Aparta el horario mientras la persona termina el formulario; repetirlo renueva el tiempo
     @PostMapping("/holds")
     public ResponseEntity<SlotHoldService.HoldResult> holdSlot(
             @Valid @RequestBody SlotHoldRequest request,
@@ -71,7 +70,6 @@ public class AppointmentController {
         return ResponseEntity.ok(slotHoldService.hold(request.getSlot(), request.getHolderId(), clientKey(httpRequest)));
     }
 
-    // Por POST con parámetro para poder llamarlo con navigator.sendBeacon al cerrar la página
     @PostMapping("/holds/release")
     public ResponseEntity<Void> releaseSlot(@RequestParam String holderId) {
         slotHoldService.release(holderId);

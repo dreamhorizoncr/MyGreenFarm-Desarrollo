@@ -7,7 +7,6 @@ type SlotStatus = 'HELD' | 'RELEASED' | 'BOOKED'
 
 const HOLDER_KEY = 'mgf_booking_holder'
 
-// Identificador de esta pestaña para apartar horarios; se conserva al recargar la página
 function readHolderId(): string {
   const fresh = crypto.randomUUID()
   try {
@@ -20,7 +19,6 @@ function readHolderId(): string {
   return fresh
 }
 
-// Clave de un horario: "2026-10-21T15:00"
 export const slotKey = (date: string, time: string) => `${date}T${time.slice(0, 5)}`
 
 const withoutKey = (set: Set<string>, key: string) => {
@@ -32,8 +30,6 @@ const withoutKey = (set: Set<string>, key: string) => {
 
 const withKey = (set: Set<string>, key: string) => (set.has(key) ? set : new Set(set).add(key))
 
-// Aparta en el servidor el horario elegido y recibe por Server-Sent Events los horarios
-// que otras personas están reservando o ya reservaron, para deshabilitarlos al momento.
 export function useSlotHolds() {
   const [holderId] = useState(readHolderId)
   const [heldByOthers, setHeldByOthers] = useState<Set<string>>(() => new Set())
@@ -53,7 +49,6 @@ export function useSlotHolds() {
           setHeldByOthers((current) => withoutKey(current, key))
           return
         }
-        // Los avisos de mi propio apartado no deshabilitan el horario para mí
         if (key === myHoldRef.current) return
         setHeldByOthers((current) => (status === 'HELD' ? withKey(current, key) : withoutKey(current, key)))
       } catch {
@@ -63,7 +58,6 @@ export function useSlotHolds() {
     return () => source.close()
   }, [])
 
-  // Al cerrar o salir de la página se libera el horario para los demás
   useEffect(() => {
     const releaseOnExit = () => {
       if (myHoldRef.current) navigator.sendBeacon?.(appointmentService.releaseHoldUrl(holderId))
@@ -96,7 +90,6 @@ export function useSlotHolds() {
     appointmentService.releaseHold(holderId).catch(() => undefined)
   }, [holderId])
 
-  // Después de reservar, el servidor ya borró el apartado
   const forget = useCallback(() => {
     myHoldRef.current = null
     setMyHold(null)

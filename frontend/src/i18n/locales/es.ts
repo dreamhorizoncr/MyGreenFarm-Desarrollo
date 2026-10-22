@@ -379,7 +379,7 @@ export default {
     noNews: "Todavía no hay noticias publicadas.",
     newsgallery: "Galería",
     deleteImage: "Eliminar imagen",
-    deleteModalTitle: "¿Eliminar noticia?",
+    deleteModalTitle: "Eliminar noticia",
     deleteModalMessage: "¿Estás seguro de que deseas eliminar esta noticia?",
     deleteModalCancel: "Cancelar",
     deleteModalConfirm: "Eliminar",
@@ -1006,6 +1006,7 @@ export default {
     expedients: {
       noMatches: 'No se encontraron expedientes con ese nombre.',
       title: "Gestión de Expedientes Académicos",
+      tabLabel: "Expedientes académicos",
       description:
         "Visualiza los expedientes académicos de los niños y niñas matriculados en la institución.",
       searchbutton: "Buscar niño",
@@ -1122,6 +1123,7 @@ export default {
 
     children: {
       title: "Gestión de Niños",
+      tabLabel: "Niños",
       description: 'Administra los niños registrados en My Green Farm.',
       searchPlaceholder: 'Buscar niño...',
       addChild: 'Registrar niño',
@@ -1296,6 +1298,7 @@ export default {
     },
     evaluations: {
       title: "Gestión de Evaluaciones",
+      tabLabel: "Evaluaciones",
       description: "Registra, consulta y administra el progreso de los niños.",
       registerEvaluation: "Registrar evaluación",
       searchPlaceholder: "Buscar evaluación...",

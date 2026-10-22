@@ -17,7 +17,6 @@ import { useAnnouncementCategories } from "../hooks/useAnnouncementCategories.ts
 import TabHighlight from "../components/ui/TabHighlight.tsx";
 import { tabCarouselClass, useTabCarousel } from "../hooks/useTabCarousel.ts";
 
-
 function NewsPage() {
   const { t, i18n } = useTranslation();
   const { announcements,totalPages, loading, error, fetchAnnouncements } =
@@ -48,7 +47,6 @@ function NewsPage() {
 
   const cards = announcements;
 
-  // Al cambiar de categoría se vuelve a la primera página de esa categoría
   const selectCategory = (category: string) => {
     setActiveCategory(category);
     setCurrentPage(1);
