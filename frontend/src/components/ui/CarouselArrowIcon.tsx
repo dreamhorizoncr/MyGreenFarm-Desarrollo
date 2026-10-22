@@ -1,4 +1,3 @@
-// Triángulo redondeado de las flechas de carrusel (galería, testimonios); apunta a la derecha salvo con flip
 function CarouselArrowIcon({ flip = false }: Readonly<{ flip?: boolean }>) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className={`size-[40%] ${flip ? 'rotate-180' : ''}`}>

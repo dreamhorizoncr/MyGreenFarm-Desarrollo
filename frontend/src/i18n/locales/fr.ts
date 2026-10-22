@@ -381,7 +381,7 @@ export default {
     noNews: "Aucune actualité n’a encore été publiée.",
     newsgallery: "Galerie",
     deleteImage: "Supprimer l’image",
-    deleteModalTitle: "Supprimer l’actualité ?",
+    deleteModalTitle: "Supprimer l’actualité",
     deleteModalMessage: "Êtes-vous sûr de vouloir supprimer cette actualité ?",
     deleteModalCancel: "Annuler",
     deleteModalConfirm: "Supprimer",
@@ -955,6 +955,7 @@ export default {
     },
     evaluations: {
       title: "Gestion des Évaluations",
+      tabLabel: "Évaluations",
       description: "Enregistrez, consultez et gérez les progrès des enfants.",
       registerEvaluation: "Enregistrer une évaluation",
       searchPlaceholder: "Rechercher une évaluation...",
@@ -1105,6 +1106,7 @@ export default {
     expedients: {
       noMatches: 'Aucun dossier trouvé avec ce nom.',
       title: "Gestion des Dossiers Académiques",
+      tabLabel: "Dossiers académiques",
       description:
         "Consultez les dossiers académiques des enfants inscrits dans l’établissement.",
       searchbutton: "Rechercher un enfant",
@@ -1218,6 +1220,7 @@ export default {
 
     children: {
       title: "Gestion des Enfants",
+      tabLabel: "Enfants",
       description: 'Gérez les enfants enregistrés dans My Green Farm.',
       searchPlaceholder: 'Rechercher un enfant...',
       addChild: 'Inscrire un enfant',

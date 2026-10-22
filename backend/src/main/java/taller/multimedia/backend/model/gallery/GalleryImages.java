@@ -22,7 +22,6 @@ import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-
 @Entity 
 @Table(name = "gallery_images")
 @Data
@@ -43,7 +42,6 @@ public class GalleryImages {
     @Column (nullable = false)
     private String fileUrl;
 
-    // Texto alternativo para lectores de pantalla
     @Column(name = "alt_text", length = 140)
     private String altText;
 

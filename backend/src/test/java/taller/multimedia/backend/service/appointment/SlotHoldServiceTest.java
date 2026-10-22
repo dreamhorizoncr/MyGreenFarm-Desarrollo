@@ -128,8 +128,6 @@ class SlotHoldServiceTest {
         assertThat(service.heldSlots()).doesNotContain(SLOT);
     }
 
-    // Reproduce el bug: dos personas envían la cita del mismo horario al mismo tiempo.
-    // La "reserva" simulada revisa si está libre y luego guarda, como AppointmentService.
     @Test
     void bookExclusively_onlyOneOfTwoSimultaneousBookingsSucceeds() throws Exception {
         List<String> saved = new CopyOnWriteArrayList<>();

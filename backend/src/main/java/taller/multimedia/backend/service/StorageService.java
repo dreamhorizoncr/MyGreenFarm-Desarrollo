@@ -34,7 +34,6 @@ public class StorageService {
 
     public String uploadFile(MultipartFile file, String bucketName, String folder) {
         try {
-            // El nombre original viene del usuario: se limpia antes de usarlo en la ruta y en la URL pública
             String fileName = folder + "/" + UUID.randomUUID() + "_" + Sanitizer.safeFileName(file.getOriginalFilename());
 
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()

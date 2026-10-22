@@ -8,7 +8,6 @@ interface ImageThumbProps {
   label?: string
   onDelete?: () => void
   deleteLabel?: string
-  // Con onAltChange la tarjeta muestra el campo de texto alternativo de la imagen
   altText?: string
   onAltChange?: (value: string) => void
   altLabel?: string
@@ -70,7 +69,6 @@ interface ImageThumbListProps {
   title?: string
   children: ReactNode
   className?: string
-  // Lista plegable (cerrada al inicio) para cuando hay muchas imágenes; summary va junto al título
   collapsible?: boolean
   summary?: string
   forceOpen?: boolean

@@ -40,7 +40,6 @@ function PdfPage({ pdf, pageNumber, width, label }: Readonly<{ pdf: PDFDocumentP
       task = page.render({ canvas, viewport })
       await task.promise
     }
-    // Cancelar el render al cambiar de zoom rechaza la promesa; no es un error
     renderPage().catch(() => undefined)
     return () => {
       cancelled = true
@@ -71,7 +70,6 @@ function PdfViewer({ url, fileName, title, className = 'h-105' }: Readonly<PdfVi
   const [zoomIndex, setZoomIndex] = useState(2)
   const [currentPage, setCurrentPage] = useState(1)
 
-  // Al cambiar de documento, quien lo usa remonta el visor con otra key
   useEffect(() => {
     let cancelled = false
     const task = getDocument({url})
@@ -92,7 +90,6 @@ function PdfViewer({ url, fileName, title, className = 'h-105' }: Readonly<PdfVi
     return () => observer.disconnect()
   }, [])
 
-  // Página actual según el scroll: la primera cuyo borde inferior pasa la mitad del visor
   const handleScroll = () => {
     const el = scrollRef.current
     if (!el) return

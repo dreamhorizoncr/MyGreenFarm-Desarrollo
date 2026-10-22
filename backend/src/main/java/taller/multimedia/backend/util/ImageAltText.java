@@ -6,7 +6,6 @@ import taller.multimedia.backend.exception.InvalidFieldException;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
-// Texto alternativo de las imágenes que suben los administradores (lectores de pantalla)
 public final class ImageAltText {
 
     public static final int MAX_LENGTH = 140;
@@ -15,7 +14,6 @@ public final class ImageAltText {
     private ImageAltText() {
     }
 
-    // Vacío se guarda como null; si viene, se valida largo y contenido seguro
     public static String clean(String value) {
         if (value == null || value.isBlank()) return null;
         String trimmed = value.trim();
@@ -25,7 +23,6 @@ public final class ImageAltText {
         return Sanitizer.requireClean(FIELD, trimmed);
     }
 
-    // Los textos de una subida múltiple llegan como arreglo JSON (una lista simple partiría los textos con comas)
     public static List<String> parseList(ObjectMapper objectMapper, String json) {
         if (json == null || json.isBlank()) return List.of();
         try {

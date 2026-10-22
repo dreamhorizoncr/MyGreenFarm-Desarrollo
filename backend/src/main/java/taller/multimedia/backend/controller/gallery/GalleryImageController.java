@@ -57,7 +57,6 @@ public class GalleryImageController {
         return ResponseEntity.ok(images);
     }
 
-    // Edita solo el texto alternativo de una imagen ya subida
     @PatchMapping("/images/{imageId}/alt")
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<Void> updateImageAlt(

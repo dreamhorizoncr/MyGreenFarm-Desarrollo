@@ -95,7 +95,6 @@ interface VacancyManagementSectionProps {
   error: string | null
   applicantNameById: Map<string, string>
   onCreate: (data: VacancyInput) => Promise<void>
-  // El botón para crear vive en el encabezado de la página; aquí solo se muestra el modal
   showCreateModal: boolean
   onCloseCreateModal: () => void
   onSetOpen: (id: string, isOpen: boolean) => void

@@ -100,7 +100,6 @@ function AdminUsersPage() {
           </button>
         </div>
 
-        {/* Pestañas de rol a la izquierda y buscador a la derecha; en móvil el buscador va arriba */}
         <div className="mb-lg mt-xl flex flex-col-reverse gap-md md:flex-row md:items-center md:justify-between">
           <div ref={tabRowRef} className={`${tabCarouselClass} -my-1 min-w-0 md:flex-1`}>
             {ROLE_OPTIONS.map((role) => (

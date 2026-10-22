@@ -38,7 +38,7 @@ function LikeBadge({ albumTitle, liked, totalLikes, loading, onToggle }: Readonl
     >
       <HeartIcon
         size={14}
-        className={liked ? 'fill-current text-red-500' : 'text-neutral-400'}
+        className={liked ? 'text-pink-400 [&_svg]:fill-current' : 'text-neutral-400'}
         aria-hidden="true"
       />
       <span className="font-body text-caption font-bold text-neutral-800">{totalLikes}</span>

@@ -10,7 +10,6 @@ interface CacheData {
     totalPages: number
 }
 
-// Traduce los nombres de club de los niños; si el catálogo falla se muestran sin traducir
 async function translateClubNames(children: Child[], targetLang: string): Promise<Map<string, string>> {
     const translatedClubName = new Map<string, string>()
 
@@ -105,7 +104,6 @@ export function useChildren() {
 
                 setChildren(processedContent)
             } catch {
-                // Si la traducción falla se guardan los datos sin traducir
                 processedContent = rawContent
             }
 

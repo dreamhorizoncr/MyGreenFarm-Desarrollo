@@ -40,10 +40,10 @@ function LikeControl({ isInteractive, isLiked, likeCount, onToggle }: Readonly<L
         aria-pressed={isLiked}
         aria-label={t('forum.likes.label')}
         className={`flex items-center gap-xs font-body text-body-sm transition ${
-          isLiked ? 'text-danger' : 'text-neutral-500 hover:text-danger'
+          isLiked ? 'text-pink-400' : 'text-neutral-500 hover:text-pink-400'
         }`}
       >
-        <HeartIcon size={18} className={isLiked ? 'fill-current' : ''} />
+        <HeartIcon size={18} className={isLiked ? '[&_svg]:fill-current' : ''} />
         <span>{likeCount}</span>
       </button>
     )

@@ -157,8 +157,6 @@ function AdminServicePlansPage() {
     }
   }
 
-  // Múltiplo de las columnas visibles (1 / 2 / 3) para no dejar huecos en la última fila
-
   const pageSize = useGridPageSize({ base: 1, md: 2, lg: 3 })
 
   const { currentPage, setPage, totalPages, pageItems: pagedPlans } = useClientPagination(plans, pageSize)

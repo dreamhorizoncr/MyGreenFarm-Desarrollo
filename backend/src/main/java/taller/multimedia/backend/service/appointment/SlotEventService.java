@@ -12,8 +12,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-// Avisa en tiempo real (Server-Sent Events) a las páginas de citas abiertas cuando un horario
-// se aparta, se libera o se reserva, para que nadie elija uno que otra persona está usando.
 @Service
 public class SlotEventService {
 
@@ -28,7 +26,6 @@ public class SlotEventService {
 
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
 
-    // Abre la conexión y manda primero los horarios que ya están apartados
     public SseEmitter subscribe(Collection<LocalDateTime> heldSlots) {
         SseEmitter emitter = new SseEmitter(EMITTER_TIMEOUT_MS);
         emitter.onCompletion(() -> emitters.remove(emitter));
@@ -58,7 +55,6 @@ public class SlotEventService {
         }
     }
 
-    // Comentario vacío periódico para que proxies como el de Railway no corten la conexión inactiva
     @Scheduled(fixedRate = 20_000)
     public void heartbeat() {
         for (SseEmitter emitter : emitters) {

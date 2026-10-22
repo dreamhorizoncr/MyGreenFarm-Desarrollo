@@ -20,7 +20,6 @@ public class AnnouncementImage {
     @Column(name = "file_url", nullable = false)
     private String fileUrl;
 
-    // Texto alternativo para lectores de pantalla
     @Column(name = "alt_text", length = 140)
     private String altText;
 
