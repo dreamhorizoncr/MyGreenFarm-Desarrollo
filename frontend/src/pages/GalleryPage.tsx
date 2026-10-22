@@ -10,6 +10,8 @@ import ninos2 from '../assets/imgs/ninos2.svg'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import TabHighlight from '../components/ui/TabHighlight.tsx'
+import transportador from "../assets/imgs/transportador.svg";
+import abaco from "../assets/imgs/abaco.svg";
 
 function GalleryPage() {
   const { t, i18n } = useTranslation()
@@ -58,6 +60,28 @@ function GalleryPage() {
       <Navbar />
 
       <section className="flex min-h-[280px] items-start bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
+           <img
+          src={abaco}
+          alt=""
+          aria-hidden="true"
+          className="absolute top-[24%] left-[3%] rotate-[-20deg]
+              w-[clamp(3rem,12vw,8rem)]
+              md:top-[25%] md:left-[8%]
+              lg:top-[25%] lg:left-[10%] 
+              pointer-events-none select-none opacity-50"
+        />
+
+        <img
+          src={transportador}
+          alt=""
+          aria-hidden="true"
+          className="absolute top-[25%] right-[3%]
+              w-[clamp(3rem,13vw,9rem)]
+              md:top-[25%] md:right-[8%]
+              lg:top-[25%] lg:right-[10%] 
+              pointer-events-none select-none opacity-50"
+        />
+
         <div className="mx-auto w-full max-w-[700px]">
           <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">
             {t('home.galeria.title')}
