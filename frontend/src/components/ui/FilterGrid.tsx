@@ -29,6 +29,45 @@ function waitForImages(node: HTMLElement) {
   return Promise.race([Promise.all(images), new Promise((resolve) => setTimeout(resolve, 1500))])
 }
 
+const TIMING = { duration: DURATION, easing: EASING }
+
+function resetNode(node: HTMLElement) {
+  node.getAnimations().forEach((animation) => animation.cancel())
+  if (!node.dataset.flipKey || !node.dataset.flipStarted) return
+  delete node.dataset.flipStarted
+  Object.assign(node.style, { position: '', left: '', top: '', width: '', height: '', opacity: '' })
+}
+
+function startExit(node: HTMLElement, rect: Rect | undefined, finish: () => void) {
+  if (!rect) {
+    finish()
+    return
+  }
+  Object.assign(node.style, { position: 'absolute', left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` })
+  const exit = node.animate([{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(0.6)', opacity: 0 }], { ...TIMING, fill: 'forwards' })
+  void exit.finished.then(finish, finish)
+}
+
+function animateHeight(grid: HTMLElement, startHeight: number | null) {
+  const endHeight = grid.offsetHeight
+  if (startHeight === null || startHeight === endHeight) return
+  grid.animate([{ height: `${startHeight}px` }, { height: `${endHeight}px` }], TIMING)
+}
+
+function animateItem(node: HTMLElement, before: Rect | undefined, next: Rect) {
+  if (!before) {
+    node.style.opacity = '0'
+    void waitForImages(node).then(() => {
+      node.style.opacity = ''
+      node.animate([{ transform: 'scale(0.6)', opacity: 0 }, { transform: 'scale(1)', opacity: 1 }], TIMING)
+    })
+    return
+  }
+  const dx = before.left - next.left
+  const dy = before.top - next.top
+  if (dx || dy) node.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'translate(0, 0)' }], TIMING)
+}
+
 interface FilterGridProps {
   children: ReactNode
   className?: string
@@ -61,37 +100,19 @@ export function FilterGrid({ children, className = '' }: Readonly<FilterGridProp
     lastSignature.current = keySignature
     const animate = gridHeight.current !== null && !prefersReducedMotion()
     const nodes = [...grid.children] as HTMLElement[]
-    const timing = { duration: DURATION, easing: EASING }
 
-    for (const node of nodes) {
-      node.getAnimations().forEach((animation) => animation.cancel())
-      if (node.dataset.flipKey && node.dataset.flipStarted) {
-        delete node.dataset.flipStarted
-        Object.assign(node.style, { position: '', left: '', top: '', width: '', height: '', opacity: '' })
-      }
-    }
+    nodes.forEach(resetNode)
 
     for (const node of nodes) {
       const key = node.dataset.flipExit
       if (!key || node.dataset.flipStarted) continue
-      const rect = rects.current.get(key)
       node.dataset.flipStarted = 'true'
       const finish = () => setExiting((current) => current.filter((item) => String(item.key) !== key))
-      if (!rect || !animate) {
-        finish()
-        continue
-      }
-      Object.assign(node.style, { position: 'absolute', left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` })
-      const exit = node.animate([{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(0.6)', opacity: 0 }], { ...timing, fill: 'forwards' })
-      void exit.finished.then(finish, finish)
+      startExit(node, animate ? rects.current.get(key) : undefined, finish)
     }
 
-    const startHeight = gridHeight.current
-    const endHeight = grid.offsetHeight
-    if (animate && startHeight !== null && startHeight !== endHeight) {
-      grid.animate([{ height: `${startHeight}px` }, { height: `${endHeight}px` }], timing)
-    }
-    gridHeight.current = endHeight
+    animateHeight(grid, animate ? gridHeight.current : null)
+    gridHeight.current = grid.offsetHeight
 
     for (const node of nodes) {
       const key = node.dataset.flipKey
@@ -99,18 +120,7 @@ export function FilterGrid({ children, className = '' }: Readonly<FilterGridProp
       const next = measure(node)
       const before = rects.current.get(key)
       rects.current.set(key, next)
-      if (!animate) continue
-      if (!before) {
-        node.style.opacity = '0'
-        void waitForImages(node).then(() => {
-          node.style.opacity = ''
-          node.animate([{ transform: 'scale(0.6)', opacity: 0 }, { transform: 'scale(1)', opacity: 1 }], timing)
-        })
-        continue
-      }
-      const dx = before.left - next.left
-      const dy = before.top - next.top
-      if (dx || dy) node.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'translate(0, 0)' }], timing)
+      if (animate) animateItem(node, before, next)
     }
 
     for (const key of rects.current.keys()) {

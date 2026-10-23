@@ -37,33 +37,30 @@ interface VacancyCardProps {
   position?: number
 }
 
-const HEADER_TONES = {
-  pinkBoth: { header: 'bg-pink-400', wave: 'text-pink-400' },
-  greenBoth: { header: 'bg-green-500', wave: 'text-green-500' },
-  pinkThenGreen: { header: 'bg-pink-400 md:bg-green-500', wave: 'text-pink-400 md:text-green-500' },
-  greenThenPink: { header: 'bg-green-500 md:bg-pink-400', wave: 'text-green-500 md:text-pink-400' },
-}
-
 const HEADER_ILLUSTRATIONS = [lapiz, tijera, goma, cabra]
 
-function headerTone(position: number) {
+function toneAttributes(position: number) {
   const mobilePink = position % 2 === 0
   const desktopPink = (Math.floor(position / 2) + (position % 2)) % 2 === 0
-  if (mobilePink === desktopPink) return mobilePink ? HEADER_TONES.pinkBoth : HEADER_TONES.greenBoth
-  return mobilePink ? HEADER_TONES.pinkThenGreen : HEADER_TONES.greenThenPink
+  return {
+    'data-tone-mobile': mobilePink ? 'pink' : 'green',
+    'data-tone-desktop': desktopPink ? 'pink' : 'green',
+  }
 }
 
 function VacancyCard({ title, description, onApply, loading = false, position = 0 }: Readonly<VacancyCardProps>) {
   const { t } = useTranslation()
-  const tone = headerTone(position)
+  const tone = toneAttributes(position)
+  const illustration = HEADER_ILLUSTRATIONS[position % HEADER_ILLUSTRATIONS.length]
 
   if (loading) {
     return (
-      <article className="flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow">
-        <div className={`${tone.header} flex items-center gap-md px-lg pb-sm pt-lg`}>
-          <Skeleton shape="line" className="h-6 w-3/5 opacity-40" />
+      <article {...tone} className="vacancy-card flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow">
+        <div className="flex items-center justify-between gap-md bg-(--tone) px-lg pb-xs pt-md [@media(hover:hover)]:bg-(--tone-soft)">
+          <Skeleton shape="line" className="h-7 w-3/5 opacity-50 [@media(hover:hover)]:opacity-100" />
+          <Skeleton shape="rect" className="h-14 w-14 shrink-0 opacity-50 [@media(hover:hover)]:opacity-100" />
         </div>
-        <ScallopEdge className={tone.wave} />
+        <ScallopEdge className="text-(--tone) [@media(hover:hover)]:text-(--tone-soft)" />
         <div className="flex flex-1 flex-col p-lg pt-md">
           <div className="flex flex-1 flex-col gap-2xs">
             <Skeleton shape="line" className="h-4 w-full" />
@@ -79,22 +76,30 @@ function VacancyCard({ title, description, onApply, loading = false, position = 
   }
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white text-left shadow card-hover">
-      <div className={`${tone.header} flex items-center justify-between gap-md px-lg pb-xs pt-md`}>
-        <h2 className="m-0 min-w-0 font-heading text-h4 font-bold leading-snug text-white">
+    <article {...tone} className="vacancy-card group flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white text-left shadow card-hover">
+      <div className="flex items-center justify-between gap-md bg-(--tone) px-lg pb-xs pt-md transition-colors duration-300 [@media(hover:hover)]:bg-(--tone-soft) group-hover:bg-(--tone)">
+        <h2 className="m-0 min-w-0 font-heading text-h4 font-bold leading-snug text-white transition-colors duration-300 [@media(hover:hover)]:text-(--tone-ink) group-hover:text-white">
           {title}
         </h2>
-        <img
-          src={HEADER_ILLUSTRATIONS[position % HEADER_ILLUSTRATIONS.length]}
-          alt=""
+        <span
           aria-hidden="true"
-          className="h-14 w-14 shrink-0 object-contain brightness-0 invert"
+          className="h-14 w-14 shrink-0 bg-white transition-colors duration-300 [@media(hover:hover)]:bg-(--tone-ink) group-hover:bg-white"
+          style={{
+            maskImage: `url(${illustration})`,
+            WebkitMaskImage: `url(${illustration})`,
+            maskSize: 'contain',
+            WebkitMaskSize: 'contain',
+            maskRepeat: 'no-repeat',
+            WebkitMaskRepeat: 'no-repeat',
+            maskPosition: 'center',
+            WebkitMaskPosition: 'center',
+          }}
         />
       </div>
-      <ScallopEdge className={tone.wave} />
+      <ScallopEdge className="text-(--tone) transition-colors duration-300 [@media(hover:hover)]:text-(--tone-soft) group-hover:text-(--tone)" />
 
       <div className="flex flex-1 flex-col p-lg pt-md">
-      <p className="m-0 flex-1 font-body text-body-sm text-body-text">
+      <p className="m-0 flex-1 font-body text-body-sm text-[var(--grey-600)]">
         {description}
       </p>
 
