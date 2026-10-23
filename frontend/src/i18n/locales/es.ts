@@ -1197,7 +1197,7 @@ export default {
       savedMessage: "Horario guardado correctamente.",
       unsavedChanges: "Tienes cambios sin guardar",
       allSaved: "Todo está guardado",
-      discard: "Descartar cambios",
+      discard: "Descartar",
       save: "Guardar",
       specialTitle: "Días especiales",
       specialHint: "Estos días reemplazan tu horario semanal.",
