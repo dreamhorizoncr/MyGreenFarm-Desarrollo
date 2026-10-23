@@ -53,7 +53,7 @@ function JoinSection() {
               className="absolute right-[10%] top-1/2 hidden h-[220px] w-auto -translate-y-1/2 -scale-x-100 md:block"
             />
 
-            <div className="relative flex flex-col items-center gap-700 px-md py-1000 text-center md:px-1400 md:py-1500">
+            <div className="relative flex flex-col items-center gap-700 px-xl py-1000 text-center md:px-1400 md:py-1500">
               <CirclePlusIcon
                 size={56}
                 className="text-white"

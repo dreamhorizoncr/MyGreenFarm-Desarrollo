@@ -1286,7 +1286,7 @@ export default {
       savedMessage: "Schedule saved successfully.",
       unsavedChanges: "You have unsaved changes",
       allSaved: "Everything is saved",
-      discard: "Discard changes",
+      discard: "Discard",
       save: "Save",
       specialTitle: "Special days",
       specialHint: "These days replace your weekly schedule.",

@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ArrowRightIcon } from '@animateicons/react/lucide'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import ApplyVacancyModal from '../components/ApplyVacancyModal.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import ScallopEdge from '../components/ui/ScallopEdge.tsx'
+import BlobButton from '../components/ui/BlobButton.tsx'
 import lapiz from '../assets/imgs/lapiz.svg'
 import tijera from '../assets/imgs/Tijera.svg'
 import goma from '../assets/imgs/Goma.svg'
@@ -70,7 +70,7 @@ function VacancyCard({ title, description, onApply, loading = false, position = 
             <Skeleton shape="line" className="h-4 w-full" />
             <Skeleton shape="line" className="h-4 w-2/3" />
           </div>
-          <div className="mt-md flex justify-end">
+          <div className="mt-md flex justify-start">
             <Skeleton shape="pill" className="h-11 w-28" />
           </div>
         </div>
@@ -98,19 +98,10 @@ function VacancyCard({ title, description, onApply, loading = false, position = 
         {description}
       </p>
 
-      <div className="mt-md flex justify-end">
-        <button
-          type="button"
-          onClick={onApply}
-          className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
-        >
+      <div className="mt-md flex justify-start">
+        <BlobButton onClick={onApply} className="h-11 w-fit px-lg font-body text-button font-bold">
           {t('vacancies.apply')}
-          <ArrowRightIcon
-            size={16}
-            aria-hidden="true"
-            className="transition-transform group-hover:translate-x-0.5"
-          />
-        </button>
+        </BlobButton>
       </div>
       </div>
     </article>

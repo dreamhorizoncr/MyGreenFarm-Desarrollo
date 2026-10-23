@@ -1294,7 +1294,7 @@ export default {
       savedMessage: "Horaire enregistré avec succès.",
       unsavedChanges: "Vous avez des modifications non enregistrées",
       allSaved: "Tout est enregistré",
-      discard: "Annuler les modifications",
+      discard: "Annuler",
       save: "Enregistrer",
       specialTitle: "Jours spéciaux",
       specialHint: "Ces jours remplacent votre horaire hebdomadaire.",
