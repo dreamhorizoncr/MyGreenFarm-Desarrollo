@@ -129,6 +129,7 @@ export default {
         "Recibe en tu correo las últimas novedades, actividades y momentos especiales de nuestros pequeños en Green Farm.",
       emailPlaceholder: "Tu correo electrónico",
       subscribe: "Suscribirse",
+      privacyNote: "Sin spam. Puedes darte de baja cuando quieras.",
       subscribing: "Suscribiendo...",
       subscribeSuccess: "¡Te has suscrito exitosamente al boletín!",
       subscribeError: "No se pudo completar la suscripción. Inténtalo de nuevo.",

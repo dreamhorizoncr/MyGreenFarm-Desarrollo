@@ -10,6 +10,7 @@ import ninos2 from '../assets/imgs/ninos2.svg'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import TabHighlight from '../components/ui/TabHighlight.tsx'
+import { FilterGrid, FilterGridItem } from '../components/ui/FilterGrid.tsx'
 import transportador from "../assets/imgs/transportador.svg";
 import abaco from "../assets/imgs/abaco.svg";
 
@@ -160,19 +161,20 @@ function GalleryPage() {
             )}
 
             {!loading && !error && (
-              <div className="grid grid-cols-1 gap-[24px] md:grid-cols-3">
+              <FilterGrid className="grid grid-cols-1 gap-[24px] md:grid-cols-3">
                 {(activeCategory ? visibleGalleries : galleriesInYearOrder).map((gallery) => (
-                  <MultimediaCard
-                    key={gallery.id}
-                    imageSrc={gallery.galleryImages[0]?.fileUrl ?? ninos2}
-                    alt={gallery.title}
-                    badge={t('home.galeria.photoCount', { count: gallery.galleryImages.length })}
-                    title={gallery.title}
-                    description={gallery.description}
-                    onClick={() => navigate(`/albumes/${gallery.id}`)}
-                  />
+                  <FilterGridItem key={gallery.id} className="rounded-3xl">
+                    <MultimediaCard
+                      imageSrc={gallery.galleryImages[0]?.fileUrl ?? ninos2}
+                      alt={gallery.title}
+                      badge={t('home.galeria.photoCount', { count: gallery.galleryImages.length })}
+                      title={gallery.title}
+                      description={gallery.description}
+                      onClick={() => navigate(`/albumes/${gallery.id}`)}
+                    />
+                  </FilterGridItem>
                 ))}
-              </div>
+              </FilterGrid>
             )}
           </Container>
         </div>
