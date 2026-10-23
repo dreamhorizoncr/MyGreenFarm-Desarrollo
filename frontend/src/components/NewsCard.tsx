@@ -21,7 +21,7 @@ interface NewsCardProps {
 
 function CoverImage({ coverImage, title, alt }: Readonly<{ coverImage?: string; title: string; alt?: string }>) {
   return coverImage ? (
-    <img src={coverImage} alt={alt || title} className="h-full w-full object-cover" />
+    <img src={coverImage} alt={alt || title} className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" />
   ) : (
     <div className="flex h-full w-full items-center justify-center bg-bg-page">
       <img src={LowCortisol} alt="" className="h-[75%] w-[75%] object-contain" />
@@ -99,8 +99,8 @@ function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverIm
 
   if (big) {
     return (
-      <article className={`relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow card-hover md:h-[340px] ${className}`}>
-        <div className="relative h-[240px] md:absolute md:inset-y-0 md:left-0 md:h-auto md:w-1/2">
+      <article className={`group relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow card-hover md:h-[340px] ${className}`}>
+        <div className="relative h-[240px] overflow-hidden md:absolute md:inset-y-0 md:left-0 md:h-auto md:w-1/2">
           <CoverImage coverImage={coverImage} title={announcement!.title} alt={coverAlt} />
 
           <span className="absolute left-[14px] top-[14px] rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
@@ -130,8 +130,8 @@ function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverIm
   }
 
   return (
-    <article className={`relative overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow card-hover md:h-[340px] ${className}`}>
-      <div className="relative h-[200px] md:absolute md:inset-x-0 md:top-0 md:h-[125px]">
+    <article className={`group relative overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow card-hover md:h-[340px] ${className}`}>
+      <div className="relative h-[200px] overflow-hidden md:absolute md:inset-x-0 md:top-0 md:h-[125px]">
         <CoverImage coverImage={coverImage} title={announcement!.title} alt={coverAlt} />
 
         <span className="absolute left-[14px] top-[14px] rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">

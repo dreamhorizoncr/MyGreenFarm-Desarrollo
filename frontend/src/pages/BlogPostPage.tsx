@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowLeftIcon, HeartIcon, SparklesIcon } from '@animateicons/react/lucide'
+import { ArrowLeftIcon, SparklesIcon } from '@animateicons/react/lucide'
+import LikeHeart from '../components/ui/LikeHeart.tsx'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar.tsx'
@@ -206,10 +207,7 @@ function BlogPostPage() {
                       : 'text-neutral-500 hover:text-pink-400'
                   }`}
                 >
-                  <HeartIcon
-                    size={20}
-                    className={isLiked(post.id) ? '[&_svg]:fill-current' : ''}
-                  />
+                  <LikeHeart liked={isLiked(post.id)} size={20} />
                   <span>{getLikeCount(post.id)}</span>
                 </button>
               </div>
@@ -245,6 +243,9 @@ function BlogPostPage() {
               </div>
 
               <div className="mt-lg border-t border-neutral-100 pt-md">
+                <h3 className="m-0 mb-sm text-left font-heading text-h5 font-bold text-heading">
+                  {t('forum.blog.replyTitle')}
+                </h3>
                 <input
                   id="blog-comment-name"
                   type="text"

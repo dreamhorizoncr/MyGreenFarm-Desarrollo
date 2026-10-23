@@ -72,13 +72,13 @@ function PlanCard({
   }
 
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white card-hover">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white card-hover">
       <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
         {plan!.imageUrl ? (
           <img
             src={plan!.imageUrl}
             alt={plan!.imageAlt || plan!.name}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">

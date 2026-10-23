@@ -27,14 +27,16 @@ function LatestPostsCard({ blogPosts, onOpen }: Readonly<LatestPostsCardProps>) 
               <button
                 type="button"
                 onClick={() => onOpen(post.id)}
-                className="flex w-full items-start gap-sm rounded-lg py-sm text-left transition-colors hover:bg-neutral-50"
+                className="group flex w-full items-start gap-sm rounded-lg py-sm text-left transition-colors hover:bg-neutral-50"
               >
                 {post.imageUrl && (
-                  <img
-                    src={post.imageUrl}
-                    alt={post.imageAlt || post.title}
-                    className="h-12 w-12 shrink-0 rounded-sm object-cover"
-                  />
+                  <span className="block h-12 w-12 shrink-0 overflow-hidden rounded-sm">
+                    <img
+                      src={post.imageUrl}
+                      alt={post.imageAlt || post.title}
+                      className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                    />
+                  </span>
                 )}
                 <span className="min-w-0 flex-1">
                   <span

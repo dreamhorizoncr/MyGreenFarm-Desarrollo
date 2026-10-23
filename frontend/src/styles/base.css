@@ -365,19 +365,24 @@ dialog:focus {
   }
 }
 
+:is(input, textarea, select, button, .PhoneInput).rounded-xl:is(.border-neutral-200, .border-neutral-300) {
+  transition: border-color 150ms ease;
+}
+
+:is(input, textarea, select, button, .PhoneInput).rounded-xl:is(.border-neutral-200, .border-neutral-300):hover:not(:disabled, :focus, :focus-within) {
+  border-color: color-mix(in oklch, var(--color-green-500) 45%, var(--color-neutral-200));
+}
+
+.PhoneInput.rounded-xl:focus-within {
+  border-color: var(--color-heading);
+}
+
 html.text-normal {
   font-size: 100%;
 }
 
 html.text-large {
   font-size: 112.5%;
-}
-
-html.text-xlarge {
-  font-size: 125%;
-}
-
-html.text-large {
   --text-page-title: calc(clamp(28px, 1.65rem + 0.7vw, 34px) * 1.06);
   --text-h1: calc(clamp(36px, 2.25rem + 1vw, 52px) * 1.06);
   --text-h2: calc(clamp(30px, 1.875rem + 0.8vw, 44px) * 1.06);
@@ -393,6 +398,7 @@ html.text-large {
 }
 
 html.text-xlarge {
+  font-size: 125%;
   --text-page-title: calc(clamp(28px, 1.65rem + 0.7vw, 34px) * 1.12);
   --text-h1: calc(clamp(36px, 2.25rem + 1vw, 52px) * 1.12);
   --text-h2: calc(clamp(30px, 1.875rem + 0.8vw, 44px) * 1.12);

@@ -9,7 +9,7 @@ const cardActionButton = tv({
     action: {
       edit: 'border-green-500 text-green-500 hover:bg-green-50',
       reschedule: 'border-green-500 text-green-500 hover:bg-green-50',
-      feature: 'border-yellow-500 bg-white text-yellow-500 hover:bg-yellow-50',
+      feature: 'border-transparent bg-transparent text-white drop-shadow-[0_1px_2px_rgb(0_0_0/0.55)] hover:scale-110',
       delete: 'border-red-300 text-danger hover:bg-red-50',
     },
     size: {
@@ -21,7 +21,7 @@ const cardActionButton = tv({
     },
   },
   compoundVariants: [
-    { action: 'feature', pressed: true, class: 'border-yellow-400 bg-yellow-400 text-white hover:bg-yellow-500' },
+    { action: 'feature', pressed: true, class: 'text-yellow-400' },
   ],
   defaultVariants: {
     size: 'md',
@@ -52,7 +52,11 @@ function CardActionButton({ action, label, size = 'md', pressed, type = 'button'
       className={cardActionButton({ action, size, pressed: Boolean(pressed), className })}
       {...rest}
     >
-      <Icon size={ICON_SIZE[size]} aria-hidden="true" />
+      <Icon
+        size={action === 'feature' ? 24 : ICON_SIZE[size]}
+        aria-hidden="true"
+        className={action === 'feature' && pressed ? '[&_path]:fill-current [&_polygon]:fill-current' : ''}
+      />
     </button>
   )
 }
