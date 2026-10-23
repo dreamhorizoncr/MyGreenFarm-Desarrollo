@@ -59,6 +59,32 @@ html [data-sileo-button][data-state] {
   --sileo-btn-bg-hover: color-mix(in oklch, var(--white) 30%, transparent);
 }
 
+.vacancy-card {
+  --tone: var(--green-500);
+  --tone-ink: var(--green-500);
+  --tone-soft: var(--green-50);
+}
+
+.vacancy-card[data-tone-mobile="pink"] {
+  --tone: var(--pink-400);
+  --tone-ink: var(--pink-400);
+  --tone-soft: var(--pink-50);
+}
+
+@media (width >= 48rem) {
+  .vacancy-card[data-tone-desktop="green"] {
+    --tone: var(--green-500);
+    --tone-ink: var(--green-500);
+    --tone-soft: var(--green-50);
+  }
+
+  .vacancy-card[data-tone-desktop="pink"] {
+    --tone: var(--pink-400);
+    --tone-ink: var(--pink-400);
+    --tone-soft: var(--pink-50);
+  }
+}
+
 .blob-btn {
   z-index: 1;
   position: relative;
@@ -92,7 +118,7 @@ html [data-sileo-button][data-state] {
   width: 100%;
   height: 100%;
   border-radius: 999px;
-  transition: all 0.3s 0.2s;
+  transition: left 0.3s 0.2s, top 0.3s 0.2s;
 }
 
 .blob-btn:hover {
@@ -102,7 +128,7 @@ html [data-sileo-button][data-state] {
 .blob-btn:hover::after {
   left: 0;
   top: 0;
-  transition: all 0.3s;
+  transition: left 0.3s, top 0.3s;
 }
 
 .blob-btn__inner {
