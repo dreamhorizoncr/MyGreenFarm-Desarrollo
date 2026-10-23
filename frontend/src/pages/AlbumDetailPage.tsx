@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { HeartIcon } from '@animateicons/react/lucide'
+import LikeHeart from '../components/ui/LikeHeart.tsx'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import PhotoLightbox from '../components/PhotoLightbox.tsx'
@@ -36,11 +36,7 @@ function LikeBadge({ albumTitle, liked, totalLikes, loading, onToggle }: Readonl
       aria-label={`${liked ? t('home.galeria.unlike') : t('home.galeria.like')} · ${albumTitle}`}
       aria-pressed={liked}
     >
-      <HeartIcon
-        size={14}
-        className={liked ? 'text-pink-400 [&_svg]:fill-current' : 'text-neutral-400'}
-        aria-hidden="true"
-      />
+      <LikeHeart liked={liked} size={14} className={liked ? 'text-pink-400' : 'text-neutral-400'} />
       <span className="font-body text-caption font-bold text-neutral-800">{totalLikes}</span>
     </button>
   )

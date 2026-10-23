@@ -316,6 +316,7 @@ export default {
       noSearchResults: "No se encontraron publicaciones con esa búsqueda.",
       backToBlog: "Volver al blog",
       commentsTitle: "Respuestas",
+      replyTitle: "Envía tu respuesta",
       commentsEmpty: "Todavía no hay respuestas.",
       commentNameLabel: "Nombre",
       commentNameRequired: "Escribe tu nombre para responder.",
@@ -757,7 +758,7 @@ export default {
       photoAfterRegister: 'Podrás agregar una fotografía después de registrar al docente.',
       invalidImage: 'Selecciona un archivo de imagen válido.',
       imageTooLarge: 'La fotografía no puede superar los 5 MB.',
-      passwordLabel: 'Contraseña',
+      accessCodeLabel: 'Contraseña',
       passwordRequired: 'La contraseña es obligatoria.',
       passwordMin: 'La contraseña debe tener al menos 8 caracteres.',
       passwordHint: 'Mínimo 8 caracteres, incluyendo mayúscula, minúscula, número y símbolo.',
@@ -948,7 +949,7 @@ export default {
       deleteYearConfirmPlaceholder: "Año",
       featured: "Destacado",
       toggleFeatured: "Marcar como destacado",
-      maxFeaturedReached: "Máximo 3 álbumes destacados. Desmarcá uno primero.",
+      maxFeaturedReached: "Ya hay 3 álbumes destacados, que es el máximo. Quita la estrella de uno antes de destacar otro.",
       albumCreatedTitle: "Álbum creado",
       albumCreatedDescription: "El álbum se publicó correctamente.",
       albumUpdatedTitle: "Álbum actualizado",
@@ -1148,6 +1149,7 @@ export default {
       birthDateLabel: 'Fecha de nacimiento',
       medicalNotesLabel: 'Notas médicas',
       noClubs: 'No hay clubes disponibles.',
+      withoutClubs: 'Sin clubes',
       loadingOptions: 'Cargando información...',
 
       relationships: {

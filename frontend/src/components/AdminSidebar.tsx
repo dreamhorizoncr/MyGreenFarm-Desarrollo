@@ -49,7 +49,7 @@ interface SidebarItem {
 }
 
 const SIDEBAR_SCROLL_KEY = 'admin-sidebar-scroll-top'
-const CHILDREN_MODULE_PATHS = ['/admin/children', '/admin/expedients', '/admin/evaluations']
+const CHILDREN_MODULE_PATHS = new Set(['/admin/children', '/admin/expedients', '/admin/evaluations'])
 let lastFilledKey: string | null = null
 
 function AdminSidebar() {
@@ -63,7 +63,7 @@ function AdminSidebar() {
   const closeMobileMenu = useCallback(() => setOpen(false), [])
   useDismiss({ ref: mobileMenuRef, isOpen: open, onClose: closeMobileMenu })
 
-  const activeKey = CHILDREN_MODULE_PATHS.includes(pathname) ? 'niños' : pathname
+  const activeKey = CHILDREN_MODULE_PATHS.has(pathname) ? 'niños' : pathname
   const [filled, setFilled] = useState(() => activeKey === lastFilledKey)
   useEffect(() => {
     lastFilledKey = activeKey
@@ -126,7 +126,7 @@ function AdminSidebar() {
   const itemsByRole: Record<string, SidebarItem[]> = { OWNER: ownerItems, ADMIN: adminItems }
   const items = itemsByRole[role ?? ''] ?? teacherItems
 
-  const isChildrenModulePath = CHILDREN_MODULE_PATHS.includes(pathname)
+  const isChildrenModulePath = CHILDREN_MODULE_PATHS.has(pathname)
   const activeItem =
     items.find((item) => item.path === pathname) ??
     (isChildrenModulePath ? items.find((item) => item.id === 'niños') : undefined) ??

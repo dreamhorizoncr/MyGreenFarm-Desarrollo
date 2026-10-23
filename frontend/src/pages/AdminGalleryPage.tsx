@@ -72,12 +72,12 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading =
 	}
 
 	return (
-		<article className="relative h-full rounded-3xl border border-neutral-100 bg-white shadow-sm card-hover">
+		<article className="group relative h-full rounded-3xl border border-neutral-100 bg-white shadow-sm card-hover">
 			<div className="relative m-sm overflow-hidden rounded-[20px]">
 				<img
 					src={gallery!.galleryImages[0]?.fileUrl ?? ninos2}
 					alt={gallery!.title}
-					className="block aspect-[4/3] w-full object-cover"
+					className="block aspect-[4/3] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
 				/>
 				<span className="absolute bottom-sm left-sm rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
 					{t('home.galeria.photoCount', { count: gallery!.galleryImages.length })}
@@ -88,15 +88,15 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading =
 					label={t('admin.gallery.toggleFeatured')}
 					title={t('admin.gallery.toggleFeatured')}
 					onClick={onToggleFeatured}
-					className="absolute left-sm top-sm shadow"
+					className="absolute left-sm top-sm"
 				/>
 			</div>
 
 			<div className="overflow-hidden px-lg pb-lg text-left">
-				<h3 className="m-0 line-clamp-2 min-h-[2.8em] font-heading text-h4 font-bold text-heading">
+				<h3 className="m-0 truncate font-heading text-h4 font-bold text-heading" title={gallery!.title}>
 					{gallery!.title}
 				</h3>
-				<p className="-mt-sm line-clamp-5 min-h-[7.5em] font-body text-body-sm font-normal leading-[1.5] text-body-text-dark">
+				<p className="mt-xs line-clamp-5 min-h-[7.5em] font-body text-body-sm font-normal leading-[1.5] text-body-text-dark">
 					{gallery!.description}
 				</p>
 
@@ -423,9 +423,7 @@ function AdminGalleryPage() {
 				const newFiles = files.map(({ file }) => file)
 				await uploadImages(saved.id, newFiles, data.title, imageAlts.altsFor(newFiles))
 			}
-			for (const { id, altText } of imageAlts.changed(images)) {
-				await galleryService.updateImageAlt(String(id), altText)
-			}
+			await Promise.all(imageAlts.changed(images).map(({ id, altText }) => galleryService.updateImageAlt(String(id), altText)))
 
 			notify.success({
 				title: editing ? t('admin.gallery.albumUpdatedTitle') : t('admin.gallery.albumCreatedTitle'),

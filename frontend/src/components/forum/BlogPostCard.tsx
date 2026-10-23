@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { HeartIcon, MessageCircleIcon } from '@animateicons/react/lucide'
+import LikeHeart from '../ui/LikeHeart.tsx'
 import type { BlogPost } from '../../types/forum.ts'
 import PostAvatar from './PostAvatar.tsx'
 import Skeleton from '../ui/Skeleton.tsx'
@@ -43,7 +44,7 @@ function LikeControl({ isInteractive, isLiked, likeCount, onToggle }: Readonly<L
           isLiked ? 'text-pink-400' : 'text-neutral-500 hover:text-pink-400'
         }`}
       >
-        <HeartIcon size={18} className={isLiked ? '[&_svg]:fill-current' : ''} />
+        <LikeHeart liked={isLiked} size={18} />
         <span>{likeCount}</span>
       </button>
     )
@@ -148,7 +149,7 @@ function BlogPostCard({
 
   return (
     <article
-      className={`relative flex h-full flex-col rounded-2xl border border-neutral-200 bg-white text-left card-hover ${
+      className={`group relative flex h-full flex-col rounded-2xl border border-neutral-200 bg-white text-left card-hover ${
         isInteractive ? 'cursor-pointer' : ''
       }`}
     >
@@ -167,7 +168,7 @@ function BlogPostCard({
             src={post!.imageUrl}
             alt={post!.imageAlt ?? ''}
             loading="lazy"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
         )}
       </div>

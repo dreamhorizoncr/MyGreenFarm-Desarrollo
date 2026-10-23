@@ -96,7 +96,7 @@ function CountrySelect({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={ariaLabel}
-        className="flex h-full items-center gap-2xs rounded-lg px-2xs outline-none transition-colors hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-link disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex h-8 items-center gap-2xs rounded-full px-xs outline-none transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link disabled:cursor-not-allowed disabled:opacity-60"
       >
         <span className="flex w-6 shrink-0 items-center text-heading">
           <Flag country={value} label={selectedLabel} />

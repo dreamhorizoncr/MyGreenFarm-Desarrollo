@@ -32,7 +32,7 @@ function MultimediaCard({ imageSrc, alt, badge, title, description, onClick, loa
         <img
           src={imageSrc}
           alt={alt}
-          className="block aspect-[4/3] w-full object-cover"
+          className="block aspect-[4/3] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
         />
         <span className="absolute bottom-sm left-sm rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
           {badge}
@@ -55,7 +55,7 @@ function MultimediaCard({ imageSrc, alt, badge, title, description, onClick, loa
       <button
         type="button"
         onClick={onClick}
-        className="flex h-full w-full flex-col rounded-3xl bg-white text-left shadow cursor-pointer card-hover focus-visible:outline-2 focus-visible:outline-orange-500 focus-visible:outline-offset-2"
+        className="group flex h-full w-full flex-col rounded-3xl bg-white text-left shadow cursor-pointer card-hover focus-visible:outline-2 focus-visible:outline-orange-500 focus-visible:outline-offset-2"
       >
         {contenido}
       </button>
