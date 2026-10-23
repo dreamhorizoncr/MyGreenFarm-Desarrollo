@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, StarIcon } from '@animateicons/react/lucide'
+import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import useEmblaCarousel from 'embla-carousel-react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
@@ -115,6 +116,7 @@ interface AdminAlbumsByYearProps {
 	onEdit: (gallery: Gallery) => void
 	onDelete: (gallery: Gallery) => void
 	onToggleFeatured: (gallery: Gallery) => void
+	mobileArrowsSlot: HTMLElement | null
 }
 
 const ALL_YEARS = 'all'
@@ -127,6 +129,7 @@ function AdminAlbumsByYear({
 	onEdit,
 	onDelete,
 	onToggleFeatured,
+	mobileArrowsSlot,
 }: Readonly<AdminAlbumsByYearProps>) {
 	const { t } = useTranslation()
 	const reduceMotion = useReducedMotion()
@@ -155,6 +158,28 @@ function AdminAlbumsByYear({
 	}, [emblaApi])
 
 	if (years.length === 0) return null
+	const arrows = (className: string) => (prevEnabled || nextEnabled) && (
+		<div className={`${className} shrink-0 gap-sm`}>
+			<button
+				type="button"
+				onClick={() => emblaApi?.scrollPrev()}
+				disabled={!prevEnabled}
+				aria-label={t('admin.gallery.prevAlbums')}
+				className="flex size-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-heading shadow-sm transition hover:bg-neutral-50 disabled:opacity-40"
+			>
+				<ChevronLeftIcon size={18} />
+			</button>
+			<button
+				type="button"
+				onClick={() => emblaApi?.scrollNext()}
+				disabled={!nextEnabled}
+				aria-label={t('admin.gallery.nextAlbums')}
+				className="flex size-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-heading shadow-sm transition hover:bg-neutral-50 disabled:opacity-40"
+			>
+				<ChevronRightIcon size={18} />
+			</button>
+		</div>
+	)
 	const galleries = activeId === ALL_YEARS
 		? years.flatMap((category) => galleriesByCategory[category.id] ?? [])
 		: (galleriesByCategory[activeId] ?? [])
@@ -182,28 +207,8 @@ function AdminAlbumsByYear({
 						)
 					})}
 				</div>
-				{(prevEnabled || nextEnabled) && (
-					<div className="flex shrink-0 gap-sm">
-						<button
-							type="button"
-							onClick={() => emblaApi?.scrollPrev()}
-							disabled={!prevEnabled}
-							aria-label={t('admin.gallery.prevAlbums')}
-							className="flex size-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-heading shadow-sm transition hover:bg-neutral-50 disabled:opacity-40"
-						>
-							<ChevronLeftIcon size={18} />
-						</button>
-						<button
-							type="button"
-							onClick={() => emblaApi?.scrollNext()}
-							disabled={!nextEnabled}
-							aria-label={t('admin.gallery.nextAlbums')}
-							className="flex size-9 items-center justify-center rounded-full border border-neutral-200 bg-white text-heading shadow-sm transition hover:bg-neutral-50 disabled:opacity-40"
-						>
-							<ChevronRightIcon size={18} />
-						</button>
-					</div>
-				)}
+				{arrows('hidden md:flex')}
+				{mobileArrowsSlot && createPortal(arrows('flex md:hidden'), mobileArrowsSlot)}
 			</div>
 
 			<AnimatePresence mode="wait" initial={false}>
@@ -272,6 +277,7 @@ function AdminGalleryPage() {
 	} = useGalleryAdmin()
 
 	const [formOpen, setFormOpen] = useState(false)
+	const [mobileArrowsSlot, setMobileArrowsSlot] = useState<HTMLDivElement | null>(null)
 	const [editing, setEditing] = useState<Gallery | null>(null)
 	const [deleteTarget, setDeleteTarget] = useState<Gallery | null>(null)
 	const [deleteYearTarget, setDeleteYearTarget] = useState<GalleryCategory | null>(null)
@@ -530,14 +536,17 @@ function AdminGalleryPage() {
 						{t('admin.gallery.subtitle')}
 					</p>
 				</div>
-				<button
-					type="button"
-					onClick={openCreate}
-					className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
-				>
-					<PlusIcon size={18} aria-hidden="true" />
-					{t('admin.gallery.addAlbum')}
-				</button>
+				<div className="flex w-full items-center justify-between gap-md md:w-auto">
+					<button
+						type="button"
+						onClick={openCreate}
+						className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
+					>
+						<PlusIcon size={18} aria-hidden="true" />
+						{t('admin.gallery.addAlbum')}
+					</button>
+					<div ref={setMobileArrowsSlot} className="md:hidden" />
+				</div>
 			</div>
 
 			{error && <p className="mt-lg rounded-xl bg-red-50 p-md text-body-sm text-red-700">{error}</p>}
@@ -735,6 +744,7 @@ function AdminGalleryPage() {
 						onEdit={(gallery) => openEdit(gallery)}
 						onDelete={(gallery) => setDeleteTarget(gallery)}
 						onToggleFeatured={handleToggleFeatured}
+						mobileArrowsSlot={mobileArrowsSlot}
 					/>
 				)}
 			</section>
