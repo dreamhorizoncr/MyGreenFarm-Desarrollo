@@ -130,6 +130,7 @@ export default {
         "Get the latest news, activities and special moments of our little ones at Green Farm delivered to your inbox.",
       emailPlaceholder: "Your email address",
       subscribe: "Subscribe",
+      privacyNote: "No spam. Unsubscribe anytime.",
       subscribing: "Subscribing...",
       subscribeSuccess: "You have successfully subscribed to the newsletter!",
       subscribeError: "We couldn't complete your subscription. Please try again.",

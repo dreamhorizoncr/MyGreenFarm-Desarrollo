@@ -130,6 +130,7 @@ export default {
         "Recevez dans votre boîte mail les dernières actualités, activités et moments spéciaux de nos petits chez Green Farm.",
       emailPlaceholder: "Votre adresse e-mail",
       subscribe: "S’abonner",
+      privacyNote: "Pas de spam. Désabonnez-vous à tout moment.",
       subscribing: "Inscription en cours...",
       subscribeSuccess: "Votre inscription à la newsletter a bien été effectuée !",
       subscribeError: "Impossible de finaliser l'inscription. Veuillez réessayer.",
