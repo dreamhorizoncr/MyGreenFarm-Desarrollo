@@ -142,6 +142,7 @@ function CommunityPostPage() {
           {formOpen ? t('forum.community.cancel') : t('forum.community.addComment')}
         </button>
         {formOpen && <form onSubmit={submitComment} className="mt-md flex w-full flex-col gap-md rounded-2xl border border-neutral-200 bg-white p-lg">
+          <h3 className="m-0 text-left font-heading text-h5 font-bold text-heading">{t('forum.blog.replyTitle')}</h3>
           <div>
             <input value={name} onChange={(event) => setName(event.target.value)} maxLength={40} required aria-label={t('forum.community.commentNameLabel')} placeholder={t('forum.community.commentNameLabel')} className="h-11 w-full rounded-xl border border-neutral-300 bg-white px-md font-body text-body-sm text-body-text-dark outline-none focus:border-heading" />
             <FieldHint>{t('fields.comment.name.hint')}</FieldHint>

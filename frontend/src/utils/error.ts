@@ -42,8 +42,9 @@ function translateKnownMessage(message: string): string {
 }
 
 function bodyText(data: object): unknown {
-  if ('message' in data) return data.message
-  return 'error' in data ? data.error : undefined
+  if ('message' in data && data.message) return data.message
+  const isSpringDefaultError = 'status' in data && 'path' in data
+  return 'error' in data && !isSpringDefaultError ? data.error : undefined
 }
 
 function messageFromBody(data: unknown): string | undefined {

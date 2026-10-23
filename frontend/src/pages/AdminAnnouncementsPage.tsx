@@ -186,9 +186,7 @@ function AnnouncementsPage() {
 
       if (cover) await uploadImages(saved.id, [cover], true, imageAlts.altsFor([cover]));
       if (gallery.length) await uploadImages(saved.id, gallery, false, imageAlts.altsFor(gallery));
-      for (const { id, altText } of imageAlts.changed(images)) {
-        await announcementService.updateImageAlt(String(id), altText);
-      }
+      await Promise.all(imageAlts.changed(images).map(({ id, altText }) => announcementService.updateImageAlt(String(id), altText)));
       void reloadList();
 
       notify.success({

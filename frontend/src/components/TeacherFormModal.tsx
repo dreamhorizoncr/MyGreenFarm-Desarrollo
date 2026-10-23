@@ -375,7 +375,7 @@ import type { CreateTeacherData } from '../services/admin.ts'
             {/* Contraseña */}
             {!isEditing && (
             <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
-                {t('admin.teachersPage.passwordLabel')}
+                {t('admin.teachersPage.accessCodeLabel')}
 
                 <input
                 placeholder={t('fields.person.password.placeholder')}

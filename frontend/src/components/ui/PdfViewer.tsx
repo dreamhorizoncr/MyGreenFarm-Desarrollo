@@ -53,7 +53,7 @@ function PdfPage({ pdf, pageNumber, width, label }: Readonly<{ pdf: PDFDocumentP
       <canvas
         ref={canvasRef}
         data-page={pageNumber}
-        aria-hidden="true"
+        role="presentation"
         style={{ width, height: width * ratio }}
         className="mx-auto block rounded-lg bg-white shadow-[0_2px_12px_rgb(0_0_0/0.08)]"
       />

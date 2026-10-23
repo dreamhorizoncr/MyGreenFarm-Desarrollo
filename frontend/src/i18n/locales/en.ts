@@ -317,6 +317,7 @@ export default {
       noSearchResults: "No posts matched your search.",
       backToBlog: "Back to the blog",
       commentsTitle: "Replies",
+      replyTitle: "Send your reply",
       commentsEmpty: "There are no replies yet.",
       commentNameLabel: "Name",
       commentNameRequired: "Enter your name to reply.",
@@ -754,7 +755,7 @@ export default {
       photoAfterRegister: 'You can add a photo after registering the teacher.',
       invalidImage: 'Select a valid image file.',
       imageTooLarge: 'The photo cannot exceed 5 MB.',
-      passwordLabel: 'Password',
+      accessCodeLabel: 'Password',
       passwordRequired: 'Password is required.',
       passwordMin: 'The password must be at least 8 characters long.',
       passwordHint: 'At least 8 characters, including an uppercase letter, a lowercase letter, a number and a symbol.',
@@ -1237,6 +1238,7 @@ export default {
       birthDateLabel: 'Date of birth',
       medicalNotesLabel: 'Medical notes',
       noClubs: 'No clubs are available.',
+      withoutClubs: 'No clubs',
       loadingOptions: 'Loading information...',
 
       relationships: {

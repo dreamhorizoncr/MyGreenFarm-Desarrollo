@@ -68,7 +68,7 @@ function ScrollToTopButton() {
             onClick={handleClick}
             aria-label={t('common.scrollToTop')}
             /* 💡 Cambiado a bottom-20 para colocarse arriba del menú de accesibilidad (que está en bottom-6) */
-            className={`fixed bottom-21 right-6 z-40 flex size-12 items-center justify-center rounded-full text-white shadow-lg transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link ${
+            className={`fixed bottom-21 right-6 z-40 flex size-12 items-center justify-center rounded-full text-white shadow-lg transition-all duration-300 hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link ${
                 overGreen ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-500 hover:bg-green-600'
             } ${visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-3 opacity-0'}`}
         >

@@ -318,6 +318,7 @@ export default {
       noSearchResults: "Aucune publication ne correspond à cette recherche.",
       backToBlog: "Retour au blog",
       commentsTitle: "Réponses",
+      replyTitle: "Envoyez votre réponse",
       commentsEmpty: "Il n'y a pas encore de réponses.",
       commentNameLabel: "Nom",
       commentNameRequired: "Saisissez votre nom pour répondre.",
@@ -763,7 +764,7 @@ export default {
       photoAfterRegister: "Vous pourrez ajouter une photo après avoir inscrit l'enseignant.",
       invalidImage: 'Sélectionnez un fichier image valide.',
       imageTooLarge: 'La photo ne peut pas dépasser 5 Mo.',
-      passwordLabel: 'Mot de passe',
+      accessCodeLabel: 'Mot de passe',
       passwordRequired: 'Le mot de passe est obligatoire.',
       passwordMin: 'Le mot de passe doit contenir au moins 8 caractères.',
       passwordHint: 'Au moins 8 caractères, dont une majuscule, une minuscule, un chiffre et un symbole.',
@@ -1245,6 +1246,7 @@ export default {
       birthDateLabel: 'Date de naissance',
       medicalNotesLabel: 'Notes médicales',
       noClubs: 'Aucun club disponible.',
+      withoutClubs: 'Aucun club',
       loadingOptions: 'Chargement des informations...',
 
       relationships: {
