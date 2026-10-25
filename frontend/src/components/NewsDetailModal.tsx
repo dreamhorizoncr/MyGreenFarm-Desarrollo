@@ -151,7 +151,7 @@ function NewsDetailModal({
             )}
 
                 {!loading && coverImage && (
-                    <div className="relative mx-auto mt-[40px] flex h-[260px] max-w-[950px] items-center justify-center overflow-hidden rounded-[22px] bg-black sm:h-[360px] md:h-[480px]">
+                    <div className="relative mx-auto mt-lg flex max-w-[950px] items-center justify-center overflow-hidden rounded-[22px] bg-black sm:mt-[40px]">
                         <img
                             src={coverImage.fileUrl}
                             alt=""
@@ -161,7 +161,7 @@ function NewsDetailModal({
                         <img
                             src={coverImage.fileUrl}
                             alt={coverImage.altText || announcement.title}
-                            className="relative z-10 h-full w-full object-contain"
+                            className="relative z-10 block h-auto max-h-[85svh] w-full object-contain"
                         />
                     </div>
                 )}
