@@ -1,4 +1,30 @@
 export default {
+  chat: {
+    title: "Ruti, asistente virtual",
+    open: "Abrir chat del asistente",
+    close: "Cerrar chat",
+    assistantAlt: "Ruti, asistente virtual",
+    greetingGuest: "¡Hola, soy Ruti!",
+    greetingGuestText: "Dime en qué te puedo ayudar hoy",
+    greetingNamed: "¡Hola, {{name}}!",
+    greetingNamedText: "Soy Ruti, dime en qué te puedo ayudar hoy",
+    frequentQuestions: "Preguntas frecuentes",
+    suggestions: {
+      booking: "¿Cómo reservo?",
+      plans: "¿Qué planes?",
+      vacancies: "¿Vacantes?",
+    },
+    typing: "Escribiendo",
+    placeholder: "Escribe tu pregunta...",
+    send: "Enviar mensaje",
+    disclaimer: "El asistente puede cometer errores.",
+    maxLength: "Solo puedo recibir mensajes de hasta 500 caracteres.",
+    emptyQuestion: "Por favor, escribe una pregunta.",
+    respectful: "Por favor, mantén un tono respetuoso.",
+    safeReply: "Puedo orientarte sobre las funciones y servicios de My Green Farm.",
+    privateData: "No puedo proporcionar expedientes ni datos personales desde este chat.",
+    retry: "Oh, parece que esto está tardando un poco. Nuestro equipo ya lo está revisando. Puedes intentarlo de nuevo en un momento.",
+  },
   teacherDashboard: {
     hello: "Hola",
     subtitle: "Bienvenido a tu espacio de trabajo docente.",
@@ -23,6 +49,9 @@ export default {
     clubs: "Clubes",
     adminLogin: "Ingreso de Administradores",
     dashboard: "Dashboard",
+    ownerPanel: "Panel del propietario",
+    teacherPanel: "Panel docente",
+    adminPanel: "Panel de administrador",
   },
   home: {
     header: {
