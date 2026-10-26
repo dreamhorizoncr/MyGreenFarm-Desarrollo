@@ -34,4 +34,13 @@ i18n
     },
   })
 
+function syncDocumentLanguage(language: string) {
+  if (typeof document === 'undefined') return
+  const base = (language || 'es').split('-')[0].toLowerCase()
+  document.documentElement.lang = ['es', 'en', 'fr'].includes(base) ? base : 'es'
+}
+
+syncDocumentLanguage(i18n.resolvedLanguage || i18n.language || 'es')
+i18n.on('languageChanged', syncDocumentLanguage)
+
 export default i18n
