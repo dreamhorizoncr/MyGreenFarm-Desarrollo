@@ -48,19 +48,37 @@ function toneAttributes(position: number) {
   }
 }
 
+function useCenterActive<T extends HTMLElement>() {
+  const ref = useRef<T>(null)
+
+  useEffect(() => {
+    const node = ref.current
+    if (!node || !window.matchMedia('(hover: none)').matches) return
+    const observer = new IntersectionObserver(
+      ([entry]) => node.toggleAttribute('data-active', entry.isIntersecting),
+      { rootMargin: '-40% 0px -40% 0px' },
+    )
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
+  return ref
+}
+
 function VacancyCard({ title, description, onApply, loading = false, position = 0 }: Readonly<VacancyCardProps>) {
   const { t } = useTranslation()
   const tone = toneAttributes(position)
   const illustration = HEADER_ILLUSTRATIONS[position % HEADER_ILLUSTRATIONS.length]
+  const cardRef = useCenterActive<HTMLElement>()
 
   if (loading) {
     return (
       <article {...tone} className="vacancy-card flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow">
-        <div className="flex items-center justify-between gap-md bg-(--tone) px-lg pb-xs pt-md [@media(hover:hover)]:bg-(--tone-soft)">
-          <Skeleton shape="line" className="h-7 w-3/5 opacity-50 [@media(hover:hover)]:opacity-100" />
-          <Skeleton shape="rect" className="h-14 w-14 shrink-0 opacity-50 [@media(hover:hover)]:opacity-100" />
+        <div className="flex items-center justify-between gap-md bg-(--tone-soft) px-lg pb-xs pt-md">
+          <Skeleton shape="line" className="h-7 w-3/5" />
+          <Skeleton shape="rect" className="h-14 w-14 shrink-0" />
         </div>
-        <ScallopEdge className="text-(--tone) [@media(hover:hover)]:text-(--tone-soft)" />
+        <ScallopEdge className="text-(--tone-soft)" />
         <div className="flex flex-1 flex-col p-lg pt-md">
           <div className="flex flex-1 flex-col gap-2xs">
             <Skeleton shape="line" className="h-4 w-full" />
@@ -76,14 +94,14 @@ function VacancyCard({ title, description, onApply, loading = false, position = 
   }
 
   return (
-    <article {...tone} className="vacancy-card group flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white text-left shadow card-hover">
-      <div className="flex items-center justify-between gap-md bg-(--tone) px-lg pb-xs pt-md transition-colors duration-300 [@media(hover:hover)]:bg-(--tone-soft) group-hover:bg-(--tone)">
-        <h2 className="m-0 min-w-0 font-heading text-h4 font-bold leading-snug text-white transition-colors duration-300 [@media(hover:hover)]:text-(--tone-ink) group-hover:text-white">
+    <article ref={cardRef} {...tone} className="vacancy-card group flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white text-left shadow card-hover">
+      <div className="flex items-center justify-between gap-md bg-(--tone-soft) px-lg pb-xs pt-md transition-colors duration-300 group-hover:bg-(--tone) group-data-active:bg-(--tone)">
+        <h2 className="m-0 min-w-0 font-heading text-h4 font-bold leading-snug text-(--tone-ink) transition-colors duration-300 group-hover:text-white group-data-active:text-white">
           {title}
         </h2>
         <span
           aria-hidden="true"
-          className="h-14 w-14 shrink-0 bg-white transition-colors duration-300 [@media(hover:hover)]:bg-(--tone-ink) group-hover:bg-white"
+          className="h-14 w-14 shrink-0 bg-(--tone-ink) transition-colors duration-300 group-hover:bg-white group-data-active:bg-white"
           style={{
             maskImage: `url(${illustration})`,
             WebkitMaskImage: `url(${illustration})`,
@@ -96,7 +114,7 @@ function VacancyCard({ title, description, onApply, loading = false, position = 
           }}
         />
       </div>
-      <ScallopEdge className="text-(--tone) transition-colors duration-300 [@media(hover:hover)]:text-(--tone-soft) group-hover:text-(--tone)" />
+      <ScallopEdge className="text-(--tone-soft) transition-colors duration-300 group-hover:text-(--tone) group-data-active:text-(--tone)" />
 
       <div className="flex flex-1 flex-col p-lg pt-md">
       <p className="m-0 flex-1 font-body text-body-sm text-[var(--grey-600)]">
