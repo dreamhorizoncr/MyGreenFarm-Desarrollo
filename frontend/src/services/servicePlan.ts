@@ -1,5 +1,5 @@
 import { apiClient } from './api.ts'
-import type { ServicePlan, ServicePlanRequest, OnvoRawPlan } from '../types/servicePlan.ts'
+import type { ServicePlan, ServicePlanRequest, OnvoRawPlan, ConfirmSinpePayload, ConfirmPaymentPayload } from '../types/servicePlan.ts'
 import type { TranslationItem } from './announcement.ts'
 
 export interface PageResponse<T> {
@@ -35,7 +35,7 @@ export const servicePlanService = {
 
   async createPlan(data: ServicePlanRequest, file: File): Promise<ServicePlan> {
     const formData = new FormData()
-    formData.append('data', JSON.stringify({ schedule: data.schedule, includes: data.includes, gatewayPriceId: data.gatewayPriceId, imageAlt: data.imageAlt }))
+    formData.append('data', JSON.stringify(data))
     formData.append('file', file)
 
     const response = await apiClient.post<ServicePlan>('/service-plans', formData, {
@@ -84,5 +84,44 @@ export const servicePlanService = {
   async checkPaymentStatus(gatewaySessionId: string): Promise<{ isPaid: boolean; isFailed: boolean; status: string }> {
     const response = await apiClient.get(`/service-plans/status/${gatewaySessionId}`);
     return response.data;
+  },
+
+  async createPaymentIntent(data: {
+    priceId?: string
+    customerEmail: string
+    description: string
+    servicePlanId?: string
+    baseAmount?: number
+    paymentMethod?: 'card' | 'sinpe'
+    language?: string
+  }): Promise<any> {
+    const response = await apiClient.post('/webhooks/create-intent', data)
+    return response.data
+  },
+
+  async quoteVariablePlan(data: {
+    servicePlanId: string
+    baseAmount: number
+    paymentMethod: 'card' | 'sinpe'
+  }): Promise<{
+    baseAmount: number
+    serviceTaxAmount: number
+    processingFeeAmount: number
+    processingFeeTaxAmount: number
+    totalAmount: number
+    currency: string
+  }> {
+    const response = await apiClient.post('/webhooks/quote', data)
+    return response.data
+  },
+
+  async confirmPayment(data: ConfirmPaymentPayload) {
+    const response = await apiClient.post('/webhooks/confirm', data);
+    return response.data;
+  },
+
+  async confirmSinpePayment(payload: ConfirmSinpePayload) {
+    const response = await apiClient.post('/webhooks/confirm-sinpe', payload)
+    return response.data
   }
 }

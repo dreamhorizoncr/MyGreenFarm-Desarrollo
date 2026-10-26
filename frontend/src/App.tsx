@@ -49,6 +49,7 @@ import BlobGooFilter from './components/ui/BlobGooFilter.tsx'
 import OwnerClubsPage from './pages/OwnerClubsPage.tsx'
 import ClubsPage from './pages/ClubsPage.tsx'
 import AboutUsPage from './pages/AboutUsPage.tsx'
+import PaymentPage from './pages/PaymentPage.tsx'
 import ChatWidget from './components/chat/ChatWidget.tsx'
 
 function SessionWatcher() {
@@ -122,6 +123,7 @@ function App() {
                     <Route path="/vacantes" element={<VacanciesPage />} />
                     <Route path="/clubs" element={<ClubsPage />} />
                     <Route path="/about-us" element={<AboutUsPage />} />
+                    <Route path="/checkout" element={<PaymentPage />} />
                     <Route path="/signup" element={<Navigate to="/admin/users" replace />} />
                     <Route path="*" element={<Navigate to="/" replace />} />
                   </Routes>
