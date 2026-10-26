@@ -41,7 +41,7 @@ export default function ChatPanel({ onClose }: ChatPanelProps) {
         </button>
       </header>
 
-      <div className="flex flex-1 flex-col space-y-3 overflow-y-auto bg-white px-4 py-4 text-left">
+      <div className="modal-scroll relative flex flex-1 flex-col space-y-3 bg-white px-4 py-4 text-left">
         {messages.length === 0 && (
           <div className="flex flex-1 flex-col items-center justify-center pt-3 text-center">
             <img

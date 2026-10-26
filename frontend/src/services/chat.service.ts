@@ -3,6 +3,12 @@ import { apiClient } from './api'
 export interface ChatRequest {
   message: string
   conversationId?: string | null
+  history?: ChatTurn[]
+}
+
+export interface ChatTurn {
+  role: 'user' | 'assistant'
+  content: string
 }
 
 export interface ChatResponse {

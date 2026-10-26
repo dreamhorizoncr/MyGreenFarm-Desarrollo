@@ -120,7 +120,13 @@ export function useChat() {
     setLoading(true)
 
     try {
-      const res: ChatResponse = await sendChatMessage({ message: trimmed, conversationId })
+      const history = messages
+        .slice(-12)
+        .map(({ role, content }) => ({
+          role: role === 'user' ? 'user' as const : 'assistant' as const,
+          content,
+        }))
+      const res: ChatResponse = await sendChatMessage({ message: trimmed, conversationId, history })
       if (closedRef.current) return
       if (res.conversationId) setConversationId(res.conversationId)
       const firstName = getLoggedInFirstName()
@@ -147,7 +153,7 @@ export function useChat() {
     } finally {
       if (!closedRef.current) setLoading(false)
     }
-  }, [input, loading, conversationId])
+  }, [input, loading, conversationId, messages])
 
   const clearChat = useCallback(() => {
     closedRef.current = true

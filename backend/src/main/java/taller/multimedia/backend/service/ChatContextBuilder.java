@@ -13,7 +13,10 @@ public class ChatContextBuilder {
             INFORMACIÓN PÚBLICA DE MY GREEN FARM:
             - Centro educativo acreditado por el MEP con programas de guardería y preescolar para niños desde los 3 meses hasta los 12 años.
             - El sitio incluye Inicio, Sobre nosotros, Servicios y planes, Clubes, Reserva de citas, Noticias, Foro, Galería, Vacantes y Contacto.
-            - DATOS REALES PENDIENTES: ubicación, horarios generales, contacto y descripción de planes. TODO: completar con datos verificados; no inventar valores.
+            - Ubicación general: Liberia, Guanacaste, Costa Rica. Para la ubicación exacta en Google Maps, orienta a la sección Contacto del sitio.
+            - Para consultar horarios disponibles y agendar una cita, orienta a la sección Reservar cita.
+            - Los horarios de las lecciones se disponen después de completar la matrícula y se comunican al encargado.
+            - Para consultas generales, el contacto público es +506 8327-8347 por WhatsApp.
             - Usa solo los datos institucionales disponibles aquí; no inventes precios, horarios, cupos ni estados actuales.
             """;
     private static final String VISITOR_RULES = """
