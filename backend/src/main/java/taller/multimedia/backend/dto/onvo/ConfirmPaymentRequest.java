@@ -18,4 +18,13 @@ public class ConfirmPaymentRequest {
     private Integer expYear;
     private String cvc;
     private String cardHolder;
+    private String clientName;
+    private String clientEmail;
+    private String identificationType;
+    private String clientIdentification;
+    private double totalAmount;
+    private String description;
+    private String language;
+    private String cabysCode;
+    private double taxRate;
 }

@@ -4,7 +4,7 @@ import Button from './ui/Button.tsx'
 import Select from './ui/Select.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
-import type { OnvoRawPlan, ServicePlan } from '../types/servicePlan.ts'
+import type { OnvoRawPlan, ServicePlan, ServicePlanRequest } from '../types/servicePlan.ts'
 import ImagePickerButton from './ui/ImagePickerButton.tsx'
 import ImageThumb, { ImageThumbList } from './ui/ImageThumb.tsx'
 import DeleteConfirmModal from './ui/DeleteConfirmModal.tsx'
@@ -31,8 +31,8 @@ interface CreateServicePlanModalProps {
   onvoPlans: OnvoRawPlan[]
   existingPlans: ServicePlan[]
   planToEdit?: ServicePlan | null
-  onSave: (data: { schedule: string; includes: string; gatewayPriceId: string; imageAlt?: string }, file: File) => Promise<unknown>
-  onUpdate?: (id: string, data: { schedule: string; includes: string; gatewayPriceId: string; imageAlt?: string }, file?: File) => Promise<unknown>
+  onSave: (data: ServicePlanRequest, file: File) => Promise<unknown>
+  onUpdate?: (id: string, data: ServicePlanRequest, file?: File) => Promise<unknown>
   onClose: () => void
   onImageDeleted?: () => void | Promise<void>
 }
@@ -46,6 +46,9 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
   const isEditing = !!planToEdit
 
   const [gatewayPriceId, setGatewayPriceId] = useState(planToEdit?.gatewayPriceId ?? '')
+  const [variablePrice, setVariablePrice] = useState(planToEdit?.variablePrice ?? false)
+  const [minimumAmount, setMinimumAmount] = useState(String(planToEdit?.minimumAmount ?? ''))
+  const [maximumAmount, setMaximumAmount] = useState(String(planToEdit?.maximumAmount ?? ''))
   const [schedule, setSchedule] = useState(() => parseSchedule(planToEdit?.schedule) ?? emptySchedule())
   const [includes, setIncludes] = useState(planToEdit?.includes ?? '')
   const [selectedImage, setSelectedImage] = useState<SelectedImage | null>(null)
@@ -56,6 +59,7 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
   const [scheduleError, setScheduleError] = useState<string | null>(null)
   const [includesError, setIncludesError] = useState<string | null>(null)
   const [onvoError, setOnvoError] = useState<string | null>(null)
+  const [variablePriceError, setVariablePriceError] = useState<string | null>(null)
   const [imageError, setImageError] = useState<string | null>(null)
   const [imageAlt, setImageAlt] = useState(planToEdit?.imageAlt ?? '')
   const [imageAltError, setImageAltError] = useState<string | null>(null)
@@ -73,6 +77,8 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
   const availablePlans = isEditing
     ? onvoPlans
     : onvoPlans.filter(sp => !existingPlans.some(p => p.gatewayPriceId === sp.gatewayPriceId))
+  const selectedOnvoPlan = onvoPlans.find((item) => item.gatewayPriceId === gatewayPriceId)
+  const planCurrency = selectedOnvoPlan?.currency ?? planToEdit?.currency ?? 'CRC'
 
   const handleFileChange = (file: File | undefined) => {
     if (!file) return
@@ -98,6 +104,15 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
     } else {
       setOnvoError(null)
     }
+
+    const minAmount = Number(minimumAmount)
+    const maxAmount = Number(maximumAmount)
+    const customPriceError = variablePrice
+      && (!Number.isFinite(minAmount) || !Number.isFinite(maxAmount) || minAmount <= 0 || maxAmount < minAmount)
+      ? t('admin.servicios.variablePriceRangeError')
+      : null
+    setVariablePriceError(customPriceError)
+    if (customPriceError) hasError = true
 
     const scheduleMessage = validateSchedule(schedule, t)
     setScheduleError(scheduleMessage)
@@ -128,7 +143,14 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
 
     setSaving(true)
     try {
-      const data = { schedule: serializeSchedule(schedule), includes: includes.trim(), gatewayPriceId, imageAlt: imageAlt.trim() }
+      const data: ServicePlanRequest = {
+        schedule: serializeSchedule(schedule),
+        includes: includes.trim(),
+        gatewayPriceId,
+        imageAlt: imageAlt.trim(),
+        variablePrice,
+        ...(variablePrice ? { minimumAmount: minAmount, maximumAmount: maxAmount } : {}),
+      }
       if (isEditing && onUpdate) {
         await onUpdate(planToEdit.id, data, selectedImage?.file)
       } else {
@@ -194,6 +216,56 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
         </label>
 
         <div>
+          <section className="rounded-xl border border-neutral-200 p-md">
+            <label className="flex items-start gap-sm font-body text-body-sm font-semibold text-heading">
+              <input
+                type="checkbox"
+                checked={variablePrice}
+                onChange={(event) => setVariablePrice(event.target.checked)}
+                className="mt-1 accent-green-600"
+              />
+              <span>
+                {t('admin.servicios.variablePrice')}
+                <span className="mt-1 block font-normal text-neutral-500">
+                  {t('admin.servicios.variablePriceHint')}
+                </span>
+              </span>
+            </label>
+            {variablePrice && (
+              <div className="mt-md grid grid-cols-1 gap-md sm:grid-cols-2">
+                <label className="font-body text-body-sm font-semibold text-heading">
+                  {t('admin.servicios.minimumAmount')} ({planCurrency})
+                  <input
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    required
+                    value={minimumAmount}
+                    onChange={(event) => setMinimumAmount(event.target.value)}
+                    className="mt-xs h-11 w-full rounded-xl border border-neutral-200 px-md font-normal outline-none focus:border-green-500"
+                  />
+                </label>
+                <label className="font-body text-body-sm font-semibold text-heading">
+                  {t('admin.servicios.maximumAmount')} ({planCurrency})
+                  <input
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    required
+                    value={maximumAmount}
+                    onChange={(event) => setMaximumAmount(event.target.value)}
+                    className="mt-xs h-11 w-full rounded-xl border border-neutral-200 px-md font-normal outline-none focus:border-green-500"
+                  />
+                </label>
+                {variablePriceError && (
+                  <span className="font-body text-body-sm font-normal text-danger sm:col-span-2">
+                    {variablePriceError}
+                  </span>
+                )}
+              </div>
+            )}
+          </section>
+
           <ScheduleField
             id="create-plan-schedule"
             label={t('admin.servicios.scheduleLabel')}

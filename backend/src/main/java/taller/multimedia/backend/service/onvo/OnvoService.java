@@ -1,10 +1,15 @@
 package taller.multimedia.backend.service.onvo;
 
 import lombok.RequiredArgsConstructor;
+import taller.multimedia.backend.service.EmailService;
+import taller.multimedia.backend.service.electronic_billing.ElectronicBillingService;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -27,6 +32,12 @@ public class OnvoService {
     private String onvoApiUrl;
 
     private final RestTemplate restTemplate;
+
+    private final ElectronicBillingService electronicBillingService;
+
+    private final EmailService emailService;
+
+    private static final Logger log = LoggerFactory.getLogger(EmailService.class);
 
     private HttpHeaders buildHeaders() {
         HttpHeaders headers = new HttpHeaders();
@@ -134,7 +145,16 @@ public class OnvoService {
             Integer expMonth,
             Integer expYear,
             String cvc,
-            String cardHolder) {
+            String cardHolder,
+            String clientName,
+            String clientEmail,
+            String identificationType,
+            String clientIdentification,
+            double totalAmount,
+            String description,
+            String cabysCode,
+            double taxRate,
+            String language) {
 
         String paymentMethodUrl = onvoApiUrl + "/payment-methods";
 
@@ -174,6 +194,29 @@ public class OnvoService {
             ResponseEntity<Map> confirmResponse = restTemplate.exchange(confirmUrl, HttpMethod.POST, confirmEntity,
                     Map.class);
 
+            Map<String, Object> responseBody = confirmResponse.getBody();
+
+            String paymentStatus = responseBody != null ? (String) responseBody.get("status") : null;
+
+            if (paymentStatus != null && "succeeded".equalsIgnoreCase(paymentStatus.trim())) {
+                try {
+                    Map<String, Object> invoiceResponse = electronicBillingService.emitInvoiceForSuccessfulPayment(
+                            clientName, clientEmail, identificationType, clientIdentification, totalAmount, description,
+                            cabysCode, taxRate);
+
+                    emailService.sendInvoiceWithPdf(clientEmail, clientName, invoiceResponse,
+                            Locale.forLanguageTag(language == null ? "es" : language));
+
+                    log.info("Proceso de factura e correo iniciado en segundo plano para: {}", clientEmail);
+
+                } catch (Exception e) {
+                    log.error("¡ERROR CRÍTICO AL INICIAR FACTURA/CORREO!: {}", e.getMessage());
+                    e.printStackTrace();
+                }
+            } else {
+                log.info("El pago NO fue exitoso. Status: " + paymentStatus);
+            }
+
             return confirmResponse.getBody();
 
         } catch (HttpClientErrorException e) {
@@ -182,61 +225,93 @@ public class OnvoService {
     }
 
     public Map<String, Object> confirmPaymentIntentWithSinpe(
-        String paymentIntentId,
-        String phoneNumber,
-        String sinpeReference) {
+            String paymentIntentId,
+            String phoneNumber,
+            String sinpeReference,
+            String clientName,
+            String clientEmail,
+            String identificationType,
+            String clientIdentification,
+            double totalAmount,
+            String description,
+            String cabysCode,
+            double taxRate,
+            String language,
+            String currency) {
 
-    String paymentMethodUrl = onvoApiUrl + "/payment-methods";
-
-    // 1. Limpiar espacios o guiones del número recibido
-    String cleanDigits = phoneNumber.replaceAll("[^0-9]", "");
-
-    // 2. Garantizar el formato internacional E.164 con "+506"
-    String formattedPhone;
-    if (cleanDigits.startsWith("506") && cleanDigits.length() == 11) {
-        formattedPhone = "+" + cleanDigits;
-    } else if (cleanDigits.length() == 8) {
-        formattedPhone = "+506" + cleanDigits;
-    } else {
-        formattedPhone = "+" + cleanDigits; // Fallback por si mandan otro formato
-    }
-
-    Map<String, Object> mobileData = Map.of(
-            "number", formattedPhone, // 👈 Enviará "+50688888888"
-            "identificationType", 1,
-            "identification", "101110111"
-    );
-
-    Map<String, Object> paymentMethodBody = Map.of(
-            "type", "mobile_number",
-            "mobileNumber", mobileData
-    );
-
-    HttpEntity<Map<String, Object>> pmEntity = new HttpEntity<>(paymentMethodBody, buildHeaders());
-
-    try {
-        ResponseEntity<Map> pmResponse = restTemplate.exchange(
-                paymentMethodUrl, HttpMethod.POST, pmEntity, Map.class
-        );
-
-        if (pmResponse.getBody() == null || !pmResponse.getBody().containsKey("id")) {
-            throw new RuntimeException("No se pudo generar el método de pago SINPE en Onvo");
+        if (currency != null && "USD".equalsIgnoreCase(currency.trim())) {
+            throw new IllegalArgumentException(
+                    "El método de pago SINPE no está disponible para transacciones en Dólares (USD).");
         }
 
-        String paymentMethodId = (String) pmResponse.getBody().get("id");
+        String paymentMethodUrl = onvoApiUrl + "/payment-methods";
 
-        String confirmUrl = onvoApiUrl + "/payment-intents/" + paymentIntentId + "/confirm";
-        Map<String, Object> confirmBody = Map.of("paymentMethodId", paymentMethodId);
+        String cleanDigits = phoneNumber.replaceAll("[^0-9]", "");
 
-        HttpEntity<Map<String, Object>> confirmEntity = new HttpEntity<>(confirmBody, buildHeaders());
-        ResponseEntity<Map> confirmResponse = restTemplate.exchange(
-                confirmUrl, HttpMethod.POST, confirmEntity, Map.class
-        );
+        String formattedPhone;
+        if (cleanDigits.startsWith("506") && cleanDigits.length() == 11) {
+            formattedPhone = "+" + cleanDigits;
+        } else if (cleanDigits.length() == 8) {
+            formattedPhone = "+506" + cleanDigits;
+        } else {
+            formattedPhone = "+" + cleanDigits;
+        }
 
-        return confirmResponse.getBody();
+        Map<String, Object> mobileData = Map.of(
+                "number", formattedPhone,
+                "identificationType", 1,
+                "identification", "101110111");
 
-    } catch (HttpStatusCodeException e) {
-        throw new RuntimeException("Error al procesar el pago SINPE con Onvo: " + e.getResponseBodyAsString());
+        Map<String, Object> paymentMethodBody = Map.of(
+                "type", "mobile_number",
+                "mobileNumber", mobileData);
+
+        HttpEntity<Map<String, Object>> pmEntity = new HttpEntity<>(paymentMethodBody, buildHeaders());
+
+        try {
+            ResponseEntity<Map> pmResponse = restTemplate.exchange(
+                    paymentMethodUrl, HttpMethod.POST, pmEntity, Map.class);
+
+            if (pmResponse.getBody() == null || !pmResponse.getBody().containsKey("id")) {
+                throw new RuntimeException("No se pudo generar el método de pago SINPE en Onvo");
+            }
+
+            String paymentMethodId = (String) pmResponse.getBody().get("id");
+
+            String confirmUrl = onvoApiUrl + "/payment-intents/" + paymentIntentId + "/confirm";
+            Map<String, Object> confirmBody = Map.of("paymentMethodId", paymentMethodId);
+
+            HttpEntity<Map<String, Object>> confirmEntity = new HttpEntity<>(confirmBody, buildHeaders());
+            ResponseEntity<Map> confirmResponse = restTemplate.exchange(
+                    confirmUrl, HttpMethod.POST, confirmEntity, Map.class);
+
+            Map<String, Object> responseBody = confirmResponse.getBody();
+
+            String paymentStatus = responseBody != null ? (String) responseBody.get("status") : null;
+
+            if (paymentStatus != null && "succeeded".equalsIgnoreCase(paymentStatus.trim())) {
+                try {
+                    Map<String, Object> invoiceResponse = electronicBillingService.emitInvoiceForSuccessfulPayment(
+                            clientName, clientEmail, identificationType, clientIdentification, totalAmount, description,
+                            cabysCode, taxRate);
+
+                    emailService.sendInvoiceWithPdf(clientEmail, clientName, invoiceResponse,
+                            Locale.forLanguageTag(language == null ? "es" : language));
+
+                    log.info("Proceso de factura e correo iniciado en segundo plano para: {}", clientEmail);
+
+                } catch (Exception e) {
+                    log.error("¡ERROR CRÍTICO AL INICIAR FACTURA/CORREO!: {}", e.getMessage());
+                    e.printStackTrace();
+                }
+            } else {
+                log.info("El pago NO fue exitoso. Status: " + paymentStatus);
+            }
+
+            return confirmResponse.getBody();
+
+        } catch (HttpStatusCodeException e) {
+            throw new RuntimeException("Error al procesar el pago SINPE con Onvo: " + e.getResponseBodyAsString());
+        }
     }
-}
 }

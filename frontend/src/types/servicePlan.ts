@@ -11,6 +11,8 @@ export interface ServicePlan {
   schedule: string
   includes: string
   isActive: boolean
+  cabysCode?: string
+  taxRate?: number
 }
 
 export interface OnvoRawPlan {
@@ -29,8 +31,36 @@ export interface ServicePlanRequest {
   imageAlt?: string
 }
 
+export interface ConfirmPaymentPayload {
+  paymentIntentId: string
+  cardNumber: string
+  expMonth: number
+  expYear: number
+  cvc: string
+  cardHolder: string
+  clientName: string
+  clientEmail: string
+  identificationType: string
+  clientIdentification: string
+  totalAmount: number
+  description: string
+  language: string
+  cabysCode?: string
+  taxRate?: number
+}
+
 export interface ConfirmSinpePayload {
   paymentIntentId: string
   phoneNumber: string
   sinpeReference: string
+  clientName: string
+  clientEmail: string
+  identificationType: string
+  clientIdentification: string
+  totalAmount: number
+  description: string
+  language: string
+  currency: string
+  cabysCode?: string
+  taxRate?: number
 }

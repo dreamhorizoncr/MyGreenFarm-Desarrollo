@@ -40,7 +40,9 @@ function ServiceDetailModal({
     const dialogRef = useRef<HTMLDialogElement>(null)
 
     const [scheduleOpen, setScheduleOpen] = useState(false)
-    const [currency, setCurrency] = useState<Currency>(() => initialCurrency ?? cleanCurrency(plan.currency))
+    const [currency, setCurrency] = useState<Currency>(() =>
+        plan.variablePrice ? cleanCurrency(plan.currency) : initialCurrency ?? cleanCurrency(plan.currency),
+    )
 
     const { closing, requestClose } = useModalExit(onClose)
     useDialogDismiss(dialogRef, requestClose, !scheduleOpen)
@@ -50,14 +52,17 @@ function ServiceDetailModal({
     }, [])
 
     // Cálculo del precio según la moneda seleccionada en el Toggle
-    const price = exchangeRate
+    const price = plan.variablePrice
+        ? plan.minimumAmount ?? plan.price
+        : exchangeRate
         ? convertCurrency(plan.price, cleanCurrency(plan.currency), currency, 'buy', exchangeRate)
         : plan.price
+    const priceCurrency = plan.variablePrice ? cleanCurrency(plan.currency) : currency
 
     const handleProceedToCheckout = () => {
         // Si pasaste una función personalizada
         if (onSubscribe) {
-            onSubscribe(plan, currency, price)
+            onSubscribe(plan, priceCurrency, price)
             return
         }
 
@@ -134,14 +139,25 @@ function ServiceDetailModal({
                                 {t('services.priceLabel')}
                             </h3>
                             <div className="mt-xs flex min-w-0 flex-col items-start gap-xs [&>div:first-child]:justify-start">
-                                <CurrencyToggle value={currency} onChange={setCurrency} hasExchangeRate={Boolean(exchangeRate)} />
+                                {!plan.variablePrice && (
+                                    <CurrencyToggle value={currency} onChange={setCurrency} hasExchangeRate={Boolean(exchangeRate)} />
+                                )}
                                 <span className="font-heading text-h2 font-bold leading-none text-green-500">
                                     <AnimatedNumber
                                         value={price}
-                                        format={(n) => `${currencySymbol(currency)}${formatCurrency(n, currency, i18n.language)}`}
+                                        format={(n) => `${currencySymbol(priceCurrency)}${formatCurrency(n, priceCurrency, i18n.language)}`}
                                     />
                                 </span>
-                                <span className="font-body text-caption text-neutral-500">{t('services.approxPrice')}</span>
+                                {plan.variablePrice ? (
+                                    <span className="font-body text-caption text-neutral-500">
+                                        {t('services.customAmountRange', {
+                                            min: `${currencySymbol(priceCurrency)}${formatCurrency(plan.minimumAmount ?? 0, priceCurrency, i18n.language)}`,
+                                            max: `${currencySymbol(priceCurrency)}${formatCurrency(plan.maximumAmount ?? 0, priceCurrency, i18n.language)}`,
+                                        })}
+                                    </span>
+                                ) : (
+                                    <span className="font-body text-caption text-neutral-500">{t('services.approxPrice')}</span>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -76,7 +76,16 @@ public class OnvoWebhookController {
             request.getExpMonth(),
             request.getExpYear(),
             request.getCvc(),
-            request.getCardHolder()
+            request.getCardHolder(),
+            request.getClientName(),
+            request.getClientEmail(),
+            request.getIdentificationType(),
+            request.getClientIdentification(),
+            request.getTotalAmount(),
+            request.getDescription(),
+            request.getCabysCode(),
+            request.getTaxRate(),
+            request.getLanguage()
         );
         return ResponseEntity.ok(result);
     }
@@ -86,7 +95,17 @@ public class OnvoWebhookController {
         Map<String, Object> result = onvoService.confirmPaymentIntentWithSinpe(
             request.getPaymentIntentId(),
             request.getPhoneNumber(),
-            request.getSinpeReference()
+            request.getSinpeReference(),
+            request.getClientName(),
+            request.getClientEmail(),
+            request.getIdentificationType(),
+            request.getClientIdentification(),
+            request.getTotalAmount(),
+            request.getDescription(),
+            request.getCabysCode(),
+            request.getTaxRate(),
+            request.getLanguage(),
+            request.getCurrency()
         );
         return ResponseEntity.ok(result);
     }

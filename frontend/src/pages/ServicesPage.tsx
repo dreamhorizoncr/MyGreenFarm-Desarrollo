@@ -100,7 +100,7 @@ function PlanCard({
         </p>
 
         <div className="mt-auto flex flex-col items-start gap-2xs pt-xs [&>div:first-child]:justify-start">
-          <CurrencyToggle value={currency} onChange={setCurrency} hasExchangeRate={Boolean(exchangeRate)} />
+            <CurrencyToggle value={currency} onChange={setCurrency} hasExchangeRate={Boolean(exchangeRate)} />
           <span className="text-left font-heading text-h2 font-bold text-green-500">
             <AnimatedNumber
               value={price}
