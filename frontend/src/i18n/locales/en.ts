@@ -1,4 +1,30 @@
 export default {
+  chat: {
+    title: "Ruti, virtual assistant",
+    open: "Open assistant chat",
+    close: "Close chat",
+    assistantAlt: "Ruti, virtual assistant",
+    greetingGuest: "Hi, I’m Ruti!",
+    greetingGuestText: "Tell me how I can help you today",
+    greetingNamed: "Hi, {{name}}!",
+    greetingNamedText: "I’m Ruti. How can I help you today?",
+    frequentQuestions: "Frequently asked questions",
+    suggestions: {
+      booking: "How do I book?",
+      plans: "What plans?",
+      vacancies: "Open positions?",
+    },
+    typing: "Typing",
+    placeholder: "Type your question...",
+    send: "Send message",
+    disclaimer: "The assistant may make mistakes.",
+    maxLength: "Messages can be up to 500 characters.",
+    emptyQuestion: "Please enter a question.",
+    respectful: "Please keep a respectful tone.",
+    safeReply: "I can guide you through My Green Farm’s features and services.",
+    privateData: "I can’t provide student files or personal information in this chat.",
+    retry: "This is taking a little longer than expected. Our team is looking into it. Please try again in a moment.",
+  },
   teacherDashboard: {
     hello: "Hello",
     subtitle: "Welcome to your teaching workspace.",
@@ -23,6 +49,9 @@ export default {
     clubs: "Clubs",
     adminLogin: "Admin login",
     dashboard: "Dashboard",
+    ownerPanel: "Owner Panel",
+    teacherPanel: "Teacher Panel",
+    adminPanel: "Admin Panel",
   },
   home: {
     header: {
@@ -130,6 +159,7 @@ export default {
         "Get the latest news, activities and special moments of our little ones at Green Farm delivered to your inbox.",
       emailPlaceholder: "Your email address",
       subscribe: "Subscribe",
+      privacyNote: "No spam. Unsubscribe anytime.",
       subscribing: "Subscribing...",
       subscribeSuccess: "You have successfully subscribed to the newsletter!",
       subscribeError: "We couldn't complete your subscription. Please try again.",
@@ -317,6 +347,7 @@ export default {
       noSearchResults: "No posts matched your search.",
       backToBlog: "Back to the blog",
       commentsTitle: "Replies",
+      replyTitle: "Send your reply",
       commentsEmpty: "There are no replies yet.",
       commentNameLabel: "Name",
       commentNameRequired: "Enter your name to reply.",
@@ -380,7 +411,7 @@ export default {
     noNews: "There are no published news yet.",
     newsgallery: "Gallery",
     deleteImage: "Delete image",
-    deleteModalTitle: "Delete news?",
+    deleteModalTitle: "Delete news",
     deleteModalMessage: "Are you sure you want to delete this news item?",
     deleteModalCancel: "Cancel",
     deleteModalConfirm: "Delete",
@@ -754,7 +785,7 @@ export default {
       photoAfterRegister: 'You can add a photo after registering the teacher.',
       invalidImage: 'Select a valid image file.',
       imageTooLarge: 'The photo cannot exceed 5 MB.',
-      passwordLabel: 'Password',
+      accessCodeLabel: 'Password',
       passwordRequired: 'Password is required.',
       passwordMin: 'The password must be at least 8 characters long.',
       passwordHint: 'At least 8 characters, including an uppercase letter, a lowercase letter, a number and a symbol.',
@@ -949,6 +980,7 @@ export default {
     },
     evaluations: {
       title: "Evaluation Management",
+      tabLabel: "Evaluations",
       description: "Record, review, and manage children's progress.",
       registerEvaluation: "Register evaluation",
       searchPlaceholder: "Search evaluations...",
@@ -1097,6 +1129,7 @@ export default {
     expedients: {
       noMatches: 'No records found with that name.',
       title: "Academic Record Management",
+      tabLabel: "Academic records",
       description:
         "View the academic records of the children enrolled at the institution.",
       searchbutton: "Search child",
@@ -1210,6 +1243,7 @@ export default {
 
     children: {
       title: "Children Management",
+      tabLabel: "Children",
       description: 'Manage the children registered in My Green Farm.',
       searchPlaceholder: 'Search children...',
       addChild: 'Register child',
@@ -1234,6 +1268,7 @@ export default {
       birthDateLabel: 'Date of birth',
       medicalNotesLabel: 'Medical notes',
       noClubs: 'No clubs are available.',
+      withoutClubs: 'No clubs',
       loadingOptions: 'Loading information...',
 
       relationships: {
@@ -1281,7 +1316,7 @@ export default {
       savedMessage: "Schedule saved successfully.",
       unsavedChanges: "You have unsaved changes",
       allSaved: "Everything is saved",
-      discard: "Discard changes",
+      discard: "Discard",
       save: "Save",
       specialTitle: "Special days",
       specialHint: "These days replace your weekly schedule.",

@@ -88,7 +88,6 @@ function formatBlock({ days, start, end }: ScheduleBlock, t: TFunction, language
   return { days: dayText, hours }
 }
 
-// Une los bloques que comparten horario (p. ej. jueves y viernes de 12 a 1) para no repetir líneas
 function mergeSameHours(schedule: ScheduleValue): ScheduleValue {
   const byHours = new Map<string, ScheduleBlock>()
   for (const block of schedule) {
@@ -105,7 +104,6 @@ export function formatScheduleEntries(value: string | null | undefined, t: TFunc
   return mergeSameHours(schedule).map((block) => formatBlock(block, t, language))
 }
 
-// Cuántos días distintos de la semana cubre el horario (para el resumen «N días a la semana»)
 export function countScheduleDays(value: string | null | undefined): number {
   const schedule = parseSchedule(value)
   return schedule ? new Set(schedule.flatMap((block) => block.days)).size : 0

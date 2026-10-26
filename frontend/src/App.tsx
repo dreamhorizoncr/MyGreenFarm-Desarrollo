@@ -50,6 +50,7 @@ import OwnerClubsPage from './pages/OwnerClubsPage.tsx'
 import ClubsPage from './pages/ClubsPage.tsx'
 import AboutUsPage from './pages/AboutUsPage.tsx'
 import PaymentPage from './pages/PaymentPage.tsx'
+import ChatWidget from './components/chat/ChatWidget.tsx'
 
 function SessionWatcher() {
   useSessionExpiredNotice()
@@ -132,6 +133,7 @@ function App() {
             <GlobalFooter />
             <ScrollToTopButton />
             <AccessibilityMenu />
+            <ChatWidget />
           </div>
         </BrowserRouter>
       </AccessibilityProvider>

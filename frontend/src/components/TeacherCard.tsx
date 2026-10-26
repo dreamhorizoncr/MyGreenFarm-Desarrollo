@@ -1,19 +1,18 @@
+import { useTranslation } from "react-i18next";
+import { UserRoundIcon } from "@animateicons/react/lucide";
 
-import { useTranslation } from 'react-i18next'
-import { UserRoundIcon } from '@animateicons/react/lucide'
+import type { UserInfo } from "../types/auth.ts";
 
-import type { UserInfo } from '../types/auth.ts'
-
-import Skeleton from './ui/Skeleton.tsx'
-import CardActionButton from './ui/CardActionButton.tsx'
+import Skeleton from "./ui/Skeleton.tsx";
+import CardActionButton from "./ui/CardActionButton.tsx";
 
 interface TeacherCardProps {
-  user?: UserInfo
-  isSelf?: boolean
-  onEdit?: () => void
-  onDelete?: () => void
-  loading?: boolean
-  showPhoto?: boolean
+  user?: UserInfo;
+  isSelf?: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  loading?: boolean;
+  showPhoto?: boolean;
 }
 
 function TeacherCard({
@@ -24,31 +23,25 @@ function TeacherCard({
   loading = false,
   showPhoto = false,
 }: Readonly<TeacherCardProps>) {
-  const { t, i18n } = useTranslation()
+  const { t, i18n } = useTranslation();
 
   const roleLabels: Record<string, string> = {
-    OWNER: t('admin.roles.OWNER'),
-    TEACHER: t('admin.roles.TEACHER'),
-    ADMIN: t('admin.roles.ADMIN'),
-  }
+    OWNER: t("admin.roles.OWNER"),
+    TEACHER: t("admin.roles.TEACHER"),
+    ADMIN: t("admin.roles.ADMIN"),
+  };
 
   const formattedBirthday = user?.birthday
     ? new Intl.DateTimeFormat(i18n.language, {
-        dateStyle: 'medium',
+        dateStyle: "medium",
       }).format(new Date(`${user.birthday}T00:00:00`))
-    : t('admin.notAvailable')
+    : t("admin.notAvailable");
 
   return (
     <article className="card-hover flex min-w-0 flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
-
       {showPhoto && (
         <div className="mb-lg flex justify-center">
-          {loading && (
-            <Skeleton
-              shape="circle"
-              className="h-28 w-28"
-            />
-          )}
+          {loading && <Skeleton shape="circle" className="h-28 w-28" />}
           {!loading && user?.photoUrl && (
             <img
               src={user.photoUrl}
@@ -72,14 +65,8 @@ function TeacherCard({
       <header className="flex min-w-0 items-start justify-between gap-sm">
         {loading ? (
           <div className="min-w-0 flex-1">
-            <Skeleton
-              shape="line"
-              className="h-5 w-1/2"
-            />
-            <Skeleton
-              shape="line"
-              className="mt-2 h-3 w-1/4"
-            />
+            <Skeleton shape="line" className="h-5 w-1/2" />
+            <Skeleton shape="line" className="mt-2 h-3 w-1/4" />
           </div>
         ) : (
           <div className="min-w-0">
@@ -96,15 +83,9 @@ function TeacherCard({
 
       {loading ? (
         <>
-          <Skeleton
-            shape="line"
-            className="mt-md h-3 w-2/3"
-          />
+          <Skeleton shape="line" className="mt-md h-3 w-2/3" />
 
-          <Skeleton
-            shape="line"
-            className="mt-sm h-3 w-1/3"
-          />
+          <Skeleton shape="line" className="mt-sm h-3 w-1/3" />
         </>
       ) : (
         <>
@@ -112,45 +93,35 @@ function TeacherCard({
             {user!.email}
           </p>
 
-          <p className="m-0 mt-sm font-body text-body-sm text-body-text">
-            <span className="font-semibold">
-              {t('admin.birthday')}:
-            </span>{' '}
-            {formattedBirthday}
-          </p>
+          {user?.birthday && (
+            <p className="m-0 mt-sm font-body text-body-sm text-body-text">
+              <span className="font-semibold">{t("admin.birthday")}:</span>{" "}
+              {formattedBirthday}
+            </p>
+          )}
         </>
       )}
 
       <div className="mt-auto flex justify-end gap-xs pt-lg">
         {loading ? (
           <>
-            <Skeleton
-              shape="circle"
-              className="size-10"
-            />
+            <Skeleton shape="circle" className="size-10" />
 
-            <Skeleton
-              shape="circle"
-              className="size-10"
-            />
+            <Skeleton shape="circle" className="size-10" />
           </>
         ) : (
           <>
             <CardActionButton
               action="edit"
-              label={t('admin.edit')}
+              label={t("admin.edit")}
               onClick={onEdit}
               disabled={!onEdit}
             />
 
             <CardActionButton
               action="delete"
-              label={t('admin.delete')}
-              title={
-                isSelf
-                  ? t('admin.selfDeleteNotAllowed')
-                  : undefined
-              }
+              label={t("admin.delete")}
+              title={isSelf ? t("admin.selfDeleteNotAllowed") : undefined}
               disabled={isSelf || !onDelete}
               onClick={onDelete}
             />
@@ -158,7 +129,7 @@ function TeacherCard({
         )}
       </div>
     </article>
-  )
+  );
 }
 
-export default TeacherCard
+export default TeacherCard;

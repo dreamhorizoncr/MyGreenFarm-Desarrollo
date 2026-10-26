@@ -93,9 +93,16 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
     setImageError(null)
   }
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault()
+  const validateImageAlt = () => {
+    const altValue = imageAlt.trim()
+    let altMessage: string | null = null
+    if (altValue) altMessage = validateSafeText(altValue, t)
+    else if (selectedImage) altMessage = t('common.imageAltRequired')
+    setImageAltError(altMessage)
+    return !altMessage
+  }
 
+  const validateForm = () => {
     let hasError = false
 
     if (!gatewayPriceId) {
@@ -131,15 +138,14 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
       setImageError(null)
     }
 
-    // Una imagen nueva necesita texto alternativo; la actual solo se revisa si se escribió algo
-    const altValue = imageAlt.trim()
-    let altMessage: string | null = null
-    if (altValue) altMessage = validateSafeText(altValue, t)
-    else if (selectedImage) altMessage = t('common.imageAltRequired')
-    setImageAltError(altMessage)
-    if (altMessage) hasError = true
+    if (!validateImageAlt()) hasError = true
 
-    if (hasError) return
+    return !hasError
+  }
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault()
+    if (!validateForm()) return
 
     setSaving(true)
     try {

@@ -9,7 +9,6 @@ import 'swiper/css/zoom'
 import CarouselDots from './ui/CarouselDots.tsx'
 import type { GalleryImage } from '../types/gallery.ts'
 
-// Galería y noticias comparten el visor: basta con id y url (el título es opcional)
 type LightboxImage = Pick<GalleryImage, 'id' | 'fileUrl'> & { title?: string; altText?: string | null }
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock.ts'

@@ -1,4 +1,30 @@
 export default {
+  chat: {
+    title: "Ruti, assistante virtuelle",
+    open: "Ouvrir le chat de l’assistante",
+    close: "Fermer le chat",
+    assistantAlt: "Ruti, assistante virtuelle",
+    greetingGuest: "Bonjour, je suis Ruti !",
+    greetingGuestText: "Dites-moi comment je peux vous aider aujourd’hui",
+    greetingNamed: "Bonjour, {{name}} !",
+    greetingNamedText: "Je suis Ruti. Comment puis-je vous aider aujourd’hui ?",
+    frequentQuestions: "Questions fréquentes",
+    suggestions: {
+      booking: "Comment réserver ?",
+      plans: "Quels forfaits ?",
+      vacancies: "Postes vacants ?",
+    },
+    typing: "Écriture en cours",
+    placeholder: "Écrivez votre question...",
+    send: "Envoyer le message",
+    disclaimer: "L’assistante peut se tromper.",
+    maxLength: "Les messages peuvent contenir jusqu’à 500 caractères.",
+    emptyQuestion: "Veuillez saisir une question.",
+    respectful: "Veuillez garder un ton respectueux.",
+    safeReply: "Je peux vous guider dans les fonctionnalités et les services de My Green Farm.",
+    privateData: "Je ne peux pas fournir de dossiers d’élèves ni de renseignements personnels dans ce chat.",
+    retry: "Cela prend un peu plus de temps que prévu. Notre équipe vérifie la situation. Vous pouvez réessayer dans un instant.",
+  },
   teacherDashboard: {
     hello: "Bonjour",
     subtitle: "Bienvenue dans votre espace de travail enseignant.",
@@ -23,6 +49,9 @@ export default {
     clubs: "Clubs",
     adminLogin: "Connexion administrateurs",
     dashboard: "Tableau de bord",
+    ownerPanel: "Panneau du propriétaire",
+    teacherPanel: "Panneau enseignant",
+    adminPanel: "Panneau administrateur",
   },
   home: {
     header: {
@@ -130,6 +159,7 @@ export default {
         "Recevez dans votre boîte mail les dernières actualités, activités et moments spéciaux de nos petits chez Green Farm.",
       emailPlaceholder: "Votre adresse e-mail",
       subscribe: "S’abonner",
+      privacyNote: "Pas de spam. Désabonnez-vous à tout moment.",
       subscribing: "Inscription en cours...",
       subscribeSuccess: "Votre inscription à la newsletter a bien été effectuée !",
       subscribeError: "Impossible de finaliser l'inscription. Veuillez réessayer.",
@@ -318,6 +348,7 @@ export default {
       noSearchResults: "Aucune publication ne correspond à cette recherche.",
       backToBlog: "Retour au blog",
       commentsTitle: "Réponses",
+      replyTitle: "Envoyez votre réponse",
       commentsEmpty: "Il n'y a pas encore de réponses.",
       commentNameLabel: "Nom",
       commentNameRequired: "Saisissez votre nom pour répondre.",
@@ -381,7 +412,7 @@ export default {
     noNews: "Aucune actualité n’a encore été publiée.",
     newsgallery: "Galerie",
     deleteImage: "Supprimer l’image",
-    deleteModalTitle: "Supprimer l’actualité ?",
+    deleteModalTitle: "Supprimer l’actualité",
     deleteModalMessage: "Êtes-vous sûr de vouloir supprimer cette actualité ?",
     deleteModalCancel: "Annuler",
     deleteModalConfirm: "Supprimer",
@@ -763,7 +794,7 @@ export default {
       photoAfterRegister: "Vous pourrez ajouter une photo après avoir inscrit l'enseignant.",
       invalidImage: 'Sélectionnez un fichier image valide.',
       imageTooLarge: 'La photo ne peut pas dépasser 5 Mo.',
-      passwordLabel: 'Mot de passe',
+      accessCodeLabel: 'Mot de passe',
       passwordRequired: 'Le mot de passe est obligatoire.',
       passwordMin: 'Le mot de passe doit contenir au moins 8 caractères.',
       passwordHint: 'Au moins 8 caractères, dont une majuscule, une minuscule, un chiffre et un symbole.',
@@ -955,6 +986,7 @@ export default {
     },
     evaluations: {
       title: "Gestion des Évaluations",
+      tabLabel: "Évaluations",
       description: "Enregistrez, consultez et gérez les progrès des enfants.",
       registerEvaluation: "Enregistrer une évaluation",
       searchPlaceholder: "Rechercher une évaluation...",
@@ -1105,6 +1137,7 @@ export default {
     expedients: {
       noMatches: 'Aucun dossier trouvé avec ce nom.',
       title: "Gestion des Dossiers Académiques",
+      tabLabel: "Dossiers académiques",
       description:
         "Consultez les dossiers académiques des enfants inscrits dans l’établissement.",
       searchbutton: "Rechercher un enfant",
@@ -1218,6 +1251,7 @@ export default {
 
     children: {
       title: "Gestion des Enfants",
+      tabLabel: "Enfants",
       description: 'Gérez les enfants enregistrés dans My Green Farm.',
       searchPlaceholder: 'Rechercher un enfant...',
       addChild: 'Inscrire un enfant',
@@ -1242,6 +1276,7 @@ export default {
       birthDateLabel: 'Date de naissance',
       medicalNotesLabel: 'Notes médicales',
       noClubs: 'Aucun club disponible.',
+      withoutClubs: 'Aucun club',
       loadingOptions: 'Chargement des informations...',
 
       relationships: {
@@ -1289,7 +1324,7 @@ export default {
       savedMessage: "Horaire enregistré avec succès.",
       unsavedChanges: "Vous avez des modifications non enregistrées",
       allSaved: "Tout est enregistré",
-      discard: "Annuler les modifications",
+      discard: "Annuler",
       save: "Enregistrer",
       specialTitle: "Jours spéciaux",
       specialHint: "Ces jours remplacent votre horaire hebdomadaire.",

@@ -172,12 +172,12 @@ function ChildCard({ child, onEdit, onDelete, loading = false }: Readonly<ChildC
           </div>
         </div>
       ) : (
-        child!.clubNames.length > 0 && (
-          <div className="mt-6 border-t border-neutral-100 pt-4">
-            <p className="font-body text-body-sm font-semibold text-heading">
-              {t('admin.children.clubs')}
-            </p>
+        <div className="mt-6 border-t border-neutral-100 pt-4">
+          <p className="font-body text-body-sm font-semibold text-heading">
+            {t('admin.children.clubs')}
+          </p>
 
+          {child!.clubNames.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-2">
               {child!.clubNames.map((club) => (
                 <span
@@ -188,8 +188,10 @@ function ChildCard({ child, onEdit, onDelete, loading = false }: Readonly<ChildC
                 </span>
               ))}
             </div>
-          </div>
-        )
+          ) : (
+            <p className="mt-2 font-body text-body-sm text-body-text">{t('admin.children.withoutClubs')}</p>
+          )}
+        </div>
       )}
     </article>
   );

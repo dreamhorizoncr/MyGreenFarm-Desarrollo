@@ -24,6 +24,8 @@ import {
 } from '../utils/validators.ts'
 import type { ReferralSource } from '../types/appointment.ts'
 import FieldHint from '../components/ui/FieldHint.tsx'
+import AutoHeight from '../components/ui/AutoHeight.tsx'
+import TabHighlight from '../components/ui/TabHighlight.tsx'
 import { tabCarouselClass, useTabCarousel } from '../hooks/useTabCarousel.ts'
 
 function BookingPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
@@ -170,7 +172,6 @@ function BookingPage() {
   const availableDates = Object.keys(availability).filter(isBookableWeekday)
   const effectiveDay = day && availableDates.includes(day) ? day : availableDates[0] ?? null
   const dayRowRef = useTabCarousel(effectiveDay)
-  // Un horario que otra persona aparta o reserva deja de estar disponible: se pasa al siguiente libre
   const isSlotFree = (date: string, start: string) => !slotHolds.isUnavailable(slotKey(date, start))
   const firstFreeTime = effectiveDay
     ? availability[effectiveDay]?.slots.map((slot) => slot.slice(0, 5)).find((start) => isSlotFree(effectiveDay, start)) ?? null
@@ -298,7 +299,6 @@ function BookingPage() {
     }
   })()
 
-  // Aparta (o renueva) el horario elegido; si alguien más lo tomó, vuelve al paso de horarios
   const holdSelectedSlot = async () => {
     if (!effectiveDay || !effectiveTime) return false
     const result = await slotHolds.hold(slotKey(effectiveDay, effectiveTime))
@@ -492,11 +492,6 @@ function BookingPage() {
         </p>
       </div>
 
-      {selectedDay?.specialDay && (
-        <p className="m-0 text-left font-body text-body-sm font-semibold text-link">
-          {t('booking.specialSchedule')}{selectedDay.eventName ? `: ${eventNames[effectiveDay ?? ''] ?? selectedDay.eventName}` : ''}
-        </p>
-      )}
 
       {slotsLoading && (
         <p className="m-0 text-left font-body text-body-sm text-body-text">
@@ -534,12 +529,21 @@ function BookingPage() {
                 type="button"
                 aria-pressed={effectiveDay === date}
                 onClick={() => selectDay(date)}
-                className={`${selectableClassName(effectiveDay === date)} inline-flex h-11 items-center justify-center whitespace-nowrap md:w-full`}
+                className={`relative inline-flex h-11 items-center justify-center whitespace-nowrap rounded-full border border-green-500 px-md py-sm font-body text-body-sm font-semibold transition-colors duration-300 md:w-full ${
+                  effectiveDay === date ? 'text-white' : 'bg-transparent text-heading hover:bg-green-50'
+                }`}
               >
+                {effectiveDay === date && <TabHighlight layoutId="booking-day-tab" className="bg-green-500" />}
                 {dayLabel(date)}
               </button>
             ))}
           </div>
+
+          {selectedDay?.specialDay && (
+            <p className="m-0 text-left font-body text-body-sm font-semibold text-link">
+              {t('booking.specialSchedule')}{selectedDay.eventName ? `: ${eventNames[effectiveDay ?? ''] ?? selectedDay.eventName}` : ''}
+            </p>
+          )}
 
           <div className="flex flex-col gap-sm">
             <h4 className="m-0 text-left font-body text-body font-bold text-body-text">
@@ -829,8 +833,8 @@ function BookingPage() {
     <div className="min-h-screen bg-bg-page">
       <Navbar />
 
-      <main className="flex items-center justify-center px-[30px] py-[30px] md:px-6 md:py-10">
-        <section className="relative flex w-full max-w-[333px] flex-col overflow-hidden rounded-[13px] bg-bg-card shadow md:max-w-[900px] md:rounded-2xl">
+      <main className="flex items-start justify-center px-[30px] py-[30px] md:px-6 md:py-10">
+        <section className="relative flex w-full max-w-[333px] flex-col overflow-hidden rounded-[13px] border border-neutral-200 bg-bg-card shadow md:max-w-[900px] md:rounded-[20px]">
 
           <div className="flex w-full flex-col px-[30px] pb-[28px] pt-[40px] md:px-[50px] md:py-[40px]">
             <div className="mb-lg flex items-center gap-sm">
@@ -849,9 +853,9 @@ function BookingPage() {
 
             <WizardProgress step={step} />
 
-            <div className="flex-1 overflow-y-auto">
+            <AutoHeight className="-mx-1 px-1 pb-1">
               {stepContents[step]()}
-            </div>
+            </AutoHeight>
 
             <div className="mt-lg flex items-center justify-between gap-sm">
               {step > 1 ? (

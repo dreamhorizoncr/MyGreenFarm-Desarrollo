@@ -58,7 +58,6 @@ public class ParentService {
         return parentRepository.findByIsActiveTrue(pageable);
     }
 
-    // Cédula o DIMEX escritos con guiones o espacios se guardan solo con dígitos; un pasaporte queda igual
     static String normalizeIdentification(String identification) {
         String trimmed = identification == null ? "" : identification.trim();
         return trimmed.matches("[\\d\\s-]+") ? trimmed.replaceAll("\\D", "") : trimmed;

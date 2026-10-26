@@ -29,6 +29,12 @@ function ProfileButton() {
   const user = userStorage.getUser()
   if (!user) return null
 
+  const panelLabelKey = user.role === 'OWNER'
+    ? 'ownerPanel'
+    : user.role === 'ADMIN'
+      ? 'adminPanel'
+      : 'teacherPanel'
+
   const handleLogout = async () => {
     await authService.signout()
 
@@ -69,7 +75,7 @@ function ProfileButton() {
             className="flex w-full items-center gap-2 whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100"
           >
           <LayoutDashboardIcon size={18} className="shrink-0" />
-            {t('navbar.dashboard')}
+            {t(`navbar.${panelLabelKey}`)}
           </Link>
 
           <button
