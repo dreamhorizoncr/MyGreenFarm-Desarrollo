@@ -1,291 +1,277 @@
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { PlusIcon } from '@animateicons/react/lucide'
-import AdminLayout from '../layout/AdminLayout.tsx'
-import Skeleton from '../components/ui/Skeleton.tsx'
-import CreateServicePlanModal from '../components/CreateServicePlanModal.tsx'
-import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
-import Pagination from '../components/ui/Pagination.tsx'
-import { useServicePlanAdmin } from '../hooks/useServicePlanAdmin.ts'
-import { useClientPagination } from '../hooks/useClientPagination.ts'
-import { useGridPageSize } from '../hooks/useGridPageSize.ts'
-import { notify, notifyError } from '../utils/notifications.ts'
-import type { ServicePlan } from '../types/servicePlan.ts'
-import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
-import { useExchangeRate } from '../hooks/useExchangeRate.ts'
-import type { Currency, ExchangeRate } from '../types/exchangeRate.ts'
-import { convertCurrency, currencySymbol, formatCurrency } from '../utils/currency.ts'
-import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
-import CardActionButton from '../components/ui/CardActionButton.tsx'
-import CurrencyToggle from '../components/currency/CurrencyToggle.tsx'
-import SkeletonList from '../components/ui/SkeletonList.tsx'
-import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
+  import { useEffect, useState } from 'react'
+  import { useTranslation } from 'react-i18next'
+  import { PlusIcon } from '@animateicons/react/lucide'
+  import AdminLayout from '../layout/AdminLayout.tsx'
+  import Skeleton from '../components/ui/Skeleton.tsx'
+  import CreateServicePlanModal from '../components/CreateServicePlanModal.tsx'
+  import DeleteConfirmModal from '../components/ui/DeleteConfirmModal.tsx'
+  import Pagination from '../components/ui/Pagination.tsx'
+  import { useServicePlanAdmin } from '../hooks/useServicePlanAdmin.ts'
+  import { useClientPagination } from '../hooks/useClientPagination.ts'
+  import { useGridPageSize } from '../hooks/useGridPageSize.ts'
+  import { notify, notifyError } from '../utils/notifications.ts'
+  import type { ServicePlan } from '../types/servicePlan.ts'
+  import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
+  import { useExchangeRate } from '../hooks/useExchangeRate.ts'
+  import type { Currency, ExchangeRate } from '../types/exchangeRate.ts'
+  import { convertCurrency, currencySymbol, formatCurrency } from '../utils/currency.ts'
+  import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
+  import CardActionButton from '../components/ui/CardActionButton.tsx'
+  import CurrencyToggle from '../components/currency/CurrencyToggle.tsx'
+  import SkeletonList from '../components/ui/SkeletonList.tsx'
+  import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
-interface AdminPlanCardProps {
-  plan?: ServicePlan
-  exchangeRate?: ExchangeRate | null
-  deleting?: boolean
-  onEdit?: () => void
-  onDelete?: () => void
-  language?: string
-  loading?: boolean
-}
-
-function AdminPlanCard({
-  plan,
-  exchangeRate,
-  deleting,
-  onEdit,
-  onDelete,
-  language,
-  loading = false,
-}: Readonly<AdminPlanCardProps>) {
-  const { t } = useTranslation()
-
-  const getCleanCurrency = (curr?: string): Currency => {
-    const upper = curr?.toUpperCase()
-    return ['CRC', 'USD', 'EUR'].includes(upper ?? '') ? (upper as Currency) : 'CRC'
+  interface AdminPlanCardProps {
+    plan?: ServicePlan
+    exchangeRate?: ExchangeRate | null
+    deleting?: boolean
+    onEdit?: () => void
+    onDelete?: () => void
+    language?: string
+    loading?: boolean
   }
 
-  const [currency, setCurrency] = useState<Currency>(() => getCleanCurrency(plan?.currency))
+  function AdminPlanCard({
+    plan,
+    exchangeRate,
+    deleting,
+    onEdit,
+    onDelete,
+    language,
+    loading = false,
+  }: Readonly<AdminPlanCardProps>) {
+    const { t } = useTranslation()
 
-  useEffect(() => {
-    if (plan?.currency) {
-      setCurrency(getCleanCurrency(plan.currency))
+    const getCleanCurrency = (curr?: string): Currency => {
+      const upper = curr?.toUpperCase()
+      return ['CRC', 'USD', 'EUR'].includes(upper ?? '') ? (upper as Currency) : 'CRC'
     }
-  }, [plan?.currency])
 
-  const baseCurrency = getCleanCurrency(plan?.currency)
-  const displayCurrency = plan?.variablePrice ? baseCurrency : currency
-  const price = plan && exchangeRate
-    ? convertCurrency(plan.price, baseCurrency, currency, 'buy', exchangeRate)
-    : plan?.price ?? 0
+    const [currency, setCurrency] = useState<Currency>(() => getCleanCurrency(plan?.currency))
 
-  if (loading) {
-    return (
-      <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
-        <Skeleton shape="rect" className="h-[180px] w-full rounded-none" />
-        <div className="flex flex-1 flex-col gap-sm p-lg">
-          <Skeleton shape="line" className="h-5 w-3/4" />
-          <Skeleton shape="line" className="h-4 w-full" />
-          <Skeleton shape="line" className="h-4 w-2/3" />
-          <div className="flex items-center gap-sm">
-            <Skeleton shape="pill" className="h-6 w-20" />
-            <Skeleton shape="line" className="h-6 w-16" />
-          </div>
-          <div className="mt-auto flex justify-end gap-sm pt-sm">
-            <Skeleton shape="circle" className="size-10" />
-            <Skeleton shape="circle" className="size-10" />
+    useEffect(() => {
+      if (plan?.currency) {
+        setCurrency(getCleanCurrency(plan.currency))
+      }
+    }, [plan?.currency])
+
+    const baseCurrency = getCleanCurrency(plan?.currency)
+    const price = plan && exchangeRate
+      ? convertCurrency(plan.price, baseCurrency, currency, 'buy', exchangeRate)
+      : plan?.price ?? 0
+
+    if (loading) {
+      return (
+        <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm">
+          <Skeleton shape="rect" className="h-[180px] w-full rounded-none" />
+          <div className="flex flex-1 flex-col gap-sm p-lg">
+            <Skeleton shape="line" className="h-5 w-3/4" />
+            <Skeleton shape="line" className="h-4 w-full" />
+            <Skeleton shape="line" className="h-4 w-2/3" />
+            <div className="flex items-center gap-sm">
+              <Skeleton shape="pill" className="h-6 w-20" />
+              <Skeleton shape="line" className="h-6 w-16" />
+            </div>
+            <div className="mt-auto flex justify-end gap-sm pt-sm">
+              <Skeleton shape="circle" className="size-10" />
+              <Skeleton shape="circle" className="size-10" />
+            </div>
           </div>
         </div>
-      </div>
+      )
+    }
+
+    return (
+      <article className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white card-hover">
+        <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
+          {plan!.imageUrl ? (
+            <img src={plan!.imageUrl} alt={plan!.imageAlt || plan!.name} className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center">
+              <span className="font-body text-body-sm text-neutral-400">{t('admin.servicios.chooseImage')}</span>
+            </div>
+          )}
+          <span className="absolute bottom-sm left-sm flex items-center gap-1 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
+            {getPlanTypeLabel(plan!.type, t as never)}
+          </span>
+        </div>
+
+        <div className="flex flex-1 flex-col gap-sm px-lg pb-lg pt-md">
+          <div className="flex items-start justify-between gap-sm">
+            <h3 className="m-0 min-w-0 flex-1 text-left font-heading text-h4 font-bold text-green-500 line-clamp-2">
+              {plan!.name}
+            </h3>
+          </div>
+
+          <p className="-mt-xs mb-0 min-h-[2lh] text-left font-body text-body-sm leading-relaxed text-body-text-dark line-clamp-2">
+            {plan!.description}
+          </p>
+
+          <div className="mt-auto flex flex-col items-start gap-2xs pt-xs [&>div:first-child]:justify-start">
+              <CurrencyToggle value={currency} onChange={setCurrency} hasExchangeRate={Boolean(exchangeRate)} />
+            <span className="text-left font-heading text-h2 font-bold text-green-500">
+              <AnimatedNumber
+                value={price}
+                format={(n) => `${currencySymbol(currency)}${formatCurrency(n, currency, language)}`}
+              />
+            </span>
+          </div>
+
+          <div className="flex justify-end gap-sm pt-sm">
+            <CardActionButton action="edit" label={t('admin.edit')} onClick={onEdit} />
+            <CardActionButton action="delete" label={t('admin.delete')} disabled={deleting} onClick={onDelete} />
+          </div>
+        </div>
+      </article>
     )
   }
 
-  return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white card-hover">
-      <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
-        {plan!.imageUrl ? (
-          <img src={plan!.imageUrl} alt={plan!.imageAlt || plan!.name} className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center">
-            <span className="font-body text-body-sm text-neutral-400">{t('admin.servicios.chooseImage')}</span>
-          </div>
-        )}
-        <span className="absolute bottom-sm left-sm flex items-center gap-1 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
-          {getPlanTypeLabel(plan!.type, t as never)}
-        </span>
-      </div>
+  function AdminServicePlansPage() {
+    const { t, i18n } = useTranslation()
+    const { plans, sourcePlans, onvoPlans, loading, error, fetchAll, createPlan, updatePlan, deletePlan } = useServicePlanAdmin()
+    const { data: exchangeRate } = useExchangeRate()
+    const [showCreateModal, setShowCreateModal] = useState(false)
+    const [editingPlan, setEditingPlan] = useState<ServicePlan | null>(null)
+    const [deletingId, setDeletingId] = useState<string | null>(null)
+    const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
-      <div className="flex flex-1 flex-col gap-sm px-lg pb-lg pt-md">
-        <div className="flex items-start justify-between gap-sm">
-          <h3 className="m-0 min-w-0 flex-1 text-left font-heading text-h4 font-bold text-green-500 line-clamp-2">
-            {plan!.name}
-          </h3>
-        </div>
+    useEffect(() => {
+      void fetchAll(i18n.language)
+    }, [fetchAll, i18n.language])
 
-        <p className="-mt-xs mb-0 min-h-[2lh] text-left font-body text-body-sm leading-relaxed text-body-text-dark line-clamp-2">
-          {plan!.description}
-        </p>
+    const getSourcePlan = (id: string) => sourcePlans.find(p => p.id === id) ?? plans.find(p => p.id === id) ?? null
 
-        <div className="mt-auto flex flex-col items-start gap-2xs pt-xs [&>div:first-child]:justify-start">
-          {!plan!.variablePrice && (
-            <CurrencyToggle value={currency} onChange={setCurrency} hasExchangeRate={Boolean(exchangeRate)} />
-          )}
-          <span className="text-left font-heading text-h2 font-bold text-green-500">
-            <AnimatedNumber
-              value={plan!.variablePrice ? plan!.minimumAmount ?? plan!.price : price}
-              format={(n) => `${currencySymbol(displayCurrency)}${formatCurrency(n, displayCurrency, language)}`}
-            />
-          </span>
-          {plan!.variablePrice && (
-            <span className="font-body text-caption text-neutral-500">
-              {t('services.customAmountRange', {
-                min: `${currencySymbol(displayCurrency)}${formatCurrency(plan!.minimumAmount ?? 0, displayCurrency, language)}`,
-                max: `${currencySymbol(displayCurrency)}${formatCurrency(plan!.maximumAmount ?? 0, displayCurrency, language)}`,
-              })}
-            </span>
-          )}
-        </div>
-
-        <div className="flex justify-end gap-sm pt-sm">
-          <CardActionButton action="edit" label={t('admin.edit')} onClick={onEdit} />
-          <CardActionButton action="delete" label={t('admin.delete')} disabled={deleting} onClick={onDelete} />
-        </div>
-      </div>
-    </article>
-  )
-}
-
-function AdminServicePlansPage() {
-  const { t, i18n } = useTranslation()
-  const { plans, sourcePlans, onvoPlans, loading, error, fetchAll, createPlan, updatePlan, deletePlan } = useServicePlanAdmin()
-  const { data: exchangeRate } = useExchangeRate()
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [editingPlan, setEditingPlan] = useState<ServicePlan | null>(null)
-  const [deletingId, setDeletingId] = useState<string | null>(null)
-  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
-
-  useEffect(() => {
-    void fetchAll(i18n.language)
-  }, [fetchAll, i18n.language])
-
-  const getSourcePlan = (id: string) => sourcePlans.find(p => p.id === id) ?? plans.find(p => p.id === id) ?? null
-
-  const handleDelete = async (id: string) => {
-    setDeletingId(id)
-    try {
-      await deletePlan(id)
-      notify.success({
-        title: t('admin.servicios.deletedToastTitle'),
-        description: t('admin.servicios.deletedToastDescription'),
-      })
-    } catch (err) {
-      notifyError(t('admin.servicios.deleteErrorToastTitle'), err)
-      throw err
-    } finally {
-      setDeletingId(null)
+    const handleDelete = async (id: string) => {
+      setDeletingId(id)
+      try {
+        await deletePlan(id)
+        notify.success({
+          title: t('admin.servicios.deletedToastTitle'),
+          description: t('admin.servicios.deletedToastDescription'),
+        })
+      } catch (err) {
+        notifyError(t('admin.servicios.deleteErrorToastTitle'), err)
+        throw err
+      } finally {
+        setDeletingId(null)
+      }
     }
+
+    const pageSize = useGridPageSize({ base: 1, md: 2, lg: 3 })
+
+    const { currentPage, setPage, totalPages, pageItems: pagedPlans } = useClientPagination(plans, pageSize)
+
+    const planToDelete = plans.find(p => p.id === confirmDeleteId)
+    const skeletonCount = useSkeletonCount('admin-service-plans', loading, pagedPlans.length, 3)
+
+    return (
+      <AdminLayout>
+        <div className="flex flex-col gap-lg">
+          <div className="flex flex-wrap items-center justify-between gap-md">
+            <div>
+              <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
+                {t('admin.servicios.title')}
+              </h1>
+              <p className="mt-2 font-body text-body text-neutral-500">
+                {t('admin.servicios.subtitle')}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowCreateModal(true)}
+              className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
+            >
+              <PlusIcon size={18} aria-hidden="true" />
+              {t('admin.servicios.addPlan')}
+            </button>
+          </div>
+
+          {loading && (
+            <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 lg:grid-cols-3">
+              <SkeletonList count={skeletonCount}>{() => <AdminPlanCard loading />}</SkeletonList>
+            </div>
+          )}
+
+          {error && (
+            <p className="text-center font-body text-body text-danger">{error}</p>
+          )}
+
+          {!loading && !error && plans.length === 0 && (
+            <p className="text-center font-body text-body text-neutral-500">
+              {t('admin.servicios.empty')}
+            </p>
+          )}
+
+          {!loading && !error && plans.length > 0 && (
+            <>
+              <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 lg:grid-cols-3">
+                {pagedPlans.map(plan => (
+                  <AdminPlanCard
+                    key={plan.id}
+                    plan={plan}
+                    exchangeRate={exchangeRate}
+                    language={i18n.language}
+                    deleting={deletingId === plan.id}
+                    onEdit={() => setEditingPlan(getSourcePlan(plan.id))}
+                    onDelete={() => setConfirmDeleteId(plan.id)}
+                  />
+                ))}
+              </div>
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+            </>
+          )}
+        </div>
+
+        {(showCreateModal || editingPlan) && (
+          <CreateServicePlanModal
+            onvoPlans={onvoPlans}
+            existingPlans={sourcePlans}
+            planToEdit={editingPlan}
+            onImageDeleted={() => fetchAll(i18n.language)}
+            onSave={async (data, file) => {
+              try {
+                await createPlan(data, file)
+                await fetchAll(i18n.language)
+                notify.success({
+                  title: t('admin.servicios.createdToastTitle'),
+                  description: t('admin.servicios.createdToastDescription'),
+                })
+              } catch (err) {
+                notifyError(t('admin.servicios.saveErrorToastTitle'), err)
+                throw err
+              }
+            }}
+            onUpdate={async (id, data, file) => {
+              try {
+                await updatePlan(id, data, file)
+                await fetchAll(i18n.language)
+                notify.success({
+                  title: t('admin.servicios.updatedToastTitle'),
+                  description: t('admin.servicios.updatedToastDescription'),
+                })
+              } catch (err) {
+                notifyError(t('admin.servicios.saveErrorToastTitle'), err)
+                throw err
+              }
+            }}
+            onClose={() => {
+              setShowCreateModal(false)
+              setEditingPlan(null)
+            }}
+          />
+        )}
+
+        {confirmDeleteId && planToDelete && (
+          <DeleteConfirmModal
+            title={t('admin.servicios.deleteTitle')}
+            message={t('admin.servicios.deleteConfirm', { name: planToDelete.name })}
+            onConfirm={() => handleDelete(confirmDeleteId)}
+            onClose={() => setConfirmDeleteId(null)}
+          />
+        )}
+      </AdminLayout>
+    )
   }
 
-  const pageSize = useGridPageSize({ base: 1, md: 2, lg: 3 })
-
-  const { currentPage, setPage, totalPages, pageItems: pagedPlans } = useClientPagination(plans, pageSize)
-
-  const planToDelete = plans.find(p => p.id === confirmDeleteId)
-  console.log('onvoPlans actuales:', onvoPlans);
-console.log('existingPlans actuales:', plans);
-console.log('Detalle de onvoPlans:', JSON.stringify(onvoPlans, null, 2));
-  const skeletonCount = useSkeletonCount('admin-service-plans', loading, pagedPlans.length, 3)
-
-  return (
-    <AdminLayout>
-      <div className="flex flex-col gap-lg">
-        <div className="flex flex-wrap items-center justify-between gap-md">
-          <div>
-            <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
-              {t('admin.servicios.title')}
-            </h1>
-            <p className="mt-2 font-body text-body text-neutral-500">
-              {t('admin.servicios.subtitle')}
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setShowCreateModal(true)}
-            className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
-          >
-            <PlusIcon size={18} aria-hidden="true" />
-            {t('admin.servicios.addPlan')}
-          </button>
-        </div>
-
-        {loading && (
-          <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 lg:grid-cols-3">
-            <SkeletonList count={skeletonCount}>{() => <AdminPlanCard loading />}</SkeletonList>
-          </div>
-        )}
-
-        {error && (
-          <p className="text-center font-body text-body text-danger">{error}</p>
-        )}
-
-        {!loading && !error && plans.length === 0 && (
-          <p className="text-center font-body text-body text-neutral-500">
-            {t('admin.servicios.empty')}
-          </p>
-        )}
-
-        {!loading && !error && plans.length > 0 && (
-          <>
-            <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 lg:grid-cols-3">
-              {pagedPlans.map(plan => (
-                <AdminPlanCard
-                  key={plan.id}
-                  plan={plan}
-                  exchangeRate={exchangeRate}
-                  language={i18n.language}
-                  deleting={deletingId === plan.id}
-                  onEdit={() => setEditingPlan(getSourcePlan(plan.id))}
-                  onDelete={() => setConfirmDeleteId(plan.id)}
-                />
-              ))}
-            </div>
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
-          </>
-        )}
-      </div>
-
-      {(showCreateModal || editingPlan) && (
-        <CreateServicePlanModal
-          onvoPlans={onvoPlans}
-          existingPlans={sourcePlans}
-          planToEdit={editingPlan}
-          onImageDeleted={() => fetchAll(i18n.language)}
-          onSave={async (data, file) => {
-            try {
-              await createPlan(data, file)
-              await fetchAll(i18n.language)
-              notify.success({
-                title: t('admin.servicios.createdToastTitle'),
-                description: t('admin.servicios.createdToastDescription'),
-              })
-            } catch (err) {
-              notifyError(t('admin.servicios.saveErrorToastTitle'), err)
-              throw err
-            }
-          }}
-          onUpdate={async (id, data, file) => {
-            try {
-              await updatePlan(id, data, file)
-              await fetchAll(i18n.language)
-              notify.success({
-                title: t('admin.servicios.updatedToastTitle'),
-                description: t('admin.servicios.updatedToastDescription'),
-              })
-            } catch (err) {
-              notifyError(t('admin.servicios.saveErrorToastTitle'), err)
-              throw err
-            }
-          }}
-          onClose={() => {
-            setShowCreateModal(false)
-            setEditingPlan(null)
-          }}
-        />
-      )}
-
-      {confirmDeleteId && planToDelete && (
-        <DeleteConfirmModal
-          title={t('admin.servicios.deleteTitle')}
-          message={t('admin.servicios.deleteConfirm', { name: planToDelete.name })}
-          onConfirm={() => handleDelete(confirmDeleteId)}
-          onClose={() => setConfirmDeleteId(null)}
-        />
-      )}
-    </AdminLayout>
-  )
-}
-
-export default AdminServicePlansPage
+  export default AdminServicePlansPage
