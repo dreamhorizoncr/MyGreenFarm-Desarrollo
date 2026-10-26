@@ -1,4 +1,30 @@
 export default {
+  chat: {
+    title: "Ruti, virtual assistant",
+    open: "Open assistant chat",
+    close: "Close chat",
+    assistantAlt: "Ruti, virtual assistant",
+    greetingGuest: "Hi, I’m Ruti!",
+    greetingGuestText: "Tell me how I can help you today",
+    greetingNamed: "Hi, {{name}}!",
+    greetingNamedText: "I’m Ruti. How can I help you today?",
+    frequentQuestions: "Frequently asked questions",
+    suggestions: {
+      booking: "How do I book?",
+      plans: "What plans?",
+      vacancies: "Open positions?",
+    },
+    typing: "Typing",
+    placeholder: "Type your question...",
+    send: "Send message",
+    disclaimer: "The assistant may make mistakes.",
+    maxLength: "Messages can be up to 500 characters.",
+    emptyQuestion: "Please enter a question.",
+    respectful: "Please keep a respectful tone.",
+    safeReply: "I can guide you through My Green Farm’s features and services.",
+    privateData: "I can’t provide student files or personal information in this chat.",
+    retry: "This is taking a little longer than expected. Our team is looking into it. Please try again in a moment.",
+  },
   teacherDashboard: {
     hello: "Hello",
     subtitle: "Welcome to your teaching workspace.",
@@ -23,6 +49,9 @@ export default {
     clubs: "Clubs",
     adminLogin: "Admin login",
     dashboard: "Dashboard",
+    ownerPanel: "Owner Panel",
+    teacherPanel: "Teacher Panel",
+    adminPanel: "Admin Panel",
   },
   home: {
     header: {

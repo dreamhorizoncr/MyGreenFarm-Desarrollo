@@ -131,6 +131,8 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/api/clubs").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/clubs/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/users/teachers").permitAll()
+            .requestMatchers(HttpMethod.POST, "/api/chat").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/chat/health").permitAll()
             .requestMatchers("/api/service-plans/webhooks/**").permitAll()
             .requestMatchers(request -> !request.getRequestURI().startsWith("/api")).permitAll()
             .anyRequest().authenticated())
