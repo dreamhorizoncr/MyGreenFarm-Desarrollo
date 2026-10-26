@@ -28,7 +28,7 @@ public class ChatConfig {
                 .readTimeout(readTimeout)
                 .build();
         return Client.builder().apiKey(apiKey)
-                .clientOptions(ClientOptions.builder().httpClient(httpClient).build())
+                .clientOptions(ClientOptions.builder().customHttpClient(httpClient).build())
                 .build();
     }
 
