@@ -12,8 +12,15 @@ export interface ChatMessage {
 }
 
 const STORAGE_KEY = 'mygreenfarm_chat_history'
+const STORAGE_VERSION = 1
 const INTERNAL_DISCLOSURE = /\b(codigo fuente|fuente del codigo|endpoint|api interna|implementacion interna|arquitectura interna|instrucciones internas|configuracion interna)\b/i
 const ACCESS_INVITATION = /(inici(?:a|ar|e)\s+sesion|ingres(?:a|ar)\s+al\s+sistema|cuenta\s+(?:que\s+tenga\s+)?acceso|solicit(?:a|ar)\s+acceso|seccion\s+correspondiente)/i
+
+interface PersistedChat {
+  version: number
+  messages: ChatMessage[]
+  conversationId: string | null
+}
 
 function generateId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
@@ -56,9 +63,16 @@ function sanitizeAnswer(answer: string) {
 
 function loadHistory(): ChatMessage[] {
   try {
+    const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
+    if (navigation?.type === 'reload') {
+      sessionStorage.removeItem(STORAGE_KEY)
+      return []
+    }
+
     const raw = sessionStorage.getItem(STORAGE_KEY)
     if (!raw) return []
-    const history = JSON.parse(raw) as ChatMessage[]
+    const stored = JSON.parse(raw) as PersistedChat | ChatMessage[]
+    const history = Array.isArray(stored) ? stored : stored.messages
     const firstName = getLoggedInFirstName()
     return history.map((message, index) => {
       if (message.role !== 'bot') return message
@@ -76,9 +90,24 @@ function loadHistory(): ChatMessage[] {
   }
 }
 
-function saveHistory(messages: ChatMessage[]) {
+function loadConversationId(): string | null {
   try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
+    const raw = sessionStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    const stored = JSON.parse(raw) as PersistedChat | ChatMessage[]
+    return Array.isArray(stored) ? null : stored.conversationId || null
+  } catch {
+    return null
+  }
+}
+
+function saveHistory(messages: ChatMessage[], conversationId: string | null) {
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+      version: STORAGE_VERSION,
+      messages,
+      conversationId,
+    } satisfies PersistedChat))
   } catch {
     // Ignore unavailable storage.
   }
@@ -89,7 +118,7 @@ export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>(() => loadHistory())
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [conversationId, setConversationId] = useState<string | null>(null)
+  const [conversationId, setConversationId] = useState<string | null>(() => loadConversationId())
 
   useEffect(() => {
     closedRef.current = false
@@ -103,7 +132,7 @@ export function useChat() {
       const msg: ChatMessage = { id: generateId(), role: 'bot', content: i18n.t('chat.maxLength'), blocked: true }
       setMessages((prev) => {
         const next = [...prev, msg]
-        saveHistory(next)
+        saveHistory(next, conversationId)
         return next
       })
       setInput('')
@@ -113,7 +142,7 @@ export function useChat() {
     const userMsg: ChatMessage = { id: generateId(), role: 'user', content: trimmed }
     setMessages((prev) => {
       const next = [...prev, userMsg]
-      saveHistory(next)
+      saveHistory(next, conversationId)
       return next
     })
     setInput('')
@@ -128,6 +157,7 @@ export function useChat() {
         }))
       const res: ChatResponse = await sendChatMessage({ message: trimmed, conversationId, history })
       if (closedRef.current) return
+      const nextConversationId = res.conversationId || conversationId
       if (res.conversationId) setConversationId(res.conversationId)
       const firstName = getLoggedInFirstName()
       const content = sanitizeAnswer(res.answer)
@@ -139,7 +169,7 @@ export function useChat() {
       }
       setMessages((prev) => {
         const next = [...prev, botMsg]
-        saveHistory(next)
+        saveHistory(next, nextConversationId)
         return next
       })
     } catch {
@@ -147,7 +177,7 @@ export function useChat() {
       const botMsg: ChatMessage = { id: generateId(), role: 'bot', content: i18n.t('chat.retry'), blocked: true }
       setMessages((prev) => {
         const next = [...prev, botMsg]
-        saveHistory(next)
+        saveHistory(next, conversationId)
         return next
       })
     } finally {

@@ -24,12 +24,17 @@ export const SinpeModal: React.FC<SinpeModalProps> = ({
 
     return createPortal(
         <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/55 backdrop-blur p-4">
-            <div className="w-full max-w-lg min-w-[320px] rounded-[28px] bg-white p-6 text-center shadow-2xl animate-fade-in">
+            <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="sinpe-modal-title"
+                className="w-full max-w-lg min-w-[320px] rounded-[28px] bg-white p-6 text-center shadow-2xl animate-fade-in"
+            >
                 <div className="mx-auto mb-md flex h-16 w-16 items-center justify-center rounded-full bg-orange-50 text-orange-500">
                 <SmartphoneIcon size={32} />
             </div>
 
-                <h3 className="font-heading text-xl font-bold">
+                <h3 id="sinpe-modal-title" className="font-heading text-xl font-bold">
                     Procesando Transferencia SINPE
                 </h3>
 

@@ -11,11 +11,6 @@ export default function ChatWidget() {
   const { t } = useTranslation()
 
   const closeChat = () => {
-    try {
-      sessionStorage.removeItem('mygreenfarm_chat_history')
-    } catch {
-      // Storage may be unavailable in private browsing contexts.
-    }
     setOpen(false)
   }
 

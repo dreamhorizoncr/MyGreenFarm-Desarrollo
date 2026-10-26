@@ -12,7 +12,7 @@ interface ChatPanelProps {
 }
 
 export default function ChatPanel({ onClose }: ChatPanelProps) {
-  const { messages, input, setInput, sendMessage, loading, clearChat } = useChat()
+  const { messages, input, setInput, sendMessage, loading } = useChat()
   const { t } = useTranslation()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const user = userStorage.getUser()
@@ -20,7 +20,6 @@ export default function ChatPanel({ onClose }: ChatPanelProps) {
   const firstName = user?.firstName?.trim()
 
   const closeChat = () => {
-    clearChat()
     onClose()
   }
 

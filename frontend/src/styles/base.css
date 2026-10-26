@@ -490,3 +490,80 @@ html.highlight-links-mode a {
   border-radius: 4px;
   border: 1px dashed #ca8a04;
 }
+
+/* =============================================================================
+   ACCESIBILIDAD — lector por voz, dislexia, cursor, guía y filtros
+   ============================================================================= */
+
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("/fonts/OpenDyslexic-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+html.dyslexia-font body,
+html.dyslexia-font body * {
+  font-family: "OpenDyslexic", "Comic Sans MS", "Trebuchet MS", sans-serif !important;
+}
+
+html.text-spacing-mode body {
+  letter-spacing: 0.055em;
+  word-spacing: 0.16em;
+}
+
+html.text-spacing-mode p,
+html.text-spacing-mode li,
+html.text-spacing-mode dd,
+html.text-spacing-mode dt,
+html.text-spacing-mode blockquote,
+html.text-spacing-mode td,
+html.text-spacing-mode th,
+html.text-spacing-mode label,
+html.text-spacing-mode input,
+html.text-spacing-mode textarea,
+html.text-spacing-mode select {
+  line-height: 1.8 !important;
+  letter-spacing: 0.055em !important;
+  word-spacing: 0.16em !important;
+}
+
+html.color-monochrome {
+  filter: grayscale(100%);
+}
+
+html.color-low-saturation {
+  filter: saturate(55%);
+}
+
+html.color-high-saturation {
+  filter: saturate(180%);
+}
+
+html.stop-animations-mode {
+  scroll-behavior: auto !important;
+}
+
+html.stop-animations-mode *,
+html.stop-animations-mode *::before,
+html.stop-animations-mode *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+html.big-cursor,
+html.big-cursor * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24'%3E%3Cpath d='M5 2.5 20 12l-6.2 1.4 3.7 7.6-2.7 1.2-3.7-7.6L6.6 19z' fill='%23000' stroke='%23fff' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/svg%3E") 5 3, auto !important;
+}
+
+.a11y-reading-highlight {
+  outline: 3px solid #f59e0b !important;
+  outline-offset: 3px !important;
+  border-radius: 6px;
+  background-color: rgba(254, 240, 138, 0.5) !important;
+  color: #1e293b !important;
+  box-decoration-break: clone;
+}
+
