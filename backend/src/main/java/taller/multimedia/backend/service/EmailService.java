@@ -7,9 +7,11 @@ import taller.multimedia.backend.model.curriculum.Curriculum;
 import taller.multimedia.backend.model.user.User;
 import taller.multimedia.backend.repository.newsletter_subscriber.NewsletterSubscriberRepository;
 import taller.multimedia.backend.repository.newsletter_subscriber.SubscriberEmailProjection;
+import taller.multimedia.backend.service.electronic_billing.ElectronicBillingService;
 import taller.multimedia.backend.service.translation.TranslationService;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -19,12 +21,18 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+
+import jakarta.mail.internet.MimeMessage;
 
 @Service
 public class EmailService {
@@ -36,6 +44,10 @@ public class EmailService {
     private final BrevoEmailService brevoEmailService;
     private final NewsletterSubscriberRepository newsletterRepository;
     private final TranslationService translationService;
+    private final JavaMailSender mailSender;
+
+    @Autowired
+    private ElectronicBillingService electronicBillingService;
 
     @Value("${mail.support}")
     private String supportEmail;
@@ -45,7 +57,7 @@ public class EmailService {
 
     @Value("${daycare.mail.admin}")
     private String correoAdmin;
-    
+
     @Value("${social.link:https://linktr.ee/dreamhorizoncr}")
     private String socialLink;
 
@@ -53,12 +65,14 @@ public class EmailService {
             MessageSource messageSource,
             BrevoEmailService brevoEmailService,
             NewsletterSubscriberRepository newsletterRepository,
-            TranslationService translationService) {
+            TranslationService translationService,
+            JavaMailSender mailSender) {
         this.templateEngine = templateEngine;
         this.messageSource = messageSource;
         this.brevoEmailService = brevoEmailService;
         this.newsletterRepository = newsletterRepository;
         this.translationService = translationService;
+        this.mailSender = mailSender;
     }
 
     private Context createBaseContext(Locale locale) {
@@ -331,7 +345,8 @@ public class EmailService {
     }
 
     @Async
-    public void sendSemiannualEvaluationSummaryEmail(String parentEmail, String childName, String summaryText, String period, String parentLanguage) {
+    public void sendSemiannualEvaluationSummaryEmail(String parentEmail, String childName, String summaryText,
+            String period, String parentLanguage) {
         try {
             String lang = normalizeNewsletterLanguage(parentLanguage);
             Locale locale = Locale.forLanguageTag(lang);
@@ -362,6 +377,108 @@ public class EmailService {
         } catch (Exception e) {
             log.error("Error al enviar resumen semestral a {}: {}", parentEmail, e.getMessage(), e);
         }
+    }
+
+    @Async
+    public void sendEmailWithAttachment(String to, String subject, String htmlContent, byte[] pdfBytes,
+            String pdfFilename) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new org.springframework.mail.javamail.MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(htmlContent, true);
+
+            if (pdfBytes != null && pdfBytes.length > 0) {
+                helper.addAttachment(pdfFilename, new ByteArrayResource(pdfBytes));
+            }
+
+            mailSender.send(message);
+            log.info("Correo con factura adjunta enviado con éxito a: {}", to);
+        } catch (Exception e) {
+            log.error("Error al enviar correo con adjunto a {}: {}", to, e.getMessage(), e);
+        }
+    }
+
+    @Async
+    public void sendInvoiceWithPdf(String clientEmail, String clientName, byte[] pdfBytes) {
+        sendInvoiceWithPdf(clientEmail, clientName, pdfBytes, Locale.forLanguageTag("es"));
+    }
+
+    @Async
+    public void sendInvoiceWithPdf(String clientEmail, String clientName, byte[] pdfBytes, Locale requestedLocale) {
+        try {
+            Locale locale = resolveInvoiceLocale(requestedLocale);
+            Context context = createBaseContext(locale);
+            context.setVariable("clientName", clientName);
+            context.setVariable("websiteUrl", frontendUrl);
+
+            String htmlContent = templateEngine.process("email/electronic_billing/invoice-success", context);
+
+            String subject = messageSource.getMessage("email.billing.subject", null, locale);
+            sendEmailWithAttachment(clientEmail, subject, htmlContent, pdfBytes, "FacturaElectronica.pdf");
+
+            log.info("Correo con factura electrónica adjunta enviado exitosamente a: {}", clientEmail);
+        } catch (Exception e) {
+            log.error("Error al enviar el correo de factura electrónica con adjunto a {}: {}", clientEmail,
+                    e.getMessage(), e);
+        }
+    }
+
+    @Async
+    public void sendInvoiceWithPdf(String clientEmail, String clientName, Map<String, Object> invoiceResponse) {
+        sendInvoiceWithPdf(clientEmail, clientName, invoiceResponse, Locale.forLanguageTag("es"));
+    }
+
+    @Async
+    public void sendInvoiceWithPdf(String clientEmail, String clientName, Map<String, Object> invoiceResponse,
+            Locale requestedLocale) {
+        try {
+            byte[] pdfBytes = null;
+
+            if (invoiceResponse != null) {
+                // 1. Si viene el PDF directo
+                if (invoiceResponse.get("pdf") != null) {
+                    String pdfBase64 = (String) invoiceResponse.get("pdf");
+                    if (!pdfBase64.isBlank()) {
+                        pdfBytes = java.util.Base64.getDecoder().decode(pdfBase64);
+                    }
+                }
+                else if (invoiceResponse.get("documentId") != null) {
+                    String documentId = (String) invoiceResponse.get("documentId");
+                    log.info(">>> Documento en cola detectado (ID: {}). Iniciando reintentos de descarga...",
+                            documentId);
+
+                    pdfBytes = electronicBillingService.downloadPdfWithRetry(documentId);
+                }
+            }
+
+            Locale locale = resolveInvoiceLocale(requestedLocale);
+            Context context = createBaseContext(locale);
+            context.setVariable("clientName", clientName);
+            context.setVariable("websiteUrl", frontendUrl);
+
+            String htmlContent = templateEngine.process("email/electronic_billing/invoice-success", context);
+
+            String subject = messageSource.getMessage("email.billing.subject", null, locale);
+            sendEmailWithAttachment(clientEmail, subject, htmlContent, pdfBytes, "FacturaElectronica.pdf");
+
+            log.info("Correo con factura electrónica adjunta enviado exitosamente a: {}", clientEmail);
+        } catch (Exception e) {
+            log.error("Error al enviar el correo de factura electrónica con adjunto a {}: {}", clientEmail,
+                    e.getMessage(), e);
+        }
+    }
+
+    private Locale resolveInvoiceLocale(Locale requestedLocale) {
+        if (requestedLocale == null) {
+            return Locale.forLanguageTag("es");
+        }
+        String language = requestedLocale.getLanguage().toLowerCase(Locale.ROOT);
+        return List.of("es", "en", "fr").contains(language)
+                ? Locale.forLanguageTag(language)
+                : Locale.forLanguageTag("es");
     }
 
     private String normalizeNewsletterLanguage(String language) {

@@ -56,6 +56,7 @@ function AdminPlanCard({
   }, [plan?.currency])
 
   const baseCurrency = getCleanCurrency(plan?.currency)
+  const displayCurrency = plan?.variablePrice ? baseCurrency : currency
   const price = plan && exchangeRate
     ? convertCurrency(plan.price, baseCurrency, currency, 'buy', exchangeRate)
     : plan?.price ?? 0
@@ -108,13 +109,23 @@ function AdminPlanCard({
         </p>
 
         <div className="mt-auto flex flex-col items-start gap-2xs pt-xs [&>div:first-child]:justify-start">
-          <CurrencyToggle value={currency} onChange={setCurrency} hasExchangeRate={Boolean(exchangeRate)} />
+          {!plan!.variablePrice && (
+            <CurrencyToggle value={currency} onChange={setCurrency} hasExchangeRate={Boolean(exchangeRate)} />
+          )}
           <span className="text-left font-heading text-h2 font-bold text-green-500">
             <AnimatedNumber
-              value={price}
-              format={(n) => `${currencySymbol(currency)}${formatCurrency(n, currency, language)}`}
+              value={plan!.variablePrice ? plan!.minimumAmount ?? plan!.price : price}
+              format={(n) => `${currencySymbol(displayCurrency)}${formatCurrency(n, displayCurrency, language)}`}
             />
           </span>
+          {plan!.variablePrice && (
+            <span className="font-body text-caption text-neutral-500">
+              {t('services.customAmountRange', {
+                min: `${currencySymbol(displayCurrency)}${formatCurrency(plan!.minimumAmount ?? 0, displayCurrency, language)}`,
+                max: `${currencySymbol(displayCurrency)}${formatCurrency(plan!.maximumAmount ?? 0, displayCurrency, language)}`,
+              })}
+            </span>
+          )}
         </div>
 
         <div className="flex justify-end gap-sm pt-sm">

@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 import { parseSchedule } from '../utils/schedule.ts'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { getErrorMessage } from '../utils/error.ts'
-import type { ServicePlan, OnvoRawPlan } from '../types/servicePlan.ts'
+import type { ServicePlan, OnvoRawPlan, ServicePlanRequest } from '../types/servicePlan.ts'
 
 const ENTITY_TYPE = 'service_plan'
 
@@ -59,7 +59,7 @@ export function useServicePlanAdmin() {
     }
   }, [])
 
-  const createPlan = useCallback(async (data: { schedule: string; includes: string; gatewayPriceId: string }, file: File) => {
+  const createPlan = useCallback(async (data: ServicePlanRequest, file: File) => {
     try {
       const created = await servicePlanService.createPlan(data, file)
       setSourcePlans(prev => [...prev, created])
@@ -71,7 +71,7 @@ export function useServicePlanAdmin() {
     }
   }, [])
 
-  const updatePlan = useCallback(async (id: string, data: { schedule: string; includes: string; gatewayPriceId: string }, file?: File) => {
+  const updatePlan = useCallback(async (id: string, data: ServicePlanRequest, file?: File) => {
     try {
       const updated = await servicePlanService.updatePlan(id, data, file)
       setSourcePlans(prev => prev.map(p => p.id === id ? updated : p))
