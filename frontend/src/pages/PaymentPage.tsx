@@ -16,7 +16,6 @@ import type { Currency } from '../types/exchangeRate.ts'
 import { currencySymbol, formatCurrency } from '../utils/currency.ts'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { notifyError } from '../utils/notifications.ts'
-import { getErrorMessage } from '../utils/error.ts'
 import { SinpeModal } from '../components/SinpeModal'
 import Select from '../components/ui/Select.tsx'
 import { SUPPORTED_LANGUAGES } from '../i18n/index.ts'
@@ -39,13 +38,6 @@ export default function PaymentPage() {
     const plan = state?.plan
     const currency = state?.currency ?? 'CRC'
     const price = state?.price ?? 0
-    const variableCurrency: Currency = plan?.currency?.toUpperCase() === 'USD' ? 'USD' : 'CRC'
-    const [baseAmount, setBaseAmount] = useState(String(plan?.minimumAmount ?? plan?.price ?? 0))
-    const [quote, setQuote] = useState<Awaited<ReturnType<typeof servicePlanService.quoteVariablePlan>> | null>(null)
-    const [quoteLoading, setQuoteLoading] = useState(false)
-    const [quoteError, setQuoteError] = useState<string | null>(null)
-    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card')
-    const [loading, setLoading] = useState(false)
     const [translatedPlans, setTranslatedPlans] = useState<Record<string, ServicePlan>>(
         () => plan ? { [i18n.language.split('-')[0]]: plan } : {},
     )
@@ -89,52 +81,9 @@ export default function PaymentPage() {
     }, [i18n, plan])
 
     const displayPlan = translatedPlans[i18n.language.split('-')[0]] ?? plan
-    const numericBaseAmount = Number(baseAmount)
-    const withinVariablePriceRange = Boolean(
-        plan?.variablePrice
-        && Number.isFinite(numericBaseAmount)
-        && numericBaseAmount >= (plan.minimumAmount ?? Number.POSITIVE_INFINITY)
-        && numericBaseAmount <= (plan.maximumAmount ?? Number.NEGATIVE_INFINITY),
-    )
-    const paymentCurrency: Currency = plan?.variablePrice ? variableCurrency : currency
-    const paymentAmount = plan?.variablePrice ? quote?.totalAmount ?? 0 : price
 
-    useEffect(() => {
-        if (!plan?.variablePrice) return
-
-        if (!withinVariablePriceRange) {
-            setQuote(null)
-            setQuoteLoading(false)
-            setQuoteError(t('services.customAmountInvalid'))
-            return
-        }
-
-        let isCurrent = true
-        setQuote(null)
-        setQuoteLoading(true)
-        setQuoteError(null)
-        const timeoutId = window.setTimeout(() => {
-            void servicePlanService.quoteVariablePlan({
-                servicePlanId: plan.id,
-                baseAmount: numericBaseAmount,
-                paymentMethod,
-            }).then((result) => {
-                if (isCurrent) setQuote(result)
-            }).catch((error: unknown) => {
-                if (isCurrent) {
-                    setQuote(null)
-                    setQuoteError(getErrorMessage(error))
-                }
-            }).finally(() => {
-                if (isCurrent) setQuoteLoading(false)
-            })
-        }, 250)
-
-        return () => {
-            isCurrent = false
-            window.clearTimeout(timeoutId)
-        }
-    }, [numericBaseAmount, paymentMethod, plan, t, withinVariablePriceRange])
+    const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card')
+    const [loading, setLoading] = useState(false)
 
     // Campos del formulario y Facturación Electrónica (Obligatorios)
     const [email, setEmail] = useState('')
@@ -202,20 +151,11 @@ export default function PaymentPage() {
         setLoading(true)
 
         try {
-            const intent = await servicePlanService.createPaymentIntent(plan.variablePrice
-                ? {
-                    servicePlanId: plan.id,
-                    baseAmount: numericBaseAmount,
-                    paymentMethod: 'card',
-                    customerEmail: email,
-                    description: `Pago de ${displayPlan?.name ?? plan.name}`,
-                    language: i18n.resolvedLanguage ?? i18n.language,
-                }
-                : {
-                    priceId: plan.gatewayPriceId,
-                    customerEmail: email,
-                    description: `Pago de ${displayPlan?.name ?? plan.name}`,
-                })
+            const intent = await servicePlanService.createPaymentIntent({
+                priceId: plan.gatewayPriceId,
+                customerEmail: email,
+                description: `Pago de ${displayPlan?.name ?? plan.name}`
+            })
 
             const [expMonth, expYear] = expiry.split('/')
 
@@ -230,7 +170,7 @@ export default function PaymentPage() {
                 clientEmail: email,
                 identificationType: identificationType,
                 clientIdentification: identificationType === '05' ? clientIdentification.trim() : clientIdentification.replace(/\D/g, ''),
-                totalAmount: plan.variablePrice ? numericBaseAmount : price,
+                totalAmount: price,
                 description: `Suscripción: ${displayPlan?.name ?? plan.name}`,
                 language: i18n.resolvedLanguage ?? i18n.language,
                 cabysCode: plan.cabysCode || "9310211050502",
@@ -256,20 +196,11 @@ export default function PaymentPage() {
         setLoading(true)
 
         try {
-            const intent = await servicePlanService.createPaymentIntent(plan.variablePrice
-                ? {
-                    servicePlanId: plan.id,
-                    baseAmount: numericBaseAmount,
-                    paymentMethod: 'sinpe',
-                    customerEmail: email,
-                    description: `Pago SINPE de ${displayPlan?.name ?? plan.name}`,
-                    language: i18n.resolvedLanguage ?? i18n.language,
-                }
-                : {
-                    priceId: plan.gatewayPriceId,
-                    customerEmail: email,
-                    description: `Pago SINPE de ${displayPlan?.name ?? plan.name}`,
-                })
+            const intent = await servicePlanService.createPaymentIntent({
+                priceId: plan.gatewayPriceId,
+                customerEmail: email,
+                description: `Pago SINPE de ${displayPlan?.name ?? plan.name}`
+            })
 
             const confirmResult = await servicePlanService.confirmSinpePayment({
                 paymentIntentId: intent.id,
@@ -279,12 +210,12 @@ export default function PaymentPage() {
                 clientEmail: email,
                 identificationType: identificationType,
                 clientIdentification: identificationType === '05' ? clientIdentification.trim() : clientIdentification.replace(/\D/g, ''),
-                totalAmount: plan.variablePrice ? numericBaseAmount : price,
+                totalAmount: price,
                 description: `Suscripción SINPE: ${displayPlan?.name ?? plan.name}`,
                 language: i18n.resolvedLanguage ?? i18n.language,
                 cabysCode: plan.cabysCode || "9310211050502",
                 taxRate: plan.taxRate || 4.0,
-                currency: paymentCurrency,
+                currency: currency
             })
 
             setLoading(false)
@@ -402,13 +333,11 @@ export default function PaymentPage() {
                                 <CreditCardIcon size={20} className={paymentMethod === 'card' ? 'text-green-500' : 'text-neutral-400'} />
                                 {t('services.card')}
                             </button>
-                        
-                        {
+
                             <button
                                 type="button"
                                 onClick={() => setPaymentMethod('sinpe')}
-                                disabled={plan.variablePrice && variableCurrency === 'USD'}
-                                className={`flex items-center justify-center gap-xs rounded-2xl border p-md font-body text-body-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${paymentMethod === 'sinpe'
+                                className={`flex items-center justify-center gap-xs rounded-2xl border p-md font-body text-body-sm font-semibold transition ${paymentMethod === 'sinpe'
                                     ? 'border-green-500 bg-green-50 text-green-500 shadow-sm'
                                     : 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50'
                                     }`}
@@ -416,7 +345,6 @@ export default function PaymentPage() {
                                 <SmartphoneIcon size={20} className={paymentMethod === 'sinpe' ? 'text-green-500' : 'text-neutral-400'} />
                                 {t('services.sinpeMovil')}
                             </button>
-                        }
                         </div>
 
                         {paymentMethod === 'card' && (
@@ -485,18 +413,16 @@ export default function PaymentPage() {
 
                                 <button
                                     type="submit"
-                                    disabled={loading || (plan.variablePrice && (!quote || quoteLoading))}
+                                    disabled={loading}
                                     className="mt-lg flex h-12 w-full items-center justify-center gap-xs rounded-full bg-orange-500 font-body text-body font-semibold text-white transition hover:bg-orange-600 disabled:opacity-60"
                                 >
                                     <LockIcon size={18} />
-                                    {loading
-                                        ? t('services.processing')
-                                        : `${t('services.pay')} ${currencySymbol(paymentCurrency)}${formatCurrency(paymentAmount, paymentCurrency, i18n.language)}`}
+                                    {loading ? t('services.processing') : `${t('services.pay')} ${currencySymbol(currency)}${formatCurrency(price, currency, i18n.language)}`}
                                 </button>
                             </form>
                         )}
 
-                        {paymentMethod === 'sinpe' && paymentCurrency === 'CRC' && (
+                        {paymentMethod === 'sinpe' && currency === 'CRC' && (
                             <form onSubmit={handleSinpePayment} className="mt-lg space-y-md">
                                 <div className="rounded-2xl bg-neutral-50 p-md">
                                     <p className="font-body text-body-sm text-neutral-600 text-left">
@@ -540,7 +466,7 @@ export default function PaymentPage() {
 
                                 <button
                                     type="submit"
-                                    disabled={loading || (plan.variablePrice && (!quote || quoteLoading))}
+                                    disabled={loading}
                                     className="mt-lg flex h-12 w-full items-center justify-center gap-xs rounded-full bg-orange-500 font-body text-body font-semibold text-white transition hover:bg-orange-600 disabled:opacity-60"
                                 >
                                     <CheckCheckIcon size={18} />
@@ -571,67 +497,15 @@ export default function PaymentPage() {
                             </div>
                         </div>
 
-                        {plan.variablePrice && (
-                            <div className="mt-md space-y-xs border-b border-neutral-100 pb-md">
-                                <label className="block font-body text-caption font-semibold text-heading">
-                                    {t('services.customAmount')} ({paymentCurrency})
-                                    <input
-                                        type="number"
-                                        min={plan.minimumAmount ?? undefined}
-                                        max={plan.maximumAmount ?? undefined}
-                                        step="0.01"
-                                        value={baseAmount}
-                                        onChange={(event) => setBaseAmount(event.target.value)}
-                                        className="mt-xs h-11 w-full rounded-xl border border-neutral-200 px-md font-body text-body-sm outline-none focus:border-green-500"
-                                    />
-                                </label>
-                                <p className="font-body text-caption text-neutral-500">
-                                    {t('services.customAmountRange', {
-                                        min: `${currencySymbol(paymentCurrency)}${formatCurrency(plan.minimumAmount ?? 0, paymentCurrency, i18n.language)}`,
-                                        max: `${currencySymbol(paymentCurrency)}${formatCurrency(plan.maximumAmount ?? 0, paymentCurrency, i18n.language)}`,
-                                    })}
-                                </p>
-                                {quoteLoading && (
-                                    <p className="font-body text-caption text-neutral-500">{t('services.calculatingTotal')}</p>
-                                )}
-                                {quoteError && (
-                                    <p className="font-body text-caption text-danger">{quoteError}</p>
-                                )}
-                            </div>
-                        )}
-
                         <div className="mt-md space-y-xs font-body text-body-sm text-neutral-600">
-                            {plan.variablePrice && quote ? (
-                                <>
-                                    <div className="flex justify-between">
-                                        <span>{t('services.serviceAmount')}</span>
-                                        <span>{currencySymbol(paymentCurrency)}{formatCurrency(quote.baseAmount, paymentCurrency, i18n.language)}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span>{t('services.taxes')}</span>
-                                        <span>{currencySymbol(paymentCurrency)}{formatCurrency(quote.serviceTaxAmount, paymentCurrency, i18n.language)}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span>{t('services.paymentFee')}</span>
-                                        <span>{currencySymbol(paymentCurrency)}{formatCurrency(quote.processingFeeAmount, paymentCurrency, i18n.language)}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span>{t('services.paymentFeeTaxes')}</span>
-                                        <span>{currencySymbol(paymentCurrency)}{formatCurrency(quote.processingFeeTaxAmount, paymentCurrency, i18n.language)}</span>
-                                    </div>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="flex justify-between">
-                                        <span>{t('services.subtotal')}</span>
-                                        <span>{currencySymbol(currency)}{formatCurrency(price, currency, i18n.language)}</span>
-                                    </div>
-                                    <div className="flex justify-between text-neutral-400">
-                                        <span>{t('services.taxes')}</span>
-                                        <span>{t('services.included')}</span>
-                                    </div>
-                                </>
-                            )}
+                            <div className="flex justify-between">
+                                <span>{t('services.subtotal')}</span>
+                                <span>{currencySymbol(currency)}{formatCurrency(price, currency, i18n.language)}</span>
+                            </div>
+                            <div className="flex justify-between text-neutral-400">
+                                <span>{t('services.taxes')}</span>
+                                <span>{t('services.included')}</span>
+                            </div>
                         </div>
 
                         <div className="mt-lg flex items-center justify-between border-t border-neutral-200 pt-md">
@@ -640,8 +514,8 @@ export default function PaymentPage() {
                             </span>
                             <span className="font-heading text-h3 font-bold text-green-500">
                                 <AnimatedNumber
-                                    value={paymentAmount}
-                                    format={(n) => `${currencySymbol(paymentCurrency)}${formatCurrency(n, paymentCurrency, i18n.language)}`}
+                                    value={price}
+                                    format={(n) => `${currencySymbol(currency)}${formatCurrency(n, currency, i18n.language)}`}
                                 />
                             </span>
                         </div>
