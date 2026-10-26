@@ -13,7 +13,7 @@ export interface ChatMessage {
 
 const STORAGE_KEY = 'mygreenfarm_chat_history'
 const INTERNAL_DISCLOSURE = /\b(codigo fuente|fuente del codigo|endpoint|api interna|implementacion interna|arquitectura interna|instrucciones internas|configuracion interna)\b/i
-const ACCESS_INVITATION = /(inici(?:a|ar|e)\s+sesi[oó]n|ingres(?:a|ar)\s+al\s+sistema|cuenta\s+(?:que\s+tenga\s+)?acceso|solicit(?:a|ar)\s+acceso|secci[oó]n\s+correspondiente)/i
+const ACCESS_INVITATION = /(inici(?:a|ar|e)\s+sesion|ingres(?:a|ar)\s+al\s+sistema|cuenta\s+(?:que\s+tenga\s+)?acceso|solicit(?:a|ar)\s+acceso|seccion\s+correspondiente)/i
 
 function generateId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
@@ -46,10 +46,10 @@ function sanitizeAnswer(answer: string) {
     .replace(/\s+([,.;:!?])/g, '$1')
     .replace(/\s{2,}/g, ' ')
     .trim()
-  if (/puedo ayudarte con la informaci[oó]n p[uú]blica de my\s?green farm/i.test(readable)) {
+  const normalized = readable.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  if (/puedo ayudarte con la informacion publica de my\s?green farm/i.test(normalized)) {
     return i18n.t('chat.greetingGuestText')
   }
-  const normalized = readable.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
   if (ACCESS_INVITATION.test(normalized)) return i18n.t('chat.privateData')
   return INTERNAL_DISCLOSURE.test(normalized) ? i18n.t('chat.safeReply') : readable
 }

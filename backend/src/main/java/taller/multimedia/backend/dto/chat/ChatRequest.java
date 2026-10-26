@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRequest {
-    @Size(max = 2000)
+    @Size(max = 500)
     private String message;
 
     private String conversationId;

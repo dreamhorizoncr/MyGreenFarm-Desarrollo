@@ -12,6 +12,7 @@ export interface ChatResponse {
 }
 
 export async function sendChatMessage(payload: ChatRequest): Promise<ChatResponse> {
-  const response = await apiClient.post<ChatResponse>('/chat', payload)
+  // Gemini can take longer than the default 20 second API timeout.
+  const response = await apiClient.post<ChatResponse>('/chat', payload, { timeout: 70000 })
   return response.data
 }
