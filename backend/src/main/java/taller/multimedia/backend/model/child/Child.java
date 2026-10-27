@@ -27,6 +27,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import taller.multimedia.backend.model.group.Group;
 import taller.multimedia.backend.model.parent.Parent;
 
 @Entity 
@@ -70,5 +71,9 @@ public class Child {
 
     @OneToMany(mappedBy = "child", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ChildClub> childClubs = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id")
+    private Group group;
 
 }
