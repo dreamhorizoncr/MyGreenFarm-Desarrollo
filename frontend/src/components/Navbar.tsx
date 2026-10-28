@@ -181,6 +181,7 @@ function Navbar() {
         <button
           type="button"
           tabIndex={-1}
+          aria-hidden="true"
           aria-label="Close menu"
           className="fixed inset-0 z-50 cursor-default bg-scrim"
           onClick={() => setDrawerOpen(false)}
@@ -188,6 +189,8 @@ function Navbar() {
       )}
 
       <div
+        aria-hidden={!drawerOpen}
+        inert={!drawerOpen}
         className={`fixed right-0 top-0 z-[60] h-dvh w-[280px] overflow-y-auto bg-bg-page transition-transform duration-300 ${
           drawerOpen ? 'translate-x-0' : 'translate-x-full'
         }`}

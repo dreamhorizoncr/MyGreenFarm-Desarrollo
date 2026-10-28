@@ -20,6 +20,7 @@ import { notifyError } from '../utils/notifications.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import { SinpeModal } from '../components/SinpeModal'
 import Select from '../components/ui/Select.tsx'
+import FieldHint from '../components/ui/FieldHint.tsx'
 import { SUPPORTED_LANGUAGES } from '../i18n/index.ts'
 
 interface LocationState {
@@ -29,6 +30,9 @@ interface LocationState {
 }
 
 type PaymentMethod = 'card' | 'sinpe'
+
+const errorMessage = (err: unknown, fallback: string) =>
+    err instanceof Error && err.message ? err.message : fallback
 
 export default function PaymentPage() {
     const { t, i18n } = useTranslation()
@@ -239,10 +243,10 @@ export default function PaymentPage() {
             } else {
                 navigate('/payment-failed');
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             setLoading(false)
             console.error("Error en el pago:", err)
-            notifyError(err?.message || "Hubo un error al procesar el pago o la factura.")
+            notifyError(errorMessage(err, "Hubo un error al procesar el pago o la factura."))
         }
     }
 
@@ -290,10 +294,10 @@ export default function PaymentPage() {
             } else {
                 navigate('/payment-failed')
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
             setLoading(false)
             console.error("Error en el pago SINPE:", err)
-            notifyError(err?.message || "Hubo un error al procesar el pago con SINPE.")
+            notifyError(errorMessage(err, "Hubo un error al procesar el pago con SINPE."))
             navigate('/payment-failed')
         }
     }
@@ -315,8 +319,8 @@ export default function PaymentPage() {
 
             <Container className="mt-6 grid grid-cols-1 gap-xl lg:grid-cols-12">
                 <main className="lg:col-span-7">
-                    <div className="rounded-[28px] border border-neutral-200 bg-white p-lg shadow-sm sm:p-xl">
-                        <h1 className="font-heading text-h3 font-bold text-heading text-left my-2">
+                    <div className="rounded-[20px] border border-neutral-200 bg-white p-lg shadow-sm sm:p-xl">
+                        <h1 className="m-0 font-heading text-h3 font-bold leading-tight text-heading text-left">
                             {t('services.finalizePurchase')}
                         </h1>
                         <div className="mt-md space-y-md">
@@ -324,8 +328,8 @@ export default function PaymentPage() {
                                 {t('services.invoiceInformation')}
                             </h2>
                             <div>
-                                <label className="block font-body text-caption font-semibold text-heading text-left">
-                                    {t('services.fullNameOrCompany')} *
+                                <label className="block font-body text-body-sm font-semibold text-heading text-left">
+                                    {t('services.fullNameOrCompany')}
                                 </label>
                                 <input
                                     type="text"
@@ -334,13 +338,14 @@ export default function PaymentPage() {
                                     placeholder="Sofía Rodríguez Mora"
                                     value={clientName}
                                     onChange={(e) => setClientName(e.target.value)}
-                                    className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 font-body text-body-sm outline-none transition focus:border-green-500"
+                                    className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 bg-white font-body text-body-sm font-normal outline-none focus:border-heading"
                                 />
+                                <FieldHint>{t('fields.payment.fullName.hint')}</FieldHint>
                             </div>
 
                             <div>
-                                <label className="block font-body text-caption font-semibold text-heading text-left">
-                                    {t('services.email')} *
+                                <label className="block font-body text-body-sm font-semibold text-heading text-left">
+                                    {t('services.email')}
                                 </label>
                                 <input
                                     type="email"
@@ -349,14 +354,15 @@ export default function PaymentPage() {
                                     placeholder="juan@gmail.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 font-body text-body-sm outline-none transition focus:border-green-500"
+                                    className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 bg-white font-body text-body-sm font-normal outline-none focus:border-heading"
                                 />
+                                <FieldHint>{t('fields.payment.email.hint')}</FieldHint>
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-md">
                                 <div>
-                                    <label className="block font-body text-caption font-semibold text-heading text-left">
-                                        {t('services.identificationType')} *
+                                    <label className="block font-body text-body-sm font-semibold text-heading text-left">
+                                        {t('services.identificationType')}
                                     </label>
                                     <div className="mt-xs">
                                         <Select
@@ -365,11 +371,12 @@ export default function PaymentPage() {
                                             options={identificationOptions}
                                         />
                                     </div>
+                                    <FieldHint>{t('fields.payment.identificationType.hint')}</FieldHint>
                                 </div>
 
                                 <div>
-                                    <label className="block font-body text-caption font-semibold text-heading text-left">
-                                        {t('services.identificationNumber',)} *
+                                    <label className="block font-body text-body-sm font-semibold text-heading text-left">
+                                        {t('services.identificationNumber',)}
                                     </label>
                                     <input
                                         type="text"
@@ -378,8 +385,9 @@ export default function PaymentPage() {
                                         placeholder={identificationType === '05' ? t('services.passportPlaceholder') : '105670890'}
                                         value={clientIdentification}
                                         onChange={(e) => setClientIdentification(e.target.value)}
-                                        className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 font-body text-body-sm outline-none transition focus:border-green-500"
+                                        className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 bg-white font-body text-body-sm font-normal outline-none focus:border-heading"
                                     />
+                                    <FieldHint>{t('fields.payment.identificationNumber.hint')}</FieldHint>
                                 </div>
                             </div>
                         </div>
@@ -393,12 +401,12 @@ export default function PaymentPage() {
                             <button
                                 type="button"
                                 onClick={() => setPaymentMethod('card')}
-                                className={`flex items-center justify-center gap-xs rounded-2xl border p-md font-body text-body-sm font-semibold transition ${paymentMethod === 'card'
-                                    ? 'border-green-500 bg-green-50 text-green-500 shadow-sm'
-                                    : 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50'
+                                className={`flex h-11 items-center justify-center gap-xs rounded-full border border-green-500 px-md font-body text-body-sm font-semibold transition-colors duration-300 ${paymentMethod === 'card'
+                                    ? 'bg-green-500 text-white'
+                                    : 'bg-transparent text-heading hover:bg-green-50'
                                     }`}
                             >
-                                <CreditCardIcon size={20} className={paymentMethod === 'card' ? 'text-green-500' : 'text-neutral-400'} />
+                                <CreditCardIcon size={20} />
                                 {t('services.card')}
                             </button>
 
@@ -414,7 +422,7 @@ export default function PaymentPage() {
                                     : 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50'
                                     }`}
                             >
-                                <SmartphoneIcon size={20} className={paymentMethod === 'sinpe' ? 'text-green-500' : 'text-neutral-400'} />
+                                <SmartphoneIcon size={20} />
                                 {t('services.sinpeMovil')}
                             </button>
                         </div>
@@ -438,8 +446,8 @@ export default function PaymentPage() {
                                     </label>
                                 )}
                                 <div>
-                                    <label className="block font-body text-caption font-semibold text-heading text-left">
-                                        {t('services.cardHolderName')} *
+                                    <label className="block font-body text-body-sm font-semibold text-heading text-left">
+                                        {t('services.cardHolderName')}
                                     </label>
                                     <input
                                         type="text"
@@ -447,13 +455,14 @@ export default function PaymentPage() {
                                         placeholder="Juan Pérez"
                                         value={cardHolder}
                                         onChange={(e) => setCardHolder(e.target.value)}
-                                        className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 font-body text-body-sm outline-none transition focus:border-green-500 focus:ring-1 focus:ring-green-500"
+                                        className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 bg-white font-body text-body-sm font-normal outline-none focus:border-heading"
                                     />
+                                    <FieldHint>{t('fields.payment.cardHolderName.hint')}</FieldHint>
                                 </div>
 
                                 <div>
-                                    <label className="block font-body text-caption font-semibold text-heading text-left">
-                                        {t('services.cardNumber')} *
+                                    <label className="block font-body text-body-sm font-semibold text-heading text-left">
+                                        {t('services.cardNumber')}
                                     </label>
                                     <div className="relative mt-xs">
                                         <input
@@ -462,16 +471,17 @@ export default function PaymentPage() {
                                             placeholder="0000 0000 0000 0000"
                                             value={cardNumber}
                                             onChange={handleCardNumberChange}
-                                            className="w-full rounded-xl border border-neutral-200 px-md h-11 font-body text-body-sm outline-none transition focus:border-green-500 focus:ring-1 focus:ring-green-500"
+                                            className="w-full rounded-xl border border-neutral-200 px-md h-11 bg-white font-body text-body-sm font-normal outline-none focus:border-heading"
                                         />
                                         <CreditCardIcon size={20} className="absolute right-md top-1/2 -translate-y-1/2 text-neutral-400" />
                                     </div>
+                                    <FieldHint>{t('fields.payment.cardNumber.hint')}</FieldHint>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-md">
                                     <div>
-                                        <label className="block font-body text-caption font-semibold text-heading text-left">
-                                            {t('services.expiry')} *
+                                        <label className="block font-body text-body-sm font-semibold text-heading text-left">
+                                            {t('services.expiry')}
                                         </label>
                                         <input
                                             type="text"
@@ -479,13 +489,14 @@ export default function PaymentPage() {
                                             placeholder="MM/AA"
                                             value={expiry}
                                             onChange={handleExpiryChange}
-                                            className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 font-body text-body-sm outline-none transition focus:border-green-500 focus:ring-1 focus:ring-green-500"
+                                            className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 bg-white font-body text-body-sm font-normal outline-none focus:border-heading"
                                         />
+                                        <FieldHint>{t('fields.payment.expiry.hint')}</FieldHint>
                                     </div>
 
                                     <div>
-                                        <label className="block font-body text-caption font-semibold text-heading text-left">
-                                            {t('services.cvc')} *
+                                        <label className="block font-body text-body-sm font-semibold text-heading text-left">
+                                            {t('services.cvc')}
                                         </label>
                                         <input
                                             type="password"
@@ -494,8 +505,9 @@ export default function PaymentPage() {
                                             placeholder="123"
                                             value={cvc}
                                             onChange={(e) => setCvc(e.target.value.replace(/\D/g, ''))}
-                                            className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 font-body text-body-sm outline-none transition focus:border-green-500 focus:ring-1 focus:ring-green-500"
+                                            className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 bg-white font-body text-body-sm font-normal outline-none focus:border-heading"
                                         />
+                                        <FieldHint>{t('fields.payment.cvc.hint')}</FieldHint>
                                     </div>
                                 </div>
 
@@ -531,8 +543,8 @@ export default function PaymentPage() {
                                 </div>
 
                                 <div>
-                                    <label className="font-body text-caption font-semibold text-heading flex">
-                                        {t('services.senderPhone')} *
+                                    <label className="font-body text-body-sm font-semibold text-heading flex">
+                                        {t('services.senderPhone')}
                                     </label>
                                     <input
                                         type="tel"
@@ -540,13 +552,14 @@ export default function PaymentPage() {
                                         placeholder="88888888"
                                         value={phoneNumber}
                                         onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ''))}
-                                        className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 font-body text-body-sm outline-none transition focus:border-green-500 focus:ring-1 focus:ring-green-500"
+                                        className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 bg-white font-body text-body-sm font-normal outline-none focus:border-heading"
                                     />
+                                    <FieldHint>{t('fields.payment.senderPhone.hint')}</FieldHint>
                                 </div>
 
                                 <div>
-                                    <label className="font-body text-caption font-semibold text-heading flex">
-                                        {t('services.referenceNumber')} *
+                                    <label className="font-body text-body-sm font-semibold text-heading flex">
+                                        {t('services.referenceNumber')}
                                     </label>
                                     <input
                                         type="text"
@@ -554,8 +567,9 @@ export default function PaymentPage() {
                                         placeholder="Ej. 123456789"
                                         value={sinpeReference}
                                         onChange={(e) => setSinpeReference(e.target.value)}
-                                        className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 font-body text-body-sm outline-none transition focus:border-green-500 focus:ring-1 focus:ring-green-500"
+                                        className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 bg-white font-body text-body-sm font-normal outline-none focus:border-heading"
                                     />
+                                    <FieldHint>{t('fields.payment.referenceNumber.hint')}</FieldHint>
                                 </div>
 
                                 <button
@@ -572,8 +586,8 @@ export default function PaymentPage() {
                 </main>
 
                 <aside className="lg:col-span-5">
-                    <div className="rounded-[28px] border border-neutral-200 bg-white p-lg shadow-sm">
-                        <h2 className="font-heading text-h4 font-bold text-heading">
+                    <div className="rounded-[20px] border border-neutral-200 bg-white p-lg shadow-sm sm:p-xl">
+                        <h2 className="m-0 font-heading text-h3 font-bold leading-tight text-heading text-left">
                             {t('services.orderSummary')}
                         </h2>
 

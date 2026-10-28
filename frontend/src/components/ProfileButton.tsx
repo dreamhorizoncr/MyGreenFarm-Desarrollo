@@ -3,7 +3,7 @@ import 'blobatar/motion.css'
 import { Link, useNavigate } from 'react-router-dom';
 import { userStorage } from '../utils/userStorage.ts'
 import { useCallback, useRef, useState } from 'react';
-import { LayoutDashboardIcon, LogOutIcon } from '@animateicons/react/lucide';
+import { LogOutIcon, UserRoundIcon } from '@animateicons/react/lucide';
 import { useTranslation } from 'react-i18next';
 import { authService } from '../services/auth.ts';
 import { tokenStorage } from '../utils/token.ts'
@@ -74,7 +74,7 @@ function ProfileButton() {
             onClick={() => { releaseExclusiveOpen(closeMenu); closeMenu() }}
             className="flex w-full items-center gap-2 whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100"
           >
-          <LayoutDashboardIcon size={18} className="shrink-0" />
+          <UserRoundIcon size={18} className="shrink-0" />
             {t(`navbar.${panelLabelKey}`)}
           </Link>
 
