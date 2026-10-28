@@ -1,43 +1,9 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-
-type FontSize = "normal" | "large" | "xlarge";
-export type ColorMode = "normal" | "monochrome" | "low-saturation" | "high-saturation";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { MotionGlobalConfig } from "motion/react";
+import { notifyReducedMotionChange } from "../utils/reducedMotion";
+import { AccessibilityContext, type AccessibilityContextType, type ColorMode, type FontSize } from "./accessibility";
 
 const COLOR_MODES: ColorMode[] = ["normal", "monochrome", "low-saturation", "high-saturation"];
-
-interface AccessibilityContextType {
-    fontSize: FontSize;
-    setFontSize: (size: FontSize) => void;
-    highContrast: boolean;
-    toggleHighContrast: () => void;
-    colorMode: ColorMode;
-    setColorMode: (mode: ColorMode) => void;
-    highlightLinks: boolean;
-    toggleHighlightLinks: () => void;
-    dyslexiaFont: boolean;
-    toggleDyslexiaFont: () => void;
-    textSpacing: boolean;
-    toggleTextSpacing: () => void;
-    bigCursor: boolean;
-    toggleBigCursor: () => void;
-    readingGuide: boolean;
-    toggleReadingGuide: () => void;
-    stopAnimations: boolean;
-    toggleStopAnimations: () => void;
-    voiceReader: boolean;
-    toggleVoiceReader: () => void;
-    autoReadModals: boolean;
-    toggleAutoReadModals: () => void;
-    announceAlerts: boolean;
-    toggleAnnounceAlerts: () => void;
-    clickToRead: boolean;
-    toggleClickToRead: () => void;
-    readFocus: boolean;
-    toggleReadFocus: () => void;
-    resetAccessibility: () => void;
-}
-
-const AccessibilityContext = createContext<AccessibilityContextType | undefined>(undefined);
 
 function readBoolean(key: string, fallback = false) {
     const value = localStorage.getItem(key);
@@ -120,6 +86,8 @@ export function AccessibilityProvider({ children }: Readonly<{ children: ReactNo
         else localStorage.removeItem("a11y_reading_guide");
 
         root.classList.toggle("stop-animations-mode", stopAnimations);
+        MotionGlobalConfig.skipAnimations = stopAnimations;
+        notifyReducedMotionChange();
         if (stopAnimations) localStorage.setItem("a11y_stop_animations", "true");
         else localStorage.removeItem("a11y_stop_animations");
 
@@ -241,12 +209,4 @@ export function AccessibilityProvider({ children }: Readonly<{ children: ReactNo
             {children}
         </AccessibilityContext.Provider>
     );
-}
-
-export function useAccessibility() {
-    const context = useContext(AccessibilityContext);
-    if (!context) {
-        throw new Error("useAccessibility debe usarse dentro de un AccessibilityProvider");
-    }
-    return context;
 }

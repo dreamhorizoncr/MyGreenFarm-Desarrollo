@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { VolumeXIcon } from "@animateicons/react/lucide";
-import { useAccessibility } from "../../contexts/AccessibilityContext";
+import { useAccessibility } from "../../contexts/accessibility";
 import { useVoiceReader } from "../../contexts/VoiceReaderContext";
 import {
   findReadableTarget,
