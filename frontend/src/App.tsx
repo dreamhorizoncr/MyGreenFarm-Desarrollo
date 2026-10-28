@@ -1,3 +1,4 @@
+import { Fragment, type ReactNode } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { Toaster } from 'sileo'
 
@@ -42,6 +43,7 @@ import ScrollToTopButton from './components/ScrollToTopButton.tsx'
 import { ProfileAvatarProvider } from './contexts/ProfileAvatarContext.tsx'
 import { ForumFeedProvider } from './contexts/ForumFeedContext.tsx'
 import { AccessibilityProvider } from '../src/contexts/AccessibilityContext.tsx'
+import { useMotionKey } from './hooks/useMotionKey.ts'
 import { VoiceReaderProvider } from './contexts/VoiceReaderContext.tsx'
 import AccessibilityMenu from './components/ui/AccessibilityMenu.tsx'
 import VoiceReaderController from './components/ui/VoiceReaderController.tsx'
@@ -64,6 +66,10 @@ function isDashboardPath(pathname: string) {
   return pathname === '/profile' || pathname.startsWith('/admin')
 }
 
+function MotionBoundary({ children }: Readonly<{ children: ReactNode }>) {
+  return <Fragment key={useMotionKey()}>{children}</Fragment>
+}
+
 function GlobalFooter() {
   const { pathname } = useLocation()
   if (isDashboardPath(pathname)) return null
@@ -80,6 +86,7 @@ function App() {
             <SessionWatcher />
             <BlobGooFilter />
             <div className="flex min-h-svh flex-col">
+              <MotionBoundary>
               <div className="flex-1">
                 <ProfileAvatarProvider>
                   <ForumFeedProvider>
@@ -136,10 +143,11 @@ function App() {
               </div>
               <GlobalFooter />
               <ScrollToTopButton />
+              <ChatWidget />
+              </MotionBoundary>
               <AccessibilityMenu />
               <VoiceReaderController />
               <ReadingGuide />
-              <ChatWidget />
             </div>
           </VoiceReaderProvider>
         </BrowserRouter>

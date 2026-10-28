@@ -1,4 +1,5 @@
 import { Children, cloneElement, isValidElement, useEffect, useLayoutEffect, useRef, useState, type HTMLAttributes, type ReactElement, type ReactNode } from 'react'
+import { animationsStopped } from '../../utils/reducedMotion'
 
 const DURATION = 350
 const EASING = 'ease'
@@ -14,10 +15,6 @@ type ItemElement = ReactElement<HTMLAttributes<HTMLDivElement> & { 'data-flip-ke
 
 function itemsOf(children: ReactNode) {
   return Children.toArray(children).filter(isValidElement) as ItemElement[]
-}
-
-function prefersReducedMotion() {
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
 function measure(node: HTMLElement): Rect {
@@ -98,7 +95,7 @@ export function FilterGrid({ children, className = '' }: Readonly<FilterGridProp
     const grid = gridRef.current
     if (!grid || lastSignature.current === keySignature) return
     lastSignature.current = keySignature
-    const animate = gridHeight.current !== null && !prefersReducedMotion()
+    const animate = gridHeight.current !== null && !animationsStopped()
     const nodes = [...grid.children] as HTMLElement[]
 
     nodes.forEach(resetNode)

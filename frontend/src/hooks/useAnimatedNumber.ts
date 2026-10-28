@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { animationsStopped } from '../utils/reducedMotion'
 
 const DEFAULT_DURATION = 700
 
@@ -7,7 +8,7 @@ function easeOutCubic(progress: number): number {
 }
 
 function prefersReducedMotion(): boolean {
-  return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  return animationsStopped()
 }
 
 interface UseAnimatedNumberOptions {
@@ -28,14 +29,22 @@ export function useAnimatedNumber(value: number, options: UseAnimatedNumberOptio
       return
     }
 
-    if (prefersReducedMotion()) {
-      currentRef.current = value
-      setDisplayValue(value)
-      return
-    }
-
     if (frameRef.current !== null) {
       cancelAnimationFrame(frameRef.current)
+    }
+
+    if (prefersReducedMotion()) {
+      frameRef.current = requestAnimationFrame(() => {
+        currentRef.current = value
+        setDisplayValue(value)
+        frameRef.current = null
+      })
+      return () => {
+        if (frameRef.current !== null) {
+          cancelAnimationFrame(frameRef.current)
+          frameRef.current = null
+        }
+      }
     }
 
     const from = currentRef.current

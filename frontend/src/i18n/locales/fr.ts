@@ -1,13 +1,14 @@
 export default {
   chat: {
-    title: "Ruti, assistante virtuelle",
-    open: "Ouvrir le chat de l’assistante",
+    title: "Pío, assistant virtuel",
+    tickle: "Chatouiller Pío",
+    open: "Ouvrir le chat de l’assistant",
     close: "Fermer le chat",
-    assistantAlt: "Ruti, assistante virtuelle",
-    greetingGuest: "Bonjour, je suis Ruti !",
+    assistantAlt: "Pío, assistant virtuel",
+    greetingGuest: "Bonjour, je suis Pío !",
     greetingGuestText: "Dites-moi comment je peux vous aider aujourd’hui",
     greetingNamed: "Bonjour, {{name}} !",
-    greetingNamedText: "Je suis Ruti. Comment puis-je vous aider aujourd’hui ?",
+    greetingNamedText: "Je suis Pío. Comment puis-je vous aider aujourd’hui ?",
     frequentQuestions: "Questions fréquentes",
     suggestions: {
       booking: "Comment réserver ?",
@@ -17,7 +18,7 @@ export default {
     typing: "Écriture en cours",
     placeholder: "Écrivez votre question...",
     send: "Envoyer le message",
-    disclaimer: "L’assistante peut se tromper.",
+    disclaimer: "Réponses générées par IA à partir des informations du site. Elles peuvent contenir des erreurs.",
     maxLength: "Les messages peuvent contenir jusqu’à 500 caractères.",
     emptyQuestion: "Veuillez saisir une question.",
     respectful: "Veuillez garder un ton respectueux.",
@@ -1672,6 +1673,18 @@ export default {
     loggedIn: "Les réactions sont réservées aux visiteurs et vous êtes connecté. Déconnectez-vous pour réagir.",
   },
   fields: {
+    payment: {
+      fullName: { hint: "Tel qu’il apparaîtra sur la facture électronique." },
+      email: { hint: "Nous y enverrons la facture et la confirmation du paiement." },
+      identificationType: { hint: "Choisissez le type de document du titulaire de la facture." },
+      identificationNumber: { hint: "Sans tirets ni espaces." },
+      cardHolderName: { hint: "Tel qu’il est imprimé sur la carte." },
+      cardNumber: { hint: "Les 16 chiffres au recto de la carte." },
+      expiry: { hint: "Mois et année d’expiration." },
+      cvc: { hint: "Les 3 ou 4 chiffres au verso." },
+      senderPhone: { hint: "Le numéro depuis lequel vous avez fait le SINPE Móvil, sans tirets." },
+      referenceNumber: { hint: "Il figure sur le reçu du virement." },
+    },
     news: {
       title: {
         placeholder: "Ex. : Foire scientifique 2026",
