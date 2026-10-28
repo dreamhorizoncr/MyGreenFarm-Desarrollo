@@ -1158,6 +1158,64 @@ export default {
       currentPhoto: "Foto actual",
     },
 
+    
+    "groups": {
+      "tabLabel": "Grupos",
+      "title": "Grupos",
+      "description": "Organiza y administra los grupos de estudiantes y sus docentes.",
+      "searchPlaceholder": "Buscar por grupo, docente o estudiante...",
+      "noResults": "No se encontraron grupos.",
+      "loadError": "No se pudieron cargar los grupos.",
+
+      "addGroup": "Agregar grupo",
+      "createTitle": "Crear grupo",
+      "editTitle": "Editar grupo",
+      "deleteTitle": "Eliminar grupo",
+      "viewDetails": "Ver detalles",
+
+      "groupId": "ID del grupo",
+      "name": "Nombre del grupo",
+      "namePlaceholder": "Ingrese el nombre del grupo",
+      "descriptionLabel": "Descripción",
+      "descriptionPlaceholder": "Ingrese una descripción del grupo",
+      "noDescription": "Sin descripción",
+
+      "teacher": "Docente responsable",
+      "selectTeacher": "Seleccione un docente",
+
+      "capacity": "Capacidad máxima",
+      "capacityPlaceholder": "Ingrese la capacidad máxima",
+      "unlimitedCapacity": "Sin límite de capacidad",
+      "enrolledChildren": "Estudiantes inscritos",
+      "availableSpots_one": "{{count}} cupo disponible",
+      "availableSpots_other": "{{count}} cupos disponibles",
+      "full": "Grupo lleno",
+
+      "students": "Estudiantes",
+      "studentId": "Identificación estudiantil",
+      "noStudents": "Este grupo todavía no tiene estudiantes asignados.",
+      "assignStudent": "Asignar estudiante",
+      "removeStudent": "Retirar estudiante",
+      "transferStudent": "Trasladar estudiante",
+
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "create": "Crear grupo",
+      "update": "Guardar cambios",
+
+      "createSuccess": "El grupo se creó correctamente.",
+      "createError": "No se pudo crear el grupo.",
+      "updateSuccess": "El grupo se actualizó correctamente.",
+      "updateError": "No se pudo actualizar el grupo.",
+      "deleteSuccess": "El grupo se eliminó correctamente.",
+      "deleteError": "No se pudo eliminar el grupo.",
+
+      "deleteMessage": "¿Está seguro de que desea eliminar el grupo «{{name}}»?",
+      "requiredField": "Este campo es obligatorio.",
+      "invalidCapacity": "La capacidad debe ser mayor que cero.",
+      "capacityExceeded": "La capacidad no puede ser menor que la cantidad de estudiantes inscritos."
+    },
+
     parents: {
       empty: 'No hay padres de familia registrados.',
       noMatches: 'No se encontraron padres con esa búsqueda.',

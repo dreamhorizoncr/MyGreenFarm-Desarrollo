@@ -1,3 +1,4 @@
+
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { userStorage } from '../utils/userStorage.ts'
@@ -5,16 +6,33 @@ import TabHighlight from './ui/TabHighlight.tsx'
 import { tabCarouselClass, useTabCarousel } from '../hooks/useTabCarousel.ts'
 
 const moduleSections = [
-  { path: '/admin/children', labelKey: 'admin.children.tabLabel', adminOnly: true },
-  { path: '/admin/expedients', labelKey: 'admin.expedients.tabLabel', adminOnly: false },
-  { path: '/admin/evaluations', labelKey: 'admin.evaluations.tabLabel', adminOnly: false },
+  {
+    path: '/admin/children',
+    labelKey: 'admin.children.tabLabel',
+    roles: ['OWNER', 'ADMIN'],
+  },
+  {
+    path: '/admin/groups',
+    labelKey: 'admin.groups.tabLabel',
+    roles: ['OWNER', 'TEACHER'],
+  },
+  {
+    path: '/admin/expedients',
+    labelKey: 'admin.expedients.tabLabel',
+    roles: null,
+  },
+  {
+    path: '/admin/evaluations',
+    labelKey: 'admin.evaluations.tabLabel',
+    roles: null,
+  },
 ] as const
 
 function ChildrenModuleTabs() {
   const { pathname } = useLocation()
   const { t } = useTranslation()
+
   const role = userStorage.getUser()?.role
-  const isAdmin = role === 'OWNER' || role === 'ADMIN'
   const navRef = useTabCarousel<HTMLElement>(pathname)
 
   return (
@@ -24,9 +42,15 @@ function ChildrenModuleTabs() {
       className={`${tabCarouselClass} mt-[calc(var(--spacing-lg)-4px)]`}
     >
       {moduleSections
-        .filter((section) => isAdmin || !section.adminOnly)
+        .filter(
+          (section) =>
+            section.roles === null ||
+            (role != null &&
+              (section.roles as readonly string[]).includes(role)),
+        )
         .map(({ path, labelKey }) => {
-          const isActive = pathname === path
+          const isActive =
+            pathname === path || pathname.startsWith(`${path}/`)
 
           return (
             <Link
@@ -39,7 +63,13 @@ function ChildrenModuleTabs() {
                   : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
               }`}
             >
-              {isActive && <TabHighlight layoutId="children-module-tab" className="bg-green-500" />}
+              {isActive && (
+                <TabHighlight
+                  layoutId="children-module-tab"
+                  className="bg-green-500"
+                />
+              )}
+
               {t(labelKey)}
             </Link>
           )
