@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.onvo.ConfirmPaymentRequest;
 import taller.multimedia.backend.dto.onvo.ConfirmSinpeRequest;
 import taller.multimedia.backend.dto.onvo.PricePaymentRequest;
+import taller.multimedia.backend.dto.onvo.PaymentQuote;
 import taller.multimedia.backend.service.onvo.OnvoService;
 
 @RestController
@@ -60,12 +61,26 @@ public class OnvoWebhookController {
 
     @PostMapping("/create-intent")
     public ResponseEntity<Map<String, Object>> createIntentFromPrice(@RequestBody PricePaymentRequest request) {
-        Map<String, Object> paymentIntent = onvoService.createPaymentIntentFromPrice(
-            request.getPriceId(), 
+        Map<String, Object> paymentIntent = onvoService.createPaymentIntentForPlan(
+            request.getServicePlanId(),
             request.getCustomerEmail(), 
-            request.getDescription()
+            request.getDescription(),
+            request.getCouponCode(),
+            null,
+            request.getPaymentMethod(),
+            request.getLanguage(),
+            request.getSaveSubscription() != null ? request.getSaveSubscription() : false
         );
         return ResponseEntity.ok(paymentIntent);
+    }
+
+    @PostMapping("/quote")
+    public ResponseEntity<PaymentQuote> quotePayment(@RequestBody PricePaymentRequest request) {
+        return ResponseEntity.ok(onvoService.quoteServicePlan(
+                request.getServicePlanId(),
+                request.getCouponCode(),
+                request.getPaymentMethod(),
+                null));
     }
 
     @PostMapping("/confirm")
@@ -80,12 +95,7 @@ public class OnvoWebhookController {
             request.getClientName(),
             request.getClientEmail(),
             request.getIdentificationType(),
-            request.getClientIdentification(),
-            request.getTotalAmount(),
-            request.getDescription(),
-            request.getCabysCode(),
-            request.getTaxRate(),
-            request.getLanguage()
+            request.getClientIdentification()
         );
         return ResponseEntity.ok(result);
     }
@@ -99,13 +109,7 @@ public class OnvoWebhookController {
             request.getClientName(),
             request.getClientEmail(),
             request.getIdentificationType(),
-            request.getClientIdentification(),
-            request.getTotalAmount(),
-            request.getDescription(),
-            request.getCabysCode(),
-            request.getTaxRate(),
-            request.getLanguage(),
-            request.getCurrency()
+            request.getClientIdentification()
         );
         return ResponseEntity.ok(result);
     }

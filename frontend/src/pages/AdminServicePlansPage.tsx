@@ -128,7 +128,7 @@
 
   function AdminServicePlansPage() {
     const { t, i18n } = useTranslation()
-    const { plans, sourcePlans, onvoPlans, loading, error, fetchAll, createPlan, updatePlan, deletePlan } = useServicePlanAdmin()
+    const { plans, sourcePlans, loading, error, fetchAll, createPlan, updatePlan, deletePlan } = useServicePlanAdmin()
     const { data: exchangeRate } = useExchangeRate()
     const [showCreateModal, setShowCreateModal] = useState(false)
     const [editingPlan, setEditingPlan] = useState<ServicePlan | null>(null)
@@ -225,8 +225,6 @@
 
         {(showCreateModal || editingPlan) && (
           <CreateServicePlanModal
-            onvoPlans={onvoPlans}
-            existingPlans={sourcePlans}
             planToEdit={editingPlan}
             onImageDeleted={() => fetchAll(i18n.language)}
             onSave={async (data, file) => {

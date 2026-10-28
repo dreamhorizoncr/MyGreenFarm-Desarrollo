@@ -2,14 +2,13 @@ import { useCallback, useState } from 'react'
 import { parseSchedule } from '../utils/schedule.ts'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { getErrorMessage } from '../utils/error.ts'
-import type { ServicePlan, OnvoRawPlan, ServicePlanRequest } from '../types/servicePlan.ts'
+import type { ServicePlan, ServicePlanRequest } from '../types/servicePlan.ts'
 
 const ENTITY_TYPE = 'service_plan'
 
 export function useServicePlanAdmin() {
   const [plans, setPlans] = useState<ServicePlan[]>([])
   const [sourcePlans, setSourcePlans] = useState<ServicePlan[]>([])
-  const [onvoPlans, setOnvoPlans] = useState<OnvoRawPlan[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -17,15 +16,11 @@ export function useServicePlanAdmin() {
     setLoading(true)
     setError(null)
     try {
-      const [dbPlansRes, rawPlans] = await Promise.all([
-        servicePlanService.getAllPlans(),
-        servicePlanService.getOnvoRawPlans(),
-      ])
+      const dbPlansRes = await servicePlanService.getAllPlans()
 
       const dbPlans = Array.isArray(dbPlansRes) ? dbPlansRes : dbPlansRes.content
 
       setSourcePlans(dbPlans)
-      setOnvoPlans(rawPlans)
 
       const targetLang = lang?.split('-')[0]
       const items = dbPlans.flatMap((plan) => [
@@ -94,5 +89,5 @@ export function useServicePlanAdmin() {
     }
   }, [])
 
-  return { plans, sourcePlans, onvoPlans, loading, error, fetchAll, createPlan, updatePlan, deletePlan }
+  return { plans, sourcePlans, loading, error, fetchAll, createPlan, updatePlan, deletePlan }
 }

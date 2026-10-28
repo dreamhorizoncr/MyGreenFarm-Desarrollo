@@ -1,5 +1,7 @@
 package taller.multimedia.backend.dto.onvo;
 
+import java.util.UUID;
+
 import com.google.auto.value.AutoValue.Builder;
 
 import lombok.AllArgsConstructor;
@@ -22,9 +24,9 @@ public class ConfirmPaymentRequest {
     private String clientEmail;
     private String identificationType;
     private String clientIdentification;
-    private double totalAmount;
     private String description;
     private String language;
-    private String cabysCode;
-    private double taxRate;
+    private UUID servicePlanId;
+    private String couponCode;
+    private boolean saveSubscription;
 }

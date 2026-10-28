@@ -84,7 +84,8 @@ public class ElectronicBillingService {
                                 BigDecimal.ZERO,
                                 null,
                                 BigDecimal.ZERO,
-                                "CRC");
+                                "CRC",
+                                null);
         }
 
         public Map emitInvoiceForSuccessfulPayment(
@@ -99,7 +100,9 @@ public class ElectronicBillingService {
                         BigDecimal processingFeeAmount,
                         String processingFeeCabysCode,
                         BigDecimal processingFeeTaxRate,
-                        String currency) {
+                        String currency,
+                        BigDecimal bacExchangeRate) {
+                String cleanCurrency = currency != null ? currency.toUpperCase() : "CRC";
                 String idempotencyKey = "pedido-" + LocalDate.now() + "-" + System.currentTimeMillis();
 
                 String cleanIdentification = clientIdentification != null
@@ -131,6 +134,12 @@ public class ElectronicBillingService {
                 invoicePayload.put("condicionVenta", "01");
                 invoicePayload.put("medioPago", List.of("04"));
                 invoicePayload.put("currency", currency);
+                if ("USD".equalsIgnoreCase(cleanCurrency)) {
+                if (bacExchangeRate == null || bacExchangeRate.compareTo(BigDecimal.ZERO) <= 0) {
+                        throw new IllegalStateException("Se requiere un tipo de cambio del BAC válido para facturar en Dólares.");
+                }
+                invoicePayload.put("tipoCambio", bacExchangeRate);
+                }
                 invoicePayload.put("observaciones", "Pago procesado exitosamente mediante pasarela web");
                 invoicePayload.put("receptor", Map.of(
                                 "tipoIdentificacion", identificationType,

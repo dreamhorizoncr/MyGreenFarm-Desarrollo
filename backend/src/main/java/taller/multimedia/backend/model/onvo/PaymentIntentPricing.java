@@ -2,6 +2,7 @@ package taller.multimedia.backend.model.onvo;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,6 +28,9 @@ public class PaymentIntentPricing {
 
     @Column(name = "payment_intent_id", nullable = false, unique = true, length = 100)
     private String paymentIntentId;
+
+    @Column(name = "service_plan_id")
+    private UUID servicePlanId;
 
     @Column(name = "service_description", nullable = false, length = 500)
     private String serviceDescription;
@@ -66,6 +70,12 @@ public class PaymentIntentPricing {
 
     @Column(name = "language", nullable = false, length = 10)
     private String language;
+
+    @Column(name = "coupon_code", length = 60)
+    private String couponCode;
+
+    @Column(name = "save_subscription", nullable = false)
+    private Boolean saveSubscription;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

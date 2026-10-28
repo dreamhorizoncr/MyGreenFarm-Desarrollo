@@ -22,10 +22,11 @@ public class ServicePlanRequest {
     @Positive(message = "El precio debe ser mayor a cero")
     private BigDecimal price;
 
+    private BigDecimal gatewayPriceAmount;
+
     @NotBlank(message = "El tipo de plan es obligatorio")
     private String type;
 
-    @NotBlank(message = "El ID del precio de Onvo es obligatorio")
     private String gatewayPriceId;
 
     @NotBlank(message = "El horario es obligatorio")
@@ -40,9 +41,29 @@ public class ServicePlanRequest {
     @Size(max = 6, message = "El máximo de caracteres es de 6")
     private String currency;
 
-    @NotBlank(message = "El payment URL es obligatorio")
     @Size(max = 300, message = "El payment URL deben tener como máximo 300 caracteres")
     private String paymentUrl;
+
+    @NotBlank(message = "El código CABYS es obligatorio")
+    private String cabysCode;
+
+    @NotNull(message = "La tarifa de IVA es obligatoria")
+    private BigDecimal taxRate;
+
+    @Size(max = 60, message = "El código de cupón no puede superar 60 caracteres")
+    private String couponCode;
+
+    private String couponType;
+
+    @Positive(message = "El valor del cupón debe ser mayor a cero")
+    private BigDecimal couponValue;
+
+    private java.time.LocalDate couponExpiresAt;
+
+    @Positive(message = "El máximo de usos debe ser mayor a cero")
+    private Integer couponMaxRedemptions;
+
+    private String couponId;
 
     @Size(max = 140, message = "El texto alternativo debe tener como máximo 140 caracteres")
     private String imageAlt;

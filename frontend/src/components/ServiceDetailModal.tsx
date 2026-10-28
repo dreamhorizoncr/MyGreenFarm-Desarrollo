@@ -52,18 +52,16 @@ import CurrencyToggle from './currency/CurrencyToggle.tsx'
 
         // Cálculo del precio según la moneda seleccionada en el Toggle
         const price = exchangeRate
-            ? convertCurrency(plan.price, cleanCurrency(plan.currency), currency, 'buy', exchangeRate)
-            : plan.price
+            ? convertCurrency(plan.gatewayPriceAmount ?? plan.price, cleanCurrency(plan.currency), currency, 'buy', exchangeRate)
+            : plan.gatewayPriceAmount ?? plan.price
         const priceCurrency = cleanCurrency(plan.currency)
 
         const handleProceedToCheckout = () => {
-            // Si pasaste una función personalizada
             if (onSubscribe) {
                 onSubscribe(plan, priceCurrency, price)
                 return
             }
 
-            // Redirección directa al formulario de pago de Tarjeta / SINPE
             requestClose()
             navigate('/payment', {
                 state: {
