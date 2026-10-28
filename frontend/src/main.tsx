@@ -4,7 +4,9 @@ import './i18n/index.ts'
 import './index.css'
 import App from './App.tsx'
 import { installModalScrollbars } from './utils/modalScrollbars.ts'
+import { installReducedMotionBridge } from './utils/reducedMotion.ts'
 
+installReducedMotionBridge()
 installModalScrollbars()
 
 window.addEventListener("unhandledrejection", (event) => {

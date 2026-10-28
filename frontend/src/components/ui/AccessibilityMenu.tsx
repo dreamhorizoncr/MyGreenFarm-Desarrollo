@@ -20,12 +20,15 @@ import {
     PanelsTopLeft,
     Type,
 } from 'lucide-react'
-import { useAccessibility, type ColorMode } from '../../contexts/AccessibilityContext'
+import { useAccessibility, type ColorMode } from '../../contexts/accessibility'
 import { useVoiceReader } from '../../contexts/VoiceReaderContext'
 import useDismiss from '../../hooks/useDismiss.ts'
 import { useDropdownMotion } from '../../hooks/useDropdownMotion.ts'
 import ModalCloseButton from './ModalCloseButton.tsx'
 import TabHighlight from './TabHighlight.tsx'
+import AutoHeight from './AutoHeight.tsx'
+import { useMotionKey } from '../../hooks/useMotionKey.ts'
+import { tabCarouselClass, useTabCarousel } from '../../hooks/useTabCarousel.ts'
 
 type FontSize = 'normal' | 'large' | 'xlarge'
 type MenuTab = 'reading' | 'vision' | 'tools'
@@ -60,7 +63,7 @@ interface ToggleRowProps {
 function ToggleRow({ label, icon, checked, onChange, disabled = false }: Readonly<ToggleRowProps>) {
     return (
         <label
-            className={`relative flex min-h-32 flex-col justify-between rounded-2xl border border-neutral-100 bg-white p-3 shadow-sm transition-colors hover:border-green-200 ${
+            className={`relative flex min-h-32 flex-col gap-sm rounded-2xl border border-neutral-200 bg-white p-3 shadow-sm transition-colors hover:border-[color-mix(in_oklch,var(--color-green-500)_45%,var(--color-neutral-200))] ${
                 disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
             }`}
         >
@@ -87,6 +90,8 @@ function ToggleRow({ label, icon, checked, onChange, disabled = false }: Readonl
 export default function AccessibilityMenu() {
     const [isOpen, setIsOpen] = useState(false)
     const [activeTab, setActiveTab] = useState<MenuTab>('reading')
+    const tabRowRef = useTabCarousel(activeTab)
+    const motionKey = useMotionKey()
     const [activeReadAction, setActiveReadAction] = useState<'page' | 'selection' | null>(null)
     const rootRef = useRef<HTMLDivElement>(null)
     const { t } = useTranslation()
@@ -170,6 +175,7 @@ export default function AccessibilityMenu() {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
+                        key={motionKey}
                         {...dropdownMotion}
                         id="accessibility-panel"
                         role="dialog"
@@ -177,7 +183,7 @@ export default function AccessibilityMenu() {
                         className="absolute bottom-16 right-0 w-[min(26rem,calc(100vw-48px))] origin-bottom-right overflow-hidden rounded-[20px] border border-neutral-200 bg-bg-card p-lg shadow-lg"
                     >
                         <div className="flex items-center justify-between gap-md">
-                            <h2 style={{ fontSize: '1.375rem', transform: 'none' }} className="m-0 min-w-0 font-heading font-bold leading-tight text-heading">
+                            <h2 className="m-0 min-w-0 font-heading text-h4 font-bold leading-tight text-heading">
                                 {t('accessibility.title')}
                             </h2>
                             <ModalCloseButton onClick={close} aria-label={t('common.close')} />
@@ -186,7 +192,8 @@ export default function AccessibilityMenu() {
                         <div
                             role="tablist"
                             aria-label={t('accessibility.title')}
-                            className="mt-md grid grid-cols-3 gap-2"
+                            ref={tabRowRef}
+                            className={`mt-md ${tabCarouselClass}`}
                         >
                             {TABS.map(({ value, labelKey }) => {
                                 const isActive = activeTab === value
@@ -199,8 +206,8 @@ export default function AccessibilityMenu() {
                                         aria-selected={isActive}
                                         aria-controls={isActive ? `a11y-panel-${value}` : undefined}
                                         onClick={() => setActiveTab(value)}
-                                        className={`relative isolate whitespace-nowrap rounded-full border px-2 py-2 font-body text-body-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link ${
-                                            isActive ? 'border-orange-500 text-green-500' : 'border-neutral-200 bg-white text-neutral-600 hover:border-green-500 hover:text-green-500'
+                                        className={`relative grow whitespace-nowrap rounded-full border border-green-500 px-sm py-xs font-body text-body-sm font-semibold transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link ${
+                                            isActive ? 'bg-green-500 text-white' : 'bg-transparent text-heading hover:bg-green-50'
                                         }`}
                                     >
                                         {t(labelKey)}
@@ -209,14 +216,15 @@ export default function AccessibilityMenu() {
                             })}
                         </div>
 
-                        <div className="modal-scroll mt-md max-h-[min(58vh,28rem)] overflow-y-auto pr-1">
+                        <AutoHeight className="pt-md">
+                        <div className="modal-scroll max-h-[min(28rem,calc(100svh-24rem))] overflow-y-auto pr-1">
                             {activeTab === 'reading' && (
                                 <section
                                     role="tabpanel"
                                     id="a11y-panel-reading"
                                     aria-labelledby="a11y-tab-reading"
                                 >
-                                    <div className="rounded-2xl border border-neutral-100 bg-white p-3 shadow-sm">
+                                    <div className="rounded-2xl border border-neutral-200 bg-white p-3 shadow-sm">
                                         <div className="flex items-center gap-2">
                                             <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-green-50 text-green-500">
                                                 <AudioLinesIcon size={20} isAnimated={isSpeaking} aria-hidden="true" />
@@ -252,18 +260,18 @@ export default function AccessibilityMenu() {
                                                 onClick={() => startReading(readCurrentView, 'page')}
                                                 disabled={!readerSupported}
                                                 aria-pressed={activeReadAction === 'page'}
-                                                className={`flex h-11 w-full items-center justify-center gap-2 rounded-full border px-4 font-body text-body-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link ${activeReadAction === 'page' ? 'border-green-500 bg-green-500 text-white' : 'border-green-500 bg-white text-green-500'}`}
+                                                className={`flex h-11 w-full items-center justify-center gap-2 rounded-full border border-green-500 px-md font-body text-body-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link ${activeReadAction === 'page' ? 'bg-green-500 text-white' : 'bg-white text-heading hover:bg-green-50'}`}
                                             >
                                                 <BookOpenTextIcon size={17} aria-hidden="true" />
                                                 {t('accessibility.readPage')}
                                             </button>
-                                            <div className="grid grid-cols-2 gap-2">
+                                            <div className="grid grid-cols-1 gap-2">
                                                 <button
                                                     type="button"
                                                     onClick={() => startReading(readSelection, 'selection')}
                                                     disabled={!readerSupported}
                                                     aria-pressed={activeReadAction === 'selection'}
-                                                    className={`flex h-10 w-full items-center justify-center gap-1.5 rounded-full border px-2 font-body text-caption font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link ${activeReadAction === 'selection' ? 'border-green-500 bg-green-500 text-white' : 'border-green-500 bg-white text-green-500'}`}
+                                                    className={`flex h-11 w-full items-center justify-center gap-1.5 rounded-full border border-green-500 px-sm font-body text-body-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link ${activeReadAction === 'selection' ? 'bg-green-500 text-white' : 'bg-white text-heading hover:bg-green-50'}`}
                                                 >
                                                     <MousePointerClickIcon size={15} aria-hidden="true" />
                                                     {t('accessibility.readSelection')}
@@ -272,7 +280,7 @@ export default function AccessibilityMenu() {
                                                     type="button"
                                                     onClick={() => { stop(); setActiveReadAction(null) }}
                                                     disabled={!isSpeaking}
-                                                    className="flex h-10 w-full items-center justify-center gap-1.5 rounded-full border border-orange-500 bg-white px-2 font-body text-caption font-semibold text-orange-600 transition-colors hover:bg-orange-50 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+                                                    className="flex h-11 w-full items-center justify-center gap-1.5 rounded-full border border-orange-500 bg-white px-sm font-body text-body-sm font-semibold text-orange-600 transition-colors hover:bg-orange-50 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
                                                 >
                                                     <VolumeXIcon size={15} aria-hidden="true" />
                                                     {t('accessibility.stopReading')}
@@ -340,7 +348,7 @@ export default function AccessibilityMenu() {
                                                         aria-checked={isActive}
                                                         onClick={() => setFontSize(value)}
                                                         className={`relative rounded-full border border-green-500 py-xs font-body text-body-sm font-semibold transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link ${
-                                            isActive ? 'text-white' : 'bg-transparent text-green-500 hover:bg-green-50'
+                                            isActive ? 'text-white' : 'bg-transparent text-heading hover:bg-green-50'
                                                         }`}
                                                     >
                                                         {isActive && (
@@ -356,7 +364,7 @@ export default function AccessibilityMenu() {
                                         </div>
                                     </div>
 
-                                    <div className="mt-md grid grid-cols-2 gap-5">
+                                    <div className="mt-sm grid grid-cols-2 gap-sm">
                                         <ToggleRow
                                             label={t('accessibility.enableContrast')}
                                             icon={<Eye size={20} aria-hidden="true" />}
@@ -371,7 +379,7 @@ export default function AccessibilityMenu() {
                                         />
                                     </div>
 
-                                    <div className="mt-md grid grid-cols-2 gap-5">
+                                    <div className="mt-sm grid grid-cols-2 gap-sm">
                                         <ToggleRow
                                             label={t('accessibility.dyslexiaFont')}
                                             icon={<Type size={20} aria-hidden="true" />}
@@ -404,10 +412,10 @@ export default function AccessibilityMenu() {
                                                         role="radio"
                                                         aria-checked={isActive}
                                                         onClick={() => setColorMode(value)}
-                                                        className={`relative rounded-full border border-green-500 px-2 py-xs font-body text-caption font-semibold transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link ${
+                                                        className={`relative rounded-full border border-green-500 px-sm py-xs font-body text-body-sm font-semibold transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link ${
                                                             isActive
                                                                 ? 'text-white'
-                                                                : 'bg-transparent text-green-500 hover:bg-green-50'
+                                                                : 'bg-transparent text-heading hover:bg-green-50'
                                                         }`}
                                                     >
                                                         {isActive && (
@@ -463,6 +471,7 @@ export default function AccessibilityMenu() {
                                 </section>
                             )}
                         </div>
+                        </AutoHeight>
 
                         <button
                             type="button"

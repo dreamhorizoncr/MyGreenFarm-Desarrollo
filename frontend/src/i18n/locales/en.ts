@@ -1,13 +1,14 @@
 export default {
   chat: {
-    title: "Ruti, virtual assistant",
+    title: "Pío, virtual assistant",
+    tickle: "Tickle Pío",
     open: "Open assistant chat",
     close: "Close chat",
-    assistantAlt: "Ruti, virtual assistant",
-    greetingGuest: "Hi, I’m Ruti!",
+    assistantAlt: "Pío, virtual assistant",
+    greetingGuest: "Hi, I’m Pío!",
     greetingGuestText: "Tell me how I can help you today",
     greetingNamed: "Hi, {{name}}!",
-    greetingNamedText: "I’m Ruti. How can I help you today?",
+    greetingNamedText: "I’m Pío. How can I help you today?",
     frequentQuestions: "Frequently asked questions",
     suggestions: {
       booking: "How do I book?",
@@ -17,7 +18,7 @@ export default {
     typing: "Typing",
     placeholder: "Type your question...",
     send: "Send message",
-    disclaimer: "The assistant may make mistakes.",
+    disclaimer: "AI-generated answers based on the site's information. They may contain mistakes.",
     maxLength: "Messages can be up to 500 characters.",
     emptyQuestion: "Please enter a question.",
     respectful: "Please keep a respectful tone.",
@@ -1660,6 +1661,18 @@ export default {
     loggedIn: "Reactions are only for visitors and you are logged in. Log out to react.",
   },
   fields: {
+    payment: {
+      fullName: { hint: "As it will appear on the electronic invoice." },
+      email: { hint: "We'll send the invoice and payment confirmation here." },
+      identificationType: { hint: "Choose the invoice holder's document type." },
+      identificationNumber: { hint: "No dashes or spaces." },
+      cardHolderName: { hint: "Exactly as printed on the card." },
+      cardNumber: { hint: "The 16 digits on the front of the card." },
+      expiry: { hint: "Expiration month and year." },
+      cvc: { hint: "The 3 or 4 digits on the back." },
+      senderPhone: { hint: "The number you sent the SINPE Móvil from, no dashes." },
+      referenceNumber: { hint: "It appears on the transfer receipt." },
+    },
     news: {
       title: {
         placeholder: "E.g. 2026 Science Fair",

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAccessibility } from "../../contexts/AccessibilityContext";
+import { useAccessibility } from "../../contexts/accessibility";
 
 const BAND_HEIGHT = 132;
 

@@ -1,13 +1,14 @@
 export default {
   chat: {
-    title: "Ruti, asistente virtual",
+    title: "Pío, asistente virtual",
+    tickle: "Hacerle cosquillas a Pío",
     open: "Abrir chat del asistente",
     close: "Cerrar chat",
-    assistantAlt: "Ruti, asistente virtual",
-    greetingGuest: "¡Hola, soy Ruti!",
+    assistantAlt: "Pío, asistente virtual",
+    greetingGuest: "¡Hola, soy Pío!",
     greetingGuestText: "Dime en qué te puedo ayudar hoy",
     greetingNamed: "¡Hola, {{name}}!",
-    greetingNamedText: "Soy Ruti, dime en qué te puedo ayudar hoy",
+    greetingNamedText: "Soy Pío, dime en qué te puedo ayudar hoy",
     frequentQuestions: "Preguntas frecuentes",
     suggestions: {
       booking: "¿Cómo reservo?",
@@ -17,7 +18,7 @@ export default {
     typing: "Escribiendo",
     placeholder: "Escribe tu pregunta...",
     send: "Enviar mensaje",
-    disclaimer: "El asistente puede cometer errores.",
+    disclaimer: "Respuestas generadas con IA a partir de la información del sitio. Pueden contener errores.",
     maxLength: "Solo puedo recibir mensajes de hasta 500 caracteres.",
     emptyQuestion: "Por favor, escribe una pregunta.",
     respectful: "Por favor, mantén un tono respetuoso.",
@@ -1668,6 +1669,18 @@ export default {
     loggedIn: "Las reacciones son solo para visitantes y tienes la sesión iniciada. Cierra sesión para poder reaccionar.",
   },
   fields: {
+    payment: {
+      fullName: { hint: "Como aparecerá en la factura electrónica." },
+      email: { hint: "Te enviaremos aquí la factura y la confirmación del pago." },
+      identificationType: { hint: "Elige el tipo de documento del titular de la factura." },
+      identificationNumber: { hint: "Sin guiones ni espacios." },
+      cardHolderName: { hint: "Tal como aparece impreso en la tarjeta." },
+      cardNumber: { hint: "Los 16 dígitos del frente de la tarjeta." },
+      expiry: { hint: "Mes y año de vencimiento." },
+      cvc: { hint: "Los 3 o 4 dígitos del reverso." },
+      senderPhone: { hint: "Número desde el que hiciste el SINPE Móvil, sin guiones." },
+      referenceNumber: { hint: "Aparece en el comprobante de la transferencia." },
+    },
     news: {
       title: {
         placeholder: "Ej.: Feria de ciencias 2026",

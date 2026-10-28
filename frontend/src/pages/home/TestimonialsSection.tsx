@@ -15,6 +15,8 @@ import lapiz from "../../assets/imgs/lapiz.svg";
 import Tijera from "../../assets/imgs/Tijera.svg";
 import Goma from "../../assets/imgs/Goma.svg";
 import Cabra from "../../assets/imgs/Cabra.svg";
+import { animationsStopped } from "../../utils/reducedMotion";
+import { useAccessibility } from "../../contexts/accessibility";
 
 const testimonialStyles = [
   { accent: "#F37B25", initials: "MJA" },
@@ -27,11 +29,22 @@ const cardPosition = (index: number, activeIndex: number, total: number) => {
   return (index - activeIndex + total) % total === 1 ? "right" : "left";
 };
 
+const avatarAnimation = (
+  stopped: boolean,
+  playing: boolean,
+): { animate?: "always" | "hover" } => {
+  if (stopped) return {};
+  return { animate: playing ? "always" : "hover" };
+};
+
 function TestimonialsSection() {
+  const { stopAnimations } = useAccessibility();
   const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const touchStartX = useRef<number | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [inView, setInView] = useState(false);
 
   const testimonials = [
     {
@@ -59,13 +72,21 @@ function TestimonialsSection() {
   );
 
   useEffect(() => {
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (reduceMotion || isPaused) return undefined;
+    const section = sectionRef.current;
+    if (!section) return undefined;
+    const observer = new IntersectionObserver(([entry]) =>
+      setInView(entry.isIntersecting),
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (stopAnimations || animationsStopped() || isPaused || !inView)
+      return undefined;
     const interval = window.setInterval(() => move(1), 6000);
     return () => window.clearInterval(interval);
-  }, [isPaused, move]);
+  }, [inView, isPaused, move, stopAnimations]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -78,6 +99,7 @@ function TestimonialsSection() {
 
   return (
     <section
+      ref={sectionRef}
       id="testimonials"
       className="relative flex min-h-[100svh] w-full flex-col"
     >
@@ -201,7 +223,10 @@ function TestimonialsSection() {
                         <Blobatar
                           name={name}
                           size={44}
-                          animate="always"
+                          {...avatarAnimation(
+                            stopAnimations,
+                            inView && isActive,
+                          )}
                           title={name}
                           palette={{ head: style.accent }}
                           className="size-11 shrink-0 rounded-full"
