@@ -15,12 +15,12 @@ import taller.multimedia.backend.model.group.Group;
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Long> {
 
-    @Query("SELECT DISTINCT g FROM Group g LEFT JOIN FETCH g.children WHERE g.id = :id")
+    @Query("SELECT DISTINCT g FROM Group g LEFT JOIN FETCH g.childGroups cg LEFT JOIN FETCH cg.child WHERE g.id = :id")
     Optional<Group> findByIdWithChildren(@Param("id") Long id);
 
-    @Query("SELECT DISTINCT g FROM Group g LEFT JOIN FETCH g.children")
+    @Query("SELECT DISTINCT g FROM Group g LEFT JOIN FETCH g.childGroups cg LEFT JOIN FETCH cg.child")
     List<Group> findAllWithChildren();
 
-    @Query("SELECT g FROM Group g WHERE g.teacherUser.id = :teacherUserId")
-    List<Group> findByTeacherUserId(@Param("teacherUserId") UUID teacherUserId);
+    @Query("SELECT DISTINCT g FROM Group g JOIN g.teacherGroups tg WHERE tg.teacher.id = :teacherId")
+    List<Group> findByTeacherId(@Param("teacherId") UUID teacherId);
 }

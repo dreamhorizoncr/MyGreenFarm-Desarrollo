@@ -1,10 +1,11 @@
 package taller.multimedia.backend.dto.group;
 
+import java.util.Set;
 import java.util.UUID;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +26,8 @@ public class GroupRequest {
     @Min(value = 1, message = "La capacidad máxima debe ser al menos 1")
     private Integer maxCapacity;
 
-    @NotNull(message = "El teacher es obligatorio")
-    private UUID teacherId;
+    @NotEmpty(message = "Debe asignar al menos un teacher")
+    private Set<UUID> teacherIds;
+
+    private Set<Long> childIds;
 }

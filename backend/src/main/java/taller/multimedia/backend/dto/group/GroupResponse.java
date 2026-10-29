@@ -21,7 +21,7 @@ public class GroupResponse {
     private Integer maxCapacity;
     private Integer enrolledChildren;
     private Integer availableSpots;
-    private UUID teacherId;
-    private String teacherName;
+    private List<UUID> teacherIds;
+    private List<String> teacherNames;
     private List<ChildOptionResponse> children;
 }
