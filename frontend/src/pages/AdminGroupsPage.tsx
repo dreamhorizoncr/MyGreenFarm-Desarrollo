@@ -48,7 +48,7 @@ import type { Group } from '../types/group.ts'
         return groups.filter((group) => {
         return (
             group.name.toLocaleLowerCase().includes(query) ||
-            group.teacherName.toLocaleLowerCase().includes(query) ||
+            group.teacherNames.join('').toLocaleLowerCase().includes(query) ||
             (group.description ?? '').toLocaleLowerCase().includes(query) ||
             (group.children ?? []).some((child) =>
             child.fullName.toLocaleLowerCase().includes(query),
