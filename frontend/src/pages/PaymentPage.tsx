@@ -19,6 +19,7 @@ import { notifyError } from '../utils/notifications.ts'
 import { SinpeModal } from '../components/SinpeModal'
 import Select from '../components/ui/Select.tsx'
 import FieldHint from '../components/ui/FieldHint.tsx'
+import AutoHeight from '../components/ui/AutoHeight.tsx'
 import { SUPPORTED_LANGUAGES } from '../i18n/index.ts'
 
 interface LocationState {
@@ -149,6 +150,19 @@ export default function PaymentPage() {
             setExpiry(val)
         }
     }
+
+    const [expiryMonth = '', expiryYear = ''] = expiry.split('/')
+    const billingReady =
+        clientName.trim() !== '' &&
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) &&
+        clientIdentification.trim() !== ''
+    const cardReady =
+        billingReady &&
+        cardHolder.trim() !== '' &&
+        cardNumber.replace(/\D/g, '').length >= 13 &&
+        Number(expiryMonth) >= 1 && Number(expiryMonth) <= 12 && expiryYear.length === 2 &&
+        cvc.length >= 3
+    const sinpeReady = billingReady && phoneNumber.length === 8 && sinpeReference.trim() !== ''
 
     const handleCardPayment = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -355,6 +369,7 @@ export default function PaymentPage() {
                             </button>
                         </div>
 
+                        <AutoHeight className="-mx-1 flow-root px-1 pb-1">
                         {paymentMethod === 'card' && (
                             <form onSubmit={handleCardPayment} className="mt-lg space-y-md">
                                 <div>
@@ -425,8 +440,8 @@ export default function PaymentPage() {
 
                                 <button
                                     type="submit"
-                                    disabled={loading}
-                                    className="mt-lg flex h-11 w-full items-center justify-center gap-xs rounded-full bg-orange-500 font-body text-body-sm font-semibold text-white transition hover:bg-orange-600 disabled:opacity-60"
+                                    disabled={loading || !cardReady}
+                                    className="mt-lg flex h-11 w-full items-center justify-center gap-xs rounded-full bg-orange-500 font-body text-body-sm font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-orange-500"
                                 >
                                     <LockIcon size={18} />
                                     {loading ? t('services.processing') : `${t('services.pay')} ${currencySymbol(currency)}${formatCurrency(price, currency, i18n.language)}`}
@@ -480,14 +495,15 @@ export default function PaymentPage() {
 
                                 <button
                                     type="submit"
-                                    disabled={loading}
-                                    className="mt-lg flex h-11 w-full items-center justify-center gap-xs rounded-full bg-orange-500 font-body text-body-sm font-semibold text-white transition hover:bg-orange-600 disabled:opacity-60"
+                                    disabled={loading || !sinpeReady}
+                                    className="mt-lg flex h-11 w-full items-center justify-center gap-xs rounded-full bg-orange-500 font-body text-body-sm font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-orange-500"
                                 >
                                     <CheckCheckIcon size={18} />
                                     {loading ? t('services.verify') : t('services.confirmSinpe')}
                                 </button>
                             </form>
                         )}
+                        </AutoHeight>
                     </div>
                 </main>
 

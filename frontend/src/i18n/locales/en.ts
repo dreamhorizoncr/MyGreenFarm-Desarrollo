@@ -130,6 +130,10 @@ export default {
       albumTitle: "Albums",
       albumCount: "20 photos",
       filterAll: "All",
+      mostLikedTitle: "Family favorites",
+      mostLikedDescription: "The photos that have received the most hearts from our families.",
+      likeCount: "{{count}} likes",
+      openPhoto: "View photo: {{title}}",
       photoCount: "{{count}} photos",
       empty: "No albums for this year.",
       noGalleries: "No albums published yet.",
@@ -326,6 +330,10 @@ export default {
       placeholderTitle: 'Our Team',
       placeholderDescription:
         'Our educators will appear here when we connect this section to the teacher management system.',
+      previous: 'Previous educators',
+      next: 'Next educators',
+      navigation: 'Team navigation',
+      goTo: 'Go to team page {{number}}',
     },
     roles: {
       TEACHER: 'Teacher',
@@ -627,6 +635,10 @@ export default {
       back: "Back",
       next: "Next",
       confirmButton: "Confirm appointment",
+      edit: "Edit",
+      editSection: "Edit {{section}}",
+      appointmentLabel: "Your appointment",
+      emailNotice: "We will send the confirmation to <strong>{{email}}</strong>.",
     },
     specialSchedule: "Special schedule",
   },
@@ -705,6 +717,8 @@ export default {
     backToProfile: "Back to My profile",
   },
   common: {
+    imageCover: "Cover",
+    imageGallery: "Gallery",
     errors: {
       network: 'Could not connect to the server. Check your connection and try again.',
       forbidden: 'You do not have permission to perform this action.',

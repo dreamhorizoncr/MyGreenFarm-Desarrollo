@@ -298,7 +298,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
               <ImageThumbList className="mt-sm">
                 <ImageThumb
                   src={image.previewUrl}
-                  label={image.file.name}
+                  label={t('common.imageCover')}
                   onDelete={clearSelectedImage}
                   deleteLabel={t('adminForum.removeImage')}
                   altText={form.imageAlt ?? ''}
@@ -317,7 +317,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
               <ImageThumbList title={t('adminForum.currentImage')} className="mt-sm">
                 <ImageThumb
                   src={form.imageUrl}
-                  label={t('adminForum.postImage')}
+                  label={t('common.imageCover')}
                   onDelete={removeImage}
                   deleteLabel={t('adminForum.removeImage')}
                   altText={form.imageAlt ?? ''}

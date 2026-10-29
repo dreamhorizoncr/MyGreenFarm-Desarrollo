@@ -128,8 +128,8 @@ function JoinSection() {
                   />
                   <button
                     type="submit"
-                    disabled={loading}
-                    className="h-11 w-full shrink-0 whitespace-nowrap rounded-full sm:w-auto bg-green-500 px-lg font-body text-button font-bold text-white transition-colors hover:bg-green-600 disabled:opacity-70"
+                    disabled={loading || !email.trim()}
+                    className="h-11 w-full shrink-0 whitespace-nowrap rounded-full sm:w-auto bg-green-500 px-lg font-body text-button font-bold text-white transition-colors hover:bg-green-600 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:bg-green-500"
                   >
                     {loading ? t('home.join.subscribing') : t('home.join.subscribe')}
                   </button>

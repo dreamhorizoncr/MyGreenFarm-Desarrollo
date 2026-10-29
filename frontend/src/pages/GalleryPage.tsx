@@ -11,6 +11,7 @@ import SkeletonList from '../components/ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import TabHighlight from '../components/ui/TabHighlight.tsx'
 import { FilterGrid, FilterGridItem } from '../components/ui/FilterGrid.tsx'
+import MostLikedPhotos from '../components/gallery/MostLikedPhotos.tsx'
 import transportador from "../assets/imgs/transportador.svg";
 import abaco from "../assets/imgs/abaco.svg";
 
@@ -180,10 +181,7 @@ function GalleryPage() {
         </div>
       </section>
 
-      <section
-        aria-hidden="true"
-        className="h-[280px] w-full bg-white md:h-[320px]"
-      />
+      <MostLikedPhotos galleries={allGalleries} />
 
     </div>
   )

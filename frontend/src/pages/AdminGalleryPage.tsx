@@ -662,7 +662,7 @@ function AdminGalleryPage() {
 										<ImageThumb
 											key={selected.previewUrl}
 											src={selected.previewUrl}
-											label={selected.file.name}
+											label={t('common.imageGallery')}
 											onDelete={() => removeSelectedFile(index)}
 											deleteLabel={`${t('admin.delete')}: ${selected.file.name}`}
 											altText={imageAlts.newValue(selected.file)}
@@ -691,7 +691,7 @@ function AdminGalleryPage() {
 								<ImageThumb
 									key={image.id}
 									src={image.fileUrl}
-									label={t('admin.gallery.photoTag')}
+									label={t('common.imageGallery')}
 									onDelete={() => setImageToDelete(image.id)}
 									deleteLabel={t('admin.delete')}
 									altText={imageAlts.existingValue(image)}
