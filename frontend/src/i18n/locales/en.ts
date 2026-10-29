@@ -1250,6 +1250,65 @@ export default {
       currentPhoto: "Current photo",
     },
 
+    
+    "groups": {
+      "tabLabel": "Groups",
+      "title": "Groups",
+      "description": "Organize and manage student groups and their teachers.",
+      "searchPlaceholder": "Search by group, teacher, or student...",
+      "noResults": "No groups found.",
+      "loadError": "Unable to load groups.",
+
+      "addGroup": "Add group",
+      "createTitle": "Create group",
+      "editTitle": "Edit group",
+      "deleteTitle": "Delete group",
+      "viewDetails": "View details",
+
+      "groupId": "Group ID",
+      "name": "Group name",
+      "namePlaceholder": "Enter the group name",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Enter a group description",
+      "noDescription": "No description",
+
+      "teacher": "Assigned teacher",
+      "selectTeacher": "Select a teacher",
+
+      "capacity": "Maximum capacity",
+      "capacityPlaceholder": "Enter the maximum capacity",
+      "unlimitedCapacity": "Unlimited capacity",
+      "enrolledChildren": "Enrolled students",
+      "availableSpots_one": "{{count}} spot available",
+      "availableSpots_other": "{{count}} spots available",
+      "full": "Group full",
+
+      "students": "Students",
+      "studentId": "Student ID",
+      "noStudents": "This group does not have any assigned students yet.",
+      "assignStudent": "Assign student",
+      "removeStudent": "Remove student",
+      "transferStudent": "Transfer student",
+
+      "save": "Save",
+      "cancel": "Cancel",
+      "create": "Create group",
+      "update": "Save changes",
+
+      "createSuccess": "Group created successfully.",
+      "createError": "Unable to create the group.",
+      "updateSuccess": "Group updated successfully.",
+      "updateError": "Unable to update the group.",
+      "deleteSuccess": "Group deleted successfully.",
+      "deleteError": "Unable to delete the group.",
+
+      "deleteMessage": "Are you sure you want to delete the group «{{name}}»?",
+      "requiredField": "This field is required.",
+      "invalidCapacity": "Capacity must be greater than zero.",
+      "capacityExceeded": "Capacity cannot be lower than the number of enrolled students."
+    },
+
+
     parents: {
       empty: 'There are no registered parents.',
       noMatches: 'No parents match that search.',

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.BatchSize;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,6 +26,7 @@ import taller.multimedia.backend.model.user.User;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Group {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -39,12 +39,12 @@ public class Group {
 
     @Column(name = "max_capacity")
     private Integer maxCapacity;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User teacherUser;
-    
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
     @BatchSize(size = 20)
     private List<Child> children = new ArrayList<>();
 }
