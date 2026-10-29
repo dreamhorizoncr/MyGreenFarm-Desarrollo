@@ -54,4 +54,7 @@ public class AppointmentRequest {
     private String referralOtherDetail;
     
     private String language;
+
+    @Size(max = 64)
+    private String holdId;
 }

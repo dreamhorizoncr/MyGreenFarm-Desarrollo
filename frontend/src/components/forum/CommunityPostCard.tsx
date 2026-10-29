@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { HeartIcon, MessageCircleIcon } from '@animateicons/react/lucide'
+import LikeHeart from '../ui/LikeHeart.tsx'
 import type { CommunityPost } from '../../types/forum.ts'
 import PostAvatar from './PostAvatar.tsx'
 import Skeleton from '../ui/Skeleton.tsx'
@@ -60,8 +61,8 @@ function CommunityPostCard({ post, onToggleLike, onOpenComments, onDelete, loadi
       </p>
       <div className="mt-md flex items-center gap-lg border-t border-neutral-100 pt-md">
         {onToggleLike ? (
-          <button type="button" onClick={() => onToggleLike(post!.id)} aria-pressed={post!.reacted} aria-label={t('forum.likes.label')} className={`flex items-center gap-xs font-body text-body-sm ${post!.reacted ? 'text-danger' : 'text-neutral-500 hover:text-danger'}`}>
-            <HeartIcon size={18} className={post!.reacted ? 'fill-current' : ''} /><span>{post!.likeCount}</span>
+          <button type="button" onClick={() => onToggleLike(post!.id)} aria-pressed={post!.reacted} aria-label={t('forum.likes.label')} className={`flex items-center gap-xs font-body text-body-sm ${post!.reacted ? 'text-pink-400' : 'text-neutral-500 hover:text-pink-400'}`}>
+            <LikeHeart liked={Boolean(post!.reacted)} size={18} /><span>{post!.likeCount}</span>
           </button>
         ) : (
           <span aria-label={t('forum.likes.label')} className="flex items-center gap-xs font-body text-body-sm text-neutral-500">

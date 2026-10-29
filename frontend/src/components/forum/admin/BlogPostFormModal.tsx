@@ -19,7 +19,6 @@ const ALLOWED_IMAGE_TYPES = new Set([
 
 const MAX_TITLE = 120
 const MAX_TOPIC = 60
-const MAX_ALT = 140
 const MAX_CONTENT = 4000
 
 interface SelectedImage {
@@ -132,7 +131,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
     if (Object.values(errors).some((message) => message !== null)) return
 
     if ((image || form.imageUrl) && !form.imageAlt?.trim()) {
-      setAltError(t('adminForum.imageAltRequired'))
+      setAltError(t('common.imageAltRequired'))
       return
     }
 
@@ -299,16 +298,37 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
               <ImageThumbList className="mt-sm">
                 <ImageThumb
                   src={image.previewUrl}
-                  label={image.file.name}
+                  label={t('common.imageCover')}
                   onDelete={clearSelectedImage}
                   deleteLabel={t('adminForum.removeImage')}
+                  altText={form.imageAlt ?? ''}
+                  onAltChange={(value) => {
+                    setAltError('')
+                    setForm((current) => ({ ...current, imageAlt: value }))
+                  }}
+                  altError={altError || null}
+                  altLabel={t('common.imageAltLabel')}
+                  altPlaceholder={t('common.imageAltPlaceholder')}
                 />
               </ImageThumbList>
             )}
 
             {!image && form.imageUrl && (
               <ImageThumbList title={t('adminForum.currentImage')} className="mt-sm">
-                <ImageThumb src={form.imageUrl} label={t('adminForum.postImage')} onDelete={removeImage} deleteLabel={t('adminForum.removeImage')} />
+                <ImageThumb
+                  src={form.imageUrl}
+                  label={t('common.imageCover')}
+                  onDelete={removeImage}
+                  deleteLabel={t('adminForum.removeImage')}
+                  altText={form.imageAlt ?? ''}
+                  onAltChange={(value) => {
+                    setAltError('')
+                    setForm((current) => ({ ...current, imageAlt: value }))
+                  }}
+                  altError={altError || null}
+                  altLabel={t('common.imageAltLabel')}
+                  altPlaceholder={t('common.imageAltPlaceholder')}
+                />
               </ImageThumbList>
             )}
 
@@ -319,27 +339,6 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
             )}
           </div>
 
-          <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
-            {t('adminForum.imageAlt')}
-
-            <input
-              maxLength={MAX_ALT}
-              value={form.imageAlt ?? ''}
-              onChange={(event) => {
-                setAltError('')
-                setForm({ ...form, imageAlt: event.target.value })
-              }}
-              placeholder={t('fields.post.imageAlt.placeholder')}
-              className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
-            />
-            <FieldHint>{t('fields.post.imageAlt.hint')}</FieldHint>
-
-            {altError && (
-              <span className="mt-xs block text-caption font-normal text-danger">
-                {altError}
-              </span>
-            )}
-          </label>
         </div>
 
         <div className="mt-xl flex justify-end gap-md *:flex-1">

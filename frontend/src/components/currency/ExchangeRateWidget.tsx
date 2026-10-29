@@ -72,7 +72,7 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
         }}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
-        className="inline-flex items-center gap-sm rounded-full border border-green-500 bg-green-500 px-lg py-sm font-body text-body-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-green-500"
+        className="inline-flex h-11 items-center gap-xs rounded-full border border-green-500 bg-white px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
       >
         <BanknoteIcon size={20} aria-hidden="true" />
         <span>{t('moneda.buyRate')}</span>
@@ -86,23 +86,20 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
           }}
           onClose={handleClose}
           aria-labelledby="exchange-rate-title"
-          className={`fixed inset-0 m-auto max-h-[90vh] w-[min(520px,94vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg shadow-xl backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+          className={`fixed inset-0 m-auto max-h-[90vh] w-[min(520px,94vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg shadow-xl backdrop:bg-scrim md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         >
-          <ModalCloseButton
-            onClick={handleClose}
-            aria-label={t('legalModal.close')}
-            className="absolute right-3 top-[26px] z-20"
-          />
-
-          <div className="mb-lg text-center">
-            <h2 id="exchange-rate-title" className="m-0 font-heading text-h4 font-bold text-green-500">
-              {t('moneda.buyRate')}
-            </h2>
-            {data && lastUpdated && (
-              <p className="m-0 mt-xs font-body text-body-sm text-neutral-500">
-                {t('moneda.sourceAndDate', { source: data.source, rateDate: lastUpdated })}
-              </p>
-            )}
+          <div className="mb-lg flex items-start justify-between gap-md">
+            <div className="min-w-0 text-left">
+              <h2 id="exchange-rate-title" className="m-0 font-heading text-h4 font-bold text-green-500">
+                {t('moneda.buyRate')}
+              </h2>
+              {data && lastUpdated && (
+                <p className="m-0 mt-xs font-body text-body-sm text-neutral-500">
+                  {t('moneda.sourceAndDate', { source: data.source, rateDate: lastUpdated })}
+                </p>
+              )}
+            </div>
+            <ModalCloseButton onClick={handleClose} aria-label={t('legalModal.close')} />
           </div>
 
           {renderStatus()}

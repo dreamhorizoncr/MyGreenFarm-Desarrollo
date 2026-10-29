@@ -1,6 +1,7 @@
 package taller.multimedia.backend.service.service_plan;
 
 import lombok.RequiredArgsConstructor;
+import taller.multimedia.backend.util.ImageAltText;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,7 @@ public class ServicePlanImageService {
         plan.setImageUrl(imageUrl);
         plan.setSchedule(Sanitizer.requireClean("schedule", dto.getSchedule()));
         plan.setIncludes(Sanitizer.requireClean("includes", dto.getIncludes()));
+        plan.setImageAlt(ImageAltText.clean(dto.getImageAlt()));
         plan.setActive(true);
 
         return servicePlanRepository.save(plan);
@@ -70,6 +72,7 @@ public class ServicePlanImageService {
         existing.setGatewayPriceId(dto.getGatewayPriceId());
         existing.setSchedule(Sanitizer.requireClean("schedule", dto.getSchedule()));
         existing.setIncludes(Sanitizer.requireClean("includes", dto.getIncludes()));
+        existing.setImageAlt(ImageAltText.clean(dto.getImageAlt()));
 
         if (file != null && !file.isEmpty()) {
             String contentType = file.getContentType();

@@ -15,6 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.Valid;
+import taller.multimedia.backend.dto.ImageAltRequest;
+import taller.multimedia.backend.util.ImageAltText;
+import tools.jackson.databind.ObjectMapper;
 import taller.multimedia.backend.dto.gallery.GalleryImageResponse;
 import taller.multimedia.backend.service.gallery.GalleryImageService;
 
@@ -27,15 +31,18 @@ import java.util.UUID;
 public class GalleryImageController {
 
     private final GalleryImageService imageService;
+    private final ObjectMapper objectMapper;
 
     @PostMapping(value = "/{galleryId}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<List<GalleryImageResponse>> uploadImages(
             @PathVariable UUID galleryId,
             @RequestParam("files") List<MultipartFile> files,
-            @RequestParam("title") String title) {
+            @RequestParam("title") String title,
+            @RequestParam(name = "altTexts", required = false) String altTextsJson) {
 
-        List<GalleryImageResponse> responses = imageService.uploadImages(galleryId, files, title);
+        List<GalleryImageResponse> responses = imageService.uploadImages(
+                galleryId, files, title, ImageAltText.parseList(objectMapper, altTextsJson));
         return ResponseEntity.status(HttpStatus.CREATED).body(responses);
     }
 
@@ -48,6 +55,23 @@ public class GalleryImageController {
         Pageable pageable = PageRequest.of(page, size);
         Page<GalleryImageResponse> images = imageService.getImagesByGallery(galleryId, pageable);
         return ResponseEntity.ok(images);
+    }
+
+    @Validated
+    @GetMapping("/images/most-liked")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<List<GalleryImageResponse>> getMostLiked(
+        @RequestParam(defaultValue = "10") @Min(1) @Max(20) int limit) {
+        return ResponseEntity.ok(imageService.getMostLiked(limit));
+    }
+
+    @PatchMapping("/images/{imageId}/alt")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    public ResponseEntity<Void> updateImageAlt(
+            @PathVariable UUID imageId,
+            @Valid @RequestBody ImageAltRequest request) {
+        imageService.updateAltText(imageId, request.getAltText());
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/images/{imageId}")

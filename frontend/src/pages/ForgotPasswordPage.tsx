@@ -57,7 +57,7 @@ function ForgotPasswordPage() {
       closeTo={isAuthenticated ? "/profile" : "/login"}
       contentClassName="max-w-[303px] md:max-w-[430px]"
     >
-      <h2 className="mb-[28px] text-left font-heading text-h1 leading-none text-heading md:mb-[45px]">
+      <h2 className="mb-[28px] text-left font-heading text-h3 leading-tight text-heading md:mb-[45px]">
         {t("forgotPassword.title")}
       </h2>
 
@@ -95,7 +95,7 @@ function ForgotPasswordPage() {
           </p>
         )}
 
-        <div className="mx-auto mt-[30px] w-[209px] md:mt-[55px] md:w-[72%]">
+        <div className="mt-[28px] w-full md:mt-[35px]">
           <AuthButton loading={loading} disabled={!email.trim()}>
             {loading
               ? t("forgotPassword.loading")

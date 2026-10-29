@@ -28,7 +28,6 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
     const [scheduleOpen, setScheduleOpen] = useState(false)
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
     const { closing, requestClose } = useModalExit(onClose)
-    // Con el horario abierto, Escape y el clic afuera cierran solo el mini modal y no el detalle
     useDialogDismiss(dialogRef, requestClose, !scheduleOpen)
 
     useEffect(() => {
@@ -57,7 +56,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                 <ModalCloseButton
                     onClick={requestClose}
                     aria-label={t('ownerClubs.closeClubDetails')}
-                    className="absolute right-3 top-[26px] z-20"
+                    className="absolute right-[22px] top-[40px] z-20 md:right-[55px] md:top-[55px]"
                 />
 
                 <header className="mx-auto max-w-[850px] text-center">
@@ -81,7 +80,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                     <div className="mt-[40px] overflow-hidden rounded-[22px]">
                         <img
                             src={coverUrl}
-                            alt={club.name}
+                            alt={coverImage?.altText || club.name}
                             className="h-[260px] w-full object-cover sm:h-[360px] md:h-[480px]"
                         />
                     </div>
@@ -100,11 +99,11 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                         </h3>
                         <div className={`grid gap-[12px] ${galleryGridColumns}`}>
                             {galleryImages.map((image, index) => (
-                                <div key={image.id} className="relative overflow-hidden rounded-2xl">
+                                <div key={image.id} className="group relative overflow-hidden rounded-2xl">
                                     <img
                                         src={image.fileUrl}
-                                        alt={club.name}
-                                        className="h-[220px] w-full object-cover transition-transform duration-300 hover:scale-105"
+                                        alt={image.altText || club.name}
+                                        className="h-[220px] w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                     />
                                     <button
                                         type="button"
@@ -112,7 +111,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                                         aria-label={`${t('clubs.gallery')}: ${club.name}`}
                                         className="absolute inset-0 flex cursor-zoom-in items-end justify-end p-3 focus-visible:outline-2 focus-visible:outline-white"
                                     >
-                                        <span className="flex size-10 items-center justify-center rounded-full bg-black/55 text-white shadow transition hover:scale-105 hover:bg-black/70">
+                                        <span className="flex size-10 items-center justify-center rounded-full bg-black/55 text-white opacity-0 shadow transition group-hover:scale-105 group-hover:bg-black/70 group-hover:opacity-100 group-focus-within:opacity-100">
                                             <ZoomIn size={20} aria-hidden="true" />
                                         </span>
                                     </button>
@@ -125,7 +124,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
 
             {lightboxIndex !== null && galleryImages[lightboxIndex] && (
                 <PhotoLightbox
-                    images={galleryImages.map((image) => ({ id: String(image.id), fileUrl: image.fileUrl }))}
+                    images={galleryImages.map((image) => ({ id: String(image.id), fileUrl: image.fileUrl, altText: image.altText }))}
                     initialIndex={lightboxIndex}
                     alt={club.name}
                     onClose={() => setLightboxIndex(null)}

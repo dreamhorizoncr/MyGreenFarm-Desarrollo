@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CalendarDaysIcon, MapPinIcon, SparklesIcon } from '@animateicons/react/lucide'
 ;
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,7 @@ import { useAnnouncementImages } from '../hooks/useAnnouncementImages.ts';
 import { useModalExit } from '../hooks/useModalExit.ts';
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock.ts';
 
-import type { Announcement } from '../types/announcement.ts';
+import type { Announcement, AnnouncementImageResponse } from '../types/announcement.ts';
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 import PhotoLightbox from './PhotoLightbox.tsx'
 
@@ -15,6 +15,7 @@ interface NewsDetailModalProps{
     announcement: Announcement;
     typeLabel: string;
     onClose: () => void;
+    initialImages?: AnnouncementImageResponse[];
 }
 
 function formatDate(
@@ -34,16 +35,21 @@ function NewsDetailModal({
     announcement,
     typeLabel,
     onClose,
+    initialImages,
 }: Readonly<NewsDetailModalProps>) {
     const { t, i18n } = useTranslation();
     const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+    const [loadedImages, setLoadedImages] = useState<ReadonlySet<string>>(() => new Set())
+    const [coverRatio, setCoverRatio] = useState<{ url: string; ratio: number } | null>(null)
+    const coverRef = useRef<HTMLImageElement>(null)
+
+    const markLoaded = (url: string) => setLoadedImages((current) => new Set(current).add(url))
 
     const { closing, requestClose } = useModalExit(onClose);
     useBodyScrollLock();
 
     const {
         images,
-        loading,
         error,
         fetchImages,
     } = useAnnouncementImages();
@@ -68,11 +74,29 @@ function NewsDetailModal({
         };
     }, [requestClose, lightboxIndex]);
 
-    const announcementImages = images[announcement.id] ?? [];
+    const announcementImages = images[announcement.id] ?? initialImages ?? [];
 
     const coverImage =
     announcementImages.find((image) => image.isCover) ??
     announcementImages[0];
+    const coverUrl = coverImage?.fileUrl
+    const coverLoaded = coverUrl ? loadedImages.has(coverUrl) : false
+    const knownRatio = coverRatio?.url === coverUrl ? coverRatio?.ratio : undefined
+
+    useEffect(() => {
+        const img = coverRef.current
+        if (!img || !coverUrl) return
+        let frame = 0
+        const readSize = () => {
+            if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+                setCoverRatio({ url: coverUrl, ratio: img.naturalWidth / img.naturalHeight })
+            } else {
+                frame = requestAnimationFrame(readSize)
+            }
+        }
+        frame = requestAnimationFrame(readSize)
+        return () => cancelAnimationFrame(frame)
+    }, [coverUrl])
 
     const galleryImages = announcementImages.filter(
         (image) => !image.isCover,
@@ -100,7 +124,7 @@ function NewsDetailModal({
             <ModalCloseButton
                 onClick={requestClose}
                 aria-label={t("newspage.closeNews")}
-              className="absolute right-3 top-[26px] z-20"
+              className="absolute right-[22px] top-[40px] z-20 md:right-[55px] md:top-[55px]"
             />
 
         <div className="px-[22px] pb-[45px] pt-[40px] md:px-[55px] md:pb-[60px] md:pt-[55px]">
@@ -138,30 +162,37 @@ function NewsDetailModal({
             </div>
             </header>
 
-                {loading && (
-                <p className="mt-[35px] text-center font-body text-body-sm text-neutral-500">
-                    {t("common.loading")}
-                </p>
-            )}
-
                 {error && (
                 <p className="mt-[35px] text-center font-body text-body-sm text-danger">
                     {error}
                 </p>
             )}
 
-                {!loading && coverImage && (
-                    <div className="relative mx-auto mt-[40px] flex h-[260px] max-w-[950px] items-center justify-center overflow-hidden rounded-[22px] bg-black sm:h-[360px] md:h-[480px]">
+                {coverImage && (
+                    <div
+                        role={coverLoaded ? undefined : 'status'}
+                        aria-label={coverLoaded ? undefined : t("common.loading")}
+                        style={coverLoaded ? undefined : { aspectRatio: knownRatio ?? 16 / 9 }}
+                        className={`relative mx-auto mt-lg flex max-h-[85svh] max-w-[950px] items-center justify-center overflow-hidden rounded-[22px] sm:mt-[40px] ${
+                            coverLoaded ? 'bg-black' : 'animate-pulse bg-neutral-200'
+                        }`}
+                    >
                         <img
                             src={coverImage.fileUrl}
                             alt=""
                             aria-hidden="true"
-                            className="absolute inset-0 h-full w-full scale-125 object-cover opacity-60 blur-2xl"
+                            className={`absolute inset-0 h-full w-full scale-125 object-cover blur-2xl transition-opacity duration-500 ${
+                                coverLoaded ? 'opacity-60' : 'opacity-0'
+                            }`}
                         />
                         <img
+                            ref={coverRef}
                             src={coverImage.fileUrl}
-                            alt={announcement.title}
-                            className="relative z-10 h-full w-full object-contain"
+                            alt={coverImage.altText || announcement.title}
+                            onLoad={() => markLoaded(coverImage.fileUrl)}
+                            className={`z-10 block max-h-[85svh] w-full object-contain transition-opacity duration-500 ${
+                                coverLoaded ? 'relative h-auto opacity-100' : 'absolute inset-0 h-full opacity-0'
+                            }`}
                         />
                     </div>
                 )}
@@ -186,7 +217,7 @@ function NewsDetailModal({
                     </p>
             </section>
 
-                {!loading && galleryImages.length > 0 && (
+                {galleryImages.length > 0 && (
                     <section className="mt-[60px]">
 
                 <h3 className="mb-[18px] font-heading text-h4 font-bold text-heading">
@@ -199,12 +230,13 @@ function NewsDetailModal({
                     {galleryImages.map((image, index) => (
                     <div
                         key={image.id}
-                        className="relative overflow-hidden rounded-2xl"
+                        className={`group relative overflow-hidden rounded-2xl ${loadedImages.has(image.fileUrl) ? '' : 'animate-pulse bg-neutral-200'}`}
                     >
                         <img
                             src={image.fileUrl}
-                            alt={announcement.title}
-                            className="h-[220px] w-full object-cover transition-transform duration-300 hover:scale-105"
+                            alt={image.altText || announcement.title}
+                            onLoad={() => markLoaded(image.fileUrl)}
+                            className={`h-[220px] w-full object-cover transition duration-300 group-hover:scale-105 ${loadedImages.has(image.fileUrl) ? 'opacity-100' : 'opacity-0'}`}
                         />
                         <button
                             type="button"
@@ -212,7 +244,7 @@ function NewsDetailModal({
                             aria-label={`${t('newspage.gallery')}: ${announcement.title}`}
                             className="absolute inset-0 flex cursor-zoom-in items-end justify-end p-3 focus-visible:outline-2 focus-visible:outline-white"
                         >
-                            <span className="flex size-10 items-center justify-center rounded-full bg-black/55 text-white shadow transition hover:scale-105 hover:bg-black/70">
+                            <span className="flex size-10 items-center justify-center rounded-full bg-black/55 text-white opacity-0 shadow transition group-hover:scale-105 group-hover:bg-black/70 group-hover:opacity-100 group-focus-within:opacity-100">
                                 <ZoomIn size={20} aria-hidden="true" />
                             </span>
                         </button>

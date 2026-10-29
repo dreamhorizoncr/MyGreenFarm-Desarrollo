@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import taller.multimedia.backend.dto.service_plan.ServicePlanRequest;
 import taller.multimedia.backend.model.service_plans.ServicePlan;
 import taller.multimedia.backend.repository.service_plan.ServicePlanRepository;
+import taller.multimedia.backend.service.electronic_billing.ElectronicBillingService;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class ServicePlanService {
     private final ServicePlanRepository servicePlanRepository;
     private final ServicePlanImageService servicePlanImagesService;
     private final RestTemplate restTemplate;
+    private final ElectronicBillingService electronicBillingService;
 
     @Value("${onvo.api.key}")
     private String onvoApiKey;
@@ -78,6 +80,7 @@ public class ServicePlanService {
 
         dto.setType(
                 targetOnvoPlan.get("type") != null ? targetOnvoPlan.get("type").toString().toUpperCase() : "ONE_TIME");
+
         String realCheckoutUrl = generateCheckoutUrl(dto.getGatewayPriceId());
         dto.setPaymentUrl(realCheckoutUrl);
 
@@ -87,6 +90,34 @@ public class ServicePlanService {
     @Transactional
     public ServicePlan updatePlan(UUID id, ServicePlanRequest dto, MultipartFile file) {
         return servicePlanImagesService.updatePlanWithImage(id, dto, file);
+    }
+
+    private void applyBestCabysMatch(ServicePlanRequest dto, String name, String description) {
+        String query = (name + " " + description).trim();
+        Map<String, Object> result = electronicBillingService.searchCabysCatalog(query);
+        Object rawItems = result == null ? null : result.get("items");
+        if (!(rawItems instanceof List<?> items) || items.isEmpty()
+                || !(items.get(0) instanceof Map<?, ?> match)) {
+            throw new IllegalStateException("No se encontró una coincidencia CABYS para el servicio.");
+        }
+
+        Object code = match.get("codigo");
+        Object rawTaxRate = match.get("impuesto");
+        if (code == null || rawTaxRate == null) {
+            throw new IllegalStateException("La coincidencia CABYS no incluye código y tarifa de impuesto.");
+        }
+
+        BigDecimal taxRate;
+        try {
+            taxRate = new BigDecimal(rawTaxRate.toString());
+        } catch (NumberFormatException exception) {
+            throw new IllegalStateException("La tarifa de impuesto CABYS no es válida.", exception);
+        }
+        if (!List.of(0, 1, 2, 4, 8, 13).contains(taxRate.intValue())
+                || taxRate.compareTo(BigDecimal.valueOf(taxRate.intValue())) != 0) {
+            throw new IllegalStateException("La tarifa de impuesto CABYS no tiene un código tributario soportado.");
+        }
+
     }
 
     @Transactional

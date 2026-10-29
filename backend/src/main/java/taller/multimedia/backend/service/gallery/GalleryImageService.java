@@ -1,9 +1,11 @@
 package taller.multimedia.backend.service.gallery;
 
 import lombok.RequiredArgsConstructor;
+import taller.multimedia.backend.util.ImageAltText;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +42,7 @@ public class GalleryImageService {
     private static final String FOLDER = "images_content";
 
     @Transactional
-    public List<GalleryImageResponse> uploadImages(UUID galleryId, List<MultipartFile> files, String title) {
+    public List<GalleryImageResponse> uploadImages(UUID galleryId, List<MultipartFile> files, String title, List<String> altTexts) {
         Gallery gallery = galleryRepository.findById(galleryId)
                 .orElseThrow(() -> new RuntimeException("Galería no encontrada con ID: " + galleryId));
 
@@ -56,7 +58,8 @@ public class GalleryImageService {
 
         List<GalleryImageResponse> responses = new ArrayList<>();
 
-        for (MultipartFile file : files) {
+        for (int index = 0; index < files.size(); index++) {
+            MultipartFile file = files.get(index);
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
                 throw new IllegalArgumentException(
@@ -71,6 +74,7 @@ public class GalleryImageService {
             image.setGallery(gallery);
             image.setTitle(cleanTitle);
             image.setFileUrl(fileUrl);
+            image.setAltText(ImageAltText.at(altTexts, index));
 
             GalleryImages saved = imageRepository.save(image);
             responses.add(mapToResponse(saved, 0L));
@@ -79,11 +83,26 @@ public class GalleryImageService {
         return responses;
     }
 
+    @Transactional
+    public void updateAltText(UUID imageId, String altText) {
+        GalleryImages image = imageRepository.findById(imageId)
+                .orElseThrow(() -> new RuntimeException("Imagen no encontrada con ID: " + imageId));
+        image.setAltText(ImageAltText.clean(altText));
+        imageRepository.save(image);
+    }
+
     private boolean isValidImageFormat(String contentType) {
         return contentType.equals("image/png") ||
                 contentType.equals("image/jpg") ||
                 contentType.equals("image/jpeg") ||
                 contentType.equals("image/svg+xml");
+    }
+
+    @Transactional(readOnly = true)
+    public List<GalleryImageResponse> getMostLiked(int limit) {
+        return imageRepository.findMostLiked(PageRequest.of(0, limit)).stream()
+                .map(result -> mapToResponse(result.getImage(), result.getLikes()))
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -174,6 +193,7 @@ public void deleteFiles(List<String> filePaths) {
                 .galleryId(image.getGallery().getId())
                 .title(image.getTitle())
                 .fileUrl(image.getFileUrl())
+                .altText(image.getAltText())
                 .likeCount((int) likeCount)
                 .build();
     }

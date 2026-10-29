@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { XIcon } from "@animateicons/react/lucide";
+import { useTranslation } from "react-i18next";
+import ModalCloseButton from "../components/ui/ModalCloseButton.tsx";
 import illustration from "../assets/imgs/portadaTemporal.jpeg";
 import Navbar from "../components/Navbar.tsx";
 
@@ -24,13 +25,14 @@ function AuthLayout({
   children,
 }: Readonly<AuthLayoutProps>) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-bg-page">
   <Navbar />
 
   <main className="flex items-center justify-center px-[30px] py-[30px] md:px-6 md:py-16">
     <section
-      className={`relative flex w-full max-w-[333px] flex-col rounded-[13px] bg-bg-card shadow md:min-h-[500px] md:max-h-[calc(100svh-8rem)] md:flex-row md:rounded-2xl ${scrollable ? "overflow-y-auto" : "overflow-hidden"} ${containerClassName}`}
+      className={`relative flex w-full max-w-[333px] flex-col rounded-[13px] border border-neutral-200 bg-bg-card shadow md:min-h-[500px] md:max-h-[calc(100svh-8rem)] md:flex-row md:rounded-2xl ${scrollable ? "overflow-y-auto" : "overflow-hidden"} ${containerClassName}`}
     >
       <div className="relative h-[205px] w-full shrink-0 overflow-hidden md:h-auto md:w-1/2">
         <img
@@ -47,14 +49,11 @@ function AuthLayout({
       </div>
 
       <div className="relative flex w-full flex-col bg-bg-card md:min-h-0 md:w-1/2">
-        <button
-          type="button"
+        <ModalCloseButton
           onClick={() => navigate(closeTo)}
-          className="absolute right-[15px] top-[30px] z-20 inline-flex size-8 items-center justify-center rounded-full text-heading focus-visible:outline-2 focus-visible:outline-green-500 focus-visible:outline-offset-2 md:right-[30px] md:top-[25px]"
-          aria-label="Close"
-        >
-          <XIcon size={20} aria-hidden="true" />
-        </button>
+          aria-label={t("common.close")}
+          className="absolute right-[15px] top-[26px] z-20 md:right-[30px] md:top-[22px]"
+        />
 
         <div
           className={`flex flex-col md:min-h-0 md:flex-1 md:overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${rightPanelClassName}`}

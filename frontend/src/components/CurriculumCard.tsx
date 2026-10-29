@@ -118,7 +118,7 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
               type="button"
               onClick={onApprove}
               disabled={application!.status !== 'PENDING'}
-              className="inline-flex h-11 min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-full border border-green-500 px-sm sm:px-lg font-body text-body-sm font-semibold uppercase tracking-wide text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:min-w-35 sm:flex-none"
+              className="inline-flex h-11 min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-full border border-green-500 px-sm sm:px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:min-w-35 sm:flex-none"
             >
               {t('admin.curriculums.approve')}
             </button>
@@ -126,7 +126,7 @@ function CurriculumCard({ application, vacancyTitle, isExpanded,  onToggleExpand
               type="button"
               onClick={onReject}
               disabled={application!.status !== 'PENDING'}
-              className="inline-flex h-11 min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-full bg-orange-500 px-sm sm:px-lg font-body text-body-sm font-semibold uppercase tracking-wide text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:min-w-35 sm:flex-none"
+              className="inline-flex h-11 min-w-0 flex-1 items-center justify-center whitespace-nowrap rounded-full bg-orange-500 px-sm sm:px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:min-w-35 sm:flex-none"
             >
               {t('admin.curriculums.reject')}
             </button>

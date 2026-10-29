@@ -30,6 +30,9 @@ public class ClubImage {
     @Column(name = "file_url", nullable = false, length = 500)
     private String fileUrl;
 
+    @Column(name = "alt_text", length = 140)
+    private String altText;
+
     @Column(name = "sort_order", nullable = false)
     private Integer sortOrder = 0;
 

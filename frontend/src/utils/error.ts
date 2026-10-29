@@ -41,12 +41,18 @@ function translateKnownMessage(message: string): string {
   return message
 }
 
+function bodyText(data: object): unknown {
+  if ('message' in data && data.message) return data.message
+  const isSpringDefaultError = 'status' in data && 'path' in data
+  return 'error' in data && !isSpringDefaultError ? data.error : undefined
+}
+
 function messageFromBody(data: unknown): string | undefined {
   if (typeof data === 'object' && data !== null) {
     const fromCode = messageFromCode(data)
     if (fromCode !== undefined) return fromCode
 
-    const message = 'message' in data ? data.message : 'error' in data ? data.error : undefined
+    const message = bodyText(data)
     if (typeof message === 'string') return translateKnownMessage(message)
   }
 
@@ -57,37 +63,51 @@ function messageFromBody(data: unknown): string | undefined {
   return undefined
 }
 
+export function getErrorField(error: unknown): string | undefined {
+  if (!axios.isAxiosError(error)) return undefined
+  const data: unknown = error.response?.data
+  if (typeof data !== 'object' || data === null || !('field' in data)) return undefined
+  return typeof data.field === 'string' ? data.field : undefined
+}
+
 function isFeaturedGalleryConflict(error: AxiosError): boolean {
   const requestUrl = error.config?.url ?? ''
   const isGalleryUpdate = error.config?.method?.toLowerCase() === 'put' && requestUrl.includes('/gallery/')
   return error.response?.status === 409 && isGalleryUpdate
 }
 
+const STATUS_MESSAGE_KEYS = {
+  401: 'common.sessionExpired',
+  403: 'common.errors.forbidden',
+  404: 'common.errors.notFound',
+  409: 'common.errors.conflict',
+  413: 'common.errors.fileTooLarge',
+} as const
+
+function messageFromStatus(status: number): string {
+  const known = STATUS_MESSAGE_KEYS[status as keyof typeof STATUS_MESSAGE_KEYS]
+  if (known) return i18n.t(known)
+  return status >= 500 ? i18n.t('common.errors.server') : i18n.t('common.errors.invalidData')
+}
+
+function axiosErrorMessage(error: AxiosError): string {
+  if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
+    return i18n.t('common.timeout')
+  }
+
+  const fromBody = messageFromBody(error.response?.data)
+  if (fromBody !== undefined) return fromBody
+
+  if (isFeaturedGalleryConflict(error)) {
+    return i18n.t('admin.gallery.maxFeaturedReached')
+  }
+
+  if (!error.response) return i18n.t('common.errors.network')
+  return messageFromStatus(error.response.status)
+}
+
 export function getErrorMessage(error: unknown): string {
-  if (axios.isAxiosError(error)) {
-    if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
-      return i18n.t('common.timeout')
-    }
-
-    const fromBody = messageFromBody(error.response?.data)
-    if (fromBody !== undefined) return fromBody
-
-    if (isFeaturedGalleryConflict(error)) {
-      return i18n.t('admin.gallery.maxFeaturedReached')
-    }
-  }
-
-  if (axios.isAxiosError(error)) {
-    if (!error.response) return i18n.t('common.errors.network')
-    const status = error.response.status
-    if (status === 401) return i18n.t('common.sessionExpired')
-    if (status === 403) return i18n.t('common.errors.forbidden')
-    if (status === 404) return i18n.t('common.errors.notFound')
-    if (status === 409) return i18n.t('common.errors.conflict')
-    if (status === 413) return i18n.t('common.errors.fileTooLarge')
-    if (status >= 500) return i18n.t('common.errors.server')
-    return i18n.t('common.errors.invalidData')
-  }
+  if (axios.isAxiosError(error)) return axiosErrorMessage(error)
 
   return error instanceof Error && error.message
     ? error.message

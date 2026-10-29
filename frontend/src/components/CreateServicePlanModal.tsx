@@ -4,7 +4,7 @@ import Button from './ui/Button.tsx'
 import Select from './ui/Select.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
-import type { OnvoRawPlan, ServicePlan } from '../types/servicePlan.ts'
+import type { OnvoRawPlan, ServicePlan, ServicePlanRequest } from '../types/servicePlan.ts'
 import ImagePickerButton from './ui/ImagePickerButton.tsx'
 import ImageThumb, { ImageThumbList } from './ui/ImageThumb.tsx'
 import DeleteConfirmModal from './ui/DeleteConfirmModal.tsx'
@@ -31,8 +31,8 @@ interface CreateServicePlanModalProps {
   onvoPlans: OnvoRawPlan[]
   existingPlans: ServicePlan[]
   planToEdit?: ServicePlan | null
-  onSave: (data: { schedule: string; includes: string; gatewayPriceId: string }, file: File) => Promise<unknown>
-  onUpdate?: (id: string, data: { schedule: string; includes: string; gatewayPriceId: string }, file?: File) => Promise<unknown>
+  onSave: (data: ServicePlanRequest, file: File) => Promise<unknown>
+  onUpdate?: (id: string, data: ServicePlanRequest, file?: File) => Promise<unknown>
   onClose: () => void
   onImageDeleted?: () => void | Promise<void>
 }
@@ -57,6 +57,8 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
   const [includesError, setIncludesError] = useState<string | null>(null)
   const [onvoError, setOnvoError] = useState<string | null>(null)
   const [imageError, setImageError] = useState<string | null>(null)
+  const [imageAlt, setImageAlt] = useState(planToEdit?.imageAlt ?? '')
+  const [imageAltError, setImageAltError] = useState<string | null>(null)
 
   useEffect(() => {
     dialogRef.current?.showModal()
@@ -85,9 +87,16 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
     setImageError(null)
   }
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault()
+  const validateImageAlt = () => {
+    const altValue = imageAlt.trim()
+    let altMessage: string | null = null
+    if (altValue) altMessage = validateSafeText(altValue, t)
+    else if (selectedImage) altMessage = t('common.imageAltRequired')
+    setImageAltError(altMessage)
+    return !altMessage
+  }
 
+  const validateForm = () => {
     let hasError = false
 
     if (!gatewayPriceId) {
@@ -114,11 +123,23 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
       setImageError(null)
     }
 
-    if (hasError) return
+    if (!validateImageAlt()) hasError = true
+
+    return !hasError
+  }
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault()
+    if (!validateForm()) return
 
     setSaving(true)
     try {
-      const data = { schedule: serializeSchedule(schedule), includes: includes.trim(), gatewayPriceId }
+      const data: ServicePlanRequest = {
+        schedule: serializeSchedule(schedule),
+        includes: includes.trim(),
+        gatewayPriceId,
+        imageAlt: imageAlt.trim()
+      }
       if (isEditing && onUpdate) {
         await onUpdate(planToEdit.id, data, selectedImage?.file)
       } else {
@@ -184,6 +205,8 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
         </label>
 
         <div>
+          
+
           <ScheduleField
             id="create-plan-schedule"
             label={t('admin.servicios.scheduleLabel')}
@@ -229,12 +252,20 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
             <ImageThumbList className="mt-sm">
               <ImageThumb
                 src={selectedImage.previewUrl}
-                label={selectedImage.file.name}
+                label={t('common.imageCover')}
                 onDelete={() => {
                   releasePreview(selectedImage)
                   setSelectedImage(null)
                 }}
                 deleteLabel={t('admin.cancel')}
+                altText={imageAlt}
+                onAltChange={(value) => {
+                  setImageAlt(value)
+                  if (imageAltError) setImageAltError(null)
+                }}
+                altError={imageAltError}
+                altLabel={t('common.imageAltLabel')}
+                altPlaceholder={t('common.imageAltPlaceholder')}
               />
             </ImageThumbList>
           )}
@@ -242,9 +273,17 @@ function CreateServicePlanModal({ onvoPlans, existingPlans, planToEdit, onSave, 
             <ImageThumbList title={t('admin.servicios.currentImage')} className="mt-sm">
               <ImageThumb
                 src={currentImageUrl}
-                label={t('admin.servicios.image')}
+                label={t('common.imageCover')}
                 onDelete={() => setConfirmImageDelete(true)}
                 deleteLabel={t('common.deleteImageTitle')}
+                altText={imageAlt}
+                onAltChange={(value) => {
+                  setImageAlt(value)
+                  if (imageAltError) setImageAltError(null)
+                }}
+                altError={imageAltError}
+                altLabel={t('common.imageAltLabel')}
+                altPlaceholder={t('common.imageAltPlaceholder')}
               />
             </ImageThumbList>
           )}

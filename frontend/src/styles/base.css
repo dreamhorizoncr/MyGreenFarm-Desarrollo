@@ -22,9 +22,6 @@ input[type="search"]::-webkit-search-cancel-button {
    Import order: tailwindcss → tokens → base → main
    ============================================================================= */
 
-/* ---------------------------------------------------------------------------
-   NOTIFICATIONS (Sileo)
-   --------------------------------------------------------------------------- */
 html:root {
   --sileo-state-success: var(--success-default);
   --sileo-state-loading: var(--neutral-default);
@@ -45,10 +42,47 @@ html [data-sileo-description] {
   text-align: right;
 }
 
+:where([data-sileo-viewport][popover]) {
+  inset: auto;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  overflow: visible;
+  width: auto;
+  height: auto;
+}
+
 html [data-sileo-button][data-state] {
   --sileo-btn-color: var(--white);
   --sileo-btn-bg: color-mix(in oklch, var(--white) 20%, transparent);
   --sileo-btn-bg-hover: color-mix(in oklch, var(--white) 30%, transparent);
+}
+
+.vacancy-card {
+  --tone: var(--green-500);
+  --tone-ink: var(--green-500);
+  --tone-soft: var(--green-50);
+}
+
+.vacancy-card[data-tone-mobile="pink"] {
+  --tone: var(--pink-400);
+  --tone-ink: var(--pink-400);
+  --tone-soft: var(--pink-50);
+}
+
+@media (width >= 48rem) {
+  .vacancy-card[data-tone-desktop="green"] {
+    --tone: var(--green-500);
+    --tone-ink: var(--green-500);
+    --tone-soft: var(--green-50);
+  }
+
+  .vacancy-card[data-tone-desktop="pink"] {
+    --tone: var(--pink-400);
+    --tone-ink: var(--pink-400);
+    --tone-soft: var(--pink-50);
+  }
 }
 
 .blob-btn {
@@ -84,7 +118,7 @@ html [data-sileo-button][data-state] {
   width: 100%;
   height: 100%;
   border-radius: 999px;
-  transition: all 0.3s 0.2s;
+  transition: left 0.3s 0.2s, top 0.3s 0.2s;
 }
 
 .blob-btn:hover {
@@ -94,7 +128,7 @@ html [data-sileo-button][data-state] {
 .blob-btn:hover::after {
   left: 0;
   top: 0;
-  transition: all 0.3s;
+  transition: left 0.3s, top 0.3s;
 }
 
 .blob-btn__inner {
@@ -357,68 +391,58 @@ dialog:focus {
   }
 }
 
+:is(input, textarea, select, button, .PhoneInput).rounded-xl:is(.border-neutral-200, .border-neutral-300) {
+  transition: border-color 150ms ease;
+}
+
+:is(input, textarea, select, button, .PhoneInput).rounded-xl:is(.border-neutral-200, .border-neutral-300):hover:not(:disabled, :focus, :focus-within) {
+  border-color: color-mix(in oklch, var(--color-green-500) 45%, var(--color-neutral-200));
+}
+
+.PhoneInput.rounded-xl:focus-within {
+  border-color: var(--color-heading);
+}
+
 html.text-normal {
   font-size: 100%;
 }
 
 html.text-large {
   font-size: 112.5%;
+  --text-page-title: calc(clamp(28px, 1.65rem + 0.7vw, 34px) * 1.06);
+  --text-h1: calc(clamp(36px, 2.25rem + 1vw, 52px) * 1.06);
+  --text-h2: calc(clamp(30px, 1.875rem + 0.8vw, 44px) * 1.06);
+  --text-h3: calc(clamp(24px, 1.5rem + 0.6vw, 36px) * 1.06);
+  --text-h4: calc(clamp(20px, 1.25rem + 0.5vw, 28px) * 1.06);
+  --text-h5: calc(clamp(18px, 1.125rem + 0.3vw, 24px) * 1.06);
+  --text-h6: calc(clamp(16px, 1rem + 0.25vw, 20px) * 1.06);
+  --text-body-lg: calc(clamp(18px, 1.125rem + 0.3vw, 22px) * 1.12);
+  --text-body: calc(16px * 1.12);
+  --text-body-sm: calc(clamp(14px, 0.875rem + 0.15vw, 16px) * 1.12);
+  --text-button: calc(17px * 1.12);
+  --text-caption: calc(12px * 1.12);
 }
 
 html.text-xlarge {
   font-size: 125%;
+  --text-page-title: calc(clamp(28px, 1.65rem + 0.7vw, 34px) * 1.12);
+  --text-h1: calc(clamp(36px, 2.25rem + 1vw, 52px) * 1.12);
+  --text-h2: calc(clamp(30px, 1.875rem + 0.8vw, 44px) * 1.12);
+  --text-h3: calc(clamp(24px, 1.5rem + 0.6vw, 36px) * 1.12);
+  --text-h4: calc(clamp(20px, 1.25rem + 0.5vw, 28px) * 1.12);
+  --text-h5: calc(clamp(18px, 1.125rem + 0.3vw, 24px) * 1.12);
+  --text-h6: calc(clamp(16px, 1rem + 0.25vw, 20px) * 1.12);
+  --text-body-lg: calc(clamp(18px, 1.125rem + 0.3vw, 22px) * 1.25);
+  --text-body: calc(16px * 1.25);
+  --text-body-sm: calc(clamp(14px, 0.875rem + 0.15vw, 16px) * 1.25);
+  --text-button: calc(17px * 1.25);
+  --text-caption: calc(12px * 1.25);
 }
 
-html.text-large p,
-html.text-large span,
-html.text-large a,
-html.text-large button,
-html.text-large input,
-html.text-large textarea,
-html.text-large label {
-  font-size: 1.1em !important;
-}
-
-html.text-xlarge p,
-html.text-xlarge span,
-html.text-xlarge a,
-html.text-xlarge button,
-html.text-xlarge input,
-html.text-xlarge textarea,
-html.text-xlarge label {
-  font-size: 1.10em !important;
-}
-
-html.text-large h1,
-html.text-large h2,
-html.text-large h3,
-html.text-large h4,
-html.text-large h5,
-html.text-large h6,
-html.text-large .text-h1,
-html.text-large .text-page-title {
-  font-size: calc(var(--base-size, 2rem) + 0.8rem) !important;
-  transform: scale(1.02);
-  transform-origin: left;
-}
-
-html.text-xlarge h1,
-html.text-xlarge h2,
-html.text-xlarge h3,
-html.text-xlarge h4,
-html.text-xlarge h5,
-html.text-xlarge h6,
-html.text-xlarge .text-h1,
-html.text-xlarge .text-page-title {
-  font-size: calc(var(--base-size, 2rem) + 0.9rem) !important;
-  transform: scale(1.08);
-  transform-origin: left;
-}
-
-tml.high-contrast {
+html.high-contrast {
   --bg-page: #ffffff;
-  background-color: #ffffff !important;
-  color: #0f172a !important;
+  background-color: #ffffff;
+  color: #0f172a;
 }
 
 html.high-contrast p,
@@ -429,15 +453,14 @@ html.high-contrast input,
 html.high-contrast textarea,
 html.high-contrast td,
 html.high-contrast th {
-  color: #0f172a !important;
+  color: #0f172a;
 }
 
 html.high-contrast [class*="border"],
-html.high-contrast border,
 html.high-contrast input,
 html.high-contrast select,
 html.high-contrast textarea {
-  border-color: #64748b !important;
+  border-color: #64748b;
 }
 
 html.high-contrast h1,
@@ -446,24 +469,101 @@ html.high-contrast h3,
 html.high-contrast h4,
 html.high-contrast h5,
 html.high-contrast h6 {
-  color: #020617 !important;
+  color: #020617;
 }
 
 html.high-contrast .bg-white {
-  background-color: #ffffff !important;
-  box-shadow: 0 0 0 1px #64748b !important;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 1px #64748b;
 }
 
 html.grayscale-mode {
-  filter: grayscale(100%) !important;
+  filter: grayscale(100%);
 }
 
 html.highlight-links-mode a {
-  background-color: #fef08a !important;
-  color: #1e293b !important;
-  text-decoration: underline !important;
-  font-weight: 700 !important;
+  background-color: #fef08a;
+  color: #1e293b;
+  text-decoration: underline;
+  font-weight: 700;
 
-  border-radius: 4px !important;
-  border: 1px dashed #ca8a04 !important;
+  border-radius: 4px;
+  border: 1px dashed #ca8a04;
 }
+
+/* =============================================================================
+   ACCESIBILIDAD — lector por voz, dislexia, cursor, guía y filtros
+   ============================================================================= */
+
+@font-face {
+  font-family: "OpenDyslexic";
+  src: url("/fonts/OpenDyslexic-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+html.dyslexia-font body,
+html.dyslexia-font body * {
+  font-family: "OpenDyslexic", "Comic Sans MS", "Trebuchet MS", sans-serif !important;
+}
+
+html.text-spacing-mode body {
+  letter-spacing: 0.055em;
+  word-spacing: 0.16em;
+}
+
+html.text-spacing-mode p,
+html.text-spacing-mode li,
+html.text-spacing-mode dd,
+html.text-spacing-mode dt,
+html.text-spacing-mode blockquote,
+html.text-spacing-mode td,
+html.text-spacing-mode th,
+html.text-spacing-mode label,
+html.text-spacing-mode input,
+html.text-spacing-mode textarea,
+html.text-spacing-mode select {
+  line-height: 1.8 !important;
+  letter-spacing: 0.055em !important;
+  word-spacing: 0.16em !important;
+}
+
+html.color-monochrome {
+  filter: grayscale(100%);
+}
+
+html.color-low-saturation {
+  filter: saturate(55%);
+}
+
+html.color-high-saturation {
+  filter: saturate(180%);
+}
+
+html.stop-animations-mode {
+  scroll-behavior: auto !important;
+}
+
+html.stop-animations-mode *,
+html.stop-animations-mode *::before,
+html.stop-animations-mode *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+html.big-cursor,
+html.big-cursor * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24'%3E%3Cpath d='M5 2.5 20 12l-6.2 1.4 3.7 7.6-2.7 1.2-3.7-7.6L6.6 19z' fill='%23000' stroke='%23fff' stroke-width='1.2' stroke-linejoin='round'/%3E%3C/svg%3E") 5 3, auto !important;
+}
+
+.a11y-reading-highlight {
+  outline: 3px solid #f59e0b !important;
+  outline-offset: 3px !important;
+  border-radius: 6px;
+  background-color: rgba(254, 240, 138, 0.5) !important;
+  color: #1e293b !important;
+  box-decoration-break: clone;
+}
+

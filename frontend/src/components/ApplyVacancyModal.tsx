@@ -60,23 +60,20 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
       aria-label={heading}
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
-      <div className="relative p-[28px_22px_30px]">
-        <ModalCloseButton
-          onClick={requestClose}
-          aria-label={t('admin.cancel')}
-          className="absolute right-3 top-[26px] z-20"
-        />
-
-        <div className="relative mb-lg text-center">
-          <h2 className="m-0 font-heading text-h4 font-bold leading-tight text-heading">
-            {heading}
-          </h2>
-          {vacancyId !== null && (
-            <p className="m-0 mt-2xs font-body text-body-sm text-neutral-500">{title}</p>
-          )}
+      <div className="relative p-lg md:p-xl">
+        <div className="mb-lg flex items-start justify-between gap-md">
+          <div className="min-w-0 text-left">
+            <h2 className="m-0 font-heading text-h4 font-bold leading-tight text-heading">
+              {heading}
+            </h2>
+            {vacancyId !== null && (
+              <p className="m-0 mt-2xs font-body text-body-sm text-neutral-500">{title}</p>
+            )}
+          </div>
+          <ModalCloseButton onClick={requestClose} aria-label={t('admin.cancel')} />
         </div>
 
-        <div className="flex flex-col gap-md px-7 pb-8 pt-2.5 text-left">
+        <div className="flex flex-col gap-md text-left">
           <TextField
             hint={t('fields.apply.name.hint')}
             placeholder={t('fields.apply.name.placeholder')}
@@ -138,7 +135,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="inline-flex w-fit items-center gap-xs whitespace-nowrap rounded-full border border-neutral-300 bg-white px-md py-sm font-body text-body-sm font-semibold text-heading transition-colors hover:border-green-500 hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+                className="inline-flex w-fit items-center gap-xs whitespace-nowrap h-11 rounded-full border border-green-500 bg-white px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
               >
                 <FileTextIcon size={17} aria-hidden="true" />
                 <span>{t('vacancies.chooseFile')}</span>
@@ -174,7 +171,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
               <button
                 type="button"
                 onClick={() => certificatesInputRef.current?.click()}
-                className="inline-flex w-fit items-center gap-xs whitespace-nowrap rounded-full border border-neutral-300 bg-white px-md py-sm font-body text-body-sm font-semibold text-heading transition-colors hover:border-green-500 hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+                className="inline-flex w-fit items-center gap-xs whitespace-nowrap h-11 rounded-full border border-green-500 bg-white px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
               >
                 <FileTextIcon size={17} aria-hidden="true" />
                 <span>{t('vacancies.chooseCertificates')}</span>
@@ -219,7 +216,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
             <Button
               variant="secondary"
               onClick={requestClose}
-              className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50"
+              className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold text-heading hover:bg-green-50"
             >
               {t('admin.cancel')}
             </Button>
@@ -228,7 +225,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
               onClick={handleSubmitClick}
               loading={form.submitting}
               disabled={!form.name.trim() || !form.email.trim() || (form.showPhone && !form.phone.trim()) || (form.showFile && !form.file)}
-              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold uppercase tracking-wide text-white hover:bg-orange-600"
+              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
             >
               {form.submitting ? t('common.loading') : t('vacancies.submitApplication')}
             </Button>

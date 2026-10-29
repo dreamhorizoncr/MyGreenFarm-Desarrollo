@@ -1,3 +1,4 @@
+import { formatIdentification, formatPhone } from "../utils/contactFormat.ts";
 import type { Parent } from "../types/parent.ts";
 import Skeleton from "./ui/Skeleton.tsx";
 import CardActionButton from "./ui/CardActionButton.tsx";
@@ -62,7 +63,7 @@ function ParentCard({
               <>
                 <p>
                 <span className="font-bold">{t("admin.parents.identification")}: </span>
-                {parent!.identification}
+                {formatIdentification(parent!.identification)}
                 </p>
 
                 <p>
@@ -108,7 +109,7 @@ function ParentCard({
 
                 <p className="mt-2 break-words font-body text-body-sm leading-relaxed text-body-text">
                     <span className="font-bold">{t("admin.parents.phoneNumber")}: </span>
-                    {parent!.phoneNumber}
+                    {formatPhone(parent!.phoneNumber)}
                 </p>
 
                 <p className="mt-2 break-words font-body text-body-sm leading-relaxed text-body-text">

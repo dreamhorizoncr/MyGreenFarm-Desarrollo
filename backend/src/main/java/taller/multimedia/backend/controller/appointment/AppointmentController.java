@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,13 +20,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import taller.multimedia.backend.dto.appointment.AppointmentRequest;
 import taller.multimedia.backend.dto.appointment.AvailableDayResponse;
+import taller.multimedia.backend.dto.appointment.SlotHoldRequest;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
 import taller.multimedia.backend.service.appointment.AppointmentService;
 import taller.multimedia.backend.service.appointment.ScheduleConfigService;
+import taller.multimedia.backend.service.appointment.SlotEventService;
+import taller.multimedia.backend.service.appointment.SlotHoldService;
 
 @RestController
 @RequestMapping("/api/appointments")
@@ -35,6 +42,12 @@ public class AppointmentController {
     @Autowired
     private ScheduleConfigService scheduleConfigService;
 
+    @Autowired
+    private SlotHoldService slotHoldService;
+
+    @Autowired
+    private SlotEventService slotEventService;
+
     private final AppointmentService appointmentService;
 
     public AppointmentController(AppointmentService appointmentService) {
@@ -43,8 +56,35 @@ public class AppointmentController {
 
     @PostMapping
     public ResponseEntity<Appointment> createAppointment(@Valid @RequestBody AppointmentRequest requestDTO) {
-        Appointment newAppointment = appointmentService.createAppointment(requestDTO);
+        Appointment newAppointment = slotHoldService.bookExclusively(
+                requestDTO.getAppointmentDate(),
+                requestDTO.getHoldId(),
+                () -> appointmentService.createAppointment(requestDTO));
         return ResponseEntity.ok(newAppointment);
+    }
+
+    @PostMapping("/holds")
+    public ResponseEntity<SlotHoldService.HoldResult> holdSlot(
+            @Valid @RequestBody SlotHoldRequest request,
+            HttpServletRequest httpRequest) {
+        return ResponseEntity.ok(slotHoldService.hold(request.getSlot(), request.getHolderId(), clientKey(httpRequest)));
+    }
+
+    @PostMapping("/holds/release")
+    public ResponseEntity<Void> releaseSlot(@RequestParam String holderId) {
+        slotHoldService.release(holderId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(path = "/holds/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter streamSlotEvents() {
+        return slotEventService.subscribe(slotHoldService.heldSlots());
+    }
+
+    private String clientKey(HttpServletRequest request) {
+        String forwarded = request.getHeader("X-Forwarded-For");
+        if (forwarded != null && !forwarded.isBlank()) return forwarded.split(",")[0].trim();
+        return request.getRemoteAddr();
     }
 
     @GetMapping
@@ -98,7 +138,8 @@ public class AppointmentController {
             @RequestParam LocalDateTime newDate,
             @RequestParam(required = false, defaultValue = "es") String lang) {
 
-        Appointment updatedAppointment = appointmentService.rescheduleAppointment(id, newDate, lang);
+        Appointment updatedAppointment = slotHoldService.bookExclusively(
+                newDate, null, () -> appointmentService.rescheduleAppointment(id, newDate, lang));
         return ResponseEntity.ok(updatedAppointment);
     }
 

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import TabHighlight from '../ui/TabHighlight.tsx'
+import { tabCarouselClass, useTabCarousel } from '../../hooks/useTabCarousel.ts'
 
 const SECTIONS = [
   { id: 'forum-about', labelKey: 'forum.about.title' },
@@ -13,8 +14,7 @@ type SectionId = (typeof SECTIONS)[number]['id']
 function ForumSectionTabs() {
   const { t } = useTranslation()
   const [active, setActive] = useState<SectionId>(SECTIONS[0].id)
-  const navRef = useRef<HTMLElement>(null)
-  // Mientras dura el scroll suave de un clic, el observador no cambia la pestaña elegida
+  const navRef = useTabCarousel<HTMLElement>(active)
   const lockUntil = useRef(0)
 
   useEffect(() => {
@@ -26,7 +26,6 @@ function ForumSectionTabs() {
       },
       { rootMargin: '-30% 0px -60% 0px' },
     )
-    // Las tarjetas aparecen cuando llegan los datos: se observan también las que se agregan después
     const observed = new Set<Element>()
     const attach = () => {
       for (const { id } of SECTIONS) {
@@ -46,18 +45,11 @@ function ForumSectionTabs() {
     }
   }, [])
 
-  // Mantiene visible dentro del carrusel la pestaña activa
-  useEffect(() => {
-    const nav = navRef.current
-    const tab = nav?.querySelector<HTMLElement>(`[data-section="${active}"]`)
-    if (nav && tab) nav.scrollTo({ left: tab.offsetLeft - (nav.clientWidth - tab.clientWidth) / 2, behavior: 'smooth' })
-  }, [active])
-
   return (
     <nav
       ref={navRef}
       aria-label={t('forum.sidebarLabel')}
-      className="isolate -mx-1 mt-[calc(var(--spacing-sm)-4px)] flex flex-col gap-sm overflow-visible p-1 lg:hidden"
+      className={`${tabCarouselClass} mt-[calc(var(--spacing-sm)-4px)] lg:hidden`}
     >
       {SECTIONS.map(({ id, labelKey }) => {
         const isActive = id === active
@@ -71,7 +63,7 @@ function ForumSectionTabs() {
               lockUntil.current = Date.now() + 900
               setActive(id)
             }}
-            className={`relative w-full whitespace-normal rounded-full border border-green-500 px-md py-xs text-left font-body text-body-sm transition duration-300 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
+            className={`relative rounded-full border border-green-500 px-md py-xs font-body text-body-sm transition duration-300 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
               isActive ? 'text-white' : 'bg-transparent text-heading hover:bg-green-50'
             }`}
           >

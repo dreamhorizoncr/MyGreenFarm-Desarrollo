@@ -38,7 +38,6 @@ export const announcementService = {
         await apiClient.delete(`/announcements/categories/${id}`)
     },
 
-    // categoryId filtra en el backend, así el paginador cuenta solo las noticias de esa categoría
     async getAnnouncements(lang: string, page: number = 0, size: number = 10, categoryId?: string): Promise<AnnouncementPage> {
         const response = await apiClient.get<AnnouncementPage>('/announcements',{params:{lang,page,size,categoryId}})
         return response.data
@@ -69,11 +68,13 @@ export const announcementService = {
         announcementId: string,
         files: File[],
         isCover: boolean,
+        altTexts?: string[],
     ): Promise<AnnouncementImageResponse[]> {
         const formData = new FormData()
         files
             .map((file) => new File([file], sanitizeFileName(file.name), { type: file.type }))
             .forEach((file) => formData.append('files', file))
+        if (altTexts?.length) formData.append('altTexts', JSON.stringify(altTexts))
 
         const response = await apiClient.post<AnnouncementImageResponse[]>(
             `/announcements/${announcementId}/images`,
@@ -88,6 +89,10 @@ export const announcementService = {
 
     async deleteImage(imageId: string): Promise<void> {
         await apiClient.delete(`/announcements/images/${imageId}`)
+    },
+
+    async updateImageAlt(imageId: string, altText: string): Promise<void> {
+        await apiClient.patch(`/announcements/images/${imageId}/alt`, { altText })
     },
 
     async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {

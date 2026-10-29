@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import taller.multimedia.backend.dto.appointment.AppointmentRequest;
+import taller.multimedia.backend.exception.SlotUnavailableException;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
 import taller.multimedia.backend.model.appointment.ReferralSource;
@@ -69,8 +70,8 @@ public class AppointmentService {
         List<LocalTime> availableSlots = scheduleConfigService.getAvailableSlotsForDate(requestedStart.toLocalDate());
 
         if (!availableSlots.contains(requestedTime)) {
-            throw new RuntimeException(
-                    "Lo sentimos, el horario seleccionado no está habilitado por la administración.");
+            throw new SlotUnavailableException(
+                    "Lo sentimos, el horario seleccionado ya no está disponible. Elige otro horario.");
         }
 
         LocalDateTime requestedEnd = requestedStart.plusMinutes(59);
@@ -98,7 +99,7 @@ public class AppointmentService {
                 .anyMatch(a -> a.getStatus() != AppointmentStatus.CANCELLED);
 
         if (isSlotTaken) {
-            throw new RuntimeException(
+            throw new SlotUnavailableException(
                     "Lo sentimos, este horario ya ha sido reservado o está pendiente de aprobación.");
         }
 
@@ -301,8 +302,8 @@ public class AppointmentService {
         LocalTime newTime = newAppointmentDate.toLocalTime();
 
         if (!availableSlots.contains(newTime)) {
-            throw new RuntimeException(
-                    "Lo sentimos, el nuevo horario seleccionado no está habilitado por la administración.");
+            throw new SlotUnavailableException(
+                    "Lo sentimos, el nuevo horario seleccionado no está disponible.");
         }
 
         LocalDateTime newEnd = newAppointmentDate.plusMinutes(59);
@@ -317,7 +318,7 @@ public class AppointmentService {
                                 || other.getStatus() == AppointmentStatus.CONFIRMED));
 
         if (isSlotTaken) {
-            throw new RuntimeException(
+            throw new SlotUnavailableException(
                     "El nuevo horario seleccionado ya está ocupado.");
         }
 

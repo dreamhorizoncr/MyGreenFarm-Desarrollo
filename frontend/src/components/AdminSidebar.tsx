@@ -49,6 +49,8 @@ interface SidebarItem {
 }
 
 const SIDEBAR_SCROLL_KEY = 'admin-sidebar-scroll-top'
+const CHILDREN_MODULE_PATHS = new Set(['/admin/children', '/admin/expedients', '/admin/evaluations'])
+let lastFilledKey: string | null = null
 
 function AdminSidebar() {
   const { t } = useTranslation()
@@ -61,11 +63,14 @@ function AdminSidebar() {
   const closeMobileMenu = useCallback(() => setOpen(false), [])
   useDismiss({ ref: mobileMenuRef, isOpen: open, onClose: closeMobileMenu })
 
-  const [filled, setFilled] = useState(false)
+  const activeKey = CHILDREN_MODULE_PATHS.has(pathname) ? 'niños' : pathname
+  const [filled, setFilled] = useState(() => activeKey === lastFilledKey)
   useEffect(() => {
+    lastFilledKey = activeKey
+    if (filled) return
     const frame = requestAnimationFrame(() => setFilled(true))
     return () => cancelAnimationFrame(frame)
-  }, [])
+  }, [activeKey, filled])
 
   useLayoutEffect(() => {
     const saved = sessionStorage.getItem(SIDEBAR_SCROLL_KEY)
@@ -121,11 +126,7 @@ function AdminSidebar() {
   const itemsByRole: Record<string, SidebarItem[]> = { OWNER: ownerItems, ADMIN: adminItems }
   const items = itemsByRole[role ?? ''] ?? teacherItems
 
-  const isChildrenModulePath = [
-    '/admin/children',
-    '/admin/expedients',
-    '/admin/evaluations',
-  ].includes(pathname)
+  const isChildrenModulePath = CHILDREN_MODULE_PATHS.has(pathname)
   const activeItem =
     items.find((item) => item.path === pathname) ??
     (isChildrenModulePath ? items.find((item) => item.id === 'niños') : undefined) ??
@@ -156,7 +157,7 @@ function AdminSidebar() {
           setSidebarHovered(false)
         }
       }}
-      className="w-full shrink-0 bg-bg-page px-[var(--scale-1100)] pt-md md:fixed md:px-md md:bottom-0 md:left-0 md:top-16 md:z-30 md:flex md:w-[260px] md:flex-col md:gap-sm md:overflow-y-auto md:py-lg"
+      className="w-full shrink-0 bg-bg-page px-[var(--scale-1100)] pt-md md:sticky md:top-0 md:z-30 md:h-[calc(100svh-4rem)] md:self-start md:px-md md:flex md:w-[260px] md:flex-col md:gap-sm md:overflow-y-auto md:py-lg"
     >
       <div ref={mobileMenuRef} className="md:hidden">
         <button

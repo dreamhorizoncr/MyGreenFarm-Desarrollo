@@ -53,7 +53,7 @@ function DeleteConfirmModal({
       aria-label={title}
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
-      <div className="relative p-[28px_22px_30px]">
+      <div className="relative p-lg md:p-xl">
         <div className="flex items-center justify-between gap-md">
           <h2 className="m-0 font-heading text-h4 font-bold text-heading">
             {title}
@@ -78,7 +78,7 @@ function DeleteConfirmModal({
             <Button
               variant="secondary"
               onClick={requestClose}
-              className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold uppercase tracking-wide text-heading hover:bg-green-50"
+              className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold text-heading hover:bg-green-50"
             >
               {t('admin.cancel')}
             </Button>
@@ -86,7 +86,7 @@ function DeleteConfirmModal({
               variant="success"
               onClick={() => void handleConfirm()}
               loading={deleting}
-              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold uppercase tracking-wide text-white hover:bg-orange-600"
+              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
             >
               {deleting ? t('common.loading') : confirmLabel ?? t('admin.delete')}
             </Button>

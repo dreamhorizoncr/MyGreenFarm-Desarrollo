@@ -1,3 +1,4 @@
+import { Fragment, type ReactNode } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { Toaster } from 'sileo'
 
@@ -42,13 +43,21 @@ import ScrollToTopButton from './components/ScrollToTopButton.tsx'
 import { ProfileAvatarProvider } from './contexts/ProfileAvatarContext.tsx'
 import { ForumFeedProvider } from './contexts/ForumFeedContext.tsx'
 import { AccessibilityProvider } from '../src/contexts/AccessibilityContext.tsx'
+import { useMotionKey } from './hooks/useMotionKey.ts'
+import { VoiceReaderProvider } from './contexts/VoiceReaderContext.tsx'
 import AccessibilityMenu from './components/ui/AccessibilityMenu.tsx'
+import VoiceReaderController from './components/ui/VoiceReaderController.tsx'
+import ReadingGuide from './components/ui/ReadingGuide.tsx'
 import { useSessionExpiredNotice } from './hooks/useSessionExpiredNotice.ts'
 import { ErrorBoundary } from './components/ErrorBoundary.tsx'
 import BlobGooFilter from './components/ui/BlobGooFilter.tsx'
 import OwnerClubsPage from './pages/OwnerClubsPage.tsx'
 import ClubsPage from './pages/ClubsPage.tsx'
 import AboutUsPage from './pages/AboutUsPage.tsx'
+import PaymentPage from './pages/PaymentPage.tsx'
+import ChatWidget from './components/chat/ChatWidget.tsx'
+import GroupsRoute from './routes/GroupsRoute.tsx'
+import AdminGroupsPage from './pages/AdminGroupsPage.tsx'
 
 function SessionWatcher() {
   useSessionExpiredNotice()
@@ -57,6 +66,10 @@ function SessionWatcher() {
 
 function isDashboardPath(pathname: string) {
   return pathname === '/profile' || pathname.startsWith('/admin')
+}
+
+function MotionBoundary({ children }: Readonly<{ children: ReactNode }>) {
+  return <Fragment key={useMotionKey()}>{children}</Fragment>
 }
 
 function GlobalFooter() {
@@ -70,67 +83,78 @@ function App() {
     <ErrorBoundary>
       <AccessibilityProvider>
         <BrowserRouter>
-          <Toaster position="top-right" offset={{ top: 76 }} />
-          <SessionWatcher />
-          <BlobGooFilter />
-          <div className="flex min-h-svh flex-col">
-            <div className="flex-1">
-              <ProfileAvatarProvider>
-                <ForumFeedProvider>
-                  <Routes>
-                    <Route element={<ProtectedRoute />} />
-                    <Route path="/profile" element={<ProfilePage />} />
-                    <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-                    <Route element={<ForumManagementRoute />}>
-                      <Route path="/admin/forum" element={<AdminForumPage />} />
-                    </Route>
-                    <Route element={<AdminRoute />}>
-                      <Route path="/admin/citas" element={<AdminCitasPage />} />
-                      <Route path="/admin/users" element={<AdminUsersPage />} />
-                      <Route path="/admin/teachers" element={<AdminTeachersPage />} />
-                      <Route path="/admin/announcements" element={<AnnouncementsPage />} />
-                      <Route path="/admin/gallery" element={<AdminGalleryPage />} />
-                      <Route path="/admin/curriculums" element={<AdminCurriculumsPage />} />
-                      <Route path="/admin/clubs" element={<OwnerClubsPage />} />
-                      <Route path="/admin/parents" element={<AdminParentsPage />} />
-                      <Route path="/admin/children" element={<AdminChildrenPage />} />
-                      <Route element={<OwnerRoute />}>
-                        <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />
-                        <Route path="/admin/disponibilidad" element={<OwnerAvailabilityPage />} />
-                        <Route path="/admin/newsletter" element={<OwnerNewsletter />} />
+          <VoiceReaderProvider>
+            <Toaster position="top-right" offset={{ top: 76 }} />
+            <SessionWatcher />
+            <BlobGooFilter />
+            <div className="flex min-h-svh flex-col">
+              <MotionBoundary>
+              <div className="flex-1">
+                <ProfileAvatarProvider>
+                  <ForumFeedProvider>
+                    <Routes>
+                      <Route element={<ProtectedRoute />} />
+                      <Route path="/profile" element={<ProfilePage />} />
+                      <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+                      <Route element={<ForumManagementRoute />}>
+                        <Route path="/admin/forum" element={<AdminForumPage />} />
                       </Route>
-                    </Route>
-                    <Route element={<ExpedientsRoute />}>
-                      <Route path="/admin/expedients" element={<AdminExpedientsPage />} />
-                      <Route path="/admin/evaluations" element={<AdminEvaluationsPage />} />
-                    </Route>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/booking" element={<BookingPage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                    <Route path="/reset-password" element={<ResetPasswordPage />} />
-                    <Route path="/news" element={<NewsPage />} />
-                    <Route path="/forum" element={<ForumPage />} />
-                    <Route path="/forum/blog/:id" element={<BlogPostPage />} />
-                    <Route path="/forum/community/:id" element={<CommunityPostPage />} />
-                    <Route path="/multimedia" element={<GalleryPage />} />
-                    <Route path="/albumes/:id" element={<AlbumDetailPage />} />
-                    <Route path="/services" element={<ServicesPage />} />
-                    <Route path="/payment-success" element={<PaymentSuccessPage />} />
-                    <Route path="/payment-failed" element={<PaymentFailedPage />} />
-                    <Route path="/vacantes" element={<VacanciesPage />} />
-                    <Route path="/clubs" element={<ClubsPage />} />
-                    <Route path="/about-us" element={<AboutUsPage />} />
-                    <Route path="/signup" element={<Navigate to="/admin/users" replace />} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
-                  </Routes>
-                </ForumFeedProvider>
-              </ProfileAvatarProvider>
+                      <Route element={<AdminRoute />}>
+                        <Route path="/admin/citas" element={<AdminCitasPage />} />
+                        <Route path="/admin/users" element={<AdminUsersPage />} />
+                        <Route path="/admin/teachers" element={<AdminTeachersPage />} />
+                        <Route path="/admin/announcements" element={<AnnouncementsPage />} />
+                        <Route path="/admin/gallery" element={<AdminGalleryPage />} />
+                        <Route path="/admin/curriculums" element={<AdminCurriculumsPage />} />
+                        <Route path="/admin/clubs" element={<OwnerClubsPage />} />
+                        <Route path="/admin/parents" element={<AdminParentsPage />} />
+                        <Route path="/admin/children" element={<AdminChildrenPage />} />
+                        <Route element={<OwnerRoute />}>
+                          <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />
+                          <Route path="/admin/disponibilidad" element={<OwnerAvailabilityPage />} />
+                          <Route path="/admin/newsletter" element={<OwnerNewsletter />} />
+                        </Route>
+                      </Route>
+                      <Route element={<GroupsRoute />}>
+                        <Route path="/admin/groups" element={<AdminGroupsPage />} />
+                      </Route>
+                      <Route element={<ExpedientsRoute />}>
+                        <Route path="/admin/expedients" element={<AdminExpedientsPage />} />
+                        <Route path="/admin/evaluations" element={<AdminEvaluationsPage />} />
+                      </Route>
+                      <Route path="/" element={<HomePage />} />
+                      <Route path="/booking" element={<BookingPage />} />
+                      <Route path="/login" element={<LoginPage />} />
+                      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                      <Route path="/reset-password" element={<ResetPasswordPage />} />
+                      <Route path="/news" element={<NewsPage />} />
+                      <Route path="/forum" element={<ForumPage />} />
+                      <Route path="/forum/blog/:id" element={<BlogPostPage />} />
+                      <Route path="/forum/community/:id" element={<CommunityPostPage />} />
+                      <Route path="/multimedia" element={<GalleryPage />} />
+                      <Route path="/albumes/:id" element={<AlbumDetailPage />} />
+                      <Route path="/services" element={<ServicesPage />} />
+                      <Route path="/payment-success" element={<PaymentSuccessPage />} />
+                      <Route path="/payment-failed" element={<PaymentFailedPage />} />
+                      <Route path="/vacantes" element={<VacanciesPage />} />
+                      <Route path="/clubs" element={<ClubsPage />} />
+                      <Route path="/about-us" element={<AboutUsPage />} />
+                      <Route path="/checkout" element={<PaymentPage />} />
+                      <Route path="/signup" element={<Navigate to="/admin/users" replace />} />
+                      <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                  </ForumFeedProvider>
+                </ProfileAvatarProvider>
+              </div>
+              <GlobalFooter />
+              <ScrollToTopButton />
+              <ChatWidget />
+              </MotionBoundary>
+              <AccessibilityMenu />
+              <VoiceReaderController />
+              <ReadingGuide />
             </div>
-            <GlobalFooter />
-            <ScrollToTopButton />
-            <AccessibilityMenu />
-          </div>
+          </VoiceReaderProvider>
         </BrowserRouter>
       </AccessibilityProvider>
     </ErrorBoundary>

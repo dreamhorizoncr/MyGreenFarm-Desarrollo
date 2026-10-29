@@ -82,7 +82,7 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
       aria-label={t('teacherAppointments.changeStatus')}
       className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
-      <div className="relative p-[28px_22px_30px]">
+      <div className="relative p-lg md:p-xl">
         <div className="flex items-center justify-between gap-md">
           <h2 className="m-0 font-heading text-h4 font-bold text-heading">
             {t('teacherAppointments.changeStatus')}
@@ -94,14 +94,14 @@ function ChangeAppointmentStatusModal({ appointment, onConfirm, onClose }: Reado
           />
         </div>
 
-        <div className="mt-lg mb-lg px-[28px]">
+        <div className="my-lg">
           <WizardSteps
             steps={[t('teacherAppointments.stepChooseStatus'), t('teacherAppointments.stepConfirm')]}
             current={step}
           />
         </div>
 
-        <div className="flex flex-col gap-md px-[28px] pb-[32px] pt-[30px]">
+        <div className="flex flex-col gap-md pt-sm">
           {step === 0 && (
             <>
               <p className="rounded-2xl border border-neutral-200 bg-[var(--grey-100)] px-md py-sm text-left font-body text-body leading-relaxed text-body-text">

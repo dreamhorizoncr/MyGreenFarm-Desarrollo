@@ -27,7 +27,8 @@ function PdfPage({ pdf, pageNumber, width, label }: Readonly<{ pdf: PDFDocumentP
   useEffect(() => {
     let cancelled = false
     let task: { cancel: () => void; promise: Promise<void> } | null = null
-    void pdf.getPage(pageNumber).then((page) => {
+    const renderPage = async () => {
+      const page = await pdf.getPage(pageNumber)
       const canvas = canvasRef.current
       if (cancelled || !canvas || width <= 0) return
       const base = page.getViewport({ scale: 1 })
@@ -37,8 +38,9 @@ function PdfPage({ pdf, pageNumber, width, label }: Readonly<{ pdf: PDFDocumentP
       canvas.width = Math.floor(viewport.width)
       canvas.height = Math.floor(viewport.height)
       task = page.render({ canvas, viewport })
-      task.promise.catch(() => undefined)
-    })
+      await task.promise
+    }
+    renderPage().catch(() => undefined)
     return () => {
       cancelled = true
       task?.cancel()
@@ -49,11 +51,11 @@ function PdfPage({ pdf, pageNumber, width, label }: Readonly<{ pdf: PDFDocumentP
     <canvas
       ref={canvasRef}
       data-page={pageNumber}
-      aria-label={label}
-      role="img"
       style={{ width, height: width * ratio }}
       className="mx-auto block rounded-lg bg-white shadow-[0_2px_12px_rgb(0_0_0/0.08)]"
-    />
+    >
+      {label}
+    </canvas>
   )
 }
 
@@ -66,10 +68,9 @@ function PdfViewer({ url, fileName, title, className = 'h-105' }: Readonly<PdfVi
   const [zoomIndex, setZoomIndex] = useState(2)
   const [currentPage, setCurrentPage] = useState(1)
 
-  // Al cambiar de documento, quien lo usa remonta el visor con otra key
   useEffect(() => {
     let cancelled = false
-    const task = getDocument(url)
+    const task = getDocument({url})
     task.promise
       .then((doc) => { if (!cancelled) setPdf(doc) })
       .catch(() => { if (!cancelled) setError(true) })
@@ -87,7 +88,6 @@ function PdfViewer({ url, fileName, title, className = 'h-105' }: Readonly<PdfVi
     return () => observer.disconnect()
   }, [])
 
-  // Página actual según el scroll: la primera cuyo borde inferior pasa la mitad del visor
   const handleScroll = () => {
     const el = scrollRef.current
     if (!el) return
@@ -154,9 +154,9 @@ function PdfViewer({ url, fileName, title, className = 'h-105' }: Readonly<PdfVi
         )}
 
         {!error && !pdf && (
-          <div className="mx-auto flex flex-col gap-md" style={{ width: pageWidth || '100%' }} role="status" aria-label={t('pdfViewer.loading')}>
+          <output className="mx-auto flex flex-col gap-md" style={{ width: pageWidth || '100%' }} aria-label={t('pdfViewer.loading')}>
             <Skeleton className="aspect-[1/1.294] w-full rounded-lg" />
-          </div>
+          </output>
         )}
 
         {pdf && pageWidth > 0 && (

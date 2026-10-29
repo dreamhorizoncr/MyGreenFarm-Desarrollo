@@ -4,7 +4,8 @@ import { useTranslation } from "react-i18next";
 import Select from "./ui/Select.tsx";
 import { evaluationService } from "../services/evaluation";
 import { expedientService } from "../services/expedient";
-import { notify } from "../utils/notifications";
+import { notify, notifyError } from "../utils/notifications";
+import { getErrorField, getErrorMessage } from "../utils/error.ts";
 import { useModalVisibility } from "../hooks/useModalExit.ts";
 import DatePickerField from "./ui/DatePickerField.tsx";
 import { validateRequired, validateSafeText } from "../utils/validators.ts";
@@ -133,7 +134,6 @@ function EvaluationFormModal({
 
         try {
             setSaving(true);
-            setError(null);
 
             if (evaluation) {
                 await evaluationService.update(evaluation.id, form);
@@ -145,11 +145,13 @@ function EvaluationFormModal({
 
             onSaved();
             onClose();
-        } catch {
-            setError(
-                evaluation
-                    ? t("admin.evaluations.formUpdateError")
-                    : t("admin.evaluations.formCreateError"),
+        } catch (err) {
+            const field = getErrorField(err);
+            if (field) setFieldErrors((current) => ({ ...current, [field]: getErrorMessage(err) }));
+
+            notifyError(
+                evaluation ? t("admin.evaluations.formUpdateError") : t("admin.evaluations.formCreateError"),
+                err,
             );
         } finally {
             setSaving(false);
@@ -158,6 +160,10 @@ function EvaluationFormModal({
 
     const { shouldRender, closing } = useModalVisibility(isOpen);
     if (!shouldRender) return null;
+
+    let submitLabel = t("admin.evaluations.formAdd");
+    if (saving) submitLabel = t("admin.evaluations.formSaving");
+    else if (evaluation) submitLabel = t("admin.evaluations.formSaveChanges");
 
     return (
         <div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
@@ -344,11 +350,7 @@ function EvaluationFormModal({
                         disabled={saving || loadingOptions || !form.expedientId || !form.evaluationDate || !form.communicationProgress.trim() || !form.languageProgress.trim() || !form.readingProgress.trim() || !form.motorProgress.trim() || !form.teacherObservation.trim()}
                         className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                        {saving
-                            ? t("admin.evaluations.formSaving")
-                            : evaluation
-                            ? t("admin.evaluations.formSaveChanges")
-                            : t("admin.evaluations.formAdd")}
+                        {submitLabel}
                     </button>
                 </div>
             </form>

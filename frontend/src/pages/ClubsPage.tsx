@@ -26,13 +26,13 @@ function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
     const isFull = available <= 0
 
     return (
-        <article className="relative flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm card-hover">
+        <article className="group relative flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm card-hover">
             <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
                 {club.coverImageUrl ? (
                     <img
                         src={club.coverImageUrl}
-                        alt={club.name}
-                        className="h-full w-full object-cover"
+                        alt={club.images?.find((image) => image.isCover)?.altText || club.name}
+                        className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                     />
                 ) : (
                     <div className="flex h-full w-full items-center justify-center">
@@ -151,12 +151,12 @@ function ClubsPage() {
         <div id="clubs-page" className="flex min-h-screen flex-col bg-bg-page">
             <Navbar />
 
-            <section className="flex min-h-[280px] items-start bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
+            <section data-scroll-bg="green" className="flex min-h-[280px] items-start bg-green-500 px-[30px] pt-[48px] pb-[40px] text-center text-white md:min-h-[320px] md:pt-[72px]">
                 <div className="mx-auto w-full max-w-175">
-                    <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">
+                    <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-white">
                         {t('clubs.title')}
                     </h1>
-                    <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">
+                    <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-white md:text-body-sm">
                         {t('clubs.subtitle')}
                     </p>
                 </div>

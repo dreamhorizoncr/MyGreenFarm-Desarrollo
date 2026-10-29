@@ -142,12 +142,14 @@ export function useAnnouncements() {
     announcementId: string,
     files: File[],
     isCover: boolean,
+    altTexts?: string[],
   ) => {
     try {
       return await announcementService.uploadImages(
         announcementId,
         files,
         isCover,
+        altTexts,
       );
     } catch (err) {
       setError(getErrorMessage(err));

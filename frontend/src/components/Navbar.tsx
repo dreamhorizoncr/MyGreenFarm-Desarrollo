@@ -57,10 +57,10 @@ function useBrandNameFits(language: string, isAuthenticated: boolean) {
       const links = Array.from(menu.children) as HTMLElement[]
       const menuWidth =
         links.reduce((total, link) => total + link.offsetWidth, 0) +
-        parseFloat(menuStyle.columnGap || '0') * Math.max(0, links.length - 1) +
-        parseFloat(menuStyle.paddingLeft) +
-        parseFloat(menuStyle.paddingRight)
-      const available = row.clientWidth - parseFloat(rowStyle.paddingLeft) - parseFloat(rowStyle.paddingRight)
+        Number.parseFloat(menuStyle.columnGap || '0') * Math.max(0, links.length - 1) +
+        Number.parseFloat(menuStyle.paddingLeft) +
+        Number.parseFloat(menuStyle.paddingRight)
+      const available = row.clientWidth - Number.parseFloat(rowStyle.paddingLeft) - Number.parseFloat(rowStyle.paddingRight)
 
       setShowName(brand.offsetWidth + nameWidth + menuWidth + options.offsetWidth <= available)
     }
@@ -92,8 +92,8 @@ function Navbar() {
     { to: '/multimedia', label: t('navbar.multimedia') },
     { to: '/forum', label: t('navbar.forum') },
     { to: '/services', label: t('navbar.services') },
-    { to: '/vacantes', label: t('navbar.vacancies') },
     { to: '/clubs', label: t('navbar.clubs') },
+    { to: '/vacantes', label: t('navbar.vacancies') },
     { to: '/about-us', label: t('navbar.aboutUs') },
   ]
 
@@ -181,6 +181,7 @@ function Navbar() {
         <button
           type="button"
           tabIndex={-1}
+          aria-hidden="true"
           aria-label="Close menu"
           className="fixed inset-0 z-50 cursor-default bg-scrim"
           onClick={() => setDrawerOpen(false)}
@@ -188,6 +189,8 @@ function Navbar() {
       )}
 
       <div
+        aria-hidden={!drawerOpen}
+        inert={!drawerOpen}
         className={`fixed right-0 top-0 z-[60] h-dvh w-[280px] overflow-y-auto bg-bg-page transition-transform duration-300 ${
           drawerOpen ? 'translate-x-0' : 'translate-x-full'
         }`}

@@ -96,9 +96,9 @@ function CountrySelect({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={ariaLabel}
-        className="flex h-full items-center gap-2xs rounded-lg px-2xs outline-none transition-colors hover:bg-neutral-100 focus-visible:outline-2 focus-visible:outline-link disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex h-8 items-center gap-2xs rounded-full px-xs outline-none transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link disabled:cursor-not-allowed disabled:opacity-60"
       >
-        <span className="flex w-6 shrink-0 items-center">
+        <span className="flex w-6 shrink-0 items-center text-heading">
           <Flag country={value} label={selectedLabel} />
         </span>
         <ChevronDownIcon size={14} aria-hidden="true" className={`shrink-0 text-neutral-500 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
@@ -146,7 +146,7 @@ function CountrySelect({
                     option.value === value ? 'font-semibold text-link' : ''
                   }`}
                 >
-                  <span className="flex w-6 shrink-0 items-center">
+                  <span className="flex w-6 shrink-0 items-center text-heading">
                     <Flag country={option.value} label={option.label} />
                   </span>
                   <span className="min-w-0 flex-1 truncate">{option.label}</span>

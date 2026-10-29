@@ -57,7 +57,7 @@ class GalleryImageServiceTest {
                 new MockMultipartFile("file", "foto.png", "image/png", new byte[] { 1, 2, 3 }));
 
         assertThrows(InvalidFieldException.class,
-                () -> galleryImageService.uploadImages(galleryId, files, "<script>alert(1)</script>Título"));
+                () -> galleryImageService.uploadImages(galleryId, files, "<script>alert(1)</script>Título", List.of()));
 
         verify(imageRepository, never()).save(any());
         verify(storageService, never()).uploadFile(any(), any(), any());

@@ -38,6 +38,9 @@ public class ServicePlan {
     @Column(nullable = false)
     private String imageUrl;
 
+    @Column(name = "image_alt", length = 140)
+    private String imageAlt;
+
     @Column(nullable = false)
     private BigDecimal price;
     

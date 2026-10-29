@@ -1,10 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ArrowRightIcon } from '@animateicons/react/lucide'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import ApplyVacancyModal from '../components/ApplyVacancyModal.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
+import ScallopEdge from '../components/ui/ScallopEdge.tsx'
+import BlobButton from '../components/ui/BlobButton.tsx'
+import lapiz from '../assets/imgs/lapiz.svg'
+import tijera from '../assets/imgs/Tijera.svg'
+import goma from '../assets/imgs/Goma.svg'
+import cabra from '../assets/imgs/Cabra.svg'
 import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
 import { useVacancies } from '../hooks/useVacancies.ts'
 import { useCurriculums } from '../hooks/useCurriculums.ts'
@@ -29,50 +34,98 @@ interface VacancyCardProps {
   description?: string
   onApply?: () => void
   loading?: boolean
+  position?: number
 }
 
-function VacancyCard({ title, description, onApply, loading = false }: Readonly<VacancyCardProps>) {
+const HEADER_ILLUSTRATIONS = [lapiz, tijera, goma, cabra]
+
+function toneAttributes(position: number) {
+  const mobilePink = position % 2 === 0
+  const desktopPink = (Math.floor(position / 2) + (position % 2)) % 2 === 0
+  return {
+    'data-tone-mobile': mobilePink ? 'pink' : 'green',
+    'data-tone-desktop': desktopPink ? 'pink' : 'green',
+  }
+}
+
+function useCenterActive<T extends HTMLElement>() {
+  const ref = useRef<T>(null)
+
+  useEffect(() => {
+    const node = ref.current
+    if (!node || !window.matchMedia('(hover: none)').matches) return
+    const observer = new IntersectionObserver(
+      ([entry]) => node.toggleAttribute('data-active', entry.isIntersecting),
+      { rootMargin: '-40% 0px -40% 0px' },
+    )
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
+  return ref
+}
+
+function VacancyCard({ title, description, onApply, loading = false, position = 0 }: Readonly<VacancyCardProps>) {
   const { t } = useTranslation()
+  const tone = toneAttributes(position)
+  const illustration = HEADER_ILLUSTRATIONS[position % HEADER_ILLUSTRATIONS.length]
+  const cardRef = useCenterActive<HTMLElement>()
 
   if (loading) {
     return (
-      <article className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow">
-        <Skeleton shape="line" className="h-6 w-3/4" />
-        <div className="mt-sm flex flex-1 flex-col gap-2xs">
-          <Skeleton shape="line" className="h-4 w-full" />
-          <Skeleton shape="line" className="h-4 w-full" />
-          <Skeleton shape="line" className="h-4 w-2/3" />
+      <article {...tone} className="vacancy-card flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow">
+        <div className="flex items-center justify-between gap-md bg-(--tone-soft) px-lg pb-xs pt-md">
+          <Skeleton shape="line" className="h-7 w-3/5" />
+          <Skeleton shape="rect" className="h-14 w-14 shrink-0" />
         </div>
-        <div className="mt-md flex justify-end">
-          <Skeleton shape="pill" className="h-11 w-28" />
+        <ScallopEdge className="text-(--tone-soft)" />
+        <div className="flex flex-1 flex-col p-lg pt-md">
+          <div className="flex flex-1 flex-col gap-2xs">
+            <Skeleton shape="line" className="h-4 w-full" />
+            <Skeleton shape="line" className="h-4 w-full" />
+            <Skeleton shape="line" className="h-4 w-2/3" />
+          </div>
+          <div className="mt-md flex justify-start">
+            <Skeleton shape="pill" className="h-11 w-28" />
+          </div>
         </div>
       </article>
     )
   }
 
   return (
-    <article className="group flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow card-hover">
-      <h2 className="m-0 font-heading text-h4 font-bold leading-snug text-heading">
-        {title}
-      </h2>
+    <article ref={cardRef} {...tone} className="vacancy-card group flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white text-left shadow card-hover">
+      <div className="flex items-center justify-between gap-md bg-(--tone-soft) px-lg pb-xs pt-md transition-colors duration-300 group-hover:bg-(--tone) group-data-active:bg-(--tone)">
+        <h2 className="m-0 min-w-0 font-heading text-h4 font-bold leading-snug text-(--tone-ink) transition-colors duration-300 group-hover:text-white group-data-active:text-white">
+          {title}
+        </h2>
+        <span
+          aria-hidden="true"
+          className="h-14 w-14 shrink-0 bg-(--tone-ink) transition-colors duration-300 group-hover:bg-white group-data-active:bg-white"
+          style={{
+            maskImage: `url(${illustration})`,
+            WebkitMaskImage: `url(${illustration})`,
+            maskSize: 'contain',
+            WebkitMaskSize: 'contain',
+            maskRepeat: 'no-repeat',
+            WebkitMaskRepeat: 'no-repeat',
+            maskPosition: 'center',
+            WebkitMaskPosition: 'center',
+          }}
+        />
+      </div>
+      <ScallopEdge className="text-(--tone-soft) transition-colors duration-300 group-hover:text-(--tone) group-data-active:text-(--tone)" />
 
-      <p className="mt-sm flex-1 font-body text-body-sm text-body-text">
+      <div className="flex flex-1 flex-col p-lg pt-md">
+      <p className="m-0 flex-1 font-body text-body-sm text-[var(--grey-600)]">
         {description}
       </p>
 
-      <div className="mt-md flex justify-end">
-        <button
-          type="button"
-          onClick={onApply}
-          className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
-        >
+      <div className="mt-md flex justify-start">
+        <BlobButton onClick={onApply} className="h-11 w-fit px-lg font-body text-button font-bold">
           {t('vacancies.apply')}
-          <ArrowRightIcon
-            size={16}
-            aria-hidden="true"
-            className="transition-transform group-hover:translate-x-0.5"
-          />
-        </button>
+        </BlobButton>
+      </div>
       </div>
     </article>
   )
@@ -121,12 +174,12 @@ function VacanciesPage() {
     <div id="vacancies-page" className="min-h-screen bg-bg-page">
       <Navbar />
 
-      <section className="flex min-h-[280px] items-start bg-green-500 px-[30px] pt-[48px] pb-[40px] text-center text-white md:min-h-[320px] md:pt-[72px]">
+      <section className="flex min-h-[280px] items-start bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
         <div className="mx-auto w-full max-w-175">
-          <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-white">
+          <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">
             {t('vacancies.title')}
           </h1>
-          <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-white md:text-body-sm">
+          <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">
             {t('vacancies.subtitle')}
           </p>
         </div>
@@ -136,7 +189,7 @@ function VacanciesPage() {
         <Container className="py-10 md:py-12">
           {loading && (
             <div className="grid grid-cols-1 gap-md md:grid-cols-2">
-              <SkeletonList count={skeletonCount}>{() => <VacancyCard loading />}</SkeletonList>
+              <SkeletonList count={skeletonCount}>{(position) => <VacancyCard loading position={position} />}</SkeletonList>
             </div>
           )}
           {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
@@ -167,9 +220,10 @@ function VacanciesPage() {
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-md md:grid-cols-2">
-                {openVacancies.map((vacancy) => (
+                {openVacancies.map((vacancy, position) => (
                   <VacancyCard
                     key={vacancy.id}
+                    position={position}
                     title={vacancy.title}
                     description={vacancy.description}
                     onApply={() => setApplyTarget({ title: vacancy.title, vacancyId: vacancy.id, requiredFields: vacancy.requiredFields })}
@@ -202,13 +256,13 @@ function VacanciesPage() {
           className={`fixed inset-0 m-auto max-h-[90vh] w-[min(420px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card text-center backdrop:bg-scrim ${sentClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
         >
           <div className="relative p-lg md:p-xl">
-            <ModalCloseButton onClick={requestCloseSent} aria-label={t('legalModal.close')} className="absolute right-3 top-[26px] z-20" />
-            <h2 className="m-0 px-xl font-heading text-h4 font-bold text-heading">{t('vacancies.applicationSentTitle')}</h2>
+            <ModalCloseButton onClick={requestCloseSent} aria-label={t('legalModal.close')} className="absolute right-lg top-lg z-20 md:right-xl md:top-xl" />
+            <h2 className="m-0 px-xl pt-xl font-heading text-h4 font-bold text-heading">{t('vacancies.applicationSentTitle')}</h2>
             <p className="mt-sm font-body text-body-sm text-body-text">{t('vacancies.applicationSentMessage')}</p>
             <button
               type="button"
               onClick={requestCloseSent}
-              className="mt-lg inline-flex h-11 w-full items-center justify-center rounded-full bg-green-500 font-body text-body-sm font-semibold uppercase tracking-wide text-white"
+              className="mt-lg inline-flex h-11 w-full items-center justify-center rounded-full bg-green-500 font-body text-body-sm font-semibold text-white"
             >
               {t('vacancies.gotIt')}
             </button>

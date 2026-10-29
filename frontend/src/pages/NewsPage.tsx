@@ -17,16 +17,17 @@ import { useAnnouncementCategories } from "../hooks/useAnnouncementCategories.ts
 import TabHighlight from "../components/ui/TabHighlight.tsx";
 import { tabCarouselClass, useTabCarousel } from "../hooks/useTabCarousel.ts";
 
-
 function NewsPage() {
   const { t, i18n } = useTranslation();
   const { announcements,totalPages, loading, error, fetchAnnouncements } =
     useAnnouncements();
   const {
+    images: announcementImages,
     loading: imagesLoading,
     error: imagesError,
     fetchImages,
     getCoverImage,
+    getCoverAlt,
   } = useAnnouncementImages();
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const tabRowRef = useTabCarousel(activeCategory);
@@ -47,7 +48,6 @@ function NewsPage() {
 
   const cards = announcements;
 
-  // Al cambiar de categoría se vuelve a la primera página de esa categoría
   const selectCategory = (category: string) => {
     setActiveCategory(category);
     setCurrentPage(1);
@@ -135,7 +135,7 @@ function NewsPage() {
               <div className="flex flex-col gap-[18px]">
                 {rows.map((row, rowIndex) => (
                   <div
-                    key={row.map((a) => a.id).join('-')}
+                    key={row.map((a) => a.id).join('-')}  
                     className="grid grid-cols-1 gap-[18px] md:grid-cols-12"
                   >
                     {row.map((a, colIndex) => {
@@ -152,6 +152,7 @@ function NewsPage() {
                           typeLabel={labelFor({ id: a.categoryId, code: a.categoryCode ?? a.type, title: a.categoryTitle })}
                           formattedDate={formatNewsDate(a.eventDate, i18n.language)}
                           coverImage={getCoverImage(a.id)}
+                          coverAlt={getCoverAlt(a.id)}
                           onReadMore={() => setSelectedAnnouncement(a)}
                         />
                       );
@@ -175,6 +176,7 @@ function NewsPage() {
           announcement={selectedAnnouncement}
           typeLabel={labelFor({ id: selectedAnnouncement.categoryId, code: selectedAnnouncement.categoryCode ?? selectedAnnouncement.type, title: selectedAnnouncement.categoryTitle })}
           onClose={() => setSelectedAnnouncement(null)}
+          initialImages={announcementImages[selectedAnnouncement.id]}
         />
       )}
     </div>

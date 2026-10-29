@@ -1,3 +1,4 @@
+
 package taller.multimedia.backend.service.group;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
 import taller.multimedia.backend.dto.child.ChildOptionResponse;
 import taller.multimedia.backend.dto.group.GroupRequest;
 import taller.multimedia.backend.dto.group.GroupResponse;
@@ -73,9 +75,17 @@ public class GroupService {
 
     @Transactional
     public void delete(Long id) {
-        Group group = groupRepository.findById(id)
+        Group group = groupRepository.findByIdWithChildren(id)
                 .orElseThrow(() -> new EntityNotFoundException("Grupo no encontrado con ID: " + id));
 
+        // Desvincular estudiantes sin eliminarlos
+        for (var child : group.getChildren()) {
+            child.setGroup(null);
+        }
+
+        group.getChildren().clear();
+
+        // Eliminar únicamente el grupo
         groupRepository.delete(group);
     }
 
@@ -128,6 +138,7 @@ public class GroupService {
     public GroupResponse getById(Long id) {
         Group group = groupRepository.findByIdWithChildren(id)
                 .orElseThrow(() -> new EntityNotFoundException("Grupo no encontrado con ID: " + id));
+
         return mapToResponse(group);
     }
 
@@ -224,12 +235,12 @@ public class GroupService {
                         .toList();
 
         int enrolledChildren = children.size();
+
         Integer availableSpots = group.getMaxCapacity() == null
                 ? null
                 : Math.max(0, group.getMaxCapacity() - enrolledChildren);
-        List<User> teachers = group.getTeacherGroups().stream()
-                .map(TeacherGroup::getTeacher)
-                .toList();
+
+        User teacher = group.getTeacherUser();
 
         return GroupResponse.builder()
                 .id(group.getId())

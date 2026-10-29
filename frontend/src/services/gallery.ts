@@ -21,6 +21,11 @@ export const galleryService = {
 		return response.data.content
 	},
 
+	async getMostLikedImages(limit = 10): Promise<GalleryImage[]> {
+		const response = await apiClient.get<GalleryImage[]>('/gallery/images/most-liked', { params: { limit } })
+		return response.data
+	},
+
 	async getFeatured(): Promise<Gallery[]> {
 		const response = await apiClient.get<Gallery[]>('/gallery/featured')
 		return response.data
@@ -65,11 +70,13 @@ export const galleryService = {
 		galleryId: string,
 		files: File[],
 		title: string,
+		altTexts?: string[],
 	): Promise<GalleryImage[]> {
 		const formData = new FormData()
 		files
 			.map((file) => new File([file], sanitizeFileName(file.name), { type: file.type }))
 			.forEach((file) => formData.append('files', file))
+		if (altTexts?.length) formData.append('altTexts', JSON.stringify(altTexts))
 
 		const response = await apiClient.post<GalleryImage[]>(
 			`/gallery/${galleryId}/images`,
@@ -85,6 +92,10 @@ export const galleryService = {
 
 	async deleteImage(imageId: string): Promise<void> {
 		await apiClient.delete(`/gallery/images/${imageId}`)
+	},
+
+	async updateImageAlt(imageId: string, altText: string): Promise<void> {
+		await apiClient.patch(`/gallery/images/${imageId}/alt`, { altText })
 	},
 	async translateBatch(entityType: string, targetLanguage: string, items: TranslationItem[]): Promise<Record<string, string>> {
 		const response = await apiClient.post<Record<string, string>>('/translations/batch', {

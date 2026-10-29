@@ -20,25 +20,27 @@ function LatestPostsCard({ blogPosts, onOpen }: Readonly<LatestPostsCardProps>) 
         {t('forum.latest.title')}
       </h2>
 
-      <ul className="m-0 mt-md flex list-none flex-col p-0">
+      <ul className="-mx-sm m-0 mt-sm flex list-none flex-col gap-2xs p-0">
         {latestPosts.map((post) => {
           return (
-            <li key={post.id} className="border-b border-neutral-100 last:border-b-0">
+            <li key={post.id}>
               <button
                 type="button"
                 onClick={() => onOpen(post.id)}
-                className="flex w-full items-start gap-sm rounded-lg py-sm text-left transition-colors hover:bg-neutral-50"
+                className="group flex w-full items-start gap-sm rounded-lg px-sm py-sm text-left transition-colors duration-150 hover:bg-orange-100 focus-visible:bg-orange-100 focus-visible:outline-none"
               >
                 {post.imageUrl && (
-                  <img
-                    src={post.imageUrl}
-                    alt={post.imageAlt || post.title}
-                    className="h-12 w-12 shrink-0 rounded-sm object-cover"
-                  />
+                  <span className="block h-12 w-12 shrink-0 overflow-hidden rounded-sm">
+                    <img
+                      src={post.imageUrl}
+                      alt={post.imageAlt || post.title}
+                      className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                    />
+                  </span>
                 )}
                 <span className="min-w-0 flex-1">
                   <span
-                    className="line-clamp-2 block font-body text-body-sm font-semibold leading-[1.4] text-body-text"
+                    className="line-clamp-2 block font-body text-body-sm font-semibold leading-[1.4] text-body-text transition-colors duration-150 group-hover:text-heading group-focus-visible:text-heading"
                     style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}
                   >
                     {post.title}

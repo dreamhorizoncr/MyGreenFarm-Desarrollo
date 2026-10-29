@@ -1,16 +1,19 @@
 import { useCallback, useEffect, useState, type InputHTMLAttributes } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { ArrowLeftIcon, CheckIcon } from '@animateicons/react/lucide'
-import PhoneInput from 'react-phone-number-input'
+import { Clock, Mail } from 'lucide-react'
+import PhoneInput, { formatPhoneNumberIntl } from 'react-phone-number-input'
 import { useNavigate } from 'react-router-dom'
 import 'react-phone-number-input/style.css'
 import BookingSuccessModal from '../components/BookingSuccessModal.tsx'
 import Navbar from '../components/Navbar.tsx'
 import TextField from '../components/ui/TextField.tsx'
+import CardActionButton from '../components/ui/CardActionButton.tsx'
 import Select from '../components/ui/Select.tsx'
 import CountrySelect from '../components/ui/CountrySelect.tsx'
 import { phoneLabels } from '../utils/phoneLabels.ts'
 import { useBooking } from '../hooks/useBooking.ts'
+import { slotKey, useSlotHolds } from '../hooks/useSlotHolds.ts'
 import { appointmentService } from '../services/appointment.ts'
 import { notify } from '../utils/notifications.ts'
 import {
@@ -23,6 +26,8 @@ import {
 } from '../utils/validators.ts'
 import type { ReferralSource } from '../types/appointment.ts'
 import FieldHint from '../components/ui/FieldHint.tsx'
+import AutoHeight from '../components/ui/AutoHeight.tsx'
+import TabHighlight from '../components/ui/TabHighlight.tsx'
 import { tabCarouselClass, useTabCarousel } from '../hooks/useTabCarousel.ts'
 
 function BookingPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
@@ -133,8 +138,11 @@ function BookingPage() {
     submit,
     setSuccess,
   } = useBooking()
+  const slotHolds = useSlotHolds()
+  const releaseSlotHold = slotHolds.release
 
   const [step, setStep] = useState(1)
+  const [returnToSummary, setReturnToSummary] = useState(false)
 
   const [fullName, setFullName] = useState('')
   const [idType, setIdType] = useState('Costarricense')
@@ -167,9 +175,12 @@ function BookingPage() {
   const availableDates = Object.keys(availability).filter(isBookableWeekday)
   const effectiveDay = day && availableDates.includes(day) ? day : availableDates[0] ?? null
   const dayRowRef = useTabCarousel(effectiveDay)
-  const effectiveTime =
-    time ??
-    (effectiveDay ? availability[effectiveDay]?.slots[0]?.slice(0, 5) ?? null : null)
+  const isSlotFree = (date: string, start: string) => !slotHolds.isUnavailable(slotKey(date, start))
+  const firstFreeTime = effectiveDay
+    ? availability[effectiveDay]?.slots.map((slot) => slot.slice(0, 5)).find((start) => isSlotFree(effectiveDay, start)) ?? null
+    : null
+  const effectiveTime = time && effectiveDay && isSlotFree(effectiveDay, time) ? time : firstFreeTime
+  const holdsSelection = Boolean(effectiveDay && effectiveTime && slotHolds.myHold?.key === slotKey(effectiveDay, effectiveTime))
   const selectedDay = effectiveDay ? availability[effectiveDay] : null
 
   const [eventNames, setEventNames] = useState<Record<string, string>>({})
@@ -291,10 +302,41 @@ function BookingPage() {
     }
   })()
 
-  const handleNext = () => {
-    if (validateStep(step) && step < 5) {
-      setStep(step + 1)
+  const holdSelectedSlot = async () => {
+    if (!effectiveDay || !effectiveTime) return false
+    const result = await slotHolds.hold(slotKey(effectiveDay, effectiveTime))
+    if (!result.ok) {
+      notify.error({ title: t('booking.slotUnavailableTitle'), description: result.message })
+      setTime(null)
+      setStep(1)
     }
+    return result.ok
+  }
+
+  const handleSelectTime = (start: string) => {
+    setTime(start)
+    if (!effectiveDay) return
+    void slotHolds.hold(slotKey(effectiveDay, start)).then((result) => {
+      if (result.ok) return
+      notify.error({ title: t('booking.slotUnavailableTitle'), description: result.message })
+      setTime(null)
+    })
+  }
+
+  const handleNext = async () => {
+    if (!validateStep(step) || step >= 5) return
+    if (!(await holdSelectedSlot())) return
+    if (returnToSummary) {
+      setReturnToSummary(false)
+      setStep(5)
+      return
+    }
+    setStep(step + 1)
+  }
+
+  const editFromSummary = (targetStep: number) => {
+    setReturnToSummary(true)
+    setStep(targetStep)
   }
 
   const handleBack = () => {
@@ -319,9 +361,16 @@ function BookingPage() {
       referralSource: referralSource as ReferralSource,
       referralOtherDetail: referralSource === 'OTHER' ? referralOtherDetail.trim() : undefined,
       language: (i18n.language ?? 'es').split('-')[0],
+      holdId: slotHolds.holderId,
     })
     if (result.ok) {
+      slotHolds.forget()
       resetForm()
+    } else if (result.slotTaken) {
+      notify.error({ title: t('booking.slotUnavailableTitle'), description: result.message ?? t('booking.submitError') })
+      setTime(null)
+      setStep(1)
+      void fetchWeek(toISODate(getTomorrow()))
     } else {
       notify.error({
         title: t('booking.submitErrorToastTitle'),
@@ -332,6 +381,7 @@ function BookingPage() {
 
   const resetForm = useCallback(() => {
     setStep(1)
+    setReturnToSummary(false)
     setFullName('')
     setIdType('Costarricense')
     setIdNumber('')
@@ -345,6 +395,7 @@ function BookingPage() {
     setReferralOtherDetail('')
     setDay(null)
     setTime(null)
+    releaseSlotHold()
     setFullNameError(false)
     setIdNumberError(false)
     setEmailError(false)
@@ -354,7 +405,7 @@ function BookingPage() {
     setReasonError(false)
     setReferralSourceError(false)
     setReferralOtherDetailError(false)
-  }, [])
+  }, [releaseSlotHold])
 
   const selectableClassName = (active: boolean) =>
     `rounded-full border px-md py-sm font-body text-body-sm font-semibold transition-colors ${
@@ -420,17 +471,23 @@ function BookingPage() {
   const renderSlots = (slots: Slot[]) =>
     slots.length > 0 ? (
       <div className="grid grid-cols-2 gap-sm sm:grid-cols-3 md:grid-cols-5">
-        {slots.map((slot) => (
-          <button
-            key={slot.start}
-            type="button"
-            aria-pressed={effectiveTime === slot.start}
-            onClick={() => setTime(slot.start)}
-            className={`${selectableClassName(effectiveTime === slot.start)} inline-flex h-11 w-full items-center justify-center whitespace-nowrap`}
-          >
-            {slot.start}
-          </button>
-        ))}
+        {slots.map((slot) => {
+          const unavailable = effectiveDay ? !isSlotFree(effectiveDay, slot.start) : false
+          return (
+            <button
+              key={slot.start}
+              type="button"
+              aria-pressed={effectiveTime === slot.start}
+              disabled={unavailable}
+              title={unavailable ? t('booking.slotHeldByOther') : undefined}
+              onClick={() => handleSelectTime(slot.start)}
+              className={`${selectableClassName(effectiveTime === slot.start)} inline-flex h-11 w-full flex-col items-center justify-center whitespace-nowrap leading-tight disabled:cursor-not-allowed disabled:border-neutral-200 disabled:bg-neutral-100 disabled:text-neutral-400 disabled:hover:bg-neutral-100`}
+            >
+              {slot.start}
+              {unavailable && <span className="text-[0.65rem] font-normal">{t('booking.slotHeldByOther')}</span>}
+            </button>
+          )
+        })}
       </div>
     ) : (
       <p className="m-0 text-left font-body text-body-sm text-body-text">
@@ -449,11 +506,6 @@ function BookingPage() {
         </p>
       </div>
 
-      {selectedDay?.specialDay && (
-        <p className="m-0 text-left font-body text-body-sm font-semibold text-link">
-          {t('booking.specialSchedule')}{selectedDay.eventName ? `: ${eventNames[effectiveDay ?? ''] ?? selectedDay.eventName}` : ''}
-        </p>
-      )}
 
       {slotsLoading && (
         <p className="m-0 text-left font-body text-body-sm text-body-text">
@@ -491,12 +543,21 @@ function BookingPage() {
                 type="button"
                 aria-pressed={effectiveDay === date}
                 onClick={() => selectDay(date)}
-                className={`${selectableClassName(effectiveDay === date)} inline-flex h-11 items-center justify-center whitespace-nowrap md:w-full`}
+                className={`relative inline-flex h-11 items-center justify-center whitespace-nowrap rounded-full border border-green-500 px-md py-sm font-body text-body-sm font-semibold transition-colors duration-300 md:w-full ${
+                  effectiveDay === date ? 'text-white' : 'bg-transparent text-heading hover:bg-green-50'
+                }`}
               >
+                {effectiveDay === date && <TabHighlight layoutId="booking-day-tab" className="bg-green-500" />}
                 {dayLabel(date)}
               </button>
             ))}
           </div>
+
+          {selectedDay?.specialDay && (
+            <p className="m-0 text-left font-body text-body-sm font-semibold text-link">
+              {t('booking.specialSchedule')}{selectedDay.eventName ? `: ${eventNames[effectiveDay ?? ''] ?? selectedDay.eventName}` : ''}
+            </p>
+          )}
 
           <div className="flex flex-col gap-sm">
             <h4 className="m-0 text-left font-body text-body font-bold text-body-text">
@@ -511,6 +572,10 @@ function BookingPage() {
             </h4>
             {renderSlots(afternoonSlots)}
           </div>
+
+          {holdsSelection && (
+            <p className="m-0 text-left font-body text-body-sm text-neutral-500">{t('booking.slotHeldNote')}</p>
+          )}
         </>
       )}
     </div>
@@ -707,60 +772,92 @@ function BookingPage() {
     </div>
   )
 
+  const longDayLabel = (date: string) => {
+    const label = new Date(`${date}T12:00:00`).toLocaleDateString(i18n.language, { weekday: 'long', day: 'numeric', month: 'long' })
+    return label.charAt(0).toUpperCase() + label.slice(1)
+  }
+
+  const editButton = (targetStep: number, section: string) => (
+    <CardActionButton
+      action="edit"
+      size="sm"
+      label={t('booking.wizard.editSection', { section })}
+      title={t('booking.wizard.edit')}
+      onClick={() => editFromSummary(targetStep)}
+      className="self-start"
+    />
+  )
+
+  const summaryItem = (label: string, value: React.ReactNode, wide = false) => (
+    <div className={`flex min-w-0 flex-col gap-2xs ${wide ? 'md:col-span-2' : ''}`}>
+      <dt className="font-body text-caption text-body-text">{label}</dt>
+      <dd className="m-0 break-words font-body text-body-sm font-semibold text-body-text-dark">{value}</dd>
+    </div>
+  )
+
+  const summarySection = (title: string, targetStep: number, children: React.ReactNode) => (
+    <section className="py-md first:pt-0 last:pb-0">
+      <header className="mb-sm flex items-center justify-between gap-sm">
+        <h4 className="m-0 min-w-0 text-left font-heading text-h6 font-bold text-heading">{title}</h4>
+        {editButton(targetStep, title)}
+      </header>
+      <dl className="m-0 grid grid-cols-1 gap-md text-left md:grid-cols-2">{children}</dl>
+    </section>
+  )
+
+  const referralText = `${referralSource ? t(`booking.referral.options.${referralSource}`) : ''}${referralSource === 'OTHER' && referralOtherDetail ? `: ${referralOtherDetail}` : ''}`
+
   const renderStepConfirm = () => (
-    <div className="flex flex-col gap-lg">
+    <div className="flex flex-col gap-md text-left">
       <h3 className="m-0 text-left font-heading text-h4 font-bold text-heading">
         {t('booking.wizard.confirmTitle')}
       </h3>
 
-      <div className="flex flex-col gap-md">
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.wizard.schedule')}</span>
-          <span className="font-body text-body-sm font-semibold text-heading">
-            {effectiveDay && dayLabel(effectiveDay)} - {effectiveTime}
+      <div className="flex items-center justify-between gap-md rounded-[20px] bg-green-50 p-md md:p-lg">
+        <div className="flex min-w-0 flex-col gap-2xs">
+          <span className="font-body text-caption text-body-text">{t('booking.wizard.appointmentLabel')}</span>
+          <span className="font-heading text-h5 font-bold leading-tight text-body-text-dark">
+            {effectiveDay && longDayLabel(effectiveDay)}
+          </span>
+          <span className="flex items-center gap-2xs font-body text-body font-semibold text-body-text-dark">
+            <Clock size={16} aria-hidden="true" className="text-green-500" />
+            {effectiveTime}
           </span>
         </div>
-
-        <div className="h-px bg-neutral-300" />
-
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.childName')}</span>
-          <span className="font-body text-body-sm font-semibold text-heading">{childName}</span>
-        </div>
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.reason')}</span>
-          <span className="font-body text-body-sm text-heading">{reason}</span>
-        </div>
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.referral.title')}</span>
-          <span className="font-body text-body-sm text-heading">
-            {referralSource && t(`booking.referral.options.${referralSource}`)}{referralSource === 'OTHER' && referralOtherDetail ? `: ${referralOtherDetail}` : ''}
-          </span>
-        </div>
-
-        <div className="h-px bg-neutral-300" />
-
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.fullName')}</span>
-          <span className="font-body text-body-sm font-semibold text-heading">{fullName}</span>
-        </div>
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.idNumber')}</span>
-          <span className="font-body text-body-sm text-heading">{idType} - {idNumber}</span>
-        </div>
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.occupation')}</span>
-          <span className="font-body text-body-sm text-heading">{occupation}</span>
-        </div>
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.email')}</span>
-          <span className="font-body text-body-sm text-heading">{email}</span>
-        </div>
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.phone')}</span>
-          <span className="font-body text-body-sm text-heading">{phone}</span>
-        </div>
+        {editButton(1, t('booking.wizard.schedule'))}
       </div>
+
+      <div className="divide-y divide-neutral-200 rounded-[20px] border border-neutral-200 bg-white px-md py-md md:px-lg md:py-lg">
+        {summarySection(t('booking.wizard.childTitle'), 2, (
+          <>
+            {summaryItem(t('booking.childName'), childName)}
+            {summaryItem(t('booking.referral.title'), referralText)}
+            {summaryItem(t('booking.reason'), reason, true)}
+          </>
+        ))}
+
+        {summarySection(t('booking.wizard.identityTitle'), 3, (
+          <>
+            {summaryItem(t('booking.fullName'), fullName)}
+            {summaryItem(t('booking.idNumber'), `${idType} · ${idNumber}`)}
+          </>
+        ))}
+
+        {summarySection(t('booking.wizard.contactTitle'), 4, (
+          <>
+            {summaryItem(t('booking.email'), email)}
+            {summaryItem(t('booking.phone'), formatPhoneNumberIntl(phone) || phone)}
+            {summaryItem(t('booking.occupation'), occupation)}
+          </>
+        ))}
+      </div>
+
+      <p className="m-0 flex items-start gap-xs font-body text-body-sm text-body-text">
+        <Mail size={16} aria-hidden="true" className="mt-[3px] shrink-0 text-green-500" />
+        <span className="min-w-0 break-words">
+          <Trans i18nKey="booking.wizard.emailNotice" values={{ email }} components={{ strong: <strong className="font-semibold text-body-text-dark" /> }} />
+        </span>
+      </p>
 
       {submitError && (
         <p className="m-0 text-center font-body text-body-sm text-danger">
@@ -782,8 +879,8 @@ function BookingPage() {
     <div className="min-h-screen bg-bg-page">
       <Navbar />
 
-      <main className="flex items-center justify-center px-[30px] py-[30px] md:px-6 md:py-10">
-        <section className="relative flex w-full max-w-[333px] flex-col overflow-hidden rounded-[13px] bg-bg-card shadow md:max-w-[900px] md:rounded-2xl">
+      <main className="flex items-start justify-center px-[30px] py-[30px] md:px-6 md:py-10">
+        <section className="relative flex w-full max-w-[333px] flex-col overflow-hidden rounded-[13px] border border-neutral-200 bg-bg-card shadow md:max-w-[900px] md:rounded-[20px]">
 
           <div className="flex w-full flex-col px-[30px] pb-[28px] pt-[40px] md:px-[50px] md:py-[40px]">
             <div className="mb-lg flex items-center gap-sm">
@@ -795,16 +892,16 @@ function BookingPage() {
               >
                 <ArrowLeftIcon size={30} aria-hidden="true" />
               </button>
-              <h2 className="m-0 text-left font-heading text-h1 leading-none text-heading">
+              <h2 className="m-0 text-left font-heading text-h3 leading-tight text-heading">
                 {t('booking.title')}
               </h2>
             </div>
 
             <WizardProgress step={step} />
 
-            <div className="flex-1 overflow-y-auto">
+            <AutoHeight className="-mx-1 px-1 pb-1">
               {stepContents[step]()}
-            </div>
+            </AutoHeight>
 
             <div className="mt-lg flex items-center justify-between gap-sm">
               {step > 1 ? (
@@ -823,11 +920,11 @@ function BookingPage() {
               {step < 5 ? (
                 <button
                   type="button"
-                  onClick={handleNext}
+                  onClick={() => void handleNext()}
                   disabled={!stepFilled}
                   className="flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-orange-500"
                 >
-                  {t('booking.wizard.next')}
+                  {returnToSummary ? t('booking.wizard.edit') : t('booking.wizard.next')}
                 </button>
               ) : (
                 <button

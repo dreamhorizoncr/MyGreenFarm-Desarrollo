@@ -1,6 +1,10 @@
 package taller.multimedia.backend.controller.club;
 
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
+import taller.multimedia.backend.dto.ImageAltRequest;
+import taller.multimedia.backend.util.ImageAltText;
+import tools.jackson.databind.ObjectMapper;
 import taller.multimedia.backend.dto.club.ClubImageResponse;
 import taller.multimedia.backend.service.club.ClubImageService;
 
@@ -19,15 +23,18 @@ import java.util.List;
 public class ClubImageController {
 
     private final ClubImageService clubImageService;
+    private final ObjectMapper objectMapper;
 
     @PostMapping(value = "/{clubId}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<List<ClubImageResponse>> uploadImages(
             @PathVariable Long clubId,
             @RequestParam("files") List<MultipartFile> files,
-            @RequestParam(name = "isCover", defaultValue = "false") boolean isCover) {
+            @RequestParam(name = "isCover", defaultValue = "false") boolean isCover,
+            @RequestParam(name = "altTexts", required = false) String altTextsJson) {
 
-        List<ClubImageResponse> responses = clubImageService.uploadImages(clubId, files, isCover);
+        List<ClubImageResponse> responses = clubImageService.uploadImages(
+                clubId, files, isCover, ImageAltText.parseList(objectMapper, altTextsJson));
         return ResponseEntity.status(HttpStatus.CREATED).body(responses);
     }
 
@@ -52,6 +59,15 @@ public class ClubImageController {
             @PathVariable Long imageId,
             @RequestParam("sortOrder") Integer sortOrder) {
         return ResponseEntity.ok(clubImageService.updateSortOrder(imageId, sortOrder));
+    }
+
+    @PatchMapping("/images/{imageId}/alt")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    public ResponseEntity<Void> updateImageAlt(
+            @PathVariable Long imageId,
+            @Valid @RequestBody ImageAltRequest request) {
+        clubImageService.updateAltText(imageId, request.getAltText());
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/images/{imageId}")
