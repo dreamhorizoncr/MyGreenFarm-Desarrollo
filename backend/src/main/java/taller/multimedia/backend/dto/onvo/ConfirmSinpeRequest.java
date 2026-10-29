@@ -1,5 +1,7 @@
 package taller.multimedia.backend.dto.onvo;
 
+import java.util.UUID;
+
 import lombok.Data;
 
 @Data 
@@ -11,10 +13,9 @@ public class ConfirmSinpeRequest {
     private String clientEmail;
     private String identificationType;
     private String clientIdentification;
-    private double totalAmount;
     private String description;
     private String language;
-    private String cabysCode;
-    private double taxRate;
     private String currency;
+    private UUID servicePlanId;
+    private String couponCode;
 }

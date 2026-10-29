@@ -12,6 +12,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import taller.multimedia.backend.dto.MessageResponse;
 import taller.multimedia.backend.exception.InvalidFieldException;
@@ -19,6 +21,8 @@ import taller.multimedia.backend.exception.InvalidFieldException;
 @RestControllerAdvice
 @Order(Ordered.LOWEST_PRECEDENCE)
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(InvalidFieldException.class)
     public ResponseEntity<MessageResponse> handleInvalidField(InvalidFieldException exception) {
@@ -41,6 +45,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<MessageResponse> handleUnreadable(HttpMessageNotReadableException exception) {
+        log.warn("No se pudo interpretar el cuerpo de la solicitud: {}",
+                exception.getMostSpecificCause().getMessage());
         return ResponseEntity.badRequest().body(new MessageResponse("Los datos enviados tienen un formato inválido."));
     }
 

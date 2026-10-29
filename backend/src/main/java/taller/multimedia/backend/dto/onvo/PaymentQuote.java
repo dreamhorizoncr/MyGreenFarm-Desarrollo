@@ -6,11 +6,15 @@ import java.util.UUID;
 public record PaymentQuote(
         UUID servicePlanId,
         BigDecimal baseAmount,
+        BigDecimal discountAmount,
         BigDecimal serviceTaxAmount,
         BigDecimal processingFeeAmount,
         BigDecimal processingFeeTaxAmount,
         BigDecimal totalAmount,
         String currency,
         String paymentMethod,
-        BigDecimal exchangeRate) {
+        BigDecimal exchangeRate,
+        String cabysCode,
+        BigDecimal taxRate,
+        String cabysDescription) {
 }

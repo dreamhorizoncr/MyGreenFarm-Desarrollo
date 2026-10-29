@@ -13,9 +13,11 @@ import Container from '../components/home/Container.tsx'
 import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
 import type { ServicePlan } from '../types/servicePlan.ts'
 import type { Currency } from '../types/exchangeRate.ts'
+import type { PaymentQuote } from '../types/servicePlan.ts'
 import { currencySymbol, formatCurrency } from '../utils/currency.ts'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { notifyError } from '../utils/notifications.ts'
+import { getErrorMessage } from '../utils/error.ts'
 import { SinpeModal } from '../components/SinpeModal'
 import Select from '../components/ui/Select.tsx'
 import FieldHint from '../components/ui/FieldHint.tsx'
@@ -41,8 +43,8 @@ export default function PaymentPage() {
     // Datos transferidos desde la página anterior
     const state = location.state as LocationState | null
     const plan = state?.plan
-    const currency = state?.currency ?? 'CRC'
-    const price = state?.price ?? 0
+    const currency = plan?.currency ?? state?.currency ?? 'CRC'
+    const planCurrency = currency
     const [translatedPlans, setTranslatedPlans] = useState<Record<string, ServicePlan>>(
         () => plan ? { [i18n.language.split('-')[0]]: plan } : {},
     )
@@ -89,20 +91,63 @@ export default function PaymentPage() {
 
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card')
     const [loading, setLoading] = useState(false)
+    const [couponCode, setCouponCode] = useState('')
+    const [quote, setQuote] = useState<PaymentQuote | null>(null)
+    const [quoteError, setQuoteError] = useState('')
+    const [quoteLoading, setQuoteLoading] = useState(false)
+    const [saveSubscription, setSaveSubscription] = useState(false)
 
-    // Campos del formulario y Facturación Electrónica (Obligatorios)
+    const isRecurring = Boolean(plan && !['ONE_TIME', 'DAILY'].includes(plan.type.toUpperCase()))
+
+    useEffect(() => {
+        if (!plan) return
+        let isCurrent = true
+        setQuote(null)
+        setQuoteError('')
+        setQuoteLoading(true)
+        
+        const timeout = window.setTimeout(() => {
+
+            const payload = {
+                servicePlanId: plan.id,
+                couponCode: couponCode.trim() || undefined,
+                paymentMethod,
+                cabysCode: plan.cabysCode, 
+            }
+
+            console.log("PAYLOAD ENVIADO A /webhooks/quote:", payload)
+
+            void servicePlanService.quoteVariablePlan(payload).then((result) => {
+                if (!isCurrent) return
+                console.log("COTIZACIÓN RECIBIDA DEL BACKEND:", result)
+                setQuote(result)
+            }).catch((error: unknown) => {
+                console.error("ERROR DE COTIZACIÓN DETALLADO:", error)
+                if (error && typeof error === 'object' && 'response' in error) {
+                    console.error("DETALLE TÉCNICO DEL ERROR 400:", (error as any).response?.data)
+                }
+                if (isCurrent) setQuoteError(getErrorMessage(error))
+            }).finally(() => {
+                if (isCurrent) setQuoteLoading(false)
+            })
+        }, couponCode.trim() ? 350 : 0)
+
+        return () => {
+            isCurrent = false
+            window.clearTimeout(timeout)
+        }
+    }, [couponCode, paymentMethod, plan])
+
     const [email, setEmail] = useState('')
     const [clientName, setClientName] = useState('')
     const [identificationType, setIdentificationType] = useState('01')
     const [clientIdentification, setClientIdentification] = useState('')
 
-    // Campos de Tarjeta
     const [cardNumber, setCardNumber] = useState('')
     const [expiry, setExpiry] = useState('')
     const [cvc, setCvc] = useState('')
     const [cardHolder, setCardHolder] = useState('')
 
-    // Campo SINPE Móvil
     const [phoneNumber, setPhoneNumber] = useState('')
     const [sinpeReference, setSinpeReference] = useState('')
     const [showSinpeModal, setShowSinpeModal] = useState(false)
@@ -166,13 +211,21 @@ export default function PaymentPage() {
 
     const handleCardPayment = async (e: React.FormEvent) => {
         e.preventDefault()
+        if (!clientName.trim() || !email.trim() || !clientIdentification.trim()) {
+            notifyError(t('services.invoiceFieldsRequired'))
+            return
+        }
         setLoading(true)
 
         try {
             const intent = await servicePlanService.createPaymentIntent({
-                priceId: plan.gatewayPriceId,
+                servicePlanId: plan.id,
                 customerEmail: email,
-                description: `Pago de ${displayPlan?.name ?? plan.name}`
+                description: `Pago de ${displayPlan?.name ?? plan.name}`,
+                paymentMethod: 'card',
+                language: i18n.resolvedLanguage ?? i18n.language,
+                couponCode: couponCode.trim() || undefined,
+                saveSubscription,
             })
 
             const [expMonth, expYear] = expiry.split('/')
@@ -188,16 +241,18 @@ export default function PaymentPage() {
                 clientEmail: email,
                 identificationType: identificationType,
                 clientIdentification: identificationType === '05' ? clientIdentification.trim() : clientIdentification.replace(/\D/g, ''),
-                totalAmount: price,
                 description: `Suscripción: ${displayPlan?.name ?? plan.name}`,
                 language: i18n.resolvedLanguage ?? i18n.language,
-                cabysCode: plan.cabysCode || "9310211050502",
-                taxRate: plan.taxRate || 4.0
+                servicePlanId: plan.id,
+                couponCode: couponCode.trim() || undefined,
+                saveSubscription,
             })
 
             setLoading(false)
 
             if (confirmResult.status === 'succeeded') {
+                if (confirmResult.subscriptionError) notifyError(confirmResult.subscriptionError)
+                if (confirmResult.invoiceError) notifyError(confirmResult.invoiceError)
                 navigate('/payment-success');
             } else {
                 navigate('/payment-failed');
@@ -211,13 +266,20 @@ export default function PaymentPage() {
 
     const handleSinpePayment = async (e: React.FormEvent) => {
         e.preventDefault()
+        if (!clientName.trim() || !email.trim() || !clientIdentification.trim()) {
+            notifyError(t('services.invoiceFieldsRequired'))
+            return
+        }
         setLoading(true)
 
         try {
             const intent = await servicePlanService.createPaymentIntent({
-                priceId: plan.gatewayPriceId,
+                servicePlanId: plan.id,
                 customerEmail: email,
-                description: `Pago SINPE de ${displayPlan?.name ?? plan.name}`
+                description: `Pago SINPE de ${displayPlan?.name ?? plan.name}`,
+                paymentMethod: 'sinpe',
+                language: i18n.resolvedLanguage ?? i18n.language,
+                couponCode: couponCode.trim() || undefined,
             })
 
             const confirmResult = await servicePlanService.confirmSinpePayment({
@@ -228,18 +290,18 @@ export default function PaymentPage() {
                 clientEmail: email,
                 identificationType: identificationType,
                 clientIdentification: identificationType === '05' ? clientIdentification.trim() : clientIdentification.replace(/\D/g, ''),
-                totalAmount: price,
                 description: `Suscripción SINPE: ${displayPlan?.name ?? plan.name}`,
                 language: i18n.resolvedLanguage ?? i18n.language,
-                cabysCode: plan.cabysCode || "9310211050502",
-                taxRate: plan.taxRate || 4.0,
-                currency: currency
+                currency: planCurrency,
+                servicePlanId: plan.id,
+                couponCode: couponCode.trim() || undefined,
             })
 
             setLoading(false)
             setPaymentResultStatus(confirmResult?.status || '')
 
             if (confirmResult?.status === 'succeeded') {
+                if (confirmResult.invoiceError) notifyError(confirmResult.invoiceError)
                 navigate('/payment-success')
             } else if (['pending', 'processing', 'requires_action'].includes(confirmResult?.status)) {
                 setShowSinpeModal(true)
@@ -275,12 +337,10 @@ export default function PaymentPage() {
                         <h1 className="m-0 font-heading text-h3 font-bold leading-tight text-heading text-left">
                             {t('services.finalizePurchase')}
                         </h1>
-                        <p className="mt-xs font-body text-body-sm text-neutral-500 text-left">
-                            {t('services.completeDetails')}
-                        </p>
-
-                        {/* SECCIÓN: Datos Obligatorios de Facturación Electrónica */}
-                        <div className="mt-md space-y-md border-b border-neutral-200 pb-lg">
+                        <div className="mt-md space-y-md">
+                            <h2 className="font-heading text-h4 font-bold text-heading text-left">
+                                {t('services.invoiceInformation')}
+                            </h2>
                             <div>
                                 <label className="block font-body text-body-sm font-semibold text-heading text-left">
                                     {t('services.fullNameOrCompany')}
@@ -288,6 +348,7 @@ export default function PaymentPage() {
                                 <input
                                     type="text"
                                     required
+                                    form={paymentMethod === 'card' ? 'card-payment-form' : 'sinpe-payment-form'}
                                     placeholder="Sofía Rodríguez Mora"
                                     value={clientName}
                                     onChange={(e) => setClientName(e.target.value)}
@@ -303,6 +364,7 @@ export default function PaymentPage() {
                                 <input
                                     type="email"
                                     required
+                                    form={paymentMethod === 'card' ? 'card-payment-form' : 'sinpe-payment-form'}
                                     placeholder="juan@gmail.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -333,6 +395,7 @@ export default function PaymentPage() {
                                     <input
                                         type="text"
                                         required
+                                        form={paymentMethod === 'card' ? 'card-payment-form' : 'sinpe-payment-form'}
                                         placeholder={identificationType === '05' ? t('services.passportPlaceholder') : '105670890'}
                                         value={clientIdentification}
                                         onChange={(e) => setClientIdentification(e.target.value)}
@@ -343,6 +406,11 @@ export default function PaymentPage() {
                             </div>
                         </div>
 
+                    </div>
+                    <div className="mt-lg rounded-[28px] border border-neutral-200 bg-white p-lg shadow-sm sm:p-xl">
+                        <h2 className="font-heading text-h4 font-bold text-heading text-left">
+                            {t('services.paymentInformation')}
+                        </h2>
                         <div className="mt-lg grid grid-cols-2 gap-sm">
                             <button
                                 type="button"
@@ -358,10 +426,14 @@ export default function PaymentPage() {
 
                             <button
                                 type="button"
-                                onClick={() => setPaymentMethod('sinpe')}
-                                className={`flex h-11 items-center justify-center gap-xs rounded-full border border-green-500 px-md font-body text-body-sm font-semibold transition-colors duration-300 ${paymentMethod === 'sinpe'
-                                    ? 'bg-green-500 text-white'
-                                    : 'bg-transparent text-heading hover:bg-green-50'
+                                disabled={planCurrency === 'USD'}
+                                onClick={() => {
+                                    setSaveSubscription(false)
+                                    setPaymentMethod('sinpe')
+                                }}
+                                className={`flex items-center justify-center gap-xs rounded-2xl border p-md font-body text-body-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-40 ${paymentMethod === 'sinpe'
+                                    ? 'border-green-500 bg-green-50 text-green-500 shadow-sm'
+                                    : 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50'
                                     }`}
                             >
                                 <SmartphoneIcon size={20} />
@@ -371,7 +443,23 @@ export default function PaymentPage() {
 
                         <AutoHeight className="-mx-1 flow-root px-1 pb-1">
                         {paymentMethod === 'card' && (
-                            <form onSubmit={handleCardPayment} className="mt-lg space-y-md">
+                            <form id="card-payment-form" onSubmit={handleCardPayment} className="mt-lg space-y-md">
+                                {isRecurring && (
+                                    <label className="flex items-start gap-sm rounded-xl border border-neutral-200 p-md font-body text-body-sm text-heading">
+                                        <input
+                                            type="checkbox"
+                                            checked={saveSubscription}
+                                            onChange={(event) => setSaveSubscription(event.target.checked)}
+                                            className="mt-1 accent-green-600"
+                                        />
+                                        <span>
+                                            <span className="block font-semibold">{t('services.saveSubscription')}</span>
+                                            <span className="mt-2xs block text-caption text-neutral-500">
+                                                {t('services.subscriptionTerms')}
+                                            </span>
+                                        </span>
+                                    </label>
+                                )}
                                 <div>
                                     <label className="block font-body text-body-sm font-semibold text-heading text-left">
                                         {t('services.cardHolderName')}
@@ -440,17 +528,23 @@ export default function PaymentPage() {
 
                                 <button
                                     type="submit"
-                                    disabled={loading || !cardReady}
-                                    className="mt-lg flex h-11 w-full items-center justify-center gap-xs rounded-full bg-orange-500 font-body text-body-sm font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-orange-500"
+                                    disabled={loading || quoteLoading || !quote}
+                                    className="mt-lg flex h-12 w-full items-center justify-center gap-xs rounded-full bg-orange-500 font-body text-body font-semibold text-white transition hover:bg-orange-600 disabled:opacity-60"
                                 >
                                     <LockIcon size={18} />
-                                    {loading ? t('services.processing') : `${t('services.pay')} ${currencySymbol(currency)}${formatCurrency(price, currency, i18n.language)}`}
+                                    {loading
+                                        ? t('services.processing')
+                                        : quoteLoading
+                                            ? t('common.loading')
+                                            : quote
+                                                ? `${t('services.pay')} ${currencySymbol(currency)}${formatCurrency(quote.totalAmount, currency, i18n.language)}`
+                                                : t('services.pay')}
                                 </button>
                             </form>
                         )}
 
-                        {paymentMethod === 'sinpe' && currency === 'CRC' && (
-                            <form onSubmit={handleSinpePayment} className="mt-lg space-y-md">
+                        {paymentMethod === 'sinpe' && planCurrency === 'CRC' && (
+                            <form id="sinpe-payment-form" onSubmit={handleSinpePayment} className="mt-lg space-y-md">
                                 <div className="rounded-2xl bg-neutral-50 p-md">
                                     <p className="font-body text-body-sm text-neutral-600 text-left">
                                         {t('services.sinpeInstructions')}
@@ -495,8 +589,8 @@ export default function PaymentPage() {
 
                                 <button
                                     type="submit"
-                                    disabled={loading || !sinpeReady}
-                                    className="mt-lg flex h-11 w-full items-center justify-center gap-xs rounded-full bg-orange-500 font-body text-body-sm font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-orange-500"
+                                    disabled={loading || quoteLoading || !quote}
+                                    className="mt-lg flex h-12 w-full items-center justify-center gap-xs rounded-full bg-orange-500 font-body text-body font-semibold text-white transition hover:bg-orange-600 disabled:opacity-60"
                                 >
                                     <CheckCheckIcon size={18} />
                                     {loading ? t('services.verify') : t('services.confirmSinpe')}
@@ -528,14 +622,52 @@ export default function PaymentPage() {
                         </div>
 
                         <div className="mt-md space-y-xs font-body text-body-sm text-neutral-600">
+                            {quoteError && <p role="alert" className="font-body text-caption text-danger">{quoteError}</p>}
                             <div className="flex justify-between">
                                 <span>{t('services.subtotal')}</span>
-                                <span>{currencySymbol(currency)}{formatCurrency(price, currency, i18n.language)}</span>
+                                <span>{quote ? `${currencySymbol(currency)}${formatCurrency(quote.baseAmount, currency, i18n.language)}` : '—'}</span>
                             </div>
-                            <div className="flex justify-between text-neutral-400">
-                                <span>{t('services.taxes')}</span>
-                                <span>{t('services.included')}</span>
-                            </div>
+                            {quote && quote.discountAmount > 0 && (
+                                <div className="flex justify-between text-green-700">
+                                    <span>{t('services.discount')}</span>
+                                    <span>-{currencySymbol(currency)}{formatCurrency(quote.discountAmount, currency, i18n.language)}</span>
+                                </div>
+                            )}
+                            {quote && quote.processingFeeAmount > 0 && (
+                                <div className="flex justify-between">
+                                    <span>{t('services.processingFee')}</span>
+                                    <span>{currencySymbol(currency)}{formatCurrency(quote.processingFeeAmount, currency, i18n.language)}</span>
+                                </div>
+                            )}
+                            {quote && (
+                                <>
+                                    {quote.exchangeRate !== null && (
+                                        <div className="flex justify-between">
+                                            <span>{t('services.bacExchangeRate')}</span>
+                                            <span>
+                                                {currencySymbol('CRC')}{formatCurrency(
+                                                    quote.exchangeRate,
+                                                    'CRC',
+                                                    i18n.language,
+                                                )} / USD
+                                            </span>
+                                        </div>
+                                    )}
+                                    <div className="flex justify-between">
+                                        <span>{t('services.serviceTax', { rate: quote.taxRate })}</span>
+                                        <span>{currencySymbol(currency)}{formatCurrency(quote.serviceTaxAmount, currency, i18n.language)}</span>
+                                    </div>
+                                    {quote.cabysDescription && (
+                                        <p className="pl-sm text-caption text-neutral-500">
+                                            {quote.cabysDescription.split(' / ').at(-1)}
+                                        </p>
+                                    )}
+                                    <div className="flex justify-between">
+                                        <span>{t('services.onvoTax')}</span>
+                                        <span>{currencySymbol(currency)}{formatCurrency(quote.processingFeeTaxAmount, currency, i18n.language)}</span>
+                                    </div>
+                                </>
+                            )}
                         </div>
 
                         <div className="mt-lg flex items-center justify-between border-t border-neutral-200 pt-md">
@@ -544,12 +676,30 @@ export default function PaymentPage() {
                             </span>
                             <span className="font-heading text-h3 font-bold text-green-500">
                                 <AnimatedNumber
-                                    value={price}
-                                    format={(n) => `${currencySymbol(currency)}${formatCurrency(n, currency, i18n.language)}`}
+                                    value={quote?.totalAmount ?? 0}
+                                    format={(n) => quote
+                                        ? `${currencySymbol(currency)}${formatCurrency(n, currency, i18n.language)}`
+                                        : '—'}
                                 />
                             </span>
                         </div>
                     </div>
+
+                    {plan.couponCode && (
+                        <div className="mt-md rounded-[28px] border border-neutral-200 bg-white p-lg shadow-sm">
+                            <label className="block font-body text-caption font-semibold text-heading text-left">
+                                {t('services.couponCode')}
+                                <input
+                                    type="text"
+                                    value={couponCode}
+                                    onChange={(event) => setCouponCode(event.target.value.toUpperCase())}
+                                    maxLength={60}
+                                    placeholder={t('services.couponPlaceholder')}
+                                    className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 font-body text-body-sm outline-none focus:border-green-500"
+                                />
+                            </label>
+                        </div>
+                    )}
                 </aside>
             </Container>
             <SinpeModal
