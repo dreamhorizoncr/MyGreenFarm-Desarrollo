@@ -585,7 +585,7 @@ function OwnerClubsPage() {
                   <ImageThumbList className="mt-sm">
                     <ImageThumb
                       file={cover}
-                      label={cover.name}
+                      label={t('common.imageCover')}
                       onDelete={() => setCover(null)}
                       deleteLabel={t("ownerClubs.deleteImage")}
                       altText={imageAlts.newValue(cover)}
@@ -615,7 +615,7 @@ function OwnerClubsPage() {
                       <ImageThumb
                         key={`${file.name}-${index}`}
                         file={file}
-                        label={file.name}
+                        label={t('common.imageGallery')}
                         onDelete={() => setGallery((current) => current.filter((_, i) => i !== index))}
                         deleteLabel={t("ownerClubs.deleteImage")}
                         altText={imageAlts.newValue(file)}
@@ -636,7 +636,7 @@ function OwnerClubsPage() {
                   <ImageThumb
                     key={image.id}
                     src={image.fileUrl}
-                    label={image.isCover ? t("ownerClubs.coverTag") : t("ownerClubs.galleryTag")}
+                    label={image.isCover ? t('common.imageCover') : t('common.imageGallery')}
                     onDelete={() => setImageToDelete(image)}
                     deleteLabel={t("ownerClubs.deleteImage")}
                     altText={imageAlts.existingValue(image)}

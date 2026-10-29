@@ -11,6 +11,7 @@ import { validateEmail, validatePassword, validateRequired, validateSafeText } f
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 import TabHighlight from './ui/TabHighlight.tsx'
 import FieldHint from './ui/FieldHint.tsx'
+import AutoHeight from './ui/AutoHeight.tsx'
 
 interface CreateUserModalProps {
   onCreated: () => void | Promise<void>
@@ -100,7 +101,8 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
         />
       </div>
 
-      <div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
+      <div className="mt-lg">
+      <AutoHeight className="-mx-1 grid grid-cols-1 gap-md px-1 pb-1 md:grid-cols-2">
         <label className="font-body text-body-sm font-semibold text-heading">
           {t('signup.firstName')}
           <input
@@ -198,6 +200,7 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
             <FieldHint>{t('fields.person.birthday.hint')}</FieldHint>
           </div>
         )}
+      </AutoHeight>
       </div>
 
       <div className="mt-lg flex justify-end gap-md *:flex-1">

@@ -129,6 +129,10 @@ export default {
       albumTitle: "Álbumes",
       albumCount: "20 fotos",
       filterAll: "Todos",
+      mostLikedTitle: "Las más queridas",
+      mostLikedDescription: "Las fotos que más corazones han recibido de nuestras familias.",
+      likeCount: "{{count}} me gusta",
+      openPhoto: "Ver foto: {{title}}",
       photoCount: "{{count}} fotos",
       empty: "No hay álbumes para este año.",
       noGalleries: "Todavía no hay álbumes publicados.",
@@ -325,6 +329,10 @@ export default {
       placeholderTitle: 'Nuestro equipo',
       placeholderDescription:
         'Nuestros docentes aparecerán aquí cuando conectemos esta sección con el sistema de gestión de docentes.',
+      previous: 'Docentes anteriores',
+      next: 'Siguientes docentes',
+      navigation: 'Navegación del equipo',
+      goTo: 'Ir a la página {{number}} del equipo',
     },
     roles: {
       TEACHER: 'Docente',
@@ -627,6 +635,10 @@ export default {
       back: "Anterior",
       next: "Siguiente",
       confirmButton: "Confirmar cita",
+      edit: "Editar",
+      editSection: "Editar {{section}}",
+      appointmentLabel: "Tu cita",
+      emailNotice: "Te enviaremos la confirmación a <strong>{{email}}</strong>.",
     },
     specialSchedule: "Horario especial",
   },
@@ -708,6 +720,8 @@ export default {
     backToProfile: "Regresar a Mi perfil",
   },
   common: {
+    imageCover: "Portada",
+    imageGallery: "Galería",
     errors: {
       network: 'No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.',
       forbidden: 'No tienes permiso para realizar esta acción.',
