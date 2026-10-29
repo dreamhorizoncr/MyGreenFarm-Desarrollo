@@ -99,11 +99,11 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                         </h3>
                         <div className={`grid gap-[12px] ${galleryGridColumns}`}>
                             {galleryImages.map((image, index) => (
-                                <div key={image.id} className="relative overflow-hidden rounded-2xl">
+                                <div key={image.id} className="group relative overflow-hidden rounded-2xl">
                                     <img
                                         src={image.fileUrl}
                                         alt={image.altText || club.name}
-                                        className="h-[220px] w-full object-cover transition-transform duration-300 hover:scale-105"
+                                        className="h-[220px] w-full object-cover transition-transform duration-300 group-hover:scale-105"
                                     />
                                     <button
                                         type="button"
@@ -111,7 +111,7 @@ function ClubDetailModal({ club, onClose }: Readonly<ClubDetailModalProps>) {
                                         aria-label={`${t('clubs.gallery')}: ${club.name}`}
                                         className="absolute inset-0 flex cursor-zoom-in items-end justify-end p-3 focus-visible:outline-2 focus-visible:outline-white"
                                     >
-                                        <span className="flex size-10 items-center justify-center rounded-full bg-black/55 text-white shadow transition hover:scale-105 hover:bg-black/70">
+                                        <span className="flex size-10 items-center justify-center rounded-full bg-black/55 text-white opacity-0 shadow transition group-hover:scale-105 group-hover:bg-black/70 group-hover:opacity-100 group-focus-within:opacity-100">
                                             <ZoomIn size={20} aria-hidden="true" />
                                         </span>
                                     </button>

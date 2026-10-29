@@ -99,7 +99,7 @@ function AnnouncementsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i18n.language, currentPage, activeCategory, pageSize]);
 
-  const { loading: coversLoading, fetchImages: fetchCovers, getCoverImage, getCoverAlt } = useAnnouncementImages();
+  const { images: coverImages, loading: coversLoading, fetchImages: fetchCovers, getCoverImage, getCoverAlt } = useAnnouncementImages();
 
   useEffect(() => {
     void fetchCovers(announcements.map((announcement) => announcement.id));
@@ -483,7 +483,7 @@ function AnnouncementsPage() {
                   <ImageThumbList className="mt-sm">
                     <ImageThumb
                         file={cover}
-                        label={cover.name}
+                        label={t('common.imageCover')}
                         onDelete={() => setCover(null)}
                         deleteLabel={t("adminNews.deleteImage")}
                         altText={imageAlts.newValue(cover)}
@@ -513,7 +513,7 @@ function AnnouncementsPage() {
                       <ImageThumb
                         key={`${file.name}-${index}`}
                         file={file}
-                        label={file.name}
+                        label={t('common.imageGallery')}
                         onDelete={() => setGallery((current) => current.filter((_, i) => i !== index))}
                         deleteLabel={t("adminNews.deleteImage")}
                         altText={imageAlts.newValue(file)}
@@ -534,7 +534,7 @@ function AnnouncementsPage() {
                   <ImageThumb
                     key={image.id}
                     src={image.fileUrl}
-                    label={image.isCover ? t("adminNews.newscover") : t("adminNews.newsgallery")}
+                    label={image.isCover ? t('common.imageCover') : t('common.imageGallery')}
                     onDelete={() => setImageToDelete(image)}
                     deleteLabel={t("adminNews.deleteImage")}
                     altText={imageAlts.existingValue(image)}
@@ -643,6 +643,7 @@ function AnnouncementsPage() {
           announcement={previewing}
           typeLabel={labelFor({ id: previewing.categoryId, code: previewing.categoryCode ?? previewing.type, title: previewing.categoryTitle })}
           onClose={() => setPreviewing(null)}
+          initialImages={coverImages[previewing.id]}
         />
       )}
 

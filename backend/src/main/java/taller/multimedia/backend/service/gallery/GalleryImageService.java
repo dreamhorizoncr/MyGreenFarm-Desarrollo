@@ -5,6 +5,7 @@ import taller.multimedia.backend.util.ImageAltText;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,6 +96,13 @@ public class GalleryImageService {
                 contentType.equals("image/jpg") ||
                 contentType.equals("image/jpeg") ||
                 contentType.equals("image/svg+xml");
+    }
+
+    @Transactional(readOnly = true)
+    public List<GalleryImageResponse> getMostLiked(int limit) {
+        return imageRepository.findMostLiked(PageRequest.of(0, limit)).stream()
+                .map(result -> mapToResponse(result.getImage(), result.getLikes()))
+                .toList();
     }
 
     @Transactional(readOnly = true)
