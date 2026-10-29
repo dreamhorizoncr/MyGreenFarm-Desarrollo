@@ -121,7 +121,9 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
   }, [selectedImage])
 
   useEffect(() => {
-    if (cabysQuery.trim().length < 3 || (selectedCabys && cabysLabel(selectedCabys) === cabysQuery)) {
+    if (cabysQuery.trim().length < 3
+      || (planToEdit?.cabysCode === cabysQuery.trim() && !selectedCabys)
+      || (selectedCabys && cabysLabel(selectedCabys) === cabysQuery)) {
       setCabysResults([])
       return
     }
@@ -207,7 +209,7 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
     if (!isEditing && (!name.trim() || !description.trim() || !price || Number(price) <= 0)) {
       setCabysError(t('admin.servicios.serviceFieldsRequired'))
       hasError = true
-    } else if (!selectedCabys) {
+    } else if (!selectedCabys && !planToEdit?.cabysCode) {
       setCabysError(t('admin.servicios.selectCabys'))
       hasError = true
     } else {

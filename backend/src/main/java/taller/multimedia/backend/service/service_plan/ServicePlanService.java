@@ -261,8 +261,6 @@ public class ServicePlanService {
             couponBody.put("amountOff", dto.getCouponValue());
         }
 
-        // Configuración específica para links de checkout / un solo uso según tu JSON
-        // de Onvo
         couponBody.put("scope", "checkout_session");
         couponBody.put("appliesTo", List.of("one_time_links"));
 
@@ -272,8 +270,6 @@ public class ServicePlanService {
         if (dto.getCouponMaxRedemptions() != null) {
             couponBody.put("maxRedemptions", dto.getCouponMaxRedemptions());
         }
-
-        couponBody.put("code", codeNormalized);
 
         try {
             ResponseEntity<Map> couponResponse = restTemplate.exchange(
@@ -285,21 +281,49 @@ public class ServicePlanService {
             if (couponResponse.getBody() == null || couponResponse.getBody().get("id") == null) {
                 throw new IllegalStateException("Onvo no devolvió el identificador del cupón creado.");
             }
-            dto.setCouponId(couponResponse.getBody().get("id").toString());
+            String couponId = couponResponse.getBody().get("id").toString();
+            Map<String, Object> promotionCodeBody = Map.of(
+                    "promotionCodes", List.of(Map.of(
+                            "code", codeNormalized,
+                            "isActive", true)));
+            restTemplate.exchange(
+                    onvoApiUrl + "/coupons/" + couponId,
+                    HttpMethod.POST,
+                    new HttpEntity<>(promotionCodeBody, headers),
+                    Map.class);
+
+            ResponseEntity<Map> verifiedCoupon = restTemplate.exchange(
+                    onvoApiUrl + "/coupons/" + couponId,
+                    HttpMethod.GET,
+                    new HttpEntity<>(headers),
+                    Map.class);
+            if (verifiedCoupon.getBody() == null
+                    || !hasActivePromotionCode(verifiedCoupon.getBody(), codeNormalized)) {
+                throw new IllegalStateException("Onvo no guardó el código promocional en el cupón.");
+            }
+
+            dto.setCouponId(couponId);
             dto.setCouponCode(codeNormalized);
             log.info("Cupón creado con éxito en OnvoPay: ID {}", dto.getCouponId());
 
         } catch (HttpClientErrorException e) {
             String errorBody = e.getResponseBodyAsString();
             log.error("Error de Onvo al crear el cupón: {}", errorBody);
-
-            if (errorBody.contains("P2002") || errorBody.contains("Unique constraint")) {
-                log.warn("El cupón '{}' ya existe en OnvoPay. El cupón ya está activo en la pasarela.", codeNormalized);
-                dto.setCouponCode(codeNormalized);
-            } else {
-                throw new RuntimeException("Error al registrar el cupón en OnvoPay: " + errorBody);
-            }
+            throw new RuntimeException("Error al registrar el cupón en OnvoPay: " + errorBody, e);
         }
+    }
+
+    private boolean hasActivePromotionCode(Map<?, ?> coupon, String expectedCode) {
+        Object rawPromotionCodes = coupon.get("promotionCodes");
+        if (!(rawPromotionCodes instanceof List<?> promotionCodes)) {
+            return false;
+        }
+        return promotionCodes.stream()
+                .filter(Map.class::isInstance)
+                .map(Map.class::cast)
+                .anyMatch(promotionCode -> expectedCode.equalsIgnoreCase(
+                        String.valueOf(promotionCode.get("code")))
+                        && !Boolean.FALSE.equals(promotionCode.get("isActive")));
     }
 
     private boolean isRecurring(String type) {
@@ -361,9 +385,13 @@ public class ServicePlanService {
     public ServicePlan updatePlan(UUID id, ServicePlanRequest dto, MultipartFile file) {
         ServicePlan existing = getPlanById(id);
         if (dto.getCabysCode() != null && !dto.getCabysCode().isBlank()) {
-            CabysDetails cabys = findCabys(dto.getCabysCode());
-            dto.setCabysCode(cabys.code());
-            dto.setTaxRate(cabys.taxRate());
+            if (dto.getCabysCode().equals(existing.getCabysCode())) {
+                dto.setTaxRate(existing.getTaxRate());
+            } else {
+                CabysDetails cabys = findCabys(dto.getCabysCode());
+                dto.setCabysCode(cabys.code());
+                dto.setTaxRate(cabys.taxRate());
+            }
         }
         if (dto.getCouponCode() != null && !dto.getCouponCode().isBlank()) {
             validateCoupon(dto, existing.getPrice());
