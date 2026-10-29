@@ -56,6 +56,8 @@ import ClubsPage from './pages/ClubsPage.tsx'
 import AboutUsPage from './pages/AboutUsPage.tsx'
 import PaymentPage from './pages/PaymentPage.tsx'
 import ChatWidget from './components/chat/ChatWidget.tsx'
+import GroupsRoute from './routes/GroupsRoute.tsx'
+import AdminGroupsPage from './pages/AdminGroupsPage.tsx'
 
 function SessionWatcher() {
   useSessionExpiredNotice()
@@ -112,6 +114,9 @@ function App() {
                           <Route path="/admin/disponibilidad" element={<OwnerAvailabilityPage />} />
                           <Route path="/admin/newsletter" element={<OwnerNewsletter />} />
                         </Route>
+                      </Route>
+                      <Route element={<GroupsRoute />}>
+                        <Route path="/admin/groups" element={<AdminGroupsPage />} />
                       </Route>
                       <Route element={<ExpedientsRoute />}>
                         <Route path="/admin/expedients" element={<AdminExpedientsPage />} />
