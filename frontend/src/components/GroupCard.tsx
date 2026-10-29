@@ -93,7 +93,7 @@ import type { Group } from '../types/group.ts'
                     </p>
 
                     <p className="break-words font-body text-body-sm text-body-text">
-                    {group!.teacherName}
+                    {group!.teacherNames}
                     </p>
                 </>
                 )}
