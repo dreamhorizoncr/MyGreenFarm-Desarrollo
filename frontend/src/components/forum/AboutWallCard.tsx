@@ -10,7 +10,7 @@ function AboutWallCard({ community = false }: Readonly<AboutWallCardProps>) {
 
   return (
     <section id="forum-about" className="flex flex-col items-start rounded-2xl border border-neutral-200 bg-white p-lg text-left">
-      <span className="flex size-[56px] items-center justify-center rounded-full bg-[var(--orange-100)] text-[var(--orange-500)]">
+      <span className="flex size-[56px] items-center justify-center rounded-full bg-[var(--pink-50)] text-pink-400">
         <UsersIcon size={24} aria-hidden="true" />
       </span>
 

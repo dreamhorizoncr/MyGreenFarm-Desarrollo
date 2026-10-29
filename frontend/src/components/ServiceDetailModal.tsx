@@ -134,7 +134,7 @@ import CurrencyToggle from './currency/CurrencyToggle.tsx'
                                     {t('services.priceLabel')}
                                 </h3>
                                 <div className="mt-xs flex min-w-0 flex-col items-start gap-xs [&>div:first-child]:justify-start">
-                                    <span className="font-heading text-h2 font-bold leading-none text-green-500">
+                                    <span className="flex flex-col items-start gap-md font-heading text-h2 font-bold leading-none text-green-500">
                                         <CurrencyToggle
                                             value={currency}
                                             onChange={setCurrency}

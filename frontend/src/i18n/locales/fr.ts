@@ -130,6 +130,10 @@ export default {
       albumTitle: "Albums",
       albumCount: "20 photos",
       filterAll: "Toutes",
+      mostLikedTitle: "Les préférées",
+      mostLikedDescription: "Les photos qui ont reçu le plus de cœurs de nos familles.",
+      likeCount: "{{count}} j’aime",
+      openPhoto: "Voir la photo : {{title}}",
       photoCount: "{{count}} photos",
       empty: "Aucun album pour cette année.",
       noGalleries: "Aucun album publié pour le moment.",
@@ -327,6 +331,10 @@ export default {
       placeholderTitle: 'Notre équipe',
       placeholderDescription:
         'Nos éducateurs apparaîtront ici lorsque cette section sera connectée au système de gestion des enseignants.',
+      previous: 'Éducateurs précédents',
+      next: 'Éducateurs suivants',
+      navigation: 'Navigation de l’équipe',
+      goTo: 'Aller à la page {{number}} de l’équipe',
     },
     roles: {
       TEACHER: 'Enseignant',
@@ -630,6 +638,10 @@ export default {
       back: "Précédent",
       next: "Suivant",
       confirmButton: "Confirmer le rendez-vous",
+      edit: "Modifier",
+      editSection: "Modifier {{section}}",
+      appointmentLabel: "Votre rendez-vous",
+      emailNotice: "Nous enverrons la confirmation à <strong>{{email}}</strong>.",
     },
     specialSchedule: "Horaire spécial",
   },
@@ -712,6 +724,8 @@ export default {
     backToProfile: "Retour à mon profil",
   },
   common: {
+    imageCover: "Couverture",
+    imageGallery: "Galerie",
     errors: {
       network: 'Impossible de se connecter au serveur. Vérifiez votre connexion et réessayez.',
       forbidden: "Vous n'avez pas l'autorisation d'effectuer cette action.",
@@ -1282,6 +1296,65 @@ export default {
       choosePhoto: "Choisir une photo",
       currentPhoto: "Photo actuelle",
     },
+
+    
+    "groups": {
+      "tabLabel": "Groupes",
+      "title": "Groupes",
+      "description": "Organisez et gérez les groupes d'élèves et leurs enseignants.",
+      "searchPlaceholder": "Rechercher par groupe, enseignant ou élève...",
+      "noResults": "Aucun groupe trouvé.",
+      "loadError": "Impossible de charger les groupes.",
+
+      "addGroup": "Ajouter un groupe",
+      "createTitle": "Créer un groupe",
+      "editTitle": "Modifier le groupe",
+      "deleteTitle": "Supprimer le groupe",
+      "viewDetails": "Voir les détails",
+
+      "groupId": "Identifiant du groupe",
+      "name": "Nom du groupe",
+      "namePlaceholder": "Saisissez le nom du groupe",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Saisissez une description du groupe",
+      "noDescription": "Aucune description",
+
+      "teacher": "Enseignant responsable",
+      "selectTeacher": "Sélectionnez un enseignant",
+
+      "capacity": "Capacité maximale",
+      "capacityPlaceholder": "Saisissez la capacité maximale",
+      "unlimitedCapacity": "Capacité illimitée",
+      "enrolledChildren": "Élèves inscrits",
+      "availableSpots_one": "{{count}} place disponible",
+      "availableSpots_other": "{{count}} places disponibles",
+      "full": "Groupe complet",
+
+      "students": "Élèves",
+      "studentId": "Identifiant de l'élève",
+      "noStudents": "Ce groupe n'a pas encore d'élèves inscrits.",
+      "assignStudent": "Affecter un élève",
+      "removeStudent": "Retirer un élève",
+      "transferStudent": "Transférer un élève",
+
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "create": "Créer le groupe",
+      "update": "Enregistrer les modifications",
+
+      "createSuccess": "Le groupe a été créé avec succès.",
+      "createError": "Impossible de créer le groupe.",
+      "updateSuccess": "Le groupe a été mis à jour avec succès.",
+      "updateError": "Impossible de mettre à jour le groupe.",
+      "deleteSuccess": "Le groupe a été supprimé avec succès.",
+      "deleteError": "Impossible de supprimer le groupe.",
+
+      "deleteMessage": "Êtes-vous sûr de vouloir supprimer le groupe « {{name}} » ?",
+      "requiredField": "Ce champ est obligatoire.",
+      "invalidCapacity": "La capacité doit être supérieure à zéro.",
+      "capacityExceeded": "La capacité ne peut pas être inférieure au nombre d'élèves inscrits."
+    },
+
 
     parents: {
       empty: "Aucun parent n'est inscrit.",

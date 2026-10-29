@@ -520,7 +520,7 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
             <ImageThumbList title={t('admin.servicios.currentImage')} className="mt-sm">
               <ImageThumb
                 src={currentImageUrl}
-                label={t('admin.servicios.image')}
+                label={t('common.imageCover')}
                 onDelete={() => setConfirmImageDelete(true)}
                 deleteLabel={t('common.deleteImageTitle')}
                 altText={imageAlt}

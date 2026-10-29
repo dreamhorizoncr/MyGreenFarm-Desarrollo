@@ -87,10 +87,26 @@ public class GroupController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         groupService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{groupId}/children/{childId}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<GroupResponse> addChild(
+            @PathVariable Long groupId,
+            @PathVariable Long childId) {
+        return ResponseEntity.ok(groupService.addChild(groupId, childId));
+    }
+
+    @DeleteMapping("/{groupId}/children/{childId}")
+    @PreAuthorize("hasRole('OWNER')")
+    public ResponseEntity<GroupResponse> removeChild(
+            @PathVariable Long groupId,
+            @PathVariable Long childId) {
+        return ResponseEntity.ok(groupService.removeChild(groupId, childId));
     }
 
     private boolean isOwner(Authentication authentication) {

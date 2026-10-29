@@ -57,6 +57,14 @@ public class GalleryImageController {
         return ResponseEntity.ok(images);
     }
 
+    @Validated
+    @GetMapping("/images/most-liked")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<List<GalleryImageResponse>> getMostLiked(
+        @RequestParam(defaultValue = "10") @Min(1) @Max(20) int limit) {
+        return ResponseEntity.ok(imageService.getMostLiked(limit));
+    }
+
     @PatchMapping("/images/{imageId}/alt")
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<Void> updateImageAlt(

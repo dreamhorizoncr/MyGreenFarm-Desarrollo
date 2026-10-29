@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState, type InputHTMLAttributes } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { ArrowLeftIcon, CheckIcon } from '@animateicons/react/lucide'
-import PhoneInput from 'react-phone-number-input'
+import { Clock, Mail } from 'lucide-react'
+import PhoneInput, { formatPhoneNumberIntl } from 'react-phone-number-input'
 import { useNavigate } from 'react-router-dom'
 import 'react-phone-number-input/style.css'
 import BookingSuccessModal from '../components/BookingSuccessModal.tsx'
 import Navbar from '../components/Navbar.tsx'
 import TextField from '../components/ui/TextField.tsx'
+import CardActionButton from '../components/ui/CardActionButton.tsx'
 import Select from '../components/ui/Select.tsx'
 import CountrySelect from '../components/ui/CountrySelect.tsx'
 import { phoneLabels } from '../utils/phoneLabels.ts'
@@ -140,6 +142,7 @@ function BookingPage() {
   const releaseSlotHold = slotHolds.release
 
   const [step, setStep] = useState(1)
+  const [returnToSummary, setReturnToSummary] = useState(false)
 
   const [fullName, setFullName] = useState('')
   const [idType, setIdType] = useState('Costarricense')
@@ -323,7 +326,17 @@ function BookingPage() {
   const handleNext = async () => {
     if (!validateStep(step) || step >= 5) return
     if (!(await holdSelectedSlot())) return
+    if (returnToSummary) {
+      setReturnToSummary(false)
+      setStep(5)
+      return
+    }
     setStep(step + 1)
+  }
+
+  const editFromSummary = (targetStep: number) => {
+    setReturnToSummary(true)
+    setStep(targetStep)
   }
 
   const handleBack = () => {
@@ -368,6 +381,7 @@ function BookingPage() {
 
   const resetForm = useCallback(() => {
     setStep(1)
+    setReturnToSummary(false)
     setFullName('')
     setIdType('Costarricense')
     setIdNumber('')
@@ -758,60 +772,92 @@ function BookingPage() {
     </div>
   )
 
+  const longDayLabel = (date: string) => {
+    const label = new Date(`${date}T12:00:00`).toLocaleDateString(i18n.language, { weekday: 'long', day: 'numeric', month: 'long' })
+    return label.charAt(0).toUpperCase() + label.slice(1)
+  }
+
+  const editButton = (targetStep: number, section: string) => (
+    <CardActionButton
+      action="edit"
+      size="sm"
+      label={t('booking.wizard.editSection', { section })}
+      title={t('booking.wizard.edit')}
+      onClick={() => editFromSummary(targetStep)}
+      className="self-start"
+    />
+  )
+
+  const summaryItem = (label: string, value: React.ReactNode, wide = false) => (
+    <div className={`flex min-w-0 flex-col gap-2xs ${wide ? 'md:col-span-2' : ''}`}>
+      <dt className="font-body text-caption text-body-text">{label}</dt>
+      <dd className="m-0 break-words font-body text-body-sm font-semibold text-body-text-dark">{value}</dd>
+    </div>
+  )
+
+  const summarySection = (title: string, targetStep: number, children: React.ReactNode) => (
+    <section className="py-md first:pt-0 last:pb-0">
+      <header className="mb-sm flex items-center justify-between gap-sm">
+        <h4 className="m-0 min-w-0 text-left font-heading text-h6 font-bold text-heading">{title}</h4>
+        {editButton(targetStep, title)}
+      </header>
+      <dl className="m-0 grid grid-cols-1 gap-md text-left md:grid-cols-2">{children}</dl>
+    </section>
+  )
+
+  const referralText = `${referralSource ? t(`booking.referral.options.${referralSource}`) : ''}${referralSource === 'OTHER' && referralOtherDetail ? `: ${referralOtherDetail}` : ''}`
+
   const renderStepConfirm = () => (
-    <div className="flex flex-col gap-lg">
+    <div className="flex flex-col gap-md text-left">
       <h3 className="m-0 text-left font-heading text-h4 font-bold text-heading">
         {t('booking.wizard.confirmTitle')}
       </h3>
 
-      <div className="flex flex-col gap-md">
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.wizard.schedule')}</span>
-          <span className="font-body text-body-sm font-semibold text-heading">
-            {effectiveDay && dayLabel(effectiveDay)} - {effectiveTime}
+      <div className="flex items-center justify-between gap-md rounded-[20px] bg-green-50 p-md md:p-lg">
+        <div className="flex min-w-0 flex-col gap-2xs">
+          <span className="font-body text-caption text-body-text">{t('booking.wizard.appointmentLabel')}</span>
+          <span className="font-heading text-h5 font-bold leading-tight text-body-text-dark">
+            {effectiveDay && longDayLabel(effectiveDay)}
+          </span>
+          <span className="flex items-center gap-2xs font-body text-body font-semibold text-body-text-dark">
+            <Clock size={16} aria-hidden="true" className="text-green-500" />
+            {effectiveTime}
           </span>
         </div>
-
-        <div className="h-px bg-neutral-300" />
-
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.childName')}</span>
-          <span className="font-body text-body-sm font-semibold text-heading">{childName}</span>
-        </div>
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.reason')}</span>
-          <span className="font-body text-body-sm text-heading">{reason}</span>
-        </div>
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.referral.title')}</span>
-          <span className="font-body text-body-sm text-heading">
-            {referralSource && t(`booking.referral.options.${referralSource}`)}{referralSource === 'OTHER' && referralOtherDetail ? `: ${referralOtherDetail}` : ''}
-          </span>
-        </div>
-
-        <div className="h-px bg-neutral-300" />
-
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.fullName')}</span>
-          <span className="font-body text-body-sm font-semibold text-heading">{fullName}</span>
-        </div>
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.idNumber')}</span>
-          <span className="font-body text-body-sm text-heading">{idType} - {idNumber}</span>
-        </div>
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.occupation')}</span>
-          <span className="font-body text-body-sm text-heading">{occupation}</span>
-        </div>
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.email')}</span>
-          <span className="font-body text-body-sm text-heading">{email}</span>
-        </div>
-        <div className="flex flex-col gap-xs">
-          <span className="font-body text-caption text-body-text">{t('booking.phone')}</span>
-          <span className="font-body text-body-sm text-heading">{phone}</span>
-        </div>
+        {editButton(1, t('booking.wizard.schedule'))}
       </div>
+
+      <div className="divide-y divide-neutral-200 rounded-[20px] border border-neutral-200 bg-white px-md py-md md:px-lg md:py-lg">
+        {summarySection(t('booking.wizard.childTitle'), 2, (
+          <>
+            {summaryItem(t('booking.childName'), childName)}
+            {summaryItem(t('booking.referral.title'), referralText)}
+            {summaryItem(t('booking.reason'), reason, true)}
+          </>
+        ))}
+
+        {summarySection(t('booking.wizard.identityTitle'), 3, (
+          <>
+            {summaryItem(t('booking.fullName'), fullName)}
+            {summaryItem(t('booking.idNumber'), `${idType} · ${idNumber}`)}
+          </>
+        ))}
+
+        {summarySection(t('booking.wizard.contactTitle'), 4, (
+          <>
+            {summaryItem(t('booking.email'), email)}
+            {summaryItem(t('booking.phone'), formatPhoneNumberIntl(phone) || phone)}
+            {summaryItem(t('booking.occupation'), occupation)}
+          </>
+        ))}
+      </div>
+
+      <p className="m-0 flex items-start gap-xs font-body text-body-sm text-body-text">
+        <Mail size={16} aria-hidden="true" className="mt-[3px] shrink-0 text-green-500" />
+        <span className="min-w-0 break-words">
+          <Trans i18nKey="booking.wizard.emailNotice" values={{ email }} components={{ strong: <strong className="font-semibold text-body-text-dark" /> }} />
+        </span>
+      </p>
 
       {submitError && (
         <p className="m-0 text-center font-body text-body-sm text-danger">
@@ -878,7 +924,7 @@ function BookingPage() {
                   disabled={!stepFilled}
                   className="flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-orange-500"
                 >
-                  {t('booking.wizard.next')}
+                  {returnToSummary ? t('booking.wizard.edit') : t('booking.wizard.next')}
                 </button>
               ) : (
                 <button

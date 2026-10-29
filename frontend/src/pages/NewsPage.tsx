@@ -22,6 +22,7 @@ function NewsPage() {
   const { announcements,totalPages, loading, error, fetchAnnouncements } =
     useAnnouncements();
   const {
+    images: announcementImages,
     loading: imagesLoading,
     error: imagesError,
     fetchImages,
@@ -175,6 +176,7 @@ function NewsPage() {
           announcement={selectedAnnouncement}
           typeLabel={labelFor({ id: selectedAnnouncement.categoryId, code: selectedAnnouncement.categoryCode ?? selectedAnnouncement.type, title: selectedAnnouncement.categoryTitle })}
           onClose={() => setSelectedAnnouncement(null)}
+          initialImages={announcementImages[selectedAnnouncement.id]}
         />
       )}
     </div>

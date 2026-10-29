@@ -129,6 +129,10 @@ export default {
       albumTitle: "Álbumes",
       albumCount: "20 fotos",
       filterAll: "Todos",
+      mostLikedTitle: "Las más queridas",
+      mostLikedDescription: "Las fotos que más corazones han recibido de nuestras familias.",
+      likeCount: "{{count}} me gusta",
+      openPhoto: "Ver foto: {{title}}",
       photoCount: "{{count}} fotos",
       empty: "No hay álbumes para este año.",
       noGalleries: "Todavía no hay álbumes publicados.",
@@ -325,6 +329,10 @@ export default {
       placeholderTitle: 'Nuestro equipo',
       placeholderDescription:
         'Nuestros docentes aparecerán aquí cuando conectemos esta sección con el sistema de gestión de docentes.',
+      previous: 'Docentes anteriores',
+      next: 'Siguientes docentes',
+      navigation: 'Navegación del equipo',
+      goTo: 'Ir a la página {{number}} del equipo',
     },
     roles: {
       TEACHER: 'Docente',
@@ -627,6 +635,10 @@ export default {
       back: "Anterior",
       next: "Siguiente",
       confirmButton: "Confirmar cita",
+      edit: "Editar",
+      editSection: "Editar {{section}}",
+      appointmentLabel: "Tu cita",
+      emailNotice: "Te enviaremos la confirmación a <strong>{{email}}</strong>.",
     },
     specialSchedule: "Horario especial",
   },
@@ -708,6 +720,8 @@ export default {
     backToProfile: "Regresar a Mi perfil",
   },
   common: {
+    imageCover: "Portada",
+    imageGallery: "Galería",
     errors: {
       network: 'No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.',
       forbidden: 'No tienes permiso para realizar esta acción.',
@@ -1181,6 +1195,64 @@ export default {
       },
       choosePhoto: "Elegir foto",
       currentPhoto: "Foto actual",
+    },
+
+    
+    "groups": {
+      "tabLabel": "Grupos",
+      "title": "Grupos",
+      "description": "Organiza y administra los grupos de estudiantes y sus docentes.",
+      "searchPlaceholder": "Buscar por grupo, docente o estudiante...",
+      "noResults": "No se encontraron grupos.",
+      "loadError": "No se pudieron cargar los grupos.",
+
+      "addGroup": "Agregar grupo",
+      "createTitle": "Crear grupo",
+      "editTitle": "Editar grupo",
+      "deleteTitle": "Eliminar grupo",
+      "viewDetails": "Ver detalles",
+
+      "groupId": "ID del grupo",
+      "name": "Nombre del grupo",
+      "namePlaceholder": "Ingrese el nombre del grupo",
+      "descriptionLabel": "Descripción",
+      "descriptionPlaceholder": "Ingrese una descripción del grupo",
+      "noDescription": "Sin descripción",
+
+      "teacher": "Docente responsable",
+      "selectTeacher": "Seleccione un docente",
+
+      "capacity": "Capacidad máxima",
+      "capacityPlaceholder": "Ingrese la capacidad máxima",
+      "unlimitedCapacity": "Sin límite de capacidad",
+      "enrolledChildren": "Estudiantes inscritos",
+      "availableSpots_one": "{{count}} cupo disponible",
+      "availableSpots_other": "{{count}} cupos disponibles",
+      "full": "Grupo lleno",
+
+      "students": "Estudiantes",
+      "studentId": "Identificación estudiantil",
+      "noStudents": "Este grupo todavía no tiene estudiantes asignados.",
+      "assignStudent": "Asignar estudiante",
+      "removeStudent": "Retirar estudiante",
+      "transferStudent": "Trasladar estudiante",
+
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "create": "Crear grupo",
+      "update": "Guardar cambios",
+
+      "createSuccess": "El grupo se creó correctamente.",
+      "createError": "No se pudo crear el grupo.",
+      "updateSuccess": "El grupo se actualizó correctamente.",
+      "updateError": "No se pudo actualizar el grupo.",
+      "deleteSuccess": "El grupo se eliminó correctamente.",
+      "deleteError": "No se pudo eliminar el grupo.",
+
+      "deleteMessage": "¿Está seguro de que desea eliminar el grupo «{{name}}»?",
+      "requiredField": "Este campo es obligatorio.",
+      "invalidCapacity": "La capacidad debe ser mayor que cero.",
+      "capacityExceeded": "La capacidad no puede ser menor que la cantidad de estudiantes inscritos."
     },
 
     parents: {
