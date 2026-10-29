@@ -196,18 +196,18 @@ export default function PaymentPage() {
         }
     }
 
-    const [expiryMonth = '', expiryYear = ''] = expiry.split('/')
-    const billingReady =
-        clientName.trim() !== '' &&
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) &&
-        clientIdentification.trim() !== ''
-    const cardReady =
-        billingReady &&
-        cardHolder.trim() !== '' &&
-        cardNumber.replace(/\D/g, '').length >= 13 &&
-        Number(expiryMonth) >= 1 && Number(expiryMonth) <= 12 && expiryYear.length === 2 &&
-        cvc.length >= 3
-    const sinpeReady = billingReady && phoneNumber.length === 8 && sinpeReference.trim() !== ''
+    // const [expiryMonth = '', expiryYear = ''] = expiry.split('/')
+    // const billingReady =
+    //     clientName.trim() !== '' &&
+    //     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) &&
+    //     clientIdentification.trim() !== ''
+    // const cardReady =
+    //     billingReady &&
+    //     cardHolder.trim() !== '' &&
+    //     cardNumber.replace(/\D/g, '').length >= 13 &&
+    //     Number(expiryMonth) >= 1 && Number(expiryMonth) <= 12 && expiryYear.length === 2 &&
+    //     cvc.length >= 3
+    // const sinpeReady = billingReady && phoneNumber.length === 8 && sinpeReference.trim() !== ''
 
     const handleCardPayment = async (e: React.FormEvent) => {
         e.preventDefault()
