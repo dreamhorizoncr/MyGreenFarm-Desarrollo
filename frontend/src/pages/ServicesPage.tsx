@@ -39,8 +39,8 @@ function PlanCard({
   const [currency, setCurrency] = useState<Currency>(() => cleanCurrency(plan?.currency))
 
   const price = plan && exchangeRate
-    ? convertCurrency(plan.price, cleanCurrency(plan.currency), currency, 'buy', exchangeRate)
-    : plan?.price ?? 0
+    ? convertCurrency(plan.gatewayPriceAmount ?? plan.price, cleanCurrency(plan.currency), currency, 'buy', exchangeRate)
+    : plan?.gatewayPriceAmount ?? plan?.price ?? 0
 
   if (loading) {
     return (

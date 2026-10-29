@@ -43,6 +43,9 @@ public class ServicePlan {
 
     @Column(nullable = false)
     private BigDecimal price;
+
+    @Column(name = "gateway_price_amount", precision = 14, scale = 2)
+    private BigDecimal gatewayPriceAmount;
     
     @Column(nullable = false, length = 6)
     private String currency;
@@ -58,4 +61,31 @@ public class ServicePlan {
 
     @Column(nullable = false)
     private String paymentUrl;
+
+    @Column(name = "cabys_code", length = 20)
+    private String cabysCode;
+
+    @Column(name = "tax_rate", precision = 5, scale = 2)
+    private BigDecimal taxRate;
+
+    @Column(name = "coupon_id", columnDefinition = "TEXT")
+    private String couponId;
+
+    @Column(name = "coupon_code", length = 60)
+    private String couponCode;
+
+    @Column(name = "coupon_type", length = 20)
+    private String couponType;
+
+    @Column(name = "coupon_value", precision = 12, scale = 2)
+    private BigDecimal couponValue;
+
+    @Column(name = "coupon_expires_at")
+    private java.time.LocalDate couponExpiresAt;
+
+    @Column(name = "coupon_max_redemptions")
+    private Integer couponMaxRedemptions;
+
+    @Column(name = "coupon_redemptions")
+    private Integer couponRedemptions;
 }

@@ -53,6 +53,7 @@ public class ServicePlanImageService {
         plan.setCurrency(dto.getCurrency());
         plan.setDescription(dto.getDescription()); 
         plan.setPrice(dto.getPrice());
+        plan.setGatewayPriceAmount(dto.getGatewayPriceAmount());
         plan.setType(dto.getType());
         plan.setPaymentUrl(dto.getPaymentUrl());
         plan.setImageUrl(imageUrl);
@@ -60,6 +61,15 @@ public class ServicePlanImageService {
         plan.setIncludes(Sanitizer.requireClean("includes", dto.getIncludes()));
         plan.setImageAlt(ImageAltText.clean(dto.getImageAlt()));
         plan.setActive(true);
+        plan.setCabysCode(dto.getCabysCode());
+        plan.setTaxRate(dto.getTaxRate());
+        plan.setCouponId(dto.getCouponId());
+        plan.setCouponCode(dto.getCouponCode());
+        plan.setCouponType(dto.getCouponType());
+        plan.setCouponValue(dto.getCouponValue());
+        plan.setCouponExpiresAt(dto.getCouponExpiresAt());
+        plan.setCouponMaxRedemptions(dto.getCouponMaxRedemptions());
+        plan.setCouponRedemptions(0);
 
         return servicePlanRepository.save(plan);
     }
@@ -73,6 +83,19 @@ public class ServicePlanImageService {
         existing.setSchedule(Sanitizer.requireClean("schedule", dto.getSchedule()));
         existing.setIncludes(Sanitizer.requireClean("includes", dto.getIncludes()));
         existing.setImageAlt(ImageAltText.clean(dto.getImageAlt()));
+        if (dto.getCabysCode() != null && dto.getTaxRate() != null) {
+            existing.setCabysCode(dto.getCabysCode());
+            existing.setTaxRate(dto.getTaxRate());
+        }
+        if (dto.getCouponId() != null) {
+            existing.setCouponId(dto.getCouponId());
+            existing.setCouponCode(dto.getCouponCode());
+            existing.setCouponType(dto.getCouponType());
+            existing.setCouponValue(dto.getCouponValue());
+            existing.setCouponExpiresAt(dto.getCouponExpiresAt());
+            existing.setCouponMaxRedemptions(dto.getCouponMaxRedemptions());
+            existing.setCouponRedemptions(0);
+        }
 
         if (file != null && !file.isEmpty()) {
             String contentType = file.getContentType();

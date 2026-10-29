@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
@@ -17,7 +16,8 @@ public class PricePaymentRequest {
     private String customerEmail;
     private String description;
     private UUID servicePlanId;
-    private BigDecimal baseAmount;
     private String paymentMethod;
     private String language;
+    private String couponCode;
+    private Boolean saveSubscription = false;
 }
