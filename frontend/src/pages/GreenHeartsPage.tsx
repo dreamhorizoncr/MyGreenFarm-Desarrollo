@@ -1,5 +1,5 @@
 import { BookOpen, Heart, HandHeart, Handshake, ShieldCheck, Users, Utensils, Gift, Sprout, Eye, Target } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { motion, useReducedMotion } from 'motion/react'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -105,6 +105,9 @@ function GreenHeartsPage() {
   const [actionsIndex, setActionsIndex] = useState(0)
   const [valuesSwiper, setValuesSwiper] = useState<SwiperInstance | null>(null)
   const [valuesIndex, setValuesIndex] = useState(0)
+  const [hoveredPuzzlePiece, setHoveredPuzzlePiece] = useState<number | null>(null)
+  const [puzzleInView, setPuzzleInView] = useState(false)
+  const puzzleRef = useRef<HTMLDivElement | null>(null)
   const actionArrowClass = 'z-10 flex size-11 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-[scale,opacity] duration-300 enabled:hover:scale-105 enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:bg-orange-500 disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2'
 
   useEffect(() => {
@@ -125,6 +128,26 @@ function GreenHeartsPage() {
 
     return () => { cancelled = true }
   }, [])
+
+  useEffect(() => {
+    const puzzle = puzzleRef.current
+    if (!pageReady || !puzzle || puzzleInView) return
+
+    if (!('IntersectionObserver' in window)) {
+      setPuzzleInView(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setPuzzleInView(true)
+        observer.disconnect()
+      }
+    }, { threshold: 0.3 })
+
+    observer.observe(puzzle)
+    return () => observer.disconnect()
+  }, [pageReady, puzzleInView])
 
   if (!pageReady) return <GreenHeartsPageSkeleton loadingLabel={t('greenHearts.loading')} />
 
@@ -191,7 +214,7 @@ function GreenHeartsPage() {
               </div>
             </div>
             <div className="relative">
-              <button type="button" onClick={() => actionsSwiper?.slidePrev()} disabled={!actionsSwiper || actionsSwiper.isBeginning} aria-label={t('greenHearts.previousAction')} className={`${actionArrowClass} absolute -left-14 top-1/2 hidden -translate-y-1/2 sm:flex`}>
+              <button type="button" onClick={() => actionsSwiper?.slidePrev()} disabled={!actionsSwiper || actionsSwiper.isBeginning} aria-label={t('greenHearts.previousAction')} className={`${actionArrowClass} absolute -left-14 top-1/2 hidden -translate-y-1/2 lg:flex`}>
                 <CarouselArrowIcon flip />
               </button>
               <Swiper
@@ -225,10 +248,10 @@ function GreenHeartsPage() {
                   </SwiperSlide>
                 ))}
               </Swiper>
-              <button type="button" onClick={() => actionsSwiper?.slideNext()} disabled={!actionsSwiper || actionsSwiper.isEnd} aria-label={t('greenHearts.nextAction')} className={`${actionArrowClass} absolute -right-14 top-1/2 hidden -translate-y-1/2 sm:flex`}>
+              <button type="button" onClick={() => actionsSwiper?.slideNext()} disabled={!actionsSwiper || actionsSwiper.isEnd} aria-label={t('greenHearts.nextAction')} className={`${actionArrowClass} absolute -right-14 top-1/2 hidden -translate-y-1/2 lg:flex`}>
                 <CarouselArrowIcon />
               </button>
-              <div className="mt-3 flex justify-center gap-3 sm:hidden">
+              <div className="mt-3 flex justify-center gap-3 lg:hidden">
                 <button type="button" onClick={() => actionsSwiper?.slidePrev()} disabled={!actionsSwiper || actionsSwiper.isBeginning} aria-label={t('greenHearts.previousAction')} className={actionArrowClass}>
                   <CarouselArrowIcon flip />
                 </button>
@@ -245,15 +268,15 @@ function GreenHeartsPage() {
             <h2 className="mb-16 text-center font-heading text-h1 font-bold leading-tight text-green-500">
               <span className="bg-no-repeat pb-[0.12em] [background-position:0_100%] [background-size:100%_0.3em] [box-decoration-break:clone] [-webkit-box-decoration-break:clone]" style={{ backgroundImage: PURPOSE_UNDERLINE }}>{t('greenHearts.values.title')}</span>
             </h2>
-            <div className="green-hearts-values-puzzle mx-auto hidden lg:block">
+            <div ref={puzzleRef} className={`green-hearts-values-puzzle mx-auto hidden lg:block${puzzleInView ? ' is-in-view' : ''}`}>
               <div className="green-hearts-values-puzzle-art" aria-hidden="true">
                 {puzzlePieces.map(({ src, left, top, width, height }, index) => (
-                  <img key={index} src={src} alt="" style={{ left, top, width, height }} />
+                  <img key={index} src={src} alt="" className={hoveredPuzzlePiece === index ? 'is-raised' : undefined} style={{ left, top, width, height }} />
                 ))}
               </div>
               <div className="green-hearts-values-puzzle-content">
                 {values.map(({ labelKey, icon: Icon }, index) => (
-                  <article key={labelKey} className={`green-hearts-puzzle-value green-hearts-puzzle-value-${index + 1} green-hearts-puzzle-value-${index % 3 === 0 ? 'left' : index % 3 === 1 ? 'center' : 'right'}`}>
+                  <article key={labelKey} onMouseEnter={() => setHoveredPuzzlePiece(index)} onMouseLeave={() => setHoveredPuzzlePiece(null)} className={`green-hearts-puzzle-value green-hearts-puzzle-value-${index + 1} green-hearts-puzzle-value-${index % 3 === 0 ? 'left' : index % 3 === 1 ? 'center' : 'right'}${hoveredPuzzlePiece === index ? ' is-raised' : ''}`}>
                     <span className="mb-3 flex w-fit items-center text-white" aria-hidden="true">
                       <Icon size={32} strokeWidth={1.8} />
                     </span>
