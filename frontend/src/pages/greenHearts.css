@@ -2,6 +2,135 @@
   background-attachment: fixed;
 }
 
+#valores .green-hearts-values-swiper {
+  overflow: visible;
+  padding-bottom: 2.5rem;
+}
+
+@media (min-width: 1024px) {
+  #valores .green-hearts-values-swiper {
+    display: none;
+  }
+
+  #valores .green-hearts-values-controls {
+    display: none;
+  }
+
+  #valores .green-hearts-values-puzzle {
+    position: relative;
+    width: min(100%, 670px);
+    aspect-ratio: 1395 / 927;
+  }
+
+  #valores .green-hearts-values-puzzle-art,
+  #valores .green-hearts-values-puzzle-content {
+    position: absolute;
+    inset: 0;
+  }
+
+  #valores .green-hearts-values-puzzle-art img {
+    position: absolute;
+    max-width: none;
+    transform: scale(1.006);
+    transform-origin: center;
+  }
+
+  #valores .green-hearts-values-puzzle-content {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    justify-items: center;
+  }
+
+  #valores .green-hearts-puzzle-value {
+    width: 90%;
+    padding: 0.5rem;
+    color: white;
+  }
+
+  #valores .green-hearts-puzzle-value-left {
+    justify-self: center;
+    padding-left: 1.5rem;
+    text-align: left;
+  }
+
+  #valores .green-hearts-puzzle-value-center {
+    justify-self: center !important;
+    text-align: center !important;
+    transform: translateX(-8px);
+  }
+
+  #valores .green-hearts-puzzle-value-right {
+    justify-self: center;
+    padding-right: 1.5rem;
+    text-align: right;
+  }
+
+  #valores .green-hearts-puzzle-value-center > span {
+    margin-right: auto !important;
+    margin-left: auto !important;
+  }
+
+  #valores .green-hearts-puzzle-value-left > span {
+    margin-right: auto;
+  }
+
+  #valores .green-hearts-puzzle-value-right > span {
+    margin-left: auto;
+  }
+
+  #valores .green-hearts-puzzle-value h3 {
+    font-size: 1rem;
+  }
+
+  #valores .green-hearts-puzzle-value-right > span {
+    margin-left: auto;
+  }
+
+}
+
+@media (min-width: 1024px) {
+  #valores .green-hearts-values-swiper .swiper-wrapper {
+    display: grid !important;
+    width: 100% !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    transform: none !important;
+  }
+
+  #valores .green-hearts-values-swiper .swiper-slide {
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+  }
+
+  #valores .green-hearts-values-swiper .swiper-pagination {
+    display: none;
+  }
+}
+
+#valores .green-hearts-value-card {
+  position: relative;
+}
+
+#valores .swiper-pagination {
+  bottom: 0;
+  line-height: 1;
+}
+
+#valores .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  margin: 0 6px;
+  background: var(--green-500, #00a36c);
+  opacity: 0.35;
+}
+
+#valores .swiper-pagination-bullet-active {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .green-hearts-hero {
     background-attachment: scroll;
