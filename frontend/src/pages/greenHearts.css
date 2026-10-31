@@ -1,0 +1,47 @@
+.green-hearts-hero {
+  background-attachment: fixed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .green-hearts-hero {
+    background-attachment: scroll;
+  }
+}
+
+#lineas-de-accion .green-hearts-actions-swiper {
+  overflow: hidden;
+  padding-bottom: 3rem;
+}
+
+#lineas-de-accion .green-hearts-actions-header > :is(h2, p) {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0;
+  justify-self: stretch;
+}
+
+#lineas-de-accion .swiper-pagination {
+  bottom: 0;
+  line-height: 1;
+}
+
+#lineas-de-accion .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  margin: 0 6px;
+  background: var(--white);
+  opacity: 0.35;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+#lineas-de-accion .swiper-pagination-bullet-active {
+  background: var(--white);
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #lineas-de-accion .swiper-pagination-bullet {
+    transition: none;
+  }
+}
