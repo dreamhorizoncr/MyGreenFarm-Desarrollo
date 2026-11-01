@@ -53,6 +53,7 @@ export function useChildren() {
     const [totalPages, setTotalPages] = useState(0)
 
     const cacheRef = useRef<Map<string, CacheData>>(new Map())
+    const requestIdRef = useRef(0)
     const invalidateCache = useCallback(() => {
         cacheRef.current.clear()
     }, [])
@@ -62,6 +63,7 @@ export function useChildren() {
         lang?: string,
         status: ChildStatusFilter = 'ACTIVE',
     ) => {
+        const requestId = ++requestIdRef.current
         const targetLang = lang?.split('-')[0] || 'es'
         const cacheKey = `${status}-${page}-${targetLang}`
 
@@ -80,6 +82,8 @@ export function useChildren() {
             setError(null)
 
             const data = await childService.getAll(page, 10, status)
+            if (requestId !== requestIdRef.current) return
+
             const rawContent = data.content
             
             setSourceChildren(rawContent)
@@ -111,17 +115,23 @@ export function useChildren() {
                     ),
                 }))
 
-                setChildren(processedContent)
+                if (requestId === requestIdRef.current) {
+                    setChildren(processedContent)
+                }
             } catch {
                 processedContent = rawContent
             }
 
-            cacheRef.current.set(cacheKey, {
-                content: processedContent,
-                totalPages: data.totalPages,
-            })
+            if (requestId === requestIdRef.current) {
+                cacheRef.current.set(cacheKey, {
+                    content: processedContent,
+                    totalPages: data.totalPages,
+                })
+            }
 
         } catch {
+            if (requestId !== requestIdRef.current) return
+
             if (cacheRef.current.has(cacheKey)) {
                 const cached = cacheRef.current.get(cacheKey)!
                 setSourceChildren(cached.content)
@@ -132,7 +142,9 @@ export function useChildren() {
                 setError(i18n.t('admin.children.loadError'))
             }
         } finally {
-            setLoading(false)
+            if (requestId === requestIdRef.current) {
+                setLoading(false)
+            }
         }
     }, [])
 
