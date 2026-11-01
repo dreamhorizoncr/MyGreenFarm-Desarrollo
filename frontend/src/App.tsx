@@ -30,10 +30,6 @@ import AdminEvaluationsPage from './pages/AdminEvaluationsPage.tsx'
 import GalleryPage from './pages/GalleryPage.tsx'
 import AlbumDetailPage from './pages/AlbumDetailPage.tsx'
 import AdminGalleryPage from './pages/AdminGalleryPage.tsx'
-import ServicesPage from './pages/ServicesPage.tsx'
-import AdminServicePlansPage from './pages/AdminServicePlansPage.tsx'
-import PaymentSuccessPage from './pages/PaymentSuccessPage.tsx'
-import PaymentFailedPage from './pages/PaymentFailedPage.tsx'
 import AdminCurriculumsPage from './pages/AdminCurriculumsPage.tsx'
 import VacanciesPage from './pages/VacanciesPage.tsx'
 import OwnerAvailabilityPage from './pages/OwnerAvailabilityPage.tsx'
@@ -54,7 +50,6 @@ import BlobGooFilter from './components/ui/BlobGooFilter.tsx'
 import OwnerClubsPage from './pages/OwnerClubsPage.tsx'
 import ClubsPage from './pages/ClubsPage.tsx'
 import AboutUsPage from './pages/AboutUsPage.tsx'
-import PaymentPage from './pages/PaymentPage.tsx'
 import ChatWidget from './components/chat/ChatWidget.tsx'
 import GroupsRoute from './routes/GroupsRoute.tsx'
 import AdminGroupsPage from './pages/AdminGroupsPage.tsx'
@@ -111,7 +106,6 @@ function App() {
                         <Route path="/admin/parents" element={<AdminParentsPage />} />
                         <Route path="/admin/children" element={<AdminChildrenPage />} />
                         <Route element={<OwnerRoute />}>
-                          <Route path="/admin/service-plans" element={<AdminServicePlansPage />} />
                           <Route path="/admin/disponibilidad" element={<OwnerAvailabilityPage />} />
                           <Route path="/admin/newsletter" element={<OwnerNewsletter />} />
                         </Route>
@@ -134,14 +128,10 @@ function App() {
                       <Route path="/forum/community/:id" element={<CommunityPostPage />} />
                       <Route path="/multimedia" element={<GalleryPage />} />
                       <Route path="/albumes/:id" element={<AlbumDetailPage />} />
-                      <Route path="/services" element={<ServicesPage />} />
-                      <Route path="/payment-success" element={<PaymentSuccessPage />} />
-                      <Route path="/payment-failed" element={<PaymentFailedPage />} />
                       <Route path="/vacantes" element={<VacanciesPage />} />
                       <Route path="/clubs" element={<ClubsPage />} />
                       <Route path="/about-us" element={<AboutUsPage />} />
                       <Route path="/green-hearts" element={<GreenHeartsPage />} />
-                      <Route path="/checkout" element={<PaymentPage />} />
                       <Route path="/signup" element={<Navigate to="/admin/users" replace />} />
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
