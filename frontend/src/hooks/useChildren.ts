@@ -1,9 +1,9 @@
-import { useState, useRef } from 'react'
+import { useCallback, useState, useRef } from 'react'
 import i18n from '../i18n/index.ts'
 
 import { childService } from '../services/child'
 import { clubService } from '../services/clubs'
-import type { Child } from '../types/child'
+import type { Child, ChildStatusFilter } from '../types/child'
 
 interface CacheData {
     content: Child[]
@@ -53,16 +53,27 @@ export function useChildren() {
     const [totalPages, setTotalPages] = useState(0)
 
     const cacheRef = useRef<Map<string, CacheData>>(new Map())
+    const requestIdRef = useRef(0)
+    const invalidateCache = useCallback(() => {
+        cacheRef.current.clear()
+    }, [])
 
-    const fetchChildren = async (page = 0, lang?: string) => {
+    const fetchChildren = useCallback(async (
+        page = 0,
+        lang?: string,
+        status: ChildStatusFilter = 'ACTIVE',
+    ) => {
+        const requestId = ++requestIdRef.current
         const targetLang = lang?.split('-')[0] || 'es'
-        const cacheKey = `${page}-${targetLang}`
+        const cacheKey = `${status}-${page}-${targetLang}`
 
         if (cacheRef.current.has(cacheKey)) {
             const cached = cacheRef.current.get(cacheKey)!
             setSourceChildren(cached.content)
             setChildren(cached.content)
             setTotalPages(cached.totalPages)
+            setError(null)
+            setLoading(false)
             return
         }
 
@@ -70,7 +81,9 @@ export function useChildren() {
             setLoading(true)
             setError(null)
 
-            const data = await childService.getAll(page, 10)
+            const data = await childService.getAll(page, 10, status)
+            if (requestId !== requestIdRef.current) return
+
             const rawContent = data.content
             
             setSourceChildren(rawContent)
@@ -102,17 +115,23 @@ export function useChildren() {
                     ),
                 }))
 
-                setChildren(processedContent)
+                if (requestId === requestIdRef.current) {
+                    setChildren(processedContent)
+                }
             } catch {
                 processedContent = rawContent
             }
 
-            cacheRef.current.set(cacheKey, {
-                content: processedContent,
-                totalPages: data.totalPages,
-            })
+            if (requestId === requestIdRef.current) {
+                cacheRef.current.set(cacheKey, {
+                    content: processedContent,
+                    totalPages: data.totalPages,
+                })
+            }
 
         } catch {
+            if (requestId !== requestIdRef.current) return
+
             if (cacheRef.current.has(cacheKey)) {
                 const cached = cacheRef.current.get(cacheKey)!
                 setSourceChildren(cached.content)
@@ -123,9 +142,11 @@ export function useChildren() {
                 setError(i18n.t('admin.children.loadError'))
             }
         } finally {
-            setLoading(false)
+            if (requestId === requestIdRef.current) {
+                setLoading(false)
+            }
         }
-    }
+    }, [])
 
     return {
         children,
@@ -133,6 +154,7 @@ export function useChildren() {
         loading,
         error,
         fetchChildren,
+        invalidateCache,
         totalPages,
     }
 }

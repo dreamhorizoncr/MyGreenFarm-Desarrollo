@@ -994,6 +994,8 @@ export default {
       greeting: "Bonjour, {{name}}",
       userName: "Maria",
       pendingCount: "{{count}} en attente",
+      loading: "Chargement des données du tableau de bord...",
+      loadError: "Impossible de charger les données : {{error}}",
       periodLabel: "Filtrer par période",
       refresh: "Actualiser le résumé",
       filters: {
@@ -1007,9 +1009,10 @@ export default {
       stats: {
         todayAppointments: { label: "Rendez-vous du jour" },
         appointmentsToConfirm: { label: "Rendez-vous à confirmer" },
-        curriculumsToReview: { label: "CV à examiner" },
+        activeChildren: { label: "Enfants actifs" },
       },
       viewPending: "Voir les éléments en attente",
+      viewChildren: "Voir les enfants actifs",
       pending: "Éléments prioritaires",
       activity: "Activité récente",
       priority: { high: "Élevée", medium: "Moyenne", low: "Faible" },
@@ -1038,6 +1041,7 @@ export default {
       calendar: { title: "Calendrier", ariaLabel: "Calendrier mensuel du tableau de bord" },
       agenda: {
         title: "Agenda du jour",
+        empty: "Aucun rendez-vous pour ce jour.",
         familyOne: "Famille Vargas",
         familyTwo: "Famille Rojas",
         familyThree: "Famille Solís",
@@ -1537,6 +1541,10 @@ export default {
 
       noChildren: 'Aucun enfant enregistré.',
       noResults: 'Aucun enfant ne correspond à votre recherche.',
+      statusFilterLabel: 'Filtrer les enfants par statut',
+      statusFilters: { all: 'Tous', active: 'Actifs', inactive: 'Inactifs' },
+      statusActive: 'Actif',
+      statusInactive: 'Inactif',
 
       createTitle: 'Inscrire un enfant',
       editTitle: 'Modifier un enfant',

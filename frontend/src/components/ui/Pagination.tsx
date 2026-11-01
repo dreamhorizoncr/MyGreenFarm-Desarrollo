@@ -6,9 +6,17 @@ interface PaginationProps {
   onPageChange: (page: number) => void
 }
 
+const MAX_VISIBLE_PAGES = 10
+
 function Pagination({ currentPage, totalPages, onPageChange }: Readonly<PaginationProps>) {
   const { t } = useTranslation()
   if (totalPages <= 1) return null
+
+  const visiblePages = Math.min(totalPages, MAX_VISIBLE_PAGES)
+  const firstVisiblePage = Math.min(
+    Math.max(1, currentPage - MAX_VISIBLE_PAGES + 1),
+    totalPages - visiblePages + 1,
+  )
 
   const goToPage = (page: number) => {
     onPageChange(page)
@@ -32,8 +40,8 @@ function Pagination({ currentPage, totalPages, onPageChange }: Readonly<Paginati
         ‹
       </button>
 
-      {Array.from({ length: totalPages }, (_, index) => {
-        const page = index + 1
+      {Array.from({ length: visiblePages }, (_, index) => {
+        const page = firstVisiblePage + index
 
         return (
           <button
