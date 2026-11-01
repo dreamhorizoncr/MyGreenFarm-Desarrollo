@@ -985,6 +985,8 @@ export default {
       greeting: "Good morning, {{name}}",
       userName: "Maria",
       pendingCount: "{{count}} pending",
+      loading: "Loading dashboard data...",
+      loadError: "Dashboard data could not be loaded: {{error}}",
       periodLabel: "Filter by period",
       refresh: "Refresh summary",
       filters: {
@@ -998,9 +1000,10 @@ export default {
       stats: {
         todayAppointments: { label: "Today's appointments" },
         appointmentsToConfirm: { label: "Appointments to confirm" },
-        curriculumsToReview: { label: "Curriculums to review" },
+        activeChildren: { label: "Active children" },
       },
       viewPending: "View pending",
+      viewChildren: "View active children",
       pending: "Priority items",
       activity: "Recent activity",
       priority: { high: "High", medium: "Medium", low: "Low" },
@@ -1029,6 +1032,7 @@ export default {
       calendar: { title: "Calendar", ariaLabel: "Dashboard monthly calendar" },
       agenda: {
         title: "Daily agenda",
+        empty: "There are no appointments for this day.",
         familyOne: "Vargas family",
         familyTwo: "Rojas family",
         familyThree: "Solís family",
@@ -1529,6 +1533,10 @@ export default {
 
       noChildren: 'No children are registered.',
       noResults: 'No children matched your search.',
+      statusFilterLabel: 'Filter children by status',
+      statusFilters: { all: 'All', active: 'Active', inactive: 'Inactive' },
+      statusActive: 'Active',
+      statusInactive: 'Inactive',
 
       createTitle: 'Register child',
       editTitle: 'Edit child',

@@ -1,9 +1,9 @@
-import { useState, useRef } from 'react'
+import { useCallback, useState, useRef } from 'react'
 import i18n from '../i18n/index.ts'
 
 import { childService } from '../services/child'
 import { clubService } from '../services/clubs'
-import type { Child } from '../types/child'
+import type { Child, ChildStatusFilter } from '../types/child'
 
 interface CacheData {
     content: Child[]
@@ -53,16 +53,25 @@ export function useChildren() {
     const [totalPages, setTotalPages] = useState(0)
 
     const cacheRef = useRef<Map<string, CacheData>>(new Map())
+    const invalidateCache = useCallback(() => {
+        cacheRef.current.clear()
+    }, [])
 
-    const fetchChildren = async (page = 0, lang?: string) => {
+    const fetchChildren = useCallback(async (
+        page = 0,
+        lang?: string,
+        status: ChildStatusFilter = 'ACTIVE',
+    ) => {
         const targetLang = lang?.split('-')[0] || 'es'
-        const cacheKey = `${page}-${targetLang}`
+        const cacheKey = `${status}-${page}-${targetLang}`
 
         if (cacheRef.current.has(cacheKey)) {
             const cached = cacheRef.current.get(cacheKey)!
             setSourceChildren(cached.content)
             setChildren(cached.content)
             setTotalPages(cached.totalPages)
+            setError(null)
+            setLoading(false)
             return
         }
 
@@ -70,7 +79,7 @@ export function useChildren() {
             setLoading(true)
             setError(null)
 
-            const data = await childService.getAll(page, 10)
+            const data = await childService.getAll(page, 10, status)
             const rawContent = data.content
             
             setSourceChildren(rawContent)
@@ -125,7 +134,7 @@ export function useChildren() {
         } finally {
             setLoading(false)
         }
-    }
+    }, [])
 
     return {
         children,
@@ -133,6 +142,7 @@ export function useChildren() {
         loading,
         error,
         fetchChildren,
+        invalidateCache,
         totalPages,
     }
 }
