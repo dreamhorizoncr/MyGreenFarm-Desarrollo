@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import taller.multimedia.backend.dto.child.ChildOptionResponse;
 import taller.multimedia.backend.dto.child.ChildRequest;
 import taller.multimedia.backend.dto.child.ChildResponse;
+import taller.multimedia.backend.dto.child.ChildStatusFilter;
 import taller.multimedia.backend.service.child.ChildService;
 
 @Validated
@@ -42,6 +43,14 @@ public class ChildController {
     public ResponseEntity<Page<ChildResponse>> getAll(
             @PageableDefault(size = 10, sort = "firstName") Pageable pageable) {
         return ResponseEntity.ok(childService.getAll(pageable));
+    }
+
+    @GetMapping("/admin")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    public ResponseEntity<Page<ChildResponse>> getAllForAdmin(
+            @PageableDefault(size = 10, sort = "firstName") Pageable pageable,
+            @RequestParam(defaultValue = "ACTIVE") ChildStatusFilter status) {
+        return ResponseEntity.ok(childService.getAll(pageable, status));
     }
 
     @GetMapping("/available-for-expedient")

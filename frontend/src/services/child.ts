@@ -1,6 +1,6 @@
 import { apiClient } from "./api";
 
-import type { Child, ChildPage, ChildRequest } from "../types/child";
+import type { Child, ChildPage, ChildRequest, ChildStatusFilter } from "../types/child";
 
 export interface ChildOption {
   studentId: string;
@@ -15,9 +15,9 @@ export interface TranslationItem {
 }
 
 export const childService = {
-  async getAll(page = 0, size = 10): Promise<ChildPage> {
-    const response = await apiClient.get<ChildPage>("/child", {
-      params: { page, size },
+  async getAll(page = 0, size = 10, status: ChildStatusFilter = "ACTIVE"): Promise<ChildPage> {
+    const response = await apiClient.get<ChildPage>("/child/admin", {
+      params: { page, size, status },
     });
     return response.data;
   },

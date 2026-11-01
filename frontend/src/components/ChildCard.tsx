@@ -38,6 +38,13 @@ function ChildCard({ child, onEdit, onDelete, loading = false }: Readonly<ChildC
               <p className="mt-1 font-body text-body-sm text-body-text">
                 {t("admin.children.studentId")}: {child!.studentId}
               </p>
+              <span className={`mt-xs inline-block rounded-full px-sm py-2xs font-body text-caption font-semibold ${
+                child!.isActive
+                  ? "bg-success-50 text-success"
+                  : "border border-neutral-200 bg-neutral-50 text-neutral-500"
+              }`}>
+                {t(child!.isActive ? "admin.children.statusActive" : "admin.children.statusInactive")}
+              </span>
             </>
           )}
         </div>

@@ -989,6 +989,8 @@ export default {
       greeting: "Buenos días, {{name}}",
       userName: "María",
       pendingCount: "{{count}} pendientes",
+      loading: "Cargando datos del dashboard...",
+      loadError: "No se pudieron cargar los datos: {{error}}",
       periodLabel: "Filtrar por período",
       refresh: "Actualizar resumen",
       filters: {
@@ -1002,9 +1004,10 @@ export default {
       stats: {
         todayAppointments: { label: "Citas de hoy" },
         appointmentsToConfirm: { label: "Citas por confirmar" },
-        curriculumsToReview: { label: "Currículums por revisar" },
+        activeChildren: { label: "Niños activos" },
       },
       viewPending: "Ver pendientes",
+      viewChildren: "Ver niños activos",
       pending: "Pendientes prioritarios",
       activity: "Actividad reciente",
       priority: { high: "Alta", medium: "Media", low: "Baja" },
@@ -1033,6 +1036,7 @@ export default {
       calendar: { title: "Calendario", ariaLabel: "Calendario mensual del dashboard" },
       agenda: {
         title: "Agenda del día",
+        empty: "No hay citas para este día.",
         familyOne: "Familia Vargas",
         familyTwo: "Familia Rojas",
         familyThree: "Familia Solís",
@@ -1439,6 +1443,10 @@ export default {
 
       noChildren: 'No hay niños registrados.',
       noResults: 'No se encontraron niños con esa búsqueda.',
+      statusFilterLabel: 'Filtrar niños por estado',
+      statusFilters: { all: 'Todos', active: 'Activos', inactive: 'Inactivos' },
+      statusActive: 'Activo',
+      statusInactive: 'Inactivo',
 
       createTitle: 'Registrar niño',
       editTitle: 'Editar niño',

@@ -1,4 +1,4 @@
-import { useMemo, useState, type ComponentType } from 'react'
+import { useEffect, useMemo, useState, type ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { parseDate, type CalendarDate } from '@internationalized/date'
@@ -13,7 +13,11 @@ import {
   RefreshCwIcon,
   UserIcon,
 } from '@animateicons/react/lucide'
-import { DASHBOARD_DATE, dashboardMock, type DashboardIconName } from './dashboard.mock.ts'
+import { dashboardService } from '../services/dashboard.ts'
+import { getErrorMessage } from '../utils/error.ts'
+import type { AppointmentStatus } from '../types/appointment.ts'
+import type { AdminDashboardSummary } from '../types/dashboard.ts'
+import { dashboardMock, type DashboardIconName } from './dashboard.mock.ts'
 
 type Icon = ComponentType<{ size?: number; className?: string; 'aria-hidden'?: boolean }>
 type Period = 'today' | 'thisWeek' | 'thisMonth'
@@ -32,11 +36,36 @@ const priorityClasses = {
   low: 'border-info-200 bg-info-50 text-info',
 } as const
 
+const appointmentStatusClasses: Record<AppointmentStatus, string> = {
+  CONFIRMED: 'bg-success-50 text-success',
+  PENDING: 'bg-warning-50 text-warning',
+  CANCELLED: 'bg-danger-50 text-danger',
+}
+
+const appointmentStatusLabels = {
+  CONFIRMED: 'admin.dashboard.agenda.status.confirmed',
+  PENDING: 'admin.dashboard.agenda.status.pending',
+  CANCELLED: 'admin.dashboard.agenda.status.cancelled',
+} as const satisfies Record<AppointmentStatus, string>
+
+function currentCalendarDate(): CalendarDate {
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = String(today.getMonth() + 1).padStart(2, '0')
+  const day = String(today.getDate()).padStart(2, '0')
+  return parseDate(`${year}-${month}-${day}`)
+}
+
 function AdminDashboardPage() {
   const { t, i18n } = useTranslation()
   const [period, setPeriod] = useState<Period>('today')
-  const [selectedDate, setSelectedDate] = useState<CalendarDate | null>(() => parseDate('2026-10-31'))
+  const [selectedDate, setSelectedDate] = useState<CalendarDate>(currentCalendarDate)
+  const [dashboardData, setDashboardData] = useState<AdminDashboardSummary | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [refreshKey, setRefreshKey] = useState(0)
   const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
+  const selectedDateString = selectedDate.toString()
   const dateFormatter = useMemo(
     () => new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long' }),
     [locale],
@@ -45,6 +74,42 @@ function AdminDashboardPage() {
     () => new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long' }),
     [locale],
   )
+  const timeFormatter = useMemo(
+    () => new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }),
+    [locale],
+  )
+
+  useEffect(() => {
+    let isCurrentRequest = true
+    setLoading(true)
+    setError(null)
+    setDashboardData(null)
+
+    dashboardService.getSummary(selectedDateString)
+      .then((summary) => {
+        if (isCurrentRequest) setDashboardData(summary)
+      })
+      .catch((requestError: unknown) => {
+        if (isCurrentRequest) {
+          setDashboardData(null)
+          setError(getErrorMessage(requestError))
+        }
+      })
+      .finally(() => {
+        if (isCurrentRequest) setLoading(false)
+      })
+
+    return () => {
+      isCurrentRequest = false
+    }
+  }, [selectedDateString, refreshKey])
+
+  const selectedDateValue = selectedDate.toDate('UTC')
+  const stats = [
+    { key: 'todayAppointments', label: 'admin.dashboard.stats.todayAppointments.label', value: dashboardData?.appointments.length, icon: 'calendar', href: '/admin/citas' },
+    { key: 'appointmentsToConfirm', label: 'admin.dashboard.stats.appointmentsToConfirm.label', value: dashboardData?.pendingAppointmentCount, icon: 'clock', href: '/admin/citas' },
+    { key: 'activeChildren', label: 'admin.dashboard.stats.activeChildren.label', value: dashboardData?.activeChildrenCount, icon: 'user', href: '/admin/children' },
+  ] as const
 
   return (
     <AdminLayout>
@@ -53,9 +118,12 @@ function AdminDashboardPage() {
           {t('admin.dashboard.greeting', { name: t(`admin.dashboard.${dashboardMock.userName}`) })}
         </h1>
         <p className="mt-2 font-body text-body text-neutral-500">
-          {dateFormatter.format(DASHBOARD_DATE)} · {t('admin.dashboard.pendingCount', { count: dashboardMock.pendingCount })}
+          {dateFormatter.format(selectedDateValue)} · {dashboardData
+            ? t('admin.dashboard.pendingCount', { count: dashboardData.pendingAppointmentCount })
+            : loading ? t('admin.dashboard.loading') : ''}
         </p>
       </header>
+      {error && <p role="alert" className="mt-md rounded-xl border border-danger-100 bg-danger-50 p-md font-body text-body-sm text-danger">{t('admin.dashboard.loadError', { error })}</p>}
 
       <div className="mt-xl flex flex-wrap items-center justify-between gap-sm" role="group" aria-label={t('admin.dashboard.periodLabel')}>
         <div className="flex flex-wrap gap-sm">
@@ -78,6 +146,7 @@ function AdminDashboardPage() {
         <button
           type="button"
           aria-label={t('admin.dashboard.refresh')}
+          onClick={() => setRefreshKey((current) => current + 1)}
           className="inline-flex size-10 items-center justify-center rounded-full border border-green-500 text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
         >
           <RefreshCwIcon size={18} aria-hidden="true" />
@@ -94,7 +163,7 @@ function AdminDashboardPage() {
           <section aria-labelledby="dashboard-stats-title">
             <h2 id="dashboard-stats-title" className="sr-only">{t('admin.dashboard.statsTitle')}</h2>
             <div className="grid gap-md sm:grid-cols-2 lg:grid-cols-3">
-              {dashboardMock.stats.map((stat) => {
+              {stats.map((stat) => {
                 const Icon = ICONS[stat.icon]
                 return (
                   <Link
@@ -106,9 +175,9 @@ function AdminDashboardPage() {
                       <span className="flex size-11 items-center justify-center rounded-full bg-green-50 text-heading"><Icon size={21} aria-hidden={true} /></span>
                       <ChevronRightIcon size={18} className="text-neutral-400 transition group-hover:translate-x-1 group-hover:text-link" aria-hidden="true" />
                     </div>
-                    <p className="m-0 mt-lg font-body text-body-sm font-semibold text-neutral-500">{t(`admin.dashboard.stats.${stat.key}.label`)}</p>
-                    <p className="m-0 mt-2xs font-heading text-h2 font-bold text-heading">{stat.value}</p>
-                    <span className="mt-md inline-block font-body text-body-sm font-semibold text-link underline-offset-2 group-hover:underline">{t('admin.dashboard.viewPending')}</span>
+                    <p className="m-0 mt-lg font-body text-body-sm font-semibold text-neutral-500">{t(stat.label)}</p>
+                    <p className="m-0 mt-2xs font-heading text-h2 font-bold text-heading">{stat.value ?? '—'}</p>
+                    <span className="mt-md inline-block font-body text-body-sm font-semibold text-link underline-offset-2 group-hover:underline">{t(stat.key === 'activeChildren' ? 'admin.dashboard.viewChildren' : 'admin.dashboard.viewPending')}</span>
                   </Link>
                 )
               })}
@@ -162,7 +231,9 @@ function AdminDashboardPage() {
             <h2 id="dashboard-calendar-title" className="m-0 mb-md font-heading text-h4 font-bold text-heading">{t('admin.dashboard.calendar.title')}</h2>
             <CalendarPanel
               value={selectedDate}
-              onChange={setSelectedDate}
+              onChange={(date) => {
+                if (date) setSelectedDate(date)
+              }}
               ariaLabel={t('admin.dashboard.calendar.ariaLabel')}
               showShortcuts={false}
               compact
@@ -172,21 +243,25 @@ function AdminDashboardPage() {
 
           <section aria-labelledby="dashboard-agenda-title" className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
             <h2 id="dashboard-agenda-title" className="m-0 font-heading text-h4 font-bold text-heading">{t('admin.dashboard.agenda.title')}</h2>
-            <p className="m-0 mt-2xs font-body text-body-sm capitalize text-neutral-500">{shortDateFormatter.format(DASHBOARD_DATE)}</p>
+            <p className="m-0 mt-2xs font-body text-body-sm capitalize text-neutral-500">{shortDateFormatter.format(selectedDateValue)}</p>
             <ol className="m-0 mt-lg list-none space-y-md p-0">
-              {dashboardMock.agenda.map((appointment) => (
-                <li key={appointment.time} className="relative flex gap-sm">
-                  <time className="w-12 shrink-0 pt-2xs font-body text-caption font-bold text-neutral-500">{appointment.time}</time>
+              {dashboardData?.appointments.map((appointment) => (
+                <li key={appointment.id} className="relative flex gap-sm">
+                  <time className="w-12 shrink-0 pt-2xs font-body text-caption font-bold text-neutral-500">
+                    {timeFormatter.format(new Date(appointment.appointmentDate))}
+                  </time>
                   <div className="relative flex-1 border-l-2 border-green-100 pl-md">
-                    <span className="block font-body text-body-sm font-bold text-heading">{t(`admin.dashboard.agenda.${appointment.family}`)}</span>
-                    <span className="block font-body text-caption text-neutral-500">{t(`admin.dashboard.agenda.${appointment.reason}`)}</span>
-                    <span className={`mt-xs inline-block rounded-full px-sm py-2xs font-body text-caption font-bold ${appointment.status === 'confirmed' ? 'bg-success-50 text-success' : appointment.status === 'pending' ? 'bg-warning-50 text-warning' : 'bg-danger-50 text-danger'}`}>
-                      {t(`admin.dashboard.agenda.status.${appointment.status}`)}
+                    <span className="block font-body text-body-sm font-bold text-heading">{appointment.parentName}</span>
+                    <span className="block font-body text-caption text-neutral-500">{appointment.childName}</span>
+                    <span className={`mt-xs inline-block rounded-full px-sm py-2xs font-body text-caption font-bold ${appointmentStatusClasses[appointment.status]}`}>
+                      {t(appointmentStatusLabels[appointment.status])}
                     </span>
                   </div>
                 </li>
               ))}
             </ol>
+            {loading && <p className="mt-lg font-body text-body-sm text-neutral-500">{t('admin.dashboard.loading')}</p>}
+            {!loading && !error && dashboardData?.appointments.length === 0 && <p className="mt-lg font-body text-body-sm text-neutral-500">{t('admin.dashboard.agenda.empty')}</p>}
           </section>
           <Link to="/admin/citas" className="inline-flex w-full items-center justify-center rounded-full bg-orange-500 px-lg py-sm font-body text-body-sm font-bold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2">
             {t('admin.dashboard.agenda.viewAll')}
