@@ -1,0 +1,290 @@
+.green-hearts-hero {
+  /* Fixed backgrounds are often zoomed or blurry in mobile/tablet browsers. */
+  background-attachment: scroll;
+}
+
+@keyframes green-hearts-puzzle-enter-left {
+  from {
+    opacity: 0;
+    translate: -90px 0;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes green-hearts-puzzle-enter-right {
+  from {
+    opacity: 0;
+    translate: 90px 0;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes green-hearts-puzzle-enter-top {
+  from {
+    opacity: 0;
+    translate: 0 -70px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes green-hearts-puzzle-enter-bottom {
+  from {
+    opacity: 0;
+    translate: 0 70px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .green-hearts-hero {
+    background-attachment: fixed;
+  }
+}
+
+#valores .green-hearts-values-swiper {
+  overflow: visible;
+  padding-bottom: 2.5rem;
+}
+
+@media (min-width: 1024px) {
+  #valores .green-hearts-values-swiper {
+    display: none;
+  }
+
+  #valores .green-hearts-values-controls {
+    display: none;
+  }
+
+  #valores .green-hearts-values-puzzle {
+    position: relative;
+    width: min(100%, 670px);
+    aspect-ratio: 1395 / 927;
+  }
+
+  #valores .green-hearts-values-puzzle-art,
+  #valores .green-hearts-values-puzzle-content {
+    position: absolute;
+    inset: 0;
+  }
+
+  #valores .green-hearts-values-puzzle-art img {
+    position: absolute;
+    max-width: none;
+    transform: scale(1.006);
+    transform-origin: center;
+    transition: transform 180ms ease, filter 180ms ease;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    #valores .green-hearts-values-puzzle.is-in-view .green-hearts-values-puzzle-art img {
+      opacity: 0;
+      animation-duration: 1100ms;
+      animation-timing-function: cubic-bezier(0.2, 0.75, 0.25, 1);
+      animation-fill-mode: forwards;
+    }
+
+    #valores .green-hearts-values-puzzle.is-in-view .green-hearts-values-puzzle-art img:nth-child(1),
+    #valores .green-hearts-values-puzzle.is-in-view .green-hearts-values-puzzle-art img:nth-child(4) {
+      animation-name: green-hearts-puzzle-enter-left;
+    }
+
+    #valores .green-hearts-values-puzzle.is-in-view .green-hearts-values-puzzle-art img:nth-child(2) {
+      animation-name: green-hearts-puzzle-enter-top;
+      animation-delay: 180ms;
+    }
+
+    #valores .green-hearts-values-puzzle.is-in-view .green-hearts-values-puzzle-art img:nth-child(5) {
+      animation-name: green-hearts-puzzle-enter-bottom;
+      animation-delay: 320ms;
+    }
+
+    #valores .green-hearts-values-puzzle.is-in-view .green-hearts-values-puzzle-art img:nth-child(3),
+    #valores .green-hearts-values-puzzle.is-in-view .green-hearts-values-puzzle-art img:nth-child(6) {
+      animation-name: green-hearts-puzzle-enter-right;
+      animation-delay: 460ms;
+    }
+  }
+
+  #valores .green-hearts-values-puzzle-art img.is-raised {
+    z-index: 1;
+    transform: translateY(-8px) scale(1.025);
+    filter: drop-shadow(0 8px 8px rgb(0 0 0 / 18%));
+  }
+
+  #valores .green-hearts-values-puzzle-content {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    justify-items: center;
+  }
+
+  #valores .green-hearts-puzzle-value {
+    width: 90%;
+    padding: 0.5rem;
+    color: white;
+    transition: translate 180ms ease;
+  }
+
+  #valores .green-hearts-puzzle-value.is-raised {
+    z-index: 2;
+    translate: 0 -8px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #valores .green-hearts-values-puzzle-art img,
+    #valores .green-hearts-puzzle-value {
+      transition: none;
+    }
+
+    #valores .green-hearts-values-puzzle-art img.is-raised {
+      transform: scale(1.006);
+      filter: none;
+    }
+
+    #valores .green-hearts-puzzle-value.is-raised {
+      translate: none;
+    }
+  }
+
+  #valores .green-hearts-puzzle-value-left {
+    justify-self: center;
+    padding-left: 1.5rem;
+    text-align: left;
+  }
+
+  #valores .green-hearts-puzzle-value-center {
+    justify-self: center !important;
+    text-align: center !important;
+    transform: translateX(-8px);
+  }
+
+  #valores .green-hearts-puzzle-value-right {
+    justify-self: center;
+    padding-right: 1.5rem;
+    text-align: right;
+  }
+
+  #valores .green-hearts-puzzle-value-center > span {
+    margin-right: auto !important;
+    margin-left: auto !important;
+  }
+
+  #valores .green-hearts-puzzle-value-left > span {
+    margin-right: auto;
+  }
+
+  #valores .green-hearts-puzzle-value-right > span {
+    margin-left: auto;
+  }
+
+  #valores .green-hearts-puzzle-value h3 {
+    font-size: 1rem;
+  }
+
+  #valores .green-hearts-puzzle-value-right > span {
+    margin-left: auto;
+  }
+
+}
+
+@media (min-width: 1024px) {
+  #valores .green-hearts-values-swiper .swiper-wrapper {
+    display: grid !important;
+    width: 100% !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    transform: none !important;
+  }
+
+  #valores .green-hearts-values-swiper .swiper-slide {
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+  }
+
+  #valores .green-hearts-values-swiper .swiper-pagination {
+    display: none;
+  }
+}
+
+#valores .green-hearts-value-card {
+  position: relative;
+}
+
+#valores .swiper-pagination {
+  bottom: 0;
+  line-height: 1;
+}
+
+#valores .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  margin: 0 6px;
+  background: var(--green-500, #00a36c);
+  opacity: 0.35;
+}
+
+#valores .swiper-pagination-bullet-active {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .green-hearts-hero {
+    background-attachment: scroll;
+  }
+}
+
+#lineas-de-accion .green-hearts-actions-swiper {
+  overflow: hidden;
+  padding-bottom: 3rem;
+}
+
+#lineas-de-accion .green-hearts-actions-header > :is(h2, p) {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0;
+  justify-self: stretch;
+}
+
+#lineas-de-accion .swiper-pagination {
+  bottom: 0;
+  line-height: 1;
+}
+
+#lineas-de-accion .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  margin: 0 6px;
+  background: var(--white);
+  opacity: 0.35;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+#lineas-de-accion .swiper-pagination-bullet-active {
+  background: var(--white);
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #lineas-de-accion .swiper-pagination-bullet {
+    transition: none;
+  }
+}

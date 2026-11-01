@@ -50,10 +50,10 @@ import BlobGooFilter from './components/ui/BlobGooFilter.tsx'
 import OwnerClubsPage from './pages/OwnerClubsPage.tsx'
 import ClubsPage from './pages/ClubsPage.tsx'
 import AboutUsPage from './pages/AboutUsPage.tsx'
-import PaymentPage from './pages/PaymentPage.tsx'
 import ChatWidget from './components/chat/ChatWidget.tsx'
 import GroupsRoute from './routes/GroupsRoute.tsx'
 import AdminGroupsPage from './pages/AdminGroupsPage.tsx'
+import GreenHeartsPage from './pages/GreenHeartsPage.tsx'
 
 function SessionWatcher() {
   useSessionExpiredNotice()
@@ -131,6 +131,7 @@ function App() {
                       <Route path="/vacantes" element={<VacanciesPage />} />
                       <Route path="/clubs" element={<ClubsPage />} />
                       <Route path="/about-us" element={<AboutUsPage />} />
+                      <Route path="/green-hearts" element={<GreenHeartsPage />} />
                       <Route path="/signup" element={<Navigate to="/admin/users" replace />} />
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>

@@ -94,6 +94,7 @@ function Navbar() {
     { to: '/clubs', label: t('navbar.clubs') },
     { to: '/vacantes', label: t('navbar.vacancies') },
     { to: '/about-us', label: t('navbar.aboutUs') },
+    { to: '/green-hearts', label: t('greenHearts.navLabel') },
   ]
 
   const handleLogout = async () => {
