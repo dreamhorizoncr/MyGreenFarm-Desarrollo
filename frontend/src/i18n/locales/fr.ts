@@ -1083,7 +1083,13 @@ export default {
       activityTimeFour: "Il y a 2 heures",
       activityTimeFive: "Il y a 3 heures",
       emptyState: "Aucun élément en attente dans cette section.",
-      calendar: { title: "Calendrier", ariaLabel: "Calendrier mensuel du tableau de bord" },
+      calendar: {
+        title: "Calendrier",
+        ariaLabel: "Calendrier mensuel du tableau de bord",
+        loadError: "Les événements du calendrier n'ont pas pu être chargés.",
+        emptyDay: "Aucun événement pour cette journée.",
+        eventTypes: { APPOINTMENT: "Rendez-vous", BIRTHDAY: "Anniversaire" },
+      },
       agenda: {
         title: "Agenda du jour",
         empty: "Aucun rendez-vous pour ce jour.",

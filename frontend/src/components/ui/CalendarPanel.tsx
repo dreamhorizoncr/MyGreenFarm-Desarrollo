@@ -9,6 +9,7 @@ import Select from './Select.tsx'
 interface CalendarPanelProps {
   value: CalendarDate | null
   onChange: (value: CalendarDate | null) => void
+  onFocusChange?: (value: CalendarDate) => void
   markedDates?: ReadonlySet<string>
   minValue?: CalendarDate
   maxValue?: CalendarDate
@@ -44,10 +45,16 @@ const SIZES = {
 const YEARS_BACK = 100
 const YEARS_AHEAD = 10
 
+function clampDate(date: CalendarDate, minValue?: CalendarDate, maxValue?: CalendarDate) {
+  if (minValue && date.compare(minValue) < 0) return minValue
+  if (maxValue && date.compare(maxValue) > 0) return maxValue
+  return date
+}
+
 const shortcutClassName =
   'min-w-0 flex-1 rounded-2xl px-xs py-2 text-white font-medium hover:bg-green-400/40 transition-colors data-[pressed=true]:scale-95 disabled:opacity-50 sm:px-8'
 
-function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaLabel, showShortcuts = true, compact = false, className = '' }: Readonly<CalendarPanelProps>) {
+function CalendarPanel({ value, onChange, onFocusChange, markedDates, minValue, maxValue, ariaLabel, showShortcuts = true, compact = false, className = '' }: Readonly<CalendarPanelProps>) {
   const { t, i18n } = useTranslation()
   const size = SIZES[compact ? 'compact' : 'regular']
   const [focusedDate, setFocusedDate] = useState<CalendarDate>(value ?? today(getLocalTimeZone()))
@@ -58,10 +65,20 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
   const jumpTo = (date: CalendarDate) => {
     onChange(date)
     setFocusedDate(date)
+    onFocusChange?.(date)
   }
 
   const todayDate = today(getLocalTimeZone())
+  const resetToToday = () => {
+    onChange(todayDate)
+    setFocusedDate(todayDate)
+    onFocusChange?.(todayDate)
+  }
   const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
+  const handleFocusChange = (date: CalendarDate) => {
+    setFocusedDate(date)
+    onFocusChange?.(date)
+  }
 
   const monthOptions = useMemo(() => {
     const format = new Intl.DateTimeFormat(locale, { month: 'long' })
@@ -77,9 +94,9 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
     [firstYear, lastYear],
   )
   const moveTo = (date: CalendarDate) => {
-    if (minValue && date.compare(minValue) < 0) setFocusedDate(minValue)
-    else if (maxValue && date.compare(maxValue) > 0) setFocusedDate(maxValue)
-    else setFocusedDate(date)
+    const nextDate = clampDate(date, minValue, maxValue)
+    setFocusedDate(nextDate)
+    onFocusChange?.(nextDate)
   }
   const weekStart = startOfWeek(todayDate, i18n.language)
   const monthStart = startOfMonth(todayDate)
@@ -111,7 +128,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
           focusedValue={focusedDate}
           value={value}
           onChange={onChange}
-          onFocusChange={setFocusedDate}
+          onFocusChange={handleFocusChange}
           minValue={minValue}
           maxValue={maxValue}
           className="flex flex-col items-center w-full"
@@ -176,7 +193,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
         <div className="flex w-full justify-end">
           <button
             type="button"
-            onClick={() => onChange(null)}
+            onClick={resetToToday}
             className="rounded font-body text-caption font-semibold text-link underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-link"
           >
             {t('teacherAppointments.calendar.clear')}
@@ -189,7 +206,7 @@ function CalendarPanel({ value, onChange, markedDates, minValue, maxValue, ariaL
           <Button
             size="sm"
             variant="tertiary"
-            onPress={() => onChange(null)}
+            onPress={resetToToday}
             className={`border-orange-500 bg-orange-500 text-white hover:bg-orange-600 rounded-full border items-center justify-center font-body text-sm font-semibold transition-colors ${size.clear}`}
           >
             {t('teacherAppointments.calendar.clear')}
