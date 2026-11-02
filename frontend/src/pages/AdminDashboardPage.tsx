@@ -143,7 +143,7 @@ function AdminDashboardPage() {
       </header>
       {currentDashboardError && <p role="alert" className="mt-md rounded-xl border border-danger-100 bg-danger-50 p-md font-body text-body-sm text-danger">{t('admin.dashboard.loadError', { error: currentDashboardError })}</p>}
 
-      <div className="mt-xl flex flex-wrap items-center justify-between gap-sm" role="group" aria-label={t('admin.dashboard.periodLabel')}>
+      <fieldset className="mx-0 mb-0 mt-xl flex min-w-0 flex-wrap items-center justify-between gap-sm border-0 p-0" aria-label={t('admin.dashboard.periodLabel')}>
         <div className="flex flex-wrap gap-sm">
           {(['today', 'thisWeek', 'thisMonth'] as const).map((option) => (
             <button
@@ -175,7 +175,7 @@ function AdminDashboardPage() {
         >
           <RefreshCwIcon size={18} aria-hidden="true" />
         </button>
-      </div>
+      </fieldset>
 
       <div className="mt-xl grid gap-xl xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-xl">

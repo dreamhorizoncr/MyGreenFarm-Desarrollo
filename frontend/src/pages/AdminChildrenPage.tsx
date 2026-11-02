@@ -144,9 +144,8 @@ function AdminChildrenPage() {
 
         <ChildrenModuleTabs />
 
-        <div
-          className="mt-lg flex flex-wrap gap-sm"
-          role="group"
+        <fieldset
+          className="mx-0 mb-0 mt-lg flex min-w-0 flex-wrap gap-sm border-0 p-0"
           aria-label={t('admin.children.statusFilterLabel')}
         >
           {(['ALL', 'ACTIVE', 'INACTIVE'] as const).map((status) => (
@@ -167,7 +166,7 @@ function AdminChildrenPage() {
               {t(statusFilterLabels[status])}
             </button>
           ))}
-        </div>
+        </fieldset>
 
         {loading && (
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">

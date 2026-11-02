@@ -29,11 +29,8 @@ function ProfileButton() {
   const user = userStorage.getUser()
   if (!user) return null
 
-  const panelLabelKey = user.role === 'OWNER'
-    ? 'ownerPanel'
-    : user.role === 'ADMIN'
-      ? 'adminPanel'
-      : 'teacherPanel'
+  const panelLabelKeys: Partial<Record<string, 'ownerPanel' | 'adminPanel'>> = { OWNER: 'ownerPanel', ADMIN: 'adminPanel' }
+  const panelLabelKey = panelLabelKeys[user.role] ?? 'teacherPanel'
 
   const handleLogout = async () => {
     await authService.signout()

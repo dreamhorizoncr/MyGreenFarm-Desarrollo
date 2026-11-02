@@ -3,7 +3,34 @@ import { MotionGlobalConfig } from "motion/react";
 import { notifyReducedMotionChange } from "../utils/reducedMotion";
 import { AccessibilityContext, type AccessibilityContextType, type ColorMode, type FontSize } from "./accessibility";
 
-const COLOR_MODES: ColorMode[] = ["normal", "monochrome", "low-saturation", "high-saturation"];
+const COLOR_MODES = new Set<string>(["normal", "monochrome", "low-saturation", "high-saturation"]);
+
+function persistFlag(key: string, enabled: boolean) {
+    if (enabled) localStorage.setItem(key, "true");
+    else localStorage.removeItem(key);
+}
+
+function persistDefaultOnFlag(key: string, enabled: boolean) {
+    if (enabled) localStorage.removeItem(key);
+    else localStorage.setItem(key, "false");
+}
+
+function applyFlag(root: HTMLElement, className: string, key: string, enabled: boolean) {
+    root.classList.toggle(className, enabled);
+    persistFlag(key, enabled);
+}
+
+function applyColorMode(root: HTMLElement, colorMode: ColorMode) {
+    root.classList.remove("grayscale-mode", "color-monochrome", "color-low-saturation", "color-high-saturation", "color-normal");
+    if (colorMode === "normal") {
+        localStorage.removeItem("a11y_color_mode");
+    } else {
+        root.classList.add(`color-${colorMode}`);
+        localStorage.setItem("a11y_color_mode", colorMode);
+    }
+    // Clave antigua: ya no se usa, se limpia para no reactivar el modo anterior.
+    localStorage.removeItem("a11y_grayscale");
+}
 
 function readBoolean(key: string, fallback = false) {
     const value = localStorage.getItem(key);
@@ -13,7 +40,7 @@ function readBoolean(key: string, fallback = false) {
 
 function readColorMode(): ColorMode {
     const saved = localStorage.getItem("a11y_color_mode");
-    if (saved && COLOR_MODES.includes(saved as ColorMode)) return saved as ColorMode;
+    if (saved && COLOR_MODES.has(saved)) return saved as ColorMode;
     // Migración desde el antiguo interruptor de escala de grises.
     if (localStorage.getItem("a11y_grayscale") === "true") return "monochrome";
     return "normal";
@@ -53,59 +80,25 @@ export function AccessibilityProvider({ children }: Readonly<{ children: ReactNo
         root.classList.add(`text-${fontSize}`);
         localStorage.setItem("a11y_font", fontSize);
 
-        root.classList.toggle("high-contrast", highContrast);
-        if (highContrast) localStorage.setItem("a11y_contrast", "true");
-        else localStorage.removeItem("a11y_contrast");
-
-        root.classList.remove("grayscale-mode", "color-monochrome", "color-low-saturation", "color-high-saturation");
-        root.classList.remove("color-normal");
-        if (colorMode !== "normal") root.classList.add(`color-${colorMode}`);
-        if (colorMode === "normal") localStorage.removeItem("a11y_color_mode");
-        else localStorage.setItem("a11y_color_mode", colorMode);
-        // Clave antigua: ya no se usa, se limpia para no reactivar el modo anterior.
-        localStorage.removeItem("a11y_grayscale");
-
-        root.classList.toggle("highlight-links-mode", highlightLinks);
-        if (highlightLinks) localStorage.setItem("a11y_links", "true");
-        else localStorage.removeItem("a11y_links");
-
-        root.classList.toggle("dyslexia-font", dyslexiaFont);
-        if (dyslexiaFont) localStorage.setItem("a11y_dyslexia", "true");
-        else localStorage.removeItem("a11y_dyslexia");
-
-        root.classList.toggle("text-spacing-mode", textSpacing);
-        if (textSpacing) localStorage.setItem("a11y_text_spacing", "true");
-        else localStorage.removeItem("a11y_text_spacing");
-
-        root.classList.toggle("big-cursor", bigCursor);
-        if (bigCursor) localStorage.setItem("a11y_big_cursor", "true");
-        else localStorage.removeItem("a11y_big_cursor");
-
-        root.classList.toggle("reading-guide-mode", readingGuide);
-        if (readingGuide) localStorage.setItem("a11y_reading_guide", "true");
-        else localStorage.removeItem("a11y_reading_guide");
+        applyFlag(root, "high-contrast", "a11y_contrast", highContrast);
+        applyColorMode(root, colorMode);
+        applyFlag(root, "highlight-links-mode", "a11y_links", highlightLinks);
+        applyFlag(root, "dyslexia-font", "a11y_dyslexia", dyslexiaFont);
+        applyFlag(root, "text-spacing-mode", "a11y_text_spacing", textSpacing);
+        applyFlag(root, "big-cursor", "a11y_big_cursor", bigCursor);
+        applyFlag(root, "reading-guide-mode", "a11y_reading_guide", readingGuide);
 
         root.classList.toggle("stop-animations-mode", stopAnimations);
         MotionGlobalConfig.skipAnimations = stopAnimations;
         notifyReducedMotionChange();
-        if (stopAnimations) localStorage.setItem("a11y_stop_animations", "true");
-        else localStorage.removeItem("a11y_stop_animations");
+        persistFlag("a11y_stop_animations", stopAnimations);
 
-        root.classList.toggle("voice-reader-mode", voiceReader);
-        if (voiceReader) localStorage.setItem("a11y_voice_reader", "true");
-        else localStorage.removeItem("a11y_voice_reader");
+        applyFlag(root, "voice-reader-mode", "a11y_voice_reader", voiceReader);
 
-        if (autoReadModals) localStorage.removeItem("a11y_reader_modals");
-        else localStorage.setItem("a11y_reader_modals", "false");
-
-        if (announceAlerts) localStorage.removeItem("a11y_reader_alerts");
-        else localStorage.setItem("a11y_reader_alerts", "false");
-
-        if (clickToRead) localStorage.removeItem("a11y_reader_click");
-        else localStorage.setItem("a11y_reader_click", "false");
-
-        if (readFocus) localStorage.removeItem("a11y_reader_focus");
-        else localStorage.setItem("a11y_reader_focus", "false");
+        persistDefaultOnFlag("a11y_reader_modals", autoReadModals);
+        persistDefaultOnFlag("a11y_reader_alerts", announceAlerts);
+        persistDefaultOnFlag("a11y_reader_click", clickToRead);
+        persistDefaultOnFlag("a11y_reader_focus", readFocus);
     }, [
         fontSize,
         highContrast,

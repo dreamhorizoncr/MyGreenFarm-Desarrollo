@@ -21,7 +21,7 @@ interface ChatPanelProps {
   onClose: () => void
 }
 
-export default function ChatPanel({ onClose }: ChatPanelProps) {
+export default function ChatPanel({ onClose }: Readonly<ChatPanelProps>) {
   const { messages, input, setInput, sendMessage, loading } = useChat()
   const { t } = useTranslation()
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -47,7 +47,7 @@ export default function ChatPanel({ onClose }: ChatPanelProps) {
 
   useEffect(() => {
     const last = messages.at(-1)
-    if (!last || last.role !== 'bot' || last.id === lastBotId.current) return
+    if (last?.role !== 'bot' || last.id === lastBotId.current) return
     lastBotId.current = last.id
     const timer = window.setTimeout(() => {
       if (last.blocked) {

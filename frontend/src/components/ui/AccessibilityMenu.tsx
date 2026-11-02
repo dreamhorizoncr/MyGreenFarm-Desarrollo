@@ -143,13 +143,10 @@ export default function AccessibilityMenu() {
         [readerSupported, voiceReader, toggleVoiceReader],
     )
 
-    const readerStatus = !readerSupported
-        ? t('accessibility.readerUnsupported')
-        : isSpeaking
-            ? t('accessibility.readerSpeaking')
-            : voiceReader
-                ? t('accessibility.readerReady')
-                : t('accessibility.readerOff')
+    let readerStatus = t('accessibility.readerOff')
+    if (!readerSupported) readerStatus = t('accessibility.readerUnsupported')
+    else if (isSpeaking) readerStatus = t('accessibility.readerSpeaking')
+    else if (voiceReader) readerStatus = t('accessibility.readerReady')
 
     const readerToggleDisabled = !readerSupported || !voiceReader
 
@@ -233,12 +230,9 @@ export default function AccessibilityMenu() {
                                                 <span className="block font-body text-body-sm font-semibold leading-tight text-heading">
                                                     {t('accessibility.readerTitle')}
                                                 </span>
-                                                <span
-                                                    role="status"
-                                                    className="mt-0.5 block font-body text-caption leading-snug text-neutral-600"
-                                                >
+                                                <output className="mt-0.5 block font-body text-caption leading-snug text-neutral-600">
                                                     {readerStatus}
-                                                </span>
+                                                </output>
                                             </span>
                                             <label className="relative inline-flex shrink-0 cursor-pointer items-center" title={t('accessibility.enableReader')}>
                                                 <span className="sr-only">{t('accessibility.enableReader')}</span>

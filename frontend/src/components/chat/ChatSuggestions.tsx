@@ -10,7 +10,7 @@ interface ChatSuggestionsProps {
 const SUGGESTIONS = ['booking', 'vacancies'] as const
 const suggestionRowClass = tabCarouselClass.replace(' md:flex-wrap md:overflow-visible', '')
 
-export default function ChatSuggestions({ onSelect }: ChatSuggestionsProps) {
+export default function ChatSuggestions({ onSelect }: Readonly<ChatSuggestionsProps>) {
   const { t } = useTranslation()
   const [selected, setSelected] = useState<string | null>(null)
   const rowRef = useTabCarousel(selected)

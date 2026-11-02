@@ -32,11 +32,18 @@ type AnimatedIcon = ForwardRefExoticComponent<{ size?: number; className?: strin
 
 const DEVELOPMENT = ['emotional', 'social', 'physical', 'cognitive'] as const
 
+// Mismo subrayado de pincel que los títulos de Green Hearts, en el rosa de marca.
+const BRUSH_UNDERLINE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 16' preserveAspectRatio='none'%3E%3Cpath d='M4 11C70 4 160 3 296 8' fill='none' stroke='%23ff93a9' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E")`
+
+// Etiqueta del pie de foto.
+// Rosa de marca, igual que la etiqueta "Familia fundadora" del encabezado.
+const TAG = 'rounded-full bg-[var(--pink-400)] px-md py-1 font-body text-body-sm font-semibold text-white'
+
 const PILLARS: { key: 'play' | 'nature' | 'languages' | 'values'; Icon: AnimatedIcon; color: string }[] = [
   { key: 'play', Icon: BlocksIcon, color: 'bg-[var(--orange-500)]' },
   { key: 'nature', Icon: RabbitIcon, color: 'bg-green-500' },
   { key: 'languages', Icon: GlobeIcon, color: 'bg-[var(--pink-400)]' },
-  { key: 'values', Icon: HeartIcon, color: 'bg-[var(--orange-400)]' },
+  { key: 'values', Icon: HeartIcon, color: 'bg-green-500' },
 ]
 
 const DREAMS: { key: 'participate' | 'safe' | 'adventure'; Icon: AnimatedIcon; color: string }[] = [
@@ -88,7 +95,7 @@ function useHoverIcon() {
   }
 }
 
-function ChapterTitle({ Icon, color, children }: { Icon: AnimatedIcon; color: string; children: ReactNode }) {
+function ChapterTitle({ Icon, color, children }: Readonly<{ Icon: AnimatedIcon; color: string; children: ReactNode }>) {
   const { ref, hover } = useHoverIcon()
   return (
     <h3 {...hover} className="m-0 flex items-center gap-sm font-heading text-h4 font-bold leading-snug text-heading">
@@ -100,7 +107,7 @@ function ChapterTitle({ Icon, color, children }: { Icon: AnimatedIcon; color: st
   )
 }
 
-function PillarItem({ Icon, color, label, index }: { Icon: AnimatedIcon; color: string; label: string; index: number }) {
+function PillarItem({ Icon, color, label, index }: Readonly<{ Icon: AnimatedIcon; color: string; label: string; index: number }>) {
   const reduceMotion = useReducedMotion()
   const { ref, hover } = useHoverIcon()
   return (
@@ -124,7 +131,7 @@ function PillarItem({ Icon, color, label, index }: { Icon: AnimatedIcon; color: 
   )
 }
 
-function DreamItem({ Icon, color, label }: { Icon: AnimatedIcon; color: string; label: string }) {
+function DreamItem({ Icon, color, label }: Readonly<{ Icon: AnimatedIcon; color: string; label: string }>) {
   const { ref, hover } = useHoverIcon()
   return (
     <li {...hover} className="relative flex items-center gap-md">
@@ -146,7 +153,6 @@ function FamilySection() {
   const { ref: sunRef, hover: sunHover } = useHoverIcon()
   const { ref: davidRef, hover: davidHover } = useHoverIcon()
   const { ref: homeRef, hover: homeHover } = useHoverIcon()
-  const { ref: signatureRef, hover: signatureHover } = useHoverIcon()
 
   const reveal = (delay = 0) =>
     reduceMotion
@@ -158,13 +164,13 @@ function FamilySection() {
           transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as const },
         }
 
-  const paragraph = 'm-0 font-body text-body leading-[1.7] text-body-text'
+  const paragraph = 'm-0 font-body text-body leading-[1.6] text-body-text'
 
   return (
     <section id="our-family" aria-labelledby="our-family-title" className="relative w-full overflow-hidden">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-24 top-24 size-72 rounded-full bg-[var(--pink-200)] opacity-20 blur-3xl"
+        className="pointer-events-none absolute -left-24 top-24 size-72 rounded-full bg-[var(--pink-400)] opacity-10 blur-3xl"
       />
       <div
         aria-hidden="true"
@@ -209,7 +215,7 @@ function FamilySection() {
               <SunIcon ref={sunRef} size={28} />
             </div>
 
-            <figcaption className="mx-auto -mt-5 w-fit rotate-1 rounded-full bg-green-500 px-md py-xs font-heading text-body-sm font-bold text-white shadow-sm">
+            <figcaption className={`relative mx-auto -mt-5 w-fit rotate-1 shadow-sm ${TAG}`}>
               {t('aboutUsPage.family.caption')}
             </figcaption>
           </motion.figure>
@@ -223,11 +229,11 @@ function FamilySection() {
               {t('aboutUsPage.family.title')}
             </h2>
 
-            <p className="m-0 mt-md font-body text-body-lg leading-[1.6] text-[var(--body-text-dark)]">
+            <p className="m-0 mt-md font-body text-body leading-[1.6] text-body-text">
               {t('aboutUsPage.family.lead')}
             </p>
 
-            <div className="mt-lg flex w-full flex-col gap-sm border-t-2 border-dashed border-[var(--green-100)] pt-lg">
+            <div className="mt-lg flex w-full flex-col gap-sm border-t-2 border-dashed border-green-500/20 pt-lg">
               <ChapterTitle Icon={SunriseIcon} color="bg-[var(--green-50)] text-green-500">
                 {t('aboutUsPage.family.chapters.dream')}
               </ChapterTitle>
@@ -237,7 +243,7 @@ function FamilySection() {
                 {DEVELOPMENT.map((key) => (
                   <li
                     key={key}
-                    className="rounded-full border border-green-500/30 bg-white px-md py-1 font-body text-body-sm font-semibold text-green-500"
+                    className="rounded-full bg-[var(--green-50)] px-sm py-0.5 font-heading text-body-sm font-bold text-heading"
                   >
                     {t(`aboutUsPage.family.development.${key}`)}
                   </li>
@@ -251,25 +257,25 @@ function FamilySection() {
           <motion.article
             {...reveal()}
             {...davidHover}
-            className="relative flex flex-col gap-md overflow-hidden rounded-3xl bg-[var(--pink-50)] p-lg md:p-xl"
+            className="relative flex flex-col gap-md overflow-hidden rounded-[2rem] border-[3px] border-dashed border-pink-400/50 bg-white p-lg md:p-xl"
           >
-            <ChapterTitle Icon={FootprintsIcon} color="bg-white text-[var(--pink-600)]">
+            <ChapterTitle Icon={FootprintsIcon} color="bg-[var(--green-50)] text-[var(--pink-400)]">
               {t('aboutUsPage.family.chapters.david')}
             </ChapterTitle>
             <p className={paragraph}>{t('aboutUsPage.family.paragraph2')}</p>
             <FilledHeart
               ref={davidRef}
               size={64}
-              className="pointer-events-none absolute -bottom-3 right-3 rotate-12 text-[var(--pink-200)] opacity-70"
+              className="pointer-events-none absolute -bottom-3 right-3 rotate-12 text-[var(--pink-400)] opacity-25"
             />
           </motion.article>
 
           <motion.article
             {...reveal(0.1)}
             {...homeHover}
-            className="relative flex flex-col gap-md overflow-hidden rounded-3xl bg-[var(--orange-50)] p-lg md:p-xl"
+            className="relative flex flex-col gap-md overflow-hidden rounded-[2rem] border-[3px] border-dashed border-orange-500/40 bg-white p-lg md:p-xl"
           >
-            <ChapterTitle Icon={HouseIcon} color="bg-white text-[var(--orange-500)]">
+            <ChapterTitle Icon={HouseIcon} color="bg-[var(--green-50)] text-[var(--orange-500)]">
               {t('aboutUsPage.family.chapters.puzzle')}
             </ChapterTitle>
             <p className={paragraph}>{t('aboutUsPage.family.paragraph3')}</p>
@@ -277,7 +283,7 @@ function FamilySection() {
               ref={homeRef}
               size={64}
               aria-hidden="true"
-              className="pointer-events-none absolute -bottom-3 right-3 -rotate-12 text-[var(--orange-200)] opacity-80"
+              className="pointer-events-none absolute -bottom-3 right-3 -rotate-12 text-[var(--orange-500)] opacity-25"
             />
           </motion.article>
         </div>
@@ -304,7 +310,7 @@ function FamilySection() {
         <div className="grid items-stretch gap-lg lg:grid-cols-2">
           <motion.div
             {...reveal()}
-            className="relative flex flex-col gap-md rounded-[2rem] border-[3px] border-dashed border-[var(--green-300)] bg-white p-lg md:p-xl"
+            className="relative flex flex-col gap-md rounded-[2rem] border-[3px] border-dashed border-green-500/40 bg-white p-lg md:p-xl"
           >
             <ChapterTitle Icon={SunIcon} color="bg-[var(--green-50)] text-green-500">
               {t('aboutUsPage.family.chapters.together')}
@@ -326,9 +332,9 @@ function FamilySection() {
 
           <motion.div
             {...reveal(0.1)}
-            className="relative flex flex-col gap-md rounded-[2rem] border-[3px] border-dashed border-[var(--orange-300)] bg-white p-lg md:p-xl"
+            className="relative flex flex-col gap-md rounded-[2rem] border-[3px] border-dashed border-orange-500/40 bg-white p-lg md:p-xl"
           >
-            <ChapterTitle Icon={SparklesIcon} color="bg-[var(--orange-50)] text-[var(--orange-500)]">
+            <ChapterTitle Icon={SparklesIcon} color="bg-[var(--green-50)] text-[var(--orange-500)]">
               {t('aboutUsPage.family.chapters.future')}
             </ChapterTitle>
             <p className={paragraph}>{t('aboutUsPage.family.paragraph5')}</p>
@@ -336,7 +342,7 @@ function FamilySection() {
             <ol className="relative m-0 mt-auto flex list-none flex-col gap-md p-0 pt-xs">
               <span
                 aria-hidden="true"
-                className="absolute bottom-5 left-5 top-5 border-l-[3px] border-dotted border-[var(--orange-300)]"
+                className="absolute bottom-5 left-5 top-5 border-l-[3px] border-dotted border-orange-500/40"
               />
               {DREAMS.map(({ key, Icon, color }) => (
                 <DreamItem key={key} Icon={Icon} color={color} label={t(`aboutUsPage.family.dreams.${key}`)} />
@@ -345,14 +351,18 @@ function FamilySection() {
           </motion.div>
         </div>
 
-        <motion.p
-          {...reveal()}
-          {...signatureHover}
-          className="mx-auto m-0 flex items-center gap-sm text-center font-heading text-h6 font-bold text-heading"
-        >
-          <FilledHeart ref={signatureRef} size={20} className="text-[var(--pink-400)]" />
-          {t('aboutUsPage.family.signature')}
-        </motion.p>
+        {/* Firma como cierre de carta: despedida, nombre y un trazo de pincel corto centrado debajo */}
+        <motion.div {...reveal()} className="mx-auto flex flex-col items-center text-center">
+          <p className="m-0 font-body text-body leading-[1.6] text-body-text">{t('aboutUsPage.family.signatureClosing')}</p>
+          <p className="m-0 mt-2xs font-heading text-h4 font-bold leading-snug text-heading">
+            {t('aboutUsPage.family.signatureName')}
+          </p>
+          <span
+            aria-hidden="true"
+            className="mt-xs block h-2.5 w-40 bg-no-repeat [background-size:100%_100%]"
+            style={{ backgroundImage: BRUSH_UNDERLINE }}
+          />
+        </motion.div>
       </Container>
     </section>
   )

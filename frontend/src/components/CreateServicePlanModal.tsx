@@ -38,6 +38,18 @@ function cabysLabel(item: CabysItem) {
   return `${item.codigo} — ${item.descripcion}`
 }
 
+function missingRequiredFields(name: string, description: string, price: string) {
+  return !name.trim() || !description.trim() || !price || Number(price) <= 0
+}
+
+function hasInvalidCoupon(code: string, value: string, type: 'percent_off' | 'amount_off', price: string) {
+  if (!code.trim()) return false
+  const amount = Number(value)
+  if (!value || amount <= 0) return true
+  if (type === 'percent_off') return amount > 100
+  return amount >= Number(price)
+}
+
 interface CreateServicePlanModalProps {
   planToEdit?: ServicePlan | null
   onSave: (data: ServicePlanRequest, file: File) => Promise<unknown>
@@ -206,7 +218,7 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
   const validateForm = () => {
     let hasError = false
 
-    if (!isEditing && (!name.trim() || !description.trim() || !price || Number(price) <= 0)) {
+    if (!isEditing && missingRequiredFields(name, description, price)) {
       setCabysError(t('admin.servicios.serviceFieldsRequired'))
       hasError = true
     } else if (!selectedCabys && !planToEdit?.cabysCode) {
@@ -216,9 +228,7 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
       setCabysError(null)
     }
 
-    if (couponCode.trim() && (!couponValue || Number(couponValue) <= 0
-      || (couponType === 'percent_off' && Number(couponValue) > 100)
-      || (couponType === 'amount_off' && Number(couponValue) >= Number(price)))) {
+    if (hasInvalidCoupon(couponCode, couponValue, couponType, price)) {
       setCouponError(t('admin.servicios.invalidCoupon'))
       hasError = true
     } else {
@@ -360,6 +370,7 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
               setCabysResults([])
               setCabysError(null)
             }}
+            role="combobox"
             aria-autocomplete="list"
             aria-expanded={cabysMenuOpen}
             aria-controls="cabys-results-menu"
@@ -395,6 +406,7 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
                   <button
                     type="button"
                     role="option"
+                    aria-selected={selectedCabys?.codigo === item.codigo}
                     onClick={() => {
                       setSelectedCabys(item)
                       setCabysQuery(cabysLabel(item))

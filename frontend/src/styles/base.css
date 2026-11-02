@@ -118,7 +118,6 @@ html [data-sileo-button][data-state] {
   width: 100%;
   height: 100%;
   border-radius: 999px;
-  transition: left 0.3s 0.2s, top 0.3s 0.2s;
 }
 
 .blob-btn:hover {
@@ -128,7 +127,16 @@ html [data-sileo-button][data-state] {
 .blob-btn:hover::after {
   left: 0;
   top: 0;
-  transition: left 0.3s, top 0.3s;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .blob-btn::after {
+    transition: left 0.3s 0.2s, top 0.3s 0.2s;
+  }
+
+  .blob-btn:hover::after {
+    transition: left 0.3s, top 0.3s;
+  }
 }
 
 .blob-btn__inner {
@@ -505,7 +513,7 @@ html.highlight-links-mode a {
 
 html.dyslexia-font body,
 html.dyslexia-font body * {
-  font-family: "OpenDyslexic", "Comic Sans MS", "Trebuchet MS", sans-serif !important;
+  font-family: "OpenDyslexic", "Comic Sans MS", "Trebuchet MS", sans-serif;
 }
 
 html.text-spacing-mode body {
@@ -524,9 +532,9 @@ html.text-spacing-mode label,
 html.text-spacing-mode input,
 html.text-spacing-mode textarea,
 html.text-spacing-mode select {
-  line-height: 1.8 !important;
-  letter-spacing: 0.055em !important;
-  word-spacing: 0.16em !important;
+  line-height: 1.8;
+  letter-spacing: 0.055em;
+  word-spacing: 0.16em;
 }
 
 html.color-monochrome {
@@ -542,7 +550,7 @@ html.color-high-saturation {
 }
 
 html.stop-animations-mode {
-  scroll-behavior: auto !important;
+  scroll-behavior: auto;
 }
 
 html.stop-animations-mode *,

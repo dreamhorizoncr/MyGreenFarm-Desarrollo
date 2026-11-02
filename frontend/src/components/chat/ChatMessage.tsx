@@ -4,7 +4,7 @@ interface ChatMessageProps {
   message: ChatMessage
 }
 
-export default function ChatMessage({ message }: ChatMessageProps) {
+export default function ChatMessage({ message }: Readonly<ChatMessageProps>) {
   const isUser = message.role === 'user'
   if (isUser) {
     return (
