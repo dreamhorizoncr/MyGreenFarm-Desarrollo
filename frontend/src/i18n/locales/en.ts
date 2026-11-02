@@ -12,7 +12,6 @@ export default {
     frequentQuestions: "Frequently asked questions",
     suggestions: {
       booking: "How do I book?",
-      plans: "What plans?",
       vacancies: "Open positions?",
     },
     typing: "Typing",
@@ -1040,6 +1039,8 @@ export default {
         thisMonth: "This month",
       },
       summaryTitle: "Daily summary",
+      summaryLoading: "Generating summary with AI...",
+      summaryUnavailable: "The summary could not be generated.",
       summaryText: "The day is progressing as planned. A few tasks need attention before the day ends.",
       statsTitle: "Daily indicators",
       stats: {

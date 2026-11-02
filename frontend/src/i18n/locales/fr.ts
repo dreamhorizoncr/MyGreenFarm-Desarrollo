@@ -12,7 +12,6 @@ export default {
     frequentQuestions: "Questions fréquentes",
     suggestions: {
       booking: "Comment réserver ?",
-      plans: "Quels forfaits ?",
       vacancies: "Postes vacants ?",
     },
     typing: "Écriture en cours",
@@ -1049,6 +1048,8 @@ export default {
         thisMonth: "Ce mois",
       },
       summaryTitle: "Résumé du jour",
+      summaryLoading: "Génération du résumé avec l'IA...",
+      summaryUnavailable: "Le résumé n'a pas pu être généré.",
       summaryText: "La journée se déroule comme prévu. Quelques tâches nécessitent votre attention avant la fin de la journée.",
       statsTitle: "Indicateurs du jour",
       stats: {
