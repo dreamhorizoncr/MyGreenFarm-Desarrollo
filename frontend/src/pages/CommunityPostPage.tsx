@@ -13,6 +13,7 @@ import { getErrorMessage } from '../utils/error.ts'
 import { notify } from '../utils/notifications.ts'
 import { hasUnsafeText } from '../utils/validators.ts'
 import FieldHint from '../components/ui/FieldHint.tsx'
+import { setPageSEO } from '../utils/seo.ts'
 
 function CommunityPostPage() {
   const { t, i18n } = useTranslation()
@@ -28,6 +29,13 @@ function CommunityPostPage() {
   const [error, setError] = useState('')
   const [pendingReview, setPendingReview] = useState(false)
   const isSubmittingRef = useRef(false)
+
+  useEffect(() => {
+    setPageSEO({
+      title: `${t('forum.community.label')} | My Green Farm`,
+      description: t('seo.communityDescription'),
+    })
+  }, [t, i18n.resolvedLanguage])
 
   useEffect(() => {
     if (!id) return

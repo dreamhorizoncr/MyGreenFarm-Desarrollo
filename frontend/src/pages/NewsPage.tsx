@@ -16,6 +16,7 @@ import type { Announcement } from "../types/announcement.ts";
 import { useAnnouncementCategories } from "../hooks/useAnnouncementCategories.ts";
 import TabHighlight from "../components/ui/TabHighlight.tsx";
 import { tabCarouselClass, useTabCarousel } from "../hooks/useTabCarousel.ts";
+import { setPageSEO } from "../utils/seo.ts";
 
 function NewsPage() {
   const { t, i18n } = useTranslation();
@@ -35,6 +36,13 @@ function NewsPage() {
   const [selectedAnnouncement, setSelectedAnnouncement] =
     useState<Announcement | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    setPageSEO({
+      title: `${t('forum.title')} | My Green Farm`,
+      description: t('forum.subtitle'),
+    })
+  }, [t])
 
   useEffect(() => {
     void fetchAnnouncements(i18n.language, currentPage - 1, 10, activeCategory === "All" ? undefined : activeCategory);
