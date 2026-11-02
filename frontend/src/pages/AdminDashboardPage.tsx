@@ -67,6 +67,7 @@ function AdminDashboardPage() {
   const [dashboardError, setDashboardError] = useState<{ key: string; message: string } | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
   const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
+  const currentDate = today(getLocalTimeZone()).toString()
   const pendingCount = appointments.filter((appointment) => appointment.status === 'PENDING').length
     + curriculums.filter((curriculum) => curriculum.status === 'PENDING').length
 
@@ -274,7 +275,10 @@ function AdminDashboardPage() {
             </p>
             <ol className="m-0 mt-lg list-none space-y-md p-0">
               {selectedDateEvents.map((event) => (
-                <li key={event.id} className="relative flex gap-sm">
+                <li
+                  key={event.id}
+                  className={`relative flex gap-sm ${event.date < currentDate ? 'opacity-60' : ''}`}
+                >
                   <time className="w-12 shrink-0 pt-2xs font-body text-caption font-bold text-neutral-500">{eventTime(event, locale) ?? '—'}</time>
                   <div className="relative flex-1 border-l-2 border-green-100 pl-md">
                     <span className="block font-body text-body-sm font-bold text-heading">{event.title}</span>
