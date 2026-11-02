@@ -56,15 +56,15 @@ const DECORATION_LAYOUTS = [
     const teacherColors = [
     {
         border: 'border-pink-400',
-        background: 'var(--accent-pink)',
+        background: 'var(--pink-400)',
     },
     {
         border: 'border-orange-500',
-        background: 'var(--link-default)',
+        background: 'var(--orange-500)',
     },
     {
         border: 'border-green-500',
-        background: 'var(--heading-default)',
+        background: 'var(--green-500)',
     },
     ] as const
 
@@ -179,14 +179,14 @@ const DECORATION_LAYOUTS = [
             <main className="flex min-w-0 flex-col bg-bg-page">
             <section
                 data-scroll-bg="green"
-                className="flex min-h-[280px] items-center bg-green-500 px-[30px] py-[40px] text-center text-white xs:min-h-[320px]"
+                className="flex min-h-[280px] items-start bg-green-500 px-[30px] pt-[48px] pb-[40px] text-center text-white md:min-h-[320px] md:pt-[72px]"
             >
                 <div className="mx-auto w-full max-w-[700px]">
                 <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-white">
                     {t('aboutUsPage.hero.title')}
                 </h1>
 
-                <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-lg leading-[1.6] text-white">
+                <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-sm leading-[1.6] text-white md:text-body-sm">
                     {t('aboutUsPage.hero.description')}
                 </p>
                 </div>
@@ -204,7 +204,7 @@ const DECORATION_LAYOUTS = [
                     {t('aboutUsPage.team.title')}
                     </h2>
 
-                    <p className="m-0 max-w-[48rem] font-body text-body-lg leading-[1.6] text-[var(--body-text-dark)]">
+                    <p className="m-0 max-w-[48rem] font-body text-body leading-[1.6] text-body-text">
                     {t('aboutUsPage.team.description')}
                     </p>
                 </div>

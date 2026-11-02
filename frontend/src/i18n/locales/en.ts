@@ -405,7 +405,8 @@ export default {
         'We build that answer day by day, hand in hand with our teachers and families. Together we bring to life an educational approach that recognizes each child, respects their process, and brings play, nature, languages, and values together in meaningful experiences.',
       paragraph5:
         'As the founding family, we dream of a community where families take part, children feel loved and safe, and learning is an adventure that leaves a lifelong mark. That is the dream that gave rise to My Green Farm, and we keep building it with love, commitment, and purpose.',
-      signature: 'With love, the founding family of My Green Farm',
+      signatureClosing: 'With love,',
+      signatureName: 'The founding family of My Green Farm',
       chapters: {
         dream: 'How it all began',
         david: 'David arrived',
