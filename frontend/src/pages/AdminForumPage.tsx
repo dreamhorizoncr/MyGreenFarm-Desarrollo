@@ -23,8 +23,8 @@ type ForumAdminTab = 'posts' | 'community'
 const FORUM_ADMIN_TABS: ForumAdminTab[] = ['posts', 'community']
 
 const tabClassName = (active: boolean) =>
-  `relative rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
-    active ? 'border-green-500 text-white' : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
+  `relative rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
+    active ? 'border-orange-500 text-white' : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
   }`
 
 function AdminForumPage() {
@@ -306,7 +306,7 @@ function AdminForumPage() {
             onClick={() => setActiveTab(tab)}
             className={tabClassName(activeTab === tab)}
           >
-            {activeTab === tab && <TabHighlight layoutId="admin-forum-tab" className="bg-green-500" />}
+            {activeTab === tab && <TabHighlight layoutId="admin-forum-tab" className="bg-orange-500" />}
             {t(`adminForum.tabs.${tab}`)}
           </button>
         ))}
