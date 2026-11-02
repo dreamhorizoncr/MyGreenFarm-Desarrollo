@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { parseDate, type CalendarDate } from '@internationalized/date'
+import { getLocalTimeZone, today, type CalendarDate } from '@internationalized/date'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import CalendarPanel from '../components/ui/CalendarPanel.tsx'
 import {
@@ -48,18 +48,10 @@ const appointmentStatusLabels = {
   CANCELLED: 'admin.dashboard.agenda.status.cancelled',
 } as const satisfies Record<AppointmentStatus, string>
 
-function currentCalendarDate(): CalendarDate {
-  const today = new Date()
-  const year = today.getFullYear()
-  const month = String(today.getMonth() + 1).padStart(2, '0')
-  const day = String(today.getDate()).padStart(2, '0')
-  return parseDate(`${year}-${month}-${day}`)
-}
-
 function AdminDashboardPage() {
   const { t, i18n } = useTranslation()
   const [period, setPeriod] = useState<Period>('today')
-  const [selectedDate, setSelectedDate] = useState<CalendarDate>(currentCalendarDate)
+  const [selectedDate, setSelectedDate] = useState<CalendarDate>(() => today(getLocalTimeZone()))
   const [dashboardData, setDashboardData] = useState<AdminDashboardSummary | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -104,7 +96,7 @@ function AdminDashboardPage() {
     }
   }, [selectedDateString, refreshKey])
 
-  const selectedDateValue = selectedDate.toDate('UTC')
+  const selectedDateValue = selectedDate.toDate(getLocalTimeZone())
   const stats = [
     { key: 'todayAppointments', label: 'admin.dashboard.stats.todayAppointments.label', value: dashboardData?.appointments.length, icon: 'calendar', href: '/admin/citas' },
     { key: 'appointmentsToConfirm', label: 'admin.dashboard.stats.appointmentsToConfirm.label', value: dashboardData?.pendingAppointmentCount, icon: 'clock', href: '/admin/citas' },
