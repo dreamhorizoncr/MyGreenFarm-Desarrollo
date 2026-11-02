@@ -20,6 +20,7 @@ import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
+import { setPageSEO } from '../utils/seo.ts'
 
 interface ApplyTarget {
   title: string
@@ -142,6 +143,13 @@ function VacanciesPage() {
   const sentDialogRef = useRef<HTMLDialogElement | null>(null)
   const { closing: sentClosing, requestClose: requestCloseSent } = useModalExit(() => setApplicationSent(false))
   useDialogDismiss(sentDialogRef, requestCloseSent)
+
+  useEffect(() => {
+    setPageSEO({
+      title: `${t('vacancies.title')} | My Green Farm`,
+      description: t('vacancies.subtitle'),
+    })
+  }, [t, i18n.resolvedLanguage])
 
   useEffect(() => {
     void fetchVacancies(i18n.language)

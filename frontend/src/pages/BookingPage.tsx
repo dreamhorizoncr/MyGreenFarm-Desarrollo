@@ -29,6 +29,7 @@ import FieldHint from '../components/ui/FieldHint.tsx'
 import AutoHeight from '../components/ui/AutoHeight.tsx'
 import TabHighlight from '../components/ui/TabHighlight.tsx'
 import { tabCarouselClass, useTabCarousel } from '../hooks/useTabCarousel.ts'
+import { setPageSEO } from '../utils/seo.ts'
 
 function BookingPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return (
@@ -126,6 +127,12 @@ function WizardProgress({ step }: Readonly<{ step: number }>) {
 
 function BookingPage() {
   const { t, i18n } = useTranslation()
+  useEffect(() => {
+    setPageSEO({
+      title: 'Reservar una cita | My Green Farm',
+      description: t('seo.bookingDescription'),
+    })
+  }, [i18n.resolvedLanguage]) 
   const navigate = useNavigate()
   const {
     availability,

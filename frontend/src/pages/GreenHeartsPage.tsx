@@ -19,6 +19,7 @@ import puzzlePiece4 from '../assets/imgs/PIEZA4.svg'
 import puzzlePiece5 from '../assets/imgs/PIEZA5.svg'
 import puzzlePiece6 from '../assets/imgs/PIEZA6.svg'
 import './greenHearts.css'
+import { setPageSEO } from '../utils/seo.ts'
 
 const PURPOSE_UNDERLINE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 16' preserveAspectRatio='none'%3E%3Cpath d='M4 11C70 4 160 3 296 8' fill='none' stroke='%23F37B25' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E")`
 
@@ -99,6 +100,14 @@ function GreenHeartsPageSkeleton({ loadingLabel }: Readonly<{ loadingLabel: stri
 
 function GreenHeartsPage() {
   const { t } = useTranslation()
+  
+  useEffect(() => {
+    setPageSEO({
+      title: `${t('greenHearts.hero.title')} | My Green Farm`,
+      description: t('greenHearts.hero.description'),
+    })
+  }, [t])
+
   const [pageReady, setPageReady] = useState(false)
   const reduceMotion = useReducedMotion()
   const [actionsSwiper, setActionsSwiper] = useState<SwiperInstance | null>(null)

@@ -2307,4 +2307,11 @@ export default {
     loading: "Chargement du document…",
     error: "Impossible d’afficher le document ici.",
   },
+
+  seo: {
+    galleryDescription: 'Explorez les photos et les souvenirs des activités et des expériences de notre communauté éducative.',
+    communityDescription: 'Découvrez les expériences et les publications partagées par les familles de la communauté My Green Farm.',
+    bookingDescription: 'Demandez un rendez-vous chez My Green Farm et découvrez notre approche éducative pour les enfants et les familles.',
+  },
+
 };

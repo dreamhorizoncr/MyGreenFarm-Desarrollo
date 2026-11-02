@@ -14,6 +14,7 @@ import { FilterGrid, FilterGridItem } from '../components/ui/FilterGrid.tsx'
 import MostLikedPhotos from '../components/gallery/MostLikedPhotos.tsx'
 import transportador from "../assets/imgs/transportador.svg";
 import abaco from "../assets/imgs/abaco.svg";
+import { setPageSEO } from '../utils/seo.ts'
 
 function GalleryPage() {
   const { t, i18n } = useTranslation()
@@ -28,6 +29,13 @@ function GalleryPage() {
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start' })
   const [fits, setFits] = useState(true)
+
+  useEffect(() => {
+    setPageSEO({
+      title: `${t('navbar.multimedia')} | My Green Farm`,
+      description: t('seo.galleryDescription'),
+    })
+  }, [t, i18n.resolvedLanguage])
 
   useEffect(() => {
     if (!emblaApi) return

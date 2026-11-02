@@ -57,7 +57,7 @@ export default {
     navLabel: "Green Hearts",
     loading: "Cargando Green Hearts",
     hero: {
-      title: "Programa de acción social",
+      title: "Programa de Acción Social",
       description: "Solidaridad que acompaña y abre oportunidades. Unimos a nuestra comunidad para apoyar a niños, niñas y familias con acciones concretas.",
     },
     purpose: {
@@ -2302,4 +2302,11 @@ export default {
     loading: "Cargando documento…",
     error: "No se pudo mostrar el documento aquí.",
   },
+
+  seo: {
+  galleryDescription: 'Explora fotografías y recuerdos de las actividades, experiencias y momentos de nuestra comunidad educativa.',
+  communityDescription: 'Conoce las experiencias y publicaciones compartidas por las familias de la comunidad My Green Farm.',
+  bookingDescription: 'Solicita una cita en My Green Farm y conoce nuestra propuesta educativa para niños y familias.',
+},
+
 };

@@ -12,6 +12,7 @@ import { notify } from '../utils/notifications.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import { hasUnsafeText } from '../utils/validators.ts'
 import FieldHint from '../components/ui/FieldHint.tsx'
+import { setPageSEO } from '../utils/seo.ts'
 
 const MAX_CONTENT = 4000
 
@@ -58,6 +59,28 @@ function BlogPostPage() {
   }, [id, loadArticle, loadComments])
 
   const post = blogPosts.find((item) => item.id === id)
+
+  useEffect(() => {
+    if (!post) {
+      setPageSEO({
+        title: 'Artículo | My Green Farm',
+        description: 'Lee artículos y experiencias compartidas por la comunidad de My Green Farm.',
+      })
+      return
+    }
+
+    const description = post.content
+      .replace(/<[^>]*>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 155)
+
+    setPageSEO({
+      title: `${post.title} | My Green Farm`,
+      description: description || 'Descubre este artículo de la comunidad de My Green Farm.',
+    })
+  }, [post?.title, post?.content])
+
   const comments = post ? getComments(post.id) : []
 
   if (isLoading || isDetailLoading) {
