@@ -1074,7 +1074,13 @@ export default {
       activityTimeFour: "2 hours ago",
       activityTimeFive: "3 hours ago",
       emptyState: "There are no pending items in this section.",
-      calendar: { title: "Calendar", ariaLabel: "Dashboard monthly calendar" },
+      calendar: {
+        title: "Calendar",
+        ariaLabel: "Dashboard monthly calendar",
+        loadError: "Calendar events could not be loaded.",
+        emptyDay: "There are no events for this day.",
+        eventTypes: { APPOINTMENT: "Appointment", BIRTHDAY: "Birthday" },
+      },
       agenda: {
         title: "Daily agenda",
         empty: "There are no appointments for this day.",

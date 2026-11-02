@@ -4,6 +4,10 @@ import { Link } from 'react-router-dom'
 import { getLocalTimeZone, today, type CalendarDate } from '@internationalized/date'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import CalendarPanel from '../components/ui/CalendarPanel.tsx'
+import { useAppointments } from '../hooks/useAppointments.ts'
+import { useCurriculums } from '../hooks/useCurriculums.ts'
+import { useCalendarEvents } from '../hooks/useCalendarEvents.ts'
+import type { CalendarEvent } from '../types/calendar.ts'
 import {
   CalendarDaysIcon,
   CheckIcon,
@@ -13,14 +17,24 @@ import {
   RefreshCwIcon,
   UserIcon,
 } from '@animateicons/react/lucide'
-import { dashboardService } from '../services/dashboard.ts'
-import { getErrorMessage } from '../utils/error.ts'
-import type { AppointmentStatus } from '../types/appointment.ts'
-import type { AdminDashboardSummary } from '../types/dashboard.ts'
 import { dashboardMock, type DashboardIconName } from './dashboard.mock.ts'
 
 type Icon = ComponentType<{ size?: number; className?: string; 'aria-hidden'?: boolean }>
 type Period = 'today' | 'thisWeek' | 'thisMonth'
+
+function monthRange(month: string) {
+  const [year, monthNumber] = month.split('-').map(Number)
+  const lastDay = new Date(year, monthNumber, 0).getDate()
+  return {
+    from: `${month}-01`,
+    to: `${month}-${String(lastDay).padStart(2, '0')}`,
+  }
+}
+
+function eventTime(event: CalendarEvent, locale: string) {
+  if (event.allDay) return null
+  return new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(new Date(event.start))
+}
 
 const ICONS: Record<DashboardIconName, Icon> = {
   calendar: CalendarDaysIcon,
@@ -51,13 +65,33 @@ const appointmentStatusLabels = {
 function AdminDashboardPage() {
   const { t, i18n } = useTranslation()
   const [period, setPeriod] = useState<Period>('today')
-  const [selectedDate, setSelectedDate] = useState<CalendarDate>(() => today(getLocalTimeZone()))
-  const [dashboardData, setDashboardData] = useState<AdminDashboardSummary | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [refreshKey, setRefreshKey] = useState(0)
+  const [selectedDate, setSelectedDate] = useState<CalendarDate | null>(() => today(getLocalTimeZone()))
+  const [calendarMonth, setCalendarMonth] = useState(() => today(getLocalTimeZone()).toString().slice(0, 7))
+  const [dashboardDate] = useState(() => new Date())
+  const { appointments, fetchAppointments } = useAppointments()
+  const { curriculums, fetchCurriculums } = useCurriculums()
+  const { events, error: calendarError, fetchEvents } = useCalendarEvents()
   const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
-  const selectedDateString = selectedDate.toString()
+  const pendingCount = appointments.filter((appointment) => appointment.status === 'PENDING').length
+    + curriculums.filter((curriculum) => curriculum.status === 'PENDING').length
+
+  useEffect(() => {
+    void fetchAppointments()
+    void fetchCurriculums()
+  }, [fetchAppointments, fetchCurriculums])
+
+  useEffect(() => {
+    const range = monthRange(calendarMonth)
+    void fetchEvents(range.from, range.to)
+  }, [calendarMonth, fetchEvents])
+
+  const selectedDateEvents = events.filter((event) => event.date === selectedDate?.toString())
+  const markedDates = new Set(events.map((event) => event.date))
+  const handleCalendarChange = (date: CalendarDate | null) => {
+    setSelectedDate(date)
+    if (date) setCalendarMonth(date.toString().slice(0, 7))
+  }
+
   const dateFormatter = useMemo(
     () => new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long' }),
     [locale],
@@ -110,9 +144,7 @@ function AdminDashboardPage() {
           {t('admin.dashboard.greeting', { name: t(`admin.dashboard.${dashboardMock.userName}`) })}
         </h1>
         <p className="mt-2 font-body text-body text-neutral-500">
-          {dateFormatter.format(selectedDateValue)} · {dashboardData
-            ? t('admin.dashboard.pendingCount', { count: dashboardData.pendingAppointmentCount })
-            : loading ? t('admin.dashboard.loading') : ''}
+          {dateFormatter.format(dashboardDate)} · {t('admin.dashboard.pendingCount', { count: pendingCount })}
         </p>
       </header>
       {error && <p role="alert" className="mt-md rounded-xl border border-danger-100 bg-danger-50 p-md font-body text-body-sm text-danger">{t('admin.dashboard.loadError', { error })}</p>}
@@ -138,7 +170,12 @@ function AdminDashboardPage() {
         <button
           type="button"
           aria-label={t('admin.dashboard.refresh')}
-          onClick={() => setRefreshKey((current) => current + 1)}
+          onClick={() => {
+            void fetchAppointments()
+            void fetchCurriculums()
+            const range = monthRange(calendarMonth)
+            void fetchEvents(range.from, range.to)
+          }}
           className="inline-flex size-10 items-center justify-center rounded-full border border-green-500 text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
         >
           <RefreshCwIcon size={18} aria-hidden="true" />
@@ -221,11 +258,12 @@ function AdminDashboardPage() {
         <aside className="space-y-xl">
           <section aria-labelledby="dashboard-calendar-title" className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
             <h2 id="dashboard-calendar-title" className="m-0 mb-md font-heading text-h4 font-bold text-heading">{t('admin.dashboard.calendar.title')}</h2>
+            {calendarError && <p role="alert" className="m-0 mb-sm font-body text-caption text-danger">{t('admin.dashboard.calendar.loadError')}</p>}
             <CalendarPanel
               value={selectedDate}
-              onChange={(date) => {
-                if (date) setSelectedDate(date)
-              }}
+              onChange={handleCalendarChange}
+              onFocusChange={(date) => setCalendarMonth(date.toString().slice(0, 7))}
+              markedDates={markedDates}
               ariaLabel={t('admin.dashboard.calendar.ariaLabel')}
               showShortcuts={false}
               compact
@@ -235,22 +273,24 @@ function AdminDashboardPage() {
 
           <section aria-labelledby="dashboard-agenda-title" className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
             <h2 id="dashboard-agenda-title" className="m-0 font-heading text-h4 font-bold text-heading">{t('admin.dashboard.agenda.title')}</h2>
-            <p className="m-0 mt-2xs font-body text-body-sm capitalize text-neutral-500">{shortDateFormatter.format(selectedDateValue)}</p>
+            <p className="m-0 mt-2xs font-body text-body-sm capitalize text-neutral-500">
+              {shortDateFormatter.format(selectedDate ? new Date(selectedDate.year, selectedDate.month - 1, selectedDate.day) : dashboardDate)}
+            </p>
             <ol className="m-0 mt-lg list-none space-y-md p-0">
-              {dashboardData?.appointments.map((appointment) => (
-                <li key={appointment.id} className="relative flex gap-sm">
-                  <time className="w-12 shrink-0 pt-2xs font-body text-caption font-bold text-neutral-500">
-                    {timeFormatter.format(new Date(appointment.appointmentDate))}
-                  </time>
+              {selectedDateEvents.map((event) => (
+                <li key={event.id} className="relative flex gap-sm">
+                  <time className="w-12 shrink-0 pt-2xs font-body text-caption font-bold text-neutral-500">{eventTime(event, locale) ?? '—'}</time>
                   <div className="relative flex-1 border-l-2 border-green-100 pl-md">
-                    <span className="block font-body text-body-sm font-bold text-heading">{appointment.parentName}</span>
-                    <span className="block font-body text-caption text-neutral-500">{appointment.childName}</span>
-                    <span className={`mt-xs inline-block rounded-full px-sm py-2xs font-body text-caption font-bold ${appointmentStatusClasses[appointment.status]}`}>
-                      {t(appointmentStatusLabels[appointment.status])}
+                    <span className="block font-body text-body-sm font-bold text-heading">{event.title}</span>
+                    <span className={`mt-xs inline-block rounded-full px-sm py-2xs font-body text-caption font-bold ${event.type === 'BIRTHDAY' ? 'bg-info-50 text-info' : 'bg-warning-50 text-warning'}`}>
+                      {t(`admin.dashboard.calendar.eventTypes.${event.type}`)}
                     </span>
                   </div>
                 </li>
               ))}
+              {selectedDateEvents.length === 0 && (
+                <li className="font-body text-body-sm text-neutral-500">{t('admin.dashboard.calendar.emptyDay')}</li>
+              )}
             </ol>
             {loading && <p className="mt-lg font-body text-body-sm text-neutral-500">{t('admin.dashboard.loading')}</p>}
             {!loading && !error && dashboardData?.appointments.length === 0 && <p className="mt-lg font-body text-body-sm text-neutral-500">{t('admin.dashboard.agenda.empty')}</p>}
