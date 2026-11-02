@@ -57,7 +57,7 @@ export default {
     navLabel: "Green Hearts",
     loading: "Cargando Green Hearts",
     hero: {
-      title: "Programa de acción social",
+      title: "Programa de Acción Social",
       description: "Solidaridad que acompaña y abre oportunidades. Unimos a nuestra comunidad para apoyar a niños, niñas y familias con acciones concretas.",
     },
     purpose: {
