@@ -1,8 +1,5 @@
-export const DASHBOARD_DATE = new Date(2026, 9, 31)
-
 export const dashboardMock = {
   userName: 'userName',
-  pendingCount: 8,
   summary: 'summaryText',
   stats: [
     { key: 'todayAppointments', value: 6, icon: 'calendar', href: '/admin/citas' },

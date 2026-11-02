@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { curriculumService } from '../services/curriculum.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import i18n from '../i18n/index.ts'
@@ -13,7 +13,7 @@ export function useCurriculums() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchCurriculums = async () => {
+  const fetchCurriculums = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
@@ -24,7 +24,7 @@ export function useCurriculums() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   const submitApplication = async (data: ApplicationInput) => {
     setError(null)

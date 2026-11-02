@@ -1030,7 +1030,13 @@ export default {
       activityTimeFour: "Hace 2 horas",
       activityTimeFive: "Hace 3 horas",
       emptyState: "No hay elementos pendientes en esta sección.",
-      calendar: { title: "Calendario", ariaLabel: "Calendario mensual del dashboard" },
+      calendar: {
+        title: "Calendario",
+        ariaLabel: "Calendario mensual del dashboard",
+        loadError: "No se pudieron cargar los eventos del calendario.",
+        emptyDay: "No hay eventos para este día.",
+        eventTypes: { APPOINTMENT: "Cita", BIRTHDAY: "Cumpleaños" },
+      },
       agenda: {
         title: "Agenda del día",
         familyOne: "Familia Vargas",

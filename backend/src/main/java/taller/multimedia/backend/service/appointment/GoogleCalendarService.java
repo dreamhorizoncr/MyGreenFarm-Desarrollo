@@ -13,6 +13,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import lombok.extern.slf4j.Slf4j;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.user.User;
+import taller.multimedia.backend.dto.calendar.CalendarEventResponse;
 import taller.multimedia.backend.service.CalendarServiceException;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +32,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,7 @@ import java.util.Map;
 @Slf4j
 @Service
 public class GoogleCalendarService {
+    private static final ZoneId CALENDAR_ZONE = ZoneId.of("America/Costa_Rica");
 
     @Value("${google.calendar.id}")
     private String calendarId;
@@ -174,6 +177,56 @@ public class GoogleCalendarService {
             log.error("Error al consultar disponibilidad semanal para {}", referenceDate, e);
             throw new CalendarServiceException("No se pudo cargar la disponibilidad en este momento");
         }
+    }
+
+    public List<Event> listEvents(LocalDate from, LocalDate to) {
+        try {
+            Calendar service = getCalendarService();
+            String timeMin = from.atStartOfDay(CALENDAR_ZONE).toInstant().toString();
+            String timeMax = to.plusDays(1).atStartOfDay(CALENDAR_ZONE).toInstant().toString();
+
+            Events events = service.events().list(calendarId)
+                    .setTimeMin(new DateTime(timeMin))
+                    .setTimeMax(new DateTime(timeMax))
+                    .setSingleEvents(true)
+                    .setOrderBy("startTime")
+                    .setMaxResults(2500)
+                    .execute();
+            return events.getItems() == null ? List.of() : events.getItems();
+        } catch (Exception e) {
+            log.error("Error al consultar eventos de Google Calendar entre {} y {}", from, to, e);
+            throw new CalendarServiceException("No se pudieron cargar los eventos del calendario");
+        }
+    }
+
+    public CalendarEventResponse toResponse(Event event, String type, String title) {
+        boolean allDay = event.getStart().getDate() != null;
+        String start;
+        String end;
+        String date;
+
+        if (allDay) {
+            start = event.getStart().getDate().toStringRfc3339();
+            end = event.getEnd().getDate().toStringRfc3339();
+            date = start;
+        } else {
+            ZonedDateTime startDateTime = Instant.ofEpochMilli(event.getStart().getDateTime().getValue())
+                    .atZone(CALENDAR_ZONE);
+            ZonedDateTime endDateTime = Instant.ofEpochMilli(event.getEnd().getDateTime().getValue())
+                    .atZone(CALENDAR_ZONE);
+            start = startDateTime.toString();
+            end = endDateTime.toString();
+            date = startDateTime.toLocalDate().toString();
+        }
+
+        return new CalendarEventResponse(
+                event.getId(),
+                title == null || title.isBlank() ? "Evento de calendario" : title,
+                start,
+                end,
+                date,
+                type,
+                allDay);
     }
 
     public void addAppointmentToCalendar(Appointment appointment) {
