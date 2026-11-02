@@ -12,6 +12,7 @@ import { useGallery } from '../hooks/useGallery.ts'
 import type { Gallery } from '../types/gallery.ts'
 import { galleryService } from '../services/gallery.ts'
 import { useImageLikes } from '../hooks/useImageLikes.ts'
+import { setPageSEO } from '../utils/seo.ts'
 
 interface LikeBadgeProps {
   albumTitle: string
@@ -62,6 +63,28 @@ function AlbumDetailPage() {
     : undefined
 
   const album: Gallery | undefined = albumEntry?.[1].find((gallery) => gallery.id === id)
+
+    useEffect(() => {
+      if (!album) {
+        setPageSEO({
+          title: 'Álbum | My Green Farm',
+          description: 'Explora fotografías de las actividades y experiencias de My Green Farm.',
+        })
+        return
+      }
+
+      const description = album.description
+        .replace(/<[^>]*>/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 155)
+
+      setPageSEO({
+        title: `${album.title} | My Green Farm`,
+        description: description || 'Descubre este álbum de fotografías de My Green Farm.',
+      })
+    }, [album?.id, album?.title, album?.description])
+
   const category = categories.find((candidate) => candidate.id === albumEntry?.[0])
 
   useEffect(() => {

@@ -2295,4 +2295,11 @@ export default {
     loading: "Loading document…",
     error: "The document could not be displayed here.",
   },
+
+    seo: {
+    galleryDescription: 'Explore photos and memories of activities, experiences and moments from our educational community.',
+    communityDescription: 'Discover experiences and posts shared by families in the My Green Farm community.',
+    bookingDescription: 'Request an appointment at My Green Farm and discover our educational approach for children and families.',
+  },
+
 };

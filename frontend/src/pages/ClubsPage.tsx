@@ -10,6 +10,7 @@ import SkeletonList from '../components/ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import { clubService } from '../services/clubs.ts'
 import type { ClubResponse } from '../types/clubs.ts'
+import { setPageSEO } from '../utils/seo.ts'
 
 interface PublicClubCardProps {
     club: ClubResponse
@@ -77,6 +78,12 @@ function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
 
 function ClubsPage() {
     const { t, i18n } = useTranslation()
+        useEffect(() => {
+        setPageSEO({
+            title: `${t('clubs.title')} | My Green Farm`,
+            description: t('clubs.subtitle'),
+        })
+    }, [t, i18n.resolvedLanguage])
     const [clubs, setClubs] = useState<ClubResponse[]>([])
     const [loading, setLoading] = useState<boolean>(true)
     const [selectedClub, setSelectedClub] = useState<ClubResponse | null>(null)
