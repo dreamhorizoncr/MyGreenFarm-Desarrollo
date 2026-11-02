@@ -14,7 +14,13 @@ export interface ChatMessage {
 const STORAGE_KEY = 'mygreenfarm_chat_history'
 const STORAGE_VERSION = 1
 const INTERNAL_DISCLOSURE = /\b(codigo fuente|fuente del codigo|endpoint|api interna|implementacion interna|arquitectura interna|instrucciones internas|configuracion interna)\b/i
-const ACCESS_INVITATION = /(inici(?:a|ar|e)\s+sesion|ingres(?:a|ar)\s+al\s+sistema|cuenta\s+(?:que\s+tenga\s+)?acceso|solicit(?:a|ar)\s+acceso|seccion\s+correspondiente)/i
+const ACCESS_INVITATIONS = [
+  /inici(?:a|ar|e)\s+sesion/i,
+  /ingres(?:a|ar)\s+al\s+sistema/i,
+  /cuenta\s+(?:que\s+tenga\s+)?acceso/i,
+  /solicit(?:a|ar)\s+acceso/i,
+  /seccion\s+correspondiente/i,
+]
 
 interface PersistedChat {
   version: number
@@ -46,18 +52,18 @@ function personalizeGreeting(answer: string, question: string, firstName: string
 function sanitizeAnswer(answer: string) {
   const readable = answer
     .replace(/\*\*([^*]+)\*\*\s*\(`\/[^`]+`\)/g, '$1')
-    .replace(/\[([^\]]+)\]\(\/[^)]+\)/g, '$1')
+    .replace(/\[([^[\]]+)\]\(\/[^()]+\)/g, '$1')
     .replace(/\*\*([^*]+)\*\*/g, '$1')
     .replace(/`\/[^`]+`/g, '')
     .replace(/\/(?:booking|services|clubs|news|forum|multimedia|vacantes|about-us)(?:\/[\w-]+)*/gi, '')
-    .replace(/\s+([,.;:!?])/g, '$1')
+    .replace(/(?<=\S)\s+(?=[,.;:!?])/g, '')
     .replace(/\s{2,}/g, ' ')
     .trim()
   const normalized = readable.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
   if (/puedo ayudarte con la informacion publica de my\s?green farm/i.test(normalized)) {
     return i18n.t('chat.greetingGuestText')
   }
-  if (ACCESS_INVITATION.test(normalized)) return i18n.t('chat.privateData')
+  if (ACCESS_INVITATIONS.some((pattern) => pattern.test(normalized))) return i18n.t('chat.privateData')
   return INTERNAL_DISCLOSURE.test(normalized) ? i18n.t('chat.safeReply') : readable
 }
 

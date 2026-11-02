@@ -4,7 +4,6 @@ import { SmartphoneIcon } from '@animateicons/react/lucide'
 
 interface SinpeModalProps {
     isOpen: boolean
-    onClose: () => void
     planName: string
     phoneNumber: string
     sinpeReference: string
@@ -24,11 +23,11 @@ export const SinpeModal: React.FC<SinpeModalProps> = ({
 
     return createPortal(
         <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/55 backdrop-blur p-4">
-            <div
-                role="dialog"
+            <dialog
+                open
                 aria-modal="true"
                 aria-labelledby="sinpe-modal-title"
-                className="w-full max-w-lg min-w-[320px] rounded-[28px] bg-white p-6 text-center shadow-2xl animate-fade-in"
+                className="static m-0 text-inherit w-full max-w-lg min-w-[320px] rounded-[28px] bg-white p-6 text-center shadow-2xl animate-fade-in"
             >
                 <div className="mx-auto mb-md flex h-16 w-16 items-center justify-center rounded-full bg-orange-50 text-orange-500">
                 <SmartphoneIcon size={32} />
@@ -70,7 +69,7 @@ export const SinpeModal: React.FC<SinpeModalProps> = ({
                         Volver a Servicios
                     </button>
                 </div>
-            </div>
+            </dialog>
         </div>,
         document.body
     )

@@ -13,6 +13,23 @@ export interface PageResponse<T> {
   empty: boolean
 }
 
+function cabysRawItems(body: Record<string, unknown>): unknown[] {
+  if (Array.isArray(body.items)) return body.items
+  if (Array.isArray(body.data)) return body.data
+  return typeof body.codigo === 'string' ? [body] : []
+}
+
+function cabysDescription(item: Record<string, unknown>): string {
+  if (typeof item.descripcion === 'string') return item.descripcion
+  return typeof item.nombre === 'string' ? item.nombre : ''
+}
+
+function cabysCategories(rawCategories: unknown): string | string[] | undefined {
+  if (typeof rawCategories === 'string') return rawCategories
+  if (!Array.isArray(rawCategories)) return undefined
+  return rawCategories.filter((category: unknown): category is string => typeof category === 'string')
+}
+
 export const servicePlanService = {
   async getActivePlans(page = 0, size = 10): Promise<PageResponse<ServicePlan>> {
     const response = await apiClient.get<PageResponse<ServicePlan>>('/service-plans', {
@@ -38,13 +55,7 @@ export const servicePlanService = {
     }
 
     const body = payload as Record<string, unknown>
-    const rawItems = Array.isArray(body.items)
-      ? body.items
-      : Array.isArray(body.data)
-        ? body.data
-        : typeof body.codigo === 'string'
-          ? [body]
-          : []
+    const rawItems = cabysRawItems(body)
 
     return rawItems.map((rawItem): CabysItem => {
       if (typeof rawItem !== 'object' || rawItem === null) {
@@ -53,11 +64,7 @@ export const servicePlanService = {
       const item = rawItem as Record<string, unknown>
       const rawCategories = item.categorias ?? item.categories
       
-      const descripcion = typeof item.descripcion === 'string' 
-        ? item.descripcion 
-        : typeof item.nombre === 'string' 
-          ? item.nombre 
-          : ''
+      const descripcion = cabysDescription(item)
 
       const impuesto = Number(item.impuesto)
       if (typeof item.codigo !== 'string' || !Number.isFinite(impuesto) || impuesto < 0) {
@@ -68,11 +75,7 @@ export const servicePlanService = {
         && (!Array.isArray(rawCategories) || !rawCategories.every((category: unknown) => typeof category === 'string'))) {
         throw new Error('El catálogo CABYS devolvió categorías inválidas.')
       }
-      const categories = typeof rawCategories === 'string'
-        ? rawCategories
-        : Array.isArray(rawCategories)
-          ? rawCategories.filter((category: unknown): category is string => typeof category === 'string')
-          : undefined
+      const categories = cabysCategories(rawCategories)
       return {
         codigo: item.codigo,
         categorias: categories,

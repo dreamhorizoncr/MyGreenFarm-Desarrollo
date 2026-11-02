@@ -68,7 +68,7 @@ function MostLikedPhotos({ galleries }: Readonly<MostLikedPhotosProps>) {
         <div className="flex w-full gap-sm pb-8 md:gap-md md:pb-10">
           {grouped.map((column, columnIndex) => (
             <div
-              key={columnIndex}
+              key={column.map(({ index }) => index).join('-')}
               className={`flex min-w-0 flex-1 flex-col gap-sm md:gap-md ${columnIndex % 2 === 1 ? 'translate-y-8 md:translate-y-10' : ''}`}
             >
               {column.map(({ photo, index }) =>

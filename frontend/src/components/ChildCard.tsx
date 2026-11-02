@@ -16,190 +16,171 @@ interface ChildCardProps {
   loading?: boolean;
 }
 
+function ChildCardSkeletonRow({ lastLineClass }: Readonly<{ lastLineClass: string }>) {
+  return (
+    <div className="flex items-start gap-3">
+      <Skeleton shape="circle" className="mt-0.5 size-[18px] shrink-0" />
+
+      <div className="min-w-0 flex-1">
+        <Skeleton shape="line" className="h-3 w-1/2" />
+        <Skeleton shape="line" className={`mt-1 h-3 ${lastLineClass}`} />
+      </div>
+    </div>
+  );
+}
+
+function ChildCardSkeleton() {
+  return (
+    <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm card-hover">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <Skeleton shape="line" className="h-6 w-1/2" />
+          <Skeleton shape="line" className="mt-2 h-3 w-1/3" />
+        </div>
+
+        <div className="flex shrink-0 items-center gap-2">
+          <Skeleton shape="circle" className="size-10" />
+          <Skeleton shape="circle" className="size-10" />
+        </div>
+      </div>
+
+      <div className="mt-6 flex flex-col gap-4">
+        <ChildCardSkeletonRow lastLineClass="w-2/3" />
+        <ChildCardSkeletonRow lastLineClass="w-1/3" />
+        <ChildCardSkeletonRow lastLineClass="w-full" />
+      </div>
+
+      <div className="mt-6 border-t border-neutral-100 pt-4">
+        <Skeleton shape="line" className="h-4 w-1/4" />
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Skeleton shape="pill" className="h-6 w-20" />
+          <Skeleton shape="pill" className="h-6 w-24" />
+        </div>
+      </div>
+    </article>
+  );
+}
+
 function ChildCard({ child, onEdit, onDelete, loading = false }: Readonly<ChildCardProps>) {
-  const fullName = child ? `${child.firstName} ${child.lastName}` : "";
   const { t } = useTranslation();
+
+  if (loading || !child) return <ChildCardSkeleton />;
+
+  const fullName = `${child.firstName} ${child.lastName}`;
 
   return (
     <article className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm card-hover">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
-          {loading ? (
-            <>
-              <Skeleton shape="line" className="h-6 w-1/2" />
-              <Skeleton shape="line" className="mt-2 h-3 w-1/3" />
-            </>
-          ) : (
-            <>
-              <h2 className="font-heading text-h5 font-bold text-heading">
-                {fullName}
-              </h2>
+          <h2 className="font-heading text-h5 font-bold text-heading">
+            {fullName}
+          </h2>
 
-              <p className="mt-1 font-body text-body-sm text-body-text">
-                {t("admin.children.studentId")}: {child!.studentId}
-              </p>
-              <span className={`mt-xs inline-block rounded-full px-sm py-2xs font-body text-caption font-semibold ${
-                child!.isActive
-                  ? "bg-success-50 text-success"
-                  : "border border-neutral-200 bg-neutral-50 text-neutral-500"
-              }`}>
-                {t(child!.isActive ? "admin.children.statusActive" : "admin.children.statusInactive")}
-              </span>
-            </>
-          )}
+          <p className="mt-1 font-body text-body-sm text-body-text">
+            {t("admin.children.studentId")}: {child.studentId}
+          </p>
+          <span className={`mt-xs inline-block rounded-full px-sm py-2xs font-body text-caption font-semibold ${
+            child.isActive
+              ? "bg-success-50 text-success"
+              : "border border-neutral-200 bg-neutral-50 text-neutral-500"
+          }`}>
+            {t(child.isActive ? "admin.children.statusActive" : "admin.children.statusInactive")}
+          </span>
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          {loading ? (
-            <>
-              <Skeleton shape="circle" className="size-10" />
-              <Skeleton shape="circle" className="size-10" />
-            </>
-          ) : (
-            <>
-              <CardActionButton
-                action="edit"
-                label={`${t("admin.children.editTitle")} ${fullName}`}
-                title={t("admin.children.editTitle")}
-                onClick={() => onEdit!(child!)}
-              />
+          <CardActionButton
+            action="edit"
+            label={`${t("admin.children.editTitle")} ${fullName}`}
+            title={t("admin.children.editTitle")}
+            onClick={() => onEdit!(child)}
+          />
 
-              <CardActionButton
-                action="delete"
-                label={`${t("admin.children.deleteTitle")} ${fullName}`}
-                title={t("admin.children.deleteTitle")}
-                onClick={() => onDelete!(child!)}
-              />
-            </>
-          )}
+          <CardActionButton
+            action="delete"
+            label={`${t("admin.children.deleteTitle")} ${fullName}`}
+            title={t("admin.children.deleteTitle")}
+            onClick={() => onDelete!(child)}
+          />
         </div>
       </div>
 
       <div className="mt-6 flex flex-col gap-4">
         <div className="flex items-start gap-3">
-          {loading ? (
-            <Skeleton shape="circle" className="mt-0.5 size-[18px] shrink-0" />
-          ) : (
-            <UserIcon
-              size={18}
-              className="mt-0.5 shrink-0 text-heading"
-              aria-hidden="true"
-            />
-          )}
+          <UserIcon
+            size={18}
+            className="mt-0.5 shrink-0 text-heading"
+            aria-hidden="true"
+          />
 
           <div className="min-w-0 flex-1">
-            {loading ? (
-              <>
-                <Skeleton shape="line" className="h-3 w-1/2" />
-                <Skeleton shape="line" className="mt-1 h-3 w-2/3" />
-              </>
-            ) : (
-              <>
-                <p className="font-body text-body-sm font-semibold text-heading">
-                  {t('admin.children.parentOrGuardian')}
-                </p>
+            <p className="font-body text-body-sm font-semibold text-heading">
+              {t('admin.children.parentOrGuardian')}
+            </p>
 
-                <p className="font-body text-body-sm text-body-text">
-                  {child!.parentName}
-                </p>
-              </>
-            )}
+            <p className="font-body text-body-sm text-body-text">
+              {child.parentName}
+            </p>
           </div>
         </div>
 
         <div className="flex items-start gap-3">
-          {loading ? (
-            <Skeleton shape="circle" className="mt-0.5 size-[18px] shrink-0" />
-          ) : (
-            <CalendarDaysIcon
-              size={18}
-              className="mt-0.5 shrink-0 text-heading"
-              aria-hidden="true"
-            />
-          )}
+          <CalendarDaysIcon
+            size={18}
+            className="mt-0.5 shrink-0 text-heading"
+            aria-hidden="true"
+          />
 
           <div className="min-w-0 flex-1">
-            {loading ? (
-              <>
-                <Skeleton shape="line" className="h-3 w-1/2" />
-                <Skeleton shape="line" className="mt-1 h-3 w-1/3" />
-              </>
-            ) : (
-              <>
-                <p className="font-body text-body-sm font-semibold text-heading">
-                  {t('admin.children.birthDate')}
-                </p>
+            <p className="font-body text-body-sm font-semibold text-heading">
+              {t('admin.children.birthDate')}
+            </p>
 
-                <p className="font-body text-body-sm text-body-text">
-                  {child!.birthDate}
-                </p>
-              </>
-            )}
+            <p className="font-body text-body-sm text-body-text">
+              {child.birthDate}
+            </p>
           </div>
         </div>
 
         <div className="flex items-start gap-3">
-          {loading ? (
-            <Skeleton shape="circle" className="mt-0.5 size-[18px] shrink-0" />
-          ) : (
-            <FileTextIcon
-              size={18}
-              className="mt-0.5 shrink-0 text-heading"
-              aria-hidden="true"
-            />
-          )}
+          <FileTextIcon
+            size={18}
+            className="mt-0.5 shrink-0 text-heading"
+            aria-hidden="true"
+          />
 
           <div className="min-w-0 flex-1">
-            {loading ? (
-              <>
-                <Skeleton shape="line" className="h-3 w-1/2" />
-                <Skeleton shape="line" className="mt-1 h-3 w-full" />
-              </>
-            ) : (
-              <>
-                <p className="font-body text-body-sm font-semibold text-heading">
-                  {t('admin.children.medicalNotes')}
-                </p>
+            <p className="font-body text-body-sm font-semibold text-heading">
+              {t('admin.children.medicalNotes')}
+            </p>
 
-                <p className="font-body text-body-sm text-body-text">
-                  {child!.medicalNotes || t('admin.children.noMedicalNotes')}
-                </p>
-              </>
-            )}
+            <p className="font-body text-body-sm text-body-text">
+              {child.medicalNotes || t('admin.children.noMedicalNotes')}
+            </p>
           </div>
         </div>
       </div>
 
-      {loading ? (
-        <div className="mt-6 border-t border-neutral-100 pt-4">
-          <Skeleton shape="line" className="h-4 w-1/4" />
-          <div className="mt-2 flex flex-wrap gap-2">
-            <Skeleton shape="pill" className="h-6 w-20" />
-            <Skeleton shape="pill" className="h-6 w-24" />
-          </div>
-        </div>
-      ) : (
-        <div className="mt-6 border-t border-neutral-100 pt-4">
-          <p className="font-body text-body-sm font-semibold text-heading">
-            {t('admin.children.clubs')}
-          </p>
+      <div className="mt-6 border-t border-neutral-100 pt-4">
+        <p className="font-body text-body-sm font-semibold text-heading">
+          {t('admin.children.clubs')}
+        </p>
 
-          {child!.clubNames.length > 0 ? (
-            <div className="mt-2 flex flex-wrap gap-2">
-              {child!.clubNames.map((club) => (
-                <span
-                  key={club}
-                  className="rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white"
-                >
-                  {club}
-                </span>
-              ))}
-            </div>
-          ) : (
-            <p className="mt-2 font-body text-body-sm text-body-text">{t('admin.children.withoutClubs')}</p>
-          )}
-        </div>
-      )}
+        {child.clubNames.length > 0 ? (
+          <div className="mt-2 flex flex-wrap gap-2">
+            {child.clubNames.map((club) => (
+              <span
+                key={club}
+                className="rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white"
+              >
+                {club}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-2 font-body text-body-sm text-body-text">{t('admin.children.withoutClubs')}</p>
+        )}
+      </div>
     </article>
   );
 }

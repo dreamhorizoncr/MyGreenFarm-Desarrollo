@@ -403,7 +403,8 @@ export default {
         'Esa respuesta la construimos día a día, de la mano de nuestras docentes y de las familias. Juntos damos vida a una propuesta educativa que reconoce a cada niño, respeta su proceso e integra el juego, la naturaleza, los idiomas y los valores en experiencias significativas.',
       paragraph5:
         'Como familia fundadora, soñamos con una comunidad donde las familias participen, los niños se sientan amados y seguros, y aprender sea una aventura que deje huellas para toda la vida. Ese es el sueño que dio origen a My Green Farm y que seguimos construyendo con amor, compromiso y propósito.',
-      signature: 'Con amor, la familia fundadora de My Green Farm',
+      signatureClosing: 'Con amor,',
+      signatureName: 'La familia fundadora de My Green Farm',
       chapters: {
         dream: 'Así empezó todo',
         david: 'Llegó David',

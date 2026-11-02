@@ -45,6 +45,12 @@ const SIZES = {
 const YEARS_BACK = 100
 const YEARS_AHEAD = 10
 
+function clampDate(date: CalendarDate, minValue?: CalendarDate, maxValue?: CalendarDate) {
+  if (minValue && date.compare(minValue) < 0) return minValue
+  if (maxValue && date.compare(maxValue) > 0) return maxValue
+  return date
+}
+
 const shortcutClassName =
   'min-w-0 flex-1 rounded-2xl px-xs py-2 text-white font-medium hover:bg-green-400/40 transition-colors data-[pressed=true]:scale-95 disabled:opacity-50 sm:px-8'
 
@@ -88,11 +94,7 @@ function CalendarPanel({ value, onChange, onFocusChange, markedDates, minValue, 
     [firstYear, lastYear],
   )
   const moveTo = (date: CalendarDate) => {
-    const nextDate = minValue && date.compare(minValue) < 0
-      ? minValue
-      : maxValue && date.compare(maxValue) > 0
-        ? maxValue
-        : date
+    const nextDate = clampDate(date, minValue, maxValue)
     setFocusedDate(nextDate)
     onFocusChange?.(nextDate)
   }

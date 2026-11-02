@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type InputHTMLAttributes } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 import { ArrowLeftIcon, CheckIcon } from '@animateicons/react/lucide'
 import { Clock, Mail } from 'lucide-react'
 import PhoneInput, { formatPhoneNumberIntl } from 'react-phone-number-input'
@@ -79,6 +80,12 @@ const REFERRAL_SOURCES: ReferralSource[] = ['FRIEND', 'SOCIAL_MEDIA', 'GOOGLE_SE
 
 function parseSlots(slots: string[]): Slot[] {
   return slots.map((slot) => ({ start: slot.slice(0, 5) }))
+}
+
+function referralSummary(t: TFunction, source: ReferralSource | '', otherDetail: string): string {
+  const label = source ? t(`booking.referral.options.${source}`) : ''
+  const detail = source === 'OTHER' && otherDetail ? `: ${otherDetail}` : ''
+  return label + detail
 }
 
 const STEPS = [
@@ -812,7 +819,7 @@ function BookingPage() {
     </section>
   )
 
-  const referralText = `${referralSource ? t(`booking.referral.options.${referralSource}`) : ''}${referralSource === 'OTHER' && referralOtherDetail ? `: ${referralOtherDetail}` : ''}`
+  const referralText = referralSummary(t, referralSource, referralOtherDetail)
 
   const renderStepConfirm = () => (
     <div className="flex flex-col gap-md text-left">
