@@ -385,6 +385,51 @@ export default {
           'Cada niño tiene la oportunidad de desarrollar confianza, amistades y nuevas habilidades.',
       },
     },
+    family: {
+      eyebrow: 'Familia fundadora',
+      title: 'Nuestra familia, el corazón de My Green Farm',
+      imageAlt: 'La familia fundadora de My Green Farm junto a su hijo David',
+      caption: 'Con David, nuestro hijo',
+      lead:
+        'My Green Farm nació del sueño de dos personas que, como matrimonio, compartíamos una misma ilusión: ofrecer a las familias una educación diferente, capaz de transformar la infancia y abrir nuevas posibilidades de aprendizaje.',
+      paragraph1:
+        'Soñábamos con un lugar donde los niños pudieran explorar, jugar, descubrir y aprender en contacto con la naturaleza. Una propuesta que se atreviera a ir más allá de lo tradicional, donde cada experiencia tuviera sentido y acompañara su desarrollo emocional, social, físico y cognitivo. Queríamos aportar nuestro granito de arena a la sociedad, formando personas sensibles, seguras, con valores y capaces de contribuir al mundo que las rodea.',
+      paragraph2:
+        'Con la llegada de nuestro hijo David, ese sueño adquirió un significado todavía más profundo. Convertirnos en padres nos permitió mirar nuestro proyecto desde otra perspectiva y comprender de una manera más cercana la confianza que cada familia deposita en nosotros al entregarnos lo más valioso de su vida.',
+      paragraph3:
+        'David vino a completar una pieza muy especial de nuestro rompecabezas. Su llegada nos llevó a revisar detalles, fortalecer la seguridad y reafirmar el lugar de la familia como pilar de nuestra comunidad educativa. A la vocación que nos impulsó desde el principio se sumó nuestra experiencia como padres y una pregunta que hoy nos acompaña en cada decisión:',
+      quote:
+        '¿Qué educación y qué entorno deseamos para nuestro propio hijo y para cada niño que crece junto a nosotros?',
+      paragraph4:
+        'Esa respuesta la construimos día a día, de la mano de nuestras docentes y de las familias. Juntos damos vida a una propuesta educativa que reconoce a cada niño, respeta su proceso e integra el juego, la naturaleza, los idiomas y los valores en experiencias significativas.',
+      paragraph5:
+        'Como familia fundadora, soñamos con una comunidad donde las familias participen, los niños se sientan amados y seguros, y aprender sea una aventura que deje huellas para toda la vida. Ese es el sueño que dio origen a My Green Farm y que seguimos construyendo con amor, compromiso y propósito.',
+      signature: 'Con amor, la familia fundadora de My Green Farm',
+      chapters: {
+        dream: 'Así empezó todo',
+        david: 'Llegó David',
+        puzzle: 'Una pieza especial',
+        together: 'Lo construimos juntos',
+        future: 'Nuestro sueño',
+      },
+      development: {
+        emotional: 'Emocional',
+        social: 'Social',
+        physical: 'Físico',
+        cognitive: 'Cognitivo',
+      },
+      pillars: {
+        play: 'Juego',
+        nature: 'Naturaleza',
+        languages: 'Idiomas',
+        values: 'Valores',
+      },
+      dreams: {
+        participate: 'Familias que participan',
+        safe: 'Niños amados y seguros',
+        adventure: 'Aprender como una aventura',
+      },
+    },
     team: {
       title: 'Conoce a nuestro equipo',
       description:
