@@ -12,7 +12,6 @@ export default {
     frequentQuestions: "Preguntas frecuentes",
     suggestions: {
       booking: "¿Cómo reservo?",
-      plans: "¿Qué planes?",
       vacancies: "¿Vacantes?",
     },
     typing: "Escribiendo",
@@ -1044,6 +1043,8 @@ export default {
         thisMonth: "Este mes",
       },
       summaryTitle: "Resumen del día",
+      summaryLoading: "Generando resumen con IA...",
+      summaryUnavailable: "No se pudo generar el resumen.",
       summaryText: "La jornada avanza según lo previsto. Hay algunas tareas que requieren atención antes de finalizar el día.",
       statsTitle: "Indicadores del día",
       stats: {

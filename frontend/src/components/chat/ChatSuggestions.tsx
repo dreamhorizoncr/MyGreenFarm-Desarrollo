@@ -7,7 +7,7 @@ interface ChatSuggestionsProps {
   onSelect: (question: string) => void
 }
 
-const SUGGESTIONS = ['booking', 'plans', 'vacancies'] as const
+const SUGGESTIONS = ['booking', 'vacancies'] as const
 const suggestionRowClass = tabCarouselClass.replace(' md:flex-wrap md:overflow-visible', '')
 
 export default function ChatSuggestions({ onSelect }: ChatSuggestionsProps) {

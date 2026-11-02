@@ -12,4 +12,5 @@ export interface AdminDashboardSummary {
   appointments: DashboardAppointment[]
   pendingAppointmentCount: number
   activeChildrenCount: number
+  aiSummary: string
 }

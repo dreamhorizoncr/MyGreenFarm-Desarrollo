@@ -8,6 +8,9 @@ import { useAppointments } from '../hooks/useAppointments.ts'
 import { useCurriculums } from '../hooks/useCurriculums.ts'
 import { useCalendarEvents } from '../hooks/useCalendarEvents.ts'
 import type { CalendarEvent } from '../types/calendar.ts'
+import { dashboardService } from '../services/dashboard.ts'
+import { getErrorMessage } from '../utils/error.ts'
+import type { AdminDashboardSummary } from '../types/dashboard.ts'
 import {
   CalendarDaysIcon,
   CheckIcon,
@@ -50,18 +53,6 @@ const priorityClasses = {
   low: 'border-info-200 bg-info-50 text-info',
 } as const
 
-const appointmentStatusClasses: Record<AppointmentStatus, string> = {
-  CONFIRMED: 'bg-success-50 text-success',
-  PENDING: 'bg-warning-50 text-warning',
-  CANCELLED: 'bg-danger-50 text-danger',
-}
-
-const appointmentStatusLabels = {
-  CONFIRMED: 'admin.dashboard.agenda.status.confirmed',
-  PENDING: 'admin.dashboard.agenda.status.pending',
-  CANCELLED: 'admin.dashboard.agenda.status.cancelled',
-} as const satisfies Record<AppointmentStatus, string>
-
 function AdminDashboardPage() {
   const { t, i18n } = useTranslation()
   const [period, setPeriod] = useState<Period>('today')
@@ -71,6 +62,10 @@ function AdminDashboardPage() {
   const { appointments, fetchAppointments } = useAppointments()
   const { curriculums, fetchCurriculums } = useCurriculums()
   const { events, error: calendarError, fetchEvents } = useCalendarEvents()
+  const [dashboardData, setDashboardData] = useState<AdminDashboardSummary | null>(null)
+  const [dashboardLoadedKey, setDashboardLoadedKey] = useState<string | null>(null)
+  const [dashboardError, setDashboardError] = useState<{ key: string; message: string } | null>(null)
+  const [refreshKey, setRefreshKey] = useState(0)
   const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
   const pendingCount = appointments.filter((appointment) => appointment.status === 'PENDING').length
     + curriculums.filter((curriculum) => curriculum.status === 'PENDING').length
@@ -100,37 +95,35 @@ function AdminDashboardPage() {
     () => new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long' }),
     [locale],
   )
-  const timeFormatter = useMemo(
-    () => new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }),
-    [locale],
-  )
+  const selectedDateString = (selectedDate ?? today(getLocalTimeZone())).toString()
+  const dashboardRequestKey = `${selectedDateString}:${period}:${refreshKey}`
+  const dashboardLoading = dashboardLoadedKey !== dashboardRequestKey
+  const currentDashboardError = dashboardError?.key === dashboardRequestKey ? dashboardError.message : null
 
   useEffect(() => {
     let isCurrentRequest = true
-    setLoading(true)
-    setError(null)
-    setDashboardData(null)
 
-    dashboardService.getSummary(selectedDateString)
+    dashboardService.getSummary(selectedDateString, period)
       .then((summary) => {
-        if (isCurrentRequest) setDashboardData(summary)
+        if (isCurrentRequest) {
+          setDashboardData(summary)
+          setDashboardLoadedKey(dashboardRequestKey)
+          setDashboardError(null)
+        }
       })
       .catch((requestError: unknown) => {
         if (isCurrentRequest) {
           setDashboardData(null)
-          setError(getErrorMessage(requestError))
+          setDashboardLoadedKey(dashboardRequestKey)
+          setDashboardError({ key: dashboardRequestKey, message: getErrorMessage(requestError) })
         }
-      })
-      .finally(() => {
-        if (isCurrentRequest) setLoading(false)
       })
 
     return () => {
       isCurrentRequest = false
     }
-  }, [selectedDateString, refreshKey])
+  }, [dashboardRequestKey, period, selectedDateString])
 
-  const selectedDateValue = selectedDate.toDate(getLocalTimeZone())
   const stats = [
     { key: 'todayAppointments', label: 'admin.dashboard.stats.todayAppointments.label', value: dashboardData?.appointments.length, icon: 'calendar', href: '/admin/citas' },
     { key: 'appointmentsToConfirm', label: 'admin.dashboard.stats.appointmentsToConfirm.label', value: dashboardData?.pendingAppointmentCount, icon: 'clock', href: '/admin/citas' },
@@ -147,7 +140,7 @@ function AdminDashboardPage() {
           {dateFormatter.format(dashboardDate)} · {t('admin.dashboard.pendingCount', { count: pendingCount })}
         </p>
       </header>
-      {error && <p role="alert" className="mt-md rounded-xl border border-danger-100 bg-danger-50 p-md font-body text-body-sm text-danger">{t('admin.dashboard.loadError', { error })}</p>}
+      {currentDashboardError && <p role="alert" className="mt-md rounded-xl border border-danger-100 bg-danger-50 p-md font-body text-body-sm text-danger">{t('admin.dashboard.loadError', { error: currentDashboardError })}</p>}
 
       <div className="mt-xl flex flex-wrap items-center justify-between gap-sm" role="group" aria-label={t('admin.dashboard.periodLabel')}>
         <div className="flex flex-wrap gap-sm">
@@ -175,6 +168,7 @@ function AdminDashboardPage() {
             void fetchCurriculums()
             const range = monthRange(calendarMonth)
             void fetchEvents(range.from, range.to)
+            setRefreshKey((key) => key + 1)
           }}
           className="inline-flex size-10 items-center justify-center rounded-full border border-green-500 text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
         >
@@ -186,7 +180,9 @@ function AdminDashboardPage() {
         <div className="min-w-0 space-y-xl">
           <section aria-labelledby="dashboard-summary-title" className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
             <h2 id="dashboard-summary-title" className="m-0 font-heading text-h4 font-bold text-heading">{t('admin.dashboard.summaryTitle')}</h2>
-            <p className="m-0 mt-sm font-body text-body text-neutral-500">{t(`admin.dashboard.${dashboardMock.summary}`)}</p>
+            <p className="m-0 mt-sm font-body text-body text-neutral-500">
+              {dashboardLoading ? t('admin.dashboard.summaryLoading') : dashboardData?.aiSummary ?? t('admin.dashboard.summaryUnavailable')}
+            </p>
           </section>
 
           <section aria-labelledby="dashboard-stats-title">
@@ -292,8 +288,6 @@ function AdminDashboardPage() {
                 <li className="font-body text-body-sm text-neutral-500">{t('admin.dashboard.calendar.emptyDay')}</li>
               )}
             </ol>
-            {loading && <p className="mt-lg font-body text-body-sm text-neutral-500">{t('admin.dashboard.loading')}</p>}
-            {!loading && !error && dashboardData?.appointments.length === 0 && <p className="mt-lg font-body text-body-sm text-neutral-500">{t('admin.dashboard.agenda.empty')}</p>}
           </section>
           <Link to="/admin/citas" className="inline-flex w-full items-center justify-center rounded-full bg-orange-500 px-lg py-sm font-body text-body-sm font-bold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2">
             {t('admin.dashboard.agenda.viewAll')}
