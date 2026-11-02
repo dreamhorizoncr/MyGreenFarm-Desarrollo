@@ -29,6 +29,7 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 import { adminService } from '../services/admin.ts'
 import type { UserInfo } from '../types/auth.ts'
+import { setPageSEO } from '../utils/seo.ts'
 
 const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
 
@@ -94,6 +95,12 @@ const DECORATION_LAYOUTS = [
     function AboutUsPage() {
     const reduceMotion = useReducedMotion()
     const { t } = useTranslation()
+    useEffect(() => {
+        setPageSEO({
+            title: `${t('aboutUsPage.hero.title')} | My Green Farm`,
+            description: t('aboutUsPage.hero.description'),
+        })
+    }, [t])
 
     const [teachers, setTeachers] = useState<UserInfo[]>([])
     const [teachersLoading, setTeachersLoading] = useState(true)

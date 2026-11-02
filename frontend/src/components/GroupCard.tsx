@@ -113,7 +113,7 @@ import type { Group } from '../types/group.ts'
                 </p>
 
                 <p className="break-words font-body text-body-sm text-body-text">
-                {group.teacherNames}
+                {group.teacherNames.join(', ')}
                 </p>
             </div>
             </div>

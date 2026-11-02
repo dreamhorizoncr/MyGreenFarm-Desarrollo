@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { SearchIcon } from '@animateicons/react/lucide'
@@ -15,6 +15,7 @@ import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import ForumSectionTabs from '../components/forum/ForumSectionTabs.tsx'
+import { setPageSEO } from '../utils/seo.ts'
 
 function ForumPage() {
   const { t } = useTranslation()
@@ -39,6 +40,13 @@ function ForumPage() {
   const [blogSearch, setBlogSearch] = useState('')
   const normalizeSearchText = (value: string) =>
     value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase()
+
+  useEffect(() => {
+    setPageSEO({
+      title: `${t('forum.title')} | My Green Farm`,
+      description: t('forum.subtitle'),
+    })
+  }, [t])
 
   const filteredBlogPosts = useMemo(() => {
     const query = normalizeSearchText(blogSearch.trim())

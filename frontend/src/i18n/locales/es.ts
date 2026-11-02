@@ -12,7 +12,6 @@ export default {
     frequentQuestions: "Preguntas frecuentes",
     suggestions: {
       booking: "¿Cómo reservo?",
-      plans: "¿Qué planes?",
       vacancies: "¿Vacantes?",
     },
     typing: "Escribiendo",
@@ -58,7 +57,7 @@ export default {
     navLabel: "Green Hearts",
     loading: "Cargando Green Hearts",
     hero: {
-      title: "Programa de acción social",
+      title: "Programa de Acción Social",
       description: "Solidaridad que acompaña y abre oportunidades. Unimos a nuestra comunidad para apoyar a niños, niñas y familias con acciones concretas.",
     },
     purpose: {
@@ -1045,6 +1044,8 @@ export default {
         thisMonth: "Este mes",
       },
       summaryTitle: "Resumen del día",
+      summaryLoading: "Generando resumen con IA...",
+      summaryUnavailable: "No se pudo generar el resumen.",
       summaryText: "La jornada avanza según lo previsto. Hay algunas tareas que requieren atención antes de finalizar el día.",
       statsTitle: "Indicadores del día",
       stats: {
@@ -2302,4 +2303,11 @@ export default {
     loading: "Cargando documento…",
     error: "No se pudo mostrar el documento aquí.",
   },
+
+  seo: {
+  galleryDescription: 'Explora fotografías y recuerdos de las actividades, experiencias y momentos de nuestra comunidad educativa.',
+  communityDescription: 'Conoce las experiencias y publicaciones compartidas por las familias de la comunidad My Green Farm.',
+  bookingDescription: 'Solicita una cita en My Green Farm y conoce nuestra propuesta educativa para niños y familias.',
+},
+
 };

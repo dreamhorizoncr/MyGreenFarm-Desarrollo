@@ -12,7 +12,6 @@ export default {
     frequentQuestions: "Questions fréquentes",
     suggestions: {
       booking: "Comment réserver ?",
-      plans: "Quels forfaits ?",
       vacancies: "Postes vacants ?",
     },
     typing: "Écriture en cours",
@@ -1050,6 +1049,8 @@ export default {
         thisMonth: "Ce mois",
       },
       summaryTitle: "Résumé du jour",
+      summaryLoading: "Génération du résumé avec l'IA...",
+      summaryUnavailable: "Le résumé n'a pas pu être généré.",
       summaryText: "La journée se déroule comme prévu. Quelques tâches nécessitent votre attention avant la fin de la journée.",
       statsTitle: "Indicateurs du jour",
       stats: {
@@ -2307,4 +2308,11 @@ export default {
     loading: "Chargement du document…",
     error: "Impossible d’afficher le document ici.",
   },
+
+  seo: {
+    galleryDescription: 'Explorez les photos et les souvenirs des activités et des expériences de notre communauté éducative.',
+    communityDescription: 'Découvrez les expériences et les publications partagées par les familles de la communauté My Green Farm.',
+    bookingDescription: 'Demandez un rendez-vous chez My Green Farm et découvrez notre approche éducative pour les enfants et les familles.',
+  },
+
 };

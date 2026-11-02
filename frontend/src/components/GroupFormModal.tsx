@@ -1,8 +1,7 @@
 
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import Select from './ui/Select.tsx'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 import { adminService } from '../services/admin.ts'
@@ -41,18 +40,47 @@ function GroupFormModal({
     const [form, setForm] = useState<GroupRequest>(emptyForm)
     const [teachers, setTeachers] = useState<UserInfo[]>([])
     const [loadingTeachers, setLoadingTeachers] = useState(false)
+    const [teacherMenuOpen, setTeacherMenuOpen] = useState(false)
     const [saving, setSaving] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [fieldErrors, setFieldErrors] = useState<
         Record<string, string | null>
     >({})
 
+    const teacherSelectorRef = useRef<HTMLDivElement>(null)
+
     const { shouldRender, closing } = useModalVisibility(isOpen)
+
+    const selectedTeachers = teachers.filter((teacher) =>
+        form.teacherIds.includes(teacher.id),
+    )
 
     const clearFieldError = (field: string) => {
         setFieldErrors((current) => ({
             ...current,
             [field]: null,
+        }))
+    }
+
+    const toggleTeacher = (teacherId: string) => {
+        setForm((current) => {
+            const isSelected = current.teacherIds.includes(teacherId)
+
+            return {
+                ...current,
+                teacherIds: isSelected
+                    ? current.teacherIds.filter((id) => id !== teacherId)
+                    : [...current.teacherIds, teacherId],
+            }
+        })
+
+        clearFieldError('teacherIds')
+    }
+
+    const removeTeacher = (teacherId: string) => {
+        setForm((current) => ({
+            ...current,
+            teacherIds: current.teacherIds.filter((id) => id !== teacherId),
         }))
     }
 
@@ -72,6 +100,7 @@ function GroupFormModal({
                 : { ...emptyForm },
         )
 
+        setTeacherMenuOpen(false)
         setError(null)
         setFieldErrors({})
 
@@ -101,6 +130,32 @@ function GroupFormModal({
             mounted = false
         }
     }, [isOpen, group, t])
+
+    useEffect(() => {
+        if (!teacherMenuOpen) return
+
+        const handlePointerDown = (event: MouseEvent) => {
+            const target = event.target as Node
+
+            if (!teacherSelectorRef.current?.contains(target)) {
+                setTeacherMenuOpen(false)
+            }
+        }
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === 'Escape') {
+                setTeacherMenuOpen(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handlePointerDown)
+        document.addEventListener('keydown', handleKeyDown)
+
+        return () => {
+            document.removeEventListener('mousedown', handlePointerDown)
+            document.removeEventListener('keydown', handleKeyDown)
+        }
+    }, [teacherMenuOpen])
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -139,7 +194,7 @@ function GroupFormModal({
                 name: form.name.trim(),
                 description: form.description?.trim() || null,
                 maxCapacity: form.maxCapacity,
-                teacherIds: form.teacherIds,
+                teacherIds: [...form.teacherIds],
             }
 
             if (group) {
@@ -263,35 +318,121 @@ function GroupFormModal({
                         )}
                     </label>
 
-                    {/* Teacher */}
+                    {/* Multiple teachers */}
                     <div className="font-body text-body-sm font-semibold text-heading">
                         <label id="group-teacher-label">
                             {t('admin.groups.teacher')}
                         </label>
 
-                        <div className="mt-xs">
-                            <Select
-                                value={form.teacherIds[0] ?? ''}
-                                onChange={(value) => {
-                                    setForm((current) => ({
-                                        ...current,
-                                        teacherIds: value ? [value] : [],
-                                    }))
-                                    clearFieldError('teacherIds')
-                                }}
-                                options={teachers.map((teacher) => ({
-                                    value: teacher.id,
-                                    label: `${teacher.firstName} ${teacher.lastName}`,
-                                }))}
-                                placeholder={
-                                    loadingTeachers
-                                        ? t('admin.children.loadingOptions')
-                                        : t('admin.groups.selectTeacher')
+                        <div
+                            ref={teacherSelectorRef}
+                            className="relative mt-xs"
+                        >
+                            <button
+                                type="button"
+                                disabled={loadingTeachers || teachers.length === 0}
+                                aria-haspopup="listbox"
+                                aria-expanded={teacherMenuOpen}
+                                aria-labelledby="group-teacher-label"
+                                onClick={() =>
+                                    setTeacherMenuOpen((current) => !current)
                                 }
-                                className="h-11 w-full rounded-xl border border-neutral-200 bg-white px-md"
-                                aria-label={t('admin.groups.teacher')}
-                            />
+                                className="flex h-11 w-full items-center justify-between gap-sm rounded-xl border border-neutral-200 bg-white px-md text-left font-body text-body-sm font-normal text-heading outline-none transition-colors hover:border-neutral-400 focus:border-heading disabled:cursor-not-allowed disabled:opacity-60"
+                            >
+                                <span className="truncate text-neutral-600">
+                                    {loadingTeachers
+                                        ? t('admin.children.loadingOptions')
+                                        : teachers.length === 0
+                                            ? t('admin.groups.loadError')
+                                            : form.teacherIds.length > 0
+                                                ? `${form.teacherIds.length} seleccionado(s)`
+                                                : t('admin.groups.selectTeacher')}
+                                </span>
+
+                                <svg
+                                    className={`size-4 shrink-0 text-neutral-500 transition-transform ${
+                                        teacherMenuOpen ? 'rotate-180' : ''
+                                    }`}
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="m6 9 6 6 6-6" />
+                                </svg>
+                            </button>
+
+                            {teacherMenuOpen && (
+                                <div className="absolute left-0 top-full z-[100] mt-2 max-h-60 w-full overflow-y-auto rounded-xl border border-neutral-200 bg-white p-xs shadow-lg">
+                                    {teachers.map((teacher) => {
+                                        const selected = form.teacherIds.includes(
+                                            teacher.id,
+                                        )
+
+                                        return (
+                                            <label
+                                                key={teacher.id}
+                                                className="flex cursor-pointer items-center gap-sm rounded-lg px-md py-sm font-body text-body-sm font-normal text-heading transition-colors hover:bg-orange-50"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selected}
+                                                    onChange={() =>
+                                                        toggleTeacher(teacher.id)
+                                                    }
+                                                    className="size-4 shrink-0 accent-orange-500"
+                                                />
+
+                                                <span className="min-w-0 truncate">
+                                                    {teacher.firstName}{' '}
+                                                    {teacher.lastName}
+                                                </span>
+                                            </label>
+                                        )
+                                    })}
+                                </div>
+                            )}
                         </div>
+
+                        {/* Selected teachers */}
+                        {selectedTeachers.length > 0 && (
+                            <div className="mt-sm flex flex-wrap gap-xs">
+                                {selectedTeachers.map((teacher) => (
+                                    <span
+                                        key={teacher.id}
+                                        className="inline-flex max-w-full items-center gap-xs rounded-full border border-orange-200 bg-orange-50 py-1 pl-sm pr-xs font-body text-caption font-medium text-heading"
+                                    >
+                                        <span className="max-w-[180px] truncate">
+                                            {teacher.firstName} {teacher.lastName}
+                                        </span>
+
+                                        <button
+                                            type="button"
+                                            disabled={saving}
+                                            onClick={() =>
+                                                removeTeacher(teacher.id)
+                                            }
+                                            aria-label={`Quitar a ${teacher.firstName} ${teacher.lastName}`}
+                                            className="flex size-5 shrink-0 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-orange-200 hover:text-heading disabled:opacity-50"
+                                        >
+                                            <svg
+                                                viewBox="0 0 20 20"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth="2"
+                                                className="size-3"
+                                                aria-hidden="true"
+                                            >
+                                                <path d="m5 5 10 10M15 5 5 15" />
+                                            </svg>
+                                        </button>
+                                    </span>
+                                ))}
+                            </div>
+                        )}
 
                         {fieldErrors.teacherIds && (
                             <span className="mt-xs block font-normal text-danger">
