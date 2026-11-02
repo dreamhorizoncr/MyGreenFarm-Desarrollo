@@ -215,6 +215,55 @@ function spring(item: { x: number; v: number }, target: number, dt: number, stif
   return item.x
 }
 
+type ActiveAction = { type: IdleAction; start: number; duration: number } | null
+
+function syllableStrengthFor(letters: number) {
+  return letters > 0 ? Math.min(1, Math.max(0.45, letters / 7)) : 0.6
+}
+
+function shakeTiltAt(elapsed: number) {
+  if (elapsed < 0 || elapsed >= 0.9) return 0
+  return Math.sin(elapsed * 22) * 12 * (1 - elapsed / 0.9)
+}
+
+function fadeOut(elapsed: number, duration: number) {
+  return elapsed >= 0 && elapsed < duration ? 1 - elapsed / duration : 0
+}
+
+function actionMotion(action: ActiveAction, time: number, idle: number) {
+  if (!action) return { progress: 0, stretch: 0, peck: 0, preenTilt: 0, preenFlap: 0, glance: 0, seeds: 0 }
+  const weight = envelope(time - action.start, action.duration) * idle
+  const progress = (time - action.start) / action.duration
+  return {
+    progress,
+    stretch: action.type === 'stretch' ? weight : 0,
+    peck: action.type === 'peck' ? Math.max(bump(progress, 0.18, 0.22), bump(progress, 0.56, 0.22)) : 0,
+    preenTilt: action.type === 'preen' ? weight * 12 : 0,
+    preenFlap: action.type === 'preen' ? -Math.abs(Math.sin(progress * Math.PI * 6)) * 30 * weight : 0,
+    glance: action.type === 'look' ? Math.sin(progress * Math.PI * 2) * 2.6 * weight : 0,
+    seeds: action.type === 'peck' ? clamp01((progress - 0.3) / 0.62) : 0,
+  }
+}
+
+function followOffset(pointer: { x: number; y: number; active: boolean }) {
+  if (!pointer.active) return { x: 0, y: 0 }
+  const distance = Math.hypot(pointer.x, pointer.y) || 1
+  const reach = Math.min(1, distance / 160)
+  return {
+    x: (pointer.x / distance) * 2.4 * reach,
+    y: (pointer.y / distance) * 1.8 * reach,
+  }
+}
+
+function blinkScaleAt(blink: number) {
+  return blink < 0.07 ? 1 - blink / 0.07 : Math.min(1, (blink - 0.07) / 0.07)
+}
+
+function featherOpacityAt(featherTime: number) {
+  if (featherTime < 0 || featherTime >= 2.4) return 0
+  return featherTime < 0.2 ? featherTime / 0.2 : Math.min(1, (2.4 - featherTime) / 0.5)
+}
+
 function ChickAvatar({
   state = 'idle',
   mood = 'neutral',
@@ -309,14 +358,11 @@ function ChickAvatar({
     const start = performance.now()
     const clock = () => (performance.now() - start) / 1000
 
-    const draw = (time: number) => {
-      const props = propsRef.current
-      const dt = Math.min(0.15, Math.max(0, time - lastTime))
-      lastTime = time
+    type ChickProps = typeof propsRef.current
 
+    const syncProps = (props: ChickProps, time: number) => {
       if (props.talkTick !== seen.talkTick) {
-        const letters = props.talkTick - seen.talkTick
-        syllableStrength = letters > 0 ? Math.min(1, Math.max(0.45, letters / 7)) : 0.6
+        syllableStrength = syllableStrengthFor(props.talkTick - seen.talkTick)
         seen.talkTick = props.talkTick
         syllableAt = time
       }
@@ -335,15 +381,123 @@ function ChickAvatar({
         lastActivity = time
       }
       if (props.state !== 'idle' || props.waving) lastActivity = time
+    }
+
+    const updateWeights = (
+      props: ChickProps,
+      ease: number,
+      sleeping: boolean,
+      signals: { tickleFade: number; thanks: number; goodbye: number },
+    ) => {
+      const cheerful = props.mood === 'happy' || signals.tickleFade > 0 || signals.thanks > 0 || signals.goodbye > 0
+      weights.sleep = approach(weights.sleep, Number(sleeping), ease * 0.5)
+      weights.happy = approach(weights.happy, Number(cheerful), ease)
+      weights.worried = approach(weights.worried, Number(props.mood === 'worried'), ease)
+      weights.wave = approach(weights.wave, Number((props.waving || signals.goodbye > 0) && !sleeping), ease)
+    }
+
+    const updateAction = (time: number, sleeping: boolean) => {
+      if (current.idle > 0.95 && !sleeping && !action && time > nextAction && time - lastActivity < SLEEP_AFTER - 3.5) {
+        const pick = IDLE_ACTIONS[Math.floor(Math.random() * IDLE_ACTIONS.length)]
+        action = { type: pick.type, start: time, duration: pick.duration }
+      }
+      if (action && (time - action.start > action.duration || current.idle < 0.5 || sleeping)) {
+        action = null
+        nextAction = time + 5 + Math.random() * 4
+      }
+    }
+
+    const updateBlink = (time: number) => {
+      if (time <= nextBlink) return 1
+      const blink = time - nextBlink
+      const scale = blinkScaleAt(blink)
+      if (blink > 0.14) nextBlink = time + 2.2 + Math.random() * 2.5
+      return scale
+    }
+
+    const drawDots = (time: number) => {
+      setAttr(dotsRef.current, 'opacity', current.dots.toFixed(2))
+      if (!dotsRef.current || current.dots <= 0) return
+      Array.from(dotsRef.current.children).forEach((dot, index) => {
+        const pulse = (Math.sin(time * 5 - index * 0.9) + 1) / 2
+        setAttr(dot, 'opacity', (0.35 + pulse * 0.65).toFixed(2))
+        setAttr(dot, 'transform', `translate(0 ${(-pulse * 2).toFixed(2)})`)
+      })
+    }
+
+    const drawHearts = (sinceThanks: number) => {
+      if (!heartsRef.current) return
+      Array.from(heartsRef.current.children).forEach((heart, index) => {
+        const progress = clamp01((sinceThanks - index * 0.25) / 1.6)
+        const visibleHeart = sinceThanks >= 0 && sinceThanks < 2.6 ? envelope(progress, 1) : 0
+        const x = 38 + index * 12 + Math.sin(progress * 6 + index) * 3
+        const y = 30 - progress * 24
+        setAttr(heart, 'opacity', visibleHeart.toFixed(2))
+        setAttr(heart, 'transform', `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${(0.7 + progress * 0.5).toFixed(2)})`)
+      })
+    }
+
+    const drawFeather = (time: number) => {
+      if (!featherRef.current) return
+      const featherTime = time - featherAt
+      setAttr(featherRef.current, 'opacity', featherOpacityAt(featherTime).toFixed(2))
+      if (featherTime < 0 || featherTime >= 2.4) return
+      const x = 74 + Math.sin(featherTime * 3) * 6
+      const y = 62 + featherTime * 12
+      setAttr(featherRef.current, 'transform', `translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${(Math.sin(featherTime * 3) * 35).toFixed(2)})`)
+    }
+
+    const drawSeeds = (seedProgress: number) => {
+      if (!seedsRef.current) return
+      Array.from(seedsRef.current.children).forEach((seed, index) => {
+        const offset = index - 1
+        const x = 50 + offset * 6 + offset * seedProgress * 9
+        const y = 89 - Math.sin(seedProgress * Math.PI) * (5 + index * 2)
+        setAttr(seed, 'transform', `translate(${x.toFixed(2)} ${y.toFixed(2)})`)
+        setAttr(seed, 'opacity', envelope(seedProgress, 1).toFixed(2))
+      })
+    }
+
+    const drawBubble = (bubble: number) => {
+      if (!bubbleRef.current) return
+      setAttr(bubbleRef.current, 'opacity', bubble.toFixed(2))
+      setAttr(bubbleRef.current, 'transform', `translate(77 12) scale(${(0.6 + bubble * 0.4).toFixed(2)}) translate(-77 -12)`)
+    }
+
+    const drawZzz = (time: number) => {
+      setAttr(zzzRef.current, 'opacity', weights.sleep.toFixed(2))
+      if (!zzzRef.current || weights.sleep <= 0) return
+      Array.from(zzzRef.current.children).forEach((letter, index) => {
+        const cycle = (time * 0.5 + index / 3) % 1
+        setAttr(letter, 'opacity', envelope(cycle, 1).toFixed(2))
+        setAttr(letter, 'transform', `translate(${(cycle * 6).toFixed(2)} ${(-cycle * 14).toFixed(2)})`)
+      })
+    }
+
+    const updateFrameInterval = (props: ChickProps, time: number) => {
+      if (weights.sleep > 0.99) {
+        frameInterval = 1 / 8
+        return
+      }
+      const reacting = time - Math.max(...REACTIONS.map((type) => reactions[type])) < 2.6 || time - jumpAt < 0.6 || time - syllableAt < 0.4
+      const busy = props.state !== 'idle' || props.waving || reacting || weights.wave > 0.01 || weights.happy > 0.01 || weights.worried > 0.01
+      frameInterval = busy ? 1 / 60 : 1 / 30
+    }
+
+    const draw = (time: number) => {
+      const props = propsRef.current
+      const dt = Math.min(0.15, Math.max(0, time - lastTime))
+      lastTime = time
+
+      syncProps(props, time)
 
       const since = (type: ChickReaction) => time - reactions[type]
       const thanks = plateau(since('thanks'), 2.4, 0.35)
       const pointing = plateau(since('point'), 1.9, 0.3)
-      const shakeTime = since('shake')
-      const shakeTilt = shakeTime >= 0 && shakeTime < 0.9 ? Math.sin(shakeTime * 22) * 12 * (1 - shakeTime / 0.9) : 0
+      const shakeTilt = shakeTiltAt(since('shake'))
       const nod = envelope(since('nod'), 0.45)
       const tickleTime = since('tickle')
-      const tickleFade = tickleTime >= 0 && tickleTime < 1.3 ? 1 - tickleTime / 1.3 : 0
+      const tickleFade = fadeOut(tickleTime, 1.3)
       const tickleTilt = Math.sin(tickleTime * 38) * 7 * tickleFade
       const tickleAir = Math.abs(Math.sin(tickleTime * 14)) * 3 * tickleFade
       const goodbye = plateau(since('bye'), 2, 0.25)
@@ -353,22 +507,11 @@ function ChickAvatar({
       const target = STATE_MOTION[props.state]
       for (const key of MOTION_KEYS) current[key] = approach(current[key], target[key], ease)
       const sleeping = props.state === 'idle' && time - lastActivity > SLEEP_AFTER
-      weights.sleep = approach(weights.sleep, sleeping ? 1 : 0, ease * 0.5)
-      weights.happy = approach(weights.happy, props.mood === 'happy' || tickleFade > 0 || thanks > 0 || goodbye > 0 ? 1 : 0, ease)
-      weights.worried = approach(weights.worried, props.mood === 'worried' ? 1 : 0, ease)
-      weights.wave = approach(weights.wave, (props.waving || goodbye > 0) && !sleeping ? 1 : 0, ease)
+      updateWeights(props, ease, sleeping, { tickleFade, thanks, goodbye })
       const awake = 1 - weights.sleep
 
-      if (current.idle > 0.95 && !sleeping && !action && time > nextAction && time - lastActivity < SLEEP_AFTER - 3.5) {
-        const pick = IDLE_ACTIONS[Math.floor(Math.random() * IDLE_ACTIONS.length)]
-        action = { type: pick.type, start: time, duration: pick.duration }
-      }
-      if (action && (time - action.start > action.duration || current.idle < 0.5 || sleeping)) {
-        action = null
-        nextAction = time + 5 + Math.random() * 4
-      }
-      const actionWeight = action ? envelope(time - action.start, action.duration) * current.idle : 0
-      const actionProgress = action ? (time - action.start) / action.duration : 0
+      updateAction(time, sleeping)
+      const motion = actionMotion(action, time, current.idle)
 
       phases.body += dt * current.speed * (1 - weights.sleep * 0.6)
       phases.flap += dt * current.flapRate
@@ -377,8 +520,7 @@ function ChickAvatar({
       const jump = envelope(time - jumpAt, 0.45)
       const hop = hopOffset(time, 4.2)
       const hopWeight = current.idle * awake * (1 - weights.wave)
-      const stretch = action?.type === 'stretch' ? actionWeight : 0
-      const peck = action?.type === 'peck' ? Math.max(bump(actionProgress, 0.18, 0.22), bump(actionProgress, 0.56, 0.22)) : 0
+      const { stretch, peck } = motion
       const yawn = props.state === 'idle' ? envelope(time - lastActivity - (SLEEP_AFTER - 2.4), 2.2) : 0
 
       if (lastHopLift > 0.5 && hop.lift === 0 && hopWeight > 0.5 && time - featherAt > 2.6 && Math.random() < 0.45) featherAt = time
@@ -396,12 +538,11 @@ function ChickAvatar({
         yawn * 0.04 +
         weights.sleep * 0.04 * (1 + Math.sin(time * 1.6))
 
-      const preenTilt = action?.type === 'preen' ? actionWeight * 12 : 0
-      const tiltTarget = current.tilt * (1 - weights.worried) + Math.sin(phases.sway) * current.sway * awake + preenTilt + weights.sleep * 6 + pointing * 6
+      const tiltTarget = current.tilt * (1 - weights.worried) + Math.sin(phases.sway) * current.sway * awake + motion.preenTilt + weights.sleep * 6 + pointing * 6
       const tilt = spring(tiltSpring, tiltTarget, dt, 140, 13) + shakeTilt + tickleTilt
       const scaleY = 1 - squash
       const scaleX = 1 + squash * 0.7
-      setAttr(groupRef.current, 
+      setAttr(groupRef.current,
         'transform',
         `translate(0 ${(-lift).toFixed(2)}) rotate(${tilt.toFixed(2)} 50 ${GROUND}) translate(50 ${GROUND}) scale(${scaleX.toFixed(3)} ${scaleY.toFixed(3)}) translate(-50 -${GROUND})`,
       )
@@ -415,11 +556,10 @@ function ChickAvatar({
       setAttr(shadowRef.current, 'opacity', (1 - airborne * 0.5).toFixed(2))
 
       const baseFlap = -((1 - Math.cos(phases.flap)) / 2) * current.flap * (1 - weights.worried)
-      const preenFlap = action?.type === 'preen' ? -Math.abs(Math.sin(actionProgress * Math.PI * 6)) * 30 * actionWeight : 0
       const stretchFlap = -stretch * 45
       const waveFlap = -(45 + Math.sin(time * 12) * 22) * weights.wave
       const droop = weights.worried * 20 + weights.sleep * 8
-      const right = baseFlap + preenFlap + stretchFlap + waveFlap + droop + pointing * 55
+      const right = baseFlap + motion.preenFlap + stretchFlap + waveFlap + droop + pointing * 55
       const left = baseFlap + stretchFlap + droop
       setAttr(rightWingRef.current, 'transform', `rotate(${right.toFixed(2)} 74 56)`)
       setAttr(leftWingRef.current, 'transform', `rotate(${(-left).toFixed(2)} 26 56)`)
@@ -436,23 +576,13 @@ function ChickAvatar({
       setAttr(tongueRef.current, 'cy', (lowerInner - 1.1).toFixed(2))
       setAttr(tongueRef.current, 'opacity', Math.min(1, Math.max(0, (drop - 1.5) / 2)).toFixed(2))
 
-      let follow = { x: 0, y: 0 }
-      if (pointer.active) {
-        const dx = pointer.x
-        const dy = pointer.y
-        const distance = Math.hypot(dx, dy) || 1
-        const reach = Math.min(1, distance / 160)
-        follow = {
-          x: (dx / distance) * 2.4 * reach,
-          y: (dy / distance) * 1.8 * reach,
-        }
-      }
-      const glance = action?.type === 'look' ? Math.sin(actionProgress * Math.PI * 2) * 2.6 * actionWeight : 0
+      const follow = followOffset(pointer)
       const towardInput = props.inputDirection === 'up' ? -1 : 1
+      const lookYDirection = current.lookY > 0 ? towardInput : 1
       const lookTarget = {
-        x: current.lookX + Math.cos(time * 2) * 2.2 * current.gaze + (follow.x + glance) * current.idle * awake * (1 - pointing) + pointing * 2,
+        x: current.lookX + Math.cos(time * 2) * 2.2 * current.gaze + (follow.x + motion.glance) * current.idle * awake * (1 - pointing) + pointing * 2,
         y:
-          current.lookY * (current.lookY > 0 ? towardInput : 1) +
+          current.lookY * lookYDirection +
           Math.sin(time * 2) * 0.8 * current.gaze +
           follow.y * current.idle * awake * (1 - pointing) +
           pointing * 2 * towardInput +
@@ -464,12 +594,7 @@ function ChickAvatar({
       setAttr(lookRef.current, 'transform', `translate(${lookX.toFixed(2)} ${lookY.toFixed(2)})`)
 
       const special = Math.max(weights.happy, weights.sleep)
-      let blinkScale = 1
-      if (time > nextBlink) {
-        const blink = time - nextBlink
-        blinkScale = blink < 0.07 ? 1 - blink / 0.07 : Math.min(1, (blink - 0.07) / 0.07)
-        if (blink > 0.14) nextBlink = time + 2.2 + Math.random() * 2.5
-      }
+      const blinkScale = updateBlink(time)
       const eyeScale = Math.min(blinkScale, 1 - yawn * 0.65)
       setAttr(eyesRef.current, 'transform', `translate(0 ${EYE_Y}) scale(1 ${Math.max(0.1, eyeScale).toFixed(2)}) translate(0 -${EYE_Y})`)
       setAttr(eyesRef.current, 'opacity', (1 - special).toFixed(2))
@@ -477,68 +602,14 @@ function ChickAvatar({
       setAttr(sleepEyesRef.current, 'opacity', weights.sleep.toFixed(2))
       setAttr(browsRef.current, 'opacity', weights.worried.toFixed(2))
 
-      setAttr(dotsRef.current, 'opacity', current.dots.toFixed(2))
-      if (dotsRef.current && current.dots > 0) {
-        Array.from(dotsRef.current.children).forEach((dot, index) => {
-          const pulse = (Math.sin(time * 5 - index * 0.9) + 1) / 2
-          setAttr(dot, 'opacity', (0.35 + pulse * 0.65).toFixed(2))
-          setAttr(dot, 'transform', `translate(0 ${(-pulse * 2).toFixed(2)})`)
-        })
-      }
-
+      drawDots(time)
       setAttr(blushRef.current, 'opacity', thanks.toFixed(2))
-      if (heartsRef.current) {
-        Array.from(heartsRef.current.children).forEach((heart, index) => {
-          const progress = clamp01((since('thanks') - index * 0.25) / 1.6)
-          const visibleHeart = since('thanks') >= 0 && since('thanks') < 2.6 ? envelope(progress, 1) : 0
-          const x = 38 + index * 12 + Math.sin(progress * 6 + index) * 3
-          const y = 30 - progress * 24
-          setAttr(heart, 'opacity', visibleHeart.toFixed(2))
-          setAttr(heart, 'transform', `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${(0.7 + progress * 0.5).toFixed(2)})`)
-        })
-      }
-
-      const featherTime = time - featherAt
-      if (featherRef.current) {
-        const falling = featherTime >= 0 && featherTime < 2.4
-        let featherOpacity = 0
-        if (falling) featherOpacity = featherTime < 0.2 ? featherTime / 0.2 : Math.min(1, (2.4 - featherTime) / 0.5)
-        setAttr(featherRef.current, 'opacity', featherOpacity.toFixed(2))
-        if (falling) {
-          const x = 74 + Math.sin(featherTime * 3) * 6
-          const y = 62 + featherTime * 12
-          setAttr(featherRef.current, 'transform', `translate(${x.toFixed(2)} ${y.toFixed(2)}) rotate(${(Math.sin(featherTime * 3) * 35).toFixed(2)})`)
-        }
-      }
-
-      if (seedsRef.current) {
-        const seedProgress = action?.type === 'peck' ? clamp01((actionProgress - 0.3) / 0.62) : 0
-        Array.from(seedsRef.current.children).forEach((seed, index) => {
-          const offset = index - 1
-          const x = 50 + offset * 6 + offset * seedProgress * 9
-          const y = 89 - Math.sin(seedProgress * Math.PI) * (5 + index * 2)
-          setAttr(seed, 'transform', `translate(${x.toFixed(2)} ${y.toFixed(2)})`)
-          setAttr(seed, 'opacity', envelope(seedProgress, 1).toFixed(2))
-        })
-      }
-
-      if (bubbleRef.current) {
-        setAttr(bubbleRef.current, 'opacity', bubble.toFixed(2))
-        setAttr(bubbleRef.current, 'transform', `translate(77 12) scale(${(0.6 + bubble * 0.4).toFixed(2)}) translate(-77 -12)`)
-      }
-
-      setAttr(zzzRef.current, 'opacity', weights.sleep.toFixed(2))
-      if (zzzRef.current && weights.sleep > 0) {
-        Array.from(zzzRef.current.children).forEach((letter, index) => {
-          const cycle = (time * 0.5 + index / 3) % 1
-          setAttr(letter, 'opacity', envelope(cycle, 1).toFixed(2))
-          setAttr(letter, 'transform', `translate(${(cycle * 6).toFixed(2)} ${(-cycle * 14).toFixed(2)})`)
-        })
-      }
-      const reacting = time - Math.max(...REACTIONS.map((type) => reactions[type])) < 2.6 || time - jumpAt < 0.6 || time - syllableAt < 0.4
-      const busy = props.state !== 'idle' || props.waving || reacting || weights.wave > 0.01 || weights.happy > 0.01 || weights.worried > 0.01
-      if (weights.sleep > 0.99) frameInterval = 1 / 8
-      else frameInterval = busy ? 1 / 60 : 1 / 30
+      drawHearts(since('thanks'))
+      drawFeather(time)
+      drawSeeds(motion.seeds)
+      drawBubble(bubble)
+      drawZzz(time)
+      updateFrameInterval(props, time)
     }
 
     const loop = () => {
@@ -593,15 +664,15 @@ function ChickAvatar({
   }, [stopAnimations])
 
   return (
+    <>
+    {label && <span className="sr-only">{label}</span>}
     <svg
       ref={svgRef}
       viewBox="0 0 100 100"
       width={size}
       height={size}
       className={`overflow-visible ${className}`}
-      role={label ? 'img' : undefined}
-      aria-label={label}
-      aria-hidden={label ? undefined : true}
+      aria-hidden="true"
     >
       <ellipse ref={shadowRef} cx="50" cy="91" rx="20" ry="3" fill="rgb(0 0 0 / 0.08)" />
       <g ref={airRef}>
@@ -670,6 +741,7 @@ function ChickAvatar({
         </text>
       </g>
     </svg>
+    </>
   )
 }
 

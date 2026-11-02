@@ -88,7 +88,7 @@ function useHoverIcon() {
   }
 }
 
-function ChapterTitle({ Icon, color, children }: { Icon: AnimatedIcon; color: string; children: ReactNode }) {
+function ChapterTitle({ Icon, color, children }: Readonly<{ Icon: AnimatedIcon; color: string; children: ReactNode }>) {
   const { ref, hover } = useHoverIcon()
   return (
     <h3 {...hover} className="m-0 flex items-center gap-sm font-heading text-h4 font-bold leading-snug text-heading">
@@ -100,7 +100,7 @@ function ChapterTitle({ Icon, color, children }: { Icon: AnimatedIcon; color: st
   )
 }
 
-function PillarItem({ Icon, color, label, index }: { Icon: AnimatedIcon; color: string; label: string; index: number }) {
+function PillarItem({ Icon, color, label, index }: Readonly<{ Icon: AnimatedIcon; color: string; label: string; index: number }>) {
   const reduceMotion = useReducedMotion()
   const { ref, hover } = useHoverIcon()
   return (
@@ -124,7 +124,7 @@ function PillarItem({ Icon, color, label, index }: { Icon: AnimatedIcon; color: 
   )
 }
 
-function DreamItem({ Icon, color, label }: { Icon: AnimatedIcon; color: string; label: string }) {
+function DreamItem({ Icon, color, label }: Readonly<{ Icon: AnimatedIcon; color: string; label: string }>) {
   const { ref, hover } = useHoverIcon()
   return (
     <li {...hover} className="relative flex items-center gap-md">

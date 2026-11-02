@@ -152,24 +152,27 @@ import type { Group } from '../types/group.ts'
 
             {/* Content */}
             <div className="mt-6">
-            {loading ? (
+            {loading && (
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 {Array.from({ length: 4 }, (_, index) => (
                     <GroupCard key={index} loading />
                 ))}
                 </div>
-            ) : error ? (
+            )}
+            {!loading && error && (
                 <div
                 role="alert"
                 className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center font-body text-body-sm text-red-700"
                 >
                 {t('admin.groups.loadError')}
                 </div>
-            ) : filteredGroups.length === 0 ? (
+            )}
+            {!loading && !error && filteredGroups.length === 0 && (
                 <div className="rounded-2xl border border-neutral-200 bg-white px-6 py-12 text-center font-body text-body-sm text-neutral-500">
                 {t('admin.groups.noResults')}
                 </div>
-            ) : (
+            )}
+            {!loading && !error && filteredGroups.length > 0 && (
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 {paginatedGroups.map((group) => (
                     <GroupCard

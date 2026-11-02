@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import type { TFunction } from 'i18next'
 import {
     CreditCardIcon,
     SmartphoneIcon,
@@ -11,9 +12,8 @@ import {
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
-import type { ServicePlan } from '../types/servicePlan.ts'
+import type { ServicePlan, PaymentQuote } from '../types/servicePlan.ts'
 import type { Currency } from '../types/exchangeRate.ts'
-import type { PaymentQuote } from '../types/servicePlan.ts'
 import { currencySymbol, formatCurrency } from '../utils/currency.ts'
 import { servicePlanService } from '../services/servicePlan.ts'
 import { notifyError } from '../utils/notifications.ts'
@@ -34,6 +34,21 @@ type PaymentMethod = 'card' | 'sinpe'
 
 const errorMessage = (err: unknown, fallback: string) =>
     err instanceof Error && err.message ? err.message : fallback
+
+const optionalCoupon = (code: string) => code.trim() || undefined
+
+function payButtonLabel(
+    t: TFunction,
+    status: { loading: boolean; quoteLoading: boolean },
+    quoteTotal: string | null,
+) {
+    if (status.loading) return t('services.processing')
+    if (status.quoteLoading) return t('common.loading')
+    return quoteTotal ? `${t('services.pay')} ${quoteTotal}` : t('services.pay')
+}
+
+const normalizedIdentification = (type: string, value: string) =>
+    type === '05' ? value.trim() : value.replace(/\D/g, '')
 
 export default function PaymentPage() {
     const { t, i18n } = useTranslation()
@@ -110,7 +125,7 @@ export default function PaymentPage() {
 
             const payload = {
                 servicePlanId: plan.id,
-                couponCode: couponCode.trim() || undefined,
+                couponCode: optionalCoupon(couponCode),
                 paymentMethod,
                 cabysCode: plan.cabysCode, 
             }
@@ -211,7 +226,7 @@ export default function PaymentPage() {
                 description: `Pago de ${displayPlan?.name ?? plan.name}`,
                 paymentMethod: 'card',
                 language: i18n.resolvedLanguage ?? i18n.language,
-                couponCode: couponCode.trim() || undefined,
+                couponCode: optionalCoupon(couponCode),
                 saveSubscription,
             })
 
@@ -220,18 +235,18 @@ export default function PaymentPage() {
             const confirmResult = await servicePlanService.confirmPayment({
                 paymentIntentId: intent.id,
                 cardNumber: cardNumber.replace(/\s/g, ''),
-                expMonth: parseInt(expMonth, 10),
-                expYear: parseInt(`20${expYear}`, 10),
+                expMonth: Number.parseInt(expMonth, 10),
+                expYear: Number.parseInt(`20${expYear}`, 10),
                 cvc: cvc,
                 cardHolder: cardHolder,
                 clientName: clientName,
                 clientEmail: email,
                 identificationType: identificationType,
-                clientIdentification: identificationType === '05' ? clientIdentification.trim() : clientIdentification.replace(/\D/g, ''),
+                clientIdentification: normalizedIdentification(identificationType, clientIdentification),
                 description: `Suscripción: ${displayPlan?.name ?? plan.name}`,
                 language: i18n.resolvedLanguage ?? i18n.language,
                 servicePlanId: plan.id,
-                couponCode: couponCode.trim() || undefined,
+                couponCode: optionalCoupon(couponCode),
                 saveSubscription,
             })
 
@@ -266,7 +281,7 @@ export default function PaymentPage() {
                 description: `Pago SINPE de ${displayPlan?.name ?? plan.name}`,
                 paymentMethod: 'sinpe',
                 language: i18n.resolvedLanguage ?? i18n.language,
-                couponCode: couponCode.trim() || undefined,
+                couponCode: optionalCoupon(couponCode),
             })
 
             const confirmResult = await servicePlanService.confirmSinpePayment({
@@ -276,12 +291,12 @@ export default function PaymentPage() {
                 clientName: clientName,
                 clientEmail: email,
                 identificationType: identificationType,
-                clientIdentification: identificationType === '05' ? clientIdentification.trim() : clientIdentification.replace(/\D/g, ''),
+                clientIdentification: normalizedIdentification(identificationType, clientIdentification),
                 description: `Suscripción SINPE: ${displayPlan?.name ?? plan.name}`,
                 language: i18n.resolvedLanguage ?? i18n.language,
                 currency: planCurrency,
                 servicePlanId: plan.id,
-                couponCode: couponCode.trim() || undefined,
+                couponCode: optionalCoupon(couponCode),
             })
 
             setLoading(false)
@@ -302,6 +317,12 @@ export default function PaymentPage() {
             navigate('/payment-failed')
         }
     }
+
+    const cardPayLabel = payButtonLabel(
+        t,
+        { loading, quoteLoading },
+        quote && `${currencySymbol(currency)}${formatCurrency(quote.totalAmount, currency, i18n.language)}`,
+    )
 
     return (
         <div className="min-h-screen bg-bg-page pb-20">
@@ -439,9 +460,9 @@ export default function PaymentPage() {
                                             onChange={(event) => setSaveSubscription(event.target.checked)}
                                             className="mt-1 accent-green-600"
                                         />
-                                        <span>
-                                            <span className="block font-semibold">{t('services.saveSubscription')}</span>
-                                            <span className="mt-2xs block text-caption text-neutral-500">
+                                        <span className="font-semibold">
+                                            {t('services.saveSubscription')}
+                                            <span className="mt-2xs block text-caption font-normal text-neutral-500">
                                                 {t('services.subscriptionTerms')}
                                             </span>
                                         </span>
@@ -519,13 +540,7 @@ export default function PaymentPage() {
                                     className="mt-lg flex h-12 w-full items-center justify-center gap-xs rounded-full bg-orange-500 font-body text-body font-semibold text-white transition hover:bg-orange-600 disabled:opacity-60"
                                 >
                                     <LockIcon size={18} />
-                                    {loading
-                                        ? t('services.processing')
-                                        : quoteLoading
-                                            ? t('common.loading')
-                                            : quote
-                                                ? `${t('services.pay')} ${currencySymbol(currency)}${formatCurrency(quote.totalAmount, currency, i18n.language)}`
-                                                : t('services.pay')}
+                                    {cardPayLabel}
                                 </button>
                             </form>
                         )}
@@ -691,7 +706,6 @@ export default function PaymentPage() {
             </Container>
             <SinpeModal
                 isOpen={showSinpeModal}
-                onClose={() => setShowSinpeModal(false)}
                 planName={displayPlan?.name ?? plan.name}
                 phoneNumber={phoneNumber}
                 sinpeReference={sinpeReference}

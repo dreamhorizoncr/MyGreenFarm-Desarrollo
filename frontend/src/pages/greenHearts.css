@@ -170,8 +170,8 @@
   }
 
   #valores .green-hearts-puzzle-value-center {
-    justify-self: center !important;
-    text-align: center !important;
+    justify-self: center;
+    text-align: center;
     transform: translateX(-8px);
   }
 
@@ -182,8 +182,8 @@
   }
 
   #valores .green-hearts-puzzle-value-center > span {
-    margin-right: auto !important;
-    margin-left: auto !important;
+    margin-right: auto;
+    margin-left: auto;
   }
 
   #valores .green-hearts-puzzle-value-left > span {
@@ -198,29 +198,6 @@
     font-size: 1rem;
   }
 
-  #valores .green-hearts-puzzle-value-right > span {
-    margin-left: auto;
-  }
-
-}
-
-@media (min-width: 1024px) {
-  #valores .green-hearts-values-swiper .swiper-wrapper {
-    display: grid !important;
-    width: 100% !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    transform: none !important;
-  }
-
-  #valores .green-hearts-values-swiper .swiper-slide {
-    width: 100% !important;
-    height: auto !important;
-    margin: 0 !important;
-  }
-
-  #valores .green-hearts-values-swiper .swiper-pagination {
-    display: none;
-  }
 }
 
 #valores .green-hearts-value-card {
@@ -257,8 +234,8 @@
 }
 
 #lineas-de-accion .green-hearts-actions-header > :is(h2, p) {
-  width: 100% !important;
-  max-width: 100% !important;
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
   justify-self: stretch;
 }

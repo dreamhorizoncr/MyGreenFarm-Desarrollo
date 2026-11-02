@@ -48,9 +48,12 @@ const actions = [
   { titleKey: 'greenHearts.actions.items.communityActions.title', textKey: 'greenHearts.actions.items.communityActions.text', icon: Sprout, number: '05' },
 ] as const
 
+const PUZZLE_ALIGNMENTS = ['left', 'center', 'right'] as const
+
 function GreenHeartsPageSkeleton({ loadingLabel }: Readonly<{ loadingLabel: string }>) {
   return (
-    <div role="status" aria-label={loadingLabel} aria-busy="true" className="min-h-screen bg-bg-page">
+    <div aria-busy="true" className="min-h-screen bg-bg-page">
+      <output className="sr-only">{loadingLabel}</output>
       <Navbar />
       <div className="flex min-h-[280px] flex-col items-center justify-center gap-5 bg-white px-6 md:min-h-[320px]">
         <Skeleton shape="line" className="h-10 w-3/4 max-w-[520px]" />
@@ -271,12 +274,12 @@ function GreenHeartsPage() {
             <div ref={puzzleRef} className={`green-hearts-values-puzzle mx-auto hidden lg:block${puzzleInView ? ' is-in-view' : ''}`}>
               <div className="green-hearts-values-puzzle-art" aria-hidden="true">
                 {puzzlePieces.map(({ src, left, top, width, height }, index) => (
-                  <img key={index} src={src} alt="" className={hoveredPuzzlePiece === index ? 'is-raised' : undefined} style={{ left, top, width, height }} />
+                  <img key={src} src={src} alt="" className={hoveredPuzzlePiece === index ? 'is-raised' : undefined} style={{ left, top, width, height }} />
                 ))}
               </div>
               <div className="green-hearts-values-puzzle-content">
                 {values.map(({ labelKey, icon: Icon }, index) => (
-                  <article key={labelKey} onMouseEnter={() => setHoveredPuzzlePiece(index)} onMouseLeave={() => setHoveredPuzzlePiece(null)} className={`green-hearts-puzzle-value green-hearts-puzzle-value-${index + 1} green-hearts-puzzle-value-${index % 3 === 0 ? 'left' : index % 3 === 1 ? 'center' : 'right'}${hoveredPuzzlePiece === index ? ' is-raised' : ''}`}>
+                  <article key={labelKey} onMouseEnter={() => setHoveredPuzzlePiece(index)} onMouseLeave={() => setHoveredPuzzlePiece(null)} className={`green-hearts-puzzle-value green-hearts-puzzle-value-${index + 1} green-hearts-puzzle-value-${PUZZLE_ALIGNMENTS[index % 3]}${hoveredPuzzlePiece === index ? ' is-raised' : ''}`}>
                     <span className="mb-3 flex w-fit items-center text-white" aria-hidden="true">
                       <Icon size={32} strokeWidth={1.8} />
                     </span>

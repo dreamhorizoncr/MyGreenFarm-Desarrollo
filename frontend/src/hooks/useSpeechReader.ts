@@ -7,6 +7,21 @@ function delay(ms: number) {
   return new Promise<void>((resolve) => window.setTimeout(resolve, ms));
 }
 
+function splitLongSentence(sentence: string, chunks: string[]) {
+  let part = "";
+  for (const word of sentence.split(/\s+/)) {
+    if (!word) continue;
+    const next = part ? `${part} ${word}` : word;
+    if (next.length > MAX_CHUNK_LENGTH) {
+      if (part) chunks.push(part);
+      part = word;
+    } else {
+      part = next;
+    }
+  }
+  return part;
+}
+
 function splitIntoChunks(text: string) {
   const normalized = text.replace(/\s+/g, " ").trim();
   if (!normalized) return [];
@@ -35,18 +50,7 @@ function splitIntoChunks(text: string) {
       continue;
     }
 
-    let part = "";
-    for (const word of sentence.split(/\s+/)) {
-      if (!word) continue;
-      const next = part ? `${part} ${word}` : word;
-      if (next.length > MAX_CHUNK_LENGTH) {
-        if (part) chunks.push(part);
-        part = word;
-      } else {
-        part = next;
-      }
-    }
-    current = part;
+    current = splitLongSentence(sentence, chunks);
   }
 
   pushCurrent();
@@ -133,7 +137,8 @@ export function useSpeechReader(language: string) {
   }, [supported, clearHighlight]);
 
   const getVoice = useCallback(() => {
-    const list = voicesRef.current.length ? voicesRef.current : supported ? window.speechSynthesis.getVoices() : [];
+    let list = voicesRef.current;
+    if (!list.length && supported) list = window.speechSynthesis.getVoices();
     const base = speechLanguage.slice(0, 2).toLowerCase();
     const matching = list.filter((voice) => voice.lang.toLowerCase().startsWith(base));
     return matching.find((voice) => voice.localService) ?? matching[0] ?? list.find((voice) => voice.default) ?? list[0] ?? null;
@@ -178,6 +183,20 @@ export function useSpeechReader(language: string) {
     [getVoice, speechLanguage, supported],
   );
 
+  const speakBlock = useCallback(
+    async (block: ReadableBlock, generation: number) => {
+      highlight(block.element);
+
+      for (const chunk of splitIntoChunks(block.text)) {
+        if (generation !== generationRef.current) return false;
+        await speakChunk(chunk, generation);
+        if (generation !== generationRef.current) return false;
+      }
+      return true;
+    },
+    [highlight, speakChunk],
+  );
+
   const speakBlocks = useCallback(
     async (blocks: ReadableBlock[]) => {
       if (!supported) return;
@@ -196,13 +215,7 @@ export function useSpeechReader(language: string) {
 
       for (const block of blocks) {
         if (generation !== generationRef.current) return;
-        highlight(block.element);
-
-        for (const chunk of splitIntoChunks(block.text)) {
-          if (generation !== generationRef.current) return;
-          await speakChunk(chunk, generation);
-          if (generation !== generationRef.current) return;
-        }
+        if (!(await speakBlock(block, generation))) return;
       }
 
       if (generation === generationRef.current) {
@@ -210,7 +223,7 @@ export function useSpeechReader(language: string) {
         if (mountedRef.current) setIsSpeaking(false);
       }
     },
-    [supported, stop, clearHighlight, highlight, speakChunk],
+    [supported, stop, clearHighlight, speakBlock],
   );
 
   const speakText = useCallback(

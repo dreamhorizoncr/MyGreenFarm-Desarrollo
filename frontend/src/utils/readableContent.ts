@@ -125,7 +125,7 @@ function isElementVisible(element: Element) {
     if (!isSelfRenderable(ancestor)) return false;
     if (ancestor instanceof HTMLDetailsElement && !ancestor.open) {
       const summary = ancestor.querySelector(":scope > summary");
-      if (!summary || !summary.contains(element)) return false;
+      if (!summary?.contains(element)) return false;
     }
     if (ancestor === document.body || ancestor === document.documentElement) break;
     ancestor = ancestor.parentElement;
@@ -189,44 +189,46 @@ export function getAccessibleName(element: Element | null | undefined) {
   return normalizeText(element.getAttribute("title"));
 }
 
-function describeControl(element: HTMLElement, labels: ReadableControlLabels) {
-  if (element instanceof HTMLInputElement) {
-    const type = element.type;
-    if (type === "hidden") return "";
-    if (type === "password") {
-      const name = getAccessibleName(element) || element.placeholder;
-      return normalizeText(`${name} ${labels.password}`);
-    }
+function nameWithValue(name: string, value: string, empty: string) {
+  return normalizeText([name, value || empty].filter(Boolean).join(": "));
+}
 
-    const name = getAccessibleName(element) || normalizeText(element.placeholder);
-    if (type === "checkbox") {
-      return normalizeText(`${name} ${element.checked ? labels.checked : labels.unchecked}`);
-    }
-    if (type === "radio") {
-      return normalizeText(`${name} ${element.checked ? labels.selected : labels.notSelected}`);
-    }
-    if (type === "file") {
-      const file = element.files?.[0]?.name ?? "";
-      return normalizeText(`${name} ${file || labels.empty}`);
-    }
-
-    const value = normalizeText(element.value);
-    return normalizeText([name, value || labels.empty].filter(Boolean).join(": "));
+function describeInput(element: HTMLInputElement, labels: ReadableControlLabels) {
+  const type = element.type;
+  if (type === "hidden") return "";
+  if (type === "password") {
+    const name = getAccessibleName(element) || element.placeholder;
+    return normalizeText(`${name} ${labels.password}`);
   }
 
+  const name = getAccessibleName(element) || normalizeText(element.placeholder);
+  if (type === "checkbox") {
+    return normalizeText(`${name} ${element.checked ? labels.checked : labels.unchecked}`);
+  }
+  if (type === "radio") {
+    return normalizeText(`${name} ${element.checked ? labels.selected : labels.notSelected}`);
+  }
+  if (type === "file") {
+    const file = element.files?.[0]?.name ?? "";
+    return normalizeText(`${name} ${file || labels.empty}`);
+  }
+
+  return nameWithValue(name, normalizeText(element.value), labels.empty);
+}
+
+function describeControl(element: HTMLElement, labels: ReadableControlLabels) {
+  if (element instanceof HTMLInputElement) return describeInput(element, labels);
+
   if (element instanceof HTMLSelectElement) {
-    const name = getAccessibleName(element);
     const selected = Array.from(element.selectedOptions)
       .map((option) => normalizeText(option.textContent))
       .filter(Boolean)
       .join(", ");
-    return normalizeText([name, selected || labels.empty].filter(Boolean).join(": "));
+    return nameWithValue(getAccessibleName(element), selected, labels.empty);
   }
 
   if (element instanceof HTMLTextAreaElement) {
-    const name = getAccessibleName(element);
-    const value = normalizeText(element.value);
-    return normalizeText([name, value || labels.empty].filter(Boolean).join(": "));
+    return nameWithValue(getAccessibleName(element), normalizeText(element.value), labels.empty);
   }
 
   return "";
@@ -245,7 +247,7 @@ function flush(state: WalkState) {
   state.buffer = "";
   if (!text || !hasReadableCharacters(text)) return;
 
-  const previous = state.blocks[state.blocks.length - 1];
+  const previous = state.blocks.at(-1);
   if (previous?.text === text) return;
 
   state.blocks.push({ element: state.blockElement ?? document.body, text });
@@ -257,6 +259,39 @@ function appendText(state: WalkState, text: string) {
   state.buffer += text;
 }
 
+function walkControl(element: Element, state: WalkState) {
+  if (!CONTROL_TAGS.has(element.tagName) || !state.includeControls) return false;
+
+  flush(state);
+  const description = describeControl(element as HTMLElement, state.labels);
+  if (description) {
+    state.blocks.push({ element: element as HTMLElement, text: description });
+  }
+  return true;
+}
+
+function walkImage(element: Element, state: WalkState) {
+  if (!(element instanceof HTMLImageElement)) return false;
+
+  const alt = normalizeText(element.alt);
+  if (alt) appendText(state, alt);
+  return true;
+}
+
+function walkIconOnlyInteractive(element: Element, state: WalkState) {
+  if (!element.matches("button, a, [role='button'], [role='link']")) return false;
+
+  const visibleText = normalizeText((element as HTMLElement).innerText);
+  if (hasReadableCharacters(visibleText)) return false;
+
+  const name = getAccessibleName(element) || normalizeText(element.textContent);
+  if (!name) return false;
+
+  flush(state);
+  state.blocks.push({ element: element as HTMLElement, text: name });
+  return true;
+}
+
 function walk(element: Element, state: WalkState) {
   if (isIgnored(element) || !isSelfRenderable(element)) return;
 
@@ -266,33 +301,7 @@ function walk(element: Element, state: WalkState) {
     return;
   }
 
-  if (CONTROL_TAGS.has(element.tagName) && state.includeControls) {
-    flush(state);
-    const description = describeControl(element as HTMLElement, state.labels);
-    if (description) {
-      state.blocks.push({ element: element as HTMLElement, text: description });
-    }
-    return;
-  }
-
-  if (element instanceof HTMLImageElement) {
-    const alt = normalizeText(element.alt);
-    if (alt) appendText(state, alt);
-    return;
-  }
-
-  const isInteractive = element.matches("button, a, [role='button'], [role='link']");
-  if (isInteractive) {
-    const visibleText = normalizeText((element as HTMLElement).innerText);
-    if (!hasReadableCharacters(visibleText)) {
-      const name = getAccessibleName(element) || normalizeText(element.textContent);
-      if (name) {
-        flush(state);
-        state.blocks.push({ element: element as HTMLElement, text: name });
-        return;
-      }
-    }
-  }
+  if (walkControl(element, state) || walkImage(element, state) || walkIconOnlyInteractive(element, state)) return;
 
   const block = isBlockLevel(element);
   const previousBlock = state.blockElement;
@@ -350,7 +359,7 @@ export function getTopDialog(): HTMLElement | null {
     document.querySelectorAll<HTMLElement>('dialog[open], [role="dialog"][aria-modal="true"]'),
   ).filter((element) => !element.closest("[data-voice-reader-ui]") && isElementVisible(element));
 
-  return candidates[candidates.length - 1] ?? null;
+  return candidates.at(-1) ?? null;
 }
 
 export function getPageBlocks(options: ReadableOptions = {}): ReadableBlock[] {
@@ -430,53 +439,64 @@ function getRoleLabel(element: HTMLElement, labels: ReadableFocusLabels) {
   if (element instanceof HTMLButtonElement) return labels.roleButton;
   if (element instanceof HTMLSelectElement) return labels.roleComboBox;
   if (element instanceof HTMLTextAreaElement) return labels.roleTextBox;
-  if (element instanceof HTMLInputElement) {
-    if (element.type === "checkbox") return labels.roleCheckbox;
-    if (element.type === "radio") return labels.roleRadio;
-    if (element.type === "search") return labels.roleSearchBox;
-    if (element.type === "range") return labels.roleSlider;
-    if (["submit", "button", "reset", "image"].includes(element.type)) return labels.roleButton;
-    if (element.type === "password") return labels.password;
-    if (element.type === "hidden") return "";
-    return labels.roleTextBox;
-  }
+  if (element instanceof HTMLInputElement) return getInputRoleLabel(element, labels);
   if (element.isContentEditable) return labels.roleTextBox;
 
   return "";
 }
 
+const INPUT_ROLE_KEYS = new Map<string, keyof ReadableFocusLabels>([
+  ["checkbox", "roleCheckbox"],
+  ["radio", "roleRadio"],
+  ["search", "roleSearchBox"],
+  ["range", "roleSlider"],
+  ["submit", "roleButton"],
+  ["button", "roleButton"],
+  ["reset", "roleButton"],
+  ["image", "roleButton"],
+  ["password", "password"],
+]);
+
+function getInputRoleLabel(element: HTMLInputElement, labels: ReadableFocusLabels) {
+  if (element.type === "hidden") return "";
+  const key = INPUT_ROLE_KEYS.get(element.type);
+  return key ? labels[key] : labels.roleTextBox;
+}
+
+function getCheckedState(element: HTMLElement, explicitRole: string, labels: ReadableFocusLabels) {
+  const ariaChecked = element.getAttribute("aria-checked");
+  const radioRole = explicitRole === "radio";
+  if (ariaChecked === "true" || ariaChecked === "mixed") return radioRole ? labels.selected : labels.checked;
+  if (ariaChecked === "false") return radioRole ? labels.notSelected : labels.unchecked;
+
+  if (!(element instanceof HTMLInputElement)) return null;
+  if (element.type !== "checkbox" && element.type !== "radio") return null;
+
+  const isRadio = element.type === "radio";
+  if (element.checked) return isRadio ? labels.selected : labels.checked;
+  return isRadio ? labels.notSelected : labels.unchecked;
+}
+
+function getToggleState(value: string | null, onLabel: string, offLabel: string, mixedIsOn: boolean) {
+  if (value === "true" || (mixedIsOn && value === "mixed")) return onLabel;
+  if (value === "false") return offLabel;
+  return null;
+}
+
 function getFocusStates(element: HTMLElement, labels: ReadableFocusLabels) {
   const states: string[] = [];
   const explicitRole = getExplicitRole(element);
-  const nativeInput = element instanceof HTMLInputElement ? element : null;
 
-  const ariaChecked = element.getAttribute("aria-checked");
-  if (ariaChecked === "true" || ariaChecked === "mixed") {
-    states.push(explicitRole === "radio" ? labels.selected : labels.checked);
-  } else if (ariaChecked === "false") {
-    states.push(explicitRole === "radio" ? labels.notSelected : labels.unchecked);
-  } else if (nativeInput && (nativeInput.type === "checkbox" || nativeInput.type === "radio")) {
-    const isRadio = nativeInput.type === "radio";
-    states.push(
-      nativeInput.checked
-        ? isRadio
-          ? labels.selected
-          : labels.checked
-        : isRadio
-          ? labels.notSelected
-          : labels.unchecked,
-    );
-  }
+  const checkedState = getCheckedState(element, explicitRole, labels);
+  if (checkedState !== null) states.push(checkedState);
 
   if (element.getAttribute("aria-selected") === "true") states.push(labels.selected);
 
-  const ariaPressed = element.getAttribute("aria-pressed");
-  if (ariaPressed === "true" || ariaPressed === "mixed") states.push(labels.pressed);
-  else if (ariaPressed === "false") states.push(labels.notPressed);
+  const pressedState = getToggleState(element.getAttribute("aria-pressed"), labels.pressed, labels.notPressed, true);
+  if (pressedState !== null) states.push(pressedState);
 
-  const ariaExpanded = element.getAttribute("aria-expanded");
-  if (ariaExpanded === "true") states.push(labels.expanded);
-  else if (ariaExpanded === "false") states.push(labels.collapsed);
+  const expandedState = getToggleState(element.getAttribute("aria-expanded"), labels.expanded, labels.collapsed, false);
+  if (expandedState !== null) states.push(expandedState);
 
   const nativeDisabled = "disabled" in element && Boolean((element as HTMLButtonElement).disabled);
   if (element.getAttribute("aria-disabled") === "true" || nativeDisabled) states.push(labels.disabled);

@@ -103,6 +103,9 @@ function AdminDashboardPage() {
     { key: 'activeChildren', label: 'admin.dashboard.stats.activeChildren.label', value: dashboardData?.activeChildrenCount, icon: 'user', href: '/admin/children' },
   ] as const
 
+  let pendingLabel = loading ? t('admin.dashboard.loading') : ''
+  if (dashboardData) pendingLabel = t('admin.dashboard.pendingCount', { count: dashboardData.pendingAppointmentCount })
+
   return (
     <AdminLayout>
       <header>
@@ -110,14 +113,12 @@ function AdminDashboardPage() {
           {t('admin.dashboard.greeting', { name: t(`admin.dashboard.${dashboardMock.userName}`) })}
         </h1>
         <p className="mt-2 font-body text-body text-neutral-500">
-          {dateFormatter.format(selectedDateValue)} · {dashboardData
-            ? t('admin.dashboard.pendingCount', { count: dashboardData.pendingAppointmentCount })
-            : loading ? t('admin.dashboard.loading') : ''}
+          {dateFormatter.format(selectedDateValue)} · {pendingLabel}
         </p>
       </header>
       {error && <p role="alert" className="mt-md rounded-xl border border-danger-100 bg-danger-50 p-md font-body text-body-sm text-danger">{t('admin.dashboard.loadError', { error })}</p>}
 
-      <div className="mt-xl flex flex-wrap items-center justify-between gap-sm" role="group" aria-label={t('admin.dashboard.periodLabel')}>
+      <fieldset className="mx-0 mb-0 mt-xl flex min-w-0 flex-wrap items-center justify-between gap-sm border-0 p-0" aria-label={t('admin.dashboard.periodLabel')}>
         <div className="flex flex-wrap gap-sm">
           {(['today', 'thisWeek', 'thisMonth'] as const).map((option) => (
             <button
@@ -143,7 +144,7 @@ function AdminDashboardPage() {
         >
           <RefreshCwIcon size={18} aria-hidden="true" />
         </button>
-      </div>
+      </fieldset>
 
       <div className="mt-xl grid gap-xl xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-xl">

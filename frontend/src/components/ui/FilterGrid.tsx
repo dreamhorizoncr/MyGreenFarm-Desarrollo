@@ -65,6 +65,32 @@ function animateItem(node: HTMLElement, before: Rect | undefined, next: Rect) {
   if (dx || dy) node.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'translate(0, 0)' }], TIMING)
 }
 
+function startExits(nodes: HTMLElement[], rects: Map<string, Rect> | null, onFinish: (key: string) => void) {
+  for (const node of nodes) {
+    const key = node.dataset.flipExit
+    if (!key || node.dataset.flipStarted) continue
+    node.dataset.flipStarted = 'true'
+    startExit(node, rects?.get(key), () => onFinish(key))
+  }
+}
+
+function updateRects(nodes: HTMLElement[], rects: Map<string, Rect>, animate: boolean) {
+  for (const node of nodes) {
+    const key = node.dataset.flipKey
+    if (!key) continue
+    const next = measure(node)
+    const before = rects.get(key)
+    rects.set(key, next)
+    if (animate) animateItem(node, before, next)
+  }
+}
+
+function pruneRects(rects: Map<string, Rect>, keys: string[], nodes: HTMLElement[]) {
+  for (const key of rects.keys()) {
+    if (!keys.includes(key) && !nodes.some((node) => node.dataset.flipExit === key)) rects.delete(key)
+  }
+}
+
 interface FilterGridProps {
   children: ReactNode
   className?: string
@@ -100,29 +126,15 @@ export function FilterGrid({ children, className = '' }: Readonly<FilterGridProp
 
     nodes.forEach(resetNode)
 
-    for (const node of nodes) {
-      const key = node.dataset.flipExit
-      if (!key || node.dataset.flipStarted) continue
-      node.dataset.flipStarted = 'true'
-      const finish = () => setExiting((current) => current.filter((item) => String(item.key) !== key))
-      startExit(node, animate ? rects.current.get(key) : undefined, finish)
-    }
+    startExits(nodes, animate ? rects.current : null, (key) =>
+      setExiting((current) => current.filter((item) => String(item.key) !== key)),
+    )
 
     animateHeight(grid, animate ? gridHeight.current : null)
     gridHeight.current = grid.offsetHeight
 
-    for (const node of nodes) {
-      const key = node.dataset.flipKey
-      if (!key) continue
-      const next = measure(node)
-      const before = rects.current.get(key)
-      rects.current.set(key, next)
-      if (animate) animateItem(node, before, next)
-    }
-
-    for (const key of rects.current.keys()) {
-      if (!keys.includes(key) && !nodes.some((node) => node.dataset.flipExit === key)) rects.current.delete(key)
-    }
+    updateRects(nodes, rects.current, animate)
+    pruneRects(rects.current, keys, nodes)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keySignature])
 
