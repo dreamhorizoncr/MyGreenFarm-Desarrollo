@@ -24,6 +24,7 @@ import Container from '../components/home/Container.tsx'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import CarouselDots from '../components/ui/CarouselDots.tsx'
 import CarouselArrowIcon from '../components/ui/CarouselArrowIcon.tsx'
+import FamilySection from './about/FamilySection.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 import { adminService } from '../services/admin.ts'
@@ -185,11 +186,13 @@ const DECORATION_LAYOUTS = [
                     {t('aboutUsPage.hero.title')}
                 </h1>
 
-                <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body leading-[1.6] text-white">
+                <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-lg leading-[1.6] text-white">
                     {t('aboutUsPage.hero.description')}
                 </p>
                 </div>
             </section>
+
+            <FamilySection />
 
             <section
                 id="our-teachers"
@@ -201,7 +204,7 @@ const DECORATION_LAYOUTS = [
                     {t('aboutUsPage.team.title')}
                     </h2>
 
-                    <p className="m-0 max-w-[48rem] font-body text-body leading-[1.6] text-body-text">
+                    <p className="m-0 max-w-[48rem] font-body text-body-lg leading-[1.6] text-[var(--body-text-dark)]">
                     {t('aboutUsPage.team.description')}
                     </p>
                 </div>
