@@ -12,14 +12,21 @@ import { childService } from "../services/child";
 import { notify, notifyError } from "../utils/notifications";
 import { useChildren } from "../hooks/useChildren";
 
-import type { Child } from "../types/child";
+import type { Child, ChildStatusFilter } from "../types/child";
 import { useTranslation } from "react-i18next";
 import SkeletonList from "../components/ui/SkeletonList.tsx";
 import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 
+const statusFilterLabels = {
+  ALL: 'admin.children.statusFilters.all',
+  ACTIVE: 'admin.children.statusFilters.active',
+  INACTIVE: 'admin.children.statusFilters.inactive',
+} as const satisfies Record<ChildStatusFilter, string>
+
 function AdminChildrenPage() {
-  const { children, sourceChildren, loading, error, fetchChildren, totalPages } = useChildren();
+  const { children, sourceChildren, loading, error, fetchChildren, invalidateCache, totalPages } = useChildren();
   const [currentPage, setCurrentPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState<ChildStatusFilter>("ACTIVE");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -29,8 +36,17 @@ function AdminChildrenPage() {
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    void fetchChildren(currentPage - 1, i18n.language);
-  }, [currentPage, i18n.language]);
+    void fetchChildren(currentPage - 1, i18n.language, statusFilter);
+  }, [currentPage, fetchChildren, i18n.language, statusFilter]);
+
+  const refreshChildren = () => {
+    invalidateCache()
+    if (currentPage === 1) {
+      return fetchChildren(0, i18n.language, statusFilter)
+    }
+    setCurrentPage(1)
+    return Promise.resolve()
+  }
 
   const filteredChildren = useMemo(() => {
     return children.filter((child, index) => {
@@ -66,7 +82,7 @@ function AdminChildrenPage() {
 
     try {
       await childService.delete(childToDelete.id)
-      await fetchChildren(currentPage - 1, i18n.language)
+      await refreshChildren()
       notify.success(t("admin.children.deleteSuccess"))
       setChildToDelete(null)
     } catch (err) {
@@ -128,6 +144,31 @@ function AdminChildrenPage() {
 
         <ChildrenModuleTabs />
 
+        <div
+          className="mt-lg flex flex-wrap gap-sm"
+          role="group"
+          aria-label={t('admin.children.statusFilterLabel')}
+        >
+          {(['ALL', 'ACTIVE', 'INACTIVE'] as const).map((status) => (
+            <button
+              key={status}
+              type="button"
+              aria-pressed={statusFilter === status}
+              onClick={() => {
+                setStatusFilter(status)
+                setCurrentPage(1)
+              }}
+              className={`rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
+                statusFilter === status
+                  ? 'border-green-500 bg-green-500 text-white'
+                  : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
+              }`}
+            >
+              {t(statusFilterLabels[status])}
+            </button>
+          ))}
+        </div>
+
         {loading && (
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
             <SkeletonList count={skeletonCount}>{() => <ChildCard loading />}</SkeletonList>
@@ -160,7 +201,6 @@ function AdminChildrenPage() {
                 ))}
               </div>
 
-              {/* 💡 Componente de Paginación conectado al servidor */}
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
@@ -179,7 +219,7 @@ function AdminChildrenPage() {
           setSelectedChild(null)
         }}
         onSaved={() => {
-          void fetchChildren(currentPage - 1, i18n.language)
+          void refreshChildren()
         }}
       />
 

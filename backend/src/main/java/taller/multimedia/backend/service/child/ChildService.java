@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.child.ChildOptionResponse;
 import taller.multimedia.backend.dto.child.ChildRequest;
 import taller.multimedia.backend.dto.child.ChildResponse;
+import taller.multimedia.backend.dto.child.ChildStatusFilter;
 import taller.multimedia.backend.model.child.Child;
 import taller.multimedia.backend.model.child.ChildClub;
 import taller.multimedia.backend.model.club.Club;
@@ -92,7 +93,16 @@ public class ChildService {
 
     @Transactional(readOnly = true)
     public Page<ChildResponse> getAll(Pageable pageable) {
-        return childRepository.findByIsActiveTrue(pageable).map(this::mapToResponse);
+        return getAll(pageable, ChildStatusFilter.ACTIVE);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ChildResponse> getAll(Pageable pageable, ChildStatusFilter status) {
+        return switch (status) {
+            case ACTIVE -> childRepository.findByIsActiveTrue(pageable).map(this::mapToResponse);
+            case INACTIVE -> childRepository.findByIsActive(false, pageable).map(this::mapToResponse);
+            case ALL -> childRepository.findAll(pageable).map(this::mapToResponse);
+        };
     }
 
     @Transactional(readOnly = true)

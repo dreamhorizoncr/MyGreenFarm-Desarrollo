@@ -91,7 +91,6 @@ function Navbar() {
     { to: '/news', label: t('navbar.news') },
     { to: '/multimedia', label: t('navbar.multimedia') },
     { to: '/forum', label: t('navbar.forum') },
-    { to: '/services', label: t('navbar.services') },
     { to: '/clubs', label: t('navbar.clubs') },
     { to: '/vacantes', label: t('navbar.vacancies') },
     { to: '/about-us', label: t('navbar.aboutUs') },

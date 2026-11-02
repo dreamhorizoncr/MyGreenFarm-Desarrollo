@@ -5,7 +5,6 @@ import {
   BookOpenTextIcon,
   CalendarDaysIcon,
   ChevronDownIcon,
-  CreditCardIcon,
   FileTextIcon,
   ImageIcon,
   LayoutDashboardIcon,
@@ -37,7 +36,6 @@ type SidebarItemId =
   | "padres"
   | "niños"
   | "miPerfil"
-  | "servicios"
   | "disponibilidad"
   | "foro"
   | "boletín";
@@ -95,7 +93,6 @@ function AdminSidebar() {
     { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
     { id: 'docentes', icon: ContactRoundIcon, path: '/admin/users' },
     { id: 'profesores', icon: BookOpenTextIcon, path: '/admin/teachers' },
-    { id: 'servicios', icon: CreditCardIcon, path: '/admin/service-plans' },
     { id: 'disponibilidad', icon: CalendarDaysIcon, path: '/admin/disponibilidad' },
     { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
     { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },

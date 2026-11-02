@@ -6,6 +6,8 @@ export type Relationship =
 | 'LEGAL_GUARDIAN'
 | 'OTHER'
 
+export type ChildStatusFilter = 'ACTIVE' | 'INACTIVE' | 'ALL'
+
 export interface Child {
     id: number
     parentIdentification: string

@@ -15,9 +15,14 @@ import java.util.UUID;
 public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
     List<Appointment> findByAppointmentDateBetween(LocalDateTime startDate, LocalDateTime endDate);
 
+    List<Appointment> findByAppointmentDateGreaterThanEqualAndAppointmentDateLessThanOrderByAppointmentDateAsc(
+            LocalDateTime startDate, LocalDateTime endDate);
+
     List<Appointment> findByAppointmentDateBetweenAndStatus(LocalDateTime start, LocalDateTime end, AppointmentStatus status);
 
     List<Appointment> findByAppointmentDateBeforeAndStatus(LocalDateTime dateTime, AppointmentStatus status);
+
+    long countByStatus(AppointmentStatus status);
 
     List<Appointment> findByStatusAndAppointmentDateBefore(AppointmentStatus status, LocalDateTime dateTime);
 }
