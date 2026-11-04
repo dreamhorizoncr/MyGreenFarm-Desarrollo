@@ -16,6 +16,7 @@ import taller.multimedia.backend.dto.UserInfoResponse;
 import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.model.user.User;
 import taller.multimedia.backend.repository.forum.ForumArticleRepository;
+import taller.multimedia.backend.repository.group.TeacherGroupRepository;
 import taller.multimedia.backend.repository.user.UserRepository;
 import taller.multimedia.backend.service.appointment.CalendarSyncAsyncService;
 import taller.multimedia.backend.util.Sanitizer;
@@ -26,12 +27,14 @@ public class UserService {
     private final CalendarSyncAsyncService calendarSyncAsyncService;
     private final UserRepository userRepository;
     private final ForumArticleRepository forumArticleRepository;
+    private final TeacherGroupRepository teacherGroupRepository;
 
     public UserService(UserRepository userRepository, CalendarSyncAsyncService calendarSyncAsyncService,
-            ForumArticleRepository forumArticleRepository) {
+            ForumArticleRepository forumArticleRepository, TeacherGroupRepository teacherGroupRepository) {
         this.userRepository = userRepository;
         this.calendarSyncAsyncService = calendarSyncAsyncService;
         this.forumArticleRepository = forumArticleRepository;
+        this.teacherGroupRepository = teacherGroupRepository;
     }
 
     public Page<UserInfoResponse> getAllUsers(String currentEmail, Pageable pageable) {
@@ -163,7 +166,11 @@ public class UserService {
             throw new RuntimeException("You do not have permission to delete this user");
         }
 
+        // Antes de borrar se sueltan sus referencias: los artículos del foro quedan sin autor
+        // y el docente sale de los grupos donde estaba asignado (si no, la base de datos
+        // rechaza el borrado por la clave foránea de teacher_groups).
         forumArticleRepository.unlinkAuthor(targetUser.getId());
+        teacherGroupRepository.deleteByTeacherId(targetUser.getId());
         userRepository.delete(targetUser);
     }
 
