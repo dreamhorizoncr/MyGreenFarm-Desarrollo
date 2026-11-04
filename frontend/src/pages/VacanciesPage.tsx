@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
+import { BriefcaseBusiness } from 'lucide-react'
 import ApplyVacancyModal from '../components/ApplyVacancyModal.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import ScallopEdge from '../components/ui/ScallopEdge.tsx'
@@ -19,6 +20,7 @@ import { notifyError } from '../utils/notifications.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
+import StatusMessage from '../components/ui/StatusMessage.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import { setPageSEO } from '../utils/seo.ts'
 
@@ -200,32 +202,24 @@ function VacanciesPage() {
               <SkeletonList count={skeletonCount}>{(position) => <VacancyCard loading position={position} />}</SkeletonList>
             </div>
           )}
-          {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
+          {error && <StatusMessage variant="error" description={error} />}
 
           {!loading && !error && (
             openVacancies.length === 0 ? (
-              <div className="mx-auto max-w-140 rounded-2xl border border-neutral-200 bg-white p-xl text-center">
-                <p className="m-0 font-body text-body text-neutral-500">
-                  {t('vacancies.noVacancies')}
-                </p>
-
-                <h2 className="mt-lg font-heading text-h4 font-bold leading-snug text-heading">
-                  {t('vacancies.spontaneousTitle')}
-                </h2>
-                <p className="mt-sm font-body text-body-sm text-body-text">
-                  {t('vacancies.spontaneousDescription')}
-                </p>
-
-                <div className="mt-lg flex justify-center">
+              <StatusMessage
+                icon={BriefcaseBusiness}
+                title={t('vacancies.noVacancies')}
+                description={`${t('vacancies.spontaneousTitle')} ${t('vacancies.spontaneousDescription')}`}
+                action={
                   <button
                     type="button"
                     onClick={openSpontaneousApply}
-                    className="inline-flex h-11 items-center whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
+                    className="mt-xs inline-flex h-11 items-center whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--orange-500)]"
                   >
                     {t('vacancies.spontaneousCta')}
                   </button>
-                </div>
-              </div>
+                }
+              />
             ) : (
               <div className="grid grid-cols-1 gap-md md:grid-cols-2">
                 {openVacancies.map((vacancy, position) => (

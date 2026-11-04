@@ -438,7 +438,7 @@ export default {
         'Découvrez les éducateurs qui font de My Green Farm un lieu privilégié pour apprendre, explorer et grandir.',
       placeholderTitle: 'Notre équipe',
       placeholderDescription:
-        'Nos éducateurs apparaîtront ici lorsque cette section sera connectée au système de gestion des enseignants.',
+        'Vous découvrirez très bientôt ici les enseignants de My Green Farm.',
       previous: 'Éducateurs précédents',
       next: 'Éducateurs suivants',
       navigation: 'Navigation de l’équipe',
@@ -832,6 +832,11 @@ export default {
     backToProfile: "Retour à mon profil",
   },
   common: {
+    status: {
+      errorTitle: "Nous n'avons pas pu charger les informations",
+      emptyTitle: "Il n'y a encore rien ici",
+      retry: "Réessayer",
+    },
     imageCover: "Couverture",
     imageGallery: "Galerie",
     errors: {

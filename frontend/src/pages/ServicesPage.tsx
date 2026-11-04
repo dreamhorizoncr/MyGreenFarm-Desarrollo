@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
+import { ClipboardList } from 'lucide-react'
 import { useServicePlans } from '../hooks/useServicePlans.ts'
 import { useExchangeRate } from '../hooks/useExchangeRate.ts'
 import { ExchangeRateWidget } from '../components/currency/ExchangeRateWidget.tsx'
@@ -17,6 +18,7 @@ import ServiceDetailModal from '../components/ServiceDetailModal.tsx'
 import type { ServicePlan } from '../types/servicePlan.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
+import StatusMessage from '../components/ui/StatusMessage.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 const cleanCurrency = (value?: string): Currency => {
@@ -188,16 +190,10 @@ function ServicesPage() {
               <SkeletonList count={skeletonCount}>{() => <PlanCard loading />}</SkeletonList>
             )}
 
-            {error && (
-              <p className="col-span-full p-xl text-center font-body text-body text-danger">
-                {error}
-              </p>
-            )}
+            {error && <StatusMessage variant="error" description={error} className="col-span-full" />}
 
             {!loading && !error && plans.length === 0 && (
-              <p className="col-span-full p-xl text-center font-body text-body text-neutral-500">
-                {t('services.empty')}
-              </p>
+              <StatusMessage icon={ClipboardList} description={t('services.empty')} className="col-span-full" />
             )}
 
             {!loading && !error && plans.map(plan => (

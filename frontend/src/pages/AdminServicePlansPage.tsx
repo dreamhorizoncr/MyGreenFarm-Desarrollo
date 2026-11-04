@@ -1,3 +1,5 @@
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { ClipboardList } from 'lucide-react'
   import { useEffect, useState } from 'react'
   import { useTranslation } from 'react-i18next'
   import { PlusIcon } from '@animateicons/react/lucide'
@@ -193,14 +195,10 @@
             </div>
           )}
 
-          {error && (
-            <p className="text-center font-body text-body text-danger">{error}</p>
-          )}
+          {error && <StatusMessage variant="error" description={error} />}
 
           {!loading && !error && plans.length === 0 && (
-            <p className="text-center font-body text-body text-neutral-500">
-              {t('admin.servicios.empty')}
-            </p>
+            <StatusMessage icon={ClipboardList} description={t('admin.servicios.empty')} />
           )}
 
           {!loading && !error && plans.length > 0 && (

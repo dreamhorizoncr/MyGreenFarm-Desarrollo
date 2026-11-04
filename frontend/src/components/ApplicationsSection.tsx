@@ -1,3 +1,5 @@
+import StatusMessage from './ui/StatusMessage.tsx'
+import { FileText } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SearchIcon } from '@animateicons/react/lucide'
@@ -74,13 +76,11 @@ function ApplicationsSection({ curriculums, vacancies, loading, error, onApprove
           <SkeletonList count={skeletonCount}>{() => <CurriculumCard loading />}</SkeletonList>
         </div>
       )}
-      {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
+      {error && <StatusMessage variant="error" description={error} />}
 
       {!loading && !error && (
         filteredApplications.length === 0 ? (
-          <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
-            {t('admin.curriculums.noResults')}
-          </p>
+          <StatusMessage icon={FileText} description={t('admin.curriculums.noResults')} />
         ) : (
           <>
           <div className="flex flex-col gap-md">

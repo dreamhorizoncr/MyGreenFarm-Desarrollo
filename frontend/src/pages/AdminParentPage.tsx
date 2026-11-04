@@ -1,3 +1,5 @@
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { SearchX, UsersRound } from 'lucide-react'
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SearchIcon } from "@animateicons/react/lucide";
@@ -111,7 +113,7 @@ function AdminParentsPage() {
                 )}
 
                 {/* Error */}
-                {error && <p className="mt-8 font-body text-red-500">Error: {error}</p>}
+                {error && <StatusMessage variant="error" description={error} className="mt-8" />}
 
                 {/* Lista de padres con Paginación del Servidor */}
                 {!loading && !error && filteredParents.length > 0 && (
@@ -137,11 +139,7 @@ function AdminParentsPage() {
                 )}
 
                 {!loading && !error && parents.length === 0 && searchTerm === "" && (
-                    <div className="mt-12 rounded-2xl border border-dashed border-neutral-200 bg-white px-6 py-16 text-center">
-                        <p className="font-body text-body text-body-text">
-                            No hay padres de familia registrados.
-                        </p>
-                    </div>
+                    <StatusMessage icon={UsersRound} description={t('admin.parents.empty')} className="mt-8" />
                 )}
 
 
@@ -149,11 +147,7 @@ function AdminParentsPage() {
                     !error &&
                     parents.length > 0 &&
                     filteredParents.length === 0 && (
-                        <div className="mt-12 rounded-2xl border border-dashed border-neutral-200 bg-white px-6 py-16 text-center">
-                            <p className="font-body text-body text-body-text">
-                                No se encontraron padres con esa búsqueda.
-                            </p>
-                        </div>
+                        <StatusMessage icon={SearchX} description={t('admin.parents.noMatches')} className="mt-8" />
                     )}
 
                 {/* Modal Crear */}

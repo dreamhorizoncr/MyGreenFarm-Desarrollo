@@ -1,3 +1,5 @@
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { BookOpen } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { PlusIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
@@ -24,7 +26,7 @@ const FORUM_ADMIN_TABS: ForumAdminTab[] = ['posts', 'community']
 
 const tabClassName = (active: boolean) =>
   `relative rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
-    active ? 'border-orange-500 text-white' : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
+    active ? 'border-green-500 text-white' : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
   }`
 
 function AdminForumPage() {
@@ -237,17 +239,13 @@ function AdminForumPage() {
 
     if (visibleError) {
       return (
-        <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-body-sm text-danger">
-          {visibleError}
-        </p>
+        <StatusMessage variant="error" description={visibleError} className="mt-lg" />
       )
     }
 
     if (visiblePosts.length === 0) {
       return (
-        <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-body-sm text-neutral-500">
-          {t(isTeacher ? 'adminForum.ownEmpty' : 'adminForum.empty')}
-        </p>
+        <StatusMessage icon={BookOpen} description={t(isTeacher ? 'adminForum.ownEmpty' : 'adminForum.empty')} className="mt-lg" />
       )
     }
 
@@ -306,7 +304,7 @@ function AdminForumPage() {
             onClick={() => setActiveTab(tab)}
             className={tabClassName(activeTab === tab)}
           >
-            {activeTab === tab && <TabHighlight layoutId="admin-forum-tab" className="bg-orange-500" />}
+            {activeTab === tab && <TabHighlight layoutId="admin-forum-tab" className="bg-green-500" />}
             {t(`adminForum.tabs.${tab}`)}
           </button>
         ))}

@@ -1,3 +1,5 @@
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { FolderOpen, SearchX } from 'lucide-react'
 import { useEffect, useState } from "react";
 
 import { SearchIcon } from "@animateicons/react/lucide";
@@ -124,7 +126,7 @@ function AdminExpedientsPage() {
           </div>
         )}
 
-        {error && <p className="mt-8 font-body text-red-500">Error: {error}</p>}
+        {error && <StatusMessage variant="error" description={error} className="mt-8" />}
 
         {!loading && !error && filteredExpedients.length > 0 && (
           <>
@@ -143,22 +145,14 @@ function AdminExpedientsPage() {
         )}
 
         {!loading && !error && expedients.length === 0 && (
-          <div className="mt-12 text-center">
-            <p className="font-body text-body-text">
-              {t("admin.expedients.noExpedients")}
-            </p>
-          </div>
+          <StatusMessage icon={FolderOpen} description={t("admin.expedients.noExpedients")} className="mt-8" />
         )}
 
         {!loading &&
           !error &&
           expedients.length > 0 &&
           filteredExpedients.length === 0 && (
-            <div className="mt-12 text-center">
-              <p className="font-body text-body-text">
-                {t("admin.expedients.noMatches")}
-              </p>
-            </div>
+            <StatusMessage icon={SearchX} description={t("admin.expedients.noMatches")} className="mt-8" />
           )}
 
         {isCreateModalOpen && (

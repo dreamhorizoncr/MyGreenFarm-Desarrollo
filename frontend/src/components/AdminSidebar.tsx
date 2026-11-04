@@ -86,19 +86,22 @@ function AdminSidebar() {
   const { setSidebarHovered } = useProfileAvatar()
 
   const role = userStorage.getUser()?.role
+  // Orden del menú: el dashboard; luego lo que se publica en el sitio (citas, noticias,
+  // galería, foro, clubes, vacantes); después la administración de personas (usuarios,
+  // docentes, padres, niños); y al final la información propia (disponibilidad, boletín, perfil).
   const ownerItems: SidebarItem[] = [
     { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
     { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
     { id: 'noticias', icon: MegaphoneIcon, path: '/admin/announcements' },
     { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
+    { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
+    { id: 'clubs', icon: SparklesIcon, path: '/admin/clubs' },
+    { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
     { id: 'docentes', icon: ContactRoundIcon, path: '/admin/users' },
     { id: 'profesores', icon: BookOpenTextIcon, path: '/admin/teachers' },
-    { id: 'disponibilidad', icon: CalendarDaysIcon, path: '/admin/disponibilidad' },
-    { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
-    { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
-    { id: 'clubs', icon: SparklesIcon, path: '/admin/clubs' },
     { id: 'padres', icon: UsersIcon, path: '/admin/parents'},
     { id: 'niños', icon: UserStarIcon, path: '/admin/children' },
+    { id: 'disponibilidad', icon: CalendarDaysIcon, path: '/admin/disponibilidad' },
     { id: 'boletín', icon: MailPlus, path: '/admin/newsletter' },
     { id: 'miPerfil', icon: UserIcon, path: '/profile' },
   ]
@@ -107,17 +110,17 @@ function AdminSidebar() {
     { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
     { id: 'noticias', icon: MegaphoneIcon, path: '/admin/announcements' },
     { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
+    { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
     { id: 'docentes', icon: ContactRoundIcon, path: '/admin/users' },
     { id: 'profesores', icon: BookOpenTextIcon, path: '/admin/teachers' },
-    { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
     { id: 'padres', icon: UsersIcon, path: '/admin/parents'},
     { id: 'niños', icon: UserStarIcon, path: '/admin/children' },
     { id: 'miPerfil', icon: UserIcon, path: '/profile' },
   ]
   const teacherItems: SidebarItem[] = [
     { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
-    { id: 'niños', icon: UserStarIcon, path: '/admin/expedients' },
     { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
+    { id: 'niños', icon: UserStarIcon, path: '/admin/expedients' },
     { id: 'miPerfil', icon: UserIcon, path: '/profile' },
   ]
   const itemsByRole: Record<string, SidebarItem[]> = { OWNER: ownerItems, ADMIN: adminItems }
