@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { SearchIcon } from '@animateicons/react/lucide'
+import { BookOpen, MessagesSquare, SearchX } from 'lucide-react'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import BlogPostCard from '../components/forum/BlogPostCard.tsx'
@@ -13,6 +14,7 @@ import PublishExperienceModal from '../components/forum/PublishExperienceModal.t
 import PublishButtonCard from '../components/forum/PublishButtonCard.tsx'
 import { useForumFeedContext } from '../contexts/ForumFeedContext.tsx'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
+import StatusMessage from '../components/ui/StatusMessage.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import ForumSectionTabs from '../components/forum/ForumSectionTabs.tsx'
 import { setPageSEO } from '../utils/seo.ts'
@@ -125,22 +127,14 @@ function ForumPage() {
                   <SkeletonList count={blogSkeletonCount}>{() => <BlogPostCard loading />}</SkeletonList>
                 )}
 
-                {!isLoading && error && (
-                  <p className="m-0 rounded-2xl border border-neutral-200 bg-white p-lg font-body text-body-sm text-danger">
-                    {error}
-                  </p>
-                )}
+                {!isLoading && error && <StatusMessage variant="error" />}
 
                 {!isLoading && !error && blogPosts.length === 0 && (
-                  <p className="m-0 rounded-2xl border border-neutral-200 bg-white p-lg font-body text-body-sm text-neutral-500">
-                    {t('forum.blog.empty')}
-                  </p>
+                  <StatusMessage icon={BookOpen} description={t('forum.blog.empty')} />
                 )}
 
                 {!isLoading && blogPosts.length > 0 && filteredBlogPosts.length === 0 && (
-                  <p className="m-0 rounded-2xl border border-neutral-200 bg-white p-lg font-body text-body-sm text-neutral-500">
-                    {t('forum.blog.noSearchResults')}
-                  </p>
+                  <StatusMessage icon={SearchX} description={t('forum.blog.noSearchResults')} />
                 )}
 
                 {!isLoading && filteredBlogPosts.map((post) => (
@@ -166,16 +160,10 @@ function ForumPage() {
                   <SkeletonList count={communitySkeletonCount}>{() => <CommunityPostCard loading />}</SkeletonList>
                 )}
 
-                {!isLoading && error && (
-                  <p className="m-0 rounded-2xl border border-neutral-200 bg-white p-lg font-body text-body-sm text-danger">
-                    {error}
-                  </p>
-                )}
+                {!isLoading && error && <StatusMessage variant="error" />}
 
                 {!isLoading && !error && communityPosts.length === 0 && (
-                  <p className="m-0 rounded-2xl border border-neutral-200 bg-white p-lg font-body text-body-sm text-neutral-500">
-                    {t('forum.community.empty')}
-                  </p>
+                  <StatusMessage icon={MessagesSquare} description={t('forum.community.empty')} />
                 )}
 
                 {!isLoading && communityPosts.map((post) => (

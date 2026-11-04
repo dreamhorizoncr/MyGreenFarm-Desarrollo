@@ -166,7 +166,7 @@ function GreenHeartsPage() {
   return (
     <>
       <Navbar />
-      <main className="overflow-hidden bg-bg-page text-body-text-dark">
+      <main className="overflow-hidden bg-bg-page text-body-text">
         <section className="flex min-h-[280px] items-start bg-white px-[30px] pb-[40px] pt-[48px] text-center md:min-h-[320px] md:pt-[72px]">
           <div className="mx-auto w-full max-w-[700px]">
             <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">{t('greenHearts.hero.title')}</h1>
@@ -182,7 +182,7 @@ function GreenHeartsPage() {
           <div className="absolute inset-0 bg-green-900/65" />
           <Container>
             <div className="relative mx-auto max-w-6xl text-center">
-              <p className="mx-auto mb-6 w-fit rounded-full border border-orange-500 bg-orange-500 px-lg py-sm font-body text-body-sm font-semibold uppercase tracking-wide text-white">{t('greenHearts.purpose.label')}</p>
+              <p className="mx-auto mb-6 w-fit rounded-full border border-orange-500 bg-orange-500 px-md py-xs font-body text-body-sm font-semibold uppercase tracking-wide text-white">{t('greenHearts.purpose.label')}</p>
               <p className="m-0 font-heading text-h3 font-semibold leading-relaxed text-white">
                 {t('greenHearts.purpose.beforeFirst')}{' '}
                 <span className="bg-no-repeat pb-[0.12em] [background-position:0_100%] [background-size:100%_0.3em] [box-decoration-break:clone] [-webkit-box-decoration-break:clone]" style={{ backgroundImage: PURPOSE_UNDERLINE }}>{t('greenHearts.purpose.firstHighlight')}</span>
@@ -199,19 +199,19 @@ function GreenHeartsPage() {
         <section className="pb-2 pt-16 sm:pb-4 sm:pt-24" id="por-que-nace">
           <Container>
             <div className="w-full text-left">
-              <h2 className="mb-5 font-heading text-h2 font-bold text-heading">{t('greenHearts.why.title')}</h2>
-              <p className="mb-4 font-body text-body leading-[1.6] text-body-text-dark">{t('greenHearts.why.paragraph1')}</p>
-              <p className="m-0 font-body text-body leading-[1.6] text-body-text-dark">{t('greenHearts.why.paragraph2')}</p>
+              <h2 className="mb-5 font-heading text-h2 font-bold leading-tight text-heading">{t('greenHearts.why.title')}</h2>
+              <p className="mb-4 font-body text-body leading-[1.6] text-body-text">{t('greenHearts.why.paragraph1')}</p>
+              <p className="m-0 font-body text-body leading-[1.6] text-body-text">{t('greenHearts.why.paragraph2')}</p>
             </div>
           </Container>
         </section>
 
         <section className="pb-16 pt-16 sm:pb-24 sm:pt-24">
           <Container>
-            <div className="mb-10 text-left"><h2 className="m-0 font-heading text-h2 font-bold text-heading">{t('greenHearts.direction.title')}</h2><p className="mt-3 w-full max-w-[42rem] font-body text-body leading-[1.6] text-body-text-dark">{t('greenHearts.direction.description')}</p></div>
+            <div className="mb-10 text-left"><h2 className="m-0 font-heading text-h2 font-bold leading-tight text-heading">{t('greenHearts.direction.title')}</h2><p className="mt-3 w-full max-w-[42rem] font-body text-body leading-[1.6] text-body-text">{t('greenHearts.direction.description')}</p></div>
             <div className="grid gap-5 md:grid-cols-2">
-              <article className="rounded-3xl border border-neutral-200 bg-white p-7 text-left shadow sm:p-10"><div className="mb-5 flex items-center gap-3 text-orange-500"><h3 className="m-0 font-heading text-h2 font-bold text-orange-500">{t('greenHearts.direction.missionTitle')}</h3></div><p className="m-0 font-body text-body leading-[1.6] text-body-text-dark">{t('greenHearts.direction.mission')}</p></article>
-              <article className="rounded-3xl border border-neutral-200 bg-white p-7 text-left shadow sm:p-10"><div className="mb-5 flex items-center gap-3 text-orange-500"><h3 className="m-0 font-heading text-h2 font-bold text-orange-500">{t('greenHearts.direction.visionTitle')}</h3></div><p className="m-0 font-body text-body leading-[1.6] text-body-text-dark">{t('greenHearts.direction.vision')}</p></article>
+              <article className="rounded-3xl border border-neutral-200 bg-white p-7 text-left shadow sm:p-10"><div className="mb-5 flex items-center gap-3"><h3 className="m-0 font-heading text-h4 font-bold leading-snug text-heading">{t('greenHearts.direction.missionTitle')}</h3></div><p className="m-0 font-body text-body leading-[1.6] text-body-text">{t('greenHearts.direction.mission')}</p></article>
+              <article className="rounded-3xl border border-neutral-200 bg-white p-7 text-left shadow sm:p-10"><div className="mb-5 flex items-center gap-3"><h3 className="m-0 font-heading text-h4 font-bold leading-snug text-heading">{t('greenHearts.direction.visionTitle')}</h3></div><p className="m-0 font-body text-body leading-[1.6] text-body-text">{t('greenHearts.direction.vision')}</p></article>
             </div>
           </Container>
         </section>
@@ -254,8 +254,8 @@ function GreenHeartsPage() {
                         <span className="font-heading text-h1 font-bold leading-none text-green-500">{number}</span>
                         <span className="flex size-20 shrink-0 items-center justify-center text-orange-500"><Icon size={38} strokeWidth={1.8} /></span>
                       </div>
-                      <h3 className="mb-4 font-heading text-h4 font-bold text-green-500">{t(titleKey)}</h3>
-                      <p className="m-0 font-body text-body leading-[1.6] text-body-text-dark">{t(textKey)}</p>
+                      <h3 className="mb-4 font-heading text-h4 font-bold leading-snug text-heading">{t(titleKey)}</h3>
+                      <p className="m-0 font-body text-body leading-[1.6] text-body-text">{t(textKey)}</p>
                     </article>
                   </SwiperSlide>
                 ))}
@@ -277,7 +277,7 @@ function GreenHeartsPage() {
 
         <section className="py-16 sm:py-24" id="valores">
           <Container>
-            <h2 className="mb-16 text-center font-heading text-h1 font-bold leading-tight text-green-500">
+            <h2 className="mb-16 text-center font-heading text-h2 font-bold leading-tight text-heading">
               <span className="bg-no-repeat pb-[0.12em] [background-position:0_100%] [background-size:100%_0.3em] [box-decoration-break:clone] [-webkit-box-decoration-break:clone]" style={{ backgroundImage: PURPOSE_UNDERLINE }}>{t('greenHearts.values.title')}</span>
             </h2>
             <div ref={puzzleRef} className={`green-hearts-values-puzzle mx-auto hidden lg:block${puzzleInView ? ' is-in-view' : ''}`}>
@@ -335,7 +335,7 @@ function GreenHeartsPage() {
                           <Icon size={40} strokeWidth={1.8} />
                         </span>
                       </div>
-                      <h3 className="m-0 text-center font-heading text-h4 font-bold text-white">{t(labelKey)}</h3>
+                      <h3 className="m-0 text-center font-heading text-h4 font-bold leading-snug text-white">{t(labelKey)}</h3>
                     </motion.article>
                   </SwiperSlide>
                 )
@@ -353,10 +353,10 @@ function GreenHeartsPage() {
           </Container>
         </section>
 
-        <section className="w-full bg-white py-14 text-center text-green-500 sm:py-20">
+        <section className="w-full bg-white py-14 text-center sm:py-20">
           <Container className="flex w-full flex-col items-center">
-            <h2 className="mb-3 w-full font-heading text-h2 font-bold text-green-500">{t('greenHearts.closing.title')}</h2>
-            <p className="mb-0 w-full max-w-[900px] font-body text-body leading-[1.6] text-green-500">{t('greenHearts.closing.description')}</p>
+            <h2 className="mb-3 w-full font-heading text-h2 font-bold leading-tight text-heading">{t('greenHearts.closing.title')}</h2>
+            <p className="mb-0 w-full max-w-[900px] font-body text-body leading-[1.6] text-body-text">{t('greenHearts.closing.description')}</p>
           </Container>
         </section>
       </main>

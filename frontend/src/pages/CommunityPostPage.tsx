@@ -3,6 +3,8 @@ import { ArrowLeftIcon } from '@animateicons/react/lucide'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import Navbar from '../components/Navbar.tsx'
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { MessageCircle } from 'lucide-react'
 import PostAvatar from '../components/forum/PostAvatar.tsx'
 import Button from '../components/ui/Button.tsx'
 import ForumPendingReviewModal from '../components/forum/ForumPendingReviewModal.tsx'
@@ -135,7 +137,7 @@ function CommunityPostPage() {
       <section id="comments" className="mt-md scroll-mt-24 rounded-2xl border border-neutral-200 bg-white p-lg">
         <h1 className="m-0 border-b border-neutral-200 pb-md text-left font-heading text-h5 font-bold !text-heading">{t('forum.blog.commentsTitle')}</h1>
         <div className="mt-md flex flex-col gap-md">
-          {comments.length === 0 && <p className="m-0 font-body text-body-sm text-neutral-500">{t('forum.community.commentsEmpty')}</p>}
+          {comments.length === 0 && <StatusMessage compact icon={MessageCircle} description={t('forum.community.commentsEmpty')} />}
           {comments.map((comment) => <div key={comment.id} className="flex items-start gap-md">
             <PostAvatar name={comment.alias} size={32} />
             <div className="min-w-0 flex-1 text-left">

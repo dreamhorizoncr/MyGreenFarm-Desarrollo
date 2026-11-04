@@ -1,3 +1,5 @@
+import StatusMessage from '../../ui/StatusMessage.tsx'
+import { MessagesSquare } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import CommunityPostCard from '../CommunityPostCard.tsx'
@@ -140,17 +142,13 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
 
     if (error) {
       return (
-        <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-body-sm text-danger">
-          {error}
-        </p>
+        <StatusMessage variant="error" className="mt-lg" />
       )
     }
 
     if (posts.length === 0) {
       return (
-        <p className="m-0 mt-lg rounded-2xl border border-neutral-200 bg-white p-lg text-body-sm text-neutral-500">
-          {t('adminForum.community.empty')}
-        </p>
+        <StatusMessage icon={MessagesSquare} description={t('adminForum.community.empty')} className="mt-lg" />
       )
     }
 

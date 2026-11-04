@@ -436,7 +436,7 @@ export default {
         'Conoce a los docentes que hacen de My Green Farm un lugar especial para aprender, explorar y crecer.',
       placeholderTitle: 'Nuestro equipo',
       placeholderDescription:
-        'Nuestros docentes aparecerán aquí cuando conectemos esta sección con el sistema de gestión de docentes.',
+        'Muy pronto conocerás aquí a los docentes de My Green Farm.',
       previous: 'Docentes anteriores',
       next: 'Siguientes docentes',
       navigation: 'Navegación del equipo',
@@ -828,6 +828,11 @@ export default {
     backToProfile: "Regresar a Mi perfil",
   },
   common: {
+    status: {
+      errorTitle: "No pudimos cargar la información",
+      emptyTitle: "Todavía no hay nada por aquí",
+      retry: "Reintentar",
+    },
     imageCover: "Portada",
     imageGallery: "Galería",
     errors: {

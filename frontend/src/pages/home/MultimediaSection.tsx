@@ -1,3 +1,7 @@
+import { Images } from 'lucide-react'
+import SkeletonList from '../../components/ui/SkeletonList.tsx'
+import StatusMessage from '../../components/ui/StatusMessage.tsx'
+import { useSkeletonCount } from '../../hooks/useSkeletonCount.ts'
 import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
@@ -13,6 +17,7 @@ function MultimediaSection() {
   const navigate = useNavigate()
   const { allGalleries, loading, error, fetchGallery } = useGallery()
   const featuredGalleries = allGalleries.filter((gallery) => gallery.featured)
+  const skeletonCount = useSkeletonCount('home-multimedia', loading, featuredGalleries.length, 3)
 
   useEffect(() => {
     void fetchGallery(i18n.language)
@@ -55,15 +60,13 @@ function MultimediaSection() {
 
         <Container className="grid auto-rows-fr grid-cols-1 gap-xl pb-1500 pt-1000 md:grid-cols-3">
           {loading && (
-            <p className="col-span-full m-0 p-xl text-center font-body text-body text-white">
-              {t('common.loading')}
-            </p>
+            <SkeletonList count={skeletonCount}>{() => <MultimediaCard loading />}</SkeletonList>
           )}
 
+          {!loading && error && <StatusMessage variant="error" description={error} className="col-span-full" />}
+
           {!loading && !error && featuredGalleries.length === 0 && (
-            <p className="col-span-full m-0 p-xl text-center font-body text-body text-white">
-              {t('home.galeria.noGalleries')}
-            </p>
+            <StatusMessage icon={Images} description={t('home.galeria.noGalleries')} className="col-span-full" />
           )}
 
           {!loading &&

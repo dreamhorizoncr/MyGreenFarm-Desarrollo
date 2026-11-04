@@ -1,3 +1,5 @@
+import StatusMessage from './ui/StatusMessage.tsx'
+import { BriefcaseBusiness } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import CreateVacancyModal from './CreateVacancyModal.tsx'
@@ -121,13 +123,11 @@ function VacancyManagementSection({ vacancies, loading, error, applicantNameById
           <SkeletonList count={skeletonCount}>{() => <AdminVacancyCard loading />}</SkeletonList>
         </div>
       )}
-      {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
+      {error && <StatusMessage variant="error" description={error} />}
 
       {!loading && !error && (
         vacancies.length === 0 ? (
-          <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
-            {t('vacancies.noVacancies')}
-          </p>
+          <StatusMessage icon={BriefcaseBusiness} description={t('vacancies.noVacancies')} />
         ) : (
           <>
           <div className="grid grid-cols-1 gap-md xl:grid-cols-2">

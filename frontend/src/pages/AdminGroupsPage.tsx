@@ -13,6 +13,8 @@ import { useGroups } from '../hooks/useGroups.ts'
 import { userStorage } from '../utils/userStorage.ts'
 
 import type { Group } from '../types/group.ts'
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { UsersRound } from 'lucide-react'
 
     const PAGE_SIZE = 10
 
@@ -160,17 +162,10 @@ import type { Group } from '../types/group.ts'
                 </div>
             )}
             {!loading && error && (
-                <div
-                role="alert"
-                className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center font-body text-body-sm text-red-700"
-                >
-                {t('admin.groups.loadError')}
-                </div>
+                <StatusMessage variant="error" />
             )}
             {!loading && !error && filteredGroups.length === 0 && (
-                <div className="rounded-2xl border border-neutral-200 bg-white px-6 py-12 text-center font-body text-body-sm text-neutral-500">
-                {t('admin.groups.noResults')}
-                </div>
+                <StatusMessage icon={UsersRound} description={t('admin.groups.noResults')} />
             )}
             {!loading && !error && filteredGroups.length > 0 && (
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
