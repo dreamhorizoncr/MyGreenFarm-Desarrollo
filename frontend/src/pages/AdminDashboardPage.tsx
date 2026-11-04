@@ -1,3 +1,5 @@
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { CalendarX, Sparkles } from 'lucide-react'
 import { useEffect, useMemo, useState, type ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
@@ -141,7 +143,7 @@ function AdminDashboardPage() {
           {dateFormatter.format(dashboardDate)} · {t('admin.dashboard.pendingCount', { count: pendingCount })}
         </p>
       </header>
-      {currentDashboardError && <p role="alert" className="mt-md rounded-xl border border-danger-100 bg-danger-50 p-md font-body text-body-sm text-danger">{t('admin.dashboard.loadError', { error: currentDashboardError })}</p>}
+      {currentDashboardError && <StatusMessage variant="error" description={t('admin.dashboard.loadError', { error: currentDashboardError })} className="mt-md" />}
 
       <fieldset className="mx-0 mb-0 mt-xl flex min-w-0 flex-wrap items-center justify-between gap-sm border-0 p-0" aria-label={t('admin.dashboard.periodLabel')}>
         <div className="flex flex-wrap gap-sm">
@@ -153,7 +155,7 @@ function AdminDashboardPage() {
               onClick={() => setPeriod(option)}
               className={`rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
                 period === option
-                  ? 'border-orange-500 bg-orange-500 text-white'
+                  ? 'border-green-500 bg-green-500 text-white'
                   : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
               }`}
             >
@@ -181,9 +183,19 @@ function AdminDashboardPage() {
         <div className="min-w-0 space-y-xl">
           <section aria-labelledby="dashboard-summary-title" className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
             <h2 id="dashboard-summary-title" className="m-0 font-heading text-h4 font-bold text-heading">{t('admin.dashboard.summaryTitle')}</h2>
-            <p className="m-0 mt-sm font-body text-body text-neutral-500">
-              {dashboardLoading ? t('admin.dashboard.summaryLoading') : dashboardData?.aiSummary ?? t('admin.dashboard.summaryUnavailable')}
-            </p>
+            {dashboardLoading || dashboardData?.aiSummary ? (
+              <p className="m-0 mt-sm font-body text-body text-neutral-500">
+                {dashboardLoading ? t('admin.dashboard.summaryLoading') : dashboardData?.aiSummary}
+              </p>
+            ) : (
+              <StatusMessage
+                compact
+                variant={currentDashboardError ? 'error' : 'empty'}
+                icon={currentDashboardError ? undefined : Sparkles}
+                description={t('admin.dashboard.summaryUnavailable')}
+                className="mt-md"
+              />
+            )}
           </section>
 
           <section aria-labelledby="dashboard-stats-title">
@@ -255,7 +267,7 @@ function AdminDashboardPage() {
         <aside className="space-y-xl">
           <section aria-labelledby="dashboard-calendar-title" className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
             <h2 id="dashboard-calendar-title" className="m-0 mb-md font-heading text-h4 font-bold text-heading">{t('admin.dashboard.calendar.title')}</h2>
-            {calendarError && <p role="alert" className="m-0 mb-sm font-body text-caption text-danger">{t('admin.dashboard.calendar.loadError')}</p>}
+            {calendarError && <StatusMessage compact variant="error" description={t('admin.dashboard.calendar.loadError')} className="mb-md" />}
             <CalendarPanel
               value={selectedDate}
               onChange={handleCalendarChange}
@@ -289,7 +301,7 @@ function AdminDashboardPage() {
                 </li>
               ))}
               {selectedDateEvents.length === 0 && (
-                <li className="font-body text-body-sm text-neutral-500">{t('admin.dashboard.calendar.emptyDay')}</li>
+                <li><StatusMessage compact icon={CalendarX} description={t('admin.dashboard.calendar.emptyDay')} /></li>
               )}
             </ol>
           </section>

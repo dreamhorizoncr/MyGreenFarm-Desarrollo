@@ -1,3 +1,5 @@
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { Images } from 'lucide-react'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, StarIcon } from '@animateicons/react/lucide'
 import { createPortal } from 'react-dom'
@@ -549,7 +551,7 @@ function AdminGalleryPage() {
 				</div>
 			</div>
 
-			{error && <p className="mt-lg rounded-xl bg-red-50 p-md text-body-sm text-red-700">{error}</p>}
+			{error && <StatusMessage variant="error" description={error} className="mt-lg" />}
 
 			{formOpen && (
 				<div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
@@ -731,10 +733,8 @@ function AdminGalleryPage() {
 					</output>
 				)}
 
-				{categories.length === 0 && !loading && (
-					<p className="border-t border-neutral-200 py-xl text-body-sm text-neutral-500">
-						{t('admin.gallery.noCategories')}
-					</p>
+				{categories.length === 0 && !loading && !error && (
+					<StatusMessage icon={Images} description={t('admin.gallery.noCategories')} />
 				)}
 
 				{!loading && (

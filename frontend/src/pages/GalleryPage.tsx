@@ -4,10 +4,12 @@ import { useTranslation } from 'react-i18next'
 import useEmblaCarousel from 'embla-carousel-react'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
+import { Images } from 'lucide-react'
 import MultimediaCard from '../components/home/MultimediaCard.tsx'
 import { useGallery } from '../hooks/useGallery.ts'
 import ninos2 from '../assets/imgs/ninos2.svg'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
+import StatusMessage from '../components/ui/StatusMessage.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import TabHighlight from '../components/ui/TabHighlight.tsx'
 import { FilterGrid, FilterGridItem } from '../components/ui/FilterGrid.tsx'
@@ -157,16 +159,10 @@ function GalleryPage() {
               </div>
             )}
 
-            {error && (
-              <p className="col-span-full m-0 p-xl text-center font-body text-body text-white">
-                {error}
-              </p>
-            )}
+            {error && <StatusMessage variant="error" description={error} />}
 
             {!loading && !error && visibleGalleries.length === 0 && (
-              <p className="col-span-full m-0 p-xl text-center font-body text-body text-white">
-                {activeCategory ? t('home.galeria.empty') : t('home.galeria.noGalleries')}
-              </p>
+              <StatusMessage icon={Images} description={activeCategory ? t('home.galeria.empty') : t('home.galeria.noGalleries')} />
             )}
 
             {!loading && !error && (

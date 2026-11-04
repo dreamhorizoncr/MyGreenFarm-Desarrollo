@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { parseSchedule } from '../utils/schedule.ts'
 import { useTranslation } from 'react-i18next'
-import { UsersIcon, SparklesIcon } from '@animateicons/react/lucide'
+import { UsersIcon } from '@animateicons/react/lucide'
+import { Users } from 'lucide-react'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import ClubDetailModal from '../components/ClubDetailModal.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
+import StatusMessage from '../components/ui/StatusMessage.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import { clubService } from '../services/clubs.ts'
 import type { ClubResponse } from '../types/clubs.ts'
@@ -86,12 +88,14 @@ function ClubsPage() {
     }, [t, i18n.resolvedLanguage])
     const [clubs, setClubs] = useState<ClubResponse[]>([])
     const [loading, setLoading] = useState<boolean>(true)
+    const [error, setError] = useState(false)
     const [selectedClub, setSelectedClub] = useState<ClubResponse | null>(null)
 
     useEffect(() => {
         const fetchClubs = async () => {
             try {
                 setLoading(true)
+                setError(false)
                 const languageCode = (i18n.resolvedLanguage ?? i18n.language ?? 'es').split('-')[0]
                 const data = await clubService.getAll({ lang: languageCode, size: 10 })
 
@@ -145,6 +149,7 @@ function ClubsPage() {
                 setClubs(publishedClubs)
             } catch (err) {
                 console.error(err)
+                setError(true)
             } finally {
                 setLoading(false)
             }
@@ -237,28 +242,19 @@ function ClubsPage() {
                             ))}
                         </div>
                     )}
-                    {!loading && clubs.length === 0 && (
-                        <div className="mx-auto max-w-140 rounded-3xl border border-neutral-200 bg-white p-xl text-center shadow-md md:p-2xl">
-                            <div className="relative mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-orange-50 text-orange-500">
-                                <UsersIcon size={56} aria-hidden="true" />
-                                <div className="absolute -right-1 -top-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-500 text-white shadow-sm">
-                                    <SparklesIcon size={20} aria-hidden="true" />
-                                </div>
-                            </div>
-
-                            <h2 className="mt-xl font-heading text-h3 font-bold leading-snug text-heading">
-                                {t('clubs.comingSoonTitle')}
-                            </h2>
-
-                            <p className="mt-md font-body text-body text-body-text leading-relaxed">
-                                {t('clubs.comingSoonDescription')}
-                            </p>
-
-                            <div className="mt-lg inline-flex items-center gap-xs rounded-full bg-neutral-100 px-md py-xs text-caption font-semibold text-neutral-600">
-                                <span className="h-2 w-2 rounded-full bg-orange-500 animate-pulse" />
-                                {t('clubs.statusTag')}
-                            </div>
-                        </div>
+                    {!loading && error && <StatusMessage variant="error" />}
+                    {!loading && !error && clubs.length === 0 && (
+                        <StatusMessage
+                            icon={Users}
+                            title={t('clubs.comingSoonTitle')}
+                            description={t('clubs.comingSoonDescription')}
+                            action={
+                                <span className="mt-xs inline-flex items-center gap-xs rounded-full bg-neutral-100 px-md py-xs font-body text-caption font-semibold text-neutral-600">
+                                    <span className="h-2 w-2 rounded-full bg-orange-500 motion-safe:animate-pulse" />
+                                    {t('clubs.statusTag')}
+                                </span>
+                            }
+                        />
                     )}
                 </Container>
             </main>

@@ -1,3 +1,5 @@
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { CalendarX } from 'lucide-react'
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CopyIcon, PlusIcon } from "@animateicons/react/lucide";
@@ -354,16 +356,7 @@ function OwnerAvailabilityPage() {
           </div>
         )}
         {error && !loading && (
-          <div className="mt-xl rounded-2xl border border-red-200 bg-red-50 p-lg text-center font-body text-danger">
-            <p className="m-0">{error}</p>
-            <button
-              type="button"
-              onClick={() => window.location.reload()}
-              className="mt-sm rounded-full bg-danger px-lg py-sm font-semibold text-white transition-opacity hover:opacity-90"
-            >
-              {t("admin.availability.retry")}
-            </button>
-          </div>
+          <StatusMessage variant="error" description={error} className="mt-xl" />
         )}
 
         {!loading && !error && (
@@ -473,9 +466,7 @@ function OwnerAvailabilityPage() {
                 </p>
               )}
               {futureExceptions.length === 0 ? (
-                <p className="mt-lg rounded-2xl border border-dashed border-neutral-300 p-xl text-center font-body text-body text-neutral-500">
-                  {t("admin.availability.emptySpecial")}
-                </p>
+                <StatusMessage icon={CalendarX} description={t("admin.availability.emptySpecial")} className="mt-lg" />
               ) : (
                 <>
                   <div className="mt-md grid grid-cols-1 gap-md lg:grid-cols-2">

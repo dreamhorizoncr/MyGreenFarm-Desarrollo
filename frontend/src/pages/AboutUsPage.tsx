@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
+import StatusMessage from '../components/ui/StatusMessage.tsx'
 import CarouselDots from '../components/ui/CarouselDots.tsx'
 import CarouselArrowIcon from '../components/ui/CarouselArrowIcon.tsx'
 import FamilySection from './about/FamilySection.tsx'
@@ -264,11 +265,7 @@ const DECORATION_LAYOUTS = [
                 )}
 
                 {!teachersLoading && teachersError && (
-                    <div className="relative z-10 w-full rounded-3xl bg-[var(--grey-100)] px-lg py-1000 text-center">
-                    <p className="m-0 font-body text-body-sm text-body-text">
-                        {t('aboutUsPage.team.placeholderDescription')}
-                    </p>
-                    </div>
+                    <StatusMessage variant="error" className="relative z-10" />
                 )}
 
                 {!teachersLoading && !teachersError && teachers.length > 0 && (
@@ -546,19 +543,11 @@ const DECORATION_LAYOUTS = [
                 {!teachersLoading &&
                     !teachersError &&
                     teachers.length === 0 && (
-                    <div className="relative z-10 flex w-full flex-col items-center gap-md rounded-3xl bg-[var(--grey-100)] px-md py-1000 text-center sm:px-lg lg:py-1500">
-                        <div className="flex size-20 items-center justify-center rounded-full bg-white text-green-500">
-                        <UserRound
-                            size={44}
-                            strokeWidth={1.5}
-                            aria-hidden="true"
-                        />
-                        </div>
-
-                        <p className="m-0 max-w-[25rem] font-body text-body-sm leading-[1.6] text-body-text">
-                        {t('aboutUsPage.team.placeholderDescription')}
-                        </p>
-                    </div>
+                    <StatusMessage
+                        icon={UserRound}
+                        description={t('aboutUsPage.team.placeholderDescription')}
+                        className="relative z-10"
+                    />
                     )}
                 </Container>
             </section>
