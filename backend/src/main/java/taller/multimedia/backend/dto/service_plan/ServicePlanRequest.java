@@ -22,12 +22,8 @@ public class ServicePlanRequest {
     @Positive(message = "El precio debe ser mayor a cero")
     private BigDecimal price;
 
-    private BigDecimal gatewayPriceAmount;
-
     @NotBlank(message = "El tipo de plan es obligatorio")
     private String type;
-
-    private String gatewayPriceId;
 
     @NotBlank(message = "El horario es obligatorio")
     @Size(max = 200, message = "El horario debe tener como máximo 200 caracteres")
@@ -40,30 +36,6 @@ public class ServicePlanRequest {
     @NotBlank(message = "La moneda es obligatoria")
     @Size(max = 6, message = "El máximo de caracteres es de 6")
     private String currency;
-
-    @Size(max = 300, message = "El payment URL deben tener como máximo 300 caracteres")
-    private String paymentUrl;
-
-    @NotBlank(message = "El código CABYS es obligatorio")
-    private String cabysCode;
-
-    @NotNull(message = "La tarifa de IVA es obligatoria")
-    private BigDecimal taxRate;
-
-    @Size(max = 60, message = "El código de cupón no puede superar 60 caracteres")
-    private String couponCode;
-
-    private String couponType;
-
-    @Positive(message = "El valor del cupón debe ser mayor a cero")
-    private BigDecimal couponValue;
-
-    private java.time.LocalDate couponExpiresAt;
-
-    @Positive(message = "El máximo de usos debe ser mayor a cero")
-    private Integer couponMaxRedemptions;
-
-    private String couponId;
 
     @Size(max = 140, message = "El texto alternativo debe tener como máximo 140 caracteres")
     private String imageAlt;
@@ -92,43 +64,4 @@ public class ServicePlanRequest {
         this.description = description;
     }
 
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getGatewayPriceId() {
-        return gatewayPriceId;
-    }
-
-    public void setGatewayPriceId(String gatewayPriceId) {
-        this.gatewayPriceId = gatewayPriceId;
-    }
-
-    public String getSchedule() {
-        return schedule;
-    }
-
-    public void setSchedule(String schedule) {
-        this.schedule = schedule;
-    }
-
-    public String getIncludes() {
-        return includes;
-    }
-
-    public void setIncludes(String includes) {
-        this.includes = includes;
-    }
 }

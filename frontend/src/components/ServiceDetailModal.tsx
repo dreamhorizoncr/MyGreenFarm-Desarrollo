@@ -1,7 +1,6 @@
     import { useEffect, useRef, useState } from 'react'
-    import { ArrowRightIcon, BanknoteIcon, CalendarDaysIcon, CircleCheckIcon } from '@animateicons/react/lucide'
+    import { BanknoteIcon, CalendarDaysIcon, CircleCheckIcon } from '@animateicons/react/lucide'
     import { useTranslation } from 'react-i18next'
-    import { useNavigate } from 'react-router-dom'
     import { useModalExit } from '../hooks/useModalExit.ts'
     import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
     import type { ServicePlan } from '../types/servicePlan.ts'
@@ -17,8 +16,6 @@ import CurrencyToggle from './currency/CurrencyToggle.tsx'
         plan: ServicePlan
         initialCurrency?: Currency
         exchangeRate?: ExchangeRate | null
-        isLoading?: boolean
-        onSubscribe?: (plan: ServicePlan, currency: Currency, calculatedPrice: number) => void
         onClose: () => void
     }
 
@@ -31,12 +28,9 @@ import CurrencyToggle from './currency/CurrencyToggle.tsx'
         plan,
         initialCurrency,
         exchangeRate,
-        isLoading = false,
-        onSubscribe,
         onClose
     }: Readonly<ServiceDetailModalProps>) {
         const { t, i18n } = useTranslation()
-        const navigate = useNavigate()
         const dialogRef = useRef<HTMLDialogElement>(null)
 
         const [scheduleOpen, setScheduleOpen] = useState(false)
@@ -52,25 +46,8 @@ import CurrencyToggle from './currency/CurrencyToggle.tsx'
 
         // Cálculo del precio según la moneda seleccionada en el Toggle
         const price = exchangeRate
-            ? convertCurrency(plan.gatewayPriceAmount ?? plan.price, cleanCurrency(plan.currency), currency, 'buy', exchangeRate)
-            : plan.gatewayPriceAmount ?? plan.price
-        const priceCurrency = cleanCurrency(plan.currency)
-
-        const handleProceedToCheckout = () => {
-            if (onSubscribe) {
-                onSubscribe(plan, priceCurrency, price)
-                return
-            }
-
-            requestClose()
-            navigate('/payment', {
-                state: {
-                    plan,
-                    currency,
-                    price,
-                },
-            })
-        }
+            ? convertCurrency(plan.price, cleanCurrency(plan.currency), currency, 'buy', exchangeRate)
+            : plan.price
 
         return (
             <dialog
@@ -142,7 +119,7 @@ import CurrencyToggle from './currency/CurrencyToggle.tsx'
                                         />
                                         <AnimatedNumber
                                             value={price}
-                                            format={(n) => `${currencySymbol(priceCurrency)}${formatCurrency(n, priceCurrency, i18n.language)}`}
+                                            format={(n) => `${currencySymbol(currency)}${formatCurrency(n, currency, i18n.language)}`}
                                         />
                                     </span>
                                     
@@ -152,30 +129,13 @@ import CurrencyToggle from './currency/CurrencyToggle.tsx'
                             </div>
                         </div>
 
-                        {/* Botones de acción */}
-                        <div className="mt-xl flex gap-md *:flex-1">
+                        <div className="mt-xl">
                             <button
                                 type="button"
                                 onClick={requestClose}
-                                className="h-12 rounded-full border border-green-500 px-lg font-body text-body font-semibold text-heading transition-colors hover:bg-green-50"
+                                className="h-12 w-full rounded-full border border-green-500 px-lg font-body text-body font-semibold text-heading transition-colors hover:bg-green-50"
                             >
                                 {t('common.close')}
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={handleProceedToCheckout}
-                                disabled={isLoading}
-                                className="group inline-flex h-12 items-center justify-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body font-semibold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
-                            >
-                                {isLoading ? t('common.loading') : t('services.subscribe')}
-                                {!isLoading && (
-                                    <ArrowRightIcon
-                                        size={18}
-                                        aria-hidden="true"
-                                        className="transition-transform duration-300 group-hover:translate-x-1"
-                                    />
-                                )}
                             </button>
                         </div>
                     </section>
