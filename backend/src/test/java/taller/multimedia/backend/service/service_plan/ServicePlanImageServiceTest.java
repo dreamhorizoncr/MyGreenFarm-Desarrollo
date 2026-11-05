@@ -43,10 +43,8 @@ class ServicePlanImageServiceTest {
         request.setDescription("Descripción válida");
         request.setPrice(BigDecimal.TEN);
         request.setType("RECURRING");
-        request.setGatewayPriceId("price_123");
         request.setSchedule("Lunes a viernes, 7am a 5pm");
         request.setIncludes("Alimentación, materiales");
-        request.setPaymentUrl("https://checkout.onvopay.com/price_123");
         return request;
     }
 

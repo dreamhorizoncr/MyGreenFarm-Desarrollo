@@ -92,6 +92,7 @@ function Navbar() {
     { to: '/multimedia', label: t('navbar.multimedia') },
     { to: '/forum', label: t('navbar.forum') },
     { to: '/clubs', label: t('navbar.clubs') },
+    { to: '/services', label: t('navbar.services') },
     { to: '/vacantes', label: t('navbar.vacancies') },
     { to: '/about-us', label: t('navbar.aboutUs') },
     { to: '/green-hearts', label: t('greenHearts.navLabel') },
