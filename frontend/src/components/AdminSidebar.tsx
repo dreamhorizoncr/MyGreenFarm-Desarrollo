@@ -10,6 +10,7 @@ import {
   LayoutDashboardIcon,
   LogOutIcon,
   MegaphoneIcon,
+  BanknoteIcon,
   MessageSquarePlusIcon,
   UserIcon,
   UsersIcon,
@@ -31,6 +32,7 @@ type SidebarItemId =
   | "profesores"
   | "noticias"
   | "galeria"
+  | "servicios"
   | "cv"
   | "clubs"
   | "padres"
@@ -99,6 +101,11 @@ function AdminSidebar() {
     { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
     { id: 'docentes', icon: ContactRoundIcon, path: '/admin/users' },
     { id: 'profesores', icon: BookOpenTextIcon, path: '/admin/teachers' },
+    { id: 'disponibilidad', icon: CalendarDaysIcon, path: '/admin/disponibilidad' },
+    { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
+    { id: 'servicios', icon: BanknoteIcon, path: '/admin/services' },
+    { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
+    { id: 'clubs', icon: SparklesIcon, path: '/admin/clubs' },
     { id: 'padres', icon: UsersIcon, path: '/admin/parents'},
     { id: 'niños', icon: UserStarIcon, path: '/admin/children' },
     { id: 'disponibilidad', icon: CalendarDaysIcon, path: '/admin/disponibilidad' },

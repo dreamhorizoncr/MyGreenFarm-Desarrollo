@@ -3,6 +3,8 @@ package taller.multimedia.backend.model.service_plans;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,6 +31,7 @@ public class ServicePlan {
     @Column(nullable = false)
     private String description;
 
+    @JsonIgnore
     @Column(name = "gateway_price_id", nullable = false)
     private String gatewayPriceId;
 
@@ -44,6 +47,7 @@ public class ServicePlan {
     @Column(nullable = false)
     private BigDecimal price;
 
+    @JsonIgnore
     @Column(name = "gateway_price_amount", precision = 14, scale = 2)
     private BigDecimal gatewayPriceAmount;
     
@@ -59,33 +63,43 @@ public class ServicePlan {
     @Column(nullable = false)
     private boolean isActive;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String paymentUrl;
 
+    @JsonIgnore
     @Column(name = "cabys_code", length = 20)
     private String cabysCode;
 
+    @JsonIgnore
     @Column(name = "tax_rate", precision = 5, scale = 2)
     private BigDecimal taxRate;
 
+    @JsonIgnore
     @Column(name = "coupon_id", columnDefinition = "TEXT")
     private String couponId;
 
+    @JsonIgnore
     @Column(name = "coupon_code", length = 60)
     private String couponCode;
 
+    @JsonIgnore
     @Column(name = "coupon_type", length = 20)
     private String couponType;
 
+    @JsonIgnore
     @Column(name = "coupon_value", precision = 12, scale = 2)
     private BigDecimal couponValue;
 
+    @JsonIgnore
     @Column(name = "coupon_expires_at")
     private java.time.LocalDate couponExpiresAt;
 
+    @JsonIgnore
     @Column(name = "coupon_max_redemptions")
     private Integer couponMaxRedemptions;
 
+    @JsonIgnore
     @Column(name = "coupon_redemptions")
     private Integer couponRedemptions;
 }

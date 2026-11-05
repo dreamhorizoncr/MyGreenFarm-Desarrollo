@@ -5,6 +5,7 @@ const PLAN_TYPE_LABELS: Record<string, string> = {
   TWO_WEEKS: 'services.biweekly',
   MONTHLY: 'services.monthly',
   SIX_MONTHS: 'services.sixMonths',
+  ANNUAL: 'services.annual',
   ANNUALLY: 'services.annual',
   CUSTOM: 'services.custom',
   CUSTOM_WEEKLY: 'services.customWeekly',
