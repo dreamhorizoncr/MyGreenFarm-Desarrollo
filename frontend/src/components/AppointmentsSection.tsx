@@ -1,3 +1,5 @@
+import StatusMessage from './ui/StatusMessage.tsx'
+import { CalendarX, SearchX } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SearchIcon } from '@animateicons/react/lucide'
@@ -287,15 +289,11 @@ function AppointmentsSection() {
               </div>
             )}
 
-            {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
+            {error && <StatusMessage variant="error" description={error} />}
 
             {!loading && !error && (
               filteredAppointments.length === 0 ? (
-                <div className="rounded-2xl border border-neutral-200 bg-white p-2xl text-center shadow-sm">
-                  <p className="m-0 font-body text-body text-neutral-500">
-                    {t('teacherAppointments.calendar.noAppointmentsForDay')}
-                  </p>
-                </div>
+                <StatusMessage icon={CalendarX} description={t('teacherAppointments.calendar.noAppointmentsForDay')} />
               ) : (
                 <>
                   <div className="grid grid-cols-1 gap-md">
@@ -327,15 +325,14 @@ function AppointmentsSection() {
             </div>
           )}
 
-          {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
+          {error && <StatusMessage variant="error" description={error} />}
 
           {!loading && !error && (
             filteredAppointments.length === 0 ? (
-              <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
-                {searchTerm.trim() || statusFilter !== 'ALL'
-                  ? t('teacherAppointments.noResults')
-                  : t('teacherAppointments.empty')}
-              </p>
+              <StatusMessage
+                icon={searchTerm.trim() || statusFilter !== 'ALL' ? SearchX : CalendarX}
+                description={searchTerm.trim() || statusFilter !== 'ALL' ? t('teacherAppointments.noResults') : t('teacherAppointments.empty')}
+              />
             ) : (
               <>
                 <div className="grid grid-cols-1 gap-md xl:grid-cols-2">

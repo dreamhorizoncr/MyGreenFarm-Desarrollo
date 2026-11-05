@@ -437,7 +437,7 @@ export default {
         'Meet the educators who make My Green Farm a special place to learn, explore, and grow.',
       placeholderTitle: 'Our Team',
       placeholderDescription:
-        'Our educators will appear here when we connect this section to the teacher management system.',
+        'You will meet the My Green Farm teachers here very soon.',
       previous: 'Previous educators',
       next: 'Next educators',
       navigation: 'Team navigation',
@@ -825,6 +825,11 @@ export default {
     backToProfile: "Back to My profile",
   },
   common: {
+    status: {
+      errorTitle: "We couldn't load the information",
+      emptyTitle: "There's nothing here yet",
+      retry: "Try again",
+    },
     imageCover: "Cover",
     imageGallery: "Gallery",
     errors: {

@@ -4,6 +4,8 @@ import LikeHeart from '../components/ui/LikeHeart.tsx'
 import { useTranslation } from 'react-i18next'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar.tsx'
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { MessageCircle } from 'lucide-react'
 import Button from '../components/ui/Button.tsx'
 import PostAvatar from '../components/forum/PostAvatar.tsx'
 import ForumPendingReviewModal from '../components/forum/ForumPendingReviewModal.tsx'
@@ -243,9 +245,7 @@ function BlogPostPage() {
 
               <div className="mt-md flex flex-col gap-lg">
                 {comments.length === 0 && (
-                  <p className="m-0 text-left font-body text-body-sm text-neutral-500">
-                    {t('forum.blog.commentsEmpty')}
-                  </p>
+                  <StatusMessage compact icon={MessageCircle} description={t('forum.blog.commentsEmpty')} />
                 )}
 
                 {comments.map((comment) => (

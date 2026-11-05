@@ -1,3 +1,5 @@
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { Newspaper } from 'lucide-react'
 import { useEffect, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -311,11 +313,7 @@ function AnnouncementsPage() {
         </button>
       </div>
 
-      {error && (
-        <p className="mt-lg rounded-xl bg-red-50 p-md text-body-sm text-red-700">
-          {error}
-        </p>
-      )}
+      {error && <StatusMessage variant="error" description={error} className="mt-lg" />}
 
       {formOpen && (
         <div
@@ -625,10 +623,8 @@ function AnnouncementsPage() {
           />
         ))}
 
-        {!listLoading && announcements.length === 0 && (
-          <p className="col-span-full border-t border-neutral-200 py-xl text-body-sm text-neutral-500">
-            {t("adminNews.noNews")}
-          </p>
+        {!listLoading && !error && announcements.length === 0 && (
+          <StatusMessage icon={Newspaper} description={t("adminNews.noNews")} className="col-span-full" />
         )}
       </section>
 

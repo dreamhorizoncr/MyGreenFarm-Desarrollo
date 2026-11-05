@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 
 import Navbar from "../components/Navbar";
 import Container from "../components/home/Container";
+import { Newspaper } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import NewsDetailModal from "../components/NewsDetailModal.tsx";
 import NewsCard from "../components/NewsCard.tsx";
 import { formatNewsDate } from "../utils/newsDate.ts";
-import SkeletonList from "../components/ui/SkeletonList.tsx";
+import SkeletonList from "../components/ui/SkeletonList.tsx"
+import StatusMessage from "../components/ui/StatusMessage.tsx";
 import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
 import Pagination from "../components/ui/Pagination.tsx";
 
@@ -132,10 +134,10 @@ function NewsPage() {
             </div>
           )}
 
-          {(error || imagesError) && (
-            <p className="m-0 p-xl text-center font-body text-body text-danger">
-              {error || imagesError}
-            </p>
+          {(error || imagesError) && <StatusMessage variant="error" description={error || imagesError || undefined} />}
+
+          {!loading && !imagesLoading && !error && !imagesError && cards.length === 0 && (
+            <StatusMessage icon={Newspaper} description={t('adminNews.noNews')} />
           )}
 
           {!loading && !imagesLoading && !error && !imagesError && (

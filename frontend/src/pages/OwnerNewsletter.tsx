@@ -1,3 +1,5 @@
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { Mail, SearchX } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronDownIcon, SearchIcon, SendIcon } from '@animateicons/react/lucide'
@@ -76,6 +78,7 @@ function AdminNewsletterPage() {
     const { t } = useTranslation()
     const { sendBroadcast, unsubscribe, unsubscribeParent, getSubscribers, loading: broadcastLoading } = useNewsletter()
     const [loadingSubscribers, setLoadingSubscribers] = useState(true)
+    const [subscribersError, setSubscribersError] = useState(false)
 
     const [subscribers, setSubscribers] = useState<NewsletterRecipient[]>([])
     const [searchTerm, setSearchTerm] = useState('')
@@ -107,6 +110,7 @@ function AdminNewsletterPage() {
                     setSubscribers(data)
                 }
             } catch (error) {
+                setSubscribersError(true)
                 notifyError(t('admin.newsletter.loadError'), error)
             } finally {
                 setLoadingSubscribers(false)
@@ -282,12 +286,12 @@ function AdminNewsletterPage() {
                         <SkeletonList count={skeletonCount}>{() => <SubscriberRow loading />}</SkeletonList>
                     </div>
                 )}
-                {!loadingSubscribers && filteredItems.length === 0 && (
-                    <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
-                        {subscribers.length > 0 || searchTerm.trim()
-                            ? t('admin.newsletter.noResults')
-                            : t('admin.newsletter.noContacts')}
-                    </p>
+                {!loadingSubscribers && subscribersError && <StatusMessage variant="error" />}
+                {!loadingSubscribers && !subscribersError && filteredItems.length === 0 && (
+                    <StatusMessage
+                        icon={subscribers.length > 0 || searchTerm.trim() ? SearchX : Mail}
+                        description={subscribers.length > 0 || searchTerm.trim() ? t('admin.newsletter.noResults') : t('admin.newsletter.noContacts')}
+                    />
                 )}
                 {!loadingSubscribers && filteredItems.length > 0 && (
                     <>

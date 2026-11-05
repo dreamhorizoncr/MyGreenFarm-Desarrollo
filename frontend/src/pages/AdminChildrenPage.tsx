@@ -16,6 +16,8 @@ import type { Child, ChildStatusFilter } from "../types/child";
 import { useTranslation } from "react-i18next";
 import SkeletonList from "../components/ui/SkeletonList.tsx";
 import { useSkeletonCount } from "../hooks/useSkeletonCount.ts";
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { Baby } from 'lucide-react'
 
 const statusFilterLabels = {
   ALL: 'admin.children.statusFilters.all',
@@ -175,18 +177,12 @@ function AdminChildrenPage() {
         )}
 
         {!loading && error && (
-          <div className="mt-8 rounded-2xl border border-danger-100 bg-white p-6">
-            <p className="font-body text-body-sm text-danger">{error}</p>
-          </div>
+          <StatusMessage variant="error" description={error} className="mt-8" />
         )}
 
         {!loading && !error && (
           filteredChildren.length === 0 ? (
-            <div className="mt-8 rounded-2xl border border-dashed border-neutral-200 bg-white px-6 py-16 text-center">
-              <p className="font-body text-body text-body-text">
-                {t('admin.children.noResults')}
-              </p>
-            </div>
+            <StatusMessage icon={Baby} description={t('admin.children.noResults')} className="mt-8" />
           ) : (
             <>
               <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">

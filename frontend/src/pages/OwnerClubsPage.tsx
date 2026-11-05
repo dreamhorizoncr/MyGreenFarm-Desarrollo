@@ -1,3 +1,5 @@
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { Users } from 'lucide-react'
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -416,11 +418,7 @@ function OwnerClubsPage() {
         </button>
       </div>
 
-      {error && (
-        <p className="mt-lg rounded-xl bg-red-50 p-md text-body-sm text-red-700">
-          {error}
-        </p>
-      )}
+      {error && <StatusMessage variant="error" description={error} className="mt-lg" />}
 
       <section className="mt-xl grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
         {loading && !formOpen && (
@@ -448,10 +446,8 @@ function OwnerClubsPage() {
         />
       )}
 
-      {!loading && clubs.length === 0 && (
-        <p className="py-xl text-center font-body text-body-sm text-neutral-500">
-          {t("ownerClubs.noClubs")}
-        </p>
+      {!loading && !error && clubs.length === 0 && (
+        <StatusMessage icon={Users} description={t("ownerClubs.noClubs")} />
       )}
 
       {formOpen && (

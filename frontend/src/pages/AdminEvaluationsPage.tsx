@@ -19,6 +19,8 @@ import type { Evaluation } from "../types/evaluation";
 import type { Expedient } from "../types/expedient";
 import SkeletonList from "../components/ui/SkeletonList";
 import { useSkeletonCount } from "../hooks/useSkeletonCount";
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { ClipboardCheck, SearchX } from 'lucide-react'
 
 function AdminEvaluationsPage() {
     const { t, i18n } = useTranslation();
@@ -184,11 +186,7 @@ function AdminEvaluationsPage() {
                 )}
 
                 {!isLoading && error && (
-                    <div className="mt-8 rounded-2xl border border-danger-100 bg-white p-6">
-                        <p className="font-body text-body-sm text-danger">
-                            {error}
-                        </p>
-                    </div>
+                    <StatusMessage variant="error" description={error} className="mt-8" />
                 )}
 
                 {!isLoading &&
@@ -218,11 +216,7 @@ function AdminEvaluationsPage() {
                 {!isLoading &&
                     !error &&
                     evaluations.length === 0 && (
-                        <div className="mt-8 rounded-2xl border border-dashed border-neutral-200 bg-white px-6 py-16 text-center">
-                            <p className="font-body text-body text-body-text">
-                                {t("admin.evaluations.noEvaluations")}
-                            </p>
-                        </div>
+                        <StatusMessage icon={ClipboardCheck} description={t("admin.evaluations.noEvaluations")} className="mt-8" />
                     )}
 
                 {/* Búsqueda sin resultados */}
@@ -230,11 +224,7 @@ function AdminEvaluationsPage() {
                     !error &&
                     evaluations.length > 0 &&
                     filteredEvaluations.length === 0 && (
-                        <div className="mt-8 rounded-2xl border border-dashed border-neutral-200 bg-white px-6 py-16 text-center">
-                            <p className="font-body text-body text-body-text">
-                                {t("admin.evaluations.noResults")}
-                            </p>
-                        </div>
+                        <StatusMessage icon={SearchX} description={t("admin.evaluations.noResults")} className="mt-8" />
                     )}
             </section>
 

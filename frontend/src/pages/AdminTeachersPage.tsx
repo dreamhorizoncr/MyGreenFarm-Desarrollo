@@ -1,3 +1,5 @@
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { GraduationCap, SearchX } from 'lucide-react'
 
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -216,9 +218,7 @@ function AdminTeachersPage() {
 
                 {/* Error */}
                 {!loading && error && (
-                    <p className="mt-8 font-body text-danger">
-                        {error}
-                    </p>
+                    <StatusMessage variant="error" description={error} className="mt-8" />
                 )}
 
                 {/* Lista de docentes */}
@@ -250,13 +250,11 @@ function AdminTeachersPage() {
 
                 {/* Estado vacío */}
                 {!loading && !error && filteredTeachers.length === 0 && (
-                    <div className="mt-12 text-center">
-                        <p className="font-body text-body-text">
-                            {searchTerm
-                                ? t('admin.teachers.noSearchResults')
-                                : t('admin.teachers.empty')}
-                        </p>
-                    </div>
+                    <StatusMessage
+                        icon={searchTerm ? SearchX : GraduationCap}
+                        description={searchTerm ? t('admin.teachers.noSearchResults') : t('admin.teachers.empty')}
+                        className="mt-8"
+                    />
                 )}
 
                 {/* Editar docente */}

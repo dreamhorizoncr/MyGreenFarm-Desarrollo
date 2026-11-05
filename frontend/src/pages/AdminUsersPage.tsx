@@ -1,3 +1,5 @@
+import StatusMessage from '../components/ui/StatusMessage.tsx'
+import { SearchX, Users } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PlusIcon, SearchIcon } from '@animateicons/react/lucide'
@@ -141,13 +143,14 @@ function AdminUsersPage() {
           </div>
         )}
 
-        {error && <p className="m-0 p-xl text-center font-body text-body text-danger">{error}</p>}
+        {error && <StatusMessage variant="error" description={error} />}
 
         {!loading && !error && (
           filteredUsers.length === 0 ? (
-            <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
-              {searchTerm.trim() || roleFilter !== 'ALL' ? t('admin.noResults') : t('common.noUsers')}
-            </p>
+            <StatusMessage
+              icon={searchTerm.trim() || roleFilter !== 'ALL' ? SearchX : Users}
+              description={searchTerm.trim() || roleFilter !== 'ALL' ? t('admin.noResults') : t('common.noUsers')}
+            />
           ) : (
             <>
               <div className="grid grid-cols-1 gap-md xl:grid-cols-2">

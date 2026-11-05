@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,10 +16,13 @@ import taller.multimedia.backend.dto.UpdateUserRequest;
 import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.model.user.User;
+import taller.multimedia.backend.repository.forum.ForumArticleRepository;
+import taller.multimedia.backend.repository.group.TeacherGroupRepository;
 import taller.multimedia.backend.repository.user.UserRepository;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -29,6 +33,12 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private ForumArticleRepository forumArticleRepository;
+
+    @Mock
+    private TeacherGroupRepository teacherGroupRepository;
 
     @InjectMocks
     private UserService userService;
@@ -82,5 +92,37 @@ class UserServiceTest {
                 () -> userService.updateUser(owner.getId(), request, "owner@ejemplo.com"));
 
         verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void deleteUser_removesTheTeacherFromTheirGroupsBeforeDeletingThem() {
+        User owner = userWith(Role.OWNER);
+        User teacher = userWith(Role.TEACHER);
+
+        when(userRepository.findByEmail("owner@ejemplo.com")).thenReturn(Optional.of(owner));
+        when(userRepository.findById(teacher.getId())).thenReturn(Optional.of(teacher));
+
+        userService.deleteUser(teacher.getId(), "owner@ejemplo.com");
+
+        // Un docente asignado a un grupo tiene filas en teacher_groups: hay que quitarlas
+        // antes de borrarlo o la base de datos rechaza el borrado.
+        InOrder orden = inOrder(teacherGroupRepository, userRepository);
+        orden.verify(teacherGroupRepository).deleteByTeacherId(teacher.getId());
+        orden.verify(userRepository).delete(teacher);
+    }
+
+    @Test
+    void deleteUser_doesNotTouchGroupsWhenNotAllowed() {
+        User admin = userWith(Role.ADMIN);
+        User otherAdmin = userWith(Role.ADMIN);
+
+        when(userRepository.findByEmail("owner@ejemplo.com")).thenReturn(Optional.of(admin));
+        when(userRepository.findById(otherAdmin.getId())).thenReturn(Optional.of(otherAdmin));
+
+        assertThrows(RuntimeException.class,
+                () -> userService.deleteUser(otherAdmin.getId(), "owner@ejemplo.com"));
+
+        verify(teacherGroupRepository, never()).deleteByTeacherId(any());
+        verify(userRepository, never()).delete(any());
     }
 }
