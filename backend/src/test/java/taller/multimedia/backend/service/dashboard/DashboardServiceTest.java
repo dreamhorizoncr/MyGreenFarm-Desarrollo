@@ -28,6 +28,7 @@ import taller.multimedia.backend.repository.curriculum.CurriculumRepository;
 import taller.multimedia.backend.repository.forum.ForumArticleRepository;
 import taller.multimedia.backend.repository.gallery.GalleryRepository;
 import taller.multimedia.backend.repository.vacancy.VacancyRepository;
+import taller.multimedia.backend.service.announcement.GeminiResumenService;
 
 @ExtendWith(MockitoExtension.class)
 class DashboardServiceTest {
@@ -52,6 +53,12 @@ class DashboardServiceTest {
 
     @Mock
     private VacancyRepository vacancyRepository;
+
+    @Mock
+    private GeminiResumenService geminiResumenService;
+
+    @Mock
+    private DashboardSummaryCacheService dashboardSummaryCacheService;
 
     @InjectMocks
     private DashboardService dashboardService;
@@ -84,6 +91,9 @@ class DashboardServiceTest {
         when(curriculumRepository.findByStatusAndSubmittedAtAfterOrderBySubmittedAtDesc(
                 org.mockito.ArgumentMatchers.eq(taller.multimedia.backend.model.curriculum.CurriculumStatus.PENDING), any()))
                 .thenReturn(List.of());
+        when(geminiResumenService.generateDashboardSummary(any())).thenReturn("Resumen generado por Gemini.");
+        when(dashboardSummaryCacheService.reserveGeneration(date))
+                .thenReturn(new DashboardSummaryCacheService.SummaryReservation(null, true));
 
         var result = dashboardService.getSummary(date);
 
@@ -95,7 +105,10 @@ class DashboardServiceTest {
         assertThat(result.appointments().getFirst().status()).isEqualTo(AppointmentStatus.PENDING);
         assertThat(result.pendingAppointmentCount()).isEqualTo(3);
         assertThat(result.activeChildrenCount()).isEqualTo(12);
+        assertThat(result.aiSummary()).isEqualTo("Resumen generado por Gemini.");
         verify(appointmentRepository).countByStatus(AppointmentStatus.PENDING);
         verify(childRepository).countByIsActiveTrue();
+        verify(geminiResumenService).generateDashboardSummary(any());
+        verify(dashboardSummaryCacheService).saveSummary(date, "Resumen generado por Gemini.");
     }
 }

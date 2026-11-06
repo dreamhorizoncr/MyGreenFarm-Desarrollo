@@ -10,6 +10,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.dashboard.DashboardAppointmentResponse;
@@ -26,10 +28,13 @@ import taller.multimedia.backend.repository.curriculum.CurriculumRepository;
 import taller.multimedia.backend.repository.forum.ForumArticleRepository;
 import taller.multimedia.backend.repository.gallery.GalleryRepository;
 import taller.multimedia.backend.repository.vacancy.VacancyRepository;
+import taller.multimedia.backend.service.announcement.GeminiResumenService;
 
 @Service
 @RequiredArgsConstructor
 public class DashboardService {
+
+        private static final Logger log = LoggerFactory.getLogger(DashboardService.class);
 
         private final AppointmentRepository appointmentRepository;
         private final ChildRepository childRepository;
@@ -38,6 +43,8 @@ public class DashboardService {
         private final ForumArticleRepository forumArticleRepository;
         private final CurriculumRepository curriculumRepository;
         private final VacancyRepository vacancyRepository;
+        private final GeminiResumenService geminiResumenService;
+        private final DashboardSummaryCacheService dashboardSummaryCacheService;
 
         @Transactional(readOnly = true)
         public DashboardSummaryResponse getSummary(LocalDate date) {
@@ -85,6 +92,7 @@ public class DashboardService {
                                                 "/admin/curriculums")));
                 priorities.sort(Comparator.comparing(DashboardPriorityResponse::dueAt));
                 List<DashboardPriorityResponse> limitedPriorities = priorities.stream().limit(6).toList();
+                String aiSummary = generateAiSummary(date, appointments, limitedActivities, limitedPriorities);
 
                 return new DashboardSummaryResponse(
                                 appointments,
@@ -92,7 +100,50 @@ public class DashboardService {
                                 childRepository.countByIsActiveTrue(),
                                 limitedActivities,
                                 limitedPriorities,
-                                "");
+                                aiSummary);
+        }
+
+        private String generateAiSummary(
+                        LocalDate date,
+                        List<DashboardAppointmentResponse> appointments,
+                        List<DashboardActivityResponse> activities,
+                        List<DashboardPriorityResponse> priorities) {
+                DashboardSummaryCacheService.SummaryReservation reservation =
+                                dashboardSummaryCacheService.reserveGeneration(date);
+                if (!reservation.shouldGenerate()) {
+                        return reservation.summary() == null ? "" : reservation.summary();
+                }
+
+                String context = """
+                                Fecha: %s
+                                Citas del día:
+                                %s
+                                Actividad reciente:
+                                %s
+                                Pendientes prioritarios:
+                                %s
+                                """.formatted(
+                                date,
+                                appointments.isEmpty() ? "Ninguna" : appointments.stream()
+                                                .map(item -> "- " + item.appointmentDate() + " | "
+                                                                + item.parentName() + " | " + item.childName()
+                                                                + " | estado: " + item.status())
+                                                .reduce((left, right) -> left + "\n" + right).orElse("Ninguna"),
+                                activities.isEmpty() ? "Ninguna" : activities.stream()
+                                                .map(item -> "- " + item.type() + " | " + item.title())
+                                                .reduce((left, right) -> left + "\n" + right).orElse("Ninguna"),
+                                priorities.isEmpty() ? "Ninguno" : priorities.stream()
+                                                .map(item -> "- " + item.type() + " | " + item.title()
+                                                                + " | prioridad: " + item.priority())
+                                                .reduce((left, right) -> left + "\n" + right).orElse("Ninguno"));
+
+                String summary = geminiResumenService.generateDashboardSummary(context);
+                if (summary == null || summary.isBlank()) {
+                        log.error("No se pudo generar el resumen IA del dashboard para {}", date);
+                        return "";
+                }
+                dashboardSummaryCacheService.saveSummary(date, summary);
+                return summary;
         }
 
         private String curriculumTitle(Curriculum curriculum) {

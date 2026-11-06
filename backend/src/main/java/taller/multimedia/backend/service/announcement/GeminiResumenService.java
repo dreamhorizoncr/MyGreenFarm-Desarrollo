@@ -56,6 +56,14 @@ public class GeminiResumenService {
                     + "Responde ÚNICAMENTE con el resumen en texto plano: sin notas, aclaraciones, advertencias "
                     + "ni formato Markdown.\n\nTexto:\n";
 
+    private static final String PROMPT_DASHBOARD =
+            "Resume el estado del día de un centro educativo en 2 o 3 oraciones breves "
+                    + "(máximo 70 palabras), en español, con tono claro y útil para un administrador. "
+                    + "Menciona las citas y pendientes relevantes usando únicamente la información proporcionada. "
+                    + "Si no hay elementos en una categoría, indícalo brevemente. "
+                    + "No inventes datos ni agregues recomendaciones. "
+                    + "Responde ÚNICAMENTE con el resumen en texto plano, sin Markdown.\n\nDatos del día:\n";
+
     private final ObjectMapper objectMapper;
 
     @Value("${gemini.api.key}")
@@ -83,6 +91,10 @@ public class GeminiResumenService {
 
     public String generateArticleSummary(String content) {
         return callGemini(PROMPT_ARTICULO_FORO + content);
+    }
+
+    public String generateDashboardSummary(String context) {
+        return callGemini(PROMPT_DASHBOARD + context);
     }
 
     private String callGemini(String prompt) {
