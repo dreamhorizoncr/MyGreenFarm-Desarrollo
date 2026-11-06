@@ -12,5 +12,24 @@ export interface AdminDashboardSummary {
   appointments: DashboardAppointment[]
   pendingAppointmentCount: number
   activeChildrenCount: number
+  activities: DashboardActivity[]
+  priorities: DashboardPriority[]
   aiSummary: string
+}
+
+export interface DashboardActivity {
+  id: string
+  type: 'announcement' | 'gallery' | 'forum'
+  title: string
+  createdAt: string
+  href: string
+}
+
+export interface DashboardPriority {
+  id: string
+  type: 'appointment' | 'curriculum'
+  title: string
+  dueAt: string
+  priority: 'high' | 'medium' | 'low'
+  href: string
 }
