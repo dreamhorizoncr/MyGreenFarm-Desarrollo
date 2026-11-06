@@ -829,6 +829,7 @@ export default {
   },
   common: {
     status: {
+      loading: "Cargando…",
       errorTitle: "No pudimos cargar la información",
       emptyTitle: "Todavía no hay nada por aquí",
       retry: "Reintentar",

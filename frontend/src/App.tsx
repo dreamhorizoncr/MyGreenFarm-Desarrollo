@@ -1,39 +1,13 @@
-import { Fragment, type ReactNode } from 'react'
+import { Fragment, lazy, Suspense, type ReactNode } from 'react'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { Toaster } from 'sileo'
 
 import HomePage from './pages/HomePage.tsx'
-import BookingPage from './pages/BookingPage.tsx'
-import LoginPage from './pages/LoginPage.tsx'
-import ForgotPasswordPage from './pages/ForgotPasswordPage.tsx'
-import ResetPasswordPage from './pages/ResetPasswordPage.tsx'
-import AdminUsersPage from './pages/AdminUsersPage.tsx'
-import AdminDashboardPage from './pages/AdminDashboardPage.tsx'
-import AdminCitasPage from './pages/AdminCitasPage.tsx'
-import AdminTeachersPage from './pages/AdminTeachersPage.tsx'
-import ProfilePage from './pages/ProfilePage.tsx'
 import ProtectedRoute from './routes/ProtectedRoute.tsx'
 import AdminRoute from './routes/AdminRoute.tsx'
 import OwnerRoute from './routes/OwnerRoute.tsx'
 import ForumManagementRoute from './routes/ForumManagementRoute.tsx'
 import ExpedientsRoute from './routes/ExpedientsRoute.tsx'
-import NewsPage from './pages/NewsPage.tsx'
-import ForumPage from './pages/ForumPage.tsx'
-import BlogPostPage from './pages/BlogPostPage.tsx'
-import CommunityPostPage from './pages/CommunityPostPage.tsx'
-import AdminForumPage from './pages/AdminForumPage.tsx'
-import AnnouncementsPage from './pages/AdminAnnouncementsPage.tsx'
-import AdminExpedientsPage from './pages/AdminExpedientsPage.tsx'
-import AdminParentsPage from './pages/AdminParentPage.tsx'
-import AdminChildrenPage from './pages/AdminChildrenPage.tsx'
-import AdminEvaluationsPage from './pages/AdminEvaluationsPage.tsx'
-import GalleryPage from './pages/GalleryPage.tsx'
-import AlbumDetailPage from './pages/AlbumDetailPage.tsx'
-import AdminGalleryPage from './pages/AdminGalleryPage.tsx'
-import AdminCurriculumsPage from './pages/AdminCurriculumsPage.tsx'
-import VacanciesPage from './pages/VacanciesPage.tsx'
-import OwnerAvailabilityPage from './pages/OwnerAvailabilityPage.tsx'
-import OwnerNewsletter from './pages/OwnerNewsletter.tsx'
 import Footer from './layout/Footer.tsx'
 import ScrollToTopButton from './components/ScrollToTopButton.tsx'
 import { ProfileAvatarProvider } from './contexts/ProfileAvatarContext.tsx'
@@ -47,13 +21,42 @@ import ReadingGuide from './components/ui/ReadingGuide.tsx'
 import { useSessionExpiredNotice } from './hooks/useSessionExpiredNotice.ts'
 import { ErrorBoundary } from './components/ErrorBoundary.tsx'
 import BlobGooFilter from './components/ui/BlobGooFilter.tsx'
-import OwnerClubsPage from './pages/OwnerClubsPage.tsx'
-import ClubsPage from './pages/ClubsPage.tsx'
-import AboutUsPage from './pages/AboutUsPage.tsx'
 import ChatWidget from './components/chat/ChatWidget.tsx'
 import GroupsRoute from './routes/GroupsRoute.tsx'
-import AdminGroupsPage from './pages/AdminGroupsPage.tsx'
-import GreenHeartsPage from './pages/GreenHeartsPage.tsx'
+import PageLoader from './components/ui/PageLoader.tsx'
+
+// Cada página se descarga solo cuando se visita; la portada va en el bundle principal.
+const BookingPage = lazy(() => import('./pages/BookingPage.tsx'))
+const LoginPage = lazy(() => import('./pages/LoginPage.tsx'))
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage.tsx'))
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage.tsx'))
+const AdminUsersPage = lazy(() => import('./pages/AdminUsersPage.tsx'))
+const AdminDashboardPage = lazy(() => import('./pages/AdminDashboardPage.tsx'))
+const AdminCitasPage = lazy(() => import('./pages/AdminCitasPage.tsx'))
+const AdminTeachersPage = lazy(() => import('./pages/AdminTeachersPage.tsx'))
+const ProfilePage = lazy(() => import('./pages/ProfilePage.tsx'))
+const NewsPage = lazy(() => import('./pages/NewsPage.tsx'))
+const ForumPage = lazy(() => import('./pages/ForumPage.tsx'))
+const BlogPostPage = lazy(() => import('./pages/BlogPostPage.tsx'))
+const CommunityPostPage = lazy(() => import('./pages/CommunityPostPage.tsx'))
+const AdminForumPage = lazy(() => import('./pages/AdminForumPage.tsx'))
+const AnnouncementsPage = lazy(() => import('./pages/AdminAnnouncementsPage.tsx'))
+const AdminExpedientsPage = lazy(() => import('./pages/AdminExpedientsPage.tsx'))
+const AdminParentsPage = lazy(() => import('./pages/AdminParentPage.tsx'))
+const AdminChildrenPage = lazy(() => import('./pages/AdminChildrenPage.tsx'))
+const AdminEvaluationsPage = lazy(() => import('./pages/AdminEvaluationsPage.tsx'))
+const GalleryPage = lazy(() => import('./pages/GalleryPage.tsx'))
+const AlbumDetailPage = lazy(() => import('./pages/AlbumDetailPage.tsx'))
+const AdminGalleryPage = lazy(() => import('./pages/AdminGalleryPage.tsx'))
+const AdminCurriculumsPage = lazy(() => import('./pages/AdminCurriculumsPage.tsx'))
+const VacanciesPage = lazy(() => import('./pages/VacanciesPage.tsx'))
+const OwnerAvailabilityPage = lazy(() => import('./pages/OwnerAvailabilityPage.tsx'))
+const OwnerNewsletter = lazy(() => import('./pages/OwnerNewsletter.tsx'))
+const OwnerClubsPage = lazy(() => import('./pages/OwnerClubsPage.tsx'))
+const ClubsPage = lazy(() => import('./pages/ClubsPage.tsx'))
+const AboutUsPage = lazy(() => import('./pages/AboutUsPage.tsx'))
+const AdminGroupsPage = lazy(() => import('./pages/AdminGroupsPage.tsx'))
+const GreenHeartsPage = lazy(() => import('./pages/GreenHeartsPage.tsx'))
 
 function SessionWatcher() {
   useSessionExpiredNotice()
@@ -88,10 +91,12 @@ function App() {
               <div className="flex-1">
                 <ProfileAvatarProvider>
                   <ForumFeedProvider>
+                    <Suspense fallback={<PageLoader />}>
                     <Routes>
-                      <Route element={<ProtectedRoute />} />
-                      <Route path="/profile" element={<ProfilePage />} />
-                      <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+                      <Route element={<ProtectedRoute />}>
+                        <Route path="/profile" element={<ProfilePage />} />
+                        <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+                      </Route>
                       <Route element={<ForumManagementRoute />}>
                         <Route path="/admin/forum" element={<AdminForumPage />} />
                       </Route>
@@ -135,6 +140,7 @@ function App() {
                       <Route path="/signup" element={<Navigate to="/admin/users" replace />} />
                       <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
+                    </Suspense>
                   </ForumFeedProvider>
                 </ProfileAvatarProvider>
               </div>
