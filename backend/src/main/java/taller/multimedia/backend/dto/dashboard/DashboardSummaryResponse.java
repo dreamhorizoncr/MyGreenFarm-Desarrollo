@@ -5,5 +5,8 @@ import java.util.List;
 public record DashboardSummaryResponse(
         List<DashboardAppointmentResponse> appointments,
         long pendingAppointmentCount,
-        long activeChildrenCount) {
+        long activeChildrenCount,
+        List<DashboardActivityResponse> activities,
+        List<DashboardPriorityResponse> priorities,
+        String aiSummary) {
 }

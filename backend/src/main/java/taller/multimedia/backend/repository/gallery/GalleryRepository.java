@@ -9,9 +9,11 @@ import taller.multimedia.backend.model.gallery.Gallery;
 
 import java.util.List;
 import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Repository
 public interface GalleryRepository extends JpaRepository<Gallery, UUID> {
+    Page<Gallery> findByCreatedAtAfterOrderByCreatedAtDesc(LocalDateTime date, Pageable pageable);
     List<Gallery> findByCategoryGalleryId(UUID category);
 
     Page<Gallery> findAllByOrderByCreatedAtDesc(Pageable pageable);
