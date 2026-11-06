@@ -11,7 +11,8 @@ import { parentService } from "../services/parent";
 import { notify, notifyError } from "../utils/notifications.ts";
 import { getErrorField, getErrorMessage } from "../utils/error.ts";
 import { useModalExit } from "../hooks/useModalExit.ts";
-import { validateEmail, validateIdentification, validatePhoneNumber, validateRequired, validateSafeText } from "../utils/validators.ts";
+import { validateEmail, validateIdentification, validateRequired, validateSafeText } from "../utils/validators.ts";
+import { validatePhoneNumber } from "../utils/phoneValidators.ts";
 
 import type { Parent, ParentLanguage, ParentRequest } from "../types/parent";
 import ModalCloseButton from "./ui/ModalCloseButton.tsx";
