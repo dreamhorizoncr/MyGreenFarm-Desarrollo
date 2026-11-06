@@ -8,19 +8,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.RequiredArgsConstructor;
-import taller.multimedia.backend.dto.onvo.ConfirmPaymentRequest;
-import taller.multimedia.backend.dto.onvo.ConfirmSinpeRequest;
-import taller.multimedia.backend.dto.onvo.PricePaymentRequest;
-import taller.multimedia.backend.dto.onvo.PaymentQuote;
-import taller.multimedia.backend.service.onvo.OnvoService;
-
 @RestController
 @RequestMapping("/api/webhooks")
-@RequiredArgsConstructor
 public class OnvoWebhookController {
-
-    private final OnvoService onvoService;
 
     @PostMapping("/onvo")
     public ResponseEntity<String> handleOnvoWebhook(@RequestBody Map<String, Object> payload) {
@@ -59,58 +49,4 @@ public class OnvoWebhookController {
         return ResponseEntity.ok("Received");
     }
 
-    @PostMapping("/create-intent")
-    public ResponseEntity<Map<String, Object>> createIntentFromPrice(@RequestBody PricePaymentRequest request) {
-        Map<String, Object> paymentIntent = onvoService.createPaymentIntentForPlan(
-            request.getServicePlanId(),
-            request.getCustomerEmail(), 
-            request.getDescription(),
-            request.getCouponCode(),
-            null,
-            request.getPaymentMethod(),
-            request.getLanguage(),
-            request.getSaveSubscription() != null ? request.getSaveSubscription() : false
-        );
-        return ResponseEntity.ok(paymentIntent);
-    }
-
-    @PostMapping("/quote")
-    public ResponseEntity<PaymentQuote> quotePayment(@RequestBody PricePaymentRequest request) {
-        return ResponseEntity.ok(onvoService.quoteServicePlan(
-                request.getServicePlanId(),
-                request.getCouponCode(),
-                request.getPaymentMethod(),
-                null));
-    }
-
-    @PostMapping("/confirm")
-    public ResponseEntity<Map<String, Object>> confirmPayment(@RequestBody ConfirmPaymentRequest request) {
-        Map<String, Object> result = onvoService.confirmPaymentIntentWithCard(
-            request.getPaymentIntentId(), 
-            request.getCardNumber(),
-            request.getExpMonth(),
-            request.getExpYear(),
-            request.getCvc(),
-            request.getCardHolder(),
-            request.getClientName(),
-            request.getClientEmail(),
-            request.getIdentificationType(),
-            request.getClientIdentification()
-        );
-        return ResponseEntity.ok(result);
-    }
-
-    @PostMapping("/confirm-sinpe")
-    public ResponseEntity<Map<String, Object>> confirmSinpePayment(@RequestBody ConfirmSinpeRequest request) {
-        Map<String, Object> result = onvoService.confirmPaymentIntentWithSinpe(
-            request.getPaymentIntentId(),
-            request.getPhoneNumber(),
-            request.getSinpeReference(),
-            request.getClientName(),
-            request.getClientEmail(),
-            request.getIdentificationType(),
-            request.getClientIdentification()
-        );
-        return ResponseEntity.ok(result);
-    }
 }

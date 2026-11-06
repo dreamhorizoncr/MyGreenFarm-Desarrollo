@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import { ClipboardList } from 'lucide-react'
@@ -41,8 +40,8 @@ function PlanCard({
   const [currency, setCurrency] = useState<Currency>(() => cleanCurrency(plan?.currency))
 
   const price = plan && exchangeRate
-    ? convertCurrency(plan.gatewayPriceAmount ?? plan.price, cleanCurrency(plan.currency), currency, 'buy', exchangeRate)
-    : plan?.gatewayPriceAmount ?? plan?.price ?? 0
+    ? convertCurrency(plan.price, cleanCurrency(plan.currency), currency, 'buy', exchangeRate)
+    : plan?.price ?? 0
 
   if (loading) {
     return (
@@ -127,7 +126,6 @@ function PlanCard({
 
 function ServicesPage() {
   const { t, i18n } = useTranslation()
-  const navigate = useNavigate()
 
   const { plans, loading, error, fetchPlans, totalPages } = useServicePlans()
   const [currentPage, setCurrentPage] = useState(1)
@@ -144,18 +142,6 @@ function ServicesPage() {
   useEffect(() => {
     void fetchPlans(currentPage - 1, i18n.language, pageSize)
   }, [currentPage, i18n.language, pageSize])
-
-  // Función que se ejecuta al presionar "Suscribirse" en el Modal de Detalles
-  const handleSubscribe = (plan: ServicePlan, currency: Currency, price: number) => {
-    setSelectedPlan(null) // Cierra el modal
-    navigate('/checkout', {
-      state: {
-        plan,
-        currency,
-        price,
-      },
-    })
-  }
 
   const skeletonCount = useSkeletonCount('services', loading, plans.length, 3)
 
@@ -221,7 +207,6 @@ function ServicesPage() {
           plan={selectedPlan.plan}
           initialCurrency={selectedPlan.currency}
           exchangeRate={exchangeRate}
-          onSubscribe={handleSubscribe}
           onClose={() => setSelectedPlan(null)}
         />
       )}

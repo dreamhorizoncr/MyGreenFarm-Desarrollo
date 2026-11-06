@@ -57,6 +57,8 @@ const ClubsPage = lazy(() => import('./pages/ClubsPage.tsx'))
 const AboutUsPage = lazy(() => import('./pages/AboutUsPage.tsx'))
 const AdminGroupsPage = lazy(() => import('./pages/AdminGroupsPage.tsx'))
 const GreenHeartsPage = lazy(() => import('./pages/GreenHeartsPage.tsx'))
+const ServicesPage = lazy(() => import('./pages/ServicesPage.tsx'))
+const AdminServicePlansPage = lazy(() => import('./pages/AdminServicePlansPage.tsx'))
 
 function SessionWatcher() {
   useSessionExpiredNotice()
@@ -113,6 +115,7 @@ function App() {
                         <Route element={<OwnerRoute />}>
                           <Route path="/admin/disponibilidad" element={<OwnerAvailabilityPage />} />
                           <Route path="/admin/newsletter" element={<OwnerNewsletter />} />
+                          <Route path="/admin/services" element={<AdminServicePlansPage />} />
                         </Route>
                       </Route>
                       <Route element={<GroupsRoute />}>
@@ -132,6 +135,7 @@ function App() {
                       <Route path="/forum/blog/:id" element={<BlogPostPage />} />
                       <Route path="/forum/community/:id" element={<CommunityPostPage />} />
                       <Route path="/multimedia" element={<GalleryPage />} />
+                      <Route path="/services" element={<ServicesPage />} />
                       <Route path="/albumes/:id" element={<AlbumDetailPage />} />
                       <Route path="/vacantes" element={<VacanciesPage />} />
                       <Route path="/clubs" element={<ClubsPage />} />

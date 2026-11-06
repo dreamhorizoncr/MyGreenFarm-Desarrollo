@@ -2,7 +2,6 @@ import { useCallback, useRef, useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AnimatePresence, motion } from 'motion/react'
 import {
-    Accessibility,
     AudioLinesIcon,
     BookOpenTextIcon,
     MousePointerClickIcon,
@@ -21,6 +20,7 @@ import {
     Type,
 } from 'lucide-react'
 import { useAccessibility, type ColorMode } from '../../contexts/accessibility'
+import accessibilityIcon from '../../assets/imgs/accessibilityIcon.svg'
 import { useVoiceReader } from '../../contexts/VoiceReaderContext'
 import useDismiss from '../../hooks/useDismiss.ts'
 import { useDropdownMotion } from '../../hooks/useDropdownMotion.ts'
@@ -166,7 +166,7 @@ export default function AccessibilityMenu() {
                 aria-controls="accessibility-panel"
                 className="flex size-12 items-center justify-center rounded-full border border-neutral-200 bg-white text-heading shadow-lg transition-all duration-300 hover:scale-105 hover:bg-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
             >
-                <Accessibility size={22} isAnimated={false} aria-hidden="true" />
+                <img src={accessibilityIcon} alt="" aria-hidden="true" className="size-8" />
             </button>
 
             <AnimatePresence>

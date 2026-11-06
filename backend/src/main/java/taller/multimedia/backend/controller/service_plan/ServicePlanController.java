@@ -14,10 +14,8 @@ import taller.multimedia.backend.service.service_plan.ServicePlanService;
 import taller.multimedia.backend.service.spelling.SpellingCorrectionAsyncService;
 import tools.jackson.databind.ObjectMapper;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -35,13 +33,6 @@ public class ServicePlanController {
                 ? servicePlanService.getActivePlans()
                 : servicePlanService.getAllPlans();
         return ResponseEntity.ok(plans);
-    }
-
-    @GetMapping("/onvo-raw")
-    @PreAuthorize("hasAnyRole('OWNER')")
-    public ResponseEntity<?> getOnvoPrices() {
-        List<Map<String, Object>> onvoPrices = servicePlanService.getPlansFromOnvo();
-        return ResponseEntity.ok(onvoPrices);
     }
 
     @GetMapping("/{id}")
@@ -67,12 +58,6 @@ public class ServicePlanController {
         } catch (Exception e) {
             throw new RuntimeException("Error al procesar el plan: " + e.getMessage());
         }
-    }
-
-    @PostMapping("/{id}/checkout")
-    public ResponseEntity<Map<String, String>> createCheckoutSession(@PathVariable UUID id) {
-        Map<String, String> checkoutData = servicePlanService.createCheckoutSessionForPlan(id);
-        return ResponseEntity.ok(checkoutData); 
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
