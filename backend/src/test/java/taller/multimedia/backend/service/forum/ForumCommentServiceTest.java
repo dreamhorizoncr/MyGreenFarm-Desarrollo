@@ -38,6 +38,9 @@ class ForumCommentServiceTest {
     @Mock
     private ForumMapper forumMapper;
 
+    @Mock
+    private ForumModerationService moderationService;
+
     @InjectMocks
     private ForumCommentService forumCommentService;
 

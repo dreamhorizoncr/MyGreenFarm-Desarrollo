@@ -22,6 +22,9 @@ class ForumCommunityPostServiceTest {
     @Mock
     private ForumCommunityPostRepository communityPostRepository;
 
+    @Mock
+    private ForumModerationService moderationService;
+
     @InjectMocks
     private ForumCommunityPostService forumCommunityPostService;
 

@@ -265,3 +265,16 @@
     transition: none;
   }
 }
+
+/* Zona táctil más grande para los puntos del carrusel sin cambiar cómo se ven. */
+#valores .swiper-pagination-bullet,
+#lineas-de-accion .swiper-pagination-bullet {
+  position: relative;
+}
+
+#valores .swiper-pagination-bullet::before,
+#lineas-de-accion .swiper-pagination-bullet::before {
+  position: absolute;
+  inset: -8px;
+  content: '';
+}

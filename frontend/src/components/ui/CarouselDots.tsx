@@ -18,7 +18,7 @@ function CarouselDots({ count, activeIndex, onSelect, ariaLabel, getItemLabel, c
           aria-label={getItemLabel(index)}
           aria-current={index === activeIndex ? 'true' : undefined}
           onClick={() => onSelect(index)}
-          className={`size-2 rounded-full transition-transform focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--green-500)] ${index === activeIndex ? 'scale-125 bg-[var(--green-500)]' : 'bg-[var(--grey-300)]'}`}
+          className={`relative size-2 rounded-full transition-transform before:absolute before:-inset-2 before:content-[''] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--green-500)] ${index === activeIndex ? 'scale-125 bg-[var(--green-500)]' : 'bg-[var(--grey-300)]'}`}
         />
       ))}
     </div>

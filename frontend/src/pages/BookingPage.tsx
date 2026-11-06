@@ -21,10 +21,10 @@ import {
   validateEmail,
   validateBookingEmailDomain,
   validateIdNumber,
-  validatePhoneNumber,
   validateRequired,
   validateSafeText,
 } from '../utils/validators.ts'
+import { validatePhoneNumber } from '../utils/phoneValidators.ts'
 import type { ReferralSource } from '../types/appointment.ts'
 import FieldHint from '../components/ui/FieldHint.tsx'
 import AutoHeight from '../components/ui/AutoHeight.tsx'

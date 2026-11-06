@@ -36,7 +36,7 @@ const SIZES = {
     gridHeader: '',
     grid: 'min-h-[204px]',
     headCell: 'w-8 h-6 text-xs',
-    cell: 'h-7 w-7 text-sm my-px',
+    cell: 'h-8 w-8 text-sm my-px lg:h-7 lg:w-7',
     footer: '',
     clear: '',
   },
@@ -158,8 +158,8 @@ function CalendarPanel({ value, onChange, onFocusChange, markedDates, minValue, 
               </div>
             </div>
             <div className="flex items-center gap-1">
-              <Calendar.NavButton slot="previous" />
-              <Calendar.NavButton slot="next" />
+              <Calendar.NavButton slot="previous" className="size-9" />
+              <Calendar.NavButton slot="next" className="size-9" />
             </div>
           </Calendar.Header>
           <div className={`w-full ${size.grid}`}>

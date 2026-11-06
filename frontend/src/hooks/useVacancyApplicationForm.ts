@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { validateEmail, validatePhoneNumber, validateRequired, validateSafeText } from '../utils/validators.ts'
+import { validateEmail, validateRequired, validateSafeText } from '../utils/validators.ts'
+import { validatePhoneNumber } from '../utils/phoneValidators.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { ApplicationInput } from '../types/curriculum.ts'
 import type { OptionalApplicationField } from '../types/vacancy.ts'
