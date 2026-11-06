@@ -15,6 +15,7 @@ export interface ChatResponse {
   answer: string
   conversationId?: string | null
   blocked?: boolean
+  action?: string | null
 }
 
 export async function sendChatMessage(payload: ChatRequest): Promise<ChatResponse> {

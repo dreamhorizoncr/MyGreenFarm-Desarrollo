@@ -7,12 +7,12 @@ type SlotStatus = 'HELD' | 'RELEASED' | 'BOOKED'
 
 const HOLDER_KEY = 'mgf_booking_holder'
 
-function readHolderId(): string {
+function readHolderId(storageKey: string): string {
   const fresh = crypto.randomUUID()
   try {
-    const saved = sessionStorage.getItem(HOLDER_KEY)
+    const saved = sessionStorage.getItem(storageKey)
     if (saved) return saved
-    sessionStorage.setItem(HOLDER_KEY, fresh)
+    sessionStorage.setItem(storageKey, fresh)
   } catch {
     // Sin sessionStorage se usa un identificador nuevo en cada carga
   }
@@ -30,8 +30,8 @@ const withoutKey = (set: Set<string>, key: string) => {
 
 const withKey = (set: Set<string>, key: string) => (set.has(key) ? set : new Set(set).add(key))
 
-export function useSlotHolds() {
-  const [holderId] = useState(readHolderId)
+export function useSlotHolds(storageKey: string = HOLDER_KEY) {
+  const [holderId] = useState(() => readHolderId(storageKey))
   const [heldByOthers, setHeldByOthers] = useState<Set<string>>(() => new Set())
   const [booked, setBooked] = useState<Set<string>>(() => new Set())
   const [myHold, setMyHold] = useState<{ key: string; expiresAt: string } | null>(null)

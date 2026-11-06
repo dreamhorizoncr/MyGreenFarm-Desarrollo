@@ -13,6 +13,23 @@ class ChatServiceUtilityTest {
         assertFalse(ChatService.isOffTopic("política de privacidad"));
         assertFalse(ChatService.isOffTopic("mi religión"));
     }
+    @Test void detectsBookingIntentInSpanishEnglishAndFrench() {
+        assertTrue(ChatService.isBookingIntent("Quiero agendar una cita"));
+        assertTrue(ChatService.isBookingIntent("¿Cómo reservo?"));
+        assertTrue(ChatService.isBookingIntent("Muéstrame los horarios disponibles"));
+        assertTrue(ChatService.isBookingIntent("How do I book?"));
+        assertTrue(ChatService.isBookingIntent("I want to book an appointment"));
+        assertTrue(ChatService.isBookingIntent("Comment réserver ?"));
+        assertTrue(ChatService.isBookingIntent("Prendre un rendez-vous"));
+    }
+
+    @Test void doesNotTreatMedicalAppointmentsAsBookingIntent() {
+        assertFalse(ChatService.isBookingIntent("Tengo una cita médica"));
+        assertFalse(ChatService.isBookingIntent("cita médica"));
+        assertFalse(ChatService.isBookingIntent("medical appointment"));
+        assertFalse(ChatService.isBookingIntent("¿Qué servicios ofrecen?"));
+    }
+
     @Test void keepsOnlyCanonicalUuidConversationIds() {
         String valid = "9e0eaa3c-3396-45d7-a884-7e890c9dd8bf";
         assertEquals(valid, ChatService.validConversationId(valid));

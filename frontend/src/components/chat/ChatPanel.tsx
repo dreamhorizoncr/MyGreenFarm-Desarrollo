@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { SendIcon, XIcon } from '@animateicons/react/lucide'
+import { CalendarPlus } from 'lucide-react'
 import { useChat } from '../../hooks/useChat'
+import { useChatBooking } from '../../hooks/useChatBooking'
 import ChatMessage from './ChatMessage'
 import ChatSuggestions from './ChatSuggestions'
+import ChatBookingOptions from './ChatBookingOptions'
 import ChickAvatar, { type ChickMood, type ChickReaction, type ChickState } from './ChickAvatar'
 import { userStorage } from '../../utils/userStorage'
 import { useTranslation } from 'react-i18next'
@@ -10,6 +13,7 @@ import { animationsStopped } from '../../utils/reducedMotion'
 
 const THANKS_PATTERN = /\b(gracias|thanks|thank you|merci)\b/i
 const WORD_PATTERN = /\S+\s*/y
+const MAX_BOOKING_INPUT = 3000
 
 function nextWordEnd(text: string, from: number) {
   WORD_PATTERN.lastIndex = from
@@ -22,7 +26,8 @@ interface ChatPanelProps {
 }
 
 export default function ChatPanel({ onClose }: Readonly<ChatPanelProps>) {
-  const { messages, input, setInput, sendMessage, loading } = useChat()
+  const { messages, input, setInput, sendMessage, loading, appendMessage } = useChat()
+  const booking = useChatBooking(appendMessage)
   const { t } = useTranslation()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const user = userStorage.getUser()
@@ -34,6 +39,7 @@ export default function ChatPanel({ onClose }: Readonly<ChatPanelProps>) {
   const [talk, setTalk] = useState<{ text: string; shown: number } | null>(null)
   const lastBotId = useRef(messages.at(-1)?.id)
   const moodTimer = useRef(0)
+  const wasBookingActive = useRef(false)
 
   const react = (type: ChickReaction) => setReaction((current) => ({ type, key: (current?.key ?? 0) + 1 }))
 
@@ -46,6 +52,11 @@ export default function ChatPanel({ onClose }: Readonly<ChatPanelProps>) {
   useEffect(() => () => window.clearTimeout(moodTimer.current), [])
 
   useEffect(() => {
+    if (wasBookingActive.current && !booking.active) setInput('')
+    wasBookingActive.current = booking.active
+  }, [booking.active, setInput])
+
+  useEffect(() => {
     const last = messages.at(-1)
     if (last?.role !== 'bot' || last.id === lastBotId.current) return
     lastBotId.current = last.id
@@ -53,7 +64,7 @@ export default function ChatPanel({ onClose }: Readonly<ChatPanelProps>) {
       if (last.blocked) {
         showMood('worried', 3500)
         react('shake')
-      } else if (animationsStopped()) {
+      } else if (animationsStopped() || last.content.length > 240 || last.content.includes('\n')) {
         showMood('happy', 1600)
       } else {
         setTalk({ text: last.content, shown: 0 })
@@ -83,16 +94,32 @@ export default function ChatPanel({ onClose }: Readonly<ChatPanelProps>) {
     return () => window.clearTimeout(timer)
   }, [input, focused])
 
+  const busy = loading || booking.busy
   let chickState: ChickState = 'idle'
-  if (loading) chickState = 'thinking'
+  if (busy) chickState = 'thinking'
   else if (talk) chickState = 'speaking'
   else if (focused && input.trim()) chickState = 'listening'
   const talkTick = talk?.shown ?? 0
 
-  const handleSubmit = (event: FormEvent) => {
+  const startBooking = () => {
+    setInput('')
+    booking.start()
+  }
+
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
-    if (THANKS_PATTERN.test(input)) react('thanks')
-    sendMessage()
+    const trimmed = input.trim()
+    if (!trimmed || busy) return
+
+    if (booking.active) {
+      setInput('')
+      await booking.handleText(trimmed)
+      return
+    }
+
+    if (THANKS_PATTERN.test(trimmed)) react('thanks')
+    const response = await sendMessage()
+    if (response?.action === 'START_BOOKING') booking.start(false)
   }
 
   const closeChat = () => {
@@ -101,7 +128,7 @@ export default function ChatPanel({ onClose }: Readonly<ChatPanelProps>) {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, loading])
+  }, [messages, loading, booking.active, booking.stage])
 
   return (
     <section className="flex h-full min-h-0 flex-col bg-white text-body-text-dark">
@@ -154,7 +181,7 @@ export default function ChatPanel({ onClose }: Readonly<ChatPanelProps>) {
           </div>
         )}
         {messages.map((message) => <ChatMessage key={message.id} message={message} />)}
-        {loading && (
+        {busy && (
           <div className="flex items-center gap-2 font-body text-caption text-[var(--grey-600)]" aria-live="polite">
             <span className="flex gap-1 rounded-2xl rounded-tl-sm bg-green-50 px-3 py-3">
               <i className="h-1.5 w-1.5 animate-bounce rounded-full bg-green-500 [animation-delay:-0.2s]" />
@@ -164,35 +191,90 @@ export default function ChatPanel({ onClose }: Readonly<ChatPanelProps>) {
             {t('chat.typing')}
           </div>
         )}
+        {booking.active && (
+          <ChatBookingOptions
+            options={booking.options}
+            onSelect={booking.handleOption}
+          />
+        )}
         <div ref={messagesEndRef} />
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="border-t border-neutral-200 bg-white px-md pb-sm pt-sm"
-      >
-        <div className="flex items-center gap-xs">
-          <input
+      {!booking.active && (
+        <form
+          onSubmit={handleSubmit}
+          className="border-t border-neutral-200 bg-white px-md pb-sm pt-sm"
+        >
+          <div className="mb-xs flex items-center">
+            <button
+              type="button"
+              onClick={startBooking}
+              disabled={busy}
+              className="inline-flex items-center gap-1.5 rounded-full border border-green-500 px-3 py-1.5 font-body text-caption font-semibold text-green-700 transition-colors hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <CalendarPlus size={14} aria-hidden="true" />
+              {t('chat.booking.open')}
+            </button>
+          </div>
+          <div className="flex items-center gap-xs">
+            <input
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+              placeholder={t('chat.placeholder')}
+              maxLength={500}
+              aria-label={t('chat.placeholder')}
+              className="h-11 min-w-0 flex-1 rounded-xl border border-neutral-200 bg-white px-md font-body text-body-sm text-body-text-dark outline-none placeholder:text-[var(--grey-700)] focus:border-heading"
+            />
+            <button
+              type="submit"
+              disabled={busy || !input.trim()}
+              aria-label={t('chat.send')}
+              className="flex size-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-colors hover:bg-orange-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <SendIcon size={20} aria-hidden="true" />
+            </button>
+          </div>
+          <p className="m-0 mt-xs font-body text-[11px] leading-snug text-[var(--grey-600)]">{t('chat.disclaimer')}</p>
+        </form>
+      )}
+
+      {booking.active && booking.stage === 'data' && (
+        <form
+          onSubmit={handleSubmit}
+          className="border-t border-neutral-200 bg-white px-md pb-sm pt-sm"
+        >
+          <textarea
             value={input}
             onChange={(event) => setInput(event.target.value)}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
-            placeholder={t('chat.placeholder')}
-            maxLength={500}
-            aria-label={t('chat.placeholder')}
-            className="h-11 min-w-0 flex-1 rounded-xl border border-neutral-200 bg-white px-md font-body text-body-sm text-body-text-dark outline-none placeholder:text-[var(--grey-700)] focus:border-heading"
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
+                event.preventDefault()
+                event.currentTarget.form?.requestSubmit()
+              }
+            }}
+            placeholder={t('chat.booking.dataPlaceholder')}
+            maxLength={MAX_BOOKING_INPUT}
+            rows={4}
+            aria-label={t('chat.booking.dataPlaceholder')}
+            className="w-full resize-none rounded-xl border border-neutral-200 bg-white px-md py-sm font-body text-body-sm text-body-text-dark outline-none placeholder:text-[var(--grey-700)] focus:border-heading"
           />
-          <button
-            type="submit"
-            disabled={loading || !input.trim()}
-            aria-label={t('chat.send')}
-            className="flex size-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-colors hover:bg-orange-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <SendIcon size={20} aria-hidden="true" />
-          </button>
-        </div>
-        <p className="m-0 mt-xs font-body text-[11px] leading-snug text-[var(--grey-600)]">{t('chat.disclaimer')}</p>
-      </form>
+          <div className="mt-xs flex items-center justify-between gap-xs">
+            <p className="m-0 font-body text-[11px] leading-snug text-[var(--grey-600)]">{t('chat.booking.dataHint')}</p>
+            <button
+              type="submit"
+              disabled={booking.busy || !input.trim()}
+              aria-label={t('chat.send')}
+              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-colors hover:bg-orange-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <SendIcon size={18} aria-hidden="true" />
+            </button>
+          </div>
+        </form>
+      )}
     </section>
   )
 }

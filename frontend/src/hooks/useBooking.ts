@@ -22,9 +22,11 @@ export function useBooking() {
     try {
       const data = await appointmentService.getAvailableWeek(date)
       setAvailability(data)
+      return data
     } catch (err) {
       setAvailability({})
       setSlotsError(getErrorMessage(err))
+      return null
     } finally {
       setSlotsLoading(false)
     }

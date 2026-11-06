@@ -9,6 +9,7 @@ export interface ChatMessage {
   role: 'user' | 'bot'
   content: string
   blocked?: boolean
+  ephemeral?: boolean
 }
 
 const STORAGE_KEY = 'mygreenfarm_chat_history'
@@ -111,7 +112,7 @@ function saveHistory(messages: ChatMessage[], conversationId: string | null) {
   try {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
       version: STORAGE_VERSION,
-      messages,
+      messages: messages.filter((message) => !message.ephemeral),
       conversationId,
     } satisfies PersistedChat))
   } catch {
@@ -131,9 +132,9 @@ export function useChat() {
     return () => { closedRef.current = true }
   }, [])
 
-  const sendMessage = useCallback(async () => {
+  const sendMessage = useCallback(async (): Promise<ChatResponse | null> => {
     const trimmed = input.trim()
-    if (!trimmed || loading) return
+    if (!trimmed || loading) return null
     if (trimmed.length > 500) {
       const msg: ChatMessage = { id: generateId(), role: 'bot', content: i18n.t('chat.maxLength'), blocked: true }
       setMessages((prev) => {
@@ -142,7 +143,7 @@ export function useChat() {
         return next
       })
       setInput('')
-      return
+      return null
     }
 
     const userMsg: ChatMessage = { id: generateId(), role: 'user', content: trimmed }
@@ -156,13 +157,14 @@ export function useChat() {
 
     try {
       const history = messages
+        .filter((message) => !message.ephemeral)
         .slice(-12)
         .map(({ role, content }) => ({
           role: role === 'user' ? 'user' as const : 'assistant' as const,
           content,
         }))
       const res: ChatResponse = await sendChatMessage({ message: trimmed, conversationId, history })
-      if (closedRef.current) return
+      if (closedRef.current) return null
       const nextConversationId = res.conversationId || conversationId
       if (res.conversationId) setConversationId(res.conversationId)
       const firstName = getLoggedInFirstName()
@@ -172,24 +174,40 @@ export function useChat() {
         role: 'bot',
         content: personalizeGreeting(content, trimmed, firstName),
         blocked: res.blocked,
+        ephemeral: res.action === 'START_BOOKING',
       }
       setMessages((prev) => {
         const next = [...prev, botMsg]
         saveHistory(next, nextConversationId)
         return next
       })
+      return res
     } catch {
-      if (closedRef.current) return
+      if (closedRef.current) return null
       const botMsg: ChatMessage = { id: generateId(), role: 'bot', content: i18n.t('chat.retry'), blocked: true }
       setMessages((prev) => {
         const next = [...prev, botMsg]
         saveHistory(next, conversationId)
         return next
       })
+      return null
     } finally {
       if (!closedRef.current) setLoading(false)
     }
   }, [input, loading, conversationId, messages])
+
+  const appendMessage = useCallback((
+    role: ChatMessage['role'],
+    content: string,
+    options: { blocked?: boolean; ephemeral?: boolean } = {},
+  ) => {
+    const message: ChatMessage = { id: generateId(), role, content, ...options }
+    setMessages((prev) => {
+      const next = [...prev, message]
+      saveHistory(next, conversationId)
+      return next
+    })
+  }, [conversationId])
 
   const clearChat = useCallback(() => {
     closedRef.current = true
@@ -204,5 +222,14 @@ export function useChat() {
     }
   }, [])
 
-  return { messages, input, setInput, sendMessage, loading, clearChat, conversationId }
+  return {
+    messages,
+    input,
+    setInput,
+    sendMessage,
+    loading,
+    clearChat,
+    conversationId,
+    appendMessage,
+  }
 }
