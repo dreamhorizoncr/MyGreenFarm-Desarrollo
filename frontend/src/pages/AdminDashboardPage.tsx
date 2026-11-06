@@ -25,8 +25,6 @@ import {
 import { dashboardMock, type DashboardIconName } from './dashboard.mock.ts'
 
 type Icon = ComponentType<{ size?: number; className?: string; 'aria-hidden'?: boolean }>
-type Period = 'today' | 'thisWeek' | 'thisMonth'
-
 function monthRange(month: string) {
   const [year, monthNumber] = month.split('-').map(Number)
   const lastDay = new Date(year, monthNumber, 0).getDate()
@@ -39,6 +37,16 @@ function monthRange(month: string) {
 function eventTime(event: CalendarEvent, locale: string) {
   if (event.allDay) return null
   return new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(new Date(event.start))
+}
+
+function relativeTime(value: string, locale: string) {
+  const difference = new Date(value).getTime() - Date.now()
+  const minutes = Math.round(difference / 60000)
+  const formatter = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' })
+  if (Math.abs(minutes) < 60) return formatter.format(minutes, 'minute')
+  const hours = Math.round(minutes / 60)
+  if (Math.abs(hours) < 24) return formatter.format(hours, 'hour')
+  return formatter.format(Math.round(hours / 24), 'day')
 }
 
 const ICONS: Record<DashboardIconName, Icon> = {
@@ -57,7 +65,6 @@ const priorityClasses = {
 
 function AdminDashboardPage() {
   const { t, i18n } = useTranslation()
-  const [period, setPeriod] = useState<Period>('today')
   const [selectedDate, setSelectedDate] = useState<CalendarDate | null>(() => today(getLocalTimeZone()))
   const [calendarMonth, setCalendarMonth] = useState(() => today(getLocalTimeZone()).toString().slice(0, 7))
   const [dashboardDate] = useState(() => new Date())
@@ -99,14 +106,14 @@ function AdminDashboardPage() {
     [locale],
   )
   const selectedDateString = (selectedDate ?? today(getLocalTimeZone())).toString()
-  const dashboardRequestKey = `${selectedDateString}:${period}:${refreshKey}`
+  const dashboardRequestKey = `${selectedDateString}:${refreshKey}`
   const dashboardLoading = dashboardLoadedKey !== dashboardRequestKey
   const currentDashboardError = dashboardError?.key === dashboardRequestKey ? dashboardError.message : null
 
   useEffect(() => {
     let isCurrentRequest = true
 
-    dashboardService.getSummary(selectedDateString, period)
+    dashboardService.getSummary(selectedDateString)
       .then((summary) => {
         if (isCurrentRequest) {
           setDashboardData(summary)
@@ -125,7 +132,7 @@ function AdminDashboardPage() {
     return () => {
       isCurrentRequest = false
     }
-  }, [dashboardRequestKey, period, selectedDateString])
+  }, [dashboardRequestKey, selectedDateString])
 
   const stats = [
     { key: 'todayAppointments', label: 'admin.dashboard.stats.todayAppointments.label', value: dashboardData?.appointments.length, icon: 'calendar', href: '/admin/citas' },
@@ -135,33 +142,14 @@ function AdminDashboardPage() {
 
   return (
     <AdminLayout>
-      <header>
-        <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
-          {t('admin.dashboard.greeting', { name: t(`admin.dashboard.${dashboardMock.userName}`) })}
-        </h1>
-        <p className="mt-2 font-body text-body text-neutral-500">
-          {dateFormatter.format(dashboardDate)} · {t('admin.dashboard.pendingCount', { count: pendingCount })}
-        </p>
-      </header>
-      {currentDashboardError && <StatusMessage variant="error" description={t('admin.dashboard.loadError', { error: currentDashboardError })} className="mt-md" />}
-
-      <fieldset className="mx-0 mb-0 mt-xl flex min-w-0 flex-wrap items-center justify-between gap-sm border-0 p-0" aria-label={t('admin.dashboard.periodLabel')}>
-        <div className="flex flex-wrap gap-sm">
-          {(['today', 'thisWeek', 'thisMonth'] as const).map((option) => (
-            <button
-              key={option}
-              type="button"
-              aria-pressed={period === option}
-              onClick={() => setPeriod(option)}
-              className={`rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
-                period === option
-                  ? 'border-green-500 bg-green-500 text-white'
-                  : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
-              }`}
-            >
-              {t(`admin.dashboard.filters.${option}`)}
-            </button>
-          ))}
+      <header className="flex items-start justify-between gap-lg">
+        <div className="min-w-0">
+          <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
+            {t('admin.dashboard.greeting', { name: t(`admin.dashboard.${dashboardMock.userName}`) })}
+          </h1>
+          <p className="mt-2 font-body text-body text-neutral-500">
+            {dateFormatter.format(dashboardDate)} · {t('admin.dashboard.pendingCount', { count: pendingCount })}
+          </p>
         </div>
         <button
           type="button"
@@ -173,31 +161,33 @@ function AdminDashboardPage() {
             void fetchEvents(range.from, range.to)
             setRefreshKey((key) => key + 1)
           }}
-          className="inline-flex size-10 items-center justify-center rounded-full border border-green-500 text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+          className="mt-1 inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-green-500 text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
         >
           <RefreshCwIcon size={18} aria-hidden="true" />
         </button>
-      </fieldset>
+      </header>
+      {currentDashboardError && <StatusMessage variant="error" description={t('admin.dashboard.loadError', { error: currentDashboardError })} className="mt-md" />}
 
       <div className="mt-xl grid gap-xl xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-xl">
-          <section aria-labelledby="dashboard-summary-title" className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
-            <h2 id="dashboard-summary-title" className="m-0 font-heading text-h4 font-bold text-heading">{t('admin.dashboard.summaryTitle')}</h2>
-            {dashboardLoading || dashboardData?.aiSummary ? (
-              <p className="m-0 mt-sm font-body text-body text-neutral-500">
-                {dashboardLoading ? t('admin.dashboard.summaryLoading') : dashboardData?.aiSummary}
-              </p>
-            ) : (
-              <StatusMessage
-                compact
-                variant={currentDashboardError ? 'error' : 'empty'}
-                icon={currentDashboardError ? undefined : Sparkles}
-                description={t('admin.dashboard.summaryUnavailable')}
-                className="mt-md"
-              />
-            )}
-          </section>
 
+          <section aria-labelledby="dashboard-summary-title" className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
+        <h2 id="dashboard-summary-title" className="m-0 font-heading text-h4 font-bold text-heading">{t('admin.dashboard.summaryTitle')}</h2>
+        {dashboardLoading || dashboardData?.aiSummary ? (
+          <p className="m-0 mt-sm font-body text-body text-neutral-500">
+            {dashboardLoading ? t('admin.dashboard.summaryLoading') : dashboardData?.aiSummary}
+          </p>
+        ) : (
+          <StatusMessage
+            compact
+            variant={currentDashboardError ? 'error' : 'empty'}
+            icon={currentDashboardError ? undefined : Sparkles}
+            description={t('admin.dashboard.summaryUnavailable')}
+            className="mt-md"
+          />
+        )}
+      </section>
+      
           <section aria-labelledby="dashboard-stats-title">
             <h2 id="dashboard-stats-title" className="sr-only">{t('admin.dashboard.statsTitle')}</h2>
             <div className="grid gap-md sm:grid-cols-2 lg:grid-cols-3">
@@ -226,40 +216,41 @@ function AdminDashboardPage() {
             <section aria-labelledby="dashboard-priority-title" className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
               <h2 id="dashboard-priority-title" className="m-0 font-heading text-h4 font-bold text-heading">{t('admin.dashboard.pending')}</h2>
               <ul className="m-0 mt-md list-none space-y-sm p-0">
-                {dashboardMock.priorities.map((item) => (
-                  <li key={item.key}>
-                    <Link to="/admin/citas" className="group flex items-center gap-sm rounded-xl border border-neutral-100 p-sm transition hover:border-orange-200 hover:bg-orange-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2">
+                {dashboardData?.priorities.map((item) => (
+                  <li key={`${item.type}-${item.id}`}>
+                    <Link to={item.href} className="group flex items-center gap-sm rounded-xl border border-neutral-100 p-sm transition hover:border-orange-200 hover:bg-orange-50 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2">
                       <span className={`shrink-0 rounded-full border px-sm py-2xs font-body text-caption font-bold ${priorityClasses[item.priority]}`}>{t(`admin.dashboard.priority.${item.priority}`)}</span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate font-body text-body-sm font-semibold text-heading">{t(`admin.dashboard.items.${item.key}`)}</span>
-                        <span className="block font-body text-caption text-neutral-500">{t('admin.dashboard.dueDate', { date: t(`admin.dashboard.${item.date}`) })}</span>
+                        <span className="block truncate font-body text-body-sm font-semibold text-heading">{item.title}</span>
+                        <span className="block font-body text-caption text-neutral-500">{t('admin.dashboard.dueDate', { date: new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(item.dueAt)) })}</span>
                       </span>
                       <ChevronRightIcon size={17} className="shrink-0 text-neutral-400 transition group-hover:translate-x-1" aria-hidden="true" />
                     </Link>
                   </li>
                 ))}
               </ul>
-              <p className="sr-only">{t('admin.dashboard.emptyState')}</p>
+              {!dashboardLoading && !dashboardData?.priorities.length && <p className="mt-md font-body text-body-sm text-neutral-500">{t('admin.dashboard.emptyState')}</p>}
             </section>
 
             <section aria-labelledby="dashboard-activity-title" className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
               <h2 id="dashboard-activity-title" className="m-0 font-heading text-h4 font-bold text-heading">{t('admin.dashboard.activity')}</h2>
               <ol className="m-0 mt-md list-none space-y-md p-0">
-                {dashboardMock.activity.map((item, index) => {
-                  const Icon = ICONS[item.icon]
+                {dashboardData?.activities.map((item, index) => {
+                  const iconName: DashboardIconName = item.type === 'announcement' ? 'file' : item.type === 'gallery' ? 'calendar' : 'check'
+                  const Icon = ICONS[iconName]
                   return (
-                    <li key={item.key} className="relative flex gap-sm">
-                      {index < dashboardMock.activity.length - 1 && <span className="absolute left-4 top-9 h-full border-l border-dashed border-neutral-200" aria-hidden="true" />}
+                    <li key={`${item.type}-${item.id}`} className="relative flex gap-sm">
+                      {index < (dashboardData?.activities.length ?? 0) - 1 && <span className="absolute left-4 top-9 h-full border-l border-dashed border-neutral-200" aria-hidden="true" />}
                       <span className="relative z-10 flex size-8 shrink-0 items-center justify-center rounded-full bg-green-50 text-heading"><Icon size={15} aria-hidden={true} /></span>
-                      <span className="min-w-0">
-                        <span className="block font-body text-body-sm text-heading">{t(`admin.dashboard.items.${item.key}`)}</span>
-                        <span className="block font-body text-caption text-neutral-500">{t(`admin.dashboard.${item.time}`)}</span>
-                      </span>
+                      <Link to={item.href} className="min-w-0">
+                        <span className="block truncate font-body text-body-sm text-heading hover:text-link">{item.title}</span>
+                        <span className="block font-body text-caption text-neutral-500">{relativeTime(item.createdAt, locale)}</span>
+                      </Link>
                     </li>
                   )
                 })}
               </ol>
-              <p className="sr-only">{t('admin.dashboard.emptyState')}</p>
+              {!dashboardLoading && !dashboardData?.activities.length && <p className="mt-md font-body text-body-sm text-neutral-500">{t('admin.dashboard.emptyState')}</p>}
             </section>
           </div>
         </div>

@@ -1,6 +1,7 @@
 package taller.multimedia.backend.service.dashboard;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -15,11 +16,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
 import taller.multimedia.backend.repository.appointment.AppointmentRepository;
 import taller.multimedia.backend.repository.child.ChildRepository;
+import taller.multimedia.backend.repository.announcement.AnnouncementRepository;
+import taller.multimedia.backend.repository.curriculum.CurriculumRepository;
+import taller.multimedia.backend.repository.forum.ForumArticleRepository;
+import taller.multimedia.backend.repository.gallery.GalleryRepository;
+import taller.multimedia.backend.repository.vacancy.VacancyRepository;
 
 @ExtendWith(MockitoExtension.class)
 class DashboardServiceTest {
@@ -29,6 +37,21 @@ class DashboardServiceTest {
 
     @Mock
     private ChildRepository childRepository;
+
+    @Mock
+    private AnnouncementRepository announcementRepository;
+
+    @Mock
+    private GalleryRepository galleryRepository;
+
+    @Mock
+    private ForumArticleRepository forumArticleRepository;
+
+    @Mock
+    private CurriculumRepository curriculumRepository;
+
+    @Mock
+    private VacancyRepository vacancyRepository;
 
     @InjectMocks
     private DashboardService dashboardService;
@@ -49,6 +72,18 @@ class DashboardServiceTest {
                 .thenReturn(List.of(appointment));
         when(appointmentRepository.countByStatus(AppointmentStatus.PENDING)).thenReturn(3L);
         when(childRepository.countByIsActiveTrue()).thenReturn(12L);
+        when(appointmentRepository.findByAppointmentDateBetweenAndStatus(
+                any(), any(), org.mockito.ArgumentMatchers.eq(AppointmentStatus.PENDING)))
+                .thenReturn(List.of());
+        when(announcementRepository.findByCreatedAtAfterOrderByCreatedAtDesc(any(), any(Pageable.class)))
+                .thenReturn(Page.empty());
+        when(galleryRepository.findByCreatedAtAfterOrderByCreatedAtDesc(any(), any(Pageable.class)))
+                .thenReturn(Page.empty());
+        when(forumArticleRepository.findByCreatedAtAfterOrderByCreatedAtDesc(any(), any(Pageable.class)))
+                .thenReturn(Page.empty());
+        when(curriculumRepository.findByStatusAndSubmittedAtAfterOrderBySubmittedAtDesc(
+                org.mockito.ArgumentMatchers.eq(taller.multimedia.backend.model.curriculum.CurriculumStatus.PENDING), any()))
+                .thenReturn(List.of());
 
         var result = dashboardService.getSummary(date);
 

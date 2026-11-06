@@ -178,7 +178,7 @@ function CalendarPanel({ value, onChange, onFocusChange, markedDates, minValue, 
                       `relative flex shrink-0 items-center justify-center rounded-full transition-colors font-medium mx-auto ${size.cell}
                       ${isOutsideMonth || isDisabled ? 'text-neutral-300 opacity-60' : 'text-heading'}
                       ${isSelected ? 'bg-orange-500 shadow-md text-white' : 'hover:bg-neutral-100'}
-                      ${isMarked && !isSelected ? 'after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:size-1.5 after:rounded-full after:bg-orange-500' : ''}`
+                      ${isMarked && !isSelected ? 'after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:size-1.5 after:rounded-full after:bg-orange-500' : ''}`
                     }
                   />
                 )

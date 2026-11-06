@@ -1,6 +1,7 @@
 package taller.multimedia.backend.repository.forum;
 
 import java.util.UUID;
+import java.time.LocalDateTime;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,8 @@ import taller.multimedia.backend.model.forum.ForumArticle;
 
 @Repository
 public interface ForumArticleRepository extends JpaRepository<ForumArticle, UUID> {
+
+    Page<ForumArticle> findByCreatedAtAfterOrderByCreatedAtDesc(LocalDateTime date, Pageable pageable);
 
     Page<ForumArticle> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
