@@ -18,7 +18,7 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 
 /* =============================================================================
-   BASE — Overrides de preflight + estilos base custom
+   BASE — Preflight overrides + custom base styles
    Import order: tailwindcss → tokens → base → main
    ============================================================================= */
 
@@ -215,11 +215,15 @@ html [data-sileo-button][data-state] {
 }
 
 .blob-btn--filled .blob-btn__blob {
-  background: var(--orange-400);
+  background: var(--color-orange-600);
+}
+
+.blob-btn--filled:hover::before {
+  border-color: var(--color-orange-600);
 }
 
 /* ---------------------------------------------------------------------------
-   HTML — tipografía raíz, fondo y color
+   HTML — root typography, background and color
    --------------------------------------------------------------------------- */
 @layer base {
   html {
@@ -239,7 +243,7 @@ html [data-sileo-button][data-state] {
   }
 
   /* ---------------------------------------------------------------------------
-   ROOT — layout raíz
+   ROOT — root layout
    --------------------------------------------------------------------------- */
   #root {
     width: 100%;
@@ -255,7 +259,7 @@ html [data-sileo-button][data-state] {
   }
 
   /* ---------------------------------------------------------------------------
-   HEADINGS — tipografía (font-family, weight, color, size)
+   HEADINGS — typography (font-family, weight, color, size)
    --------------------------------------------------------------------------- */
   h1,
   h2,
@@ -337,7 +341,7 @@ html [data-sileo-button][data-state] {
   }
 
   /* ---------------------------------------------------------------------------
-   FORM — preflight no resetea border/background
+   FORM — preflight does not reset border/background
    --------------------------------------------------------------------------- */
   button,
   input,
@@ -357,7 +361,7 @@ html [data-sileo-button][data-state] {
 }
 
 /* ---------------------------------------------------------------------------
-   FONT WEIGHT OVERRIDES — Combina familia + peso para utilidades Tailwind
+   FONT WEIGHT OVERRIDES — Combine family + weight for Tailwind utilities
    --------------------------------------------------------------------------- */
 @layer base {
   input,
@@ -500,7 +504,7 @@ html.highlight-links-mode a {
 }
 
 /* =============================================================================
-   ACCESIBILIDAD — lector por voz, dislexia, cursor, guía y filtros
+   ACCESSIBILITY — voice reader, dyslexia, cursor, guide and filters
    ============================================================================= */
 
 @font-face {
@@ -514,6 +518,21 @@ html.highlight-links-mode a {
 html.dyslexia-font body,
 html.dyslexia-font body * {
   font-family: "OpenDyslexic", "Comic Sans MS", "Trebuchet MS", sans-serif;
+}
+
+/* Larger or wider text: long words wrap instead of pushing the layout off-screen. */
+html:is(.text-large, .text-xlarge, .dyslexia-font) body :where(h1, h2, h3, h4, h5, h6, p, li, dd, dt, blockquote, label, a, span, td, th, figcaption, strong, em) {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 479px) {
+  html:is(.text-large, .text-xlarge, .dyslexia-font) .navbar-brand-name {
+    display: none;
+  }
+
+  html:is(.text-large, .text-xlarge, .dyslexia-font) .a11y-panel-title {
+    font-size: var(--text-h5);
+  }
 }
 
 html.text-spacing-mode body {

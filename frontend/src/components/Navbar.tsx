@@ -11,11 +11,12 @@ import { tokenStorage } from '../utils/token.ts'
 
 interface BrandProps {
   showName?: boolean
+  compact?: boolean
   linkRef?: RefObject<HTMLAnchorElement | null>
   nameRef?: RefObject<HTMLSpanElement | null>
 }
 
-function Brand({ showName = true, linkRef, nameRef }: Readonly<BrandProps>) {
+function Brand({ showName = true, compact = false, linkRef, nameRef }: Readonly<BrandProps>) {
   return (
     <Link
       ref={linkRef}
@@ -23,7 +24,7 @@ function Brand({ showName = true, linkRef, nameRef }: Readonly<BrandProps>) {
       className="flex shrink-0 items-center gap-3 no-underline"
     >
       <img src={logo} alt="My Green Farm" className="h-12 w-auto max-w-[48px] object-contain" />
-      {showName && <span ref={nameRef} className="whitespace-nowrap font-heading text-h6 text-heading">My Green Farm</span>}
+      {showName && <span ref={nameRef} className={`whitespace-nowrap font-heading text-h6 text-heading${compact ? ' navbar-brand-name' : ''}`}>My Green Farm</span>}
     </Link>
   )
 }
@@ -38,6 +39,7 @@ function useBrandNameFits(language: string, isAuthenticated: boolean) {
   const optionsRef = useRef<HTMLDivElement>(null)
   const nameWidthRef = useRef(0)
   const [showName, setShowName] = useState(true)
+  const [collapse, setCollapse] = useState(false)
 
   useLayoutEffect(() => {
     const row = rowRef.current
@@ -63,6 +65,9 @@ function useBrandNameFits(language: string, isAuthenticated: boolean) {
       const available = row.clientWidth - Number.parseFloat(rowStyle.paddingLeft) - Number.parseFloat(rowStyle.paddingRight)
 
       setShowName(brand.offsetWidth + nameWidth + menuWidth + options.offsetWidth <= available)
+      const brandWithoutName = brand.offsetWidth - (nameRef.current ? nameWidthRef.current + BRAND_GAP : 0)
+      // With large text the links may not fit even without the name: use the compact menu instead.
+      setCollapse(brandWithoutName + menuWidth + options.offsetWidth > available)
     }
 
     measure()
@@ -72,7 +77,7 @@ function useBrandNameFits(language: string, isAuthenticated: boolean) {
     return () => observer.disconnect()
   }, [language, isAuthenticated])
 
-  return { rowRef, brandRef, nameRef, menuRef, optionsRef, showName }
+  return { rowRef, brandRef, nameRef, menuRef, optionsRef, showName, collapse }
 }
 
 function Navbar() {
@@ -81,7 +86,7 @@ function Navbar() {
   const navigate = useNavigate()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const isAuthenticated = Boolean(userStorage.getUser())
-  const { rowRef, brandRef, nameRef, menuRef, optionsRef, showName } = useBrandNameFits(i18n.language, isAuthenticated)
+  const { rowRef, brandRef, nameRef, menuRef, optionsRef, showName, collapse } = useBrandNameFits(i18n.language, isAuthenticated)
   const isProtectedPage =
     pathname === '/profile' ||
     pathname.startsWith('/admin')
@@ -93,7 +98,7 @@ function Navbar() {
     { to: '/forum', label: t('navbar.forum') },
     { to: '/services', label: t('navbar.services') },
     { to: '/clubs', label: t('navbar.clubs') },
-    { to: '/vacantes', label: t('navbar.vacancies') },
+    { to: '/vacancies', label: t('navbar.vacancies') },
     { to: '/about-us', label: t('navbar.aboutUs') },
     { to: '/green-hearts', label: t('greenHearts.navLabel') },
   ]
@@ -114,7 +119,11 @@ function Navbar() {
         isProtectedPage ? 'sticky top-0' : 'relative'
       }`}
     >
-      <nav className="hidden h-full w-full xl:flex">
+      <nav
+        aria-hidden={collapse || undefined}
+        inert={collapse || undefined}
+        className={`hidden h-full w-full xl:flex ${collapse ? 'pointer-events-none invisible absolute inset-x-0 top-0 h-16 overflow-hidden' : ''}`}
+      >
         <div ref={rowRef} className="flex h-full w-full items-center justify-between px-[var(--scale-1100)]">
           <Brand showName={showName} linkRef={brandRef} nameRef={nameRef} />
 
@@ -153,7 +162,7 @@ function Navbar() {
         </div>
       </nav>
 
-      <nav className="flex h-full w-full xl:hidden">
+      <nav className={`flex h-full w-full ${collapse ? '' : 'xl:hidden'}`}>
         <div
           className={`flex h-full w-full items-center justify-between ${
             isProtectedPage
@@ -161,7 +170,7 @@ function Navbar() {
               : 'mx-auto max-w-[var(--container-max-width)] px-lg'
           }`}
         >
-          <Brand />
+          <Brand compact />
 
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
@@ -197,7 +206,7 @@ function Navbar() {
         }`}
       >
         <div className="flex items-center justify-between px-6 py-4">
-          <Brand />
+          <Brand compact />
 
           <button
             type="button"
