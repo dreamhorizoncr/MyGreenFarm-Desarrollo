@@ -14,7 +14,7 @@ const moduleSections = [
   {
     path: '/admin/groups',
     labelKey: 'admin.groups.tabLabel',
-    roles: ['OWNER', 'TEACHER'],
+    roles: ['TEACHER'],
   },
   {
     path: '/admin/expedients',
@@ -28,7 +28,7 @@ const moduleSections = [
   },
 ] as const
 
-function ChildrenModuleTabs() {
+function ChildrenModuleTabs({ className = 'mt-[calc(var(--spacing-lg)-4px)]' }: Readonly<{ className?: string }>) {
   const { pathname } = useLocation()
   const { t } = useTranslation()
 
@@ -38,8 +38,8 @@ function ChildrenModuleTabs() {
   return (
     <nav
       ref={navRef}
-      aria-label={t('admin.sidebar.niños')}
-      className={`${tabCarouselClass} mt-[calc(var(--spacing-lg)-4px)]`}
+      aria-label={t('admin.sidebar.children')}
+      className={`${tabCarouselClass} ${className}`}
     >
       {moduleSections
         .filter(

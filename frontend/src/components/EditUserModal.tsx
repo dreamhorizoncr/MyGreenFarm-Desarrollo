@@ -9,15 +9,18 @@ import DatePickerField from './ui/DatePickerField.tsx'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 import FieldHint from './ui/FieldHint.tsx'
+import TeacherPhotoField from './TeacherPhotoField.tsx'
 
 interface EditUserModalProps {
   userToEdit: UserInfo
   currentUser: UserInfo
   onSave: (id: string, data: UpdateUserData) => Promise<void>
+  onUploadPhoto: (id: string, file: File) => Promise<void>
+  onDeletePhoto: (id: string) => Promise<void>
   onClose: () => void
 }
 
-function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<EditUserModalProps>) {
+function EditUserModal({ userToEdit, currentUser, onSave, onUploadPhoto, onDeletePhoto, onClose }: Readonly<EditUserModalProps>) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const { closing, requestClose } = useModalExit(onClose)
@@ -29,6 +32,9 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
   const [lastName, setLastName] = useState(userToEdit.lastName)
   const [email, setEmail] = useState(userToEdit.email)
   const [birthday, setBirthday] = useState(userToEdit.birthday ?? '')
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [photoRemoved, setPhotoRemoved] = useState(false)
+  const isTeacher = userToEdit.role === 'TEACHER'
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 
@@ -60,6 +66,8 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
         email: email.trim(),
         birthday: birthday || undefined,
       })
+      if (isTeacher && photoRemoved && userToEdit.photoUrl) await onDeletePhoto(userToEdit.id)
+      if (isTeacher && photoFile) await onUploadPhoto(userToEdit.id, photoFile)
       requestClose()
     } catch (err) {
       setSaveError(getErrorMessage(err))
@@ -149,6 +157,18 @@ function EditUserModal({ userToEdit, currentUser, onSave, onClose }: Readonly<Ed
           <DatePickerField value={birthday} onChange={setBirthday} ariaLabel={t('admin.birthday')} />
           <FieldHint>{t('fields.person.birthday.hint')}</FieldHint>
         </div>
+
+        {isTeacher && (
+          <TeacherPhotoField
+            currentUrl={userToEdit.photoUrl}
+            file={photoFile}
+            removed={photoRemoved}
+            disabled={saving}
+            onFileChange={setPhotoFile}
+            onRemovedChange={setPhotoRemoved}
+            className="md:col-span-2"
+          />
+        )}
       </div>
 
       {saveError && (

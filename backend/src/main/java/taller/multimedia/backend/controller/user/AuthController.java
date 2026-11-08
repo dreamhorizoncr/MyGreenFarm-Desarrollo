@@ -1,5 +1,9 @@
 package taller.multimedia.backend.controller.user;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import jakarta.validation.Valid;
 
 import org.springframework.http.HttpHeaders;
@@ -56,8 +60,11 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         try {
-            authService.registerUser(signUpRequest);
-            return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+            UUID id = authService.registerUser(signUpRequest);
+            Map<String, Object> body = new LinkedHashMap<>();
+            body.put("message", "User registered successfully!");
+            body.put("id", id);
+            return ResponseEntity.ok(body);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         } catch (Exception e) {
@@ -78,7 +85,7 @@ public class AuthController {
         try {
             authService.forgotPassword(request.getEmail());
 
-            return ResponseEntity.ok(new MessageResponse("Correo de recuperación enviado con éxito."));
+            return ResponseEntity.ok(new MessageResponse("Recovery email sent successfully."));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
@@ -88,7 +95,7 @@ public class AuthController {
     public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         try {
             authService.resetPassword(request.getToken(), request.getNewPassword());
-            return ResponseEntity.ok(new MessageResponse("Contraseña actualizada exitosamente."));
+            return ResponseEntity.ok(new MessageResponse("Password updated successfully."));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }

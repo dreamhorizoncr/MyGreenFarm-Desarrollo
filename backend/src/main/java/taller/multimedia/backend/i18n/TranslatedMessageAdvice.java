@@ -21,6 +21,8 @@ import taller.multimedia.backend.dto.MessageResponse;
 @RequiredArgsConstructor
 public class TranslatedMessageAdvice implements ResponseBodyAdvice<Object> {
 
+    private static final List<String> TRANSLATED_KEYS = List.of("message", "error", "invoiceError");
+
     private final BackendMessageTranslator translator;
 
     @Override
@@ -40,9 +42,9 @@ public class TranslatedMessageAdvice implements ResponseBodyAdvice<Object> {
         if (body instanceof String text) {
             return translator.translate(text, locale);
         }
-        if (body instanceof Map<?, ?> map && (map.get("message") instanceof String || map.get("error") instanceof String)) {
+        if (body instanceof Map<?, ?> map && TRANSLATED_KEYS.stream().anyMatch(key -> map.get(key) instanceof String)) {
             Map<Object, Object> translated = new LinkedHashMap<>(map);
-            for (String key : List.of("message", "error")) {
+            for (String key : TRANSLATED_KEYS) {
                 if (translated.get(key) instanceof String value) translated.put(key, translator.translate(value, locale));
             }
             return translated;

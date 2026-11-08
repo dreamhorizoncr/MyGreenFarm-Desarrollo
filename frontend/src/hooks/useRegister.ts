@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { authService } from '../services/auth.ts'
 import { getErrorMessage } from '../utils/error.ts'
-import type { RegisterData } from '../types/auth.ts'
+import type { RegisterData, RegisterResponse } from '../types/auth.ts'
 
 export function useRegister() {
   const [loading, setLoading] = useState(false)
@@ -11,7 +11,7 @@ export function useRegister() {
 
   const submitRegister = async (
     payload: RegisterData,
-    onSuccess?: () => void,
+    onSuccess?: (response: RegisterResponse) => void | Promise<void>,
     onError?: (message: string) => void,
   ) => {
     setLoading(true)
@@ -19,9 +19,9 @@ export function useRegister() {
     setSuccess(false)
 
     try {
-      await authService.register(payload)
+      const response = await authService.register(payload)
       setSuccess(true)
-      onSuccess?.()
+      await onSuccess?.(response)
     } catch (err) {
       const message = getErrorMessage(err)
       setError(message)
