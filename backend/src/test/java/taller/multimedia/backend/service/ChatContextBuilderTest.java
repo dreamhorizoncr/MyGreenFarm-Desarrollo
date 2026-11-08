@@ -25,7 +25,7 @@ class ChatContextBuilderTest {
         String context = builder.buildContext(null);
 
         assertTrue(context.contains("Liberia, Guanacaste, Costa Rica"));
-        assertTrue(context.contains("Reservar cita"));
+        assertTrue(context.contains("formulario de reserva"));
         assertTrue(context.contains("matrícula"));
         assertTrue(context.contains("+506 8327-8347"));
         assertFalse(context.contains("DATOS REALES PENDIENTES"));
