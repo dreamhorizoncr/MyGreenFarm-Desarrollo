@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { SendIcon, XIcon } from '@animateicons/react/lucide'
-import { CalendarPlus } from 'lucide-react'
 import { useChat } from '../../hooks/useChat'
 import { useChatBooking } from '../../hooks/useChatBooking'
 import ChatMessage from './ChatMessage'
@@ -101,11 +100,6 @@ export default function ChatPanel({ onClose }: Readonly<ChatPanelProps>) {
   else if (focused && input.trim()) chickState = 'listening'
   const talkTick = talk?.shown ?? 0
 
-  const startBooking = () => {
-    setInput('')
-    booking.start()
-  }
-
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
     const trimmed = input.trim()
@@ -205,17 +199,6 @@ export default function ChatPanel({ onClose }: Readonly<ChatPanelProps>) {
           onSubmit={handleSubmit}
           className="border-t border-neutral-200 bg-white px-md pb-sm pt-sm"
         >
-          <div className="mb-xs flex items-center">
-            <button
-              type="button"
-              onClick={startBooking}
-              disabled={busy}
-              className="inline-flex items-center gap-1.5 rounded-full border border-green-500 px-3 py-1.5 font-body text-caption font-semibold text-green-700 transition-colors hover:bg-green-50 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <CalendarPlus size={14} aria-hidden="true" />
-              {t('chat.booking.open')}
-            </button>
-          </div>
           <div className="flex items-center gap-xs">
             <input
               value={input}
