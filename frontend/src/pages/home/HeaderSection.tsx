@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import headerImage from '../../assets/imgs/ImgHeaderTemporal.svg'
-import nubesUp from '../../assets/imgs/nubesUp.svg'
+import headerImage from '../../assets/imgs/temporaryHeader.webp'
+import cloudsUp from '../../assets/imgs/cloudsUp.svg'
 import Container from '../../components/home/Container.tsx'
 import BlobButton from '../../components/ui/BlobButton.tsx'
 
@@ -41,6 +41,9 @@ function HeaderSection() {
             <img
               src={headerImage}
               alt={t('home.header.heroAlt')}
+              width={602}
+              height={436}
+              fetchPriority="high"
               className="w-full rounded-2xl object-cover"
             />
           </div>
@@ -49,7 +52,7 @@ function HeaderSection() {
 
       <div className="relative w-full overflow-hidden leading-none">
         <img
-          src={nubesUp}
+          src={cloudsUp}
           alt=""
           aria-hidden="true"
           data-scroll-bg="green"

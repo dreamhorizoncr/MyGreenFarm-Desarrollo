@@ -27,11 +27,9 @@ function LanguageSwitcher() {
     closeMenu()
     if (code === currentLanguage) return
 
-    const translate = i18n.getFixedT(code)
-
     i18n.changeLanguage(code).then(() => {
       notify.info({
-        title: translate('languageSwitcher.changedTitle')
+        title: i18n.getFixedT(code)('languageSwitcher.changedTitle')
       })
     })
   }

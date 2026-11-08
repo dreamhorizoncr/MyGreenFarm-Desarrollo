@@ -41,13 +41,13 @@ public class CategoryGalleryService {
     public CategoryGalleryResponse getById(UUID id) {
         return categoryGalleryRepository.findById(id)
                 .map(this::mapToResponse)
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Category not found with ID: " + id));
     }
 
     @Transactional
     public CategoryGalleryResponse update(UUID id, CategoryGalleryRequest dto) {
         CategoryGallery category = categoryGalleryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Category not found with ID: " + id));
 
         category.setTitle(Sanitizer.requireClean("title", dto.getTitle()));
 
@@ -58,7 +58,7 @@ public class CategoryGalleryService {
     @Transactional
     public void delete(UUID id) {
         CategoryGallery category = categoryGalleryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Category not found with ID: " + id));
 
         for (Gallery gallery : category.getGalleries()) {
             galleryService.delete(gallery.getId());
