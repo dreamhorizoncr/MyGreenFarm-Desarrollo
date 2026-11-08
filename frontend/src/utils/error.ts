@@ -1,9 +1,6 @@
 import axios, { type AxiosError } from 'axios'
 import i18n from '../i18n/index.ts'
 
-const CALENDAR_AVAILABILITY_MESSAGE = 'No se pudo cargar la disponibilidad en este momento'
-const MAX_FEATURED_MESSAGE = 'Ya existen 3 galerías destacadas. Debes desmarcar una antes de destacar otra.'
-
 function messageFromCode(data: object): string | undefined {
   const code = 'code' in data ? data.code : undefined
   switch (code) {
@@ -14,31 +11,6 @@ function messageFromCode(data: object): string | undefined {
     default:
       return undefined
   }
-}
-
-function translateKnownMessage(message: string): string {
-  if (message === CALENDAR_AVAILABILITY_MESSAGE) {
-    return i18n.t('common.calendarAvailabilityError')
-  }
-  if (message === MAX_FEATURED_MESSAGE) {
-    return i18n.t('admin.gallery.maxFeaturedReached')
-  }
-  if (message === 'Este correo ya se encuentra suscrito activamente al boletín.') {
-    return i18n.t('home.join.emailAlreadySubscribed')
-  }
-  if (message === 'El correo electrónico es obligatorio.') {
-    return i18n.t('home.join.emailRequired')
-  }
-  if (message === 'El formato del correo electrónico no es válido.') {
-    return i18n.t('home.join.emailInvalid')
-  }
-  if (message === 'El dominio del correo no es válido.') {
-    return i18n.t('home.join.domainInvalid')
-  }
-  if (message.startsWith('Solo se permiten correos de proveedores comunes')) {
-    return i18n.t('home.join.emailProviderNotAllowed')
-  }
-  return message
 }
 
 function bodyText(data: object): unknown {
@@ -53,11 +25,11 @@ function messageFromBody(data: unknown): string | undefined {
     if (fromCode !== undefined) return fromCode
 
     const message = bodyText(data)
-    if (typeof message === 'string') return translateKnownMessage(message)
+    if (typeof message === 'string') return message
   }
 
   if (typeof data === 'string') {
-    return translateKnownMessage(data)
+    return data
   }
 
   return undefined

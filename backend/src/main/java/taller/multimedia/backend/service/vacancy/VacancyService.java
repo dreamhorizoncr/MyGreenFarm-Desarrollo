@@ -66,7 +66,7 @@ public class VacancyService {
 
     private Vacancy findEntityById(UUID id) {
         return vacancyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Vacante no encontrada con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Job opening not found with ID: " + id));
     }
 
     private String toCsv(List<String> values) {

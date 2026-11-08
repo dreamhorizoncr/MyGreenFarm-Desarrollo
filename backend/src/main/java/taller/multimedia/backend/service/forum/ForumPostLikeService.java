@@ -24,11 +24,11 @@ public class ForumPostLikeService {
     @Transactional 
     public ForumPostLikeResponse toggleLike(UUID communityPostId, String anonId) {
         if (anonId == null || anonId.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se encontró el identificador del visitante");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The visitor ID was not found");
         }
 
         if (!communityPostRepository.existsById(communityPostId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post no encontrado: " + communityPostId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found: " + communityPostId);
         }
 
         boolean alreadyLiked = postLikeRepository.existsByCommunityPost_IdAndAnonId(communityPostId, anonId);

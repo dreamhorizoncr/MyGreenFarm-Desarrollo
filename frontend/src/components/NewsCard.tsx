@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import BlobButton from "./ui/BlobButton.tsx";
 import Skeleton from "./ui/Skeleton.tsx";
 import type { Announcement } from "../types/announcement.ts";
-import LowCortisol from "../assets/imgs/LowCortisol.png";
+import LowCortisol from "../assets/imgs/LowCortisol.webp";
 
 interface NewsCardProps {
   big?: boolean

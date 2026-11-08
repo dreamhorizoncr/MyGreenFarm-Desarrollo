@@ -33,9 +33,9 @@ public class ExchangeRateService {
         try {
             String xml = bacExchangeRateClient.downloadXml();
             saveDailyRates(bacExchangeRateClient.extractCostaRicaRates(xml));
-            log.info("[ExchangeRateService] Tipo de cambio actualizado");
+            log.info("[ExchangeRateService] Exchange rate updated");
         } catch (Exception e) {
-            log.warn("[ExchangeRateService] No se pudo actualizar el tipo de cambio: {}", e.getMessage());
+            log.warn("[ExchangeRateService] Could not update the exchange rate: {}", e.getMessage());
         }
     }
 

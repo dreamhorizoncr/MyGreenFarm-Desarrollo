@@ -43,14 +43,13 @@ public class ChildService {
 
         Parent parent = parentRepository.findByIdentification(parentIdentification)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Padre/Tutor no encontrado con la cédula: " + parentIdentification));
+                        "Parent/guardian not found with ID number: " + parentIdentification));
 
         String firstName = Sanitizer.requireClean("firstName", dto.getFirstName());
         String lastName = Sanitizer.requireClean("lastName", dto.getLastName());
         String medicalNotes = dto.getMedicalNotes() == null ? null
                 : Sanitizer.requireCleanPreserveLineBreaks("medicalNotes", dto.getMedicalNotes());
 
-        // 4. Reutiliza el carné anterior si quedó libre o genera uno nuevo secuencial
         String studentId = studentIdGeneratorService.generateNextStudentId();
 
         Child child = Child.builder()
@@ -61,7 +60,7 @@ public class ChildService {
                 .lastName(lastName)
                 .birthDate(dto.getBirthDate())
                 .medicalNotes(medicalNotes)
-                .isActive(dto.getIsActive() != null ? dto.getIsActive() : true) // 2. Soporte para isActive
+                .isActive(dto.getIsActive() != null ? dto.getIsActive() : true)
                 .childClubs(new ArrayList<>())
                 .build();
 
@@ -73,7 +72,7 @@ public class ChildService {
                 long enrolled = childClubRepository.countByClubId(club.getId());
                 if (club.getMaxCapacity() != null && enrolled >= club.getMaxCapacity()) {
                     throw new IllegalArgumentException(
-                            "El club '" + club.getName() + "' ya no tiene cupos disponibles.");
+                            "The club '" + club.getName() + "' has no spots left.");
                 }
 
                 ChildClub childClub = new ChildClub();
@@ -113,18 +112,18 @@ public class ChildService {
     @Transactional(readOnly = true)
     public ChildResponse getById(Long id) {
         Child child = childRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Registro de niño no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Child record not found with ID: " + id));
         return mapToResponse(child);
     }
 
     @Transactional
     public ChildResponse update(Long id, ChildRequest dto) {
         Child child = childRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Registro de niño no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Child record not found with ID: " + id));
 
         Parent parent = parentRepository.findByIdentification(dto.getParentIdentification())
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Padre/Tutor no encontrado con la cédula: " + dto.getParentIdentification()));
+                        "Parent/guardian not found with ID number: " + dto.getParentIdentification()));
 
         String firstName = Sanitizer.requireClean("firstName", dto.getFirstName());
         String lastName = Sanitizer.requireClean("lastName", dto.getLastName());
@@ -163,7 +162,7 @@ public class ChildService {
                 long enrolled = childClubRepository.countByClubId(club.getId());
                 if (club.getMaxCapacity() != null && enrolled >= club.getMaxCapacity()) {
                     throw new IllegalArgumentException(
-                            "El club '" + club.getName() + "' ya no tiene cupos disponibles.");
+                            "The club '" + club.getName() + "' has no spots left.");
                 }
 
                 ChildClub cc = new ChildClub();
@@ -197,7 +196,7 @@ public class ChildService {
     @Transactional
     public void delete(Long id) {
         Child child = childRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Registro de niño no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Child record not found with ID: " + id));
         Set<Long> affectedClubIds = new HashSet<>();
         if (child.getChildClubs() != null) {
             child.getChildClubs().forEach(cc -> affectedClubIds.add(cc.getClub().getId()));

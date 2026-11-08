@@ -46,8 +46,8 @@ public class ForumExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<MessageResponse> handleUnexpectedException(Exception exception) {
-        log.error("Error inesperado en el foro", exception);
+        log.error("Unexpected error in the forum", exception);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new MessageResponse("Ocurrió un error inesperado"));
+                .body(new MessageResponse("An unexpected error occurred"));
     }
 }

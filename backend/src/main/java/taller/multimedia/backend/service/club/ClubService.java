@@ -54,7 +54,7 @@ public class ClubService {
         String schedule = dto.getSchedule() == null ? null : Sanitizer.requireClean("schedule", dto.getSchedule());
 
         if (clubRepository.existsByNameIgnoreCase(name)) {
-            throw new IllegalArgumentException("Ya existe un club con el nombre: " + name);
+            throw new IllegalArgumentException("A club already exists with the name: " + name);
         }
 
         Club club = new Club();
@@ -86,14 +86,14 @@ public class ClubService {
     @Transactional(readOnly = true)
     public ClubResponse getById(Long id, String lang) {
         Club club = clubRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Club no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Club not found with ID: " + id));
         return mapToResponse(club, lang);
     }
 
     @Transactional
     public ClubResponse update(Long id, ClubRequest dto) {
         Club club = clubRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Club no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Club not found with ID: " + id));
 
         String name = Sanitizer.requireClean("name", dto.getName());
         String description = dto.getDescription() == null ? null
@@ -101,7 +101,7 @@ public class ClubService {
         String schedule = dto.getSchedule() == null ? null : Sanitizer.requireClean("schedule", dto.getSchedule());
 
         if (clubRepository.existsByNameIgnoreCaseAndIdNot(name, id)) {
-            throw new IllegalArgumentException("Ya existe un club con el nombre: " + name);
+            throw new IllegalArgumentException("A club already exists with the name: " + name);
         }
 
         if (dto.getMaxCapacity() != null && !dto.getMaxCapacity().equals(club.getMaxCapacity())) {
@@ -130,7 +130,7 @@ public class ClubService {
     @Transactional
     public void delete(Long id) {
         Club club = clubRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Club no encontrado con ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Club not found with ID: " + id));
 
         childRepository.deleteByClubId(id);
 
@@ -149,7 +149,7 @@ public class ClubService {
 
     public void updateAvailableSpots(Long clubId) {
         Club club = clubRepository.findById(clubId)
-                .orElseThrow(() -> new EntityNotFoundException("Club no encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Club not found"));
         long enrolled = childRepository.countByClubId(clubId);
         if (club.getMaxCapacity() != null) {
             club.setAvailableSpots((int) Math.max(0, club.getMaxCapacity() - enrolled));

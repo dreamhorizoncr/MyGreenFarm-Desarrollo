@@ -69,7 +69,7 @@ public class AnnouncementController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/resumen/regenerar")
+    @PostMapping("/{id}/summary/regenerate")
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<Void> regenerateSummary(@PathVariable UUID id) {
         announcementSummaryAsyncService.generateSummaryAsync(id, true);

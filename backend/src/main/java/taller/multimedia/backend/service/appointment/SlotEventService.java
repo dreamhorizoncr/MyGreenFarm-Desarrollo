@@ -64,7 +64,7 @@ public class SlotEventService {
                 emitters.remove(emitter);
             }
         }
-        if (log.isDebugEnabled()) log.debug("Conexiones SSE de horarios abiertas: {}", emitters.size());
+        if (log.isDebugEnabled()) log.debug("Open time slot SSE connections: {}", emitters.size());
     }
 
     int connectionCount() {

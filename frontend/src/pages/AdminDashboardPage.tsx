@@ -135,8 +135,8 @@ function AdminDashboardPage() {
   }, [dashboardRequestKey, selectedDateString])
 
   const stats = [
-    { key: 'todayAppointments', label: 'admin.dashboard.stats.todayAppointments.label', value: dashboardData?.appointments.length, icon: 'calendar', href: '/admin/citas' },
-    { key: 'appointmentsToConfirm', label: 'admin.dashboard.stats.appointmentsToConfirm.label', value: dashboardData?.pendingAppointmentCount, icon: 'clock', href: '/admin/citas' },
+    { key: 'todayAppointments', label: 'admin.dashboard.stats.todayAppointments.label', value: dashboardData?.appointments.length, icon: 'calendar', href: '/admin/appointments' },
+    { key: 'appointmentsToConfirm', label: 'admin.dashboard.stats.appointmentsToConfirm.label', value: dashboardData?.pendingAppointmentCount, icon: 'clock', href: '/admin/appointments' },
     { key: 'activeChildren', label: 'admin.dashboard.stats.activeChildren.label', value: dashboardData?.activeChildrenCount, icon: 'user', href: '/admin/children' },
   ] as const
 
@@ -296,7 +296,7 @@ function AdminDashboardPage() {
               )}
             </ol>
           </section>
-          <Link to="/admin/citas" className="inline-flex w-full items-center justify-center rounded-full bg-orange-500 px-lg py-sm font-body text-body-sm font-bold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2">
+          <Link to="/admin/appointments" className="inline-flex w-full items-center justify-center rounded-full bg-orange-500 px-lg py-sm font-body text-body-sm font-bold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2">
             {t('admin.dashboard.agenda.viewAll')}
           </Link>
         </aside>

@@ -14,15 +14,15 @@ public class GalleryRequest {
     @NotNull 
     private UUID categoryId;
 
-    @NotBlank(message = "El título es obligatorio")
-    @Size(min = 5, max = 70, message = "El título debe tener entre 50 y 70 caracteres")
+    @NotBlank(message = "The title is required")
+    @Size(min = 5, max = 70, message = "The title must be between 50 and 70 characters")
     private String title;
 
-    @NotBlank(message = "La descripción es obligatoria")
-    @Size(min = 20, max = 200, message = "El contenido no puede superar los 200 caracteres")
+    @NotBlank(message = "The description is required")
+    @Size(min = 20, max = 200, message = "The content cannot exceed 200 characters")
     private String description;
 
-    @NotNull(message = "El estado de destacado es obligatorio")
+    @NotNull(message = "The featured status is required")
     private Boolean featured = false;
 
 }

@@ -28,93 +28,93 @@ public class ForumModerationService {
     private static final Logger log = LoggerFactory.getLogger(ForumModerationService.class);
 
     private static final String REJECTED_MESSAGE =
-            "No pudimos publicar el contenido porque no cumple con las normas del foro.";
+            "We could not publish the content because it does not follow the forum rules.";
     private static final String NAME_REJECTED_MESSAGE =
-            "Ese nombre no cumple con las normas del foro. Elegí otro para continuar.";
+            "That name does not follow the forum rules. Choose another one to continue.";
     private static final String UNAVAILABLE_MESSAGE =
-            "No se pudo verificar el contenido en este momento. Intenta de nuevo en unos segundos.";
+            "The content could not be checked right now. Try again in a few seconds.";
     private static final String EMOJI_REJECTED_MESSAGE =
-            "No se permiten emojis en el foro. Quítalos e intenta de nuevo.";
+            "Emojis are not allowed in the forum. Remove them and try again.";
 
     private static final Pattern EMOJI_PATTERN = Pattern.compile(
             "[\\x{1F300}-\\x{1FAFF}\\x{2600}-\\x{27BF}\\x{1F1E6}-\\x{1F1FF}\\x{2B00}-\\x{2BFF}\\x{FE0F}\\x{200D}]");
 
     private static final String SPELLING_INSTRUCTION =
-            "- \"correctedContent\" es el mismo mensaje con la ortografía, tildes y puntuación corregidas. "
-                    + "No cambies el significado, el tono, las palabras, el idioma ni el estilo (informal está bien); "
-                    + "corrige únicamente errores ortográficos evidentes. Si no hay errores, devuelve el texto igual.";
+            "- \"correctedContent\" is the same message with its spelling, accents and punctuation corrected. "
+                    + "Do not change the meaning, tone, words, language or style (informal is fine); "
+                    + "fix only obvious spelling mistakes. If there are no mistakes, return the text unchanged.";
 
     private static final String CONTEXT =
-            "Eres moderador del foro de un centro educativo infantil en Costa Rica "
-                    + "(familias con niños de 0 a 12 años). ";
+            "You moderate the forum of an early childhood education center in Costa Rica "
+                    + "(families with children aged 0 to 12). ";
 
     private static final String PROFANITY_RULES =
-            "Rechaza groserías, insultos o lenguaje sexual en español o inglés, aunque estén mal escritos, "
-                    + "abreviados o disimulados con números, símbolos o espacios. Ejemplos: Costa Rica: malparido, "
+            "Reject profanity, insults or sexual language in Spanish or English, even when misspelled, "
+                    + "abbreviated or disguised with numbers, symbols or spaces. Examples: Costa Rica: malparido, "
                     + "hijueputa, hp, carepicha, picha, playo, zorra, puta, verga, culo, mierda, pendejo, huevón; "
-                    + "México: chingar, pinche, culero, joto, alv; Colombia: gonorrea, carechimba, pirobo; "
+                    + "Mexico: chingar, pinche, culero, joto, alv; Colombia: gonorrea, carechimba, pirobo; "
                     + "Argentina: boludo, pelotudo, forro, conchudo; Chile: weón, culiao, ctm; Venezuela: coño, "
-                    + "mamagüevo, mmg; Centroamérica: cerote; España: gilipollas, joder; inglés: fuck, shit, bitch, "
-                    + "asshole, dick, pussy, wtf, insultos raciales u homofóbicos. Permite el habla coloquial que no "
-                    + "es grosera: mae, maje, güey, pura vida, tuanis, diay, brete, chunche, güila. "
-                    + "Rechaza también contenido sexual, violento, discriminatorio, acoso, spam, publicidad o datos "
-                    + "personales de terceros. ";
+                    + "mamagüevo, mmg; Central America: cerote; Spain: gilipollas, joder; English: fuck, shit, bitch, "
+                    + "asshole, dick, pussy, wtf, racial or homophobic slurs. Allow colloquial speech that is not "
+                    + "rude: mae, maje, güey, pura vida, tuanis, diay, brete, chunche, güila. "
+                    + "Also reject sexual, violent or discriminatory content, harassment, spam, advertising or "
+                    + "personal data of third parties. ";
 
     private static final String APPROPRIATE_PROMPT =
-            CONTEXT + "Evalúa esta publicación del muro de la comunidad.\n\n"
-                    + "Publicación:\n\"%s\"\n\n"
-                    + "Reglas: " + PROFANITY_RULES
-                    + "No se permite hablar de política (partidos, candidatos, gobiernos) ni hacer proselitismo o "
-                    + "burlas religiosas. Sí se permiten cortesías como \"Dios los bendiga\" o \"Feliz Navidad\".\n\n"
-                    + "Responde ÚNICAMENTE con un JSON de una línea, sin texto adicional ni bloques de código:\n"
+            CONTEXT + "Evaluate this community wall post.\n\n"
+                    + "Post:\n\"%s\"\n\n"
+                    + "Rules: " + PROFANITY_RULES
+                    + "Talking about politics (parties, candidates, governments), proselytizing or mocking religion "
+                    + "is not allowed. Courtesies such as \"Dios los bendiga\" or \"Feliz Navidad\" are allowed.\n\n"
+                    + "Reply ONLY with a single-line JSON, with no extra text or code blocks:\n"
                     + "{\"appropriate\": true|false, \"correctedContent\": \"...\"}\n"
-                    + "- \"appropriate\" es false si incumple alguna regla.\n"
+                    + "- \"appropriate\" is false if it breaks any rule.\n"
                     + SPELLING_INSTRUCTION;
 
     private static final String COMMENT_PROMPT =
-            CONTEXT + "Evalúa este comentario a un artículo del blog del centro.\n\n"
-                    + "Tema del artículo: \"%s\"\n"
-                    + "Título del artículo: \"%s\"\n"
-                    + "Comentario:\n\"%s\"\n\n"
-                    + "Reglas: " + PROFANITY_RULES
-                    + "Solo se permite mencionar figuras políticas o religiosas, o hablar de política o religión, si "
-                    + "el artículo trata de ese tema y el comentario es respetuoso; si no, recházalo. Nunca se "
-                    + "permiten burlas, insultos ni propaganda política o religiosa. Sí se permiten cortesías como "
-                    + "\"Dios los bendiga\".\n\n"
-                    + "Responde ÚNICAMENTE con un JSON de una línea, sin texto adicional ni bloques de código:\n"
+            CONTEXT + "Evaluate this comment on an article from the center's blog.\n\n"
+                    + "Article topic: \"%s\"\n"
+                    + "Article title: \"%s\"\n"
+                    + "Comment:\n\"%s\"\n\n"
+                    + "Rules: " + PROFANITY_RULES
+                    + "Mentioning political or religious figures, or talking about politics or religion, is only "
+                    + "allowed if the article is about that topic and the comment is respectful; otherwise reject it. "
+                    + "Mockery, insults and political or religious propaganda are never allowed. Courtesies such as "
+                    + "\"Dios los bendiga\" are allowed.\n\n"
+                    + "Reply ONLY with a single-line JSON, with no extra text or code blocks:\n"
                     + "{\"appropriate\": true|false, \"onTopic\": true|false, \"correctedContent\": \"...\"}\n"
-                    + "- \"appropriate\" es false si incumple alguna regla.\n"
-                    + "- \"onTopic\" es false si el comentario no tiene ninguna relación razonable con el tema o el "
-                    + "título del artículo.\n"
+                    + "- \"appropriate\" is false if it breaks any rule.\n"
+                    + "- \"onTopic\" is false if the comment has no reasonable relation to the article's topic or "
+                    + "title.\n"
                     + SPELLING_INSTRUCTION;
 
     private static final String NAME_PROMPT =
-            CONTEXT + "Evalúa este nombre o alias con el que alguien firma en el foro.\n\n"
-                    + "Nombre:\n\"%s\"\n\n"
-                    + "Analiza tres criterios por separado:\n"
-                    + "1. \"offensive\": contiene groserías o lenguaje sexual u ofensivo, aunque esté disimulado.\n"
-                    + "2. \"doubleMeaning\": parece un nombre y apellido normales, pero leído en voz alta o juntando "
-                    + "sus partes forma una frase o palabra sexual, vulgar, de burla o que alude a abuso de menores, "
-                    + "en español o en inglés (los típicos nombres falsos de broma).\n"
-                    + "3. \"impersonation\": el nombre completo, es decir el nombre de pila y el apellido juntos, es "
-                    + "el de una figura muy conocida, o su apodo conocido, o el apellido de la figura usado solo como "
-                    + "alias. Cuentan presidentes y expresidentes de cualquier país, políticos conocidos de Costa "
-                    + "Rica (diputados, ministros, alcaldes), figuras religiosas (Dios, Jesucristo, la Virgen, el "
-                    + "Papa, Mahoma, Buda, Satanás) y criminales o personajes históricos polémicos. También cuenta "
-                    + "si imita a una de esas figuras con letras cambiadas: Donald Prompt, Donal Trum, Obamna, Nayib "
-                    + "Bukelele, Jesu Cristo.\n"
-                    + "   Compartir solo el apellido o solo el nombre de pila con una figura NO es suplantación. Esos "
-                    + "apellidos los usan miles de familias y un padre o una madre puede llamarse así sin mala "
-                    + "intención: María Escobar, Marta Trump, Carlos Bukele, Ana Castro, Luis Arias y Jesús "
-                    + "Rodríguez son personas comunes. Sí cuenta si el nombre completo es el de un familiar o socio "
-                    + "conocido de la figura. No cuenta que exista alguien poco conocido con ese mismo nombre. Si no "
-                    + "sabes si un nombre completo es el de un político real, usa la "
-                    + "búsqueda; ante la duda con un nombre y apellido normales, no es suplantación.\n\n"
-                    + "Los apodos normales son válidos (Mamá de Sofi, Familia Rojas).\n\n"
-                    + "Responde ÚNICAMENTE con un JSON de una línea, sin texto adicional ni bloques de código:\n"
+            CONTEXT + "Evaluate this name or alias that someone uses to sign in the forum.\n\n"
+                    + "Name:\n\"%s\"\n\n"
+                    + "Analyze three criteria separately:\n"
+                    + "1. \"offensive\": it contains profanity or sexual or offensive language, even if disguised.\n"
+                    + "2. \"doubleMeaning\": it looks like a normal first and last name, but read aloud or with its "
+                    + "parts joined it forms a sexual, vulgar or mocking phrase or word, or one that alludes to child "
+                    + "abuse, in Spanish or English (the typical fake joke names).\n"
+                    + "3. \"impersonation\": the full name, meaning the first name and last name together, belongs "
+                    + "to a very well-known figure, or is their known nickname, or is the figure's last name used "
+                    + "alone as an alias. This includes presidents and former presidents of any country, well-known "
+                    + "Costa Rican politicians (legislators, ministers, mayors), religious figures (Dios, Jesucristo, "
+                    + "la Virgen, el Papa, Mahoma, Buda, Satanás) and criminals or controversial historical figures. "
+                    + "It also counts if it imitates one of those figures with changed letters: Donald Prompt, Donal "
+                    + "Trum, Obamna, Nayib Bukelele, Jesu Cristo.\n"
+                    + "   Sharing only the last name or only the first name with a figure is NOT impersonation. "
+                    + "Thousands of families use those last names and a parent can be called that with no bad "
+                    + "intent: María Escobar, Marta Trump, Carlos Bukele, Ana Castro, Luis Arias and Jesús "
+                    + "Rodríguez are ordinary people. It does count if the full name is that of a known relative or "
+                    + "associate of the figure. It does not count that a little-known person has the same name. If "
+                    + "you do not know whether a full name belongs to a real politician, use "
+                    + "search; when in doubt with a normal first and last name, it is not impersonation.\n\n"
+                    + "Normal nicknames are valid (Mamá de Sofi, Familia Rojas).\n\n"
+                    + "Reply ONLY with a single-line JSON, with no extra text or code blocks:\n"
                     + "{\"offensive\": true|false, \"doubleMeaning\": true|false, \"impersonation\": true|false, "
                     + "\"appropriate\": true|false}\n"
-                    + "- \"appropriate\" es true solo si los tres criterios son false.";
+                    + "- \"appropriate\" is true only if all three criteria are false.";
 
     private final ObjectMapper objectMapper;
 
@@ -204,24 +204,24 @@ public class ForumModerationService {
 
             try (Response response = httpClient.newCall(request).execute()) {
                 if (response.code() == 429 && withSearchGrounding) {
-                    log.warn("Gemini rechazó la búsqueda de Google por cuota (429); se modera sin búsqueda");
+                    log.warn("Gemini rejected Google Search due to quota (429); moderating without search");
                     return callGemini(fieldName, prompt, false);
                 }
                 if (!response.isSuccessful()) {
-                    log.error("Error llamando a Gemini API para moderación: status={}", response.code());
+                    log.error("Error calling the Gemini API for moderation: status={}", response.code());
                     throw new InvalidFieldException(fieldName, UNAVAILABLE_MESSAGE);
                 }
 
                 String responseBody = response.body() != null ? response.body().string() : null;
                 if (responseBody == null || responseBody.isBlank()) {
-                    log.error("Gemini API devolvió una respuesta vacía para moderación");
+                    log.error("The Gemini API returned an empty moderation response");
                     throw new InvalidFieldException(fieldName, UNAVAILABLE_MESSAGE);
                 }
 
                 JsonNode root = objectMapper.readTree(responseBody);
 
                 if (root.path("candidates").isEmpty()) {
-                    log.warn("Gemini bloqueó el contenido a moderar: {}", root.path("promptFeedback"));
+                    log.warn("Gemini blocked the content to moderate: {}", root.path("promptFeedback"));
                     throw new InvalidFieldException(fieldName, REJECTED_MESSAGE);
                 }
 
@@ -231,7 +231,7 @@ public class ForumModerationService {
                         .path("text").asString();
 
                 if (text == null || text.isBlank()) {
-                    log.error("Gemini API no devolvió texto en la respuesta de moderación");
+                    log.error("The Gemini API returned no text in the moderation response");
                     throw new InvalidFieldException(fieldName, UNAVAILABLE_MESSAGE);
                 }
 
@@ -240,7 +240,7 @@ public class ForumModerationService {
         } catch (InvalidFieldException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error moderando contenido con Gemini API: {}", e.getMessage());
+            log.error("Error moderating content with the Gemini API: {}", e.getMessage());
             throw new InvalidFieldException(fieldName, UNAVAILABLE_MESSAGE);
         }
     }

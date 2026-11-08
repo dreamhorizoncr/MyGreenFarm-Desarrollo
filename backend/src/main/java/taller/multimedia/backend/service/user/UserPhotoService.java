@@ -27,19 +27,19 @@ public class UserPhotoService {
     @Transactional
     public UserInfoResponse uploadTeacherPhoto(UUID userId, MultipartFile file) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + userId));
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
         if (user.getRole() != Role.TEACHER) {
-            throw new IllegalArgumentException("Solo se pueden asignar fotos de perfil a usuarios con rol TEACHER.");
+            throw new IllegalArgumentException("Profile photos can only be assigned to users with the TEACHER role.");
         }
 
         if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("Debe seleccionar un archivo válido.");
+            throw new IllegalArgumentException("You must select a valid file.");
         }
 
         String contentType = file.getContentType();
         if (contentType == null || !isValidImageFormat(contentType)) {
-            throw new IllegalArgumentException("Formato de imagen no permitido. Solo se aceptan PNG, JPG, JPEG, SVG.");
+            throw new IllegalArgumentException("Unsupported image format. Only PNG, JPG, JPEG and SVG are accepted.");
         }
 
         if (user.getPhotoUrl() != null && !user.getPhotoUrl().isBlank()) {
@@ -48,7 +48,7 @@ public class UserPhotoService {
                 try {
                     storageService.deleteFile(usersBucket, oldPath);
                 } catch (Exception e) {
-                    System.err.println("No se pudo eliminar la foto anterior del bucket: " + e.getMessage());
+                    System.err.println("Could not delete the previous photo from the bucket: " + e.getMessage());
                 }
             }
         }
@@ -71,7 +71,7 @@ public class UserPhotoService {
     @Transactional
     public void deleteTeacherPhoto(UUID userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + userId));
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
 
         if (user.getPhotoUrl() != null && !user.getPhotoUrl().isBlank()) {
             String filePath = extractPathFromUrl(user.getPhotoUrl(), usersBucket);
@@ -98,7 +98,7 @@ public class UserPhotoService {
                 return fileUrl.substring(index + marker.length());
             }
         } catch (Exception e) {
-            System.err.println("Error al extraer la ruta de la URL de la foto: " + e.getMessage());
+            System.err.println("Error extracting the path from the photo URL: " + e.getMessage());
         }
         return null;
     }

@@ -219,7 +219,6 @@ function AdminEvaluationsPage() {
                         <StatusMessage icon={ClipboardCheck} description={t("admin.evaluations.noEvaluations")} className="mt-8" />
                     )}
 
-                {/* Búsqueda sin resultados */}
                 {!isLoading &&
                     !error &&
                     evaluations.length > 0 &&

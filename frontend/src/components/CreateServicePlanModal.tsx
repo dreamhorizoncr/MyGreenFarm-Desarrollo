@@ -72,13 +72,13 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
   }, [])
 
   const serviceFrequencyOptions: SelectOption[] = [
-    { value: 'ONE_TIME', label: t('admin.servicios.oneTime') },
-    { value: 'DAILY', label: t('admin.servicios.daily') },
-    { value: 'WEEKLY', label: t('admin.servicios.weekly') },
-    { value: 'TWO_WEEKS', label: t('admin.servicios.twoWeeks') },
-    { value: 'MONTHLY', label: t('admin.servicios.monthly') },
-    { value: 'SIX_MONTHS', label: t('admin.servicios.sixMonths') },
-    { value: 'ANNUAL', label: t('admin.servicios.annual') },
+    { value: 'ONE_TIME', label: t('admin.services.oneTime') },
+    { value: 'DAILY', label: t('admin.services.daily') },
+    { value: 'WEEKLY', label: t('admin.services.weekly') },
+    { value: 'TWO_WEEKS', label: t('admin.services.twoWeeks') },
+    { value: 'MONTHLY', label: t('admin.services.monthly') },
+    { value: 'SIX_MONTHS', label: t('admin.services.sixMonths') },
+    { value: 'ANNUAL', label: t('admin.services.annual') },
   ]
 
   const currencyOptions: SelectOption[] = [
@@ -96,7 +96,7 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
     if (!file) return
 
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-      setImageError(t('admin.servicios.invalidFileType', { name: file.name }))
+      setImageError(t('admin.services.invalidFileType', { name: file.name }))
       return
     }
 
@@ -118,7 +118,7 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
     let hasError = false
 
     if (missingRequiredFields(name, description, price)) {
-      setServiceError(t('admin.servicios.serviceFieldsRequired'))
+      setServiceError(t('admin.services.serviceFieldsRequired'))
       hasError = true
     } else {
       setServiceError(null)
@@ -130,12 +130,12 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
 
     const includesMessage = includes.trim()
       ? validateSafeText(includes, t)
-      : t('validation.fieldRequired', { field: t('admin.servicios.includesLabel') })
+      : t('validation.fieldRequired', { field: t('admin.services.includesLabel') })
     setIncludesError(includesMessage)
     if (includesMessage) hasError = true
 
     if (!isEditing && !selectedImage) {
-      setImageError(t('validation.fieldRequired', { field: t('admin.servicios.chooseImage') }))
+      setImageError(t('validation.fieldRequired', { field: t('admin.services.chooseImage') }))
       hasError = true
     } else {
       setImageError(null)
@@ -174,18 +174,18 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
     }
   }
 
-  const idleSubmitLabel = isEditing ? t('admin.save') : t('admin.servicios.create')
+  const idleSubmitLabel = isEditing ? t('admin.save') : t('admin.services.create')
   
   return (
     <dialog
       ref={dialogRef}
       onClose={requestClose}
-      aria-label={isEditing ? t('admin.servicios.editPlan') : t('admin.servicios.newPlan')}
+      aria-label={isEditing ? t('admin.services.editPlan') : t('admin.services.newPlan')}
       className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
     >
       <div className="flex items-center justify-between gap-md">
         <h2 className="m-0 font-heading text-h4 font-bold text-heading">
-          {isEditing ? t('admin.servicios.editPlan') : t('admin.servicios.newPlan')}
+          {isEditing ? t('admin.services.editPlan') : t('admin.services.newPlan')}
         </h2>
 
         <ModalCloseButton
@@ -196,23 +196,23 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
 
       <form onSubmit={handleSubmit} className="mt-lg grid gap-md">
         <label className="font-body text-body-sm font-semibold text-heading">
-          {t('admin.servicios.name')}
+          {t('admin.services.name')}
           <input value={name} onChange={(event) => setName(event.target.value)} required maxLength={120}
             className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 font-normal" />
         </label>
         <label className="font-body text-body-sm font-semibold text-heading">
-          {t('admin.servicios.description')}
+          {t('admin.services.description')}
           <textarea value={description} onChange={(event) => setDescription(event.target.value)} required maxLength={500}
             rows={3} className="mt-xs w-full rounded-xl border border-neutral-200 p-md font-normal" />
         </label>
         <div className="grid gap-md sm:grid-cols-3">
           <label className="font-body text-body-sm font-semibold text-heading">
-            {t('admin.servicios.price')}
+            {t('admin.services.price')}
             <input type="number" min="0.01" step="0.01" value={price} onChange={(event) => setPrice(event.target.value)} required
               className="mt-xs w-full rounded-xl border border-neutral-200 px-md h-11 font-normal" />
           </label>
           <label className="font-body text-body-sm font-semibold text-heading">
-            {t('admin.servicios.currency')}
+            {t('admin.services.currency')}
             <Select
               id="service-currency"
               value={currency}
@@ -223,12 +223,12 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
             />
           </label>
           <label className="font-body text-body-sm font-semibold text-heading">
-            {t('admin.servicios.serviceFrequency')}
+            {t('admin.services.serviceFrequency')}
             <Select
               id="service-frequency"
               value={type}
               onChange={(val) => setType(val)}
-              placeholder={t('admin.servicios.selectServiceFrequency')}
+              placeholder={t('admin.services.selectServiceFrequency')}
               options={serviceFrequencyOptions}
               className="w-full rounded-xl border border-neutral-200 h-11 bg-white px-md mt-xs"
             />
@@ -239,7 +239,7 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
         <div>
           <ScheduleField
             id="create-plan-schedule"
-            label={t('admin.servicios.scheduleLabel')}
+            label={t('admin.services.scheduleLabel')}
             value={schedule}
             onChange={(value) => {
               setSchedule(value)
@@ -251,7 +251,7 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
         </div>
 
         <label className="font-body text-body-sm font-semibold text-heading">
-          {t('admin.servicios.includesLabel')}
+          {t('admin.services.includesLabel')}
           <textarea
             id="create-plan-includes"
             maxLength={800}
@@ -271,9 +271,9 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
         </label>
 
         <div className="font-body text-body-sm font-semibold text-heading">
-          <span className="block">{t('admin.servicios.image')}</span>
+          <span className="block">{t('admin.services.image')}</span>
           <ImagePickerButton
-            label={t('admin.servicios.chooseImage')}
+            label={t('admin.services.chooseImage')}
             replacesCurrent={Boolean(currentImageUrl)}
             accept={ALLOWED_IMAGE_TYPES.join(',')}
             onSelect={(files) => handleFileChange(files[0])}
@@ -299,7 +299,7 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
             </ImageThumbList>
           )}
           {!selectedImage && isEditing && currentImageUrl && (
-            <ImageThumbList title={t('admin.servicios.currentImage')} className="mt-sm">
+            <ImageThumbList title={t('admin.services.currentImage')} className="mt-sm">
               <ImageThumb
                 src={currentImageUrl}
                 label={t('common.imageCover')}

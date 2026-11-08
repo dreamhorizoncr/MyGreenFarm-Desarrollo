@@ -56,7 +56,7 @@ public class ServicePlanController {
         } catch (InvalidFieldException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Error al procesar el plan: " + e.getMessage());
+            throw new RuntimeException("Error processing the plan: " + e.getMessage());
         }
     }
 
@@ -82,7 +82,7 @@ public class ServicePlanController {
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<?> deletePlan(@PathVariable UUID id) {
         servicePlanService.deletePlan(id);
-        return ResponseEntity.ok(Map.of("message", "Plan de servicio eliminado exitosamente"));
+        return ResponseEntity.ok(Map.of("message", "Service plan deleted successfully"));
     }
 
 }

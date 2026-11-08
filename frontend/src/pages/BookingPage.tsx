@@ -105,7 +105,7 @@ function BookingPage() {
   const { t, i18n } = useTranslation()
   useEffect(() => {
     setPageSEO({
-      title: 'Reservar una cita | My Green Farm',
+      title: t('seo.bookingTitle'),
       description: t('seo.bookingDescription'),
     })
   }, [i18n.resolvedLanguage]) 
@@ -182,7 +182,7 @@ function BookingPage() {
         })))
       })
       .catch(() => {
-        // Si falla la traducción se muestra el nombre original.
+        // Keep the original name if translation fails.
       })
     return () => {
       cancelled = true

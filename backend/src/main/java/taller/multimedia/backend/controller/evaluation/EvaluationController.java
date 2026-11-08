@@ -70,6 +70,6 @@ public class EvaluationController {
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
     public ResponseEntity<String> sendSemiannualSummaries() {
         evaluationSummaryService.generateAndSendSemiannualSummaries();
-        return ResponseEntity.ok("Proceso de generación y envío de resúmenes semestrales ejecutado correctamente.");
+        return ResponseEntity.ok("Semester summary generation and delivery finished successfully.");
     }
 }

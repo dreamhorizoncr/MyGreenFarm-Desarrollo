@@ -22,7 +22,7 @@ const NAV_TARGETS: Record<string, string> = {
   forum: '/forum',
   services: '/services',
   clubs: '/clubs',
-  vacancies: '/vacantes',
+  vacancies: '/vacancies',
   about: '/about-us',
   'green-hearts': '/green-hearts',
 }

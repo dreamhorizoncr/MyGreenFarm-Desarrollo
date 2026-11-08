@@ -44,25 +44,25 @@ export function VoiceReaderProvider({ children }: Readonly<{ children: ReactNode
     () => ({
       checked: t("accessibility.readerChecked", { defaultValue: "activado" }),
       unchecked: t("accessibility.readerUnchecked", { defaultValue: "desactivado" }),
-      selected: t("accessibility.readerSelected", { defaultValue: "seleccionado" }),
-      notSelected: t("accessibility.readerNotSelected", { defaultValue: "no seleccionado" }),
-      empty: t("accessibility.readerEmpty", { defaultValue: "vacío" }),
-      password: t("accessibility.readerPassword", { defaultValue: "campo de contraseña" }),
-      roleLink: t("accessibility.roleLink", { defaultValue: "enlace" }),
-      roleButton: t("accessibility.roleButton", { defaultValue: "botón" }),
-      roleCheckbox: t("accessibility.roleCheckbox", { defaultValue: "casilla de verificación" }),
-      roleRadio: t("accessibility.roleRadio", { defaultValue: "opción" }),
+      selected: t("accessibility.readerSelected"),
+      notSelected: t("accessibility.readerNotSelected"),
+      empty: t("accessibility.readerEmpty"),
+      password: t("accessibility.readerPassword"),
+      roleLink: t("accessibility.roleLink"),
+      roleButton: t("accessibility.roleButton"),
+      roleCheckbox: t("accessibility.roleCheckbox"),
+      roleRadio: t("accessibility.roleRadio"),
       roleSwitch: t("accessibility.roleSwitch", { defaultValue: "interruptor" }),
-      roleTab: t("accessibility.roleTab", { defaultValue: "pestaña" }),
-      roleMenuItem: t("accessibility.roleMenuItem", { defaultValue: "opción de menú" }),
-      roleOption: t("accessibility.roleOption", { defaultValue: "opción" }),
-      roleTextBox: t("accessibility.roleTextBox", { defaultValue: "campo de texto" }),
-      roleSearchBox: t("accessibility.roleSearchBox", { defaultValue: "campo de búsqueda" }),
-      roleComboBox: t("accessibility.roleComboBox", { defaultValue: "lista desplegable" }),
+      roleTab: t("accessibility.roleTab"),
+      roleMenuItem: t("accessibility.roleMenuItem"),
+      roleOption: t("accessibility.roleOption"),
+      roleTextBox: t("accessibility.roleTextBox"),
+      roleSearchBox: t("accessibility.roleSearchBox"),
+      roleComboBox: t("accessibility.roleComboBox"),
       roleSlider: t("accessibility.roleSlider", { defaultValue: "control deslizante" }),
       roleSummary: t("accessibility.roleSummary", { defaultValue: "detalles" }),
-      expanded: t("accessibility.readerExpanded", { defaultValue: "expandido" }),
-      collapsed: t("accessibility.readerCollapsed", { defaultValue: "contraído" }),
+      expanded: t("accessibility.readerExpanded"),
+      collapsed: t("accessibility.readerCollapsed"),
       pressed: t("accessibility.readerPressed", { defaultValue: "presionado" }),
       notPressed: t("accessibility.readerNotPressed", { defaultValue: "no presionado" }),
       disabled: t("accessibility.readerDisabled", { defaultValue: "deshabilitado" }),
@@ -122,7 +122,7 @@ export function VoiceReaderProvider({ children }: Readonly<{ children: ReactNode
 export function useVoiceReader() {
   const context = useContext(VoiceReaderContext);
   if (!context) {
-    throw new Error("useVoiceReader debe usarse dentro de un VoiceReaderProvider");
+    throw new Error("useVoiceReader must be used inside a VoiceReaderProvider");
   }
   return context;
 }

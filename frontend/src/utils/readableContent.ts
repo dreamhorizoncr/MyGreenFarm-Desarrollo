@@ -85,12 +85,12 @@ const BLOCK_TAGS = new Set([
 const CONTROL_TAGS = new Set(["INPUT", "SELECT", "TEXTAREA"]);
 
 const DEFAULT_CONTROL_LABELS: ReadableControlLabels = {
-  checked: "activado",
-  unchecked: "desactivado",
-  selected: "seleccionado",
-  notSelected: "no seleccionado",
-  empty: "vacío",
-  password: "campo de contraseña",
+  checked: "checked",
+  unchecked: "unchecked",
+  selected: "selected",
+  notSelected: "not selected",
+  empty: "empty",
+  password: "password field",
 };
 
 function normalizeText(value: string | null | undefined) {

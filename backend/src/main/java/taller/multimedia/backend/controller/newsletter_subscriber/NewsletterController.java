@@ -63,7 +63,7 @@ public class NewsletterController {
     public ResponseEntity<String> unsubscribe(@RequestParam String email) {
         try {
             newsletterService.unsubscribe(email);
-            return ResponseEntity.ok("Te has desuscrito exitosamente del boletín.");
+            return ResponseEntity.ok("You have successfully unsubscribed from the newsletter.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -74,11 +74,11 @@ public class NewsletterController {
     public ResponseEntity<String> sendBroadcast(@Valid @RequestBody BroadcastEmail dto) {
         try {
             broadcastService.sendBroadcast(dto);
-            return ResponseEntity.ok("Correo masivo enviado exitosamente a la audiencia: " + dto.getAudienceType());
+            return ResponseEntity.ok("Bulk email sent successfully to audience: " + dto.getAudienceType());
         } catch (InvalidFieldException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al enviar correos: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending emails: " + e.getMessage());
         }
     }
 }

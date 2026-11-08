@@ -86,7 +86,7 @@ export function useEvaluations() {
             });
 
         } catch (err) {
-            console.error("Error al cargar evaluaciones:", err);
+            console.error("Error loading evaluations:", err);
             setError(t("admin.evaluations.loadError"));
         } finally {
             setLoading(false);

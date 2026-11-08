@@ -34,7 +34,7 @@ function LikeBadge({ albumTitle, liked, totalLikes, loading, onToggle }: Readonl
       }}
       disabled={loading}
       className="absolute bottom-[10px] right-[10px] flex items-center gap-[6px] rounded-full bg-white px-[10px] py-[5px] shadow-md transition hover:scale-105 disabled:opacity-70"
-      aria-label={`${liked ? t('home.galeria.unlike') : t('home.galeria.like')} · ${albumTitle}`}
+      aria-label={`${liked ? t('home.gallery.unlike') : t('home.gallery.like')} · ${albumTitle}`}
       aria-pressed={liked}
     >
       <LikeHeart liked={liked} size={14} className={liked ? 'text-pink-400' : 'text-neutral-400'} />
@@ -67,8 +67,8 @@ function AlbumDetailPage() {
     useEffect(() => {
       if (!album) {
         setPageSEO({
-          title: 'Álbum | My Green Farm',
-          description: 'Explora fotografías de las actividades y experiencias de My Green Farm.',
+          title: t('seo.albumTitle'),
+          description: t('seo.albumDescription'),
         })
         return
       }
@@ -81,9 +81,9 @@ function AlbumDetailPage() {
 
       setPageSEO({
         title: `${album.title} | My Green Farm`,
-        description: description || 'Descubre este álbum de fotografías de My Green Farm.',
+        description: description || t('seo.albumFallbackDescription'),
       })
-    }, [album?.id, album?.title, album?.description])
+    }, [album?.id, album?.title, album?.description, t])
 
   const category = categories.find((candidate) => candidate.id === albumEntry?.[0])
 
@@ -109,11 +109,11 @@ function AlbumDetailPage() {
             className="flex flex-wrap items-center gap-[6px] font-body text-body text-neutral-500"
           >
             <Link className="transition hover:text-green-500" to="/multimedia">
-              {t('home.galeria.breadcrumbGallery')}
+              {t('home.gallery.breadcrumbGallery')}
             </Link>
             <span aria-hidden="true">/</span>
             <Link className="transition hover:text-green-500" to="/multimedia">
-              {t('home.galeria.breadcrumbAlbums')}
+              {t('home.gallery.breadcrumbAlbums')}
             </Link>
             {category && (
               <>
@@ -166,7 +166,7 @@ function AlbumDetailPage() {
 
           {!loading && !error && !album && (
             <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
-              {t('home.galeria.notFoundAlbum')}
+              {t('home.gallery.notFoundAlbum')}
             </p>
           )}
 
@@ -184,7 +184,7 @@ function AlbumDetailPage() {
                       type="button"
                       onClick={() => setLightboxIndex(index)}
                       className="absolute inset-0 h-full w-full focus-visible:outline-2 focus-visible:outline-orange-500 focus-visible:outline-offset-2"
-                      aria-label={`${t('home.galeria.imageGallery')}: ${album.title} ${index + 1}`}
+                      aria-label={`${t('home.gallery.imageGallery')}: ${album.title} ${index + 1}`}
                     >
                       <img
                         src={image.fileUrl}

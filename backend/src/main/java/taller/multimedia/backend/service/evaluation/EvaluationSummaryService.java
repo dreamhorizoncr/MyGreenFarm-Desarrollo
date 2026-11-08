@@ -11,7 +11,7 @@ import taller.multimedia.backend.model.expedient.Expedient;
 import taller.multimedia.backend.repository.evaluation.EvaluationRepository;
 import taller.multimedia.backend.repository.expedient.ExpedientRepository;
 import taller.multimedia.backend.service.EmailService;
-import taller.multimedia.backend.service.announcement.GeminiResumenService;
+import taller.multimedia.backend.service.announcement.GeminiSummaryService;
 import taller.multimedia.backend.service.translation.TranslationService;
 
 import java.time.LocalDate;
@@ -24,7 +24,7 @@ public class EvaluationSummaryService {
 
     private final ExpedientRepository expedientRepository;
     private final EvaluationRepository evaluationRepository;
-    private final GeminiResumenService geminiResumenService;
+    private final GeminiSummaryService geminiSummaryService;
     private final EmailService emailService;
     private final TranslationService translationService;
 
@@ -39,32 +39,32 @@ public class EvaluationSummaryService {
                         .findByExpedientIdIdAndEvaluationDateAfterOrderByEvaluationDateAsc(expedient.getId(), sixMonthsAgo);
 
                 if (evaluations.isEmpty()) {
-                    log.info("No hay evaluaciones recientes para el expediente de: {}", expedient.getChild().getFirstName());
+                    log.info("No recent evaluations for the record of: {}", expedient.getChild().getFirstName());
                     continue;
                 }
 
                 StringBuilder rawContent = new StringBuilder();
                 for (Evaluation eval : evaluations) {
-                    rawContent.append("Fecha: ").append(eval.getEvaluationDate()).append("\n")
-                            .append("- Comunicación: ").append(eval.getCommunicationProgress()).append("\n")
-                            .append("- Lenguaje: ").append(eval.getLanguageProgress()).append("\n")
-                            .append("- Lectura: ").append(eval.getReadingProgress()).append("\n")
+                    rawContent.append("Date: ").append(eval.getEvaluationDate()).append("\n")
+                            .append("- Communication: ").append(eval.getCommunicationProgress()).append("\n")
+                            .append("- Language: ").append(eval.getLanguageProgress()).append("\n")
+                            .append("- Reading: ").append(eval.getReadingProgress()).append("\n")
                             .append("- Motor: ").append(eval.getMotorProgress()).append("\n")
-                            .append("- Observación: ").append(eval.getTeacherObservation()).append("\n\n");
+                            .append("- Observation: ").append(eval.getTeacherObservation()).append("\n\n");
                 }
 
                 String childFullName = expedient.getChild().getFirstName() + " " + expedient.getChild().getLastName();
 
-                String summary = geminiResumenService.generateSemiannualEvaluationSummary(childFullName, rawContent.toString());
+                String summary = geminiSummaryService.generateSemiannualEvaluationSummary(childFullName, rawContent.toString());
 
                 if (summary == null || summary.isBlank()) {
-                    log.error("No se pudo generar el resumen IA para el niño ID: {}", expedient.getChild().getId());
+                    log.error("Could not generate the AI summary for child ID: {}", expedient.getChild().getId());
                     continue;
                 }
 
                 var parent = expedient.getChild().getParent();
                 if (parent == null) {
-                    log.error("El niño ID: {} no tiene un padre asignado.", expedient.getChild().getId());
+                    log.error("Child ID: {} has no assigned parent.", expedient.getChild().getId());
                     continue;
                 }
 
@@ -87,7 +87,7 @@ public class EvaluationSummaryService {
                 emailService.sendSemiannualEvaluationSummaryEmail(parentEmail, childFullName, finalSummary, period, parentLanguage);
 
             } catch (Exception e) {
-                log.error("Error procesando resumen para expediente ID {}: {}", expedient.getId(), e.getMessage(), e);
+                log.error("Error processing the summary for record ID {}: {}", expedient.getId(), e.getMessage(), e);
             }
         }
     }

@@ -19,21 +19,21 @@ import taller.multimedia.backend.model.child.Relationship;
 @Data 
 public class ChildRequest {
 
-    @NotNull (message = "La cédula del padre/tutor es obligatorio")
+    @NotNull (message = "The parent/guardian ID number is required")
     private String parentIdentification;
 
-    @NotNull(message = "El parentesco es obligatorio")
+    @NotNull(message = "The relationship is required")
     private Relationship relationship;
 
-    @NotBlank(message = "El nombre es obligatorio")
-    @Size(max = 100, message = "El nombre no puede exceder los 100 caracteres")
+    @NotBlank(message = "The name is required")
+    @Size(max = 100, message = "The name cannot exceed 100 characters")
     private String firstName;
 
-    @NotBlank(message = "El apellido es obligatorio")
-    @Size(max = 100, message = "El apellido no puede exceder los 100 caracteres")
+    @NotBlank(message = "The last name is required")
+    @Size(max = 100, message = "The last name cannot exceed 100 characters")
     private String lastName;
 
-    @Past(message = "La fecha de nacimiento debe ser en el pasado")
+    @Past(message = "The birth date must be in the past")
     private LocalDate birthDate;
 
     private String medicalNotes;

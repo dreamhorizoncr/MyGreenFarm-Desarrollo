@@ -41,20 +41,20 @@ public class ExpedientService {
 
         Child child = childRepository.findByStudentId(studentId)
                 .orElseThrow(
-                        () -> new EntityNotFoundException("Niño no encontrado con el carné/studentId: " + studentId));
+                        () -> new EntityNotFoundException("Child not found with student ID: " + studentId));
 
         if (expedientRepository.existsByChildStudentId(child.getStudentId())) {
-            throw new IllegalStateException("Ya existe un expediente registrado para el niño: "
+            throw new IllegalStateException("A record already exists for the child: "
                     + child.getFirstName() + " " + child.getLastName());
         }
 
         if (!Boolean.TRUE.equals(child.getIsActive())) {
-            throw new IllegalStateException("No se puede registrar un expediente para el estudiante '" 
-                    + child.getFirstName() + " " + child.getLastName() + "' porque se encuentra inactivo.");
+            throw new IllegalStateException("A record cannot be created for the student '" 
+                    + child.getFirstName() + " " + child.getLastName() + "' because they are inactive.");
         }
 
         if (expedientRepository.existsByChildStudentId(child.getStudentId())) {
-        throw new IllegalStateException("Ya existe un expediente registrado para el niño: "
+        throw new IllegalStateException("A record already exists for the child: "
                 + child.getFirstName() + " " + child.getLastName());
     }
 
@@ -71,7 +71,7 @@ public class ExpedientService {
         if (file != null && !file.isEmpty()) {
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
-                throw new IllegalArgumentException("Formato de imagen no permitido.");
+                throw new IllegalArgumentException("Unsupported image format.");
             }
             String fileUrl = storageService.uploadFile(file, expedientsBucket, "child_photos");
             expedient.setPhotoUrl(fileUrl);
@@ -93,13 +93,13 @@ public class ExpedientService {
     @Transactional(readOnly = true)
     public ExpedientResponse getExpedientById(UUID id) {
         Expedient expedient = expedientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Expediente no encontrado con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Record not found with ID: " + id));
         return mapToResponse(expedient);
     }
 
     private Expedient findEntityById(UUID id) {
         return expedientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Expediente no encontrado con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Record not found with ID: " + id));
     }
 
     @Transactional
@@ -112,7 +112,7 @@ public class ExpedientService {
                 try {
                     storageService.deleteFile(expedientsBucket, filePath);
                 } catch (Exception e) {
-                    System.err.println("No se pudo borrar la foto del bucket: " + e.getMessage());
+                    System.err.println("Could not delete the photo from the bucket: " + e.getMessage());
                 }
             }
         }
@@ -131,14 +131,14 @@ public class ExpedientService {
             if (!existing.getChild().getStudentId().equals(newStudentId)) {
                 Child newChild = childRepository.findByStudentId(newStudentId)
                         .orElseThrow(() -> new EntityNotFoundException(
-                                "Niño no encontrado con el carné/studentId: " + newStudentId));
+                                "Child not found with student ID: " + newStudentId));
 
                 if (!Boolean.TRUE.equals(newChild.getIsActive())) {
-                    throw new IllegalStateException("El estudiante seleccionado se encuentra inactivo.");
+                    throw new IllegalStateException("The selected student is inactive.");
                 }
 
                 if (expedientRepository.existsByChildStudentId(newChild.getStudentId())) {
-                    throw new IllegalStateException("Ya existe otro expediente registrado para el niño especificado.");
+                    throw new IllegalStateException("Another record already exists for the specified child.");
                 }
                 existing.setChild(newChild);
             }
@@ -155,7 +155,7 @@ public class ExpedientService {
         if (file != null && !file.isEmpty()) {
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
-                throw new IllegalArgumentException("Formato no permitido. Solo se aceptan PNG, JPG, JPEG, SVG.");
+                throw new IllegalArgumentException("Unsupported format. Only PNG, JPG, JPEG and SVG are accepted.");
             }
 
             if (existing.getPhotoUrl() != null && !existing.getPhotoUrl().isEmpty()) {
@@ -178,7 +178,7 @@ public class ExpedientService {
         Expedient expedient = findEntityById(expedientId);
 
         if (expedient.getPhotoUrl() == null || expedient.getPhotoUrl().isEmpty()) {
-            throw new IllegalStateException("El expediente no tiene ninguna fotografía registrada.");
+            throw new IllegalStateException("The record has no photo.");
         }
 
         String filePath = extractPathFromUrl(expedient.getPhotoUrl(), expedientsBucket);
@@ -205,7 +205,7 @@ public class ExpedientService {
                 return fileUrl.substring(index + marker.length());
             }
         } catch (Exception e) {
-            System.err.println("Error al extraer la ruta de la URL: " + e.getMessage());
+            System.err.println("Error extracting the path from the URL: " + e.getMessage());
         }
         return null;
     }

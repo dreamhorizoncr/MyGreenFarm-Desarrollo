@@ -4,13 +4,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public class BroadcastEmail {
-    @NotBlank(message = "El asunto es obligatorio")
+    @NotBlank(message = "The subject is required")
     private String subject;
 
-    @NotBlank(message = "El mensaje es obligatorio")
+    @NotBlank(message = "The message is required")
     private String message;
 
-    @NotNull (message = "El tipo de audiencia es obligatorio (PARENTS, SUBSCRIBERS, BOTH)")
+    @NotNull (message = "The audience type is required (PARENTS, SUBSCRIBERS, BOTH)")
     private AudienceType audienceType;
 
     private String language;

@@ -90,7 +90,7 @@ import { ClipboardList } from 'lucide-react'
             <img src={plan!.imageUrl} alt={plan!.imageAlt || plan!.name} className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
-              <span className="font-body text-body-sm text-neutral-400">{t('admin.servicios.chooseImage')}</span>
+              <span className="font-body text-body-sm text-neutral-400">{t('admin.services.chooseImage')}</span>
             </div>
           )}
           <span className="absolute bottom-sm left-sm flex items-center gap-1 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
@@ -148,11 +148,11 @@ import { ClipboardList } from 'lucide-react'
       try {
         await deletePlan(id)
         notify.success({
-          title: t('admin.servicios.deletedToastTitle'),
-          description: t('admin.servicios.deletedToastDescription'),
+          title: t('admin.services.deletedToastTitle'),
+          description: t('admin.services.deletedToastDescription'),
         })
       } catch (err) {
-        notifyError(t('admin.servicios.deleteErrorToastTitle'), err)
+        notifyError(t('admin.services.deleteErrorToastTitle'), err)
         throw err
       } finally {
         setDeletingId(null)
@@ -172,10 +172,10 @@ import { ClipboardList } from 'lucide-react'
           <div className="flex flex-wrap items-center justify-between gap-md">
             <div>
               <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
-                {t('admin.servicios.title')}
+                {t('admin.services.title')}
               </h1>
               <p className="mt-2 font-body text-body text-neutral-500">
-                {t('admin.servicios.subtitle')}
+                {t('admin.services.subtitle')}
               </p>
             </div>
 
@@ -185,7 +185,7 @@ import { ClipboardList } from 'lucide-react'
               className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
             >
               <PlusIcon size={18} aria-hidden="true" />
-              {t('admin.servicios.addPlan')}
+              {t('admin.services.addPlan')}
             </button>
           </div>
 
@@ -198,7 +198,7 @@ import { ClipboardList } from 'lucide-react'
           {error && <StatusMessage variant="error" description={error} />}
 
           {!loading && !error && plans.length === 0 && (
-            <StatusMessage icon={ClipboardList} description={t('admin.servicios.empty')} />
+            <StatusMessage icon={ClipboardList} description={t('admin.services.empty')} />
           )}
 
           {!loading && !error && plans.length > 0 && (
@@ -230,11 +230,11 @@ import { ClipboardList } from 'lucide-react'
                 await createPlan(data, file)
                 await fetchAll(i18n.language)
                 notify.success({
-                  title: t('admin.servicios.createdToastTitle'),
-                  description: t('admin.servicios.createdToastDescription'),
+                  title: t('admin.services.createdToastTitle'),
+                  description: t('admin.services.createdToastDescription'),
                 })
               } catch (err) {
-                notifyError(t('admin.servicios.saveErrorToastTitle'), err)
+                notifyError(t('admin.services.saveErrorToastTitle'), err)
                 throw err
               }
             }}
@@ -243,11 +243,11 @@ import { ClipboardList } from 'lucide-react'
                 await updatePlan(id, data, file)
                 await fetchAll(i18n.language)
                 notify.success({
-                  title: t('admin.servicios.updatedToastTitle'),
-                  description: t('admin.servicios.updatedToastDescription'),
+                  title: t('admin.services.updatedToastTitle'),
+                  description: t('admin.services.updatedToastDescription'),
                 })
               } catch (err) {
-                notifyError(t('admin.servicios.saveErrorToastTitle'), err)
+                notifyError(t('admin.services.saveErrorToastTitle'), err)
                 throw err
               }
             }}
@@ -260,8 +260,8 @@ import { ClipboardList } from 'lucide-react'
 
         {confirmDeleteId && planToDelete && (
           <DeleteConfirmModal
-            title={t('admin.servicios.deleteTitle')}
-            message={t('admin.servicios.deleteConfirm', { name: planToDelete.name })}
+            title={t('admin.services.deleteTitle')}
+            message={t('admin.services.deleteConfirm', { name: planToDelete.name })}
             onConfirm={() => handleDelete(confirmDeleteId)}
             onClose={() => setConfirmDeleteId(null)}
           />

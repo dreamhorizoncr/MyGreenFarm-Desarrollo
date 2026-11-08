@@ -39,8 +39,8 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
     body.put("error", "Unauthorized");
     body.put("code", expired ? "SESSION_EXPIRED" : "UNAUTHORIZED");
     body.put("message", expired
-        ? "Tu sesión ha expirado. Inicia sesión nuevamente."
-        : "No autorizado");
+        ? "Your session has expired. Please sign in again."
+        : "Unauthorized");
     body.put("path", request.getRequestURI());
 
     mapper.writeValue(response.getOutputStream(), body);

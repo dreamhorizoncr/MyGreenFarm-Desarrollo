@@ -11,11 +11,11 @@ import lombok.Data;
 @Data
 public class SlotHoldRequest {
 
-    @NotNull(message = "El horario es obligatorio")
-    @Future(message = "El horario debe ser en el futuro")
+    @NotNull(message = "The schedule is required")
+    @Future(message = "The time slot must be in the future")
     private LocalDateTime slot;
 
-    @NotBlank(message = "El identificador de la reserva es obligatorio")
+    @NotBlank(message = "The reservation ID is required")
     @Size(max = 64)
     private String holderId;
 }

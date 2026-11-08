@@ -30,10 +30,10 @@ public class CalendarController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
         if (to.isBefore(from)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El rango de fechas no es válido");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The date range is not valid");
         }
         if (ChronoUnit.DAYS.between(from, to) > 31) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El rango máximo es de 31 días");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The maximum range is 31 days");
         }
         return ResponseEntity.ok(calendarEventService.getPlatformEvents(from, to));
     }

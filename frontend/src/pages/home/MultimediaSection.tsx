@@ -6,8 +6,8 @@ import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowRightIcon } from '@animateicons/react/lucide'
-import ninos2 from '../../assets/imgs/ninos2.svg'
-import nubeWhiteDown from '../../assets/imgs/nubeWhiteDown.svg'
+import children from '../../assets/imgs/children.webp'
+import cloudWhiteDown from '../../assets/imgs/cloudWhiteDown.svg'
 import Container from '../../components/home/Container.tsx'
 import MultimediaCard from '../../components/home/MultimediaCard.tsx'
 import { useGallery } from '../../hooks/useGallery.ts'
@@ -28,7 +28,7 @@ function MultimediaSection() {
     <section id="multimedia" className="relative flex min-h-[100svh] w-full flex-col bg-pink-400">
       <div className="relative w-full overflow-hidden leading-none">
         <img
-          src={nubeWhiteDown}
+          src={cloudWhiteDown}
           alt=""
           aria-hidden="true"
           className="relative -mb-1 block w-[110vw] max-w-none -translate-x-1/2 left-1/2 object-cover"
@@ -66,19 +66,19 @@ function MultimediaSection() {
           {!loading && error && <StatusMessage variant="error" description={error} className="col-span-full" />}
 
           {!loading && !error && featuredGalleries.length === 0 && (
-            <StatusMessage icon={Images} description={t('home.galeria.noGalleries')} className="col-span-full" />
+            <StatusMessage icon={Images} description={t('home.gallery.noGalleries')} className="col-span-full" />
           )}
 
           {!loading &&
             featuredGalleries.map((gallery) => (
               <MultimediaCard
                 key={gallery.id}
-                imageSrc={gallery.galleryImages[0]?.fileUrl ?? ninos2}
+                imageSrc={gallery.galleryImages[0]?.fileUrl ?? children}
                 alt={gallery.title}
-                badge={t('home.galeria.photoCount', { count: gallery.galleryImages.length })}
+                badge={t('home.gallery.photoCount', { count: gallery.galleryImages.length })}
                 title={gallery.title}
                 description={gallery.description}
-                onClick={() => navigate(`/albumes/${gallery.id}`)}
+                onClick={() => navigate(`/albums/${gallery.id}`)}
               />
             ))}
         </Container>

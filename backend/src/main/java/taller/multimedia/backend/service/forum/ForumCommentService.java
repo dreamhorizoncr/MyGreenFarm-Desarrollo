@@ -59,15 +59,15 @@ public class ForumCommentService {
     @Transactional
     public void delete(UUID commentId, String currentEmail) {
         User currentUser = userRepository.findByEmail(currentEmail)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
 
         if (currentUser.getRole() != Role.OWNER) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "Solo un OWNER puede eliminar comentarios");
+                    "Only an OWNER can delete comments");
         }
 
         if (!commentRepository.existsById(commentId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comentario no encontrado: " + commentId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found: " + commentId);
         }
 
         commentRepository.deleteById(commentId);
@@ -76,12 +76,12 @@ public class ForumCommentService {
     private ForumArticle findArticle(UUID articleId) {
         return articleRepository.findById(articleId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Artículo no encontrado: " + articleId));
+                        "Article not found: " + articleId));
     }
 
     private void ensureArticleExists(UUID articleId) {
         if (!articleRepository.existsById(articleId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Artículo no encontrado: " + articleId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Article not found: " + articleId);
         }
     }
 }

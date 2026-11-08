@@ -48,7 +48,7 @@ public class StorageService {
             return baseUrl + "/object/public/" + bucketName + "/" + fileName;
 
         } catch (IOException e) {
-            throw new RuntimeException("Fallo al subir el archivo al Storage", e);
+            throw new RuntimeException("Failed to upload the file to Storage", e);
         }
     }
 
@@ -61,7 +61,7 @@ public class StorageService {
 
             s3Client.deleteObject(deleteObjectRequest);
         } catch (Exception e) {
-            throw new RuntimeException("Fallo al eliminar el archivo del Storage", e);
+            throw new RuntimeException("Failed to delete the file from Storage", e);
         }
     }
 
@@ -82,7 +82,7 @@ public class StorageService {
             return presignedRequest.url().toString();
             
         } catch (Exception e) {
-            throw new RuntimeException("Fallo al generar la URL firmada para el archivo privado", e);
+            throw new RuntimeException("Failed to generate the signed URL for the private file", e);
         }
     }
 }

@@ -55,7 +55,7 @@ function AdminParentsPage() {
             notify.success(t("admin.parents.deleteSuccessToastTitle"));
             setParentToDelete(null);
         } catch (error) {
-            console.error("Error al eliminar el padre:", error);
+            console.error("Error deleting the parent:", error);
             notify.error(t("admin.parents.deleteErrorToastTitle"));
             throw error;
         }
@@ -66,7 +66,6 @@ function AdminParentsPage() {
     return (
         <AdminLayout>
             <section className="w-full">
-                {/* Header */}
                 <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                     <div>
                         <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
@@ -77,7 +76,6 @@ function AdminParentsPage() {
                         </p>
                     </div>
 
-                    {/* Acciones y Buscador */}
                     <div className="flex w-full items-center gap-3 md:w-auto">
                         <button
                             type="button"
@@ -105,17 +103,14 @@ function AdminParentsPage() {
                     </div>
                 </div>
 
-                {/* Loading */}
                 {loading && (
                     <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
                         <SkeletonList count={skeletonCount}>{() => <ParentCard loading />}</SkeletonList>
                     </div>
                 )}
 
-                {/* Error */}
                 {error && <StatusMessage variant="error" description={error} className="mt-8" />}
 
-                {/* Lista de padres con Paginación del Servidor */}
                 {!loading && !error && filteredParents.length > 0 && (
                     <>
                         <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -129,7 +124,6 @@ function AdminParentsPage() {
                             ))}
                         </div>
 
-                        {/* 💡 El componente Pagination recibe el totalPages real del backend */}
                         <Pagination
                             currentPage={currentPage}
                             totalPages={totalPages}
@@ -150,7 +144,6 @@ function AdminParentsPage() {
                         <StatusMessage icon={SearchX} description={t('admin.parents.noMatches')} className="mt-8" />
                     )}
 
-                {/* Modal Crear */}
                 {isCreateModalOpen && (
                     <ParentFormModal
                         onClose={() => setIsCreateModalOpen(false)}
@@ -158,7 +151,6 @@ function AdminParentsPage() {
                     />
                 )}
 
-                {/* Modal Editar */}
                 {editingParent && (
                     <ParentFormModal
                         parent={editingParent}
@@ -167,7 +159,6 @@ function AdminParentsPage() {
                     />
                 )}
 
-                {/* Modal Eliminar */}
                 {parentToDelete && (
                     <DeleteConfirmModal
                         title={t("admin.parents.deleteModalTitle")}

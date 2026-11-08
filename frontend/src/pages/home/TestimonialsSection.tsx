@@ -7,14 +7,14 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 import { Blobatar } from "@blobatar/react";
-import nubesDown from "../../assets/imgs/nubesDown.svg";
+import cloudsDown from "../../assets/imgs/cloudsDown.svg";
 import Container from "../../components/home/Container.tsx";
 import CarouselDots from "../../components/ui/CarouselDots.tsx";
 import CarouselArrowIcon from "../../components/ui/CarouselArrowIcon.tsx";
-import lapiz from "../../assets/imgs/lapiz.svg";
-import Tijera from "../../assets/imgs/Tijera.svg";
-import Goma from "../../assets/imgs/Goma.svg";
-import Cabra from "../../assets/imgs/Cabra.svg";
+import pencil from "../../assets/imgs/pencil.svg";
+import scissors from "../../assets/imgs/scissors.svg";
+import eraser from "../../assets/imgs/eraser.svg";
+import goat from "../../assets/imgs/goat.svg";
 import { animationsStopped } from "../../utils/reducedMotion";
 import { useAccessibility } from "../../contexts/accessibility";
 
@@ -105,7 +105,7 @@ function TestimonialsSection() {
     >
       <div className="relative w-full overflow-hidden leading-none">
         <img
-          src={nubesDown}
+          src={cloudsDown}
           alt=""
           aria-hidden="true"
           data-scroll-bg="green"
@@ -113,9 +113,9 @@ function TestimonialsSection() {
         />
       </div>
 
-      <div className="relative overflow-hidden fondo-cuadricula min-h-screen">
+      <div className="relative overflow-hidden min-h-screen">
         <img
-          src={lapiz}
+          src={pencil}
           alt=""
           aria-hidden="true"
           className="absolute top-[1%] right-[3%] rotate-[18deg]
@@ -126,7 +126,7 @@ function TestimonialsSection() {
         />
 
         <img
-          src={Goma}
+          src={eraser}
           alt=""
           aria-hidden="true"
           className="absolute top-[11%] left-[1%] rotate-[-20deg]
@@ -137,7 +137,7 @@ function TestimonialsSection() {
         />
 
         <img
-          src={Tijera}
+          src={scissors}
           alt=""
           aria-hidden="true"
           className="absolute bottom-[2%] left-[3%] rotate-[70deg]
@@ -148,7 +148,7 @@ function TestimonialsSection() {
         />
 
         <img
-          src={Cabra}
+          src={goat}
           alt=""
           aria-hidden="true"
           className="absolute bottom-[3%] right-[10%] rotate-[-14deg]

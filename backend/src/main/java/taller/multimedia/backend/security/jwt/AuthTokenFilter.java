@@ -50,7 +50,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         } catch (ExpiredJwtException e) {
             request.setAttribute("auth_error", "SESSION_EXPIRED");
         } catch (Exception e) {
-            logger.error("No se pudo establecer la autenticación del usuario: {}", e.getMessage());
+            logger.error("Could not set user authentication: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);

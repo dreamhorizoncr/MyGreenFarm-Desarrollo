@@ -12,12 +12,12 @@ public class ApplicationRequest {
 
     private UUID vacancyId;
 
-    @NotBlank(message = "El nombre es obligatorio")
-    @Size(max = 150, message = "El nombre no puede superar los 150 caracteres")
+    @NotBlank(message = "The name is required")
+    @Size(max = 150, message = "The name cannot exceed 150 characters")
     private String applicantName;
 
-    @NotBlank(message = "El correo electrónico es obligatorio")
-    @Email(message = "El formato del correo electrónico no es válido")
+    @NotBlank(message = "The email is required")
+    @Email(message = "The email format is not valid")
     private String applicantEmail;
 
     private String applicantPhone;

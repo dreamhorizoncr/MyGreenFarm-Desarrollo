@@ -3,7 +3,7 @@ import type { ExchangeRate } from '../types/exchangeRate.ts'
 
 export const exchangeRateService = {
   async getCurrent(): Promise<ExchangeRate | null> {
-    const resp = await apiClient.get<ExchangeRate>('/tipo-cambio/actual')
+    const resp = await apiClient.get<ExchangeRate>('/exchange-rate/current')
     return resp.status === 204 ? null : resp.data
   },
 }

@@ -68,7 +68,7 @@ function AdminExpedientsPage() {
 
       notify.success(t("admin.expedients.deleteSuccessToastTitle"));
     } catch (error) {
-      console.error("Error al eliminar el expediente:", error);
+      console.error("Error deleting the record:", error);
 
       notifyError(t("admin.expedients.deleteErrorToastTitle"), error);
       throw error;
