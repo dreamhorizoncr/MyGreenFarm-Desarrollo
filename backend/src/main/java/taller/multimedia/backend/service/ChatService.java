@@ -24,19 +24,44 @@ public class ChatService {
     private static final Pattern OFF_TOPIC = Pattern.compile("\\b(?:receta|cocinar|futbol|nba|politica electoral|partido politico|elecciones|criptomoneda|bitcoin|codigo python|java code|hackear|remedio|aborto|debate religioso|chiste|broma fuera de tema)\\b");
     private static final Pattern INTERNAL_DISCLOSURE = Pattern.compile("\\b(?:codigo fuente|fuente del codigo|endpoint|api interna|implementacion interna|arquitectura interna|instrucciones internas|configuracion interna)\\b");
     private static final Pattern ACCESS_INVITATION = Pattern.compile("\\b(?:inici(?:a|ar|e) sesion|ingres(?:a|ar) al sistema|cuenta (?:que tenga )?acceso|solicit(?:a|ar) acceso|sign in|log in|log into|account (?:with|that has) access|se connecter|connectez-vous)\\b");
+    private static final Pattern MEDICAL_APPOINTMENT = Pattern.compile("\\b(?:cita|consulta|appointment|rendez[- ]?vous)\\s+(?:medica|medico|medical|medicale|doctor|dentista|dentist)\\b");
+    private static final Pattern BOOKING_INTENT = Pattern.compile("\\b(?:"
+            + "agendar(?:\\s+(?:una|la|mi))?(?:\\s+(?:cita|visita))?"
+            + "|(?:reservar|sacar|hacer|solicitar|programar|concertar)\\s+(?:una|la|mi)?\\s*(?:cita|visita)"
+            + "|(?:quiero|quisiera|deseo|necesito|puedo)\\s+(?:agendar|reservar|una\\s+cita|una\\s+visita)"
+            + "|(?:agenda|reserva)r?\\s+(?:de\\s+)?citas?"
+            + "|(?:citas?|visitas?)\\s+(?:disponibles?|disponibilidad)"
+            + "|horarios?\\s+(?:de\\s+citas?\\s+)?disponibles?"
+            + "|disponibilidad\\s+de\\s+(?:citas?|horarios?)"
+            + "|como\\s+(?:reservo|agendo|saco\\s+(?:una\\s+)?cita|hago\\s+(?:una\\s+)?cita)"
+            + "|book(?:ing)?\\s+(?:an?\\s+)?appointment"
+            + "|(?:schedule|make|request)\\s+(?:an?\\s+)?appointment"
+            + "|(?:available|availability)\\s+(?:appointment\\s+)?(?:slots?|times?|appointments?)"
+            + "|appointment\\s+(?:slots?|availability|times?)"
+            + "|how\\s+(?:do\\s+i|can\\s+i)\\s+book"
+            + "|prendre\\s+(?:un\\s+)?rendez[- ]?vous"
+            + "|(?:reserver|demander|planifier)\\s+(?:un\\s+)?rendez[- ]?vous"
+            + "|rendez[- ]?vous\\s+(?:disponibles?|disponibilites?)"
+            + "|horaires?\\s+disponibles?"
+            + "|creneaux?\\s+disponibles?"
+            + "|comment\\s+(?:reserver|prendre\\s+(?:un\\s+)?rendez[- ]?vous)"
+            + ")\\b");
     private static final Pattern MARKDOWN = Pattern.compile("\\[([^\\]]+)]\\([^)]*\\)|[*#`_~]+");
     private static final Pattern URL = Pattern.compile("(?i)\\b(?:https?://|www\\.)\\S+");
 
     private final ChatClient chatClient;
     private final ChatContextBuilder contextBuilder;
     private final ChatPromptProvider promptProvider;
+    private final ChatNavigationResolver navigationResolver;
     private final MessageSource messages;
 
     public ChatService(ChatClient chatClient, ChatContextBuilder contextBuilder,
-            ChatPromptProvider promptProvider, MessageSource messages) {
+            ChatPromptProvider promptProvider, ChatNavigationResolver navigationResolver,
+            MessageSource messages) {
         this.chatClient = chatClient;
         this.contextBuilder = contextBuilder;
         this.promptProvider = promptProvider;
+        this.navigationResolver = navigationResolver;
         this.messages = messages;
     }
 
@@ -49,6 +74,14 @@ public class ChatService {
         if (message.length() > MAX_MESSAGE_LENGTH) return response("chat.maxLength", language, conversationId, true);
         if (ProfanityFilter.containsProfanity(message)) return response("chat.respectful", language, conversationId, true);
         if (isOffTopic(message)) return response("chat.safe", language, conversationId, true);
+        if (isBookingIntent(message)) {
+            return new ChatResponse(localized("chat.booking.start", language), conversationId, false, "START_BOOKING");
+        }
+        ChatNavigationResolver.Target navigation = navigationResolver.resolve(message);
+        if (navigation != null) {
+            return new ChatResponse(localized(navigation.getMessageKey(), language), conversationId, false,
+                    navigation.getAction(), navigation.getKey());
+        }
         String safeQuestion = message.replace("<pregunta>", "").replace("</pregunta>", "");
         try {
             String answer = chatClient.prompt()
@@ -107,6 +140,13 @@ public class ChatService {
 
     public static boolean isOffTopic(String message) {
         return message != null && OFF_TOPIC.matcher(normalize(message)).find();
+    }
+
+    public static boolean isBookingIntent(String message) {
+        if (message == null) return false;
+        String normalized = normalize(message);
+        if (MEDICAL_APPOINTMENT.matcher(normalized).find()) return false;
+        return BOOKING_INTENT.matcher(normalized).find();
     }
 
     public static String normalize(String value) {

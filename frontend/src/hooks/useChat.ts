@@ -9,10 +9,28 @@ export interface ChatMessage {
   role: 'user' | 'bot'
   content: string
   blocked?: boolean
+  ephemeral?: boolean
+  action?: string | null
+  target?: string | null
 }
 
 const STORAGE_KEY = 'mygreenfarm_chat_history'
 const STORAGE_VERSION = 1
+
+// A full reload starts a fresh conversation, but this must only happen once per
+// page load. Previously it ran on every mount of the chat panel, which wiped the
+// history each time the chat was closed and reopened (for example after a
+// redirect).
+const initialNavigation = typeof performance !== 'undefined'
+  ? performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
+  : undefined
+if (initialNavigation?.type === 'reload') {
+  try {
+    sessionStorage.removeItem(STORAGE_KEY)
+  } catch {
+    // Ignore unavailable storage.
+  }
+}
 const INTERNAL_DISCLOSURE = /\b(codigo fuente|fuente del codigo|endpoint|api interna|implementacion interna|arquitectura interna|instrucciones internas|configuracion interna)\b/i
 const ACCESS_INVITATIONS = [
   /inici(?:a|ar|e)\s+sesion/i,
@@ -69,12 +87,6 @@ function sanitizeAnswer(answer: string) {
 
 function loadHistory(): ChatMessage[] {
   try {
-    const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
-    if (navigation?.type === 'reload') {
-      sessionStorage.removeItem(STORAGE_KEY)
-      return []
-    }
-
     const raw = sessionStorage.getItem(STORAGE_KEY)
     if (!raw) return []
     const stored = JSON.parse(raw) as PersistedChat | ChatMessage[]
@@ -111,7 +123,7 @@ function saveHistory(messages: ChatMessage[], conversationId: string | null) {
   try {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
       version: STORAGE_VERSION,
-      messages,
+      messages: messages.filter((message) => !message.ephemeral),
       conversationId,
     } satisfies PersistedChat))
   } catch {
@@ -131,9 +143,9 @@ export function useChat() {
     return () => { closedRef.current = true }
   }, [])
 
-  const sendMessage = useCallback(async () => {
+  const sendMessage = useCallback(async (): Promise<ChatResponse | null> => {
     const trimmed = input.trim()
-    if (!trimmed || loading) return
+    if (!trimmed || loading) return null
     if (trimmed.length > 500) {
       const msg: ChatMessage = { id: generateId(), role: 'bot', content: i18n.t('chat.maxLength'), blocked: true }
       setMessages((prev) => {
@@ -142,7 +154,7 @@ export function useChat() {
         return next
       })
       setInput('')
-      return
+      return null
     }
 
     const userMsg: ChatMessage = { id: generateId(), role: 'user', content: trimmed }
@@ -156,13 +168,14 @@ export function useChat() {
 
     try {
       const history = messages
+        .filter((message) => !message.ephemeral)
         .slice(-12)
         .map(({ role, content }) => ({
           role: role === 'user' ? 'user' as const : 'assistant' as const,
           content,
         }))
       const res: ChatResponse = await sendChatMessage({ message: trimmed, conversationId, history })
-      if (closedRef.current) return
+      if (closedRef.current) return null
       const nextConversationId = res.conversationId || conversationId
       if (res.conversationId) setConversationId(res.conversationId)
       const firstName = getLoggedInFirstName()
@@ -172,24 +185,42 @@ export function useChat() {
         role: 'bot',
         content: personalizeGreeting(content, trimmed, firstName),
         blocked: res.blocked,
+        ephemeral: res.action === 'START_BOOKING',
+        action: res.action,
+        target: res.target,
       }
       setMessages((prev) => {
         const next = [...prev, botMsg]
         saveHistory(next, nextConversationId)
         return next
       })
+      return res
     } catch {
-      if (closedRef.current) return
+      if (closedRef.current) return null
       const botMsg: ChatMessage = { id: generateId(), role: 'bot', content: i18n.t('chat.retry'), blocked: true }
       setMessages((prev) => {
         const next = [...prev, botMsg]
         saveHistory(next, conversationId)
         return next
       })
+      return null
     } finally {
       if (!closedRef.current) setLoading(false)
     }
   }, [input, loading, conversationId, messages])
+
+  const appendMessage = useCallback((
+    role: ChatMessage['role'],
+    content: string,
+    options: { blocked?: boolean; ephemeral?: boolean } = {},
+  ) => {
+    const message: ChatMessage = { id: generateId(), role, content, ...options }
+    setMessages((prev) => {
+      const next = [...prev, message]
+      saveHistory(next, conversationId)
+      return next
+    })
+  }, [conversationId])
 
   const clearChat = useCallback(() => {
     closedRef.current = true
@@ -204,5 +235,16 @@ export function useChat() {
     }
   }, [])
 
-  return { messages, input, setInput, sendMessage, loading, clearChat, conversationId }
+  return {
+    messages,
+    input,
+    setInput,
+    sendMessage,
+    loading,
+    clearChat,
+    conversationId,
+    appendMessage,
+  }
 }
+
+export type ChatController = ReturnType<typeof useChat>

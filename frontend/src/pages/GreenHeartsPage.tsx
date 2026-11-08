@@ -10,7 +10,6 @@ import 'swiper/css/pagination'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import CarouselArrowIcon from '../components/ui/CarouselArrowIcon.tsx'
-import Skeleton from '../components/ui/Skeleton.tsx'
 import greenKids from '../assets/imgs/greenKids.png'
 import puzzlePiece1 from '../assets/imgs/PIEZA1.svg'
 import puzzlePiece2 from '../assets/imgs/PIEZA2.svg'
@@ -51,56 +50,6 @@ const actions = [
 
 const PUZZLE_ALIGNMENTS = ['left', 'center', 'right'] as const
 
-function GreenHeartsPageSkeleton({ loadingLabel }: Readonly<{ loadingLabel: string }>) {
-  return (
-    <div aria-busy="true" className="min-h-screen bg-bg-page">
-      <output className="sr-only">{loadingLabel}</output>
-      <Navbar />
-      <div className="flex min-h-[280px] flex-col items-center justify-center gap-5 bg-white px-6 md:min-h-[320px]">
-        <Skeleton shape="line" className="h-10 w-3/4 max-w-[520px]" />
-        <Skeleton shape="line" className="h-4 w-5/6 max-w-[560px]" />
-      </div>
-      <Skeleton shape="rect" className="h-[360px] w-full rounded-none sm:h-[440px]" />
-      <div className="mx-auto grid w-full max-w-[1200px] gap-6 px-6 py-20 md:grid-cols-2">
-        {Array.from({ length: 2 }, (_, index) => (
-          <article key={index} className="rounded-3xl border border-neutral-200 bg-white p-7 sm:p-10">
-            <Skeleton shape="line" className="mb-8 h-8 w-2/5" />
-            <Skeleton shape="line" className="mb-3 h-4 w-full" />
-            <Skeleton shape="line" className="mb-3 h-4 w-full" />
-            <Skeleton shape="line" className="h-4 w-3/4" />
-          </article>
-        ))}
-      </div>
-      <div className="bg-green-500 px-6 py-20">
-        <div className="mx-auto grid max-w-[1200px] gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 3 }, (_, index) => (
-            <article key={index} className="flex min-h-[320px] flex-col rounded-3xl bg-white p-7 sm:p-9">
-              <div className="mb-8 flex items-center justify-between">
-                <Skeleton shape="line" className="h-10 w-12" />
-                <Skeleton shape="circle" className="size-20" />
-              </div>
-              <Skeleton shape="line" className="mb-4 h-6 w-3/4" />
-              <Skeleton shape="line" className="mb-3 h-4 w-full" />
-              <Skeleton shape="line" className="h-4 w-2/3" />
-            </article>
-          ))}
-        </div>
-      </div>
-      <div className="mx-auto w-full max-w-[900px] px-6 py-20">
-        <Skeleton shape="line" className="mx-auto mb-14 h-10 w-64" />
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
-          {Array.from({ length: 6 }, (_, index) => (
-            <article key={index} className="flex min-h-[280px] flex-col items-center justify-center gap-5 rounded-3xl border border-neutral-200 bg-white p-6 shadow">
-              <Skeleton shape="circle" className="size-14" />
-              <Skeleton shape="line" className="h-6 w-3/4" />
-            </article>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
-
 function GreenHeartsPage() {
   const { t } = useTranslation()
   
@@ -111,7 +60,6 @@ function GreenHeartsPage() {
     })
   }, [t])
 
-  const [pageReady, setPageReady] = useState(false)
   const reduceMotion = useReducedMotion()
   const [actionsSwiper, setActionsSwiper] = useState<SwiperInstance | null>(null)
   const [actionsIndex, setActionsIndex] = useState(0)
@@ -123,27 +71,8 @@ function GreenHeartsPage() {
   const actionArrowClass = 'z-10 flex size-11 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-[scale,opacity] duration-300 enabled:hover:scale-105 enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:bg-orange-500 disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2'
 
   useEffect(() => {
-    let cancelled = false
-    const imageUrls = [greenKids, ...puzzlePieces.map(({ src }) => src)]
-    const imageLoads = imageUrls.map((src) => new Promise<void>((resolve) => {
-      const image = new Image()
-      image.onload = () => resolve()
-      image.onerror = () => resolve()
-      image.src = src
-      if (image.complete) resolve()
-    }))
-    const minimumSkeletonTime = new Promise<void>((resolve) => window.setTimeout(resolve, 250))
-
-    void Promise.all([Promise.all(imageLoads), minimumSkeletonTime]).then(() => {
-      if (!cancelled) setPageReady(true)
-    })
-
-    return () => { cancelled = true }
-  }, [])
-
-  useEffect(() => {
     const puzzle = puzzleRef.current
-    if (!pageReady || !puzzle || puzzleInView) return
+    if (!puzzle || puzzleInView) return
 
     if (!('IntersectionObserver' in window)) {
       setPuzzleInView(true)
@@ -159,9 +88,7 @@ function GreenHeartsPage() {
 
     observer.observe(puzzle)
     return () => observer.disconnect()
-  }, [pageReady, puzzleInView])
-
-  if (!pageReady) return <GreenHeartsPageSkeleton loadingLabel={t('greenHearts.loading')} />
+  }, [puzzleInView])
 
   return (
     <>
