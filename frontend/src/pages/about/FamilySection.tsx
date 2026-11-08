@@ -24,7 +24,7 @@ import {
 } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 
-import familiaFundadora from '../../assets/imgs/familiaFundadora.jpeg'
+import foundingFamily from '../../assets/imgs/foundingFamily.jpeg'
 import Container from '../../components/home/Container.tsx'
 
 type IconHandle = { startAnimation: () => void; stopAnimation: () => void }
@@ -32,11 +32,8 @@ type AnimatedIcon = ForwardRefExoticComponent<{ size?: number; className?: strin
 
 const DEVELOPMENT = ['emotional', 'social', 'physical', 'cognitive'] as const
 
-// Mismo subrayado de pincel que los títulos de Green Hearts, en el rosa de marca.
 const BRUSH_UNDERLINE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 16' preserveAspectRatio='none'%3E%3Cpath d='M4 11C70 4 160 3 296 8' fill='none' stroke='%23ff93a9' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E")`
 
-// Etiqueta del pie de foto.
-// Rosa de marca, igual que la etiqueta "Familia fundadora" del encabezado.
 const TAG = 'rounded-full bg-[var(--pink-400)] px-md py-1 font-body text-body-sm font-semibold text-white'
 
 const PILLARS: { key: 'play' | 'nature' | 'languages' | 'values'; Icon: AnimatedIcon; color: string }[] = [
@@ -193,7 +190,7 @@ function FamilySection() {
           >
             <div className="relative -rotate-2 rounded-[2rem] border-[3px] border-dashed border-green-500 bg-white p-sm shadow-sm transition-transform duration-500 hover:rotate-0">
               <img
-                src={familiaFundadora}
+                src={foundingFamily}
                 alt={t('aboutUsPage.family.imageAlt')}
                 loading="lazy"
                 width={1214}
@@ -351,7 +348,6 @@ function FamilySection() {
           </motion.div>
         </div>
 
-        {/* Firma como cierre de carta: despedida, nombre y un trazo de pincel corto centrado debajo */}
         <motion.div {...reveal()} className="mx-auto flex flex-col items-center text-center">
           <p className="m-0 font-body text-body leading-[1.6] text-body-text">{t('aboutUsPage.family.signatureClosing')}</p>
           <p className="m-0 mt-2xs font-heading text-h4 font-bold leading-snug text-heading">

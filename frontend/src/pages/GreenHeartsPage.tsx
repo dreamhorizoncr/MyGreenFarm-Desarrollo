@@ -10,15 +10,17 @@ import 'swiper/css/pagination'
 import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import CarouselArrowIcon from '../components/ui/CarouselArrowIcon.tsx'
-import greenKids from '../assets/imgs/greenKids.png'
-import puzzlePiece1 from '../assets/imgs/PIEZA1.svg'
-import puzzlePiece2 from '../assets/imgs/PIEZA2.svg'
-import puzzlePiece3 from '../assets/imgs/PIEZA3.svg'
-import puzzlePiece4 from '../assets/imgs/PIEZA4.svg'
-import puzzlePiece5 from '../assets/imgs/PIEZA5.svg'
-import puzzlePiece6 from '../assets/imgs/PIEZA6.svg'
+import greenKids from '../assets/imgs/greenKids.webp'
+import puzzlePiece1 from '../assets/imgs/puzzlePiece1.svg?raw'
+import puzzlePiece2 from '../assets/imgs/puzzlePiece2.svg?raw'
+import puzzlePiece3 from '../assets/imgs/puzzlePiece3.svg?raw'
+import puzzlePiece4 from '../assets/imgs/puzzlePiece4.svg?raw'
+import puzzlePiece5 from '../assets/imgs/puzzlePiece5.svg?raw'
+import puzzlePiece6 from '../assets/imgs/puzzlePiece6.svg?raw'
 import './greenHearts.css'
 import { setPageSEO } from '../utils/seo.ts'
+import Tag from '../components/ui/Tag.tsx'
+import PuzzlePiece from '../components/PuzzlePiece.tsx'
 
 const PURPOSE_UNDERLINE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 16' preserveAspectRatio='none'%3E%3Cpath d='M4 11C70 4 160 3 296 8' fill='none' stroke='%23F37B25' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E")`
 
@@ -32,12 +34,12 @@ const values = [
 ] as const
 
 const puzzlePieces = [
-  { src: puzzlePiece1, left: '0%', top: '0%', width: '31.83%', height: '63.32%' },
-  { src: puzzlePiece2, left: '22.01%', top: '0%', width: '51.68%', height: '48.97%' },
-  { src: puzzlePiece3, left: '64.23%', top: '0%', width: '35.77%', height: '63.32%' },
-  { src: puzzlePiece4, left: '0%', top: '48.87%', width: '31.76%', height: '51.24%' },
-  { src: puzzlePiece5, left: '22.01%', top: '33.5%', width: '52.69%', height: '66.67%' },
-  { src: puzzlePiece6, left: '64.23%', top: '48.87%', width: '35.77%', height: '51.13%' },
+  { svg: puzzlePiece1, left: '0%', top: '0%', width: '31.83%', height: '63.32%' },
+  { svg: puzzlePiece2, left: '22.01%', top: '0%', width: '51.68%', height: '48.97%' },
+  { svg: puzzlePiece3, left: '64.23%', top: '0%', width: '35.77%', height: '63.32%' },
+  { svg: puzzlePiece4, left: '0%', top: '48.87%', width: '31.76%', height: '51.24%' },
+  { svg: puzzlePiece5, left: '22.01%', top: '33.5%', width: '52.69%', height: '66.67%' },
+  { svg: puzzlePiece6, left: '64.23%', top: '48.87%', width: '35.77%', height: '51.13%' },
 ]
 
 const actions = [
@@ -49,6 +51,21 @@ const actions = [
 ] as const
 
 const PUZZLE_ALIGNMENTS = ['left', 'center', 'right'] as const
+
+const pieceBodyCenter = (index: number) => {
+  const { left, top, width, height } = puzzlePieces[index]
+  const cellX = ((index % 3) + 0.5) / 3 * 100
+  const cellY = (Math.floor(index / 3) + 0.5) / 2 * 100
+  return {
+    left: `${((cellX - parseFloat(left)) / parseFloat(width)) * 100}%`,
+    top: `${((cellY - parseFloat(top)) / parseFloat(height)) * 100}%`,
+  }
+}
+
+const pieceRatio = (svg: string) => {
+  const [, , w, h] = (/viewBox="([^"]+)"/.exec(svg)?.[1] ?? '0 0 1 1').split(' ').map(Number)
+  return w / h
+}
 
 function GreenHeartsPage() {
   const { t } = useTranslation()
@@ -66,18 +83,14 @@ function GreenHeartsPage() {
   const [valuesSwiper, setValuesSwiper] = useState<SwiperInstance | null>(null)
   const [valuesIndex, setValuesIndex] = useState(0)
   const [hoveredPuzzlePiece, setHoveredPuzzlePiece] = useState<number | null>(null)
-  const [puzzleInView, setPuzzleInView] = useState(false)
+  // Without IntersectionObserver the puzzle is shown right away
+  const [puzzleInView, setPuzzleInView] = useState(() => typeof window !== 'undefined' && !('IntersectionObserver' in window))
   const puzzleRef = useRef<HTMLDivElement | null>(null)
   const actionArrowClass = 'z-10 flex size-11 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-[scale,opacity] duration-300 enabled:hover:scale-105 enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:bg-orange-500 disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2'
 
   useEffect(() => {
     const puzzle = puzzleRef.current
     if (!puzzle || puzzleInView) return
-
-    if (!('IntersectionObserver' in window)) {
-      setPuzzleInView(true)
-      return
-    }
 
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
@@ -109,7 +122,7 @@ function GreenHeartsPage() {
           <div className="absolute inset-0 bg-green-900/65" />
           <Container>
             <div className="relative mx-auto max-w-6xl text-center">
-              <p className="mx-auto mb-6 w-fit rounded-full border border-orange-500 bg-orange-500 px-md py-xs font-body text-body-sm font-semibold uppercase tracking-wide text-white">{t('greenHearts.purpose.label')}</p>
+              <p className="mx-auto mb-6 flex w-fit justify-center"><Tag>{t('greenHearts.purpose.label')}</Tag></p>
               <p className="m-0 font-heading text-h3 font-semibold leading-relaxed text-white">
                 {t('greenHearts.purpose.beforeFirst')}{' '}
                 <span className="bg-no-repeat pb-[0.12em] [background-position:0_100%] [background-size:100%_0.3em] [box-decoration-break:clone] [-webkit-box-decoration-break:clone]" style={{ backgroundImage: PURPOSE_UNDERLINE }}>{t('greenHearts.purpose.firstHighlight')}</span>
@@ -123,7 +136,7 @@ function GreenHeartsPage() {
           </Container>
         </section>
 
-        <section className="pb-2 pt-16 sm:pb-4 sm:pt-24" id="por-que-nace">
+        <section className="pb-2 pt-16 sm:pb-4 sm:pt-24" id="why-it-started">
           <Container>
             <div className="w-full text-left">
               <h2 className="mb-5 font-heading text-h2 font-bold leading-tight text-heading">{t('greenHearts.why.title')}</h2>
@@ -143,11 +156,11 @@ function GreenHeartsPage() {
           </Container>
         </section>
 
-        <section data-scroll-bg="green" className="bg-green-500 py-16 text-white sm:py-24" id="lineas-de-accion">
+        <section data-scroll-bg="green" className="bg-green-500 py-16 text-white sm:py-24" id="action-lines">
           <div className="mx-auto w-full max-w-[1200px] px-6">
             <div className="mb-10 text-left md:mb-12">
-              <span className="mb-6 flex w-fit self-start rounded-full border border-orange-500 bg-orange-500 px-md py-xs text-left font-body text-body-sm font-semibold uppercase tracking-wide text-white">{t('greenHearts.actions.label')}</span>
-              <div className="green-hearts-actions-header grid items-center gap-6 md:grid-cols-2 md:gap-12">
+              <Tag className="mb-6 block w-fit">{t('greenHearts.actions.label')}</Tag>
+              <div className="green-hearts-actions-header grid gap-4">
                 <h2 className="m-0 w-full max-w-xl text-left font-heading text-h2 font-bold leading-tight text-white">{t('greenHearts.actions.title')}</h2>
                 <p className="m-0 w-full max-w-2xl text-left font-body text-body leading-[1.6] text-white">{t('greenHearts.actions.description')}</p>
               </div>
@@ -202,20 +215,27 @@ function GreenHeartsPage() {
           </div>
         </section>
 
-        <section className="py-16 sm:py-24" id="valores">
+        <section className="py-16 sm:py-24" id="values">
           <Container>
             <h2 className="mb-16 text-center font-heading text-h2 font-bold leading-tight text-heading">
               <span className="bg-no-repeat pb-[0.12em] [background-position:0_100%] [background-size:100%_0.3em] [box-decoration-break:clone] [-webkit-box-decoration-break:clone]" style={{ backgroundImage: PURPOSE_UNDERLINE }}>{t('greenHearts.values.title')}</span>
             </h2>
             <div ref={puzzleRef} className={`green-hearts-values-puzzle mx-auto hidden lg:block${puzzleInView ? ' is-in-view' : ''}`}>
               <div className="green-hearts-values-puzzle-art" aria-hidden="true">
-                {puzzlePieces.map(({ src, left, top, width, height }, index) => (
-                  <img key={src} src={src} alt="" className={hoveredPuzzlePiece === index ? 'is-raised' : undefined} style={{ left, top, width, height }} />
+                {puzzlePieces.map(({ svg, left, top, width, height }, index) => (
+                  <PuzzlePiece
+                    key={left + top}
+                    svg={svg}
+                    className={hoveredPuzzlePiece === index ? 'is-raised' : undefined}
+                    style={{ left, top, width, height }}
+                    onPointerEnter={() => setHoveredPuzzlePiece(index)}
+                    onPointerLeave={() => setHoveredPuzzlePiece((current) => (current === index ? null : current))}
+                  />
                 ))}
               </div>
               <div className="green-hearts-values-puzzle-content">
                 {values.map(({ labelKey, icon: Icon }, index) => (
-                  <article key={labelKey} onMouseEnter={() => setHoveredPuzzlePiece(index)} onMouseLeave={() => setHoveredPuzzlePiece(null)} className={`green-hearts-puzzle-value green-hearts-puzzle-value-${index + 1} green-hearts-puzzle-value-${PUZZLE_ALIGNMENTS[index % 3]}${hoveredPuzzlePiece === index ? ' is-raised' : ''}`}>
+                  <article key={labelKey} className={`green-hearts-puzzle-value green-hearts-puzzle-value-${index + 1} green-hearts-puzzle-value-${PUZZLE_ALIGNMENTS[index % 3]}${hoveredPuzzlePiece === index ? ' is-raised' : ''}`}>
                     <span className="mb-3 flex w-fit items-center text-white" aria-hidden="true">
                       <Icon size={32} strokeWidth={1.8} />
                     </span>
@@ -255,14 +275,16 @@ function GreenHeartsPage() {
                         hover: { y: -4, scale: 1.015 },
                       }}
                       transition={{ duration: reduceMotion ? 0 : 0.45, delay: reduceMotion ? 0 : index * 0.08, ease: 'easeOut' }}
-                      className={`green-hearts-value-card group flex h-full min-h-[280px] min-w-0 flex-col items-center justify-center gap-5 rounded-3xl p-5 text-white shadow sm:p-6 ${['bg-orange-500', 'bg-green-500', 'bg-pink-300', 'bg-green-500', 'bg-pink-300', 'bg-orange-500'][index]}`}
+                      className="green-hearts-value-card relative mx-auto text-white"
+                      style={{ width: `min(100%, ${Math.round(280 * pieceRatio(puzzlePieces[index].svg))}px)`, aspectRatio: pieceRatio(puzzlePieces[index].svg) }}
                     >
-                      <div className="flex items-center justify-center">
-                        <span className="flex size-16 shrink-0 items-center justify-center text-white" aria-hidden="true">
-                          <Icon size={40} strokeWidth={1.8} />
+                      <PuzzlePiece svg={puzzlePieces[index].svg} className="green-hearts-value-piece absolute inset-0 size-full" />
+                      <div className="absolute flex w-[70%] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-3 text-center" style={pieceBodyCenter(index)}>
+                        <span className="flex size-12 shrink-0 items-center justify-center text-white" aria-hidden="true">
+                          <Icon size={36} strokeWidth={1.8} />
                         </span>
+                        <h3 className="m-0 font-heading text-h5 font-bold leading-snug text-white">{t(labelKey)}</h3>
                       </div>
-                      <h3 className="m-0 text-center font-heading text-h4 font-bold leading-snug text-white">{t(labelKey)}</h3>
                     </motion.article>
                   </SwiperSlide>
                 )

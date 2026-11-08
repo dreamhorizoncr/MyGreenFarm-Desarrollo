@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { MailIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
-import pollitos from '../../assets/imgs/pollitos.svg'
-import nubesPink from '../../assets/imgs/nubesPink.svg'
-import lapiz from '../../assets/imgs/lapiz.svg'
+import chicks from '../../assets/imgs/chicks.webp'
+import cloudsPink from '../../assets/imgs/cloudsPink.svg'
+import pencil from '../../assets/imgs/pencil.svg'
 import transportador from '../../assets/imgs/transportador.svg'
-import abaco from '../../assets/imgs/abaco.svg'
-import tijera from '../../assets/imgs/Tijera.svg'
+import abacus from '../../assets/imgs/abacus.svg'
+import scissors from '../../assets/imgs/scissors.svg'
 import Container from '../../components/home/Container.tsx'
 import { useNewsletter } from '../../hooks/useNewsletter.ts'
 import { notify } from '../../utils/notifications.ts'
@@ -15,10 +15,10 @@ import { validateEmail } from '../../utils/validators.ts'
 const BRUSH_UNDERLINE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 16' preserveAspectRatio='none'%3E%3Cpath d='M4 11C70 4 160 3 296 8' fill='none' stroke='%23fde047' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E")`
 
 const DOODLES = [
-  { src: lapiz, className: 'left-[3%] top-[8%] h-16 -rotate-12' },
+  { src: pencil, className: 'left-[3%] top-[8%] h-16 -rotate-12' },
   { src: transportador, className: 'right-[4%] top-[6%] h-14 rotate-12' },
-  { src: abaco, className: 'bottom-[10%] left-[30%] hidden h-14 rotate-6 md:block' },
-  { src: tijera, className: 'right-[30%] bottom-[8%] hidden h-12 -rotate-12 md:block' },
+  { src: abacus, className: 'bottom-[10%] left-[30%] hidden h-14 rotate-6 md:block' },
+  { src: scissors, className: 'right-[30%] bottom-[8%] hidden h-12 -rotate-12 md:block' },
 ]
 
 function JoinSection() {
@@ -47,7 +47,7 @@ function JoinSection() {
     <section id="join" className="relative flex w-full flex-col md:min-h-[100svh]">
       <div className="relative w-full overflow-hidden leading-none">
         <img
-          src={nubesPink}
+          src={cloudsPink}
           alt=""
           aria-hidden="true"
           className="relative -mb-1 block w-[110vw] max-w-none -translate-x-1/2 left-1/2 object-cover"
@@ -58,7 +58,7 @@ function JoinSection() {
         <Container className="py-1500">
           <div className="relative mt-1000 md:mt-0">
           <img
-            src={pollitos}
+            src={chicks}
             alt=""
             aria-hidden="true"
             className="absolute bottom-full left-1/2 z-10 h-28 w-auto -translate-x-1/2 translate-y-[18%] md:hidden"
@@ -75,16 +75,16 @@ function JoinSection() {
             ))}
 
             <img
-              src={pollitos}
+              src={chicks}
               alt=""
               aria-hidden="true"
-              className="absolute bottom-0 left-[9%] hidden h-[210px] w-auto origin-bottom translate-y-[8%] transition-transform duration-500 ease-out group-hover:-rotate-6 md:block"
+              className="absolute bottom-0 left-[9%] hidden h-[210px] w-auto origin-bottom transition-transform duration-500 ease-out group-hover:-rotate-6 md:block"
             />
             <img
-              src={pollitos}
+              src={chicks}
               alt=""
               aria-hidden="true"
-              className="absolute bottom-0 right-[9%] hidden h-[210px] w-auto origin-bottom translate-y-[8%] -scale-x-100 transition-transform duration-500 ease-out group-hover:rotate-6 md:block"
+              className="absolute bottom-0 right-[9%] hidden h-[210px] w-auto origin-bottom -scale-x-100 transition-transform duration-500 ease-out group-hover:rotate-6 md:block"
             />
 
             <div className="relative flex flex-col items-center px-xl py-1000 text-center md:px-1400 md:py-1200">
