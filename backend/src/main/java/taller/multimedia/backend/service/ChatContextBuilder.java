@@ -12,8 +12,9 @@ public class ChatContextBuilder {
     private static final String PUBLIC_CONTEXT = """
             INFORMACIÓN PÚBLICA DE MY GREEN FARM:
             - Centro educativo acreditado por el MEP con programas de guardería y preescolar para niños desde los 3 meses hasta los 12 años.
-            - El sitio incluye Inicio, Sobre nosotros, Servicios, Clubes, Reserva de citas, Noticias, Foro, Galería, Vacantes y Contacto.
-            - Ubicación general: Liberia, Guanacaste, Costa Rica. Para la ubicación exacta en Google Maps, orienta a la sección Contacto del sitio.
+            - El sitio incluye Inicio, Sobre nosotros, Servicios, Clubes, Reserva de citas, Noticias, Foro, Galería, Vacantes, Green Hearts y un pie de página con redes sociales, contacto y Términos y Privacidad.
+            - Ubicación de temas: Noticias (avisos, eventos y transporte), Galería (fotografías y álbumes), Foro (opiniones, publicaciones e investigaciones), Servicios (precios y planes), Clubes, Vacantes (empleo y postulaciones), Sobre nosotros (historia, dueños y origen), Green Hearts (acción social). El pie de página contiene redes sociales, Términos y Privacidad y datos de contacto.
+            - Ubicación general: Liberia, Guanacaste, Costa Rica. Para la ubicación exacta en Google Maps, orienta al pie de página, en la sección Contacto.
             - Para agendar una cita, el chat puede iniciar el formulario de reserva directamente; el formulario consulta la disponibilidad real de horarios.
             - No inventes horarios, cupos ni confirmaciones. No pidas datos personales por mensaje: el formulario los solicita de forma segura.
             - Los horarios de las lecciones se disponen después de completar la matrícula y se comunican al encargado.

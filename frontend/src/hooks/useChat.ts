@@ -10,10 +10,27 @@ export interface ChatMessage {
   content: string
   blocked?: boolean
   ephemeral?: boolean
+  action?: string | null
+  target?: string | null
 }
 
 const STORAGE_KEY = 'mygreenfarm_chat_history'
 const STORAGE_VERSION = 1
+
+// A full reload starts a fresh conversation, but this must only happen once per
+// page load. Previously it ran on every mount of the chat panel, which wiped the
+// history each time the chat was closed and reopened (for example after a
+// redirect).
+const initialNavigation = typeof performance !== 'undefined'
+  ? performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
+  : undefined
+if (initialNavigation?.type === 'reload') {
+  try {
+    sessionStorage.removeItem(STORAGE_KEY)
+  } catch {
+    // Ignore unavailable storage.
+  }
+}
 const INTERNAL_DISCLOSURE = /\b(codigo fuente|fuente del codigo|endpoint|api interna|implementacion interna|arquitectura interna|instrucciones internas|configuracion interna)\b/i
 const ACCESS_INVITATIONS = [
   /inici(?:a|ar|e)\s+sesion/i,
@@ -70,12 +87,6 @@ function sanitizeAnswer(answer: string) {
 
 function loadHistory(): ChatMessage[] {
   try {
-    const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
-    if (navigation?.type === 'reload') {
-      sessionStorage.removeItem(STORAGE_KEY)
-      return []
-    }
-
     const raw = sessionStorage.getItem(STORAGE_KEY)
     if (!raw) return []
     const stored = JSON.parse(raw) as PersistedChat | ChatMessage[]
@@ -175,6 +186,8 @@ export function useChat() {
         content: personalizeGreeting(content, trimmed, firstName),
         blocked: res.blocked,
         ephemeral: res.action === 'START_BOOKING',
+        action: res.action,
+        target: res.target,
       }
       setMessages((prev) => {
         const next = [...prev, botMsg]
@@ -233,3 +246,5 @@ export function useChat() {
     appendMessage,
   }
 }
+
+export type ChatController = ReturnType<typeof useChat>

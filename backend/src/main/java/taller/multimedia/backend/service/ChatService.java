@@ -52,13 +52,16 @@ public class ChatService {
     private final ChatClient chatClient;
     private final ChatContextBuilder contextBuilder;
     private final ChatPromptProvider promptProvider;
+    private final ChatNavigationResolver navigationResolver;
     private final MessageSource messages;
 
     public ChatService(ChatClient chatClient, ChatContextBuilder contextBuilder,
-            ChatPromptProvider promptProvider, MessageSource messages) {
+            ChatPromptProvider promptProvider, ChatNavigationResolver navigationResolver,
+            MessageSource messages) {
         this.chatClient = chatClient;
         this.contextBuilder = contextBuilder;
         this.promptProvider = promptProvider;
+        this.navigationResolver = navigationResolver;
         this.messages = messages;
     }
 
@@ -73,6 +76,11 @@ public class ChatService {
         if (isOffTopic(message)) return response("chat.safe", language, conversationId, true);
         if (isBookingIntent(message)) {
             return new ChatResponse(localized("chat.booking.start", language), conversationId, false, "START_BOOKING");
+        }
+        ChatNavigationResolver.Target navigation = navigationResolver.resolve(message);
+        if (navigation != null) {
+            return new ChatResponse(localized(navigation.getMessageKey(), language), conversationId, false,
+                    navigation.getAction(), navigation.getKey());
         }
         String safeQuestion = message.replace("<pregunta>", "").replace("</pregunta>", "");
         try {

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { SendIcon, XIcon } from '@animateicons/react/lucide'
-import { useChat } from '../../hooks/useChat'
+import type { ChatController } from '../../hooks/useChat'
+import type { ChatResponse } from '../../services/chat.service'
 import { useChatBooking } from '../../hooks/useChatBooking'
 import ChatMessage from './ChatMessage'
 import ChatSuggestions from './ChatSuggestions'
@@ -13,6 +15,17 @@ import { animationsStopped } from '../../utils/reducedMotion'
 const THANKS_PATTERN = /\b(gracias|thanks|thank you|merci)\b/i
 const WORD_PATTERN = /\S+\s*/y
 const MAX_BOOKING_INPUT = 3000
+const ACTION_DELAY = 3500
+const NAV_TARGETS: Record<string, string> = {
+  news: '/news',
+  gallery: '/multimedia',
+  forum: '/forum',
+  services: '/services',
+  clubs: '/clubs',
+  vacancies: '/vacantes',
+  about: '/about-us',
+  'green-hearts': '/green-hearts',
+}
 
 function nextWordEnd(text: string, from: number) {
   WORD_PATTERN.lastIndex = from
@@ -21,13 +34,16 @@ function nextWordEnd(text: string, from: number) {
 }
 
 interface ChatPanelProps {
+  chat: ChatController
   onClose: () => void
+  onOpenTerms: () => void
 }
 
-export default function ChatPanel({ onClose }: Readonly<ChatPanelProps>) {
-  const { messages, input, setInput, sendMessage, loading, appendMessage } = useChat()
+export default function ChatPanel({ chat, onClose, onOpenTerms }: Readonly<ChatPanelProps>) {
+  const { messages, input, setInput, sendMessage, loading, appendMessage } = chat
   const booking = useChatBooking(appendMessage)
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const user = userStorage.getUser()
   const isAuthenticated = Boolean(user)
@@ -38,6 +54,7 @@ export default function ChatPanel({ onClose }: Readonly<ChatPanelProps>) {
   const [talk, setTalk] = useState<{ text: string; shown: number } | null>(null)
   const lastBotId = useRef(messages.at(-1)?.id)
   const moodTimer = useRef(0)
+  const actionTimer = useRef(0)
   const wasBookingActive = useRef(false)
 
   const react = (type: ChickReaction) => setReaction((current) => ({ type, key: (current?.key ?? 0) + 1 }))
@@ -49,6 +66,7 @@ export default function ChatPanel({ onClose }: Readonly<ChatPanelProps>) {
   }
 
   useEffect(() => () => window.clearTimeout(moodTimer.current), [])
+  useEffect(() => () => window.clearTimeout(actionTimer.current), [])
 
   useEffect(() => {
     if (wasBookingActive.current && !booking.active) setInput('')
@@ -100,10 +118,47 @@ export default function ChatPanel({ onClose }: Readonly<ChatPanelProps>) {
   else if (focused && input.trim()) chickState = 'listening'
   const talkTick = talk?.shown ?? 0
 
+  const scrollToFooter = () => {
+    const footer = document.getElementById('site-footer')
+    if (footer) {
+      footer.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      return
+    }
+    navigate('/')
+    window.setTimeout(() => {
+      document.getElementById('site-footer')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 350)
+  }
+
+  const scheduleChatAction = (response: ChatResponse) => {
+    if (!response.action) return
+    window.clearTimeout(actionTimer.current)
+    actionTimer.current = window.setTimeout(() => {
+      if (response.action === 'NAVIGATE') {
+        const path = response.target ? NAV_TARGETS[response.target] : undefined
+        if (!path) return
+        onClose()
+        navigate(path)
+        return
+      }
+      if (response.action === 'SCROLL_FOOTER') {
+        onClose()
+        window.setTimeout(scrollToFooter, 80)
+        return
+      }
+      if (response.action === 'OPEN_TERMS') {
+        onClose()
+        onOpenTerms()
+      }
+    }, ACTION_DELAY)
+  }
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
     const trimmed = input.trim()
     if (!trimmed || busy) return
+
+    window.clearTimeout(actionTimer.current)
 
     if (booking.active) {
       setInput('')
@@ -114,6 +169,7 @@ export default function ChatPanel({ onClose }: Readonly<ChatPanelProps>) {
     if (THANKS_PATTERN.test(trimmed)) react('thanks')
     const response = await sendMessage()
     if (response?.action === 'START_BOOKING') booking.start(false)
+    else if (response?.action) scheduleChatAction(response)
   }
 
   const closeChat = () => {

@@ -2,13 +2,17 @@ import { useRef, useState } from 'react'
 import { XIcon } from '@animateicons/react/lucide'
 import ChatPanel from './ChatPanel'
 import ChickAvatar from './ChickAvatar'
+import TermsModal from '../TermsModal'
+import { useChat } from '../../hooks/useChat'
 import { useTranslation } from 'react-i18next'
 import useDismiss from '../../hooks/useDismiss'
 
 export default function ChatWidget() {
   const [open, setOpen] = useState(false)
+  const [termsOpen, setTermsOpen] = useState(false)
   const [hovering, setHovering] = useState(false)
   const [byeKey, setByeKey] = useState(0)
+  const chat = useChat()
   const chatRef = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
 
@@ -32,7 +36,7 @@ export default function ChatWidget() {
           aria-modal="false"
           aria-label={t('chat.title')}
         >
-          <ChatPanel onClose={closeChat} />
+          <ChatPanel chat={chat} onClose={closeChat} onOpenTerms={() => setTermsOpen(true)} />
         </dialog>
       )}
 
@@ -54,6 +58,8 @@ export default function ChatWidget() {
           />
         )}
       </button>
+
+      {termsOpen && <TermsModal onClose={() => setTermsOpen(false)} />}
     </div>
   )
 }
