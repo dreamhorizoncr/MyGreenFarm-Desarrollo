@@ -17,6 +17,7 @@ import puzzlePiece3 from '../assets/imgs/puzzlePiece3.svg?raw'
 import puzzlePiece4 from '../assets/imgs/puzzlePiece4.svg?raw'
 import puzzlePiece5 from '../assets/imgs/puzzlePiece5.svg?raw'
 import puzzlePiece6 from '../assets/imgs/puzzlePiece6.svg?raw'
+import puzzlePieceCard from '../assets/imgs/puzzlePieceCard.svg?raw'
 import './greenHearts.css'
 import { setPageSEO } from '../utils/seo.ts'
 import Tag from '../components/ui/Tag.tsx'
@@ -52,20 +53,8 @@ const actions = [
 
 const PUZZLE_ALIGNMENTS = ['left', 'center', 'right'] as const
 
-const pieceBodyCenter = (index: number) => {
-  const { left, top, width, height } = puzzlePieces[index]
-  const cellX = ((index % 3) + 0.5) / 3 * 100
-  const cellY = (Math.floor(index / 3) + 0.5) / 2 * 100
-  return {
-    left: `${((cellX - parseFloat(left)) / parseFloat(width)) * 100}%`,
-    top: `${((cellY - parseFloat(top)) / parseFloat(height)) * 100}%`,
-  }
-}
-
-const pieceRatio = (svg: string) => {
-  const [, , w, h] = (/viewBox="([^"]+)"/.exec(svg)?.[1] ?? '0 0 1 1').split(' ').map(Number)
-  return w / h
-}
+// The carousel shows one symmetric piece in each desktop piece's color.
+const pieceFill = (svg: string) => /<path[^>]*\sfill="([^"]+)"/.exec(svg)?.[1]
 
 function GreenHeartsPage() {
   const { t } = useTranslation()
@@ -275,15 +264,14 @@ function GreenHeartsPage() {
                         hover: { y: -4, scale: 1.015 },
                       }}
                       transition={{ duration: reduceMotion ? 0 : 0.45, delay: reduceMotion ? 0 : index * 0.08, ease: 'easeOut' }}
-                      className="green-hearts-value-card relative mx-auto text-white"
-                      style={{ width: `min(100%, ${Math.round(280 * pieceRatio(puzzlePieces[index].svg))}px)`, aspectRatio: pieceRatio(puzzlePieces[index].svg) }}
+                      className="green-hearts-value-card relative mx-auto aspect-square w-full max-w-[19rem] text-white"
                     >
-                      <PuzzlePiece svg={puzzlePieces[index].svg} className="green-hearts-value-piece absolute inset-0 size-full" />
-                      <div className="absolute flex w-[70%] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-3 text-center" style={pieceBodyCenter(index)}>
+                      <PuzzlePiece svg={puzzlePieceCard} className="green-hearts-value-piece absolute inset-0 size-full" style={{ color: pieceFill(puzzlePieces[index].svg) }} />
+                      <div className="absolute inset-[14.3%] flex flex-col items-center justify-center gap-2 px-3 text-center">
                         <span className="flex size-12 shrink-0 items-center justify-center text-white" aria-hidden="true">
                           <Icon size={36} strokeWidth={1.8} />
                         </span>
-                        <h3 className="m-0 font-heading text-h5 font-bold leading-snug text-white">{t(labelKey)}</h3>
+                        <h3 className="green-hearts-value-title m-0 font-heading text-h5 font-bold leading-snug text-white">{t(labelKey)}</h3>
                       </div>
                     </motion.article>
                   </SwiperSlide>
