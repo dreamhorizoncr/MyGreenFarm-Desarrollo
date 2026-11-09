@@ -56,18 +56,18 @@ import CurrencyToggle from './currency/CurrencyToggle.tsx'
                 className={`fixed inset-0 m-auto max-h-[90vh] w-[min(1100px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-page backdrop:bg-black/50 ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'
                     }`}
             >
-                <div className="relative px-[22px] pb-[45px] pt-[40px] md:px-[55px] md:pb-[60px] md:pt-[55px]">
+                <div className="relative px-5.5 pb-11.25 pt-10 md:px-[55px] md:pb-15 md:pt-[55px]">
                     <ModalCloseButton
                         onClick={requestClose}
                         aria-label={t('common.close')}
-                        className="absolute right-[22px] top-[40px] z-20 md:right-[55px] md:top-[55px]"
+                        className="absolute right-[22px] top-10 z-20 md:right-[55px] md:top-[55px]"
                     />
 
                     <header className="mx-auto max-w-[850px] text-center">
-                        <h2 className="mt-[16px] font-heading text-h2 font-bold leading-[1.15] text-heading">
+                        <h2 className="mt-4 font-heading text-h2 font-bold leading-[1.15] text-heading">
                             {plan.name}
                         </h2>
-                        <div className="mt-[16px] flex flex-wrap items-center justify-center gap-x-[18px] gap-y-[8px] font-body text-body-sm text-neutral-500">
+                        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-[18px] gap-y-[8px] font-body text-body-sm text-neutral-500">
                             <div className="flex items-center gap-[6px]">
                                 <CalendarDaysIcon size={16} className="text-pink-400" />
                                 <span>{getPlanTypeLabel(plan.type, t as never)}</span>
@@ -77,16 +77,16 @@ import CurrencyToggle from './currency/CurrencyToggle.tsx'
                     </header>
 
                     {plan.imageUrl && (
-                        <div className="mt-[40px] overflow-hidden rounded-[22px]">
+                        <div className="mt-10 overflow-hidden rounded-[22px]">
                             <img
                                 src={plan.imageUrl}
                                 alt={plan.imageAlt || plan.name}
-                                className="h-[260px] w-full object-cover sm:h-[360px] md:h-[480px]"
+                                className="h-65 w-full object-cover sm:h-90 md:h-120"
                             />
                         </div>
                     )}
 
-                    <section className="mx-auto mt-[40px] max-w-[950px] text-left">
+                    <section className="mx-auto mt-10 max-w-[950px] text-left">
                         <p className="m-0 whitespace-pre-line font-body text-body-sm leading-[1.85] text-body-text md:text-body">
                             {plan.description}
                         </p>
@@ -128,15 +128,7 @@ import CurrencyToggle from './currency/CurrencyToggle.tsx'
                             </div>
                         </div>
 
-                        <div className="mt-xl">
-                            <button
-                                type="button"
-                                onClick={requestClose}
-                                className="h-12 w-full rounded-full border border-green-500 px-lg font-body text-body font-semibold text-heading transition-colors hover:bg-green-50"
-                            >
-                                {t('common.close')}
-                            </button>
-                        </div>
+                        
                     </section>
                 </div>
             </dialog>

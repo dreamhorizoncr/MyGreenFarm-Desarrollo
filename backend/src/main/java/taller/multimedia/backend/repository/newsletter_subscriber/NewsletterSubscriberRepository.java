@@ -5,11 +5,9 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 
 import taller.multimedia.backend.model.newsletter_subscriber.NewsletterSubscriber;
 
-@Repository
 public interface NewsletterSubscriberRepository extends JpaRepository<NewsletterSubscriber, Integer> {
     @Query("SELECT s.email FROM NewsletterSubscriber s WHERE s.isActive = true")
     List<String> findAllActiveSubscriberEmails();

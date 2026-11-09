@@ -24,12 +24,12 @@ export const SinpeModal: React.FC<SinpeModalProps> = ({
     if (!isOpen) return null
 
     return createPortal(
-        <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/55 backdrop-blur p-4">
+        <div className="fixed inset-0 z-99999 flex items-center justify-center bg-black/55 backdrop-blur p-4">
             <dialog
                 open
                 aria-modal="true"
                 aria-labelledby="sinpe-modal-title"
-                className="static m-0 text-inherit w-full max-w-lg min-w-[320px] rounded-[28px] bg-white p-6 text-center shadow-2xl animate-fade-in"
+                className="static m-0 text-inherit w-full max-w-lg min-w-80 rounded-[28px] bg-white p-6 text-center shadow-2xl animate-fade-in"
             >
                 <div className="mx-auto mb-md flex h-16 w-16 items-center justify-center rounded-full bg-orange-50 text-orange-500">
                 <SmartphoneIcon size={32} />

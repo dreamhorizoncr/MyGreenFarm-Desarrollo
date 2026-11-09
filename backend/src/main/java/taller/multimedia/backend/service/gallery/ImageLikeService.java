@@ -1,9 +1,7 @@
 package taller.multimedia.backend.service.gallery;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 
 import taller.multimedia.backend.dto.gallery.ImageLikeResponse;
 import taller.multimedia.backend.model.gallery.GalleryImages;

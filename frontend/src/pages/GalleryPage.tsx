@@ -14,7 +14,7 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import TabHighlight from '../components/ui/TabHighlight.tsx'
 import { FilterGrid, FilterGridItem } from '../components/ui/FilterGrid.tsx'
 import MostLikedPhotos from '../components/gallery/MostLikedPhotos.tsx'
-import transportador from "../assets/imgs/transportador.svg";
+import protractor from "../assets/imgs/protractor.svg";
 import abacus from "../assets/imgs/abacus.svg";
 import { setPageSEO } from '../utils/seo.ts'
 
@@ -71,8 +71,8 @@ function GalleryPage() {
     <div id="gallery-page" className="min-h-screen bg-bg-page">
       <Navbar />
 
-      <section className="flex min-h-[280px] items-start bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
-           <img
+      <section className="flex min-h-70 items-start bg-white px-7.5 pt-12 pb-10 text-center md:min-h-80 md:pt-18">
+        <img
           src={abacus}
           alt=""
           aria-hidden="true"
@@ -84,7 +84,7 @@ function GalleryPage() {
         />
 
         <img
-          src={transportador}
+          src={protractor}
           alt=""
           aria-hidden="true"
           className="absolute top-[25%] right-[3%]
@@ -94,25 +94,24 @@ function GalleryPage() {
               pointer-events-none select-none opacity-50"
         />
 
-        <div className="mx-auto w-full max-w-[700px]">
+        <div className="mx-auto w-full max-w-175">
           <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">
             {t('home.gallery.title')}
           </h1>
 
-          <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">
+          <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">
             {t('home.gallery.description')}
           </p>
 
-          <div className="mt-[24px] w-full overflow-hidden" ref={emblaRef}>
-            <div className={`isolate flex items-center gap-[10px] ${fits ? 'w-full justify-center' : ''}`}>
+          <div className="mt-6 w-full overflow-hidden" ref={emblaRef}>
+            <div className={`isolate flex items-center gap-2.5 ${fits ? 'w-full justify-center' : ''}`}>
               <button
                 type="button"
                 onClick={() => selectCategory(null)}
-                className={`relative shrink-0 rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
-                  activeCategory === null
+                className={`relative shrink-0 rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${activeCategory === null
                     ? 'border-orange-500 text-white'
                     : 'border-orange-500 bg-transparent text-orange-600 hover:bg-orange-50'
-                }`}
+                  }`}
               >
                 {activeCategory === null && <TabHighlight layoutId="gallery-category-tab" className="bg-orange-500" />}
                 {t('home.gallery.filterAll')}
@@ -123,11 +122,10 @@ function GalleryPage() {
                   key={category.id}
                   type="button"
                   onClick={() => selectCategory(category.id)}
-                  className={`relative shrink-0 rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
-                    activeCategory === category.id
+                  className={`relative shrink-0 rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${activeCategory === category.id
                       ? 'border-orange-500 text-white'
                       : 'border-orange-500 bg-transparent text-orange-600 hover:bg-orange-50'
-                  }`}
+                    }`}
                 >
                   {activeCategory === category.id && <TabHighlight layoutId="gallery-category-tab" className="bg-orange-500" />}
                   {category.title}
@@ -139,22 +137,22 @@ function GalleryPage() {
       </section>
 
       <section data-scroll-bg="green" className="relative w-full bg-green-500 py-10 md:py-12">
-        <div className="flex w-full flex-col gap-[24px]">
-          <Container className="flex flex-col items-start gap-[16px] text-left">
+        <div className="flex w-full flex-col gap-6">
+          <Container className="flex flex-col items-start gap-4 text-left">
             <h2 className="m-0 font-heading text-h2 font-bold text-white">
               {t('home.gallery.albumTitle')}
             </h2>
 
             <div className="h-1 w-12 rounded-full bg-orange-500" aria-hidden="true" />
 
-            <p className="max-w-[25rem] font-body text-body font-normal text-white">
+            <p className="max-w-100 font-body text-body font-normal text-white">
               {t('home.gallery.description')}
             </p>
           </Container>
 
-          <Container className="flex flex-col gap-[32px]">
+          <Container className="flex flex-col gap-8">
             {loading && (
-              <div className="grid grid-cols-1 gap-[24px] md:grid-cols-3">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 <SkeletonList count={skeletonCount}>{() => <MultimediaCard loading />}</SkeletonList>
               </div>
             )}
@@ -166,7 +164,7 @@ function GalleryPage() {
             )}
 
             {!loading && !error && (
-              <FilterGrid className="grid grid-cols-1 gap-[24px] md:grid-cols-3">
+              <FilterGrid className="grid grid-cols-1 gap-6 md:grid-cols-3">
                 {(activeCategory ? visibleGalleries : galleriesInYearOrder).map((gallery) => (
                   <FilterGridItem key={gallery.id} className="rounded-3xl">
                     <MultimediaCard

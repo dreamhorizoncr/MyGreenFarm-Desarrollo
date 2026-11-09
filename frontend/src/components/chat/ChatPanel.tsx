@@ -182,7 +182,7 @@ export default function ChatPanel({ chat, onClose, onOpenTerms }: Readonly<ChatP
 
   return (
     <section className="flex h-full min-h-0 flex-col bg-white text-body-text-dark">
-      <header className="flex min-h-[68px] shrink-0 items-center justify-between border-b border-green-600 bg-green-500 px-6 py-3 text-left text-white">
+      <header className="flex min-h-17 shrink-0 items-center justify-between border-b border-green-600 bg-green-500 px-6 py-3 text-left text-white">
         <div className="flex min-w-0 items-center gap-3">
           {messages.length > 0 && (
             <button
@@ -232,7 +232,7 @@ export default function ChatPanel({ chat, onClose, onOpenTerms }: Readonly<ChatP
         )}
         {messages.map((message) => <ChatMessage key={message.id} message={message} />)}
         {busy && (
-          <div className="flex items-center gap-2 font-body text-caption text-[var(--grey-600)]" aria-live="polite">
+          <div className="flex items-center gap-2 font-body text-caption text-(--grey-600)" aria-live="polite">
             <span className="flex gap-1 rounded-2xl rounded-tl-sm bg-green-50 px-3 py-3">
               <i className="h-1.5 w-1.5 animate-bounce rounded-full bg-green-500 [animation-delay:-0.2s]" />
               <i className="h-1.5 w-1.5 animate-bounce rounded-full bg-green-500 [animation-delay:-0.1s]" />
@@ -264,7 +264,7 @@ export default function ChatPanel({ chat, onClose, onOpenTerms }: Readonly<ChatP
               placeholder={t('chat.placeholder')}
               maxLength={500}
               aria-label={t('chat.placeholder')}
-              className="h-11 min-w-0 flex-1 rounded-xl border border-neutral-200 bg-white px-md font-body text-body-sm text-body-text-dark outline-none placeholder:text-[var(--grey-700)] focus:border-heading"
+              className="h-11 min-w-0 flex-1 rounded-xl border border-neutral-200 bg-white px-md font-body text-body-sm text-body-text-dark outline-none placeholder:text-(--grey-700) focus:border-heading"
             />
             <button
               type="submit"
@@ -275,7 +275,7 @@ export default function ChatPanel({ chat, onClose, onOpenTerms }: Readonly<ChatP
               <SendIcon size={20} aria-hidden="true" />
             </button>
           </div>
-          <p className="m-0 mt-xs font-body text-[11px] leading-snug text-[var(--grey-600)]">{t('chat.disclaimer')}</p>
+          <p className="m-0 mt-xs font-body text-[11px] leading-snug text-(--grey-600)">{t('chat.disclaimer')}</p>
         </form>
       )}
 
@@ -299,10 +299,10 @@ export default function ChatPanel({ chat, onClose, onOpenTerms }: Readonly<ChatP
             maxLength={MAX_BOOKING_INPUT}
             rows={4}
             aria-label={t('chat.booking.dataPlaceholder')}
-            className="w-full resize-none rounded-xl border border-neutral-200 bg-white px-md py-sm font-body text-body-sm text-body-text-dark outline-none placeholder:text-[var(--grey-700)] focus:border-heading"
+            className="w-full resize-none rounded-xl border border-neutral-200 bg-white px-md py-sm font-body text-body-sm text-body-text-dark outline-none placeholder:text-(--grey-700) focus:border-heading"
           />
           <div className="mt-xs flex items-center justify-between gap-xs">
-            <p className="m-0 font-body text-[11px] leading-snug text-[var(--grey-600)]">{t('chat.booking.dataHint')}</p>
+            <p className="m-0 font-body text-[11px] leading-snug text-(--grey-600)">{t('chat.booking.dataHint')}</p>
             <button
               type="submit"
               disabled={booking.busy || !input.trim()}

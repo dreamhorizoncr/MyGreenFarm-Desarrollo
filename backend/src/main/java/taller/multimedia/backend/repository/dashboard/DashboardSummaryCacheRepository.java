@@ -5,12 +5,11 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
-import org.springframework.stereotype.Repository;
 
-import jakarta.persistence.LockModeType;
 import taller.multimedia.backend.model.dashboard.DashboardSummaryCache;
 
-@Repository
+import jakarta.persistence.LockModeType;
+
 public interface DashboardSummaryCacheRepository extends JpaRepository<DashboardSummaryCache, Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)

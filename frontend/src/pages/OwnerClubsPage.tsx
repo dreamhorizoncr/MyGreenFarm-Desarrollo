@@ -573,7 +573,7 @@ function OwnerClubsPage() {
                 <ImagePickerButton
                   label={t("ownerClubs.chooseCover")}
                   replacesCurrent={existingImages.some((image) => image.isCover)}
-                  accept="image/png,image/jpg,image/jpeg,image/webp,image/svg+xml"
+                  accept="image/png,image/jpg,image/jpeg,image/webp,image/svg+xml,image/webp"
                   onSelect={(files) => setCover(files[0] ?? null)}
                 />
 
@@ -600,7 +600,7 @@ function OwnerClubsPage() {
                 <ImagePickerButton
                   label={t("ownerClubs.chooseGallery")}
                   limit={6}
-                  accept="image/png,image/jpg,image/jpeg,image/webp,image/svg+xml"
+                  accept="image/png,image/jpg,image/jpeg,image/webp,image/svg+xml,image/webp"
                   multiple
                   onSelect={(files) => setGallery(files.slice(0, 6))}
                 />

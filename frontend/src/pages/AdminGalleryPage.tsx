@@ -31,7 +31,7 @@ import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
 import CreatableDropdown from '../components/ui/CreatableDropdown.tsx'
 import FieldHint from '../components/ui/FieldHint.tsx'
 
-const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'])
+const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml','image/webp'])
 const TITLE_MIN_LENGTH = 5
 const DESCRIPTION_MIN_LENGTH = 20
 
@@ -649,7 +649,7 @@ function AdminGalleryPage() {
 							<span className="block">{t('admin.gallery.photos')}</span>
 							<ImagePickerButton
 								label={t('admin.gallery.chooseImages')}
-								accept="image/png,image/jpg,image/jpeg,image/svg+xml"
+								accept="image/png,image/jpg,image/jpeg,image/svg+xml,image/webp"
 								multiple
 								onSelect={handleFilesSelected}
 							/>

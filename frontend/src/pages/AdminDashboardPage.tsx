@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom'
 import { getLocalTimeZone, today, type CalendarDate } from '@internationalized/date'
 import AdminLayout from '../layout/AdminLayout.tsx'
 import CalendarPanel from '../components/ui/CalendarPanel.tsx'
-import { useAppointments } from '../hooks/useAppointments.ts'
 import { useCurriculums } from '../hooks/useCurriculums.ts'
 import { useCalendarEvents } from '../hooks/useCalendarEvents.ts'
 import type { CalendarEvent } from '../types/calendar.ts'
@@ -68,7 +67,6 @@ function AdminDashboardPage() {
   const [selectedDate, setSelectedDate] = useState<CalendarDate | null>(() => today(getLocalTimeZone()))
   const [calendarMonth, setCalendarMonth] = useState(() => today(getLocalTimeZone()).toString().slice(0, 7))
   const [dashboardDate] = useState(() => new Date())
-  const { appointments, fetchAppointments } = useAppointments()
   const { curriculums, fetchCurriculums } = useCurriculums()
   const { events, error: calendarError, fetchEvents } = useCalendarEvents()
   const [dashboardData, setDashboardData] = useState<AdminDashboardSummary | null>(null)
@@ -77,13 +75,12 @@ function AdminDashboardPage() {
   const [refreshKey, setRefreshKey] = useState(0)
   const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
   const currentDate = today(getLocalTimeZone()).toString()
-  const pendingCount = appointments.filter((appointment) => appointment.status === 'PENDING').length
+  const pendingCount = (dashboardData?.pendingAppointmentCount ?? 0)
     + curriculums.filter((curriculum) => curriculum.status === 'PENDING').length
 
   useEffect(() => {
-    void fetchAppointments()
     void fetchCurriculums()
-  }, [fetchAppointments, fetchCurriculums])
+  }, [fetchCurriculums])
 
   useEffect(() => {
     const range = monthRange(calendarMonth)
@@ -155,7 +152,6 @@ function AdminDashboardPage() {
           type="button"
           aria-label={t('admin.dashboard.refresh')}
           onClick={() => {
-            void fetchAppointments()
             void fetchCurriculums()
             const range = monthRange(calendarMonth)
             void fetchEvents(range.from, range.to)

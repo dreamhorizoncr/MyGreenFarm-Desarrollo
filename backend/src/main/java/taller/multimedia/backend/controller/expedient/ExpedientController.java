@@ -1,7 +1,5 @@
 package taller.multimedia.backend.controller.expedient;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.expedient.ExpedientRequest;
 import taller.multimedia.backend.dto.expedient.ExpedientResponse;

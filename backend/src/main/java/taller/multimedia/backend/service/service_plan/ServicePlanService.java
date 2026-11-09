@@ -3,6 +3,10 @@ package taller.multimedia.backend.service.service_plan;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +31,17 @@ public class ServicePlanService {
     @Transactional(readOnly = true)
     public List<ServicePlan> getActivePlans() {
         return servicePlanRepository.findByIsActiveTrue();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ServicePlan> getPlans(Boolean activeOnly, Pageable pageable) {
+        Pageable alphabeticalPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Order.asc("name").ignoreCase(), Sort.Order.asc("id")));
+        return Boolean.TRUE.equals(activeOnly)
+                ? servicePlanRepository.findByIsActiveTrue(alphabeticalPageable)
+                : servicePlanRepository.findAll(alphabeticalPageable);
     }
 
     @Transactional(readOnly = true)

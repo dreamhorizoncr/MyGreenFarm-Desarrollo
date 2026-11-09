@@ -9,11 +9,9 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import taller.multimedia.backend.model.forum.ForumArticle;
 
-@Repository
 public interface ForumArticleRepository extends JpaRepository<ForumArticle, UUID> {
 
     Page<ForumArticle> findByCreatedAtAfterOrderByCreatedAtDesc(LocalDateTime date, Pageable pageable);

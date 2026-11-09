@@ -116,7 +116,7 @@ function BlogPostCard({
   if (loading) {
     return (
       <article className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white text-left">
-        <Skeleton shape="rect" className="h-[160px] w-full rounded-none xs:h-[220px]" />
+        <Skeleton shape="rect" className="h-40 w-full rounded-none xs:h-55" />
 
         <div className="flex-1 p-lg">
           <div className="flex items-center gap-md">
@@ -162,7 +162,7 @@ function BlogPostCard({
         />
       )}
 
-      <div className="h-[160px] shrink-0 overflow-hidden rounded-t-[15px] bg-neutral-100 xs:h-[220px]">
+      <div className="h-40 shrink-0 overflow-hidden rounded-t-[15px] bg-neutral-100 xs:h-55">
         {post!.imageUrl && (
           <img
             src={post!.imageUrl}
@@ -197,7 +197,7 @@ function BlogPostCard({
         </div>
 
         {post!.authorName && post!.authorRole && (
-          <span className="mt-sm inline-block max-w-full rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
+          <span className="mt-sm inline-block max-w-full rounded-full bg-(--pink-400) px-sm py-2xs font-body text-caption font-semibold text-white">
             {post!.topic}
           </span>
         )}
@@ -207,12 +207,12 @@ function BlogPostCard({
         </h2>
 
         {!(post!.authorName && post!.authorRole) && (
-          <span className="mt-sm inline-block max-w-full rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
+          <span className="mt-sm inline-block max-w-full rounded-full bg-(--pink-400) px-sm py-2xs font-body text-caption font-semibold text-white">
             {post!.topic}
           </span>
         )}
 
-        <p className="m-0 mt-xs min-h-[4.8em] line-clamp-3 break-words text-left font-body text-body-sm leading-[1.6] text-body-text">
+        <p className="m-0 mt-xs min-h-[4.8em] line-clamp-3 wrap-break-word text-left font-body text-body-sm leading-[1.6] text-body-text">
           {post!.content}
         </p>
       </div>
