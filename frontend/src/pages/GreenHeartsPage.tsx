@@ -166,7 +166,7 @@ function GreenHeartsPage() {
               </div>
             </div>
             <div className="relative">
-              <button type="button" onClick={() => actionsSwiper?.slidePrev()} disabled={!actionsSwiper || actionsSwiper.isBeginning} aria-label={t('greenHearts.previousAction')} className={`${actionArrowClass} absolute -left-14 top-1/2 hidden -translate-y-1/2 lg:flex`}>
+              <button type="button" onClick={() => actionsSwiper?.slidePrev()} disabled={!actionsSwiper || actionsSwiper.isBeginning} aria-label={t('greenHearts.previousAction')} className={`${actionArrowClass} absolute -left-3 top-1/2 hidden -translate-y-1/2 lg:flex xl:-left-14`}>
                 <CarouselArrowIcon flip />
               </button>
               <Swiper
@@ -200,7 +200,7 @@ function GreenHeartsPage() {
                   </SwiperSlide>
                 ))}
               </Swiper>
-              <button type="button" onClick={() => actionsSwiper?.slideNext()} disabled={!actionsSwiper || actionsSwiper.isEnd} aria-label={t('greenHearts.nextAction')} className={`${actionArrowClass} absolute -right-14 top-1/2 hidden -translate-y-1/2 lg:flex`}>
+              <button type="button" onClick={() => actionsSwiper?.slideNext()} disabled={!actionsSwiper || actionsSwiper.isEnd} aria-label={t('greenHearts.nextAction')} className={`${actionArrowClass} absolute -right-3 top-1/2 hidden -translate-y-1/2 lg:flex xl:-right-14`}>
                 <CarouselArrowIcon />
               </button>
               <div className="mt-3 flex justify-center gap-3 lg:hidden">

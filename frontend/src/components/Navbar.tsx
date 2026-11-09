@@ -11,12 +11,12 @@ import { tokenStorage } from '../utils/token.ts'
 
 interface BrandProps {
   showName?: boolean
-  compact?: boolean
+  compact?: 'header' | 'drawer'
   linkRef?: RefObject<HTMLAnchorElement | null>
   nameRef?: RefObject<HTMLSpanElement | null>
 }
 
-function Brand({ showName = true, compact = false, linkRef, nameRef }: Readonly<BrandProps>) {
+function Brand({ showName = true, compact, linkRef, nameRef }: Readonly<BrandProps>) {
   return (
     <Link
       ref={linkRef}
@@ -24,7 +24,7 @@ function Brand({ showName = true, compact = false, linkRef, nameRef }: Readonly<
       className="flex shrink-0 items-center gap-3 no-underline"
     >
       <img src={logo} alt="My Green Farm" className="h-12 w-auto max-w-[48px] object-contain" />
-      {showName && <span ref={nameRef} className={`whitespace-nowrap font-heading text-h6 text-heading${compact ? ' navbar-brand-name' : ''}`}>My Green Farm</span>}
+      {showName && <span ref={nameRef} className={`whitespace-nowrap font-heading text-h6 text-heading${compact ? ` navbar-brand-name-${compact}` : ''}`}>My Green Farm</span>}
     </Link>
   )
 }
@@ -170,7 +170,7 @@ function Navbar() {
               : 'mx-auto max-w-[var(--container-max-width)] px-lg'
           }`}
         >
-          <Brand compact />
+          <Brand compact="header" />
 
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
@@ -206,7 +206,7 @@ function Navbar() {
         }`}
       >
         <div className="flex items-center justify-between px-6 py-4">
-          <Brand compact />
+          <Brand compact="drawer" />
 
           <button
             type="button"

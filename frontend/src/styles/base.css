@@ -520,13 +520,54 @@ html.dyslexia-font body * {
   font-family: "OpenDyslexic", "Comic Sans MS", "Trebuchet MS", sans-serif;
 }
 
-/* Larger or wider text: long words wrap instead of pushing the layout off-screen. */
-html:is(.text-large, .text-xlarge, .dyslexia-font) body :where(h1, h2, h3, h4, h5, h6, p, li, dd, dt, blockquote, label, a, span, td, th, figcaption, strong, em) {
-  overflow-wrap: anywhere;
+@layer base {
+  /* Larger or wider text: long words wrap instead of pushing the layout off-screen. */
+  :where(html.text-large, html.text-xlarge, html.dyslexia-font) :where(body) :where(h1, h2, h3, h4, h5, h6, p, li, dd, dt, blockquote, label, a, span, td, th, figcaption, strong, em) {
+    overflow-wrap: anywhere;
+  }
+}
+
+html:is(.text-large, .text-xlarge, .dyslexia-font) .a11y-wrap-label {
+  white-space: normal;
+}
+
+html:is(.text-large, .text-xlarge, .dyslexia-font) .a11y-calendar-shortcuts {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+html:is(.text-large, .text-xlarge, .dyslexia-font) .a11y-calendar-shortcuts > * {
+  flex: 1 1 auto;
+  min-width: fit-content;
+  padding-inline: 0.75rem;
+}
+
+html:is(.text-large, .text-xlarge, .dyslexia-font) .a11y-calendar-weekday {
+  overflow-wrap: normal;
+  font-size: 12px;
+  letter-spacing: 0;
+}
+
+html:is(.text-large, .text-xlarge, .dyslexia-font) .a11y-calendar-header {
+  flex-wrap: wrap;
+}
+
+html:is(.text-large, .text-xlarge, .dyslexia-font) .a11y-calendar-grid {
+  table-layout: fixed;
+}
+
+html:is(.text-large, .text-xlarge, .dyslexia-font) .a11y-calendar-grid :is(th, td > *) {
+  width: auto;
+  max-width: 100%;
+}
+
+html:is(.text-large, .text-xlarge, .dyslexia-font) .navbar-brand-name-drawer {
+  display: none;
 }
 
 @media (max-width: 479px) {
-  html:is(.text-large, .text-xlarge, .dyslexia-font) .navbar-brand-name {
+  html:is(.text-large, .text-xlarge, .dyslexia-font) .navbar-brand-name-header {
     display: none;
   }
 

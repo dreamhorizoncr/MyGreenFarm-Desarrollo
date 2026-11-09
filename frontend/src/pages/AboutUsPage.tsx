@@ -70,7 +70,7 @@ const DECORATION_LAYOUTS = [
     },
     ] as const
 
-    const teamSlideClass = 'flex shrink-0 basis-full justify-center px-sm pb-xs pt-[4.5rem] sm:basis-1/2 sm:pb-lg lg:basis-1/3 xl:basis-1/4'
+    const teamSlideClass = 'flex shrink-0 justify-center px-sm pb-xs pt-[4.5rem] sm:pb-lg'
 
     const teamArrowClass =
     'z-20 size-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition hover:scale-105 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--orange-500)]'
@@ -81,7 +81,14 @@ const DECORATION_LAYOUTS = [
     { query: '(min-width: 40rem)', perView: 2 },
     ]
 
-    const teamPerView = () => TEAM_BREAKPOINTS.find(({ query }) => window.matchMedia(query).matches)?.perView ?? 1
+    const LARGE_TEXT_CLASSES = ['text-large', 'text-xlarge', 'dyslexia-font']
+
+    // Media queries ignore the in-app text size, so larger text shows one card less per page.
+    const teamPerView = () => {
+    const base = TEAM_BREAKPOINTS.find(({ query }) => window.matchMedia(query).matches)?.perView ?? 1
+    const largeText = LARGE_TEXT_CLASSES.some((name) => document.documentElement.classList.contains(name))
+    return largeText ? Math.max(1, base - 1) : base
+    }
 
     const shuffled = <T,>(items: T[]) => {
     const result = [...items]
@@ -147,7 +154,12 @@ const DECORATION_LAYOUTS = [
         const lists = TEAM_BREAKPOINTS.map(({ query }) => window.matchMedia(query))
         const update = () => setPerView(teamPerView())
         lists.forEach((list) => list.addEventListener('change', update))
-        return () => lists.forEach((list) => list.removeEventListener('change', update))
+        const observer = new MutationObserver(update)
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+        return () => {
+        lists.forEach((list) => list.removeEventListener('change', update))
+        observer.disconnect()
+        }
     }, [])
 
     const pageCount = Math.max(1, Math.ceil(teachers.length / perView))
@@ -222,7 +234,7 @@ const DECORATION_LAYOUTS = [
                     <div className="relative">
                         <div className="flex justify-center sm:px-14">
                         <SkeletonList count={Math.min(perView, teacherSkeletonCount)}>{() => (
-                            <div className={teamSlideClass}>
+                            <div className={teamSlideClass} style={{ flexBasis: `${100 / perView}%` }}>
                             <div className="flex w-full max-w-[19rem] flex-col items-center gap-md">
                                 <div className="flex h-60 w-60 shrink-0 items-center justify-center sm:h-56 sm:w-56 lg:h-52 lg:w-52 xl:h-56 xl:w-56">
                                 <div className="h-[78%] w-[78%] rounded-full bg-neutral-200" />
@@ -308,7 +320,7 @@ const DECORATION_LAYOUTS = [
                         const layout = DECORATION_LAYOUTS[index % DECORATION_LAYOUTS.length]
 
                         return (
-                            <div key={teacher.id} className={teamSlideClass}>
+                            <div key={teacher.id} className={teamSlideClass} style={{ flexBasis: `${100 / perView}%` }}>
                             <motion.article
                             initial="rest"
                             animate="rest"

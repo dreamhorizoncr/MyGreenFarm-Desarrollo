@@ -519,14 +519,14 @@ function BookingPage() {
 
       {!slotsLoading && !slotsError && availableDates.length > 0 && (
         <>
-          <div ref={dayRowRef} className={`${tabCarouselClass} -my-1 md:my-0 md:grid md:grid-cols-5 md:p-0 md:mx-0`}>
+          <div ref={dayRowRef} className={`${tabCarouselClass} -my-1 md:my-0 md:grid md:grid-cols-[repeat(auto-fit,minmax(min(100%,8.5rem),1fr))] md:p-0 md:mx-0`}>
             {availableDates.map((date) => (
               <button
                 key={date}
                 type="button"
                 aria-pressed={effectiveDay === date}
                 onClick={() => selectDay(date)}
-                className={`relative inline-flex h-11 items-center justify-center whitespace-nowrap rounded-full border border-green-500 px-md py-sm font-body text-body-sm font-semibold transition-colors duration-300 md:w-full ${
+                className={`relative inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-full border border-green-500 px-md py-sm font-body text-body-sm font-semibold leading-tight transition-colors duration-300 md:w-full a11y-wrap-label ${
                   effectiveDay === date ? 'text-white' : 'bg-transparent text-heading hover:bg-green-50'
                 }`}
               >

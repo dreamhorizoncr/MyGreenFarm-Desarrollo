@@ -129,7 +129,7 @@ function AdminEvaluationsPage() {
     return (
         <AdminLayout>
             <section className="w-full">
-                <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                     <div>
                         <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
                             {t("admin.evaluations.title")}
@@ -140,7 +140,7 @@ function AdminEvaluationsPage() {
                         </p>
                     </div>
 
-                    <div className="flex w-full items-center gap-3 md:w-auto">
+                    <div className="flex w-full items-center gap-3 lg:w-auto lg:shrink-0">
                         <button
                             type="button"
                             onClick={() => {
@@ -156,7 +156,7 @@ function AdminEvaluationsPage() {
                             </span>
                         </button>
 
-                        <div className="flex h-11 min-w-0 flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 md:w-[360px] md:flex-none">
+                        <div className="flex h-11 min-w-0 flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 lg:w-[clamp(220px,28vw,360px)] lg:flex-none">
                             <SearchIcon
                                 size={18}
                                 className="shrink-0 text-neutral-500"

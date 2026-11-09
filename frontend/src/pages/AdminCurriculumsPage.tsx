@@ -152,7 +152,7 @@ function AdminCurriculumsPage() {
           )}
         </div>
 
-        <div className="isolate mt-xl mb-lg flex gap-sm" role="tablist">
+        <div className="isolate mt-xl mb-lg flex flex-wrap gap-sm" role="tablist">
           <button
             type="button"
             role="tab"

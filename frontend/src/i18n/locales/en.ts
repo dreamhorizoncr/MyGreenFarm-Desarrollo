@@ -185,6 +185,8 @@ export default {
       modalClose: "Close",
     },
     testimonials: {
+      previous: "Previous testimonial",
+      next: "Next testimonial",
       navigation: 'Testimonials navigation',
       goTo: 'Go to testimonial {{number}}',
       title: "Testimonials",

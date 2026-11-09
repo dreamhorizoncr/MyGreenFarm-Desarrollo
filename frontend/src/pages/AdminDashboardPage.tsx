@@ -168,7 +168,7 @@ function AdminDashboardPage() {
       </header>
       {currentDashboardError && <StatusMessage variant="error" description={t('admin.dashboard.loadError', { error: currentDashboardError })} className="mt-md" />}
 
-      <div className="mt-xl grid gap-xl xl:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="mt-xl grid grid-cols-1 gap-xl xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-xl">
 
           <section aria-labelledby="dashboard-summary-title" className="rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">

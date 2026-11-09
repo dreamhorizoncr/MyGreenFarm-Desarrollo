@@ -108,7 +108,7 @@ function CalendarPanel({ value, onChange, onFocusChange, markedDates, minValue, 
           fullWidth
           size="sm"
           variant="tertiary"
-          className="bg-green-500 text-white rounded-2xl p-1.5 shadow-inner flex justify-between w-full"
+          className="a11y-calendar-shortcuts bg-green-500 text-white rounded-2xl p-1.5 shadow-inner flex justify-between w-full"
         >
           <Button className={shortcutClassName} isDisabled={!isInRange(todayDate)} onPress={() => jumpTo(todayDate)}>
             {t('teacherAppointments.calendar.today')}
@@ -133,7 +133,7 @@ function CalendarPanel({ value, onChange, onFocusChange, markedDates, minValue, 
           maxValue={maxValue}
           className="flex flex-col items-center w-full"
         >
-          <Calendar.Header className={`w-full flex justify-between items-center gap-xs ${compact ? '' : 'sm:px-2'} ${size.header}`}>
+          <Calendar.Header className={`a11y-calendar-header w-full flex justify-between items-center gap-xs ${compact ? '' : 'sm:px-2'} ${size.header}`}>
             <Calendar.Heading className="sr-only" />
             <div className="flex items-center gap-xs">
               <div className={compact ? 'w-[116px]' : 'w-[110px] sm:w-[140px]'}>
@@ -163,9 +163,9 @@ function CalendarPanel({ value, onChange, onFocusChange, markedDates, minValue, 
             </div>
           </Calendar.Header>
           <div className={`w-full ${size.grid}`}>
-          <Calendar.Grid className="w-full border-collapse">
+          <Calendar.Grid className="a11y-calendar-grid w-full border-collapse">
             <Calendar.GridHeader className={size.gridHeader}>
-              {(day) => <Calendar.HeaderCell className={`text-center font-semibold text-neutral-500 ${size.headCell}`}>{day}</Calendar.HeaderCell>}
+              {(day) => <Calendar.HeaderCell className={`a11y-calendar-weekday text-center font-semibold text-neutral-500 ${size.headCell}`}>{day}</Calendar.HeaderCell>}
             </Calendar.GridHeader>
             <Calendar.GridBody>
               {(date) => {

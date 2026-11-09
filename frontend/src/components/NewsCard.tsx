@@ -99,8 +99,8 @@ function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverIm
 
   if (big) {
     return (
-      <article className={`group relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow card-hover md:h-[340px] ${className}`}>
-        <div className="relative h-[240px] overflow-hidden md:absolute md:inset-y-0 md:left-0 md:h-auto md:w-1/2">
+      <article className={`group relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow card-hover md:flex md:min-h-[340px] ${className}`}>
+        <div className="relative h-[240px] overflow-hidden md:h-auto md:w-1/2 md:shrink-0">
           <CoverImage coverImage={coverImage} title={announcement!.title} alt={coverAlt} />
 
           <span className="absolute left-[14px] top-[14px] rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
@@ -108,7 +108,7 @@ function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverIm
           </span>
         </div>
 
-        <div className="relative flex flex-col items-start p-[22px] text-left md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2 md:pb-[60px]">
+        <div className="relative flex flex-col items-start p-[22px] text-left md:w-1/2">
           <span className="font-body text-caption text-neutral-500">
             {formattedDate}
           </span>
@@ -121,7 +121,7 @@ function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverIm
             {announcement!.content}
           </p>
 
-          <div className="mt-md flex w-full items-center justify-between gap-sm md:absolute md:bottom-[22px] md:left-[22px] md:right-[22px] md:w-auto">
+          <div className="mt-md flex w-full flex-wrap items-center justify-between gap-sm md:mt-auto md:pt-md">
             {footer}
           </div>
         </div>
@@ -130,8 +130,8 @@ function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverIm
   }
 
   return (
-    <article className={`group relative overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow card-hover md:h-[340px] ${className}`}>
-      <div className="relative h-[200px] overflow-hidden md:absolute md:inset-x-0 md:top-0 md:h-[125px]">
+    <article className={`group relative overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow card-hover md:flex md:min-h-[340px] md:flex-col ${className}`}>
+      <div className="relative h-[200px] overflow-hidden md:h-[125px] md:shrink-0">
         <CoverImage coverImage={coverImage} title={announcement!.title} alt={coverAlt} />
 
         <span className="absolute left-[14px] top-[14px] rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
@@ -139,7 +139,7 @@ function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverIm
         </span>
       </div>
 
-      <div className="relative flex flex-col items-start p-[20px] text-left md:absolute md:inset-x-0 md:bottom-0 md:top-[125px] md:pb-[56px]">
+      <div className="relative flex flex-col items-start p-[20px] text-left md:flex-1">
         <span className="font-body text-caption text-neutral-500">
           {formattedDate}
         </span>
@@ -152,7 +152,7 @@ function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverIm
           {announcement!.content}
         </p>
 
-        <div className="mt-sm flex w-full items-center justify-between gap-sm md:absolute md:bottom-[20px] md:left-[20px] md:right-[20px] md:w-auto">
+        <div className="mt-sm flex w-full flex-wrap items-center justify-between gap-sm md:mt-auto md:pt-sm">
           {footer}
         </div>
       </div>

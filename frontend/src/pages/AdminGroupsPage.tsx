@@ -135,7 +135,7 @@ import { notify, notifyError } from '../utils/notifications.ts'
                 </p>
             </div>
 
-            <div className="flex w-full min-w-0 items-center gap-3 sm:w-auto">
+            <div className="flex w-full min-w-0 items-center gap-3 sm:w-auto lg:shrink-0">
                 {isOwner && (
                 <button
                     type="button"
@@ -148,7 +148,7 @@ import { notify, notifyError } from '../utils/notifications.ts'
                 </button>
                 )}
 
-                <div className="relative min-w-0 flex-1 sm:w-[360px] sm:flex-none">
+                <div className="relative min-w-0 flex-1 sm:w-[360px] sm:flex-none lg:w-[clamp(220px,28vw,360px)]">
                 <SearchIcon
                     size={20}
                     className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400"

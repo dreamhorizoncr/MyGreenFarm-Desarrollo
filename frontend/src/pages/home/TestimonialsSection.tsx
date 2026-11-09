@@ -204,7 +204,7 @@ function TestimonialsSection() {
                     aria-label={`${name}, ${role}`}
                     aria-current={isActive ? "true" : undefined}
                     data-position={position}
-                    className="testimonial-card absolute left-1/2 top-0 flex flex-col overflow-hidden rounded-2xl border-t-4 bg-white p-7 text-left"
+                    className="testimonial-card flex flex-col overflow-hidden rounded-2xl border-t-4 bg-white p-7 text-left"
                     style={
                       { "--testimonial-accent": style.accent } as CSSProperties
                     }
@@ -247,7 +247,7 @@ function TestimonialsSection() {
               })}
               <button
                 type="button"
-                aria-label="Anterior"
+                aria-label={t("home.testimonials.previous")}
                 onClick={() => move(-1)}
                 className="testimonial-carousel__arrow testimonial-carousel__arrow--left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--orange-500)]"
               >
@@ -255,7 +255,7 @@ function TestimonialsSection() {
               </button>
               <button
                 type="button"
-                aria-label="Siguiente"
+                aria-label={t("home.testimonials.next")}
                 onClick={() => move(1)}
                 className="testimonial-carousel__arrow testimonial-carousel__arrow--right focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--orange-500)]"
               >

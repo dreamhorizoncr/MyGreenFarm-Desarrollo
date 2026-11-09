@@ -185,6 +185,8 @@ export default {
       modalClose: "Fermer",
     },
     testimonials: {
+      previous: "Témoignage précédent",
+      next: "Témoignage suivant",
       navigation: 'Navigation des témoignages',
       goTo: 'Aller au témoignage {{number}}',
       title: "Témoignages",
