@@ -158,7 +158,7 @@ function AdminSidebar() {
           setSidebarHovered(false)
         }
       }}
-      className="w-full shrink-0 bg-bg-page px-[var(--scale-1100)] pt-md md:sticky md:top-0 md:z-30 md:h-[calc(100svh-4rem)] md:self-start md:px-md md:flex md:w-[260px] md:flex-col md:gap-sm md:overflow-y-auto md:py-lg"
+      className="w-full shrink-0 bg-bg-page px-1100 pt-md md:sticky md:top-0 md:z-30 md:h-[calc(100svh-4rem)] md:self-start md:px-md md:flex md:w-65 md:flex-col md:gap-sm md:overflow-y-auto md:py-lg"
     >
       <div ref={mobileMenuRef} className="md:hidden">
         <button
@@ -168,7 +168,7 @@ function AdminSidebar() {
           aria-expanded={open}
         >
           <span className="flex items-center gap-sm">
-            <span className="inline-flex size-[34px] items-center justify-center rounded-full bg-white text-heading">
+            <span className="inline-flex size-8.5 items-center justify-center rounded-full bg-white text-heading">
               <ActiveIcon size={18} />
             </span>
 
@@ -205,7 +205,7 @@ function AdminSidebar() {
                   />
 
                   <span
-                    className="relative z-10 inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-heading"
+                    className="relative z-10 inline-flex size-8.5 shrink-0 items-center justify-center rounded-full bg-white text-heading"
                     aria-hidden="true"
                   >
                     <Icon size={18} />
@@ -216,7 +216,7 @@ function AdminSidebar() {
               ) : (
                 <button key={id} type="button" className={`${itemClasses} hover:bg-(--grey-100)`}>
                   <span
-                    className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-heading"
+                    className="inline-flex size-8.5 shrink-0 items-center justify-center rounded-full bg-white text-heading"
                     aria-hidden="true"
                   >
                     <Icon size={18} />
@@ -233,7 +233,7 @@ function AdminSidebar() {
               onClick={handleLogout}
             >
               <span
-                className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-danger"
+                className="inline-flex size-8.5 shrink-0 items-center justify-center rounded-full bg-white text-danger"
                 aria-hidden="true"
               >
                 <LogOutIcon size={18} />
@@ -266,7 +266,7 @@ function AdminSidebar() {
               />
 
               <span
-                className="relative z-10 inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-heading"
+                className="relative z-10 inline-flex size-8.5 shrink-0 items-center justify-center rounded-full bg-white text-heading"
                 aria-hidden="true"
               >
                 <Icon size={18} />
@@ -277,7 +277,7 @@ function AdminSidebar() {
           ) : (
             <button key={id} type="button" className={className}>
               <span
-                className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-heading"
+                className="inline-flex size-8.5 shrink-0 items-center justify-center rounded-full bg-white text-heading"
                 aria-hidden="true"
               >
                 <Icon size={18} />
@@ -295,7 +295,7 @@ function AdminSidebar() {
         onClick={handleLogout}
       >
         <span
-          className="inline-flex size-[34px] shrink-0 items-center justify-center rounded-full bg-white text-danger"
+          className="inline-flex size-8.5 shrink-0 items-center justify-center rounded-full bg-white text-danger"
           aria-hidden="true"
         >
           <LogOutIcon size={18} />

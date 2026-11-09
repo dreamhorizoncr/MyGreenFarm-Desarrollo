@@ -19,6 +19,8 @@ import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import StatusMessage from '../components/ui/StatusMessage.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
+import pencilSharpener from '../assets/imgs/pencilSharpener.svg'
+import glue from '../assets/imgs/glue.svg'
 
 const cleanCurrency = (value?: string): Currency => {
   const upper = value?.toUpperCase()
@@ -149,8 +151,20 @@ function ServicesPage() {
     <div className="min-h-screen bg-bg-page">
       <Navbar />
 
-      <section className="flex min-h-[280px] items-start bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
-        <div className="mx-auto w-full max-w-[700px]">
+      <section className="relative flex min-h-[280px] items-start overflow-hidden bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
+        <img
+          src={pencilSharpener}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute left-[3%] top-[25%] w-[clamp(3rem,9vw,6rem)] -rotate-12 select-none opacity-50 md:left-[8%] md:top-[25%] lg:left-[10%] lg:top-[25%]"
+        />
+        <img
+          src={glue}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute right-[3%] top-[25%] w-[clamp(3rem,9vw,6rem)] rotate-12 select-none opacity-50 md:right-[8%] md:top-[25%] lg:right-[10%] lg:top-[25%]"
+        />
+        <div className="relative z-10 mx-auto w-full max-w-[700px]">
           <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">
             {t('services.title')}
           </h1>

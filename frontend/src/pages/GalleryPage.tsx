@@ -14,7 +14,7 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import TabHighlight from '../components/ui/TabHighlight.tsx'
 import { FilterGrid, FilterGridItem } from '../components/ui/FilterGrid.tsx'
 import MostLikedPhotos from '../components/gallery/MostLikedPhotos.tsx'
-import transportador from "../assets/imgs/transportador.svg";
+import protractor from "../assets/imgs/protractor.svg";
 import abacus from "../assets/imgs/abacus.svg";
 import { setPageSEO } from '../utils/seo.ts'
 
@@ -84,7 +84,7 @@ function GalleryPage() {
         />
 
         <img
-          src={transportador}
+          src={protractor}
           alt=""
           aria-hidden="true"
           className="absolute top-[25%] right-[3%]

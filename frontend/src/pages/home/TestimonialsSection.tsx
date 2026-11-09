@@ -13,7 +13,7 @@ import CarouselDots from "../../components/ui/CarouselDots.tsx";
 import CarouselArrowIcon from "../../components/ui/CarouselArrowIcon.tsx";
 import pencil from "../../assets/imgs/pencil.svg";
 import scissors from "../../assets/imgs/scissors.svg";
-import eraser from "../../assets/imgs/eraser.svg";
+import glue from "../../assets/imgs/glue.svg";
 import goat from "../../assets/imgs/goat.svg";
 import { animationsStopped } from "../../utils/reducedMotion";
 import { useAccessibility } from "../../contexts/accessibility";
@@ -126,7 +126,7 @@ function TestimonialsSection() {
         />
 
         <img
-          src={eraser}
+          src={glue}
           alt=""
           aria-hidden="true"
           className="absolute top-[11%] left-[1%] rotate-[-20deg]

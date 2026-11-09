@@ -33,15 +33,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
-/**
- * Item count of each public list's first page, so the frontend can render the exact number of
- * skeletons on the first visit. Keys match the ones used by useSkeletonCount.
- *
- * Public route: it only returns totals of already public lists and takes no parameters. Results
- * are cached for {@link #CACHE_TTL}, recalculated by one caller at a time, with at most
- * {@link #MAX_PARALLEL_QUERIES} database connections and a {@link #TIMEOUT} deadline. Errors are
- * only logged.
- */
 @Slf4j
 @RestController
 @RequestMapping("/api/public/list-counts")
@@ -112,7 +103,6 @@ public class ListCountsController {
     }
 
     private Map<String, Integer> computeCounts() {
-        // Gallery returns the 10 latest albums; home shows the featured ones among them
         CompletableFuture<List<Gallery>> firstGalleries = CompletableFuture.supplyAsync(
                 () -> galleryRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(0, FIRST_PAGE)).getContent(), executor);
 

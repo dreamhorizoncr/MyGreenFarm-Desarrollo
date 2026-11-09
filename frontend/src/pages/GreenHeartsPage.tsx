@@ -11,6 +11,8 @@ import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import CarouselArrowIcon from '../components/ui/CarouselArrowIcon.tsx'
 import greenKids from '../assets/imgs/greenKids.webp'
+import pencil from '../assets/imgs/pencil.svg'
+import glue from '../assets/imgs/glue.svg'
 import puzzlePiece1 from '../assets/imgs/puzzlePiece1.svg?raw'
 import puzzlePiece2 from '../assets/imgs/puzzlePiece2.svg?raw'
 import puzzlePiece3 from '../assets/imgs/puzzlePiece3.svg?raw'
@@ -96,8 +98,20 @@ function GreenHeartsPage() {
     <>
       <Navbar />
       <main className="overflow-hidden bg-bg-page text-body-text">
-        <section className="flex min-h-[280px] items-start bg-white px-[30px] pb-[40px] pt-[48px] text-center md:min-h-[320px] md:pt-[72px]">
-          <div className="mx-auto w-full max-w-[700px]">
+        <section className="relative flex min-h-[280px] items-start overflow-hidden bg-white px-[30px] pb-[40px] pt-[48px] text-center md:min-h-[320px] md:pt-[72px]">
+          <img
+            src={pencil}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute left-[3%] top-[25%] w-[clamp(3rem,8vw,5.5rem)] -rotate-12 select-none opacity-50 md:left-[8%] md:top-[25%] lg:left-[10%] lg:top-[25%]"
+          />
+          <img
+            src={glue}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute right-[3%] top-[25%] w-[clamp(3rem,8vw,5.5rem)] rotate-12 select-none opacity-50 md:right-[8%] md:top-[25%] lg:right-[10%] lg:top-[25%]"
+          />
+          <div className="relative z-10 mx-auto w-full max-w-[700px]">
             <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">{t('greenHearts.hero.title')}</h1>
             <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">{t('greenHearts.hero.description')}</p>
           </div>

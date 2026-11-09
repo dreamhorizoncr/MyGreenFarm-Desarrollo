@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import chicks from '../../assets/imgs/chicks.webp'
 import cloudsPink from '../../assets/imgs/cloudsPink.svg'
 import pencil from '../../assets/imgs/pencil.svg'
-import transportador from '../../assets/imgs/transportador.svg'
+import protractor from '../../assets/imgs/protractor.svg'
 import abacus from '../../assets/imgs/abacus.svg'
 import scissors from '../../assets/imgs/scissors.svg'
 import Container from '../../components/home/Container.tsx'
@@ -16,7 +16,7 @@ const BRUSH_UNDERLINE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org
 
 const DOODLES = [
   { src: pencil, className: 'left-[3%] top-[8%] h-16 -rotate-12' },
-  { src: transportador, className: 'right-[4%] top-[6%] h-14 rotate-12' },
+  { src: protractor, className: 'right-[4%] top-[6%] h-14 rotate-12' },
   { src: abacus, className: 'bottom-[10%] left-[30%] hidden h-14 rotate-6 md:block' },
   { src: scissors, className: 'right-[30%] bottom-[8%] hidden h-12 -rotate-12 md:block' },
 ]
