@@ -3,6 +3,7 @@ package taller.multimedia.backend.service.appointment;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -15,9 +16,15 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import taller.multimedia.backend.dto.appointment.AppointmentRequest;
+import taller.multimedia.backend.dto.appointment.AppointmentResponse;
 import taller.multimedia.backend.exception.SlotUnavailableException;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
@@ -213,8 +220,45 @@ public class AppointmentService {
         return matcher.group(1) + " " + matcher.group(2);
     }
 
-    public List<Appointment> getAllAppointments() {
-        return appointmentRepository.findAll();
+    @Transactional(readOnly = true)
+    public Page<AppointmentResponse> getAppointments(
+            AppointmentStatus status,
+            LocalDate date,
+            String search,
+            boolean excludePast,
+            LocalDateTime notBefore,
+            Pageable pageable) {
+        Specification<Appointment> specification = (root, query, criteriaBuilder) -> {
+            List<jakarta.persistence.criteria.Predicate> predicates = new ArrayList<>();
+            if (excludePast) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(
+                        root.get("appointmentDate"),
+                        notBefore == null ? LocalDateTime.now() : notBefore));
+            }
+            if (status != null) {
+                predicates.add(criteriaBuilder.equal(root.get("status"), status));
+            }
+            if (date != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(
+                        root.get("appointmentDate"), date.atStartOfDay()));
+                predicates.add(criteriaBuilder.lessThan(
+                        root.get("appointmentDate"), date.plusDays(1).atStartOfDay()));
+            }
+            if (search != null && !search.isBlank()) {
+                String pattern = "%" + search.trim().toLowerCase(Locale.ROOT) + "%";
+                predicates.add(criteriaBuilder.or(
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("childName")), pattern),
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("parentName")), pattern),
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("parentEmail")), pattern),
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("parentPhone")), pattern)));
+            }
+            return criteriaBuilder.and(predicates.toArray(jakarta.persistence.criteria.Predicate[]::new));
+        };
+        Pageable stablePageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Order.asc("appointmentDate"), Sort.Order.asc("id")));
+        return appointmentRepository.findAll(specification, stablePageable).map(AppointmentResponse::from);
     }
 
     public Appointment getAppointmentById(UUID id) {

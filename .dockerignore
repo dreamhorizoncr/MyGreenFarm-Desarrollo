@@ -1,0 +1,7 @@
+**/credentials.json
+**/.env
+**/.env.*
+**/node_modules
+**/target
+**/dist
+.git
