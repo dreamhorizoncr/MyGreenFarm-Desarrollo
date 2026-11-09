@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ModalCloseButton from "../components/ui/ModalCloseButton.tsx";
-import illustration from "../assets/imgs/portadaTemporal.jpeg";
+import illustration from "../assets/imgs/temporaryCover.jpeg";
 import Navbar from "../components/Navbar.tsx";
 
 interface AuthLayoutProps {

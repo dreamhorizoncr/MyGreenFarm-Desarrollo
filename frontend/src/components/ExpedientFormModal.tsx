@@ -110,7 +110,7 @@ function ExpedientFormModal({
         const options = await childService.getAvailableForExpedientOptions();
         setChildrenOptions(options);
       } catch (err) {
-        console.error("Error al obtener las opciones de niños:", err);
+        console.error("Error loading the children options:", err);
       } finally {
         setLoadingOptions(false);
       }
@@ -161,7 +161,7 @@ function ExpedientFormModal({
 
       requestClose();
     } catch (error) {
-      console.error("Error al guardar el expediente:", error);
+      console.error("Error saving the record:", error);
 
       const message = getErrorMessage(error);
       const fieldSetters: Record<string, (value: string) => void> = {

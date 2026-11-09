@@ -72,7 +72,7 @@ function CommunityPostPage() {
           content: translated[`${comment.id}:content`] ?? comment.content,
         })))
       } catch {
-        // Si falla se muestra el original
+        // Keep the original if translation fails
       }
     }
     void translateComments()

@@ -20,7 +20,7 @@ import { useModalExit } from '../hooks/useModalExit.ts'
 import { notify, notifyError } from '../utils/notifications.ts'
 import { validateMinLength, validateRequired, validateSafeText } from '../utils/validators.ts'
 import type { Gallery, GalleryCategory, GalleryImage, GalleryRequest } from '../types/gallery.ts'
-import ninos2 from '../assets/imgs/ninos2.svg'
+import children from '../assets/imgs/children.webp'
 import CardActionButton from '../components/ui/CardActionButton.tsx'
 import CheckboxField from '../components/ui/CheckboxField.tsx'
 import ImagePickerButton from '../components/ui/ImagePickerButton.tsx'
@@ -78,12 +78,12 @@ function AdminAlbumCard({ gallery, onEdit, onDelete, onToggleFeatured, loading =
 		<article className="group relative h-full rounded-3xl border border-neutral-100 bg-white shadow-sm card-hover">
 			<div className="relative m-sm overflow-hidden rounded-[20px]">
 				<img
-					src={gallery!.galleryImages[0]?.fileUrl ?? ninos2}
+					src={gallery!.galleryImages[0]?.fileUrl ?? children}
 					alt={gallery!.title}
 					className="block aspect-[4/3] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
 				/>
 				<span className="absolute bottom-sm left-sm rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
-					{t('home.galeria.photoCount', { count: gallery!.galleryImages.length })}
+					{t('home.gallery.photoCount', { count: gallery!.galleryImages.length })}
 				</span>
 				<CardActionButton
 					action="feature"
@@ -136,7 +136,7 @@ function AdminAlbumsByYear({
 	const { t } = useTranslation()
 	const reduceMotion = useReducedMotion()
 	const years = categories.filter((category) => (galleriesByCategory[category.id] ?? []).length > 0)
-	const tabs = [{ id: ALL_YEARS, title: t('home.galeria.filterAll') }, ...years]
+	const tabs = [{ id: ALL_YEARS, title: t('home.gallery.filterAll') }, ...years]
 	const [selectedId, setSelectedId] = useState<string>(ALL_YEARS)
 	const activeId = tabs.some((tab) => tab.id === selectedId) ? selectedId : ALL_YEARS
 	const tabRowRef = useTabCarousel(activeId)

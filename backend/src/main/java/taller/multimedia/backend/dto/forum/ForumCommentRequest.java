@@ -7,11 +7,11 @@ import lombok.Data;
 @Data
 public class ForumCommentRequest {
 
-    @NotBlank(message = "El alias es obligatorio")
-    @Size(max = 40, message = "El alias no puede superar los 40 caracteres")
+    @NotBlank(message = "The alias is required")
+    @Size(max = 40, message = "The alias cannot exceed 40 characters")
     private String alias;
 
-    @NotBlank(message = "El contenido es obligatorio")
-    @Size(max = 4000, message = "El contenido no puede superar los 4000 caracteres")
+    @NotBlank(message = "The content is required")
+    @Size(max = 4000, message = "The content cannot exceed 4000 characters")
     private String content;
 }

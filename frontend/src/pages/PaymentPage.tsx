@@ -55,7 +55,6 @@ export default function PaymentPage() {
     const navigate = useNavigate()
     const location = useLocation()
 
-    // Datos transferidos desde la página anterior
     const state = location.state as LocationState | null
     const plan = state?.plan
     const currency = plan?.currency ?? state?.currency ?? 'CRC'
@@ -182,7 +181,7 @@ export default function PaymentPage() {
                 <Navbar />
                 <Container className="py-20 text-center">
                     <p className="font-body text-body text-neutral-600">
-                        {t('services.noPlanSelected', 'No se seleccionó ningún plan de servicio.')}
+                        {t('services.noPlanSelected')}
                     </p>
                     <button
                         type="button"
@@ -196,7 +195,6 @@ export default function PaymentPage() {
         )
     }
 
-    // Formateadores de inputs
     const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value.replace(/\D/g, '').slice(0, 16)
         setCardNumber(val.replace(/(.{4})/g, '$1 ').trim())
@@ -261,8 +259,8 @@ export default function PaymentPage() {
             }
         } catch (err: unknown) {
             setLoading(false)
-            console.error("Error en el pago:", err)
-            notifyError(errorMessage(err, "Hubo un error al procesar el pago o la factura."))
+            console.error("Payment error:", err)
+            notifyError(errorMessage(err, t('services.paymentError')))
         }
     }
 
@@ -312,8 +310,8 @@ export default function PaymentPage() {
             }
         } catch (err: unknown) {
             setLoading(false)
-            console.error("Error en el pago SINPE:", err)
-            notifyError(errorMessage(err, "Hubo un error al procesar el pago con SINPE."))
+            console.error("SINPE payment error:", err)
+            notifyError(errorMessage(err, t('services.sinpePaymentError')))
             navigate('/payment-failed')
         }
     }

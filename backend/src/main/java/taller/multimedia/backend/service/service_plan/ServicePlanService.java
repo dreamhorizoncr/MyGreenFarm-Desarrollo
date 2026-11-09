@@ -32,7 +32,7 @@ public class ServicePlanService {
     @Transactional(readOnly = true)
     public ServicePlan getPlanById(UUID id) {
         return servicePlanRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Configuración de plan no encontrada con ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Plan configuration not found with ID: " + id));
     }
 
     @Transactional
@@ -62,7 +62,7 @@ public class ServicePlanService {
     private void validateImageFileName(MultipartFile file) {
         if (file != null && file.getOriginalFilename() != null && file.getOriginalFilename().length() > 255) {
             throw new IllegalArgumentException(
-                    "El nombre del archivo de la imagen es demasiado largo (máximo 255 caracteres).");
+                    "The image file name is too long (maximum 255 characters).");
         }
     }
 
@@ -76,7 +76,7 @@ public class ServicePlanService {
                 || !List.of("CRC", "USD").contains(dto.getCurrency().toUpperCase())
                 || dto.getSchedule() == null || dto.getSchedule().isBlank() || dto.getSchedule().length() > 200
                 || dto.getIncludes() == null || dto.getIncludes().isBlank() || dto.getIncludes().length() > 800) {
-            throw new IllegalArgumentException("Complete los datos informativos del servicio.");
+            throw new IllegalArgumentException("Complete the service details.");
         }
     }
 }

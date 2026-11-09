@@ -27,15 +27,15 @@ public class SpellingCorrectionService {
     private static final Logger log = LoggerFactory.getLogger(SpellingCorrectionService.class);
 
     private static final String PROMPT =
-            "Eres un corrector ortográfico de textos en español de una guardería y granja educativa en Costa Rica. "
-                    + "Recibirás un objeto JSON cuyos valores son textos. "
-                    + "Corrige SOLO la ortografía: tildes, letras equivocadas, mayúscula al inicio de oración y "
-                    + "signos de puntuación (incluidos ¿ y ¡). "
-                    + "No cambies palabras por sinónimos, no reescribas frases, no agregues ni quites contenido, "
-                    + "no traduzcas. Respeta tal cual los nombres propios, marcas, palabras en otros idiomas "
-                    + "(inglés, francés), números, emojis y los saltos de línea. "
-                    + "Si un texto ya está bien escrito, devuélvelo idéntico. "
-                    + "Responde ÚNICAMENTE con un objeto JSON con las mismas claves.\n\nJSON:\n";
+            "You are a spelling corrector for Spanish texts from a daycare and educational farm in Costa Rica. "
+                    + "You will receive a JSON object whose values are texts. "
+                    + "Correct ONLY the spelling: accents, wrong letters, capital letters at the start of a sentence and "
+                    + "punctuation marks (including ¿ and ¡). "
+                    + "Do not replace words with synonyms, do not rewrite sentences, do not add or remove content, "
+                    + "do not translate. Keep proper names, brands, words in other languages "
+                    + "(English, French), numbers, emojis and line breaks exactly as they are. "
+                    + "If a text is already well written, return it unchanged. "
+                    + "Reply ONLY with a JSON object with the same keys.\n\nJSON:\n";
 
     private static final double MAX_LENGTH_CHANGE = 0.15;
     private static final int MIN_LENGTH_SLACK = 10;
@@ -120,7 +120,7 @@ public class SpellingCorrectionService {
 
             try (Response response = httpClient.newCall(request).execute()) {
                 if (!response.isSuccessful()) {
-                    log.error("Error llamando a Gemini para corregir ortografía: status={}", response.code());
+                    log.error("Error calling Gemini for spelling correction: status={}", response.code());
                     return null;
                 }
                 String responseBody = response.body() != null ? response.body().string() : null;
@@ -133,14 +133,14 @@ public class SpellingCorrectionService {
                         .path("content").path("parts").path(0)
                         .path("text").asString(null);
                 if (text == null || text.isBlank()) {
-                    log.error("Gemini no devolvió la corrección ortográfica");
+                    log.error("Gemini returned no spelling correction");
                     return null;
                 }
                 JsonNode json = objectMapper.readTree(text);
                 return json.isObject() ? json : null;
             }
         } catch (Exception e) {
-            log.error("Error corrigiendo ortografía con Gemini: {}", e.getMessage(), e);
+            log.error("Error correcting spelling with Gemini: {}", e.getMessage(), e);
             return null;
         }
     }

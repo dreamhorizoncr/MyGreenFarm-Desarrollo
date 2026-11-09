@@ -50,21 +50,21 @@ function WeeklyDayRow({
   const { t } = useTranslation();
   if (loading) {
     return (
-      <article className="rounded-2xl border border-neutral-200 bg-white p-md md:grid md:grid-cols-[minmax(130px,1fr)_auto_1fr_auto] md:items-center md:gap-md">
+      <article className="rounded-2xl border border-neutral-200 bg-white p-md xl:grid xl:grid-cols-[minmax(130px,1fr)_auto_1fr_auto] xl:items-center xl:gap-md">
         <Skeleton shape="line" className="h-5 w-24" />
-        <Skeleton shape="line" className="mt-sm h-4 w-32 md:mt-0" />
-        <Skeleton shape="line" className="mt-sm h-11 w-full md:mt-0" />
-        <Skeleton shape="pill" className="mt-md h-11 w-32 md:mt-0" />
+        <Skeleton shape="line" className="mt-sm h-4 w-32 xl:mt-0" />
+        <Skeleton shape="line" className="mt-sm h-11 w-full xl:mt-0" />
+        <Skeleton shape="pill" className="mt-md h-11 w-32 xl:mt-0" />
       </article>
     );
   }
 
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-md transition hover:shadow-lg md:grid md:grid-cols-[minmax(130px,1fr)_auto_1fr_auto] md:items-center md:gap-md">
+    <article className="rounded-2xl border border-neutral-200 bg-white p-md transition hover:shadow-lg xl:grid xl:grid-cols-[minmax(130px,1fr)_auto_1fr_auto] xl:items-center xl:gap-md">
       <h3 className="m-0 font-heading text-lg font-bold text-heading">
         {t(`admin.availability.weekdays.${day!.dayOfWeek}`)}
       </h3>
-      <label className="mt-sm flex min-h-11 cursor-pointer items-center gap-sm font-body text-body-sm font-semibold text-heading md:mt-0">
+      <label className="mt-sm flex min-h-11 cursor-pointer items-center gap-sm font-body text-body-sm font-semibold text-heading [overflow-wrap:normal] xl:mt-0">
         <input
           type="checkbox"
           checked={day!.active}
@@ -73,7 +73,7 @@ function WeeklyDayRow({
         />{" "}
         {t("admin.availability.attendDay")}
       </label>
-      <div className="mt-sm grid grid-cols-2 gap-sm md:mt-0">
+      <div className="mt-sm grid grid-cols-2 gap-sm xl:mt-0">
         <label className="font-body text-body-sm font-semibold text-heading">
           {t("admin.availability.from")}
           <div className="mt-xs">
@@ -108,14 +108,14 @@ function WeeklyDayRow({
       <button
         type="button"
         onClick={onCopyToAll}
-        className="mt-md inline-flex min-h-11 items-center justify-center gap-xs rounded-full border border-heading px-md font-body text-body-sm font-semibold text-heading transition-colors hover:bg-heading hover:text-white focus-visible:outline-2 focus-visible:outline-link md:mt-0"
+        className="mt-md inline-flex min-h-11 items-center justify-center gap-xs rounded-full border border-heading px-md font-body text-body-sm font-semibold text-heading transition-colors hover:bg-heading hover:text-white focus-visible:outline-2 focus-visible:outline-link xl:mt-0"
         title={t("admin.availability.copyToAllTitle")}
       >
         <CopyIcon size={16} aria-hidden="true" />{" "}
         {t("admin.availability.copyToAll")}
       </button>
       {day!.active && day!.endTime <= day!.startTime && (
-        <p className="m-0 mt-sm text-body-sm text-danger md:col-start-3">
+        <p className="m-0 mt-sm text-body-sm text-danger xl:col-start-3">
           {t("admin.availability.invalidRange")}
         </p>
       )}
@@ -399,13 +399,13 @@ function OwnerAvailabilityPage() {
                   {weeklyError}
                 </p>
               )}
-              <div className="sticky bottom-0 z-10 mt-lg flex items-center justify-between gap-md border-t border-neutral-200 bg-bg-page/95 py-md backdrop-blur">
+              <div className="sticky bottom-0 z-10 mt-lg flex flex-wrap items-center justify-between gap-md border-t border-neutral-200 bg-bg-page/95 py-md backdrop-blur">
                 <span className="font-body text-body-sm text-neutral-600">
                   {isDirty
                     ? t("admin.availability.unsavedChanges")
                     : t("admin.availability.allSaved")}
                 </span>
-                <div className="flex gap-sm">
+                <div className="flex flex-wrap gap-sm">
                   <button
                     type="button"
                     disabled={!isDirty || weeklySaving}

@@ -10,6 +10,7 @@ import DeleteUserModal from '../components/DeleteUserModal.tsx'
 import TeacherCard from '../components/TeacherCard.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
 import { useAdmin } from '../hooks/useAdmin.ts'
+import { adminService } from '../services/admin.ts'
 import { notify, notifyError } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
@@ -69,6 +70,16 @@ function AdminUsersPage() {
     }
   }
 
+  const handleUploadPhoto = async (id: string, file: File) => {
+    await adminService.uploadTeacherPhoto(id, file)
+    await fetchUsers(currentPage - 1, roleFilter)
+  }
+
+  const handleDeletePhoto = async (id: string) => {
+    await adminService.deleteTeacherPhoto(id)
+    await fetchUsers(currentPage - 1, roleFilter)
+  }
+
   const handleEdit = (user: UserInfo) => () => {
     setUserToEdit(user)
   }
@@ -85,10 +96,10 @@ function AdminUsersPage() {
         <div className="flex flex-wrap items-center justify-between gap-md">
           <div>
             <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
-              {t('admin.docentesTitle')}
+              {t('admin.usersTitle')}
             </h1>
             <p className="mt-2 font-body text-body text-neutral-500">
-              {t('admin.docentesSubtitle')}
+              {t('admin.usersSubtitle')}
             </p>
           </div>
 
@@ -184,6 +195,8 @@ function AdminUsersPage() {
           userToEdit={userToEdit}
           currentUser={currentUser}
           onSave={handleSave}
+          onUploadPhoto={handleUploadPhoto}
+          onDeletePhoto={handleDeletePhoto}
           onClose={() => setUserToEdit(null)}
         />
       )}

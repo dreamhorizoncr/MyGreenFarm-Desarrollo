@@ -56,7 +56,7 @@ public class EmailService {
     private String frontendUrl;
 
     @Value("${daycare.mail.admin}")
-    private String correoAdmin;
+    private String adminEmail;
 
     @Value("${social.link:https://linktr.ee/dreamhorizoncr}")
     private String socialLink;
@@ -106,10 +106,10 @@ public class EmailService {
             long start = System.currentTimeMillis();
             brevoEmailService.sendEmail(toEmail, toEmail, subject, html);
             log.info("Correo '{}' enviado a: {}", subject, toEmail);
-            log.info("Enviar correo tardó: {} ms", System.currentTimeMillis() - start);
+            log.info("Sending the email took {} ms", System.currentTimeMillis() - start);
         } catch (IOException e) {
-            log.error("Error enviando correo a {}: {}", toEmail, e.getMessage(), e);
-            throw new RuntimeException("No se pudo enviar el correo", e);
+            log.error("Error sending email to {}: {}", toEmail, e.getMessage(), e);
+            throw new RuntimeException("The email could not be sent", e);
         }
     }
 
@@ -154,7 +154,7 @@ public class EmailService {
         String subject = "Nueva solicitud de cita pendiente";
         String body = String.format("El padre/madre %s solicitó una cita para el niño(a) %s.",
                 appointment.getParentName(), appointment.getChildName());
-        sendEmail(correoAdmin, subject, "<p>" + body + "</p>");
+        sendEmail(adminEmail, subject, "<p>" + body + "</p>");
     }
 
     @Async
@@ -162,7 +162,7 @@ public class EmailService {
         String subject = "Cita confirmada";
         String body = String.format("El padre/madre %s que solicitó una cita para el niño(a) %s ha sido CONFIRMADA.",
                 appointment.getParentName(), appointment.getChildName());
-        sendEmail(correoAdmin, subject, "<p>" + body + "</p>");
+        sendEmail(adminEmail, subject, "<p>" + body + "</p>");
     }
 
     @Async
@@ -170,7 +170,7 @@ public class EmailService {
         String subject = "Cita cancelada";
         String body = String.format("El padre/madre %s que solicitó una cita para el niño(a) %s ha sido CANCELADA.",
                 appointment.getParentName(), appointment.getChildName());
-        sendEmail(correoAdmin, subject, "<p>" + body + "</p>");
+        sendEmail(adminEmail, subject, "<p>" + body + "</p>");
     }
 
     @Async
@@ -190,9 +190,9 @@ public class EmailService {
             sendEmail(appointment.getParentEmail(), subject, html);
 
         } catch (Exception e) {
-            log.error("Error al preparar el correo de reprogramación para {}: {}", appointment.getParentEmail(),
+            log.error("Error preparing the reschedule email for {}: {}", appointment.getParentEmail(),
                     e.getMessage(), e);
-            throw new RuntimeException("Error al enviar el correo de reprogramación", e);
+            throw new RuntimeException("Error sending the reschedule email", e);
         }
     }
 
@@ -247,11 +247,11 @@ public class EmailService {
             }
 
             sendEmail(appointment.getParentEmail(), subject, htmlContent);
-            System.out.println("Correo de recordatorio enviado exitosamente a: " + appointment.getParentEmail());
+            System.out.println("Reminder email sent successfully to: " + appointment.getParentEmail());
 
         } catch (Exception e) {
-            System.err.println("Error al enviar el correo de recordatorio: " + e.getMessage());
-            throw new RuntimeException("No se pudo enviar el correo de recordatorio", e);
+            System.err.println("Error sending the reminder email: " + e.getMessage());
+            throw new RuntimeException("The reminder email could not be sent", e);
         }
     }
 
@@ -267,7 +267,7 @@ public class EmailService {
         String html = templateEngine.process("email/birthday/birthday-reminder", context);
         String subject = messageSource.getMessage("email.birthday.reminder.subject", null, locale);
 
-        sendEmail(correoAdmin, subject, html);
+        sendEmail(adminEmail, subject, html);
     }
 
     @Async
@@ -304,21 +304,21 @@ public class EmailService {
                         translatedContent = translationService.translateBatchWithoutSaving(
                                 List.of(subject, messageContent), targetLanguage, "text/plain");
                         if (translatedContent.size() != 2) {
-                            throw new IOException("Google Translate no devolvió el asunto y el mensaje.");
+                            throw new IOException("Google Translate did not return the subject and the message.");
                         }
                         if (!subject.isBlank() && translatedContent.get(0).isBlank()) {
-                            throw new IOException("Google Translate devolvió un asunto vacío.");
+                            throw new IOException("Google Translate returned an empty subject.");
                         }
                         if (!messageContent.isBlank() && translatedContent.get(1).isBlank()) {
-                            throw new IOException("Google Translate devolvió un mensaje vacío.");
+                            throw new IOException("Google Translate returned an empty message.");
                         }
                         if (messageContent.trim().length() > 1 && translatedContent.get(1).trim().length() <= 1) {
-                            log.warn("La traducción del cuerpo al idioma {} llegó truncada; se conservará el original.",
+                            log.warn("The body translation to {} came back truncated; the original will be kept.",
                                     targetLanguage);
                             translatedContent = List.of(translatedContent.get(0), messageContent);
                         }
                     } catch (Exception e) {
-                        log.warn("No se pudo traducir el boletín al idioma {}; se enviará el texto original.",
+                        log.warn("Could not translate the newsletter to {}; the original text will be sent.",
                                 targetLanguage, e);
                         translatedContent = List.of(subject, messageContent);
                     }
@@ -339,7 +339,7 @@ public class EmailService {
                 sendEmail(recipient.getEmail(), translatedContent.get(0), html);
 
             } catch (Exception e) {
-                log.error("Error al enviar boletín masivo a {}: {}", recipient.getEmail(), e.getMessage(), e);
+                log.error("Error sending the bulk newsletter to {}: {}", recipient.getEmail(), e.getMessage(), e);
             }
         }
     }
@@ -373,9 +373,9 @@ public class EmailService {
             String htmlContent = templateEngine.process("email/evaluations/semiannual-summary", context);
 
             sendEmail(parentEmail, subject, htmlContent);
-            log.info("Resumen semestral enviado con éxito a: {} (Idioma: {})", parentEmail, lang);
+            log.info("Semester summary sent successfully to: {} (language: {})", parentEmail, lang);
         } catch (Exception e) {
-            log.error("Error al enviar resumen semestral a {}: {}", parentEmail, e.getMessage(), e);
+            log.error("Error sending the semester summary to {}: {}", parentEmail, e.getMessage(), e);
         }
     }
 
@@ -395,9 +395,9 @@ public class EmailService {
             }
 
             mailSender.send(message);
-            log.info("Correo con factura adjunta enviado con éxito a: {}", to);
+            log.info("Email with attached invoice sent successfully to: {}", to);
         } catch (Exception e) {
-            log.error("Error al enviar correo con adjunto a {}: {}", to, e.getMessage(), e);
+            log.error("Error sending email with attachment to {}: {}", to, e.getMessage(), e);
         }
     }
 
@@ -419,9 +419,9 @@ public class EmailService {
             String subject = messageSource.getMessage("email.billing.subject", null, locale);
             sendEmailWithAttachment(clientEmail, subject, htmlContent, pdfBytes, "FacturaElectronica.pdf");
 
-            log.info("Correo con factura electrónica adjunta enviado exitosamente a: {}", clientEmail);
+            log.info("Email with attached electronic invoice sent successfully to: {}", clientEmail);
         } catch (Exception e) {
-            log.error("Error al enviar el correo de factura electrónica con adjunto a {}: {}", clientEmail,
+            log.error("Error sending the electronic invoice email with attachment to {}: {}", clientEmail,
                     e.getMessage(), e);
         }
     }
@@ -438,7 +438,6 @@ public class EmailService {
             byte[] pdfBytes = null;
 
             if (invoiceResponse != null) {
-                // 1. Si viene el PDF directo
                 if (invoiceResponse.get("pdf") != null) {
                     String pdfBase64 = (String) invoiceResponse.get("pdf");
                     if (!pdfBase64.isBlank()) {
@@ -464,9 +463,9 @@ public class EmailService {
             String subject = messageSource.getMessage("email.billing.subject", null, locale);
             sendEmailWithAttachment(clientEmail, subject, htmlContent, pdfBytes, "FacturaElectronica.pdf");
 
-            log.info("Correo con factura electrónica adjunta enviado exitosamente a: {}", clientEmail);
+            log.info("Email with attached electronic invoice sent successfully to: {}", clientEmail);
         } catch (Exception e) {
-            log.error("Error al enviar el correo de factura electrónica con adjunto a {}: {}", clientEmail,
+            log.error("Error sending the electronic invoice email with attachment to {}: {}", clientEmail,
                     e.getMessage(), e);
         }
     }

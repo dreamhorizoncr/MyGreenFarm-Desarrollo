@@ -389,7 +389,6 @@ function ChildFormModal({
                         </div>
                     </div>
 
-                    {/* Notas Médicas */}
                     <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
                         {t("admin.children.medicalNotes")}
                         <textarea

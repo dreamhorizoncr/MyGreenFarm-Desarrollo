@@ -4,24 +4,16 @@ import { CloudOff, RotateCw, Sprout } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 type StatusMessageProps = Readonly<{
-  /** "empty": no hay datos que mostrar. "error": no se pudo cargar (conexión o servidor). */
   variant?: 'empty' | 'error'
   title?: string
   description?: string
   icon?: LucideIcon
-  /** Contenido extra debajo del texto (por ejemplo, un botón propio). */
   action?: ReactNode
-  /** Solo para "error": qué hacer al reintentar. Por defecto recarga la página. */
   onRetry?: () => void
-  /** Versión chica para usar dentro de otra tarjeta (por ejemplo, comentarios). */
   compact?: boolean
   className?: string
 }>
 
-/**
- * Mensaje estándar para cuando no hay datos o no se pudieron cargar. Todas las páginas
- * públicas lo usan para que estos estados se vean iguales en todo el sitio.
- */
 function StatusMessage({
   variant = 'empty',
   title,
@@ -42,7 +34,7 @@ function StatusMessage({
     <div
       role={isError ? 'alert' : 'status'}
       className={`mx-auto flex w-full flex-col items-center rounded-3xl border border-neutral-200 bg-white text-center ${
-        compact ? 'max-w-full gap-sm p-lg' : 'max-w-[35rem] gap-md p-xl shadow-md md:p-2xl'
+        compact ? 'max-w-full gap-sm p-lg' : 'col-span-full min-h-[20rem] justify-center gap-md p-xl shadow-md md:p-2xl'
       } ${className}`}
     >
       <span

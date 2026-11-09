@@ -37,7 +37,7 @@ public ImageLikeResponse toggleLike(UUID imageId, String anonId) {
     } else {
         try {
             GalleryImages image = galleryImageRepository.findById(imageId)
-                    .orElseThrow(() -> new EntityNotFoundException("Imagen no encontrada"));
+                    .orElseThrow(() -> new EntityNotFoundException("Image not found"));
 
             ImageLike like = new ImageLike();
             like.setGalleryImages(image);

@@ -16,8 +16,8 @@ public class EvaluationSummaryScheduler {
 
     @Scheduled(cron = "0 0 8 30 6,12 ?")
     public void processSemiannualSummaries() {
-        log.info("Iniciando tarea programada: Generación y envío de resúmenes semestrales de evaluación.");
+        log.info("Starting scheduled task: generating and sending semester evaluation summaries.");
         evaluationSummaryService.generateAndSendSemiannualSummaries();
-        log.info("Tarea programada de resúmenes semestrales finalizada.");
+        log.info("Semester summaries scheduled task finished.");
     }
 }

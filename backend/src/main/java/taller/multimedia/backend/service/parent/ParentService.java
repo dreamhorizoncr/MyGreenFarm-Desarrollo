@@ -38,7 +38,7 @@ public class ParentService {
         String cleanEmail = sanitizeEmail(dto.getEmail());
 
         if (parentRepository.findByEmail(cleanEmail).isPresent()) {
-            throw new InvalidFieldException(EMAIL_FIELD, "Ya existe un padre registrado con este correo.");
+            throw new InvalidFieldException(EMAIL_FIELD, "A parent with this email already exists.");
         }
 
         Parent parent = new Parent();
@@ -77,19 +77,19 @@ public class ParentService {
 
     private String sanitizeEmail(String email) {
         if (email == null || email.isBlank()) {
-            throw new InvalidFieldException(EMAIL_FIELD, "El correo electrónico es obligatorio.");
+            throw new InvalidFieldException(EMAIL_FIELD, "The email is required.");
         }
 
         String cleanEmail = email.toLowerCase().trim();
 
         if (!cleanEmail.contains("@") || !cleanEmail.contains(".")) {
-            throw new InvalidFieldException(EMAIL_FIELD, "El formato del correo electrónico no es válido.");
+            throw new InvalidFieldException(EMAIL_FIELD, "The email format is not valid.");
         }
 
         String domain = cleanEmail.substring(cleanEmail.lastIndexOf("@") + 1);
 
         if (domain.isBlank() || !domain.contains(".")) {
-            throw new InvalidFieldException(EMAIL_FIELD, "El dominio del correo no es válido.");
+            throw new InvalidFieldException(EMAIL_FIELD, "The email domain is not valid.");
         }
 
         List<String> allowedDomains = List.of(
@@ -100,7 +100,7 @@ public class ParentService {
 
         if (!allowedDomains.contains(domain)) {
             throw new InvalidFieldException(EMAIL_FIELD,
-                    "Solo se permiten correos de proveedores comunes (Gmail, Hotmail, Outlook, etc.).");
+                    "Only common email providers are allowed (Gmail, Hotmail, Outlook, etc.).");
         }
 
         List<String> blockedDomains = List.of(
@@ -111,7 +111,7 @@ public class ParentService {
                 "example.com");
 
         if (blockedDomains.contains(domain)) {
-            throw new InvalidFieldException(EMAIL_FIELD, "No se permiten correos temporales o de prueba.");
+            throw new InvalidFieldException(EMAIL_FIELD, "Temporary or test email addresses are not allowed.");
         }
 
         return cleanEmail;
@@ -119,7 +119,7 @@ public class ParentService {
 
     public Parent getParentById(Integer id) {
         return parentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("No se encontró ningún padre con el ID proporcionado."));
+                .orElseThrow(() -> new RuntimeException("No parent was found with the given ID."));
     }
 
     public Parent updateParent(Integer id, ParentRequest dto) {
@@ -127,7 +127,7 @@ public class ParentService {
 
         parentRepository.findByEmail(dto.getEmail()).ifPresent(parent -> {
             if (!parent.getId().equals(id)) {
-                throw new InvalidFieldException(EMAIL_FIELD, "Ya existe otro padre registrado con este correo.");
+                throw new InvalidFieldException(EMAIL_FIELD, "Another parent with this email already exists.");
             }
         });
 
@@ -173,7 +173,7 @@ public class ParentService {
     public void unsubscribeFromNewsletter(String email) {
         String cleanEmail = sanitizeEmail(email);
         Parent parent = parentRepository.findByEmail(cleanEmail)
-                .orElseThrow(() -> new RuntimeException("El padre no se encuentra registrado."));
+                .orElseThrow(() -> new RuntimeException("The parent is not registered."));
 
         if (parent.isActiveForNewsletter()) {
             parent.setIsActive(false);

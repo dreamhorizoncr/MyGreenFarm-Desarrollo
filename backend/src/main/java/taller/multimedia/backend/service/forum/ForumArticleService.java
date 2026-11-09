@@ -169,13 +169,13 @@ public class ForumArticleService {
 
     private User findUser(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
     }
 
     private ForumArticle findArticle(UUID id) {
         return articleRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Artículo no encontrado: " + id));
+                        "Article not found: " + id));
     }
 
     private void ensureCanManage(ForumArticle article, User currentUser) {
@@ -186,7 +186,7 @@ public class ForumArticleService {
 
         if (!owner && !teacherOwnArticle) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "No tiene permisos para gestionar este artículo");
+                    "You do not have permission to manage this article");
         }
     }
 
@@ -197,14 +197,14 @@ public class ForumArticleService {
 
         if (request.getImageAlt() == null || request.getImageAlt().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "El texto alternativo es obligatorio cuando existe una imagen");
+                    "The alt text is required when there is an image");
         }
 
         String contentType = image.getContentType();
         boolean allowed = contentType != null && List.of(ALLOWED_IMAGE_TYPES).contains(contentType);
         if (!allowed) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Formato de imagen no permitido. Use PNG, JPG, JPEG o SVG");
+                    "Unsupported image format. Use PNG, JPG, JPEG or SVG");
         }
     }
 
@@ -217,7 +217,7 @@ public class ForumArticleService {
 
         if (forumBucket == null || forumBucket.isBlank()) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "El bucket de imágenes del foro no está configurado");
+                    "The forum image bucket is not configured");
         }
 
         article.setImageUrl(storageService.uploadFile(image, forumBucket, "forum_articles"));

@@ -14,15 +14,13 @@ public class OnvoWebhookController {
 
     @PostMapping("/onvo")
     public ResponseEntity<String> handleOnvoWebhook(@RequestBody Map<String, Object> payload) {
-        System.out.println("¡Webhook recibido con éxito!");
+        System.out.println("Webhook received successfully!");
         String eventType = (String) payload.get("type");
         Map<String, Object> data = (Map<String, Object>) payload.get("data");
 
         if (data == null) {
             return ResponseEntity.ok("Received");
         }
-
-        System.out.println("Estoy en el onvo ");
 
         boolean paymentSucceeded = "checkout-session.succeeded".equals(eventType)
                 || "checkout.session.completed".equals(eventType)

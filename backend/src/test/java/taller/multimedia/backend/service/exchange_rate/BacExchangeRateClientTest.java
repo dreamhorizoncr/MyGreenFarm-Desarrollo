@@ -56,7 +56,7 @@ class BacExchangeRateClientTest {
             "https://www.sucursalelectronica.com/exchangerate/showXmlExchangeRate.do");
 
     @Test
-    @DisplayName("Lee las cuatro tasas de Costa Rica conservando los seis decimales")
+    @DisplayName("Reads the four Costa Rica rates keeping six decimals")
     void extractsTheCostaRicaRates() {
         ExchangeRates rates = client.extractCostaRicaRates(XML_COSTA_RICA);
 
@@ -69,13 +69,13 @@ class BacExchangeRateClientTest {
     }
 
     @Test
-    @DisplayName("Falla cuando la fuente no publica el país buscado")
+    @DisplayName("Fails when the source does not publish the requested country")
     void failsIfTheCountryIsMissing() {
         assertThrows(IllegalStateException.class, () -> client.extractCostaRicaRates(XML_SIN_COSTA_RICA));
     }
 
     @Test
-    @DisplayName("Falla antes de guardar si alguna tasa viene vacía")
+    @DisplayName("Fails before saving if any rate is empty")
     void failsIfAnyRateIsEmpty() {
         assertThrows(IllegalStateException.class, () -> client.extractCostaRicaRates(XML_TASA_VACIA));
     }

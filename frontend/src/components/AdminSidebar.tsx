@@ -27,20 +27,20 @@ import { userStorage } from '../utils/userStorage.ts'
 
 type SidebarItemId =
   | "dashboard"
-  | "citas"
-  | "docentes"
-  | "profesores"
-  | "noticias"
-  | "galeria"
-  | "servicios"
+  | "appointments"
+  | "users"
+  | "groups"
+  | "news"
+  | "gallery"
+  | "services"
   | "cv"
   | "clubs"
-  | "padres"
-  | "niños"
-  | "miPerfil"
-  | "disponibilidad"
-  | "foro"
-  | "boletín";
+  | "parents"
+  | "children"
+  | "myProfile"
+  | "availability"
+  | "forum"
+  | "newsletter";
 
 interface SidebarItem {
   id: SidebarItemId;
@@ -63,7 +63,7 @@ function AdminSidebar() {
   const closeMobileMenu = useCallback(() => setOpen(false), [])
   useDismiss({ ref: mobileMenuRef, isOpen: open, onClose: closeMobileMenu })
 
-  const activeKey = CHILDREN_MODULE_PATHS.has(pathname) ? 'niños' : pathname
+  const activeKey = CHILDREN_MODULE_PATHS.has(pathname) ? 'children' : pathname
   const [filled, setFilled] = useState(() => activeKey === lastFilledKey)
   useEffect(() => {
     lastFilledKey = activeKey
@@ -88,55 +88,49 @@ function AdminSidebar() {
   const { setSidebarHovered } = useProfileAvatar()
 
   const role = userStorage.getUser()?.role
-  // Orden del menú: el dashboard; luego lo que se publica en el sitio (citas, noticias,
-  // galería, foro, clubes, vacantes); después la administración de personas (usuarios,
-  // docentes, padres, niños); y al final la información propia (disponibilidad, boletín, perfil).
+  // Each path must appear once, otherwise two items are highlighted as active.
   const ownerItems: SidebarItem[] = [
     { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
-    { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
-    { id: 'noticias', icon: MegaphoneIcon, path: '/admin/announcements' },
-    { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
-    { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
+    { id: 'appointments', icon: CalendarDaysIcon, path: '/admin/appointments' },
+    { id: 'news', icon: MegaphoneIcon, path: '/admin/announcements' },
+    { id: 'gallery', icon: ImageIcon, path: '/admin/gallery' },
+    { id: 'forum', icon: MessageSquarePlusIcon, path: '/admin/forum' },
     { id: 'clubs', icon: SparklesIcon, path: '/admin/clubs' },
     { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
-    { id: 'docentes', icon: ContactRoundIcon, path: '/admin/users' },
-    { id: 'profesores', icon: BookOpenTextIcon, path: '/admin/teachers' },
-    { id: 'disponibilidad', icon: CalendarDaysIcon, path: '/admin/disponibilidad' },
-    { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
-    { id: 'servicios', icon: BanknoteIcon, path: '/admin/services' },
-    { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
-    { id: 'clubs', icon: SparklesIcon, path: '/admin/clubs' },
-    { id: 'padres', icon: UsersIcon, path: '/admin/parents'},
-    { id: 'niños', icon: UserStarIcon, path: '/admin/children' },
-    { id: 'disponibilidad', icon: CalendarDaysIcon, path: '/admin/disponibilidad' },
-    { id: 'boletín', icon: MailPlus, path: '/admin/newsletter' },
-    { id: 'miPerfil', icon: UserIcon, path: '/profile' },
+    { id: 'services', icon: BanknoteIcon, path: '/admin/services' },
+    { id: 'users', icon: ContactRoundIcon, path: '/admin/users' },
+    { id: 'groups', icon: BookOpenTextIcon, path: '/admin/groups' },
+    { id: 'parents', icon: UsersIcon, path: '/admin/parents'},
+    { id: 'children', icon: UserStarIcon, path: '/admin/children' },
+    { id: 'availability', icon: CalendarDaysIcon, path: '/admin/availability' },
+    { id: 'newsletter', icon: MailPlus, path: '/admin/newsletter' },
+    { id: 'myProfile', icon: UserIcon, path: '/profile' },
   ]
   const adminItems: SidebarItem[] = [
     { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
-    { id: 'citas', icon: CalendarDaysIcon, path: '/admin/citas' },
-    { id: 'noticias', icon: MegaphoneIcon, path: '/admin/announcements' },
-    { id: 'galeria', icon: ImageIcon, path: '/admin/gallery' },
+    { id: 'appointments', icon: CalendarDaysIcon, path: '/admin/appointments' },
+    { id: 'news', icon: MegaphoneIcon, path: '/admin/announcements' },
+    { id: 'gallery', icon: ImageIcon, path: '/admin/gallery' },
     { id: 'cv', icon: FileTextIcon, path: '/admin/curriculums' },
-    { id: 'docentes', icon: ContactRoundIcon, path: '/admin/users' },
-    { id: 'profesores', icon: BookOpenTextIcon, path: '/admin/teachers' },
-    { id: 'padres', icon: UsersIcon, path: '/admin/parents'},
-    { id: 'niños', icon: UserStarIcon, path: '/admin/children' },
-    { id: 'miPerfil', icon: UserIcon, path: '/profile' },
+    { id: 'users', icon: ContactRoundIcon, path: '/admin/users' },
+    { id: 'parents', icon: UsersIcon, path: '/admin/parents'},
+    { id: 'children', icon: UserStarIcon, path: '/admin/children' },
+    { id: 'myProfile', icon: UserIcon, path: '/profile' },
   ]
   const teacherItems: SidebarItem[] = [
     { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
-    { id: 'foro', icon: MessageSquarePlusIcon, path: '/admin/forum' },
-    { id: 'niños', icon: UserStarIcon, path: '/admin/expedients' },
-    { id: 'miPerfil', icon: UserIcon, path: '/profile' },
+    { id: 'forum', icon: MessageSquarePlusIcon, path: '/admin/forum' },
+    { id: 'children', icon: UserStarIcon, path: '/admin/expedients' },
+    { id: 'myProfile', icon: UserIcon, path: '/profile' },
   ]
   const itemsByRole: Record<string, SidebarItem[]> = { OWNER: ownerItems, ADMIN: adminItems }
   const items = itemsByRole[role ?? ''] ?? teacherItems
 
-  const isChildrenModulePath = CHILDREN_MODULE_PATHS.has(pathname)
+  const isChildrenModulePath =
+    CHILDREN_MODULE_PATHS.has(pathname) || (role === 'TEACHER' && pathname === '/admin/groups')
   const activeItem =
     items.find((item) => item.path === pathname) ??
-    (isChildrenModulePath ? items.find((item) => item.id === 'niños') : undefined) ??
+    (isChildrenModulePath ? items.find((item) => item.id === 'children') : undefined) ??
     items[0]
   const ActiveIcon = activeItem.icon
 
@@ -192,7 +186,7 @@ function AdminSidebar() {
         {open && (
           <nav className="mt-sm flex flex-col gap-xs rounded-2xl bg-white p-sm shadow">
             {items.map(({ id, icon: Icon, path }) => {
-              const isActive = path === pathname || (id === 'niños' && isChildrenModulePath);
+              const isActive = path === pathname || (id === 'children' && isChildrenModulePath);
               const label = t(`admin.sidebar.${id}`);
 
               return path ? (
@@ -253,7 +247,7 @@ function AdminSidebar() {
 
       <nav className="hidden flex-1 flex-col gap-sm md:flex">
         {items.map(({ id, icon: Icon, path }) => {
-          const isActive = path === pathname || (id === 'niños' && isChildrenModulePath);
+          const isActive = path === pathname || (id === 'children' && isChildrenModulePath);
           const label = t(`admin.sidebar.${id}`);
           const className = `${itemClasses}${
             isActive && filled ? " text-white" : " hover:bg-(--grey-100)"

@@ -73,7 +73,7 @@ function sanitizeAnswer(answer: string) {
     .replace(/\[([^[\]]+)\]\(\/[^()]+\)/g, '$1')
     .replace(/\*\*([^*]+)\*\*/g, '$1')
     .replace(/`\/[^`]+`/g, '')
-    .replace(/\/(?:booking|services|clubs|news|forum|multimedia|vacantes|about-us)(?:\/[\w-]+)*/gi, '')
+    .replace(/\/(?:booking|services|clubs|news|forum|multimedia|vacancies|about-us)(?:\/[\w-]+)*/gi, '')
     .replace(/(?<=\S)\s+(?=[,.;:!?])/g, '')
     .replace(/\s{2,}/g, ' ')
     .trim()

@@ -7,7 +7,7 @@ import Container from '../components/home/Container.tsx'
 import { Images } from 'lucide-react'
 import MultimediaCard from '../components/home/MultimediaCard.tsx'
 import { useGallery } from '../hooks/useGallery.ts'
-import ninos2 from '../assets/imgs/ninos2.svg'
+import children from '../assets/imgs/children.webp'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import StatusMessage from '../components/ui/StatusMessage.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
@@ -15,7 +15,7 @@ import TabHighlight from '../components/ui/TabHighlight.tsx'
 import { FilterGrid, FilterGridItem } from '../components/ui/FilterGrid.tsx'
 import MostLikedPhotos from '../components/gallery/MostLikedPhotos.tsx'
 import transportador from "../assets/imgs/transportador.svg";
-import abaco from "../assets/imgs/abaco.svg";
+import abacus from "../assets/imgs/abacus.svg";
 import { setPageSEO } from '../utils/seo.ts'
 
 function GalleryPage() {
@@ -73,7 +73,7 @@ function GalleryPage() {
 
       <section className="flex min-h-[280px] items-start bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
            <img
-          src={abaco}
+          src={abacus}
           alt=""
           aria-hidden="true"
           className="absolute top-[24%] left-[3%] rotate-[-20deg]
@@ -96,11 +96,11 @@ function GalleryPage() {
 
         <div className="mx-auto w-full max-w-[700px]">
           <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">
-            {t('home.galeria.title')}
+            {t('home.gallery.title')}
           </h1>
 
           <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">
-            {t('home.galeria.description')}
+            {t('home.gallery.description')}
           </p>
 
           <div className="mt-[24px] w-full overflow-hidden" ref={emblaRef}>
@@ -115,7 +115,7 @@ function GalleryPage() {
                 }`}
               >
                 {activeCategory === null && <TabHighlight layoutId="gallery-category-tab" className="bg-orange-500" />}
-                {t('home.galeria.filterAll')}
+                {t('home.gallery.filterAll')}
               </button>
 
               {categories.map((category) => (
@@ -142,13 +142,13 @@ function GalleryPage() {
         <div className="flex w-full flex-col gap-[24px]">
           <Container className="flex flex-col items-start gap-[16px] text-left">
             <h2 className="m-0 font-heading text-h2 font-bold text-white">
-              {t('home.galeria.albumTitle')}
+              {t('home.gallery.albumTitle')}
             </h2>
 
             <div className="h-1 w-12 rounded-full bg-orange-500" aria-hidden="true" />
 
             <p className="max-w-[25rem] font-body text-body font-normal text-white">
-              {t('home.galeria.description')}
+              {t('home.gallery.description')}
             </p>
           </Container>
 
@@ -162,7 +162,7 @@ function GalleryPage() {
             {error && <StatusMessage variant="error" description={error} />}
 
             {!loading && !error && visibleGalleries.length === 0 && (
-              <StatusMessage icon={Images} description={activeCategory ? t('home.galeria.empty') : t('home.galeria.noGalleries')} />
+              <StatusMessage icon={Images} description={activeCategory ? t('home.gallery.empty') : t('home.gallery.noGalleries')} />
             )}
 
             {!loading && !error && (
@@ -170,12 +170,12 @@ function GalleryPage() {
                 {(activeCategory ? visibleGalleries : galleriesInYearOrder).map((gallery) => (
                   <FilterGridItem key={gallery.id} className="rounded-3xl">
                     <MultimediaCard
-                      imageSrc={gallery.galleryImages[0]?.fileUrl ?? ninos2}
+                      imageSrc={gallery.galleryImages[0]?.fileUrl ?? children}
                       alt={gallery.title}
-                      badge={t('home.galeria.photoCount', { count: gallery.galleryImages.length })}
+                      badge={t('home.gallery.photoCount', { count: gallery.galleryImages.length })}
                       title={gallery.title}
                       description={gallery.description}
-                      onClick={() => navigate(`/albumes/${gallery.id}`)}
+                      onClick={() => navigate(`/albums/${gallery.id}`)}
                     />
                   </FilterGridItem>
                 ))}

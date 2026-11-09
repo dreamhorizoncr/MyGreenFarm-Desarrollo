@@ -9,6 +9,7 @@ export interface RegisterData {
 
 export interface RegisterResponse {
   message: string
+  id?: string | null
 }
 
 export interface LoginData {

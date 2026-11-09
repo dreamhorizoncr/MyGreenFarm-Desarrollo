@@ -6,23 +6,23 @@ import lombok.Data;
 
 @Data
 public class ParentRequest {
-    @NotBlank(message = "La identificación es obligatoria")
+    @NotBlank(message = "The ID number is required")
     private String identification;
 
-    @NotBlank(message = "El correo es obligatorio")
-    @Email(message = "El formato del correo no es válido")
+    @NotBlank(message = "The email address is required")
+    @Email(message = "The email address format is not valid")
     private String email;
 
-    @NotBlank(message = "El teléfono es obligatorio")
+    @NotBlank(message = "The phone number is required")
     private String phoneNumber;
 
-    @NotBlank(message = "La dirección es obligatoria")
+    @NotBlank(message = "The address is required")
     private String address;
 
-    @NotBlank(message = "El nombre es obligatorio")
+    @NotBlank(message = "The name is required")
     private String firstName;
 
-    @NotBlank(message = "El apellido es obligatorio")
+    @NotBlank(message = "The last name is required")
     private String lastName;
 
     private Boolean isActive = true;

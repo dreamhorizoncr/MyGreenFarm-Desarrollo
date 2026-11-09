@@ -59,7 +59,7 @@ public class CurriculumService {
 
         if (file != null && !file.isEmpty()) {
             if (!isValidCvFormat(file.getContentType())) {
-                throw new IllegalArgumentException("El CV debe ser un archivo PDF.");
+                throw new IllegalArgumentException("The CV must be a PDF file.");
             }
             curriculum.setFileName(Sanitizer.safeFileName(file.getOriginalFilename()));
             curriculum.setFileUrl(storageService.uploadFile(file, curriculumsBucket, "cvs"));
@@ -69,7 +69,7 @@ public class CurriculumService {
             for (MultipartFile certificateFile : certificates) {
                 if (certificateFile == null || certificateFile.isEmpty()) continue;
                 if (!isValidCertificateFormat(certificateFile.getContentType())) {
-                    throw new IllegalArgumentException("Los certificados deben ser PDF, PNG o JPEG.");
+                    throw new IllegalArgumentException("Certificates must be PDF, PNG or JPEG.");
                 }
 
                 CurriculumCertificate certificate = new CurriculumCertificate();
@@ -110,7 +110,7 @@ public class CurriculumService {
 
         if (status == CurriculumStatus.APPROVED && curriculum.getVacancyId() == null && vacancyId != null) {
             if (!vacancyRepository.existsById(vacancyId)) {
-                throw new InvalidFieldException("vacancyId", "La vacante seleccionada no existe.");
+                throw new InvalidFieldException("vacancyId", "The selected job opening does not exist.");
             }
             curriculum.setVacancyId(vacancyId);
         }
@@ -164,7 +164,7 @@ public class CurriculumService {
 
     private Curriculum findEntityById(UUID id) {
         return curriculumRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Postulación no encontrada con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Application not found with ID: " + id));
     }
 
     private void deleteFileQuietly(String fileUrl) {
@@ -174,7 +174,7 @@ public class CurriculumService {
         try {
             storageService.deleteFile(curriculumsBucket, filePath);
         } catch (Exception e) {
-            System.err.println("No se pudo borrar el archivo del bucket: " + e.getMessage());
+            System.err.println("Could not delete the file from the bucket: " + e.getMessage());
         }
     }
 
@@ -197,7 +197,7 @@ public class CurriculumService {
                 return fileUrl.substring(index + marker.length());
             }
         } catch (Exception e) {
-            System.err.println("Error al extraer la ruta de la URL: " + e.getMessage());
+            System.err.println("Error extracting the path from the URL: " + e.getMessage());
         }
         return null;
     }

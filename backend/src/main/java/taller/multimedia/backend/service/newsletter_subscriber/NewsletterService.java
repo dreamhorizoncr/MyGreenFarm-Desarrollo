@@ -28,7 +28,7 @@ public class NewsletterService {
                 subscriber.setLanguage(resolverLangCode(language));
                 return newsletterRepository.save(subscriber);
             }
-            throw new RuntimeException("Este correo ya se encuentra suscrito activamente al boletín.");
+            throw new RuntimeException("This email is already subscribed to the newsletter.");
         }
 
         NewsletterSubscriber newSubscriber = new NewsletterSubscriber();
@@ -43,7 +43,7 @@ public class NewsletterService {
         String cleanEmail = sanitizeEmail(email);
         
         NewsletterSubscriber subscriber = newsletterRepository.findByEmail(cleanEmail)
-                .orElseThrow(() -> new RuntimeException("El correo no se encuentra registrado en el boletín."));
+                .orElseThrow(() -> new RuntimeException("The email is not registered in the newsletter."));
 
         subscriber.setIsActive(false);
         newsletterRepository.save(subscriber);
@@ -51,19 +51,19 @@ public class NewsletterService {
 
     private String sanitizeEmail(String email) {
         if (email == null || email.isBlank()) {
-            throw new RuntimeException("El correo electrónico es obligatorio.");
+            throw new RuntimeException("The email is required.");
         }
         
         String cleanEmail = Sanitizer.requireClean("email", email).toLowerCase().trim();
         
         if (!cleanEmail.contains("@") || !cleanEmail.contains(".")) {
-            throw new RuntimeException("El formato del correo electrónico no es válido.");
+            throw new RuntimeException("The email format is not valid.");
         }
 
         String domain = cleanEmail.substring(cleanEmail.lastIndexOf("@") + 1);
 
         if (domain.isBlank() || !domain.contains(".")) {
-            throw new RuntimeException("El dominio del correo no es válido.");
+            throw new RuntimeException("The email domain is not valid.");
         }
 
         List<String> allowedDomains = List.of(
@@ -74,7 +74,7 @@ public class NewsletterService {
         );
 
         if (!allowedDomains.contains(domain)) {
-            throw new RuntimeException("Solo se permiten correos de proveedores comunes (Gmail, Hotmail, Outlook, etc).");
+            throw new RuntimeException("Only common email providers are allowed (Gmail, Hotmail, Outlook, etc).");
         }
 
         return cleanEmail;

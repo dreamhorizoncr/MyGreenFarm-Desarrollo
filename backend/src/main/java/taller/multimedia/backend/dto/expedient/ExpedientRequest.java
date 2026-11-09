@@ -11,15 +11,15 @@ import java.time.LocalDate;
 @Data
 public class ExpedientRequest {
 
-    @NotNull(message = "El carné del niño es obligatorio")
+    @NotNull(message = "The child's student ID is required")
     private String studentId;
 
-    @NotNull(message = "La fecha de admisión es obligatoria")
+    @NotNull(message = "The admission date is required")
     private LocalDate admisionDate;
 
-    @NotNull(message = "El nivel educativo es obligatorio")
+    @NotNull(message = "The education level is required")
     private EducationalLevel educationalLevel;
 
-    @Size(max = 600, message = "Las observaciones generales no pueden superar los 600 caracteres")
+    @Size(max = 600, message = "The general observations cannot exceed 600 characters")
     private String generalObservations;
 }

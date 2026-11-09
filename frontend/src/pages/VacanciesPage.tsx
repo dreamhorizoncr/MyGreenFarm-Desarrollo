@@ -7,10 +7,10 @@ import ApplyVacancyModal from '../components/ApplyVacancyModal.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import ScallopEdge from '../components/ui/ScallopEdge.tsx'
 import BlobButton from '../components/ui/BlobButton.tsx'
-import lapiz from '../assets/imgs/lapiz.svg'
-import tijera from '../assets/imgs/Tijera.svg'
-import goma from '../assets/imgs/Goma.svg'
-import cabra from '../assets/imgs/Cabra.svg'
+import pencil from '../assets/imgs/pencil.svg'
+import scissors from '../assets/imgs/scissors.svg'
+import eraser from '../assets/imgs/eraser.svg'
+import goat from '../assets/imgs/goat.svg'
 import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
 import { useVacancies } from '../hooks/useVacancies.ts'
 import { useCurriculums } from '../hooks/useCurriculums.ts'
@@ -40,7 +40,7 @@ interface VacancyCardProps {
   position?: number
 }
 
-const HEADER_ILLUSTRATIONS = [lapiz, tijera, goma, cabra]
+const HEADER_ILLUSTRATIONS = [pencil, scissors, eraser, goat]
 
 function toneAttributes(position: number) {
   const mobilePink = position % 2 === 0

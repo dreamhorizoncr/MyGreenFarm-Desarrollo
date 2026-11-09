@@ -64,7 +64,7 @@ public class BacExchangeRateClient {
         try {
             document = createSecureParser().newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
         } catch (Exception e) {
-            throw new IllegalStateException("No se pudo leer el XML de BAC: " + e.getMessage(), e);
+            throw new IllegalStateException("Could not read the BAC XML: " + e.getMessage(), e);
         }
 
         XPath xpath = XPathFactory.newInstance().newXPath();
@@ -72,11 +72,11 @@ public class BacExchangeRateClient {
         try {
             countryNode = (Node) xpath.evaluate(XPATH_COUNTRY, document, XPathConstants.NODE);
         } catch (Exception e) {
-            throw new IllegalStateException("No se pudo buscar Costa Rica en el XML de BAC: " + e.getMessage(), e);
+            throw new IllegalStateException("Could not find Costa Rica in the BAC XML: " + e.getMessage(), e);
         }
 
         if (countryNode == null) {
-            throw new IllegalStateException("No se encontró el nodo 'Costa Rica' en el XML de BAC");
+            throw new IllegalStateException("The 'Costa Rica' node was not found in the BAC XML");
         }
 
         try {
@@ -88,7 +88,7 @@ public class BacExchangeRateClient {
                     readRate(xpath, countryNode, TAG_EUR_SELL),
                     SOURCE_BAC);
         } catch (Exception e) {
-            throw new IllegalStateException("El XML de BAC no trae las cuatro tasas esperadas: " + e.getMessage(), e);
+            throw new IllegalStateException("The BAC XML does not contain the four expected rates: " + e.getMessage(), e);
         }
     }
 
@@ -107,7 +107,7 @@ public class BacExchangeRateClient {
     private BigDecimal readRate(XPath xpath, Node context, String tag) throws Exception {
         String value = ((String) xpath.evaluate(tag, context, XPathConstants.STRING)).trim();
         if (value.isEmpty()) {
-            throw new IllegalStateException("La etiqueta <" + tag + "> vino vacía");
+            throw new IllegalStateException("The <" + tag + "> tag was empty");
         }
         return new BigDecimal(value);
     }

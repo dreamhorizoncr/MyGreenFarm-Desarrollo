@@ -35,7 +35,7 @@ public class AnnouncementCategoryService {
     public AnnouncementCategoryResponse create(AnnouncementCategoryRequest dto) {
         String title = Sanitizer.requireClean("title", dto.getTitle()).trim();
         if (categoryRepository.existsByTitleIgnoreCase(title)) {
-            throw new InvalidFieldException("title", "Ya existe una categoría con ese nombre.");
+            throw new InvalidFieldException("title", "A category with that name already exists.");
         }
 
         AnnouncementCategory category = new AnnouncementCategory();
@@ -47,7 +47,7 @@ public class AnnouncementCategoryService {
     @Transactional
     public void delete(UUID id) {
         AnnouncementCategory category = categoryRepository.findById(id)
-                .orElseThrow(() -> new InvalidFieldException("id", "La categoría no existe."));
+                .orElseThrow(() -> new InvalidFieldException("id", "The category does not exist."));
 
         for (Announcement announcement : announcementRepository.findByCategoryId(id)) {
             announcementService.delete(announcement.getId());

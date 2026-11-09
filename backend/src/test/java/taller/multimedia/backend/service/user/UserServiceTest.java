@@ -104,8 +104,8 @@ class UserServiceTest {
 
         userService.deleteUser(teacher.getId(), "owner@ejemplo.com");
 
-        // Un docente asignado a un grupo tiene filas en teacher_groups: hay que quitarlas
-        // antes de borrarlo o la base de datos rechaza el borrado.
+        // A teacher assigned to a group has rows in teacher_groups; they must be removed
+        // first or the database rejects the delete.
         InOrder orden = inOrder(teacherGroupRepository, userRepository);
         orden.verify(teacherGroupRepository).deleteByTeacherId(teacher.getId());
         orden.verify(userRepository).delete(teacher);

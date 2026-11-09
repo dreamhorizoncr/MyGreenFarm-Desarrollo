@@ -177,7 +177,7 @@ public class TranslationService {
             try {
                 repository.save(translation);
             } catch (DataIntegrityViolationException e) {
-                // Otra petición concurrente ya insertó este registro
+                // Another concurrent request already inserted this row
             }
         }
     }
@@ -244,7 +244,7 @@ public class TranslationService {
         try (Response response = httpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 throw new IOException(
-                        "Error de Google Translate API: " + response.code() + " - " + response.body().string());
+                        "Google Translate API error: " + response.code() + " - " + response.body().string());
             }
             JsonNode root = objectMapper.readTree(response.body().string());
             List<String> results = new ArrayList<>();
@@ -253,7 +253,7 @@ public class TranslationService {
                 results.add(unescapeHtml(translatedText));
             }
             if (results.size() != texts.size()) {
-                throw new IOException("Google Translate devolvió una cantidad inesperada de traducciones.");
+                throw new IOException("Google Translate returned an unexpected number of translations.");
             }
             return results;
         }

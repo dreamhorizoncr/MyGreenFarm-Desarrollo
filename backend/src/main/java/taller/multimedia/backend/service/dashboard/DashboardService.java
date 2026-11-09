@@ -28,7 +28,7 @@ import taller.multimedia.backend.repository.curriculum.CurriculumRepository;
 import taller.multimedia.backend.repository.forum.ForumArticleRepository;
 import taller.multimedia.backend.repository.gallery.GalleryRepository;
 import taller.multimedia.backend.repository.vacancy.VacancyRepository;
-import taller.multimedia.backend.service.announcement.GeminiResumenService;
+import taller.multimedia.backend.service.announcement.GeminiSummaryService;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +43,7 @@ public class DashboardService {
         private final ForumArticleRepository forumArticleRepository;
         private final CurriculumRepository curriculumRepository;
         private final VacancyRepository vacancyRepository;
-        private final GeminiResumenService geminiResumenService;
+        private final GeminiSummaryService geminiSummaryService;
         private final DashboardSummaryCacheService dashboardSummaryCacheService;
 
         @Transactional(readOnly = true)
@@ -81,7 +81,7 @@ public class DashboardService {
                                                 item.getId().toString(), "appointment",
                                                 "Cita de " + item.getParentName(), item.getAppointmentDate(),
                                                 item.getAppointmentDate().isBefore(now.plusDays(2)) ? "high" : "medium",
-                                                "/admin/citas")));
+                                                "/admin/appointments")));
 
                 curriculumRepository.findByStatusAndSubmittedAtAfterOrderBySubmittedAtDesc(
                                 CurriculumStatus.PENDING, now.minusDays(30))
@@ -115,31 +115,31 @@ public class DashboardService {
                 }
 
                 String context = """
-                                Fecha: %s
-                                Citas del día:
+                                Date: %s
+                                Appointments of the day:
                                 %s
-                                Actividad reciente:
+                                Recent activity:
                                 %s
-                                Pendientes prioritarios:
+                                Priority tasks:
                                 %s
                                 """.formatted(
                                 date,
-                                appointments.isEmpty() ? "Ninguna" : appointments.stream()
+                                appointments.isEmpty() ? "None" : appointments.stream()
                                                 .map(item -> "- " + item.appointmentDate() + " | "
                                                                 + item.parentName() + " | " + item.childName()
-                                                                + " | estado: " + item.status())
-                                                .reduce((left, right) -> left + "\n" + right).orElse("Ninguna"),
-                                activities.isEmpty() ? "Ninguna" : activities.stream()
+                                                                + " | status: " + item.status())
+                                                .reduce((left, right) -> left + "\n" + right).orElse("None"),
+                                activities.isEmpty() ? "None" : activities.stream()
                                                 .map(item -> "- " + item.type() + " | " + item.title())
-                                                .reduce((left, right) -> left + "\n" + right).orElse("Ninguna"),
-                                priorities.isEmpty() ? "Ninguno" : priorities.stream()
+                                                .reduce((left, right) -> left + "\n" + right).orElse("None"),
+                                priorities.isEmpty() ? "None" : priorities.stream()
                                                 .map(item -> "- " + item.type() + " | " + item.title()
-                                                                + " | prioridad: " + item.priority())
-                                                .reduce((left, right) -> left + "\n" + right).orElse("Ninguno"));
+                                                                + " | priority: " + item.priority())
+                                                .reduce((left, right) -> left + "\n" + right).orElse("None"));
 
-                String summary = geminiResumenService.generateDashboardSummary(context);
+                String summary = geminiSummaryService.generateDashboardSummary(context);
                 if (summary == null || summary.isBlank()) {
-                        log.error("No se pudo generar el resumen IA del dashboard para {}", date);
+                        log.error("Could not generate the dashboard AI summary for {}", date);
                         return "";
                 }
                 dashboardSummaryCacheService.saveSummary(date, summary);

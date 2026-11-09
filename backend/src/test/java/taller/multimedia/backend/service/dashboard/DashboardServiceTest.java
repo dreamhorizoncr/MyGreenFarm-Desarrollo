@@ -28,7 +28,7 @@ import taller.multimedia.backend.repository.curriculum.CurriculumRepository;
 import taller.multimedia.backend.repository.forum.ForumArticleRepository;
 import taller.multimedia.backend.repository.gallery.GalleryRepository;
 import taller.multimedia.backend.repository.vacancy.VacancyRepository;
-import taller.multimedia.backend.service.announcement.GeminiResumenService;
+import taller.multimedia.backend.service.announcement.GeminiSummaryService;
 
 @ExtendWith(MockitoExtension.class)
 class DashboardServiceTest {
@@ -55,7 +55,7 @@ class DashboardServiceTest {
     private VacancyRepository vacancyRepository;
 
     @Mock
-    private GeminiResumenService geminiResumenService;
+    private GeminiSummaryService geminiSummaryService;
 
     @Mock
     private DashboardSummaryCacheService dashboardSummaryCacheService;
@@ -91,7 +91,7 @@ class DashboardServiceTest {
         when(curriculumRepository.findByStatusAndSubmittedAtAfterOrderBySubmittedAtDesc(
                 org.mockito.ArgumentMatchers.eq(taller.multimedia.backend.model.curriculum.CurriculumStatus.PENDING), any()))
                 .thenReturn(List.of());
-        when(geminiResumenService.generateDashboardSummary(any())).thenReturn("Resumen generado por Gemini.");
+        when(geminiSummaryService.generateDashboardSummary(any())).thenReturn("Resumen generado por Gemini.");
         when(dashboardSummaryCacheService.reserveGeneration(date))
                 .thenReturn(new DashboardSummaryCacheService.SummaryReservation(null, true));
 
@@ -108,7 +108,7 @@ class DashboardServiceTest {
         assertThat(result.aiSummary()).isEqualTo("Resumen generado por Gemini.");
         verify(appointmentRepository).countByStatus(AppointmentStatus.PENDING);
         verify(childRepository).countByIsActiveTrue();
-        verify(geminiResumenService).generateDashboardSummary(any());
+        verify(geminiSummaryService).generateDashboardSummary(any());
         verify(dashboardSummaryCacheService).saveSummary(date, "Resumen generado por Gemini.");
     }
 }

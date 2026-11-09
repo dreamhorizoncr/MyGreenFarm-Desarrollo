@@ -7,25 +7,25 @@ import lombok.Data;
 @Data
 public class ForumArticleRequest {
 
-    @NotBlank(message = "El título es obligatorio")
-    @Size(max = 120, message = "El título no puede superar los 120 caracteres")
+    @NotBlank(message = "The title is required")
+    @Size(max = 120, message = "The title cannot exceed 120 characters")
     private String title;
 
-    @NotBlank(message = "El tema es obligatorio")
-    @Size(max = 60, message = "El tema no puede superar los 60 caracteres")
+    @NotBlank(message = "The topic is required")
+    @Size(max = 60, message = "The topic cannot exceed 60 characters")
     private String topic;
 
-    @NotBlank(message = "El contenido es obligatorio")
-    @Size(max = 4000, message = "El contenido no puede superar los 4000 caracteres")
+    @NotBlank(message = "The content is required")
+    @Size(max = 4000, message = "The content cannot exceed 4000 characters")
     private String content;
 
-    @Size(max = 120, message = "El nombre del autor no puede superar los 120 caracteres")
+    @Size(max = 120, message = "The author name cannot exceed 120 characters")
     private String authorName;
 
-    @Size(max = 40, message = "El puesto del autor no puede superar los 40 caracteres")
+    @Size(max = 40, message = "The author position cannot exceed 40 characters")
     private String authorRole;
 
-    @Size(max = 140, message = "El texto alternativo no puede superar los 140 caracteres")
+    @Size(max = 140, message = "The alt text cannot exceed 140 characters")
     private String imageAlt;
 
     private boolean removeImage;

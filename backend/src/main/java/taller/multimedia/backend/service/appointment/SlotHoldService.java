@@ -29,7 +29,7 @@ public class SlotHoldService {
     static final int MAX_HOLDS_PER_CLIENT = 3;
 
     static final String HELD_BY_OTHER_MESSAGE =
-            "Otra persona está reservando este horario en este momento. Elige otro horario.";
+            "Someone else is booking this time slot right now. Choose another time slot.";
     private static final Pattern HOLDER_ID = Pattern.compile("^[A-Za-z0-9-]{8,64}$");
 
     record Hold(String holderId, String clientKey, Instant expiresAt) {
@@ -64,7 +64,7 @@ public class SlotHoldService {
         LocalDateTime slot = normalize(requestedSlot);
 
         if (!scheduleConfigService.getAvailableSlotsForDate(slot.toLocalDate()).contains(slot.toLocalTime())) {
-            throw new SlotUnavailableException("Ese horario ya no está disponible. Elige otro horario.");
+            throw new SlotUnavailableException("That time slot is no longer available. Choose another time slot.");
         }
 
         List<LocalDateTime> released = new ArrayList<>();
@@ -86,7 +86,7 @@ public class SlotHoldService {
             long clientHolds = holds.values().stream().filter(h -> h.clientKey().equals(clientKey)).count();
             if (current == null && clientHolds >= MAX_HOLDS_PER_CLIENT) {
                 throw new SlotUnavailableException(
-                        "Tienes demasiados horarios apartados al mismo tiempo. Termina o cancela una reserva.");
+                        "You are holding too many time slots at once. Finish or cancel a reservation.");
             }
 
             Instant expiresAt = clock.instant().plus(HOLD_DURATION);
@@ -174,7 +174,7 @@ public class SlotHoldService {
 
     private void validateHolderId(String holderId) {
         if (holderId == null || !HOLDER_ID.matcher(holderId).matches()) {
-            throw new InvalidFieldException("holderId", "El identificador de la reserva no es válido.");
+            throw new InvalidFieldException("holderId", "The reservation ID is not valid.");
         }
     }
 }

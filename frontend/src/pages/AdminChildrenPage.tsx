@@ -3,6 +3,7 @@ import { SearchIcon } from "@animateicons/react/lucide";
 
 import AdminLayout from "../layout/AdminLayout";
 import ChildrenModuleTabs from "../components/ChildrenModuleTabs";
+import Select from "../components/ui/Select.tsx";
 import ChildFormModal from "../components/ChildFormModal";
 import ChildCard from "../components/ChildCard";
 import DeleteConfirmModal from "../components/ui/DeleteConfirmModal";
@@ -98,94 +99,83 @@ function AdminChildrenPage() {
   return (
     <AdminLayout>
       <section className="w-full">
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
-              {t('admin.children.title')}
-            </h1>
+        <div>
+          <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
+            {t('admin.children.title')}
+          </h1>
 
-            <p className="mt-2 font-body text-body text-neutral-500">
-              {t('admin.children.description')}
-            </p>
+          <p className="mt-2 font-body text-body text-neutral-500">
+            {t('admin.children.description')}
+          </p>
+        </div>
+
+        <div className="mb-lg mt-lg flex flex-wrap items-center justify-between gap-md">
+          <ChildrenModuleTabs className="max-w-full" />
+
+          <div className="flex min-w-0 flex-1 flex-wrap items-center justify-end gap-md">
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedChild(null)
+              setIsFormOpen(true)
+            }}
+            className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-all duration-300 hover:scale-105 hover:bg-orange-600"
+            aria-label={t('admin.children.addChild')}
+            title={t('admin.children.addChild')}
+          >
+            <span className="text-3xl font-light leading-none transition-transform duration-300 group-hover:rotate-90">
+              +
+            </span>
+          </button>
+
+          <div className="flex h-11 min-w-0 flex-1 basis-48 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 md:max-w-[420px]">
+            <SearchIcon
+              size={18}
+              className="shrink-0 text-neutral-500"
+              aria-hidden="true"
+            />
+
+            <input
+              type="search"
+              placeholder={t('admin.children.searchPlaceholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              aria-label={t('admin.children.searchPlaceholder')}
+              className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
+            />
           </div>
 
-          <div className="flex w-full items-center gap-3 md:w-auto">
-            <button
-              type="button"
-              onClick={() => {
-                setSelectedChild(null)
-                setIsFormOpen(true)
+          <div className="w-full sm:w-auto sm:min-w-[180px]">
+            <Select
+              value={statusFilter}
+              onChange={(value) => {
+                setStatusFilter(value as ChildStatusFilter)
+                setCurrentPage(1)
               }}
-              className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-all duration-300 hover:scale-105 hover:bg-orange-600"
-              aria-label={t('admin.children.addChild')}
-              title={t('admin.children.addChild')}
-            >
-              <span className="text-3xl font-light leading-none transition-transform duration-300 group-hover:rotate-90">
-                +
-              </span>
-            </button>
-
-            <div className="flex h-11 min-w-0 flex-1 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 md:w-[360px] md:flex-none">
-              <SearchIcon
-                size={18}
-                className="shrink-0 text-neutral-500"
-                aria-hidden="true"
-              />
-
-              <input
-                type="search"
-                placeholder={t('admin.children.searchPlaceholder')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                aria-label={t('admin.children.searchPlaceholder')}
-                className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
-              />
+              options={(['ALL', 'ACTIVE', 'INACTIVE'] as const).map((status) => ({ value: status, label: t(statusFilterLabels[status]) }))}
+              className="w-full rounded-full border border-neutral-200 bg-white py-sm pl-md pr-lg"
+              aria-label={t('admin.children.statusFilterLabel')}
+            />
             </div>
           </div>
         </div>
 
-        <ChildrenModuleTabs />
-
-        <fieldset
-          className="mx-0 mb-0 mt-lg flex min-w-0 flex-wrap gap-sm border-0 p-0"
-          aria-label={t('admin.children.statusFilterLabel')}
-        >
-          {(['ALL', 'ACTIVE', 'INACTIVE'] as const).map((status) => (
-            <button
-              key={status}
-              type="button"
-              aria-pressed={statusFilter === status}
-              onClick={() => {
-                setStatusFilter(status)
-                setCurrentPage(1)
-              }}
-              className={`rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 ${
-                statusFilter === status
-                  ? 'border-green-500 bg-green-500 text-white'
-                  : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
-              }`}
-            >
-              {t(statusFilterLabels[status])}
-            </button>
-          ))}
-        </fieldset>
-
         {loading && (
-          <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <SkeletonList count={skeletonCount}>{() => <ChildCard loading />}</SkeletonList>
           </div>
         )}
 
         {!loading && error && (
-          <StatusMessage variant="error" description={error} className="mt-8" />
+          <StatusMessage variant="error" description={error} />
         )}
 
         {!loading && !error && (
           filteredChildren.length === 0 ? (
-            <StatusMessage icon={Baby} description={t('admin.children.noResults')} className="mt-8" />
+            <StatusMessage icon={Baby} description={t('admin.children.noResults')} />
           ) : (
             <>
-              <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 {filteredChildren.map((child: Child) => (
                   <ChildCard
                     key={child.id}

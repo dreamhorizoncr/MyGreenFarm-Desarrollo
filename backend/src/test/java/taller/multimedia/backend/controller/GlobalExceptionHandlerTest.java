@@ -41,10 +41,10 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void invalidField_keepsTheBusinessMessage() {
-        ResponseEntity<MessageResponse> response = handler.handleInvalidField(new InvalidFieldException("title", "Ya existe una categoría con ese nombre."));
+        ResponseEntity<MessageResponse> response = handler.handleInvalidField(new InvalidFieldException("title", "A category with that name already exists."));
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().getMessage()).isEqualTo("Ya existe una categoría con ese nombre.");
+        assertThat(response.getBody().getMessage()).isEqualTo("A category with that name already exists.");
     }
 
     @Test

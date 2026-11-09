@@ -1,7 +1,7 @@
 import AdminLayout from '../layout/AdminLayout.tsx'
 import AppointmentsSection from '../components/AppointmentsSection.tsx'
 
-function AdminCitasPage() {
+function AdminAppointmentsPage() {
   return (
     <AdminLayout>
       <AppointmentsSection />
@@ -9,4 +9,4 @@ function AdminCitasPage() {
   )
 }
 
-export default AdminCitasPage
+export default AdminAppointmentsPage

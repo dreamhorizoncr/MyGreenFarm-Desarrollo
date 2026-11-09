@@ -10,13 +10,13 @@ import java.util.List;
 @Data
 public class VacancyRequest {
 
-    @NotBlank(message = "El título es obligatorio")
-    @Size(max = 150, message = "El título no puede superar los 150 caracteres")
+    @NotBlank(message = "The title is required")
+    @Size(max = 150, message = "The title cannot exceed 150 characters")
     private String title;
 
-    @NotBlank(message = "La descripción es obligatoria")
+    @NotBlank(message = "The description is required")
     private String description;
 
-    @NotNull(message = "Los campos requeridos son obligatorios")
+    @NotNull(message = "The required fields must be filled in")
     private List<String> requiredFields;
 }

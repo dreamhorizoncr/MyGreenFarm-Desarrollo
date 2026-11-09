@@ -20,49 +20,49 @@ import tools.jackson.databind.ObjectMapper;
 
 @Service
 @RequiredArgsConstructor
-public class GeminiResumenService {
+public class GeminiSummaryService {
 
-    private static final Logger log = LoggerFactory.getLogger(GeminiResumenService.class);
+    private static final Logger log = LoggerFactory.getLogger(GeminiSummaryService.class);
 
     private static final String PROMPT_BASE =
-            "Resume el siguiente texto en 1 o 2 oraciones breves (máximo 45 palabras en total), "
-                    + "en español, con tono claro y cálido. "
-                    + "Usa solo la información del texto, sin inventar datos, y resume literalmente lo que dice "
-                    + "el texto sin importar el tema que trate. "
-                    + "No evalúes, juzgues ni comentes si el texto corresponde a un contexto de guardería, "
-                    + "educación infantil o cualquier otro tema esperado: tu única tarea es resumir el contenido tal "
-                    + "cual, como lo harías con cualquier texto. "
-                    + "Responde ÚNICAMENTE con el resumen en texto plano: sin notas, aclaraciones, advertencias "
-                    + "ni formato Markdown.\n\nTexto:\n";
+            "Summarize the following text in 1 or 2 short sentences (45 words maximum in total), "
+                    + "in Spanish, with a clear and warm tone. "
+                    + "Use only the information in the text, without making anything up, and summarize literally what "
+                    + "the text says regardless of its topic. "
+                    + "Do not evaluate, judge or comment on whether the text fits a daycare, early childhood education "
+                    + "or any other expected context: your only task is to summarize the content as is, as you would "
+                    + "with any text. "
+                    + "Reply ONLY with the summary in plain text: no notes, clarifications, warnings "
+                    + "or Markdown formatting.\n\nText:\n";
 
-    private static final String PROMPT_EVALUATION = 
-        "Eres un pedagogo experto de una guardería. Tu tarea es analizar el historial completo "
-        + "de evaluaciones del semestre del niño/a %s y sintetizar su evolución general.\n\n"
-        + "REGLAS RIGUROSAS:\n"
-        + "1. Redacta un mensaje cálido, motivador y profesional dirigido a los padres.\n"
-        + "2. NO listes fecha por fecha. Resume los avances clave en comunicación, lenguaje, lectura y desarrollo motor.\n"
-        + "3. MANTÉN EL TEXTO BREVE: Máximo 120 palabras en total.\n"
-        + "4. Finaliza el mensaje despidiéndote explícitamente a nombre del equipo de The Green Farm.\n\n"
-        + "Historial de evaluaciones del semestre:\n%s";
-        
-    private static final String PROMPT_ARTICULO_FORO =
-            "Resume el siguiente texto en una sola oración breve (máximo 30 palabras), "
-                    + "en español, con tono claro y cálido. "
-                    + "Usa solo la información del texto, sin inventar datos, y resume literalmente lo que dice "
-                    + "el texto sin importar el tema que trate. "
-                    + "No evalúes, juzgues ni comentes si el texto corresponde a un contexto de guardería, "
-                    + "educación infantil o cualquier otro tema esperado: tu única tarea es resumir el contenido tal "
-                    + "cual, como lo harías con cualquier texto. "
-                    + "Responde ÚNICAMENTE con el resumen en texto plano: sin notas, aclaraciones, advertencias "
-                    + "ni formato Markdown.\n\nTexto:\n";
+    private static final String PROMPT_EVALUATION =
+            "You are an expert educator at a daycare. Your task is to analyze the full history "
+                    + "of semester evaluations for the child %s and summarize their overall progress.\n\n"
+                    + "STRICT RULES:\n"
+                    + "1. Write a warm, encouraging and professional message addressed to the parents, in Spanish.\n"
+                    + "2. Do NOT list each date. Summarize the key progress in communication, language, reading and motor development.\n"
+                    + "3. KEEP IT SHORT: 120 words maximum in total.\n"
+                    + "4. End the message with an explicit sign-off on behalf of The Green Farm team.\n\n"
+                    + "Semester evaluation history:\n%s";
+
+    private static final String PROMPT_FORUM_ARTICLE =
+            "Summarize the following text in a single short sentence (30 words maximum), "
+                    + "in Spanish, with a clear and warm tone. "
+                    + "Use only the information in the text, without making anything up, and summarize literally what "
+                    + "the text says regardless of its topic. "
+                    + "Do not evaluate, judge or comment on whether the text fits a daycare, early childhood education "
+                    + "or any other expected context: your only task is to summarize the content as is, as you would "
+                    + "with any text. "
+                    + "Reply ONLY with the summary in plain text: no notes, clarifications, warnings "
+                    + "or Markdown formatting.\n\nText:\n";
 
     private static final String PROMPT_DASHBOARD =
-            "Resume el estado del día de un centro educativo en 2 o 3 oraciones breves "
-                    + "(máximo 70 palabras), en español, con tono claro y útil para un administrador. "
-                    + "Menciona las citas y pendientes relevantes usando únicamente la información proporcionada. "
-                    + "Si no hay elementos en una categoría, indícalo brevemente. "
-                    + "No inventes datos ni agregues recomendaciones. "
-                    + "Responde ÚNICAMENTE con el resumen en texto plano, sin Markdown.\n\nDatos del día:\n";
+            "Summarize the day's status of an educational center in 2 or 3 short sentences "
+                    + "(70 words maximum), in Spanish, with a clear tone that is useful for an administrator. "
+                    + "Mention the relevant appointments and pending items using only the information provided. "
+                    + "If a category has no items, say so briefly. "
+                    + "Do not make up data or add recommendations. "
+                    + "Reply ONLY with the summary in plain text, without Markdown.\n\nDay data:\n";
 
     private final ObjectMapper objectMapper;
 
@@ -90,7 +90,7 @@ public class GeminiResumenService {
     }
 
     public String generateArticleSummary(String content) {
-        return callGemini(PROMPT_ARTICULO_FORO + content);
+        return callGemini(PROMPT_FORUM_ARTICLE + content);
     }
 
     public String generateDashboardSummary(String context) {
@@ -120,13 +120,13 @@ public class GeminiResumenService {
 
             try (Response response = httpClient.newCall(request).execute()) {
                 if (!response.isSuccessful()) {
-                    log.error("Error llamando a Gemini API: status={}", response.code());
+                    log.error("Error calling the Gemini API: status={}", response.code());
                     return null;
                 }
 
                 String responseBody = response.body() != null ? response.body().string() : null;
                 if (responseBody == null || responseBody.isBlank()) {
-                    log.error("Gemini API devolvió una respuesta vacía");
+                    log.error("The Gemini API returned an empty response");
                     return null;
                 }
 
@@ -137,14 +137,14 @@ public class GeminiResumenService {
                         .path("text").asString();
 
                 if (text == null || text.isBlank()) {
-                    log.error("Gemini API no devolvió texto en la respuesta");
+                    log.error("The Gemini API returned no text in the response");
                     return null;
                 }
 
                 return stripMetaNotes(text.trim());
             }
         } catch (Exception e) {
-            log.error("Error generando resumen con Gemini API: {}", e.getMessage(), e);
+            log.error("Error generating a summary with the Gemini API: {}", e.getMessage(), e);
             return null;
         }
     }

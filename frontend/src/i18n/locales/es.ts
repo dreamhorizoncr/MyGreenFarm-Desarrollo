@@ -184,6 +184,8 @@ export default {
       modalClose: "Cerrar",
     },
     testimonials: {
+      previous: "Testimonio anterior",
+      next: "Siguiente testimonio",
       navigation: 'Navegación de testimonios',
       goTo: 'Ir al testimonio {{number}}',
       title: "Testimonios",
@@ -212,7 +214,7 @@ export default {
       cardText:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     },
-    galeria: {
+    gallery: {
       title: "Galería de Momentos",
       description:
         "Explora los álbumes con las fotos de nuestras actividades y momentos especiales.",
@@ -978,34 +980,8 @@ export default {
     viewProfile: "Ver perfil",
   },
   admin: {
-    teachersPage: {
-      title: "Gestión de Docentes",
-      subtitle: 'Administra los docentes de My Green Farm.',
-      register: 'Registrar docente',
-      edit: 'Editar docente',
-      searchPlaceholder: 'Buscar docente...',
-      searchLabel: 'Buscar docente',
-      noMatches: 'No se encontraron docentes con ese nombre.',
-      empty: 'Todavía no hay docentes registrados.',
-      createdToast: 'Docente registrado correctamente',
-      updatedToast: 'Información del docente actualizada',
-      photoUpdatedToast: 'Fotografía actualizada correctamente',
-      photoDeletedToast: 'Fotografía eliminada correctamente',
-      deletedToast: 'Docente eliminado correctamente',
-      photoAlt: 'Fotografía del docente',
-      changePhoto: 'Cambiar fotografía',
-      addPhoto: 'Agregar fotografía',
-      removePhoto: 'Eliminar fotografía',
-      photoAfterRegister: 'Podrás agregar una fotografía después de registrar al docente.',
-      invalidImage: 'Selecciona un archivo de imagen válido.',
-      imageTooLarge: 'La fotografía no puede superar los 5 MB.',
-      accessCodeLabel: 'Contraseña',
-      passwordRequired: 'La contraseña es obligatoria.',
-      passwordMin: 'La contraseña debe tener al menos 8 caracteres.',
-      passwordHint: 'Mínimo 8 caracteres, incluyendo mayúscula, minúscula, número y símbolo.',
-    },
-    docentesTitle: "Gestión de Usuarios",
-    docentesSubtitle:
+    usersTitle: "Gestión de Usuarios",
+    usersSubtitle:
       "Consulta y administra los usuarios del centro educativo.",
     searchPlaceholder: "Buscar por nombre, apellido, correo o rol",
     addDocente: "Agregar usuario",
@@ -1139,23 +1115,24 @@ export default {
       },
     },
     sidebar: {
+      groups: "Grupos",
       dashboard: "Dashboard",
-      docentes: "Usuarios",
-      profesores: "Docentes",
-      noticias: "Noticias",
-      galeria: "Galería",
-      citas: "Citas",
+      users: "Usuarios",
+      teachers: "Docentes",
+      news: "Noticias",
+      gallery: "Galería",
+      appointments: "Citas",
       cv: "CV",
       clubs: "Clubes",
-      expedientes: "Expedientes",
-      padres: "Padres",
-      niños: "Niños",
-      evaluaciones: "Evaluaciones",
-      miPerfil: "Mi perfil",
-      servicios: "Servicios",
-      disponibilidad: "Mi disponibilidad",
-      boletín: "Boletín",
-      foro: "Foro",
+      expedients: "Expedientes",
+      parents: "Padres",
+      children: "Niños",
+      evaluations: "Evaluaciones",
+      myProfile: "Mi perfil",
+      services: "Servicios",
+      availability: "Mi disponibilidad",
+      newsletter: "Boletín",
+      forum: "Foro",
     },
     curriculums: {
       assignVacancyLabel: 'Asignar a una vacante (opcional)',
@@ -1199,6 +1176,9 @@ export default {
       deleteErrorToastTitle: "No se pudo eliminar la postulación",
     },
     teachers: {
+      photoUploadError: "El usuario se creó, pero no se pudo subir la fotografía.",
+      photoLabel: "Fotografía (opcional)",
+      photoHint: "Se muestra en la sección de docentes de Nosotros. Máximo 5 MB.",
       title: 'Gestión de Docentes',
       description: 'Administra los docentes de My Green Farm.',
       searchPlaceholder: 'Buscar Docente...',
@@ -1283,7 +1263,7 @@ export default {
       photos: "Fotos",
       photoTag: "Foto",
     },
-    servicios: {
+    services: {
       title: "Gestión de Planes de Servicio",
       subtitle: "Crea servicios, define sus precios y configura descuentos.",
       addPlan: "Agregar plan",
@@ -1414,6 +1394,10 @@ export default {
 
     
     "groups": {
+      teachersSelected_one: "{{count}} docente seleccionado",
+      teachersSelected_other: "{{count}} docentes seleccionados",
+      removeTeacher: "Quitar a {{name}}",
+      deleteConfirm: "¿Seguro que deseas eliminar el grupo \"{{name}}\"? Los niños y docentes quedarán sin este grupo asignado. Esta acción no se puede deshacer.",
       "tabLabel": "Grupos",
       "title": "Grupos",
       "description": "Organiza y administra los grupos de estudiantes y sus docentes.",
@@ -1464,7 +1448,6 @@ export default {
       "deleteSuccess": "El grupo se eliminó correctamente.",
       "deleteError": "No se pudo eliminar el grupo.",
 
-      "deleteMessage": "¿Está seguro de que desea eliminar el grupo «{{name}}»?",
       "requiredField": "Este campo es obligatorio.",
       "invalidCapacity": "La capacidad debe ser mayor que cero.",
       "capacityExceeded": "La capacidad no puede ser menor que la cantidad de estudiantes inscritos."
@@ -1698,6 +1681,7 @@ export default {
       imageDeleteErrorToastTitle: "Error al eliminar la imagen."
     },
     evaluations: {
+      formDateFutureError: "La fecha de evaluación no puede ser posterior a hoy.",
       title: "Gestión de Evaluaciones",
       tabLabel: "Evaluaciones",
       description: "Registra, consulta y administra el progreso de los niños.",
@@ -1908,6 +1892,16 @@ export default {
     },
   },
   services: {
+    paymentError: "Hubo un error al procesar el pago o la factura.",
+    sinpePaymentError: "Hubo un error al procesar el pago con SINPE.",
+    sinpeModal: {
+      title: "Procesando transferencia SINPE",
+      received: "Hemos recibido la instrucción de pago para <strong>{{plan}}</strong>. La red bancaria está validando la acreditación de los fondos.",
+      phone: "Teléfono asociado:",
+      reference: "Referencia:",
+      confirm: "Entendido / Ir al inicio",
+      back: "Volver a Servicios",
+    },
     priceLabel: "Precio de referencia",
     approxPrice: "Monto aproximado informativo según el tipo de cambio del día. No se realizan pagos desde esta página.",
     popupBlocked: 'El navegador bloqueó la ventana de pago. Permite las ventanas emergentes para este sitio e inténtalo de nuevo.',
@@ -2342,6 +2336,13 @@ export default {
   },
 
   seo: {
+  albumTitle: "Álbum | My Green Farm",
+  albumDescription: "Explora fotografías de las actividades y experiencias de My Green Farm.",
+  albumFallbackDescription: "Descubre este álbum de fotografías de My Green Farm.",
+  articleTitle: "Artículo | My Green Farm",
+  articleDescription: "Lee artículos y experiencias compartidas por la comunidad de My Green Farm.",
+  articleFallbackDescription: "Descubre este artículo de la comunidad de My Green Farm.",
+  bookingTitle: "Reservar una cita | My Green Farm",
   galleryDescription: 'Explora fotografías y recuerdos de las actividades, experiencias y momentos de nuestra comunidad educativa.',
   communityDescription: 'Conoce las experiencias y publicaciones compartidas por las familias de la comunidad My Green Farm.',
   bookingDescription: 'Solicita una cita en My Green Farm y conoce nuestra propuesta educativa para niños y familias.',

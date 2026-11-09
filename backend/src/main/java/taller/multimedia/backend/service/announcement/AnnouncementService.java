@@ -38,7 +38,7 @@ public class AnnouncementService {
         String location = dto.getLocation() == null ? null : Sanitizer.requireClean("location", dto.getLocation());
 
         if (announcementRepository.existsByTitle(title)) {
-            throw new IllegalArgumentException("Ya existe un anuncio con el título: " + title);
+            throw new IllegalArgumentException("An announcement already exists with the title: " + title);
         }
 
         Announcement announcement = new Announcement();
@@ -90,14 +90,14 @@ public class AnnouncementService {
     @Transactional
     public AnnouncementResponse update(UUID id, AnnouncementRequest dto) {
         Announcement announcement = announcementRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Anuncio no encontrado con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Announcement not found with ID: " + id));
 
         String title = Sanitizer.requireClean("title", dto.getTitle());
         String content = Sanitizer.requireCleanPreserveLineBreaks("content", dto.getContent());
         String location = dto.getLocation() == null ? null : Sanitizer.requireClean("location", dto.getLocation());
 
         if (announcementRepository.existsByTitleAndIdNot(title, id)) {
-            throw new IllegalArgumentException("Ya existe un anuncio con el título: " + title);
+            throw new IllegalArgumentException("An announcement already exists with the title: " + title);
         }
 
         announcement.setTitle(title);
@@ -112,7 +112,7 @@ public class AnnouncementService {
 
     private void applyCategory(Announcement announcement, UUID categoryId) {
         AnnouncementCategory category = announcementCategoryRepository.findById(categoryId)
-                .orElseThrow(() -> new InvalidFieldException("categoryId", "La categoría seleccionada ya no existe."));
+                .orElseThrow(() -> new InvalidFieldException("categoryId", "The selected category no longer exists."));
         announcement.setCategory(category);
         announcement.setType(category.getCode() != null ? category.getCode() : FALLBACK_TYPE);
     }
@@ -120,7 +120,7 @@ public class AnnouncementService {
     @Transactional
     public void delete(UUID id) {
         Announcement announcement = announcementRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Anuncio no encontrado con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Announcement not found with ID: " + id));
 
         announcementImageService.deleteAllImagesByAnnouncement(id);
 
@@ -150,7 +150,7 @@ public class AnnouncementService {
             try {
                 delete(announcement.getId());
             } catch (Exception e) {
-                System.err.println("Error al eliminar anuncio expirado ID " + announcement.getId() + ": " + e.getMessage());
+                System.err.println("Error deleting expired announcement ID " + announcement.getId() + ": " + e.getMessage());
             }
         }
     }

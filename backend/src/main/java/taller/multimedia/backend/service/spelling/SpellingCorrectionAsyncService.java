@@ -62,7 +62,7 @@ public class SpellingCorrectionAsyncService {
     @Async("taskExecutor")
     public void correctArticle(UUID id) {
         try {
-            correct("publicación del blog", id, articleRepository, List.of(
+            correct("blog post", id, articleRepository, List.of(
                     new TextField<>("title", ForumArticle::getTitle, ForumArticle::setTitle),
                     new TextField<>("content", ForumArticle::getContent, ForumArticle::setContent)));
         } finally {
@@ -123,11 +123,11 @@ public class SpellingCorrectionAsyncService {
                 }
                 if (applied > 0) {
                     repository.save(entity);
-                    log.info("Ortografía corregida en {} {}: {} campo(s)", label, id, applied);
+                    log.info("Spelling corrected in {} {}: {} field(s)", label, id, applied);
                 }
             }));
         } catch (Exception e) {
-            log.error("Error corrigiendo la ortografía de {} {}", label, id, e);
+            log.error("Error correcting the spelling of {} {}", label, id, e);
         }
     }
 }

@@ -100,7 +100,7 @@ import type { Group } from "../types/group"
                     group.description,
                 }))
             } catch {
-                // Conservar las descripciones originales.
+                // Keep the original descriptions.
             }
             }
 

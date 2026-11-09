@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class AnnouncementCategoryRequest {
-    @NotBlank(message = "El nombre de la categoría es obligatorio")
-    @Size(min = 2, max = 40, message = "El nombre de la categoría debe tener entre 2 y 40 caracteres")
+    @NotBlank(message = "The category name is required")
+    @Size(min = 2, max = 40, message = "The category name must be between 2 and 40 characters")
     private String title;
 }

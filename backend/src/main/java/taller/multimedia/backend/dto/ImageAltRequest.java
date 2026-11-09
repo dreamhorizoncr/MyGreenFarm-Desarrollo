@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 public class ImageAltRequest {
 
-    @Size(max = 140, message = "El texto alternativo debe tener como máximo 140 caracteres.")
+    @Size(max = 140, message = "The alt text must be at most 140 characters.")
     private String altText;
 }

@@ -6,7 +6,7 @@ import Button from './ui/Button.tsx'
 import PhilosophyPillarItem from './PhilosophyPillarItem.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
-import nino from '../assets/imgs/nino.svg'
+import child from '../assets/imgs/child.webp'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface PhilosophyModalProps {
@@ -79,7 +79,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
         />
 
         <img
-          src={nino}
+          src={child}
           alt=""
           aria-hidden="true"
           data-scroll-bg="green"

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import taller.multimedia.backend.model.gallery.GalleryImages;
 
+import java.util.Collection;
 import java.util.UUID;
 import java.util.List;
 
@@ -16,6 +17,8 @@ public interface GalleryImageRepository extends JpaRepository<GalleryImages, UUI
     List<GalleryImages> findByGalleryId(UUID gallery);
 
     Page<GalleryImages> findByGalleryIdOrderByCreatedAtDesc(UUID galleryId, Pageable pageable);
+
+    List<GalleryImages> findByGalleryIdInOrderByCreatedAtDesc(Collection<UUID> galleryIds);
 
     @Query("SELECT gi AS image, COUNT(il) AS likes " +
            "FROM GalleryImages gi LEFT JOIN gi.imageLikes il " +

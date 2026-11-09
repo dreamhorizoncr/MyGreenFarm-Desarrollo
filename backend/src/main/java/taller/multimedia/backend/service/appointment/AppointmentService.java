@@ -43,7 +43,7 @@ public class AppointmentService {
     private ScheduleConfigService scheduleConfigService;
 
     @Value("${daycare.mail.admin}")
-    private String correoAdmin;
+    private String adminEmail;
 
     AppointmentService(CalendarSyncAsyncService calendarSyncAsyncService) {
         this.calendarSyncAsyncService = calendarSyncAsyncService;
@@ -60,18 +60,18 @@ public class AppointmentService {
 
         if (!requestedDate.isAfter(today)) {
             throw new RuntimeException(
-                    "No se pueden agendar citas para el mismo día o fechas pasadas. Debes agendar al menos con un día de anticipación.");
+                    "Appointments cannot be booked for the same day or past dates. Book at least one day in advance.");
         }
 
         if (requestedDate.getDayOfWeek().getValue() >= 6) {
-            throw new RuntimeException("La guardería no labora los fines de semana.");
+            throw new RuntimeException("The daycare is closed on weekends.");
         }
 
         List<LocalTime> availableSlots = scheduleConfigService.getAvailableSlotsForDate(requestedStart.toLocalDate());
 
         if (!availableSlots.contains(requestedTime)) {
             throw new SlotUnavailableException(
-                    "Lo sentimos, el horario seleccionado ya no está disponible. Elige otro horario.");
+                    "Sorry, the selected time slot is no longer available. Choose another time slot.");
         }
 
         LocalDateTime requestedEnd = requestedStart.plusMinutes(59);
@@ -100,7 +100,7 @@ public class AppointmentService {
 
         if (isSlotTaken) {
             throw new SlotUnavailableException(
-                    "Lo sentimos, este horario ya ha sido reservado o está pendiente de aprobación.");
+                    "Sorry, this time slot is already booked or pending approval.");
         }
 
         Appointment appointment = new Appointment();
@@ -112,7 +112,7 @@ public class AppointmentService {
         appointment.setReferralSource(dto.getReferralSource());
         if (dto.getReferralSource() == ReferralSource.OTHER) {
             if (referralOtherDetail == null || referralOtherDetail.isBlank()) {
-                throw new IllegalArgumentException("Debes indicar cómo nos conociste.");
+                throw new IllegalArgumentException("Tell us how you heard about us.");
             }
             appointment.setReferralOtherDetail(referralOtherDetail);
         }
@@ -125,7 +125,7 @@ public class AppointmentService {
         appointment.setStatus(AppointmentStatus.PENDING);
         long start = System.currentTimeMillis();
         Appointment savedAppointment = appointmentRepository.save(appointment);
-        log.info("Guardar cita tardó: {} ms", System.currentTimeMillis() - start);
+        log.info("Saving the appointment took {} ms", System.currentTimeMillis() - start);
         appointmentRepository.flush();
 
         calendarSyncAsyncService.addAppointmentAsync(savedAppointment.getId());
@@ -139,7 +139,7 @@ public class AppointmentService {
 
     private void validateAllowedEmail(String email) {
         if (email == null || !email.contains("@")) {
-            throw new IllegalArgumentException("El correo electrónico no es válido.");
+            throw new IllegalArgumentException("The email is not valid.");
         }
 
         List<String> allowedDomains = List.of(
@@ -151,13 +151,13 @@ public class AppointmentService {
 
         if (!allowedDomains.contains(domain)) {
             throw new IllegalArgumentException(
-                    "Por favor, utiliza un correo electrónico de Gmail, Hotmail u Outlook.");
+                    "Please use a Gmail, Hotmail or Outlook email address.");
         }
     }
 
     private String resolverLangCode(String languageFromDto) {
         if (languageFromDto == null || languageFromDto.isBlank()) {
-            log.warn("El idioma recibido es nulo o vacío. Usando por defecto: 'es'");
+            log.warn("The received language is null or empty. Defaulting to 'es'");
             return "es";
         }
 
@@ -170,45 +170,45 @@ public class AppointmentService {
         if (normalizado.contains("es"))
             return "es";
 
-        log.warn("Idioma no reconocido '{}'. Usando por defecto: 'es'", languageFromDto);
+        log.warn("Unrecognized language '{}'. Defaulting to 'es'", languageFromDto);
         return "es";
     }
 
     private void validateParentIdentification(String idType, String parentIdentification) {
         if (parentIdentification == null || parentIdentification.trim().isEmpty()) {
-            throw new IllegalArgumentException("La identificación no puede estar vacía.");
+            throw new IllegalArgumentException("The ID number cannot be empty.");
         }
 
         if ("Costarricense".equalsIgnoreCase(idType)) {
             if (!parentIdentification.matches("^\\d{9,10}$")) {
-                throw new IllegalArgumentException("El formato de la cédula costarricense no es válido.");
+                throw new IllegalArgumentException("The Costa Rican ID number format is not valid.");
             }
         } else if ("Extranjero".equalsIgnoreCase(idType)) {
             if (!parentIdentification.matches("^[A-Za-z0-9-]{6,20}$")) {
-                throw new IllegalArgumentException("El formato de la identificación extranjera no es válido.");
+                throw new IllegalArgumentException("The foreign ID number format is not valid.");
             }
         } else {
-            throw new IllegalArgumentException("Debe seleccionar un tipo de identificación válido.");
+            throw new IllegalArgumentException("You must select a valid ID type.");
         }
     }
 
     private String parseAndValidatePhone(String fullPhoneNumber) {
         if (fullPhoneNumber == null || fullPhoneNumber.trim().isEmpty()) {
-            throw new IllegalArgumentException("El número de teléfono no puede estar vacío.");
+            throw new IllegalArgumentException("The phone number cannot be empty.");
         }
 
         String cleanedPhone = fullPhoneNumber.trim().replaceAll("[\\s-]", "");
 
         if (!cleanedPhone.startsWith("+")) {
             throw new IllegalArgumentException(
-                    "El número de teléfono debe incluir el prefijo internacional (ej. +506...).");
+                    "The phone number must include the country code (e.g. +506...).");
         }
 
         Pattern pattern = java.util.regex.Pattern.compile("^(\\+\\d{1,3})(\\d{7,12})$");
         Matcher matcher = pattern.matcher(cleanedPhone);
 
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("El formato del número de teléfono no es válido.");
+            throw new IllegalArgumentException("The phone number format is not valid.");
         }
 
         return matcher.group(1) + " " + matcher.group(2);
@@ -220,7 +220,7 @@ public class AppointmentService {
 
     public Appointment getAppointmentById(UUID id) {
         return appointmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada con el ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Appointment not found with the ID: " + id));
     }
 
     @Transactional
@@ -231,7 +231,7 @@ public class AppointmentService {
             String lang) {
 
         Appointment appointment = appointmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Appointment not found with ID: " + id));
 
         AppointmentStatus previousStatus = appointment.getStatus();
         appointment.setStatus(newStatus);
@@ -282,19 +282,19 @@ public class AppointmentService {
         LocalDate today = LocalDate.now();
 
         if (!requestedDate.isAfter(today)) {
-            throw new RuntimeException("No se puede reprogramar una cita para el mismo día o fechas pasadas.");
+            throw new RuntimeException("An appointment cannot be rescheduled for the same day or past dates.");
         }
 
         if (requestedDate.getDayOfWeek().getValue() >= 6) {
-            throw new RuntimeException("La guardería no labora los fines de semana.");
+            throw new RuntimeException("The daycare is closed on weekends.");
         }
 
         Appointment appointment = appointmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+                .orElseThrow(() -> new RuntimeException("Appointment not found"));
 
         if (appointment.getStatus() == AppointmentStatus.CANCELLED) {
             throw new RuntimeException(
-                    "No se puede reprogramar una cita cancelada.");
+                    "A cancelled appointment cannot be rescheduled.");
         }
 
         List<LocalTime> availableSlots = scheduleConfigService
@@ -303,7 +303,7 @@ public class AppointmentService {
 
         if (!availableSlots.contains(newTime)) {
             throw new SlotUnavailableException(
-                    "Lo sentimos, el nuevo horario seleccionado no está disponible.");
+                    "Sorry, the new selected time slot is not available.");
         }
 
         LocalDateTime newEnd = newAppointmentDate.plusMinutes(59);
@@ -319,7 +319,7 @@ public class AppointmentService {
 
         if (isSlotTaken) {
             throw new SlotUnavailableException(
-                    "El nuevo horario seleccionado ya está ocupado.");
+                    "The new selected time slot is already taken.");
         }
 
         appointment.setAppointmentDate(newAppointmentDate);
@@ -366,12 +366,10 @@ public class AppointmentService {
                 appointment.setReminderSent(true);
                 appointmentRepository.save(appointment);
 
-                System.out.println("Correo de recordatorio enviado para la cita ID: " + appointment.getId());
+                System.out.println("Reminder email sent for appointment ID: " + appointment.getId());
             } catch (Exception e) {
                 System.err.println(
-                        "Error al enviar recordatorio para la cita " + appointment.getId() + ": " + e.getMessage());
-                System.err.println(
-                        "Error al enviar recordatorio para la cita " + appointment.getId() + ": " + e.getMessage());
+                        "Error sending the reminder for appointment " + appointment.getId() + ": " + e.getMessage());
             }
         }
     }
@@ -389,7 +387,7 @@ public class AppointmentService {
                 appointment.setStatus(AppointmentStatus.CANCELLED);
                 Appointment savedAppointment = appointmentRepository.save(appointment);
                 
-                log.info("Cita pendiente ID: {} auto-cancelada por expiración de fecha.", savedAppointment.getId());
+                log.info("Pending appointment ID: {} automatically cancelled because its date passed.", savedAppointment.getId());
 
                 calendarSyncAsyncService.updateAppointmentStatusAsync(
                         savedAppointment.getId(),
@@ -402,18 +400,16 @@ public class AppointmentService {
                 emailService.sendAdminCancelledAppointmentAlert(savedAppointment);
 
             } catch (Exception e) {
-                log.error("Error al auto-cancelar la cita {}: {}", appointment.getId(), e.getMessage());
+                log.error("Error automatically cancelling appointment {}: {}", appointment.getId(), e.getMessage());
             }
         }
     }
 
-    // Se ejecuta todos los días a la medianoche (00:00:00) para limpiar citas canceladas hace más de 30 días
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void deleteOldCancelledAppointments() {
         LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
 
-        // Busca las citas canceladas cuya fecha ya pasó hace más de 30 días
         List<Appointment> oldCancelledAppointments = appointmentRepository.findByStatusAndAppointmentDateBefore(
                 AppointmentStatus.CANCELLED, thirtyDaysAgo);
 
@@ -423,14 +419,12 @@ public class AppointmentService {
 
         for (Appointment appointment : oldCancelledAppointments) {
             try {
-                // Opcional: Si necesitas borrar eventos en calendarios externos o hacer limpieza previa, hazlo aquí
-                
                 appointmentRepository.delete(appointment);
                 
-                log.info("Cita cancelada ID: {} eliminada permanentemente de la base de datos tras 30 días.", appointment.getId());
+                log.info("Cancelled appointment ID: {} permanently deleted from the database after 30 days.", appointment.getId());
 
             } catch (Exception e) {
-                log.error("Error al eliminar la cita cancelada {}: {}", appointment.getId(), e.getMessage());
+                log.error("Error deleting cancelled appointment {}: {}", appointment.getId(), e.getMessage());
             }
         }
     }

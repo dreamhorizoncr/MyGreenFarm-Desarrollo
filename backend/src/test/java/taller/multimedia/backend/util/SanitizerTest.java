@@ -87,7 +87,7 @@ class SanitizerTest {
     })
     void noMaliciousInputLeavesHtmlTags(String malicious) {
         String result = Sanitizer.text(malicious);
-        assertFalse(TAG.matcher(result).find(), "Quedó HTML en: " + result);
+        assertFalse(TAG.matcher(result).find(), "HTML left in: " + result);
     }
 
     @ParameterizedTest

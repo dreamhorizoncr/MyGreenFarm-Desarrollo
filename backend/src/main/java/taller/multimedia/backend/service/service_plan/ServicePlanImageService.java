@@ -29,17 +29,17 @@ public class ServicePlanImageService {
     @Transactional
     public ServicePlan createPlanWithImage(ServicePlanRequest dto, MultipartFile file) {
         if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("Debe seleccionar una imagen obligatoriamente.");
+            throw new IllegalArgumentException("You must select an image.");
         }
 
         String contentType = file.getContentType();
         if (contentType == null || !isValidImageFormat(contentType)) {
-            throw new IllegalArgumentException("Formato no permitido. Solo se permiten PNG, JPG, JPEG, SVG.");
+            throw new IllegalArgumentException("Unsupported format. Only PNG, JPG, JPEG and SVG are allowed.");
         }
 
         long uploadStart = System.currentTimeMillis();
         String imageUrl = storageService.uploadFile(file, servicePlansBucket, "service_images");
-        log.info("Subir imagen de plan de servicio tardó: {} ms", System.currentTimeMillis() - uploadStart);
+        log.info("Uploading the service plan image took {} ms", System.currentTimeMillis() - uploadStart);
 
         ServicePlan plan = new ServicePlan();
         plan.setGatewayPriceId("");
@@ -60,7 +60,7 @@ public class ServicePlanImageService {
     @Transactional
     public ServicePlan updatePlanWithImage(UUID id, ServicePlanRequest dto, MultipartFile file) {
         ServicePlan existing = servicePlanRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Configuración de plan no encontrada con ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Plan configuration not found with ID: " + id));
 
         existing.setName(dto.getName());
         existing.setDescription(dto.getDescription());
@@ -74,7 +74,7 @@ public class ServicePlanImageService {
         if (file != null && !file.isEmpty()) {
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
-                throw new IllegalArgumentException("Formato no permitido. Solo se permiten PNG, JPG, JPEG, SVG.");
+                throw new IllegalArgumentException("Unsupported format. Only PNG, JPG, JPEG and SVG are allowed.");
             }
 
             if (existing.getImageUrl() != null && !existing.getImageUrl().isEmpty()) {
@@ -83,16 +83,16 @@ public class ServicePlanImageService {
                     try {
                         long deleteStart = System.currentTimeMillis();
                         storageService.deleteFile(servicePlansBucket, oldPath);
-                        log.info("Eliminar imagen anterior del plan tardó: {} ms", System.currentTimeMillis() - deleteStart);
+                        log.info("Deleting the previous plan image took {} ms", System.currentTimeMillis() - deleteStart);
                     } catch (Exception e) {
-                        System.err.println("No se pudo borrar la imagen anterior del bucket: " + e.getMessage());
+                        System.err.println("Could not delete the previous image from the bucket: " + e.getMessage());
                     }
                 }
             }
 
             long uploadStart = System.currentTimeMillis();
             String newImageUrl = storageService.uploadFile(file, servicePlansBucket, "service_images");
-            log.info("Subir nueva imagen de plan de servicio tardó: {} ms", System.currentTimeMillis() - uploadStart);
+            log.info("Uploading the new service plan image took {} ms", System.currentTimeMillis() - uploadStart);
             existing.setImageUrl(newImageUrl);
         }
 
@@ -102,7 +102,7 @@ public class ServicePlanImageService {
     @Transactional
     public void deletePlan(UUID id) {
         ServicePlan plan = servicePlanRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Configuración de plan no encontrada con ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Plan configuration not found with ID: " + id));
 
         if (plan.getImageUrl() != null && !plan.getImageUrl().isEmpty()) {
             String filePath = extractPathFromUrl(plan.getImageUrl(), servicePlansBucket);
@@ -110,9 +110,9 @@ public class ServicePlanImageService {
                 try {
                     long deleteStart = System.currentTimeMillis();
                     storageService.deleteFile(servicePlansBucket, filePath);
-                    log.info("Eliminar imagen de plan de servicio tardó: {} ms", System.currentTimeMillis() - deleteStart);
+                    log.info("Deleting the service plan image took {} ms", System.currentTimeMillis() - deleteStart);
                 } catch (Exception e) {
-                    System.err.println("No se pudo borrar el archivo físico del bucket: " + e.getMessage());
+                    System.err.println("Could not delete the file from the bucket: " + e.getMessage());
                 }
             }
         }
@@ -123,7 +123,7 @@ public class ServicePlanImageService {
     @Transactional
     public ServicePlan deleteImage(UUID id) {
         ServicePlan plan = servicePlanRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Configuración de plan no encontrada con ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Plan configuration not found with ID: " + id));
 
         if (plan.getImageUrl() != null && !plan.getImageUrl().isEmpty()) {
             String filePath = extractPathFromUrl(plan.getImageUrl(), servicePlansBucket);
@@ -131,7 +131,7 @@ public class ServicePlanImageService {
                 try {
                     storageService.deleteFile(servicePlansBucket, filePath);
                 } catch (Exception e) {
-                    log.warn("No se pudo borrar la imagen del plan en el bucket: {}", e.getMessage());
+                    log.warn("Could not delete the plan image from the bucket: {}", e.getMessage());
                 }
             }
             plan.setImageUrl(null);
@@ -155,7 +155,7 @@ public class ServicePlanImageService {
                 return fileUrl.substring(index + marker.length());
             }
         } catch (Exception e) {
-            System.err.println("Error al extraer la ruta de la URL: " + e.getMessage());
+            System.err.println("Error extracting the path from the URL: " + e.getMessage());
         }
         return null;
     }

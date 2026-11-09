@@ -1,5 +1,5 @@
 /* =============================================================================
-   KEYFRAMES — Animaciones usadas desde utilidades animate-[...] de Tailwind
+   KEYFRAMES — Animations used by Tailwind animate-[...] utilities
    ============================================================================= */
 
 @keyframes profile-button-in {
@@ -65,6 +65,8 @@
 }
 
 .testimonial-carousel {
+  display: grid;
+  align-items: start;
   min-height: 410px;
   perspective: 1000px;
   touch-action: pan-y;
@@ -76,6 +78,9 @@
 }
 
 .testimonial-card {
+  position: relative;
+  grid-area: 1 / 1;
+  justify-self: center;
   width: min(680px, calc(100% - 4rem));
   min-height: 340px;
   border-color: var(--testimonial-accent);
@@ -85,9 +90,9 @@
   backface-visibility: hidden;
 }
 
-.testimonial-card[data-position="active"] { z-index: 3; opacity: 1; transform: translateX(-50%) scale(1) rotateY(0deg); }
-.testimonial-card[data-position="left"] { z-index: 2; opacity: 0.6; transform: translateX(calc(-50% - 60px)) scale(0.92) rotateY(5deg); }
-.testimonial-card[data-position="right"] { z-index: 2; opacity: 0.6; transform: translateX(calc(-50% + 60px)) scale(0.92) rotateY(-5deg); }
+.testimonial-card[data-position="active"] { z-index: 3; opacity: 1; transform: translateX(0) scale(1) rotateY(0deg); }
+.testimonial-card[data-position="left"] { z-index: 2; opacity: 0.6; transform: translateX(-60px) scale(0.92) rotateY(5deg); }
+.testimonial-card[data-position="right"] { z-index: 2; opacity: 0.6; transform: translateX(60px) scale(0.92) rotateY(-5deg); }
 
 .testimonial-card:hover { box-shadow: var(--shadow); }
 

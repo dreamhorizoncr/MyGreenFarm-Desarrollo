@@ -18,13 +18,13 @@ public class AnnouncementSummaryAsyncService {
     private static final Logger log = LoggerFactory.getLogger(AnnouncementSummaryAsyncService.class);
 
     private final AnnouncementRepository announcementRepository;
-    private final GeminiResumenService geminiResumenService;
+    private final GeminiSummaryService geminiSummaryService;
 
     public AnnouncementSummaryAsyncService(
             AnnouncementRepository announcementRepository,
-            GeminiResumenService geminiResumenService) {
+            GeminiSummaryService geminiSummaryService) {
         this.announcementRepository = announcementRepository;
-        this.geminiResumenService = geminiResumenService;
+        this.geminiSummaryService = geminiSummaryService;
     }
 
     @Async("taskExecutor")
@@ -32,7 +32,7 @@ public class AnnouncementSummaryAsyncService {
     public void generateSummaryAsync(UUID announcementId, boolean force) {
         try {
             Announcement announcement = announcementRepository.findById(announcementId)
-                    .orElseThrow(() -> new RuntimeException("Anuncio no encontrado: " + announcementId));
+                    .orElseThrow(() -> new RuntimeException("Announcement not found: " + announcementId));
 
             String contentHash = HashUtils.sha256(announcement.getContent());
 
@@ -40,9 +40,9 @@ public class AnnouncementSummaryAsyncService {
                 return;
             }
 
-            String summary = geminiResumenService.generateSummary(announcement.getContent());
+            String summary = geminiSummaryService.generateSummary(announcement.getContent());
             if (summary == null) {
-                log.error("No se pudo generar el resumen IA para el anuncio {}", announcementId);
+                log.error("Could not generate the AI summary for announcement {}", announcementId);
                 return;
             }
 
@@ -50,9 +50,9 @@ public class AnnouncementSummaryAsyncService {
             announcement.setAiSummaryContentHash(contentHash);
             announcementRepository.save(announcement);
 
-            log.info("Resumen IA generado para el anuncio {}", announcementId);
+            log.info("AI summary generated for announcement {}", announcementId);
         } catch (Exception e) {
-            log.error("Error generando el resumen IA para el anuncio {}", announcementId, e);
+            log.error("Error generating the AI summary for announcement {}", announcementId, e);
         }
     }
     

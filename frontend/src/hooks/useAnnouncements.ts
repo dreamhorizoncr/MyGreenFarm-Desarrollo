@@ -74,7 +74,7 @@ export function useAnnouncements() {
             : a.aiSummary,
         })));
       } catch {
-        // Se deja el contenido original visible si la traducción no está disponible.
+        // Keep the original content if translation is unavailable.
       }
     } catch (err) {
       setError(getErrorMessage(err));

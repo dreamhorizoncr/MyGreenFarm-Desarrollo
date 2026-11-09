@@ -57,7 +57,7 @@ public class AnnouncementCategoryMigration implements ApplicationRunner {
         int updated = jdbcTemplate.update(
                 "UPDATE announcements SET category_id = ? WHERE category_id IS NULL AND type = ?",
                 category.getId(), type);
-        log.info("Noticias asignadas a la categoría {}: {}", category.getTitle(), updated);
+        log.info("News assigned to category {}: {}", category.getTitle(), updated);
     }
 
     private static int orderOf(String type) {

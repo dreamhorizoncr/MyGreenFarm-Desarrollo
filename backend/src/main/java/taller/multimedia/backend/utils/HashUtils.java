@@ -21,7 +21,7 @@ public final class HashUtils {
 
             return hex.toString();
         } catch (NoSuchAlgorithmException exception) {
-            throw new IllegalStateException("SHA-256 no disponible", exception);
+            throw new IllegalStateException("SHA-256 is not available", exception);
         }
     }
 }

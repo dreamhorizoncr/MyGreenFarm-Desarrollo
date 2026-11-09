@@ -4,7 +4,7 @@ import FooterColumn from '../components/footer/FooterColumn.tsx'
 import FooterSocialLinks from '../components/footer/FooterSocialLinks.tsx'
 import TermsModal from '../components/TermsModal.tsx'
 import { footerColumns, legalLink } from '../components/footer/footerData.ts'
-import nubeFooter from '../assets/imgs/nubeFooter.svg'
+import cloudFooter from '../assets/imgs/cloudFooter.svg'
 import logo from '../assets/imgs/Logo.svg'
 
 function Brand() {
@@ -25,7 +25,7 @@ function Footer() {
     <footer id="site-footer" data-scroll-bg="green" className="w-full text-white">
       <div className="relative w-full overflow-hidden leading-none">
         <img
-          src={nubeFooter}
+          src={cloudFooter}
           alt=""
           aria-hidden="true"
           data-scroll-bg="green"

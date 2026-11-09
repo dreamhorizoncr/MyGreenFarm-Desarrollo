@@ -60,7 +60,7 @@ public class BrevoEmailService {
                     String retryAfter = response.header("Retry-After");
                     throw new BrevoDailyLimitExceededException(errorBody, retryAfter);
                 }
-                throw new IOException("Error al enviar correo con Brevo: " + response.code() + " - " + errorBody);
+                throw new IOException("Error sending email with Brevo: " + response.code() + " - " + errorBody);
             }
         }
     }
@@ -71,7 +71,7 @@ public class BrevoEmailService {
         }
 
         private static String buildMessage(String errorBody, String retryAfter) {
-            String message = "Límite diario o rate limit de Brevo alcanzado: " + errorBody;
+            String message = "Brevo daily limit or rate limit reached: " + errorBody;
             if (retryAfter != null && !retryAfter.isBlank()) {
                 message += " Retry-After: " + retryAfter + " segundos.";
             }

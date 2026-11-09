@@ -12,45 +12,45 @@ import taller.multimedia.backend.model.appointment.ReferralSource;
 @Data
 public class AppointmentRequest {
 
-    @NotBlank(message = "El tipo de identificación es obligatorio")
+    @NotBlank(message = "The ID type is required")
     private String idType;
 
-    @NotBlank(message = "La identificación es obligatoria")
+    @NotBlank(message = "The ID number is required")
     private String parentIdentification;
 
-    @NotBlank(message = "El nombre del padre o tutor es obligatorio")
+    @NotBlank(message = "The parent or guardian name is required")
     @Size(min = 2, max = 150)
     private String parentName;
 
-    @NotBlank(message = "El correo electrónico es obligatorio")
-    @Email(message = "El formato del correo electrónico no es válido")
-    @Size(max = 255, message = "El nombre debe tener como máximo 150 caracteres")
+    @NotBlank(message = "The email is required")
+    @Email(message = "The email format is not valid")
+    @Size(max = 255, message = "The name must be at most 150 characters")
     private String parentEmail;
 
-    @NotBlank(message = "El teléfono es obligatorio")
-    @Size(min = 8, max = 35, message = "El teléfono debe tener como máximo 35 caracteres")
+    @NotBlank(message = "The phone number is required")
+    @Size(min = 8, max = 35, message = "The phone number must be at most 35 characters")
     private String parentPhone;
 
-    @NotBlank(message = "La ocupación es obligatoria")
-    @Size(max = 150, message = "La ocupación debe tener como máximo 150 caracteres")
+    @NotBlank(message = "The occupation is required")
+    @Size(max = 150, message = "The occupation must be at most 150 characters")
     private String parentOccupation;
 
-    @NotBlank(message = "El nombre del niño o niña es obligatorio")
-    @Size(max = 150, message = "El nombre del niño debe tener como máximo 150 caracteres")
+    @NotBlank(message = "The child's name is required")
+    @Size(max = 150, message = "The child's name must be at most 150 characters")
     private String childName;
 
-    @NotNull(message = "La fecha de la cita es obligatoria")
-    @Future(message = "La fecha de la cita debe ser en el futuro")
+    @NotNull(message = "The appointment date is required")
+    @Future(message = "The appointment date must be in the future")
     private LocalDateTime appointmentDate;
 
-    @Size(max = 2000, message = "El motivo debe tener como máximo 2000 caracteres")
-    @NotBlank(message = "El motivo o datos extras son obligatorios")
+    @Size(max = 2000, message = "The reason must be at most 2000 characters")
+    @NotBlank(message = "The reason or additional details are required")
     private String parentNotes;
 
-    @NotNull(message = "El campo referralSource es obligatorio")
+    @NotNull(message = "The referralSource field is required")
     private ReferralSource referralSource;
 
-    @Size(max = 255, message = "La razón debe tener como máximo 255 caracteres")
+    @Size(max = 255, message = "The reason must be at most 255 characters")
     private String referralOtherDetail;
     
     private String language;

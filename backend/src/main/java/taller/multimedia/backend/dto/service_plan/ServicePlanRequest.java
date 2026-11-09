@@ -11,33 +11,33 @@ import java.math.BigDecimal;
 @Data 
 public class ServicePlanRequest {
 
-    @NotBlank(message = "El nombre es obligatorio")
+    @NotBlank(message = "The name is required")
     private String name;
 
-    @NotBlank(message = "La descripción es obligatoria")
-    @Size(max = 500, message = "La descripción no puede superar los 500 caracteres")
+    @NotBlank(message = "The description is required")
+    @Size(max = 500, message = "The description cannot exceed 500 characters")
     private String description;
 
-    @NotNull(message = "El precio es obligatorio")
-    @Positive(message = "El precio debe ser mayor a cero")
+    @NotNull(message = "The price is required")
+    @Positive(message = "The price must be greater than zero")
     private BigDecimal price;
 
-    @NotBlank(message = "El tipo de plan es obligatorio")
+    @NotBlank(message = "The plan type is required")
     private String type;
 
-    @NotBlank(message = "El horario es obligatorio")
-    @Size(max = 200, message = "El horario debe tener como máximo 200 caracteres")
+    @NotBlank(message = "The schedule is required")
+    @Size(max = 200, message = "The schedule must be at most 200 characters")
     private String schedule;
 
-    @NotBlank(message = "Los beneficios que incluye son obligatorios")
-    @Size(max = 800, message = "Los beneficios deben tener como máximo 800 caracteres")
+    @NotBlank(message = "The included benefits are required")
+    @Size(max = 800, message = "The benefits must be at most 800 characters")
     private String includes;
 
-    @NotBlank(message = "La moneda es obligatoria")
-    @Size(max = 6, message = "El máximo de caracteres es de 6")
+    @NotBlank(message = "The currency is required")
+    @Size(max = 6, message = "The maximum length is 6 characters")
     private String currency;
 
-    @Size(max = 140, message = "El texto alternativo debe tener como máximo 140 caracteres")
+    @Size(max = 140, message = "The alt text must be at most 140 characters")
     private String imageAlt;
 
     public String getImageAlt() {
