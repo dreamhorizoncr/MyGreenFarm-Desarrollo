@@ -216,6 +216,22 @@
 
 #values .green-hearts-value-card {
   position: relative;
+  container-type: inline-size;
+}
+
+/* Large text and the wider dyslexia font: the title follows the piece width so words stay whole inside it. */
+html:is(.text-large, .text-xlarge) #values .green-hearts-value-title {
+  font-size: 8.6cqi;
+  overflow-wrap: normal;
+}
+
+html.dyslexia-font #values .green-hearts-value-title {
+  font-size: 7cqi;
+  overflow-wrap: normal;
+}
+
+html:is(.text-large, .text-xlarge, .dyslexia-font) #values .green-hearts-value-card > div {
+  padding-inline: 0;
 }
 
 #values .swiper-pagination {
