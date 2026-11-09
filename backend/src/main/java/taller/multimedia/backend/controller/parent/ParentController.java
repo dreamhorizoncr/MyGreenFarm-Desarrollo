@@ -77,7 +77,7 @@ public class ParentController {
     public ResponseEntity<String> unsubscribeFromNewsletter(@RequestParam String email) {
         try {
             parentService.unsubscribeFromNewsletter(email);
-            return ResponseEntity.ok("El padre ya no recibirá correos del boletín.");
+            return ResponseEntity.ok("The parent will no longer receive newsletter emails.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -88,7 +88,7 @@ public class ParentController {
     public ResponseEntity<String> deleteParent(@PathVariable Integer id) {
         try {
             parentService.deleteParent(id);
-            return ResponseEntity.ok("Padre eliminado exitosamente.");
+            return ResponseEntity.ok("Parent deleted successfully.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

@@ -50,7 +50,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void registerUser(SignupRequest request) {
+    public UUID registerUser(SignupRequest request) {
         String email = Sanitizer.requireClean("email", request.getEmail());
         String firstName = Sanitizer.requireClean("firstName", request.getFirstName());
         String lastName = Sanitizer.requireClean("lastName", request.getLastName());
@@ -80,6 +80,7 @@ public class AuthService {
         if (saved != null && saved.getBirthday() != null && saved.getId() != null) {
             scheduleBirthdaySync(saved.getId());
         }
+        return saved == null ? null : saved.getId();
     }
 
     private void scheduleBirthdaySync(UUID userId) {
@@ -140,7 +141,7 @@ public class AuthService {
     public void forgotPassword(String email) {
         String cleanEmail = Sanitizer.requireClean("email", email);
         User user = userRepository.findByEmail(cleanEmail)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         String token = UUID.randomUUID().toString();
         user.setResetPasswordToken(token);
@@ -152,10 +153,10 @@ public class AuthService {
 
     public void resetPassword(String token, String newPassword) {
         User user = userRepository.findByResetPasswordToken(token)
-                .orElseThrow(() -> new RuntimeException("Token inválido"));
+                .orElseThrow(() -> new RuntimeException("Invalid token"));
 
         if (user.getTokenExpirationDate().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("La sesión ha expirado");
+            throw new RuntimeException("The session has expired");
         }
 
         user.setPassword(encoder.encode(newPassword));

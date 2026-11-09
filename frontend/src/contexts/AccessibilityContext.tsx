@@ -28,7 +28,7 @@ function applyColorMode(root: HTMLElement, colorMode: ColorMode) {
         root.classList.add(`color-${colorMode}`);
         localStorage.setItem("a11y_color_mode", colorMode);
     }
-    // Clave antigua: ya no se usa, se limpia para no reactivar el modo anterior.
+    // Legacy key: removed so the old mode is not reactivated.
     localStorage.removeItem("a11y_grayscale");
 }
 
@@ -41,7 +41,7 @@ function readBoolean(key: string, fallback = false) {
 function readColorMode(): ColorMode {
     const saved = localStorage.getItem("a11y_color_mode");
     if (saved && COLOR_MODES.has(saved)) return saved as ColorMode;
-    // Migración desde el antiguo interruptor de escala de grises.
+    // Migrate from the old grayscale toggle.
     if (localStorage.getItem("a11y_grayscale") === "true") return "monochrome";
     return "normal";
 }

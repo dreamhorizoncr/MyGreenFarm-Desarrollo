@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { StarIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
-import nino from '../../assets/imgs/nino.svg'
+import child from '../../assets/imgs/child.webp'
 import Container from '../../components/home/Container.tsx'
 import BlobButton from '../../components/ui/BlobButton.tsx'
 import PhilosophyModal from '../../components/PhilosophyModal.tsx'
@@ -23,7 +23,7 @@ function PhilosophySection() {
         <Container className="py-1500">
           <div className="grid w-full items-center gap-lg rounded-3xl bg-white p-lg md:grid-cols-2 md:gap-xl md:p-xl">
             <img
-              src={nino}
+              src={child}
               alt={t('home.philosophy.imageAlt')}
               data-scroll-bg="green"
               className="h-full w-full rounded-2xl object-cover"

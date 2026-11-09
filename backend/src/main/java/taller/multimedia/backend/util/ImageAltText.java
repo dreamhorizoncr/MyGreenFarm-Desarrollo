@@ -18,7 +18,7 @@ public final class ImageAltText {
         if (value == null || value.isBlank()) return null;
         String trimmed = value.trim();
         if (trimmed.length() > MAX_LENGTH) {
-            throw new InvalidFieldException(FIELD, "El texto alternativo debe tener como máximo " + MAX_LENGTH + " caracteres.");
+            throw new InvalidFieldException(FIELD, "The alt text must be at most " + MAX_LENGTH + " characters.");
         }
         return Sanitizer.requireClean(FIELD, trimmed);
     }
@@ -29,7 +29,7 @@ public final class ImageAltText {
             return objectMapper.readValue(json, new TypeReference<List<String>>() {
             });
         } catch (RuntimeException e) {
-            throw new InvalidFieldException(FIELD, "Los textos alternativos no tienen un formato válido.");
+            throw new InvalidFieldException(FIELD, "The alt texts do not have a valid format.");
         }
     }
 

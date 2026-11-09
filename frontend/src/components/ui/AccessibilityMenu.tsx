@@ -157,11 +157,10 @@ export default function AccessibilityMenu() {
             data-voice-reader-ui=""
             className="fixed bottom-6 right-6 z-50 text-left"
         >
-            {/* Botón flotante */}
             <button
                 type="button"
                 onClick={() => setIsOpen((open) => !open)}
-                aria-label={t('accessibility.menuAria', { defaultValue: 'Menú de accesibilidad' })}
+                aria-label={t('accessibility.menuAria')}
                 aria-expanded={isOpen}
                 aria-controls="accessibility-panel"
                 className="flex size-12 items-center justify-center rounded-full border border-neutral-200 bg-white text-heading shadow-lg transition-all duration-300 hover:scale-105 hover:bg-neutral-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
@@ -180,7 +179,7 @@ export default function AccessibilityMenu() {
                         className="absolute bottom-16 right-0 w-[min(26rem,calc(100vw-48px))] origin-bottom-right overflow-hidden rounded-[20px] border border-neutral-200 bg-bg-card p-lg shadow-lg"
                     >
                         <div className="flex items-center justify-between gap-md">
-                            <h2 className="m-0 min-w-0 font-heading text-h4 font-bold leading-tight text-heading">
+                            <h2 className="a11y-panel-title m-0 min-w-0 font-heading text-h4 font-bold leading-tight text-heading">
                                 {t('accessibility.title')}
                             </h2>
                             <ModalCloseButton onClick={close} aria-label={t('common.close')} />
@@ -283,7 +282,7 @@ export default function AccessibilityMenu() {
                                         </div>
                                     </div>
 
-                                    <div className="mt-sm grid grid-cols-2 gap-sm">
+                                    <div className="mt-sm grid grid-cols-[repeat(auto-fit,minmax(max(7.5rem,calc(50%-0.5rem)),1fr))] gap-sm">
                                         <ToggleRow
                                             label={t('accessibility.autoReadModals')}
                                             icon={<PanelsTopLeft size={20} aria-hidden="true" />}
@@ -328,7 +327,7 @@ export default function AccessibilityMenu() {
                                             {t('accessibility.fontSize')}
                                         </span>
                                         <div
-                                            className="isolate grid grid-cols-3 gap-sm"
+                                            className="isolate grid grid-cols-[repeat(auto-fit,minmax(max(5.5rem,calc(33.333%-0.5rem)),1fr))] gap-sm"
                                             role="radiogroup"
                                             aria-label={t('accessibility.fontSize')}
                                         >
@@ -358,7 +357,7 @@ export default function AccessibilityMenu() {
                                         </div>
                                     </div>
 
-                                    <div className="mt-sm grid grid-cols-2 gap-sm">
+                                    <div className="mt-sm grid grid-cols-[repeat(auto-fit,minmax(max(7.5rem,calc(50%-0.5rem)),1fr))] gap-sm">
                                         <ToggleRow
                                             label={t('accessibility.enableContrast')}
                                             icon={<Eye size={20} aria-hidden="true" />}
@@ -373,7 +372,7 @@ export default function AccessibilityMenu() {
                                         />
                                     </div>
 
-                                    <div className="mt-sm grid grid-cols-2 gap-sm">
+                                    <div className="mt-sm grid grid-cols-[repeat(auto-fit,minmax(max(7.5rem,calc(50%-0.5rem)),1fr))] gap-sm">
                                         <ToggleRow
                                             label={t('accessibility.dyslexiaFont')}
                                             icon={<Type size={20} aria-hidden="true" />}
@@ -393,7 +392,7 @@ export default function AccessibilityMenu() {
                                             {t('accessibility.colorMode')}
                                         </span>
                                         <div
-                                            className="isolate grid grid-cols-2 gap-sm"
+                                            className="isolate grid grid-cols-[repeat(auto-fit,minmax(max(7.5rem,calc(50%-0.5rem)),1fr))] gap-sm"
                                             role="radiogroup"
                                             aria-label={t('accessibility.colorMode')}
                                         >
@@ -433,7 +432,7 @@ export default function AccessibilityMenu() {
                                     id="a11y-panel-tools"
                                     aria-labelledby="a11y-tab-tools"
                                 >
-                                    <div className="grid grid-cols-2 gap-sm">
+                                    <div className="grid grid-cols-[repeat(auto-fit,minmax(max(7.5rem,calc(50%-0.5rem)),1fr))] gap-sm">
                                         <ToggleRow
                                             label={t('accessibility.bigCursor')}
                                             icon={<MousePointer2 size={20} aria-hidden="true" />}
@@ -472,7 +471,7 @@ export default function AccessibilityMenu() {
                             onClick={resetAccessibility}
                             className="mt-md h-11 w-full rounded-full bg-orange-500 font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
                         >
-                            {t('accessibility.reset', { defaultValue: 'Restablecer configuración' })}
+                            {t('accessibility.reset')}
                         </button>
                     </motion.div>
                 )}

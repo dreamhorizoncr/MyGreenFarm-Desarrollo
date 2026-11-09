@@ -94,10 +94,10 @@ public class OnvoService {
                 return (String) response.getBody().get("url");
             }
         } catch (Exception e) {
-            throw new RuntimeException("Error al generar el link de pago con Onvo: " + e.getMessage());
+            throw new RuntimeException("Error generating the Onvo payment link: " + e.getMessage());
         }
 
-        throw new RuntimeException("No se pudo obtener la URL de pago de Onvo.");
+        throw new RuntimeException("Could not get the Onvo payment URL.");
     }
 
     public String createCheckoutSession(double amount, String currency, String email, String name) {
@@ -119,7 +119,7 @@ public class OnvoService {
         if (response.getBody() != null) {
             return (String) response.getBody().get("url");
         }
-        throw new RuntimeException("No se pudo obtener la URL de pago de Onvo");
+        throw new RuntimeException("Could not get the Onvo payment URL");
     }
 
     public Map<String, Object> getPriceDetails(String priceId) {
@@ -134,7 +134,7 @@ public class OnvoService {
         if (response.getBody() != null) {
             return response.getBody();
         }
-        throw new RuntimeException("No se pudo obtener el servicio de Onvo.");
+        throw new RuntimeException("Could not get the Onvo service.");
     }
 
     public PaymentQuote quoteServicePlan(
@@ -160,10 +160,10 @@ public class OnvoService {
         ServicePlan plan = getActivePlan(servicePlanId);
         String normalizedMethod = normalizePaymentMethod(paymentMethod);
         if ("sinpe".equals(normalizedMethod) && "USD".equalsIgnoreCase(plan.getCurrency())) {
-            throw new IllegalArgumentException("SINPE Móvil no está disponible para pagos en dólares.");
+            throw new IllegalArgumentException("SINPE Móvil is not available for payments in US dollars.");
         }
         if (Boolean.TRUE.equals(saveSubscription) && ("sinpe".equals(normalizedMethod) || !isRecurring(plan))) {
-            throw new IllegalArgumentException("La renovación automática requiere tarjeta y un servicio recurrente.");
+            throw new IllegalArgumentException("Automatic renewal requires a card and a recurring service.");
         }
 
         PaymentQuote quote = calculateQuote(plan, couponCode, normalizedMethod, cabysCode);
@@ -178,7 +178,7 @@ public class OnvoService {
                 new HttpEntity<>(body, buildHeaders()),
                 Map.class);
         if (response.getBody() == null || response.getBody().get("id") == null) {
-            throw new IllegalStateException("Onvo no devolvió el identificador de la intención de pago.");
+            throw new IllegalStateException("Onvo did not return the payment intent ID.");
         }
 
         PaymentIntentPricing pricing = new PaymentIntentPricing();
@@ -227,7 +227,7 @@ public class OnvoService {
         BigDecimal taxableMultiplier = BigDecimal.ONE.add(taxRate);
         BigDecimal denominator = BigDecimal.ONE.subtract(feeRate.multiply(taxableMultiplier));
         if (denominator.signum() <= 0) {
-            throw new IllegalStateException("Las tarifas de pago configuradas no permiten calcular el total.");
+            throw new IllegalStateException("The configured payment fees do not allow calculating the total.");
         }
         BigDecimal grossTotal;
         if ("card".equals(method) && isRecurring(plan) && normalizeCouponCode(couponCode) == null) {
@@ -268,7 +268,7 @@ public class OnvoService {
         Map<String, Object> priceDetails = getPriceDetails(plan.getGatewayPriceId());
         Object rawAmount = priceDetails.get("unitAmount");
         if (!(rawAmount instanceof Number amount)) {
-            throw new IllegalStateException("El precio de Onvo no contiene un monto válido.");
+            throw new IllegalStateException("The Onvo price does not contain a valid amount.");
         }
         return BigDecimal.valueOf(amount.longValue(), 2);
     }
@@ -278,7 +278,7 @@ public class OnvoService {
                 ? plan.getCabysCode()
                 : requestedCabysCode.trim();
         if (code == null || code.isBlank()) {
-            throw new IllegalArgumentException("Selecciona el código CABYS correspondiente al servicio.");
+            throw new IllegalArgumentException("Select the CABYS code for the service.");
         }
         Map<String, Object> response = electronicBillingService.searchCabysCatalog(code);
         Object rawItems = response == null ? null : response.get("items");
@@ -293,18 +293,18 @@ public class OnvoService {
                 if (rawItem instanceof Map<?, ?> item && code.equals(String.valueOf(item.get("codigo")))) {
                     Object rawRate = item.get("impuesto");
                     if (rawRate == null) {
-                        throw new IllegalStateException("El código CABYS no incluye su porcentaje de IVA.");
+                        throw new IllegalStateException("The CABYS code does not include its VAT percentage.");
                     }
                     BigDecimal rate = new BigDecimal(rawRate.toString());
                     if (!List.of(0, 1, 2, 4, 8, 13).contains(rate.intValue())
                             || rate.compareTo(BigDecimal.valueOf(rate.intValue())) != 0) {
-                        throw new IllegalStateException("El porcentaje de IVA del CABYS no está soportado.");
+                        throw new IllegalStateException("The CABYS VAT percentage is not supported.");
                     }
                     return new CabysDetails(code, rate, cabysDescription(item));
                 }
             }
         }
-        throw new IllegalArgumentException("El código CABYS seleccionado no existe en el catálogo.");
+        throw new IllegalArgumentException("The selected CABYS code does not exist in the catalog.");
     }
 
     private String cabysDescription(Map<?, ?> item) {
@@ -323,10 +323,10 @@ public class OnvoService {
 
     private BigDecimal getLatestBacUsdSellRate() {
         ExchangeRate latestRate = exchangeRateRepository.findTopByOrderByRateDateDesc()
-                .orElseThrow(() -> new IllegalStateException("No hay un tipo de cambio BAC disponible."));
+                .orElseThrow(() -> new IllegalStateException("No BAC exchange rate is available."));
         BigDecimal usdSell = latestRate.getUsdSell();
         if (usdSell == null || usdSell.signum() <= 0) {
-            throw new IllegalStateException("El tipo de cambio de venta del BAC no es válido.");
+            throw new IllegalStateException("The BAC selling exchange rate is not valid.");
         }
         return usdSell;
     }
@@ -338,25 +338,25 @@ public class OnvoService {
         }
         if (plan.getCouponCode() == null || plan.getCouponId() == null
                 || !normalizedCode.equals(plan.getCouponCode().toUpperCase(Locale.ROOT))) {
-            throw new IllegalArgumentException("El código de descuento no es válido para este servicio.");
+            throw new IllegalArgumentException("The discount code is not valid for this service.");
         }
         if (plan.getCouponExpiresAt() != null && plan.getCouponExpiresAt().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("El código de descuento ha vencido.");
+            throw new IllegalArgumentException("The discount code has expired.");
         }
         if (plan.getCouponMaxRedemptions() != null
                 && plan.getCouponRedemptions() >= plan.getCouponMaxRedemptions()) {
-            throw new IllegalArgumentException("El código de descuento alcanzó su máximo de usos.");
+            throw new IllegalArgumentException("The discount code has reached its maximum uses.");
         }
 
         Map<String, Object> coupon = getCouponDetails(plan.getCouponId());
-        log.info("JSON completo devuelto por Onvo para el cupón {}: {}", plan.getCouponId(), coupon);
+        log.info("Full JSON returned by Onvo for coupon {}: {}", plan.getCouponId(), coupon);
 
         if (Boolean.FALSE.equals(coupon.get("isActive"))) {
-            throw new IllegalArgumentException("El código de descuento ya no está activo.");
+            throw new IllegalArgumentException("The discount code is no longer active.");
         }
 
         Object rawPromotions = coupon.get("promotionCodes");
-        log.info("promotionCodes recibido de Onvo: type={}, value={}", 
+        log.info("promotionCodes received from Onvo: type={}, value={}", 
                 rawPromotions != null ? rawPromotions.getClass().getName() : "null", rawPromotions);
 
         boolean codeFound = false;
@@ -364,11 +364,11 @@ public class OnvoService {
             for (Object promotion : promotions) {
                 if (promotion instanceof Map<?, ?> promotionMap) {
                     String promoCodeOnvo = String.valueOf(promotionMap.get("code"));
-                    log.info("Evaluando código de Onvo: '{}' vs buscado: '{}'", promoCodeOnvo, normalizedCode);
+                    log.info("Checking Onvo code: '{}' vs expected: '{}'", promoCodeOnvo, normalizedCode);
                     
                     if (normalizedCode.equalsIgnoreCase(promoCodeOnvo)) {
                         if (Boolean.FALSE.equals(promotionMap.get("isActive"))) {
-                            throw new IllegalArgumentException("El código de descuento ya no está activo.");
+                            throw new IllegalArgumentException("The discount code is no longer active.");
                         }
                         codeFound = true;
                         break;
@@ -378,8 +378,8 @@ public class OnvoService {
         }
         
         if (!codeFound) {
-            log.error("El cupón ID {} en Onvo no contiene el código '{}' dentro de promotionCodes.", plan.getCouponId(), normalizedCode);
-            throw new IllegalArgumentException("Onvo no reconoce el código de descuento.");
+            log.error("Onvo coupon ID {} does not contain code '{}' in promotionCodes.", plan.getCouponId(), normalizedCode);
+            throw new IllegalArgumentException("Onvo does not recognize the discount code.");
         }
 
         BigDecimal discount = plan.getCouponValue();
@@ -396,16 +396,16 @@ public class OnvoService {
                 new HttpEntity<>(buildHeaders()),
                 Map.class);
         if (response.getBody() == null) {
-            throw new IllegalStateException("Onvo no devolvió los datos del cupón.");
+            throw new IllegalStateException("Onvo did not return the coupon data.");
         }
         return response.getBody();
     }
 
     private ServicePlan getActivePlan(UUID servicePlanId) {
         ServicePlan plan = servicePlanRepository.findById(servicePlanId)
-                .orElseThrow(() -> new IllegalArgumentException("El servicio solicitado no existe."));
+                .orElseThrow(() -> new IllegalArgumentException("The requested service does not exist."));
         if (!plan.isActive()) {
-            throw new IllegalArgumentException("El servicio solicitado no está disponible.");
+            throw new IllegalArgumentException("The requested service is not available.");
         }
         return plan;
     }
@@ -417,7 +417,7 @@ public class OnvoService {
         if ("card".equalsIgnoreCase(paymentMethod)) {
             return "card";
         }
-        throw new IllegalArgumentException("Selecciona tarjeta o SINPE Móvil como método de pago.");
+        throw new IllegalArgumentException("Select card or SINPE Móvil as the payment method.");
     }
 
     private String normalizeCouponCode(String couponCode) {
@@ -442,7 +442,7 @@ public class OnvoService {
         String currency = ((String) priceInfo.get("currency")).toUpperCase();
 
         if (unitAmount == null) {
-            throw new RuntimeException("El precio de Onvo no contiene un monto válido.");
+            throw new RuntimeException("The Onvo price does not contain a valid amount.");
         }
 
         String url = onvoApiUrl + "/payment-intents";
@@ -462,7 +462,7 @@ public class OnvoService {
         if (response.getBody() != null) {
             return response.getBody();
         }
-        throw new RuntimeException("No se pudo crear la intención de pago en Onvo");
+        throw new RuntimeException("Could not create the payment intent in Onvo");
     }
 
     @Transactional
@@ -478,7 +478,7 @@ public class OnvoService {
             String identificationType,
             String clientIdentification) {
         PaymentIntentPricing pricing = paymentIntentPricingRepository.findByPaymentIntentId(paymentIntentId)
-                .orElseThrow(() -> new IllegalArgumentException("La intención de pago no tiene un precio validado."));
+                .orElseThrow(() -> new IllegalArgumentException("The payment intent does not have a validated price."));
         ServicePlan plan = getActivePlan(pricing.getServicePlanId());
 
         String paymentMethodUrl = onvoApiUrl + "/payment-methods";
@@ -495,7 +495,7 @@ public class OnvoService {
             ResponseEntity<Map> pmResponse = restTemplate.exchange(
                     paymentMethodUrl, HttpMethod.POST, new HttpEntity<>(paymentMethodBody, headers), Map.class);
             if (pmResponse.getBody() == null || !pmResponse.getBody().containsKey("id")) {
-                throw new IllegalStateException("No se pudo generar el método de pago en Onvo.");
+                throw new IllegalStateException("Could not create the payment method in Onvo.");
             }
             String paymentMethodId = pmResponse.getBody().get("id").toString();
 
@@ -508,7 +508,7 @@ public class OnvoService {
             Map<String, Object> responseBody = confirmResponse.getBody();
             String paymentStatus = responseBody == null ? null : (String) responseBody.get("status");
             if (!"succeeded".equalsIgnoreCase(paymentStatus == null ? "" : paymentStatus.trim())) {
-                log.info("El pago no fue exitoso. Status: {}", paymentStatus);
+                log.info("The payment was not successful. Status: {}", paymentStatus);
                 return responseBody == null ? Map.of() : responseBody;
             }
 
@@ -534,9 +534,9 @@ public class OnvoService {
                         invoiceResponse,
                         Locale.forLanguageTag(pricing.getLanguage() == null ? "es" : pricing.getLanguage()));
             } catch (Exception exception) {
-                log.error("El pago se completó, pero falló la factura o el correo para {}: {}",
+                log.error("The payment completed, but the invoice or email failed for {}: {}",
                         clientEmail, exception.getMessage());
-                result.put("invoiceError", "El pago fue aprobado, pero no se pudo completar la facturación.");
+                result.put("invoiceError", "The payment was approved, but invoicing could not be completed.");
             }
 
             recordCouponRedemption(plan, pricing);
@@ -546,15 +546,15 @@ public class OnvoService {
                             clientEmail, clientName, paymentMethodId, plan, pricing);
                     result.put("subscriptionId", subscription.get("id"));
                 } catch (RuntimeException exception) {
-                    log.error("El pago se completó, pero falló la renovación para {}: {}",
+                    log.error("The payment completed, but the renewal failed for {}: {}",
                             clientEmail, exception.getMessage());
                     result.put("subscriptionError",
-                            "El pago se completó, pero no se pudo activar la renovación automática. Contacta al negocio.");
+                            "The payment completed, but automatic renewal could not be activated. Contact the business.");
                 }
             }
             return result;
         } catch (HttpStatusCodeException exception) {
-            throw new RuntimeException("Error al procesar el pago con Onvo: " + exception.getResponseBodyAsString());
+            throw new RuntimeException("Error processing the payment with Onvo: " + exception.getResponseBodyAsString());
         }
     }
 
@@ -574,7 +574,7 @@ public class OnvoService {
                 new HttpEntity<>(customerBody, buildHeaders()),
                 Map.class);
         if (customerResponse.getBody() == null || customerResponse.getBody().get("id") == null) {
-            throw new IllegalStateException("Onvo no devolvió el identificador del cliente.");
+            throw new IllegalStateException("Onvo did not return the customer ID.");
         }
 
         Map<String, Object> subscriptionBody = new HashMap<>();
@@ -590,7 +590,7 @@ public class OnvoService {
                 new HttpEntity<>(subscriptionBody, buildHeaders()),
                 Map.class);
         if (subscriptionResponse.getBody() == null || subscriptionResponse.getBody().get("id") == null) {
-            throw new IllegalStateException("Onvo no devolvió el identificador de la suscripción.");
+            throw new IllegalStateException("Onvo did not return the subscription ID.");
         }
         return subscriptionResponse.getBody();
     }
@@ -604,7 +604,7 @@ public class OnvoService {
         Map<String, Object> originalPrice = getPriceDetails(plan.getGatewayPriceId());
         Object productId = originalPrice.get("productId");
         if (productId == null) {
-            throw new IllegalStateException("No se pudo identificar el producto de Onvo para la renovación.");
+            throw new IllegalStateException("Could not identify the Onvo product for the renewal.");
         }
         Object recurring = originalPrice.get("recurring");
         Map<String, Object> body = new HashMap<>();
@@ -622,7 +622,7 @@ public class OnvoService {
                 new HttpEntity<>(body, buildHeaders()),
                 Map.class);
         if (response.getBody() == null || response.getBody().get("id") == null) {
-            throw new IllegalStateException("Onvo no devolvió el precio recurrente con el CABYS seleccionado.");
+            throw new IllegalStateException("Onvo did not return the recurring price with the selected CABYS code.");
         }
         return response.getBody().get("id").toString();
     }
@@ -637,7 +637,7 @@ public class OnvoService {
         BigDecimal taxableMultiplier = BigDecimal.ONE.add(tax);
         BigDecimal denominator = BigDecimal.ONE.subtract(feeRate.multiply(taxableMultiplier));
         if (denominator.signum() <= 0) {
-            throw new IllegalStateException("Las tarifas de pago configuradas no permiten calcular la renovación.");
+            throw new IllegalStateException("The configured payment fees do not allow calculating the renewal.");
         }
         return price.add(fixedFee)
                 .multiply(taxableMultiplier)
@@ -684,14 +684,14 @@ public class OnvoService {
             String identificationType,
             String clientIdentification) {
         PaymentIntentPricing pricing = paymentIntentPricingRepository.findByPaymentIntentId(paymentIntentId)
-                .orElseThrow(() -> new IllegalArgumentException("La intención de pago no tiene un precio validado."));
+                .orElseThrow(() -> new IllegalArgumentException("The payment intent does not have a validated price."));
         if (!"sinpe".equals(pricing.getPaymentMethod())) {
-            throw new IllegalArgumentException("La intención de pago no fue creada para SINPE Móvil.");
+            throw new IllegalArgumentException("The payment intent was not created for SINPE Móvil.");
         }
         ServicePlan plan = getActivePlan(pricing.getServicePlanId());
         if ("USD".equalsIgnoreCase(pricing.getCurrency())) {
             throw new IllegalArgumentException(
-                    "El método de pago SINPE no está disponible para transacciones en Dólares (USD).");
+                    "The SINPE payment method is not available for transactions in US dollars (USD).");
         }
 
         String paymentMethodUrl = onvoApiUrl + "/payment-methods";
@@ -723,7 +723,7 @@ public class OnvoService {
                     paymentMethodUrl, HttpMethod.POST, pmEntity, Map.class);
 
             if (pmResponse.getBody() == null || !pmResponse.getBody().containsKey("id")) {
-                throw new RuntimeException("No se pudo generar el método de pago SINPE en Onvo");
+                throw new RuntimeException("Could not create the SINPE payment method in Onvo");
             }
 
             String paymentMethodId = (String) pmResponse.getBody().get("id");
@@ -759,22 +759,22 @@ public class OnvoService {
 
                     emailService.sendInvoiceWithPdf(clientEmail, clientName, invoiceResponse,
                             Locale.forLanguageTag(pricing.getLanguage() == null ? "es" : pricing.getLanguage()));
-                    log.info("Proceso de factura e correo iniciado en segundo plano para: {}", clientEmail);
+                    log.info("Invoice and email process started in the background for: {}", clientEmail);
                 } catch (Exception exception) {
-                    log.error("El pago SINPE se completó, pero falló la factura o el correo para {}: {}",
+                    log.error("The SINPE payment completed, but the invoice or email failed for {}: {}",
                             clientEmail, exception.getMessage());
-                    result.put("invoiceError", "El pago fue aprobado, pero no se pudo completar la facturación.");
+                    result.put("invoiceError", "The payment was approved, but invoicing could not be completed.");
                 }
                 recordCouponRedemption(plan, pricing);
                 return result;
             } else {
-                log.info("El pago SINPE no fue exitoso. Status: {}", paymentStatus);
+                log.info("The SINPE payment was not successful. Status: {}", paymentStatus);
             }
 
             return confirmResponse.getBody() == null ? Map.of() : confirmResponse.getBody();
 
         } catch (HttpStatusCodeException exception) {
-            throw new RuntimeException("Error al procesar el pago SINPE con Onvo: "
+            throw new RuntimeException("Error processing the SINPE payment with Onvo: "
                     + exception.getResponseBodyAsString());
         }
     }

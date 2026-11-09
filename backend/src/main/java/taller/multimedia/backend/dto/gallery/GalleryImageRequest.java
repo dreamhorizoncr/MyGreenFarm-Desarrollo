@@ -13,9 +13,9 @@ public class GalleryImageRequest {
     @NotNull
     private UUID galleryId;
 
-    @NotBlank(message = "El título es obligatorio")
+    @NotBlank(message = "The title is required")
     private String title;
 
-    @NotBlank(message = "La imagen es obligatoria")
+    @NotBlank(message = "The image is required")
     private String urlImage;
 }

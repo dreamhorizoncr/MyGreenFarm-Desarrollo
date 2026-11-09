@@ -1,16 +1,16 @@
 /* =============================================================================
    DESIGN SYSTEM TOKENS
-   Paleta de marca personalizada. Single source of truth.
+   Custom brand palette. Single source of truth.
    Layer order: Brand (raw) → Alias (semantic) → Mapped (theme) → Responsive
    ============================================================================= */
 
 :root {
   /* ---------------------------------------------------------------------------
-     BRAND — Paleta cruda
-     Nunca se usan directo en componentes. Referenciar vía tokens semánticos.
+     BRAND — Raw palette
+     Never used directly in components. Reference them through semantic tokens.
      --------------------------------------------------------------------------- */
 
-  /* Green — Versátil (títulos, botones, iconos, bordes) */
+  /* Green — Versatile (headings, buttons, icons, borders) */
   --green-50: #e6f7ed;
   --green-100: #b3e6c5;
   --green-200: #80d49d;
@@ -21,7 +21,7 @@
   --green-700: #015f3b;
   --green-800: #014029;
 
-  /* Pink — Acentos, highlights, énfasis */
+  /* Pink — Accents, highlights, emphasis */
   --pink-50: #fff0f3;
   --pink-100: #ffd6df;
   --pink-200: #ffbccb;
@@ -32,7 +32,7 @@
   --pink-700: #b84d5a;
   --pink-800: #8f2a35;
 
-  /* Orange — Enlaces, CTAs, acciones */
+  /* Orange — Links, CTAs, actions */
   --orange-50: #fef4ec;
   --orange-100: #fce3c9;
   --orange-200: #fad2a5;
@@ -43,7 +43,7 @@
   --orange-700: #9d4e15;
   --orange-800: #653716;
 
-  /* Grey — Texto cuerpo, bordes, neutral */
+  /* Grey — Body text, borders, neutral */
   --grey-50: #f5f5f5;
   --grey-100: #e8e8e8;
   --grey-200: #d1d1d1;
@@ -54,7 +54,7 @@
   --grey-700: #595959;
   --grey-800: #3d3d3d;
 
-  /* Background — Fondos de la aplicación */
+  /* Background — App backgrounds */
   --bg-50: #ffffff;
   --bg-100: #FFFEFD;
   --bg-200: #fcfbf9;
@@ -65,14 +65,14 @@
   --bg-700: #d0cfcd;
   --bg-800: #c0bfbd;
 
-  /* White — Texto sobre fondos oscuros/colores */
+  /* White — Text on dark/colored backgrounds */
   --white: #FFFFFF;
 
   /* ---------------------------------------------------------------------------
-     STATE COLORS — Colores de estado (success, danger, warning, info)
+     STATE COLORS — success, danger, warning, info
      --------------------------------------------------------------------------- */
 
-  /* Success — Verde */
+  /* Success — Green */
   --success-50: #e8f5e9;
   --success-100: #c8e6c9;
   --success-200: #a5d6a7;
@@ -83,7 +83,7 @@
   --success-700: #388e3c;
   --success-800: #2e7d32;
 
-  /* Danger — Rojo */
+  /* Danger — Red */
   --danger-50: #fef2f2;
   --danger-100: #fee2e2;
   --danger-200: #fecaca;
@@ -105,7 +105,7 @@
   --warning-700: #ff8f00;
   --warning-800: #ff6f00;
 
-  /* Info — Azul */
+  /* Info — Blue */
   --info-50: #e3f2fd;
   --info-100: #bbdefb;
   --info-200: #90caf9;
@@ -117,27 +117,27 @@
   --info-800: #0d47a1;
 
   /* ---------------------------------------------------------------------------
-     ALIASES SEMÁNTICOS
-     Referenciar estos tokens en componentes, nunca los raw directamente.
+     SEMANTIC ALIASES
+     Use these tokens in components, never the raw ones.
      --------------------------------------------------------------------------- */
 
-  /* Heading (títulos) */
+  /* Heading */
   --heading-100: var(--green-100);
   --heading-default: var(--green-500);
   --heading-light: var(--green-100);
   --heading-dark: var(--green-700);
 
-  /* Body Text (párrafos) */
+  /* Body Text */
   --body-text-default: var(--grey-500);
   --body-text-light: var(--grey-300);
   --body-text-dark: var(--grey-700);
 
-  /* Link (enlaces) */
+  /* Link */
   --link-default: var(--orange-500);
   --link-light: var(--orange-300);
   --link-dark: var(--orange-700);
 
-  /* Accent (acentos) */
+  /* Accent */
   --accent-pink: var(--pink-400);
   --accent-pink-light: var(--pink-200);
   --accent-pink-dark: var(--pink-600);
@@ -147,19 +147,19 @@
   --bg-card: var(--white);
   --bg-surface: var(--bg-200);
 
-  /* Success (verde) */
+  /* Success */
   --success-default: var(--success-700);
   --success-accent: var(--success-500);
 
-  /* Danger (rojo) */
+  /* Danger */
   --danger-default: var(--danger-600);
   --danger-accent: var(--danger-500);
 
-  /* Warning (ámbar) */
+  /* Warning */
   --warning-default: var(--warning-800);
   --warning-accent: var(--warning-500);
 
-  /* Info (azul) */
+  /* Info */
   --info-default: var(--info-800);
   --info-accent: var(--info-700);
 
@@ -176,7 +176,7 @@
   --neutral-white: var(--white);
 
   /* ---------------------------------------------------------------------------
-     SCALE — Espaciado base
+     SCALE — Base spacing
      --------------------------------------------------------------------------- */
   --scale-0: 0px;
   --scale-25: 1px;
@@ -220,12 +220,12 @@
 }
 
 /* ---------------------------------------------------------------------------
-   @theme — Tokens que generan utilities de Tailwind
-   Prefijos: --color-*, --font-*, --text-*, --radius-*, --spacing-*, --shadow
+   @theme — Tokens that generate Tailwind utilities
+   Prefixes: --color-*, --font-*, --text-*, --radius-*, --spacing-*, --shadow
    --------------------------------------------------------------------------- */
 
 @theme {
-  /* COLORES SEMÁNTICOS */
+  /* SEMANTIC COLORS */
   --color-primary: var(--link-default);
   --color-heading: var(--heading-default);
   --color-body-text: var(--body-text-default);
@@ -242,7 +242,7 @@
   --color-warning: var(--warning-default);
   --color-info: var(--info-default);
 
-  /* COLORES RAW (para uso directo cuando se necesite) */
+  /* RAW COLORS (for direct use when needed) */
   --color-green-500: var(--green-500);
   --color-pink-400: var(--pink-400);
   --color-orange-500: var(--orange-500);
@@ -298,7 +298,7 @@
   --color-blue-700: var(--info-700);
   --color-blue-800: var(--info-800);
 
-  /*TIPOGRAFÍA*/
+  /*TYPOGRAPHY*/
   --font-heading: "Dosis", sans-serif;
   --font-subtitle: "Sniglet", cursive;
   --font-body: "Nunito", sans-serif;
@@ -332,7 +332,7 @@
   --text-caption: 12px;
   --text-caption--line-height: 1.4;
 
-  /* SPACING — referencia a scale*/
+  /* SPACING — references the scale*/
   --spacing-3xs: var(--scale-50);
   --spacing-2xs: var(--scale-100);
   --spacing-xs: var(--scale-200);
@@ -343,7 +343,7 @@
   --spacing-2xl: var(--scale-1200);
   --spacing-3xl: var(--scale-1600);
 
-  /* SPACING — pasos numéricos de la escala (aliases de --scale-*) */
+  /* SPACING — numeric scale steps (aliases of --scale-*) */
   --spacing-500: var(--scale-500);
   --spacing-700: var(--scale-700);
   --spacing-900: var(--scale-900);
@@ -354,7 +354,7 @@
   --spacing-1500: var(--scale-1500);
   --spacing-1600: var(--scale-1600);
 
-  /* BORDER RADIUS — referencia a scale*/
+  /* BORDER RADIUS — references the scale*/
   --radius-none: var(--scale-0);
   --radius-sm: var(--scale-50);
   --radius-md: var(--scale-100);
@@ -368,6 +368,6 @@
   --shadow-lg: 0 6px 18px rgba(139, 92, 246, 0.09);
   --shadow-xl: 0 8px 24px rgba(139, 92, 246, 0.10);
 
-  /* BREAKPOINTS — genera la variante xs: (680px, límite móvil/tablet) */
+  /* BREAKPOINTS — generates the xs: variant (680px, mobile/tablet limit) */
   --breakpoint-xs: 42.5rem;
 }

@@ -150,7 +150,7 @@ export default function VoiceReaderController() {
 
         if (voiceReaderRef.current && autoReadModalsRef.current) {
           lastSignatureRef.current = getBlockSignature(dialog);
-          // Marca el inicio para no anunciar el foco automático del modal.
+          // Mark the start so the modal auto-focus is not announced.
           dialogReadAtRef.current = Date.now();
           scheduleModalRead(dialog);
         }
@@ -323,7 +323,7 @@ export default function VoiceReaderController() {
         if (!dialog) return false;
         if (target === dialog) return true;
         if (target.closest('dialog, [role="dialog"]') !== dialog) return true;
-        // Evita cortar la lectura automática del modal por el foco inicial.
+        // Do not cut the modal auto-reading because of the initial focus.
         return Date.now() - dialogReadAtRef.current < 1000;
       };
 
@@ -333,7 +333,7 @@ export default function VoiceReaderController() {
       try {
         focusVisible = target.matches(":focus-visible");
       } catch {
-        // Navegadores sin :focus-visible usan la intención de teclado.
+        // Browsers without :focus-visible fall back to keyboard intent.
       }
       if (!focusVisible) return;
 

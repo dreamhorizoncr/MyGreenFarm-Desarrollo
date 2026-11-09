@@ -62,7 +62,7 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
       <button
         type="button"
         onClick={onClose}
-        aria-label={t('home.galeria.closePhoto')}
+        aria-label={t('home.gallery.closePhoto')}
         className="absolute right-md top-md z-10 flex size-[42px] items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
       >
         <XIcon size={20} />
@@ -75,7 +75,7 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
               type="button"
               onClick={() => swiper?.slidePrev()}
               disabled={isFirst}
-              aria-label={t('home.galeria.prevPhoto')}
+              aria-label={t('home.gallery.prevPhoto')}
               className={arrowClassName}
               style={{ right: arrowOffset }}
             >
@@ -118,7 +118,7 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
               type="button"
               onClick={() => swiper?.slideNext()}
               disabled={isLast}
-              aria-label={t('home.galeria.nextPhoto')}
+              aria-label={t('home.gallery.nextPhoto')}
               className={arrowClassName}
               style={{ left: arrowOffset }}
             >
@@ -132,8 +132,8 @@ function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLig
             count={total}
             activeIndex={index}
             onSelect={(target) => swiper?.slideTo(target)}
-            ariaLabel={t('home.galeria.photoNavigation')}
-            getItemLabel={(target) => t('home.galeria.goToPhoto', { number: target + 1 })}
+            ariaLabel={t('home.gallery.photoNavigation')}
+            getItemLabel={(target) => t('home.gallery.goToPhoto', { number: target + 1 })}
           />
         )}
       </figure>

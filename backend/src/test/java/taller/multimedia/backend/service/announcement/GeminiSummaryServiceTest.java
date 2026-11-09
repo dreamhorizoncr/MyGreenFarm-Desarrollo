@@ -13,20 +13,20 @@ import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class GeminiResumenServiceTest {
+class GeminiSummaryServiceTest {
 
     private MockWebServer mockWebServer;
-    private GeminiResumenService geminiResumenService;
+    private GeminiSummaryService geminiSummaryService;
 
     @BeforeEach
     void setUp() throws IOException {
         mockWebServer = new MockWebServer();
         mockWebServer.start();
 
-        geminiResumenService = new GeminiResumenService(JsonMapper.builder().build());
-        ReflectionTestUtils.setField(geminiResumenService, "apiKey", "test-api-key");
-        ReflectionTestUtils.setField(geminiResumenService, "model", "gemini-3.5-flash-lite");
-        ReflectionTestUtils.setField(geminiResumenService, "baseUrl", mockWebServer.url("/").toString());
+        geminiSummaryService = new GeminiSummaryService(JsonMapper.builder().build());
+        ReflectionTestUtils.setField(geminiSummaryService, "apiKey", "test-api-key");
+        ReflectionTestUtils.setField(geminiSummaryService, "model", "gemini-3.5-flash-lite");
+        ReflectionTestUtils.setField(geminiSummaryService, "baseUrl", mockWebServer.url("/").toString());
     }
 
     @AfterEach
@@ -54,7 +54,7 @@ class GeminiResumenServiceTest {
                 .setBody(responseBody)
                 .addHeader("Content-Type", "application/json"));
 
-        String summary = geminiResumenService.generateSummary("Contenido de la noticia de prueba.");
+        String summary = geminiSummaryService.generateSummary("Contenido de la noticia de prueba.");
 
         assertThat(summary).isEqualTo("Resumen generado de prueba.");
     }
@@ -63,7 +63,7 @@ class GeminiResumenServiceTest {
     void generateSummary_returnsNullWhenApiRespondsWithError() {
         mockWebServer.enqueue(new MockResponse().setResponseCode(500));
 
-        String summary = geminiResumenService.generateSummary("Contenido de la noticia de prueba.");
+        String summary = geminiSummaryService.generateSummary("Contenido de la noticia de prueba.");
 
         assertThat(summary).isNull();
     }
@@ -75,7 +75,7 @@ class GeminiResumenServiceTest {
                 .setBody("{\"candidates\": []}")
                 .addHeader("Content-Type", "application/json"));
 
-        String summary = geminiResumenService.generateSummary("Contenido de la noticia de prueba.");
+        String summary = geminiSummaryService.generateSummary("Contenido de la noticia de prueba.");
 
         assertThat(summary).isNull();
     }

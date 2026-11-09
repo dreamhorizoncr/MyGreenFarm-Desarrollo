@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.child.ChildOptionResponse;
 import taller.multimedia.backend.dto.group.GroupRequest;
 import taller.multimedia.backend.dto.group.GroupResponse;
+import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.model.child.Child;
 import taller.multimedia.backend.model.group.ChildGroup;
 import taller.multimedia.backend.model.group.Group;
@@ -35,12 +36,18 @@ public class GroupService {
         private final GroupRepository groupRepository;
         private final UserRepository userRepository;
         private final ChildRepository childRepository;
+        private static final String DUPLICATE_NAME_MESSAGE = "A group with that name already exists.";
+
         private final ChildGroupRepository childGroupRepository;
 
         @Transactional
         public GroupResponse create(GroupRequest request) {
                 Group group = new Group();
-                group.setName(Sanitizer.requireClean("name", request.getName()));
+                String name = Sanitizer.requireClean("name", request.getName());
+                if (groupRepository.existsByNameIgnoreCase(name)) {
+                        throw new InvalidFieldException("name", DUPLICATE_NAME_MESSAGE);
+                }
+                group.setName(name);
                 group.setDescription(request.getDescription() == null
                                 ? null
                                 : Sanitizer.requireCleanPreserveLineBreaks("description", request.getDescription()));
@@ -54,15 +61,21 @@ public class GroupService {
         @Transactional
         public GroupResponse update(Long id, GroupRequest request) {
                 Group group = groupRepository.findById(id)
-                                .orElseThrow(() -> new EntityNotFoundException("Grupo no encontrado con ID: " + id));
+                                .orElseThrow(() -> new EntityNotFoundException("Group not found with ID: " + id));
 
-                group.setName(Sanitizer.requireClean("name", request.getName()));
+                String name = Sanitizer.requireClean("name", request.getName());
+                if (groupRepository.existsByNameIgnoreCaseAndIdNot(name, id)) {
+                        throw new InvalidFieldException("name", DUPLICATE_NAME_MESSAGE);
+                }
+                group.setName(name);
                 group.setDescription(request.getDescription() == null
                                 ? null
                                 : Sanitizer.requireCleanPreserveLineBreaks("description", request.getDescription()));
                 group.setMaxCapacity(request.getMaxCapacity());
+                List<TeacherGroup> newTeacherGroups = createTeacherGroups(group, request.getTeacherIds());
                 group.getTeacherGroups().clear();
-                group.getTeacherGroups().addAll(createTeacherGroups(group, request.getTeacherIds()));
+                groupRepository.flush();
+                group.getTeacherGroups().addAll(newTeacherGroups);
                 if (request.getChildIds() != null) {
                         List<ChildGroup> newChildGroups = createChildGroups(group, request.getChildIds());
                         group.getChildGroups().clear();
@@ -77,7 +90,7 @@ public class GroupService {
         public void delete(Long id) {
                 Group group = groupRepository.findByIdWithChildren(id)
                                 .orElseThrow(() -> new EntityNotFoundException(
-                                                "Grupo no encontrado con ID: " + id));
+                                                "Group not found with ID: " + id));
 
                 group.getChildGroups().clear();
                 groupRepository.delete(group);
@@ -87,19 +100,19 @@ public class GroupService {
         public GroupResponse addChild(Long groupId, Long childId) {
                 Group group = groupRepository.findByIdWithChildren(groupId)
                                 .orElseThrow(() -> new EntityNotFoundException(
-                                                "Grupo no encontrado con ID: " + groupId));
+                                                "Group not found with ID: " + groupId));
 
                 if (group.getMaxCapacity() != null
                                 && group.getChildGroups().size() >= group.getMaxCapacity()) {
-                        throw new IllegalArgumentException("El grupo ya no tiene cupos disponibles");
+                        throw new IllegalArgumentException("The group has no spots left");
                 }
 
                 Child child = childRepository.findById(childId)
                                 .orElseThrow(() -> new EntityNotFoundException(
-                                                "Niño no encontrado con ID: " + childId));
+                                                "Child not found with ID: " + childId));
                 if (!childGroupRepository.findByChildIdIn(Set.of(childId)).isEmpty()) {
                         throw new IllegalArgumentException(
-                                        "El niño con ID " + childId + " ya pertenece a un grupo");
+                                        "The child with ID " + childId + " already belongs to a group");
                 }
 
                 ChildGroup childGroup = new ChildGroup();
@@ -114,7 +127,7 @@ public class GroupService {
         public GroupResponse removeChild(Long groupId, Long childId) {
                 ChildGroup childGroup = childGroupRepository.findByGroupIdAndChildId(groupId, childId)
                                 .orElseThrow(() -> new EntityNotFoundException(
-                                                "El niño no pertenece al grupo indicado"));
+                                                "The child does not belong to the given group"));
 
                 childGroupRepository.delete(childGroup);
                 childGroupRepository.flush();
@@ -133,7 +146,7 @@ public class GroupService {
         @Transactional
         public GroupResponse getById(Long id) {
                 Group group = groupRepository.findByIdWithChildren(id)
-                                .orElseThrow(() -> new EntityNotFoundException("Grupo no encontrado con ID: " + id));
+                                .orElseThrow(() -> new EntityNotFoundException("Group not found with ID: " + id));
 
                 return mapToResponse(group);
         }
@@ -141,13 +154,13 @@ public class GroupService {
         @Transactional
         public GroupResponse getByIdForTeacher(Long id, UUID teacherId) {
                 Group group = groupRepository.findByIdWithChildren(id)
-                                .orElseThrow(() -> new EntityNotFoundException("Grupo no encontrado con ID: " + id));
+                                .orElseThrow(() -> new EntityNotFoundException("Group not found with ID: " + id));
 
                 boolean assigned = group.getTeacherGroups().stream()
                                 .anyMatch(teacherGroup -> teacherGroup.getTeacher().getId().equals(teacherId));
                 if (!assigned) {
                         throw new org.springframework.security.access.AccessDeniedException(
-                                        "No tiene permiso para consultar este grupo");
+                                        "You do not have permission to view this group");
                 }
 
                 return mapToResponse(group);
@@ -164,10 +177,10 @@ public class GroupService {
         private User findTeacher(UUID teacherId) {
                 User teacher = userRepository.findById(teacherId)
                                 .orElseThrow(() -> new EntityNotFoundException(
-                                                "Teacher no encontrado con ID: " + teacherId));
+                                                "Teacher not found with ID: " + teacherId));
 
                 if (teacher.getRole() != Role.TEACHER) {
-                        throw new IllegalArgumentException("El usuario seleccionado no tiene el rol de teacher");
+                        throw new IllegalArgumentException("The selected user does not have the teacher role");
                 }
 
                 return teacher;
@@ -191,12 +204,12 @@ public class GroupService {
                 }
 
                 if (group.getMaxCapacity() != null && childIds.size() > group.getMaxCapacity()) {
-                        throw new IllegalArgumentException("La cantidad de niños supera la capacidad máxima del grupo");
+                        throw new IllegalArgumentException("The number of children exceeds the group's maximum capacity");
                 }
 
                 List<Child> children = childRepository.findAllById(childIds);
                 if (children.size() != childIds.size()) {
-                        throw new EntityNotFoundException("Uno o más niños no fueron encontrados");
+                        throw new EntityNotFoundException("One or more children were not found");
                 }
 
                 childGroupRepository.findByChildIdIn(childIds).stream()
@@ -205,8 +218,8 @@ public class GroupService {
                                 .findFirst()
                                 .ifPresent(childGroup -> {
                                         throw new IllegalArgumentException(
-                                                        "El niño con ID " + childGroup.getChild().getId()
-                                                                        + " ya pertenece a otro grupo");
+                                                        "The child with ID " + childGroup.getChild().getId()
+                                                                        + " already belongs to another group");
                                 });
 
                 return children.stream()

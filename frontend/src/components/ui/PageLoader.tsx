@@ -1,9 +1,21 @@
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Skeleton from './Skeleton.tsx'
 
-/** Se muestra mientras se descarga el código de una página (carga bajo demanda). */
+// Pages that load quickly show their own skeletons instead of this generic one.
+const SHOW_AFTER_MS = 600
+
 function PageLoader() {
   const { t } = useTranslation()
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setVisible(true), SHOW_AFTER_MS)
+    return () => window.clearTimeout(timer)
+  }, [])
+
+  if (!visible) return <span className="sr-only" role="status">{t('common.status.loading')}</span>
+
   return (
     <div role="status" aria-busy="true" className="mx-auto flex w-full max-w-[75rem] flex-col gap-lg px-md py-2xl md:px-xl">
       <span className="sr-only">{t('common.status.loading')}</span>

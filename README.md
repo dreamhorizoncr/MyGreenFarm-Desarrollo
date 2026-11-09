@@ -140,9 +140,9 @@ La app usa React Router con rutas públicas y rutas protegidas por sesión/rol (
 - `/login`, `/signup`, `/forgot-password`, `/reset-password`
 - `/news` — noticias
 - `/forum`, `/forum/blog/:id`, `/forum/community/:id` — foro
-- `/multimedia`, `/albumes/:id` — galería
+- `/multimedia`, `/albums/:id` — galería
 - `/services` — planes de servicio
-- `/vacantes` — vacantes de empleo
+- `/vacancies` — vacantes de empleo
 - `/clubs` — clubes
 - `/payment-success`, `/payment-failed`
 
@@ -150,8 +150,8 @@ La app usa React Router con rutas públicas y rutas protegidas por sesión/rol (
 - `/profile` — perfil del usuario
 - `/admin/dashboard` — resumen general
 - `/admin/forum` — moderación del foro
-- `/admin/citas`, `/admin/users`, `/admin/announcements`, `/admin/gallery`, `/admin/curriculums`, `/admin/clubs`, `/admin/parents`, `/admin/children`, `/admin/evaluations` — módulos de `ADMIN`
-- `/admin/service-plans`, `/admin/disponibilidad`, `/admin/newsletter` — módulos de `OWNER`
+- `/admin/appointments`, `/admin/users`, `/admin/announcements`, `/admin/gallery`, `/admin/curriculums`, `/admin/clubs`, `/admin/parents`, `/admin/children`, `/admin/evaluations` — módulos de `ADMIN`
+- `/admin/service-plans`, `/admin/availability`, `/admin/newsletter` — módulos de `OWNER`
 - `/admin/expedients` — expedientes (docentes y administración)
 
 ### Despliegue

@@ -37,7 +37,7 @@ public class BirthdayReminderScheduler {
         }
 
         if (!teachers.isEmpty()) {
-            log.info("Felicitaciones de cumpleaños programadas para {} docente(s) con fecha {}",
+            log.info("Birthday greetings scheduled for {} teacher(s) on {}",
                     teachers.size(), birthdayDate);
         }
     }
@@ -48,12 +48,12 @@ public class BirthdayReminderScheduler {
         List<User> teachers = findTeachersWithBirthdayOn(birthdayDate);
 
         if (teachers.isEmpty()) {
-            log.debug("No hay cumpleaños de docentes para {}", birthdayDate);
+            log.debug("No teacher birthdays on {}", birthdayDate);
             return;
         }
 
         emailService.sendBirthdayReminderEmail(teachers, birthdayDate, Locale.forLanguageTag("es"));
-        log.info("Recordatorio de cumpleaños programado para {} docente(s) con fecha {}",
+        log.info("Birthday reminder scheduled for {} teacher(s) on {}",
                 teachers.size(), birthdayDate);
     }
 

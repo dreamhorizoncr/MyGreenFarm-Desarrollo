@@ -40,7 +40,7 @@ export const AccessibilityContext = createContext<AccessibilityContextType | und
 export function useAccessibility() {
     const context = useContext(AccessibilityContext);
     if (!context) {
-        throw new Error("useAccessibility debe usarse dentro de un AccessibilityProvider");
+        throw new Error("useAccessibility must be used inside an AccessibilityProvider");
     }
     return context;
 }

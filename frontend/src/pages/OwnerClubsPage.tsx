@@ -214,7 +214,7 @@ function OwnerClubsPage() {
               : club.schedule,
           }));
         } catch (translationError) {
-          console.error("No se pudieron traducir los clubs:", translationError);
+          console.error("Could not translate the clubs:", translationError);
         }
       }
 

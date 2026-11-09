@@ -60,9 +60,9 @@ function MostLikedPhotos({ galleries }: Readonly<MostLikedPhotosProps>) {
     <section className="w-full bg-white py-1000 md:py-1200">
       <Container className="flex flex-col items-center gap-xl">
         <div className="flex w-full flex-col items-start gap-sm text-left">
-          <h2 className="m-0 font-heading text-h2 font-bold text-heading">{t('home.galeria.mostLikedTitle')}</h2>
+          <h2 className="m-0 font-heading text-h2 font-bold text-heading">{t('home.gallery.mostLikedTitle')}</h2>
           <div className="h-1 w-12 rounded-full bg-orange-500" aria-hidden="true" />
-          <p className="m-0 max-w-[30rem] font-body text-body text-body-text">{t('home.galeria.mostLikedDescription')}</p>
+          <p className="m-0 max-w-[30rem] font-body text-body text-body-text">{t('home.gallery.mostLikedDescription')}</p>
         </div>
 
         <div className="flex w-full gap-sm pb-8 md:gap-md md:pb-10">
@@ -77,7 +77,7 @@ function MostLikedPhotos({ galleries }: Readonly<MostLikedPhotosProps>) {
                     key={photo.id}
                     type="button"
                     onClick={() => setOpenIndex(index)}
-                    aria-label={t('home.galeria.openPhoto', { title: photo.altText || photo.albumTitle || photo.title })}
+                    aria-label={t('home.gallery.openPhoto', { title: photo.altText || photo.albumTitle || photo.title })}
                     initial={reduceMotion ? false : { opacity: 0, y: 24 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: '0px 0px -10% 0px' }}
@@ -97,7 +97,7 @@ function MostLikedPhotos({ galleries }: Readonly<MostLikedPhotosProps>) {
                       <span className="absolute bottom-xs left-xs inline-flex items-center gap-2xs rounded-full bg-white/90 px-xs py-2xs font-body text-caption font-semibold text-pink-400 shadow-sm">
                         <Heart size={14} className="fill-current" aria-hidden="true" />
                         <span aria-hidden="true">{photo.likeCount}</span>
-                        <span className="sr-only">{t('home.galeria.likeCount', { count: photo.likeCount })}</span>
+                        <span className="sr-only">{t('home.gallery.likeCount', { count: photo.likeCount })}</span>
                       </span>
                     )}
                   </motion.button>

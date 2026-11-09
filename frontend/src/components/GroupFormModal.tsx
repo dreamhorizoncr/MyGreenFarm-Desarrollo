@@ -240,7 +240,6 @@ function GroupFormModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-4 text-left md:p-[30px]">
-            {/* Backdrop */}
             <button
                 type="button"
                 tabIndex={-1}
@@ -249,7 +248,6 @@ function GroupFormModal({
                 onClick={onClose}
             />
 
-            {/* Modal */}
             <dialog
                 open
                 aria-modal="true"
@@ -263,8 +261,7 @@ function GroupFormModal({
                     : 'animate-[modal-in_0.32s_ease-out]'
                     }`}
             >
-            <form onSubmit={handleSubmit}>
-                {/* Header */}
+            <form onSubmit={handleSubmit} noValidate>
                 <div className="flex items-center justify-between gap-md">
                     <h2 className="m-0 font-heading text-h4 font-bold text-heading">
                         {t(
@@ -289,9 +286,7 @@ function GroupFormModal({
                     </p>
                 )}
 
-                {/* Fields */}
                 <div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
-                    {/* Name */}
                     <label className="font-body text-body-sm font-semibold text-heading">
                         {t('admin.groups.name')}
 
@@ -318,7 +313,6 @@ function GroupFormModal({
                         )}
                     </label>
 
-                    {/* Multiple teachers */}
                     <div className="font-body text-body-sm font-semibold text-heading">
                         <label id="group-teacher-label">
                             {t('admin.groups.teacher')}
@@ -345,7 +339,7 @@ function GroupFormModal({
                                         : teachers.length === 0
                                             ? t('admin.groups.loadError')
                                             : form.teacherIds.length > 0
-                                                ? `${form.teacherIds.length} seleccionado(s)`
+                                                ? t('admin.groups.teachersSelected', { count: form.teacherIds.length })
                                                 : t('admin.groups.selectTeacher')}
                                 </span>
 
@@ -397,7 +391,6 @@ function GroupFormModal({
                             )}
                         </div>
 
-                        {/* Selected teachers */}
                         {selectedTeachers.length > 0 && (
                             <div className="mt-sm flex flex-wrap gap-xs">
                                 {selectedTeachers.map((teacher) => (
@@ -415,7 +408,7 @@ function GroupFormModal({
                                             onClick={() =>
                                                 removeTeacher(teacher.id)
                                             }
-                                            aria-label={`Quitar a ${teacher.firstName} ${teacher.lastName}`}
+                                            aria-label={t('admin.groups.removeTeacher', { name: `${teacher.firstName} ${teacher.lastName}` })}
                                             className="flex size-5 shrink-0 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-orange-200 hover:text-heading disabled:opacity-50"
                                         >
                                             <svg
@@ -441,7 +434,6 @@ function GroupFormModal({
                         )}
                     </div>
 
-                    {/* Capacity */}
                     <label className="font-body text-body-sm font-semibold text-heading">
                         {t('admin.groups.capacity')}
 
@@ -476,7 +468,6 @@ function GroupFormModal({
                         )}
                     </label>
 
-                    {/* Description */}
                     <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
                         {t('admin.groups.descriptionLabel')}
 
@@ -503,7 +494,6 @@ function GroupFormModal({
                     </label>
                 </div>
 
-                {/* Actions */}
                 <div className="mt-lg flex flex-col gap-md sm:flex-row sm:justify-end sm:[&>*]:flex-1">
                     <button
                         type="button"

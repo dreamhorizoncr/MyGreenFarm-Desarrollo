@@ -18,7 +18,7 @@ public class GalleryExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<MessageResponse> handleResponseStatus(ResponseStatusException exception) {
-        String reason = exception.getReason() != null ? exception.getReason() : "No se pudo completar la acción.";
+        String reason = exception.getReason() != null ? exception.getReason() : "The action could not be completed.";
         return ResponseEntity.status(exception.getStatusCode()).body(new MessageResponse(reason));
     }
 }

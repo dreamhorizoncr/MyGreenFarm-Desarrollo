@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +14,7 @@ import taller.multimedia.backend.model.announcement.Announcement;
 
 @Repository
 public interface AnnouncementRepository extends JpaRepository<Announcement, UUID>{
+    @EntityGraph(attributePaths = "category")
     Page<Announcement> findByCreatedAtAfter(LocalDateTime date, Pageable pageable);
 
     Page<Announcement> findByCreatedAtAfterOrderByCreatedAtDesc(LocalDateTime date, Pageable pageable);
@@ -25,6 +27,11 @@ public interface AnnouncementRepository extends JpaRepository<Announcement, UUID
 
     List<Announcement> findByCategoryId(UUID categoryId);
 
+    @EntityGraph(attributePaths = "category")
     Page<Announcement> findByCategoryId(UUID categoryId, Pageable pageable);
+
+    @Override
+    @EntityGraph(attributePaths = "category")
+    Page<Announcement> findAll(Pageable pageable);
 
 }

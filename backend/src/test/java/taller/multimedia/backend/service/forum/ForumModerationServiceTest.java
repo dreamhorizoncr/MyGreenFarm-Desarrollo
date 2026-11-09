@@ -89,7 +89,7 @@ class ForumModerationServiceTest {
         InvalidFieldException ex = assertThrows(InvalidFieldException.class,
                 () -> moderationService.assertAppropriateName("alias", "Nombre ofensivo"));
 
-        assertThat(ex.getMessage()).contains("Ese nombre no cumple");
+        assertThat(ex.getMessage()).contains("That name does not follow");
     }
 
     @Test
@@ -100,7 +100,7 @@ class ForumModerationServiceTest {
         InvalidFieldException ex = assertThrows(InvalidFieldException.class,
                 () -> moderationService.assertAppropriateName("alias", "Mamá de Sofi"));
 
-        assertThat(ex.getMessage()).contains("No se pudo verificar");
+        assertThat(ex.getMessage()).contains("could not be checked");
         assertThat(mockWebServer.getRequestCount()).isEqualTo(2);
     }
 

@@ -119,7 +119,7 @@ public class ElectronicBillingService {
                         if (processingFeeCabysCode == null || processingFeeCabysCode.isBlank()
                                         || processingFeeTaxRate == null) {
                                 throw new IllegalStateException(
-                                                "El cargo de pago requiere un CABYS y una tarifa de IVA configurados.");
+                                                "The payment fee requires a configured CABYS code and VAT rate.");
                         }
                         details.add(createInvoiceLine(
                                         processingFeeCabysCode,
@@ -136,7 +136,7 @@ public class ElectronicBillingService {
                 invoicePayload.put("currency", currency);
                 if ("USD".equalsIgnoreCase(cleanCurrency)) {
                 if (bacExchangeRate == null || bacExchangeRate.compareTo(BigDecimal.ZERO) <= 0) {
-                        throw new IllegalStateException("Se requiere un tipo de cambio del BAC válido para facturar en Dólares.");
+                        throw new IllegalStateException("A valid BAC exchange rate is required to invoice in US dollars.");
                 }
                 invoicePayload.put("tipoCambio", bacExchangeRate);
                 }
@@ -182,7 +182,7 @@ public class ElectronicBillingService {
                 if (taxRate.compareTo(BigDecimal.valueOf(4)) == 0) return "04";
                 if (taxRate.compareTo(BigDecimal.valueOf(8)) == 0) return "05";
                 if (taxRate.compareTo(BigDecimal.valueOf(13)) == 0) return "06";
-                throw new IllegalArgumentException("La tarifa de IVA no tiene un código CABYS soportado.");
+                throw new IllegalArgumentException("The VAT rate does not have a supported CABYS code.");
         }
 
         public byte[] downloadPdfWithRetry(String documentId) {
@@ -206,12 +206,12 @@ public class ElectronicBillingService {
 
                                 if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null
                                                 && response.getBody().length > 0) {
-                                        System.out.println("¡PDF de cortesía generado y descargado exitosamente!");
+                                        System.out.println("Courtesy PDF generated and downloaded successfully!");
                                         return response.getBody();
                                 }
                         } catch (org.springframework.web.client.HttpStatusCodeException e) {
                                 if (e.getStatusCode().value() == 409) {
-                                        System.out.println("PDF aún no disponible (409 Conflict), intento "
+                                        System.out.println("PDF not available yet (409 Conflict), attempt "
                                                         + (i + 1) + "/5, esperando...");
                                 } else {
                                         System.err.println("Fallo HTTP " + e.getStatusCode() + " en intento "
@@ -229,7 +229,7 @@ public class ElectronicBillingService {
                                 break;
                         }
                 }
-                System.err.println("No se pudo obtener el PDF tras varios intentos.");
+                System.err.println("Could not get the PDF after several attempts.");
                 return null;
         }
 }

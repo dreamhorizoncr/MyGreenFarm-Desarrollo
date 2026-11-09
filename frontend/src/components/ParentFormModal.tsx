@@ -58,7 +58,6 @@ function ParentFormModal({
   const [language, setLanguage] = useState<ParentLanguage>(
     parent?.language ?? "es",
   );
-  // Estado isActive (por defecto true si es nuevo, o el valor actual si se edita)
   const [isActive, setIsActive] = useState<boolean>(parent?.isActive ?? true);
 
   const [saving, setSaving] = useState(false);
@@ -121,7 +120,7 @@ function ParentFormModal({
 
       requestClose();
     } catch (error) {
-      console.error("Error al guardar el padre:", error);
+      console.error("Error saving the parent:", error);
 
       const field = getErrorField(error);
       if (field) setFieldErrors((current) => ({ ...current, [field]: getErrorMessage(error) }));
@@ -285,7 +284,6 @@ function ParentFormModal({
             </div>
           </label>
 
-          {/* Switch estilizado para Activo / Inactivo */}
           <div className="md:col-span-2 flex items-center gap-md rounded-xl border border-neutral-200 bg-neutral-50 p-md">
             <label className="relative inline-flex items-center cursor-pointer">
               <span className="sr-only">{t("admin.parents.isActive")}</span>

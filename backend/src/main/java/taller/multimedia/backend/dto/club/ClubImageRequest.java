@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ClubImageRequest {
 
-    @NotBlank(message = "La URL de la imagen es obligatoria")
+    @NotBlank(message = "The image URL is required")
     private String fileUrl;
 
-    @Min(value = 0, message = "El orden no puede ser negativo")
+    @Min(value = 0, message = "The order cannot be negative")
     @JsonProperty("sortOrder")
     private Integer sortOrder;
 }

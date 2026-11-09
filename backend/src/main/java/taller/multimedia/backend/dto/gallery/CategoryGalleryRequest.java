@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class CategoryGalleryRequest {
 
-    @NotBlank(message = "El título es obligatorio")
-    @Size(min = 3, max = 70, message = "El título debe tener entre 3 y 70 caracteres")
+    @NotBlank(message = "The title is required")
+    @Size(min = 3, max = 70, message = "The title must be between 3 and 70 characters")
     private String title;
 }

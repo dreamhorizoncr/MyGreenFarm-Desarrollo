@@ -59,10 +59,10 @@ public class GoogleCalendarService {
         } else if (credentialsResource != null && credentialsResource.exists()) {
             long start = System.currentTimeMillis();
             credentialsStream = credentialsResource.getInputStream();
-            log.info("Cargar calendario tardó: {} ms", System.currentTimeMillis() - start);
+            log.info("Loading the calendar took {} ms", System.currentTimeMillis() - start);
         } else {
             throw new FileNotFoundException(
-                    "No se encontraron credenciales de Google Calendar ni en variable de entorno ni en archivo local.");
+                    "No Google Calendar credentials were found in the environment variable or in a local file.");
         }
 
         GoogleCredentials credentials = GoogleCredentials
@@ -157,8 +157,8 @@ public class GoogleCalendarService {
             FreeBusyResponse response = service.freebusy().query(requestBody).execute();
 
             if (response.getCalendars() == null || response.getCalendars().get(calendarId) == null) {
-                log.error("No se pudo acceder al calendario con ID: {}", calendarId);
-                throw new CalendarServiceException("No se pudo cargar la disponibilidad en este momento");
+                log.error("Could not access the calendar with ID: {}", calendarId);
+                throw new CalendarServiceException("Availability could not be loaded right now");
             }
 
             List<TimePeriod> busyPeriods = response.getCalendars().get(calendarId).getBusy();
@@ -174,8 +174,8 @@ public class GoogleCalendarService {
         } catch (CalendarServiceException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error al consultar disponibilidad semanal para {}", referenceDate, e);
-            throw new CalendarServiceException("No se pudo cargar la disponibilidad en este momento");
+            log.error("Error fetching weekly availability for {}", referenceDate, e);
+            throw new CalendarServiceException("Availability could not be loaded right now");
         }
     }
 
@@ -194,8 +194,8 @@ public class GoogleCalendarService {
                     .execute();
             return events.getItems() == null ? List.of() : events.getItems();
         } catch (Exception e) {
-            log.error("Error al consultar eventos de Google Calendar entre {} y {}", from, to, e);
-            throw new CalendarServiceException("No se pudieron cargar los eventos del calendario");
+            log.error("Error fetching Google Calendar events between {} and {}", from, to, e);
+            throw new CalendarServiceException("The calendar events could not be loaded");
         }
     }
 
@@ -254,7 +254,7 @@ public class GoogleCalendarService {
             appointment.setGoogleEventId(createdEvent.getId());
 
         } catch (Exception e) {
-            throw new RuntimeException("Error al sincronizar la cita con Google Calendar", e);
+            throw new RuntimeException("Error syncing the appointment with Google Calendar", e);
         }
     }
 
@@ -269,7 +269,7 @@ public class GoogleCalendarService {
             service.events().delete(calendarId, appointment.getGoogleEventId()).execute();
 
         } catch (Exception e) {
-            throw new RuntimeException("Error al eliminar la cita de Google Calendar", e);
+            throw new RuntimeException("Error deleting the appointment from Google Calendar", e);
         }
     }
 
@@ -288,14 +288,14 @@ public class GoogleCalendarService {
             service.events().update(calendarId, appointment.getGoogleEventId(), event).execute();
 
         } catch (Exception e) {
-            throw new RuntimeException("Error al actualizar la cita en Google Calendar", e);
+            throw new RuntimeException("Error updating the appointment in Google Calendar", e);
         }
     }
 
     public void rescheduleAppointmentInCalendar(Appointment appointment, LocalDateTime newStartDateTime) {
         try {
             if (appointment.getGoogleEventId() == null || appointment.getGoogleEventId().trim().isEmpty()) {
-                log.warn("La cita ID {} no tiene un googleEventId asociado. Se intentará crear como nuevo evento.",
+                log.warn("Appointment ID {} has no googleEventId. It will be created as a new event.",
                         appointment.getId());
                 return;
             }
@@ -306,8 +306,8 @@ public class GoogleCalendarService {
             try {
                 event = service.events().get(calendarId, appointment.getGoogleEventId()).execute();
             } catch (Exception e) {
-                System.out.println("El evento con ID de Google '" + appointment.getGoogleEventId()
-                        + "' no fue encontrado. Se creará uno nuevo.");
+                System.out.println("The event with Google ID '" + appointment.getGoogleEventId()
+                        + "' was not found. A new one will be created.");
                 addAppointmentToCalendar(appointment);
                 return;
             }
@@ -325,12 +325,12 @@ public class GoogleCalendarService {
 
             service.events().update(calendarId, appointment.getGoogleEventId(), event).execute();
             System.out.println(
-                    "Evento de Google Calendar actualizado exitosamente para la cita ID: " + appointment.getId());
+                    "Google Calendar event updated successfully for appointment ID: " + appointment.getId());
 
         } catch (Exception e) {
-            log.error("Error crítico al sincronizar la reprogramación en Google Calendar para la cita ID {}",
+            log.error("Critical error syncing the reschedule to Google Calendar for appointment ID {}",
                     appointment.getId(), e);
-            throw new RuntimeException("Error al actualizar la cita en Google Calendar", e);
+            throw new RuntimeException("Error updating the appointment in Google Calendar", e);
         }
     }
 

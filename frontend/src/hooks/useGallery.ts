@@ -100,7 +100,7 @@ export function useGallery() {
 					galleryList.map(translateGallery),
 				] as const)))
 			} catch {
-				// Se deja el contenido original visible si la traducción no está disponible.
+				// Keep the original content if translation is unavailable.
 			}
 		} catch (err) {
 			setError(getErrorMessage(err))

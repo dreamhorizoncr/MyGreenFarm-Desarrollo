@@ -41,15 +41,15 @@ public class CalendarSyncAsyncService {
         try {
             Appointment appointment = appointmentRepository.findById(appointmentId)
                     .orElseThrow(() ->
-                            new RuntimeException("Cita no encontrada: " + appointmentId));
+                            new RuntimeException("Appointment not found: " + appointmentId));
 
             googleCalendarService.addAppointmentToCalendar(appointment);
             appointmentRepository.save(appointment);
 
-            log.info("Cita {} sincronizada con Google Calendar", appointmentId);
+            log.info("Appointment {} synced with Google Calendar", appointmentId);
         } catch (Exception e) {
             log.error(
-                    "Error sincronizando la cita {} con Google Calendar",
+                    "Error syncing appointment {} with Google Calendar",
                     appointmentId,
                     e);
         }
@@ -64,7 +64,7 @@ public class CalendarSyncAsyncService {
         try {
             Appointment appointment = appointmentRepository.findById(appointmentId)
                     .orElseThrow(() ->
-                            new RuntimeException("Cita no encontrada: " + appointmentId));
+                            new RuntimeException("Appointment not found: " + appointmentId));
 
             if (status == AppointmentStatus.CONFIRMED) {
                 googleCalendarService.updateAppointmentInCalendar(
@@ -75,11 +75,11 @@ public class CalendarSyncAsyncService {
             }
 
             log.info(
-                    "Estado de la cita {} sincronizado con Google Calendar",
+                    "Status of appointment {} synced with Google Calendar",
                     appointmentId);
         } catch (Exception e) {
             log.error(
-                    "Error actualizando la cita {} en Google Calendar",
+                    "Error updating appointment {} in Google Calendar",
                     appointmentId,
                     e);
         }
@@ -94,18 +94,18 @@ public class CalendarSyncAsyncService {
         try {
             Appointment appointment = appointmentRepository.findById(appointmentId)
                     .orElseThrow(() ->
-                            new RuntimeException("Cita no encontrada: " + appointmentId));
+                            new RuntimeException("Appointment not found: " + appointmentId));
 
             googleCalendarService.rescheduleAppointmentInCalendar(
                     appointment,
                     newDate);
 
             log.info(
-                    "Cita {} reprogramada en Google Calendar",
+                    "Appointment {} rescheduled in Google Calendar",
                     appointmentId);
         } catch (Exception e) {
             log.error(
-                    "Error reprogramando la cita {} en Google Calendar",
+                    "Error rescheduling appointment {} in Google Calendar",
                     appointmentId,
                     e);
         }
@@ -131,7 +131,7 @@ public void syncBirthdayAsync(UUID userId) {
             googleCalendarService.updateBirthdayEvent(user);
         }
     } catch (Exception e) {
-        log.error("No se pudo sincronizar el cumpleaños del usuario {}", userId, e);
+        log.error("Could not sync the birthday of user {}", userId, e);
     }
 }
 }

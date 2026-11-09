@@ -11,30 +11,30 @@ import java.util.UUID;
 @Data
 public class EvaluationRequest {
 
-    @NotNull(message = "El ID del expediente es obligatorio")
+    @NotNull(message = "The record ID is required")
     private UUID expedientId;
 
-    @NotNull(message = "La fecha de evaluación es obligatoria")
-    @PastOrPresent(message = "La fecha de evaluación no puede ser una fecha futura")
+    @NotNull(message = "The evaluation date is required")
+    @PastOrPresent(message = "The evaluation date cannot be in the future")
     private LocalDate evaluationDate;
 
-    @NotBlank(message = "El progreso de comunicación es obligatorio")
-    @Size(max = 2000, message = "El progreso de comunicación no puede superar los 2000 caracteres")
+    @NotBlank(message = "The communication progress is required")
+    @Size(max = 2000, message = "The communication progress cannot exceed 2000 characters")
     private String communicationProgress;
 
-    @NotBlank(message = "El progreso de lenguaje es obligatorio")
-    @Size(max = 2000, message = "El progreso de lenguaje no puede superar los 2000 caracteres")
+    @NotBlank(message = "The language progress is required")
+    @Size(max = 2000, message = "The language progress cannot exceed 2000 characters")
     private String languageProgress;
 
-    @NotBlank(message = "El progreso de lectura es obligatorio")
-    @Size(max = 2000, message = "El progreso de lectura no puede superar los 2000 caracteres")
+    @NotBlank(message = "The reading progress is required")
+    @Size(max = 2000, message = "The reading progress cannot exceed 2000 characters")
     private String readingProgress;
 
-    @NotBlank(message = "El progreso motor es obligatorio")
-    @Size(max = 2000, message = "El progreso motor no puede superar los 2000 caracteres")
+    @NotBlank(message = "The motor progress is required")
+    @Size(max = 2000, message = "The motor progress cannot exceed 2000 characters")
     private String motorProgress;
 
-    @NotBlank(message = "La observación del profesor es obligatoria")
-    @Size(max = 3000, message = "La observación no puede superar los 3000 caracteres")
+    @NotBlank(message = "The teacher's observation is required")
+    @Size(max = 3000, message = "The observation cannot exceed 3000 characters")
     private String teacherObservation;
 }

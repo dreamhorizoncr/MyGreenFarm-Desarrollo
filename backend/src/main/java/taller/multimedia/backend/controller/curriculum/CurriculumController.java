@@ -42,7 +42,7 @@ public class CurriculumController {
         } catch (InvalidFieldException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Error al procesar la postulación: " + e.getMessage());
+            throw new RuntimeException("Error processing the application: " + e.getMessage());
         }
     }
 

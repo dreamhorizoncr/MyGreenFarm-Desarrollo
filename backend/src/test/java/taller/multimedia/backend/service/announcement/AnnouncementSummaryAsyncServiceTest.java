@@ -27,7 +27,7 @@ class AnnouncementSummaryAsyncServiceTest {
     private AnnouncementRepository announcementRepository;
 
     @Mock
-    private GeminiResumenService geminiResumenService;
+    private GeminiSummaryService geminiSummaryService;
 
     @InjectMocks
     private AnnouncementSummaryAsyncService announcementSummaryAsyncService;
@@ -43,7 +43,7 @@ class AnnouncementSummaryAsyncServiceTest {
 
         announcementSummaryAsyncService.generateSummaryAsync(id, false);
 
-        verify(geminiResumenService, never()).generateSummary(any());
+        verify(geminiSummaryService, never()).generateSummary(any());
         verify(announcementRepository, never()).save(any());
     }
 
@@ -55,11 +55,11 @@ class AnnouncementSummaryAsyncServiceTest {
         announcement.setAiSummaryContentHash(HashUtils.sha256("Contenido viejo"));
 
         when(announcementRepository.findById(id)).thenReturn(Optional.of(announcement));
-        when(geminiResumenService.generateSummary("Contenido nuevo")).thenReturn("Resumen generado.");
+        when(geminiSummaryService.generateSummary("Contenido nuevo")).thenReturn("Resumen generado.");
 
         announcementSummaryAsyncService.generateSummaryAsync(id, false);
 
-        verify(geminiResumenService, times(1)).generateSummary(eq("Contenido nuevo"));
+        verify(geminiSummaryService, times(1)).generateSummary(eq("Contenido nuevo"));
         verify(announcementRepository, times(1)).save(announcement);
     }
 
@@ -71,11 +71,11 @@ class AnnouncementSummaryAsyncServiceTest {
         announcement.setAiSummaryContentHash(HashUtils.sha256("Contenido sin cambios"));
 
         when(announcementRepository.findById(id)).thenReturn(Optional.of(announcement));
-        when(geminiResumenService.generateSummary("Contenido sin cambios")).thenReturn("Resumen regenerado.");
+        when(geminiSummaryService.generateSummary("Contenido sin cambios")).thenReturn("Resumen regenerado.");
 
         announcementSummaryAsyncService.generateSummaryAsync(id, true);
 
-        verify(geminiResumenService, times(1)).generateSummary(eq("Contenido sin cambios"));
+        verify(geminiSummaryService, times(1)).generateSummary(eq("Contenido sin cambios"));
         verify(announcementRepository, times(1)).save(announcement);
     }
 }

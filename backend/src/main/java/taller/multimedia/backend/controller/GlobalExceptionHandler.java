@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
                 .map(error -> error.getDefaultMessage())
                 .distinct()
                 .collect(Collectors.joining(". "));
-        return ResponseEntity.badRequest().body(new MessageResponse(message.isBlank() ? "Los datos enviados no son válidos." : message));
+        return ResponseEntity.badRequest().body(new MessageResponse(message.isBlank() ? "The submitted data is not valid." : message));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -45,20 +45,20 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<MessageResponse> handleUnreadable(HttpMessageNotReadableException exception) {
-        log.warn("No se pudo interpretar el cuerpo de la solicitud: {}",
+        log.warn("Could not parse the request body: {}",
                 exception.getMostSpecificCause().getMessage());
-        return ResponseEntity.badRequest().body(new MessageResponse("Los datos enviados tienen un formato inválido."));
+        return ResponseEntity.badRequest().body(new MessageResponse("The submitted data has an invalid format."));
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<MessageResponse> handleMaxUploadSize(MaxUploadSizeExceededException exception) {
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
-                .body(new MessageResponse("El archivo supera el tamaño máximo permitido."));
+                .body(new MessageResponse("The file exceeds the maximum allowed size."));
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<MessageResponse> handleDataIntegrity(DataIntegrityViolationException exception) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new MessageResponse("Ya existe un registro con esos datos o está siendo usado por otro elemento."));
+                .body(new MessageResponse("A record with that data already exists or is being used by another item."));
     }
 }

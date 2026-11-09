@@ -12,22 +12,22 @@ class ChatContextBuilderTest {
         return new UsernamePasswordAuthenticationToken("user", "", List.of(new SimpleGrantedAuthority("ROLE_" + role)));
     }
     @Test void buildsDistinctSafeRoleContexts() {
-        assertTrue(builder.buildContext(auth("OWNER")).contains("administrar agenda"));
-        assertTrue(builder.buildContext(auth("ADMIN")).contains("anuncios"));
-        assertTrue(builder.buildContext(auth("TEACHER")).contains("trabajo docente"));
+        assertTrue(builder.buildContext(auth("OWNER")).contains("manage the schedule"));
+        assertTrue(builder.buildContext(auth("ADMIN")).contains("announcements"));
+        assertTrue(builder.buildContext(auth("TEACHER")).contains("teaching work"));
         String unknown = builder.buildContext(auth("PARENT"));
-        assertTrue(unknown.contains("únicamente información pública"));
-        assertFalse(unknown.contains("visitante sin sesión"));
-        assertFalse(unknown.contains("expedientes"));
+        assertTrue(unknown.contains("only the public information"));
+        assertFalse(unknown.contains("visitor without an authenticated session"));
+        assertFalse(unknown.contains("student files"));
     }
 
     @Test void includesVerifiedPublicContactInformation() {
         String context = builder.buildContext(null);
 
         assertTrue(context.contains("Liberia, Guanacaste, Costa Rica"));
-        assertTrue(context.contains("formulario de reserva"));
-        assertTrue(context.contains("matrícula"));
+        assertTrue(context.contains("booking form"));
+        assertTrue(context.contains("enrollment"));
         assertTrue(context.contains("+506 8327-8347"));
-        assertFalse(context.contains("DATOS REALES PENDIENTES"));
+        assertFalse(context.contains("PENDING REAL DATA"));
     }
 }

@@ -117,7 +117,7 @@ public class AppointmentController {
             List<LocalTime> freeSlots = scheduleConfigService.getAvailableSlotsForDate(date);
             return ResponseEntity.ok(freeSlots);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al consultar los horarios: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error fetching the time slots: " + e.getMessage());
         }
     }
 
@@ -128,7 +128,7 @@ public class AppointmentController {
             Map<String, AvailableDayResponse> weekSlots = scheduleConfigService.getAvailableSlotsForWeek(date);
             return ResponseEntity.ok(weekSlots);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Error al consultar la semana: " + e.getMessage());
+            return ResponseEntity.badRequest().body("Error fetching the week: " + e.getMessage());
         }
     }
 
@@ -146,6 +146,6 @@ public class AppointmentController {
     @GetMapping("/test-reminders")
     public ResponseEntity<String> testReminders() {
         appointmentService.send24HourReminders();
-        return ResponseEntity.ok("Tarea de recordatorios ejecutada manualmente.");
+        return ResponseEntity.ok("Reminder task run manually.");
     }
 }

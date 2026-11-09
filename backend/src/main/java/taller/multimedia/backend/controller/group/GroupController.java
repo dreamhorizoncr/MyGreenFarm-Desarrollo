@@ -71,7 +71,7 @@ public class GroupController {
             UserDetailsImpl currentUser = (UserDetailsImpl) authentication.getPrincipal();
             if (!currentUser.getId().equals(teacherId)) {
                 throw new org.springframework.security.access.AccessDeniedException(
-                        "No puede consultar los grupos de otro teacher");
+                        "You cannot view another teacher's groups");
             }
         }
 

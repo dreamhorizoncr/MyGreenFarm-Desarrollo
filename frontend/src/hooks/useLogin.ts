@@ -36,7 +36,7 @@ export function useLogin() {
     try {
       await authService.signout()
     } catch {
-      // si el backend ya no responde, limpiamos igual
+      // Clear the session even if the backend does not respond
     }
     tokenStorage.clear()
     userStorage.clear()

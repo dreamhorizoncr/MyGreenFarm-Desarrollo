@@ -35,14 +35,14 @@ public class ClubImageService {
     @Transactional
     public List<ClubImageResponse> uploadImages(Long clubId, List<MultipartFile> files, boolean isCover, List<String> altTexts) {
         Club club = clubRepository.findById(clubId)
-                .orElseThrow(() -> new EntityNotFoundException("Club no encontrado con ID: " + clubId));
+                .orElseThrow(() -> new EntityNotFoundException("Club not found with ID: " + clubId));
 
         if (files == null || files.isEmpty()) {
-            throw new IllegalArgumentException("Debe seleccionar al menos un archivo.");
+            throw new IllegalArgumentException("You must select at least one file.");
         }
 
         if (isCover && files.size() > 1) {
-            throw new IllegalArgumentException("Solo se puede establecer una imagen de portada a la vez.");
+            throw new IllegalArgumentException("Only one cover image can be set at a time.");
         }
 
         List<ClubImage> existingImages = imageRepository.findByClubIdOrderBySortOrderAsc(clubId);
@@ -51,7 +51,7 @@ public class ClubImageService {
 
         if (!isCover && (currentGalleryCount + files.size() > 4)) {
             throw new IllegalStateException(
-                    "Límite excedido. Solo se permiten un máximo de 4 imágenes en la galería. Actualmente hay "
+                    "Limit exceeded. A maximum of 4 images is allowed in the gallery. Current count: "
                             + currentGalleryCount);
         }
 
@@ -74,7 +74,7 @@ public class ClubImageService {
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
                 throw new IllegalArgumentException(
-                        "Formato no permitido en uno de los archivos. Solo PNG, JPG, JPEG, SVG y WEBP.");
+                        "One of the files has an unsupported format. Only PNG, JPG, JPEG, SVG and WEBP are allowed.");
             }
 
             String fileUrl = storageService.uploadFile(file, clubsBucket, folder);
@@ -95,16 +95,16 @@ public class ClubImageService {
     @Transactional
     public ClubImageResponse updateImage(Long imageId, MultipartFile file, Boolean isCover) {
         if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("Debe seleccionar un archivo válido para actualizar.");
+            throw new IllegalArgumentException("You must select a valid file to update.");
         }
 
         String contentType = file.getContentType();
         if (contentType == null || !isValidImageFormat(contentType)) {
-            throw new IllegalArgumentException("Formato no permitido. Solo PNG, JPG, JPEG, SVG y WEBP.");
+            throw new IllegalArgumentException("Unsupported format. Only PNG, JPG, JPEG, SVG and WEBP are allowed.");
         }
 
         ClubImage image = imageRepository.findById(imageId)
-                .orElseThrow(() -> new EntityNotFoundException("Imagen no encontrada con ID: " + imageId));
+                .orElseThrow(() -> new EntityNotFoundException("Image not found with ID: " + imageId));
 
         Long clubId = image.getClub().getId();
         boolean newIsCover = isCover != null ? isCover : Boolean.TRUE.equals(image.getIsCover());
@@ -118,7 +118,7 @@ public class ClubImageService {
 
             if (currentGalleryCount >= 4) {
                 throw new IllegalStateException(
-                        "Límite alcanzado. Solo se permiten un máximo de 4 imágenes en la galería.");
+                        "Limit reached. A maximum of 4 images is allowed in the gallery.");
             }
         }
 
@@ -138,7 +138,7 @@ public class ClubImageService {
             try {
                 storageService.deleteFile(clubsBucket, oldFilePath);
             } catch (Exception e) {
-                System.err.println("No se pudo eliminar la imagen antigua del storage: " + e.getMessage());
+                System.err.println("Could not delete the old image from storage: " + e.getMessage());
             }
         }
 
@@ -155,11 +155,11 @@ public class ClubImageService {
     @Transactional
     public ClubImageResponse updateSortOrder(Long imageId, Integer newSortOrder) {
         if (newSortOrder == null || newSortOrder < 0) {
-            throw new IllegalArgumentException("El orden de la imagen debe ser un número entero mayor o igual a cero.");
+            throw new IllegalArgumentException("The image order must be a whole number greater than or equal to zero.");
         }
 
         ClubImage image = imageRepository.findById(imageId)
-                .orElseThrow(() -> new EntityNotFoundException("Imagen no encontrada con ID: " + imageId));
+                .orElseThrow(() -> new EntityNotFoundException("Image not found with ID: " + imageId));
 
         image.setSortOrder(newSortOrder);
         ClubImage updated = imageRepository.save(image);
@@ -170,7 +170,7 @@ public class ClubImageService {
     @Transactional
     public void updateAltText(Long imageId, String altText) {
         ClubImage image = imageRepository.findById(imageId)
-                .orElseThrow(() -> new RuntimeException("Imagen no encontrada con ID: " + imageId));
+                .orElseThrow(() -> new RuntimeException("Image not found with ID: " + imageId));
         image.setAltText(ImageAltText.clean(altText));
         imageRepository.save(image);
     }
@@ -193,7 +193,7 @@ public class ClubImageService {
     @Transactional
     public void deleteImage(Long imageId) {
         ClubImage image = imageRepository.findById(imageId)
-                .orElseThrow(() -> new EntityNotFoundException("Imagen no encontrada con ID: " + imageId));
+                .orElseThrow(() -> new EntityNotFoundException("Image not found with ID: " + imageId));
 
         String fileUrl = image.getFileUrl();
         String filePath = extractPathFromUrl(fileUrl, clubsBucket);
@@ -202,7 +202,7 @@ public class ClubImageService {
             try {
                 storageService.deleteFile(clubsBucket, filePath);
             } catch (Exception e) {
-                System.err.println("No se pudo borrar el archivo físico del bucket: " + e.getMessage());
+                System.err.println("Could not delete the file from the bucket: " + e.getMessage());
             }
         }
 
@@ -229,7 +229,7 @@ public class ClubImageService {
                 try {
                     storageService.deleteFile(clubsBucket, filePath);
                 } catch (Exception e) {
-                    System.err.println("No se pudo borrar el archivo físico del bucket: " + e.getMessage());
+                    System.err.println("Could not delete the file from the bucket: " + e.getMessage());
                 }
             }
         }
@@ -250,7 +250,7 @@ public class ClubImageService {
                 return fileUrl.substring(index + marker.length());
             }
         } catch (Exception e) {
-            System.err.println("Error al extraer la ruta de la URL: " + e.getMessage());
+            System.err.println("Error extracting the path from the URL: " + e.getMessage());
         }
         return null;
     }

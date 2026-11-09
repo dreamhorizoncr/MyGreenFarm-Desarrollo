@@ -38,7 +38,7 @@ public class BackendMessageTranslator {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
             reader.lines().skip(1).filter(line -> !line.isBlank()).forEach(this::addLine);
         } catch (IOException exception) {
-            throw new UncheckedIOException("No se pudo leer " + RESOURCE, exception);
+            throw new UncheckedIOException("Could not read " + RESOURCE, exception);
         }
         prefixes.sort(Comparator.comparingInt((Entry entry) -> entry.source().length()).reversed());
     }

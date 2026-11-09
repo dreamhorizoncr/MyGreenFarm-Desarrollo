@@ -56,7 +56,7 @@ export function useAnnouncementCategories() {
         setTranslatedTitles(Object.fromEntries(custom.map((category) => [category.id, translated[`${category.id}:title`] ?? category.title])))
       })
       .catch(() => {
-        // Si falla la traducción se muestran los nombres originales.
+        // Keep the original names if translation fails.
       })
     return () => {
       active = false

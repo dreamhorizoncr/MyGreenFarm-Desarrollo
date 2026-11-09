@@ -1,5 +1,6 @@
 import React from 'react'
 import { createPortal } from 'react-dom'
+import { Trans, useTranslation } from 'react-i18next'
 import { SmartphoneIcon } from '@animateicons/react/lucide'
 
 interface SinpeModalProps {
@@ -19,6 +20,7 @@ export const SinpeModal: React.FC<SinpeModalProps> = ({
     onConfirm,
     onCancel
 }) => {
+    const { t } = useTranslation()
     if (!isOpen) return null
 
     return createPortal(
@@ -34,20 +36,24 @@ export const SinpeModal: React.FC<SinpeModalProps> = ({
             </div>
 
                 <h3 id="sinpe-modal-title" className="font-heading text-xl font-bold">
-                    Procesando Transferencia SINPE
+                    {t('services.sinpeModal.title')}
                 </h3>
 
                 <p className="mt-2 font-body text-sm text-neutral-500">
-                    Hemos recibido la instrucción de pago para <strong className="text-orange-500">{planName}</strong>. La red bancaria está validando la acreditación de los fondos.
+                    <Trans
+                        i18nKey="services.sinpeModal.received"
+                        values={{ plan: planName }}
+                        components={{ strong: <strong className="text-orange-500" /> }}
+                    />
                 </p>
 
                 <div className="mt-4 rounded-2xl bg-neutral-50 p-4 text-left font-body text-xs text-neutral-600">
                     <div className="flex justify-between py-1 border-b border-neutral-200">
-                        <span className="font-semibold">Teléfono asociado:</span>
+                        <span className="font-semibold">{t('services.sinpeModal.phone')}</span>
                         <span>{phoneNumber}</span>
                     </div>
                     <div className="flex justify-between py-1">
-                        <span className="font-semibold">Referencia:</span>
+                        <span className="font-semibold">{t('services.sinpeModal.reference')}</span>
                         <span>{sinpeReference}</span>
                     </div>
                 </div>
@@ -58,7 +64,7 @@ export const SinpeModal: React.FC<SinpeModalProps> = ({
                         onClick={onConfirm}
                         className="w-full rounded-full bg-green-500 py-3 font-body text-sm font-semibold text-white transition hover:bg-green-600 shadow-sm"
                     >
-                        Entendido / Ir al inicio
+                        {t('services.sinpeModal.confirm')}
                     </button>
 
                     <button
@@ -66,7 +72,7 @@ export const SinpeModal: React.FC<SinpeModalProps> = ({
                         onClick={onCancel}
                         className="w-full rounded-full bg-transparent py-2 font-body text-xs font-semibold text-neutral-500 transition hover:text-orange-500"
                     >
-                        Volver a Servicios
+                        {t('services.sinpeModal.back')}
                     </button>
                 </div>
             </dialog>

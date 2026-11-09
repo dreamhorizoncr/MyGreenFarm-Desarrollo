@@ -115,7 +115,7 @@ function EvaluationFormModal({
         let dateError = validateRequired(form.evaluationDate, t("admin.evaluations.formDateLabel"), t);
         
         if (!dateError && form.evaluationDate > today) {
-            dateError = t("admin.evaluations.formDateFutureError", { defaultValue: "La fecha de evaluación no puede ser posterior a hoy." });
+            dateError = t("admin.evaluations.formDateFutureError");
         }
 
         const errors: Partial<Record<keyof EvaluationRequest, string | null>> = {

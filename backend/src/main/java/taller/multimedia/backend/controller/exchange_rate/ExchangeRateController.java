@@ -13,20 +13,20 @@ import taller.multimedia.backend.dto.exchange_rate.ExchangeRateResponse;
 import taller.multimedia.backend.service.exchange_rate.ExchangeRateService;
 
 @RestController
-@RequestMapping("/api/tipo-cambio")
+@RequestMapping("/api/exchange-rate")
 @RequiredArgsConstructor
 public class ExchangeRateController {
 
     private final ExchangeRateService exchangeRateService;
 
-    @GetMapping("/actual")
+    @GetMapping("/current")
     public ResponseEntity<ExchangeRateResponse> getCurrent() {
         return exchangeRateService.getCurrent()
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NO_CONTENT).build());
     }
 
-    @PostMapping("/actualizar-ahora")
+    @PostMapping("/refresh")
     @PreAuthorize("hasAnyRole('OWNER')")
     public ResponseEntity<ExchangeRateResponse> updateNow() {
         exchangeRateService.updateExchangeRate();

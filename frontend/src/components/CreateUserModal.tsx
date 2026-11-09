@@ -6,12 +6,14 @@ import DatePickerField from './ui/DatePickerField.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import { useRegister } from '../hooks/useRegister.ts'
-import { notify } from '../utils/notifications.ts'
 import { validateEmail, validatePassword, validateRequired, validateSafeText } from '../utils/validators.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 import TabHighlight from './ui/TabHighlight.tsx'
 import FieldHint from './ui/FieldHint.tsx'
 import AutoHeight from './ui/AutoHeight.tsx'
+import TeacherPhotoField from './TeacherPhotoField.tsx'
+import { adminService } from '../services/admin.ts'
+import { notify, notifyError } from '../utils/notifications.ts'
 
 interface CreateUserModalProps {
   onCreated: () => void | Promise<void>
@@ -41,6 +43,7 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
   const [password, setPassword] = useState('')
   const [role, setRole] = useState<Role | ''>('')
   const [birthday, setBirthday] = useState('')
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [errors, setErrors] = useState<Record<string, string | null>>({})
 
   useEffect(() => {
@@ -71,7 +74,14 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
         role,
         birthday: role === 'TEACHER' && birthday ? birthday : undefined,
       },
-      async () => {
+      async (response) => {
+        if (role === 'TEACHER' && photoFile && response.id) {
+          try {
+            await adminService.uploadTeacherPhoto(response.id, photoFile)
+          } catch (err) {
+            notifyError(t('admin.teachers.photoUploadError'), err)
+          }
+        }
         notify.success({ title: t('signup.successToastTitle'), description: t('signup.success') })
         await onCreated()
         requestClose()
@@ -199,6 +209,16 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
             <DatePickerField value={birthday} onChange={setBirthday} max={new Date().toISOString().split('T')[0]} ariaLabel={t('signup.birthdayOptional')} />
             <FieldHint>{t('fields.person.birthday.hint')}</FieldHint>
           </div>
+        )}
+
+        {role === 'TEACHER' && (
+          <TeacherPhotoField
+            file={photoFile}
+            removed={false}
+            disabled={loading}
+            onFileChange={setPhotoFile}
+            onRemovedChange={(removed) => { if (removed) setPhotoFile(null) }}
+          />
         )}
       </AutoHeight>
       </div>

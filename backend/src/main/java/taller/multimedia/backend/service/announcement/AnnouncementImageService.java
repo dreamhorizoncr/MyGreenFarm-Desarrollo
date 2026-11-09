@@ -33,14 +33,14 @@ public class AnnouncementImageService {
     public List<AnnouncementImageResponse> uploadImages(UUID announcementId, List<MultipartFile> files,
             boolean isCover, List<String> altTexts) {
         Announcement announcement = announcementRepository.findById(announcementId)
-                .orElseThrow(() -> new RuntimeException("Anuncio no encontrado con ID: " + announcementId));
+                .orElseThrow(() -> new RuntimeException("Announcement not found with ID: " + announcementId));
 
         if (files == null || files.isEmpty()) {
-            throw new IllegalArgumentException("Debe seleccionar al menos un archivo.");
+            throw new IllegalArgumentException("You must select at least one file.");
         }
 
         if (isCover && files.size() > 1) {
-            throw new IllegalArgumentException("Solo se puede establecer una imagen de portada a la vez.");
+            throw new IllegalArgumentException("Only one cover image can be set at a time.");
         }
 
         List<AnnouncementImage> existingImages = imageRepository.findByAnnouncementId(announcementId);
@@ -48,7 +48,7 @@ public class AnnouncementImageService {
 
         if (!isCover && (currentGalleryCount + files.size() > 4)) {
             throw new IllegalStateException(
-                    "Límite excedido. Solo se permiten un máximo de 4 imágenes en la galería. Actualmente hay "
+                    "Limit exceeded. A maximum of 4 images is allowed in the gallery. Current count: "
                             + currentGalleryCount);
         }
 
@@ -71,7 +71,7 @@ public class AnnouncementImageService {
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
                 throw new IllegalArgumentException(
-                        "Formato no permitido en uno de los archivos. Solo PNG, JPG, JPEG, SVG.");
+                        "One of the files has an unsupported format. Only PNG, JPG, JPEG and SVG are allowed.");
             }
 
             String fileUrl = storageService.uploadFile(file, announcementsBucket, folder);
@@ -92,7 +92,7 @@ public class AnnouncementImageService {
     @Transactional
     public void updateAltText(UUID imageId, String altText) {
         AnnouncementImage image = imageRepository.findById(imageId)
-                .orElseThrow(() -> new RuntimeException("Imagen no encontrada con ID: " + imageId));
+                .orElseThrow(() -> new RuntimeException("Image not found with ID: " + imageId));
         image.setAltText(ImageAltText.clean(altText));
         imageRepository.save(image);
     }
@@ -114,7 +114,7 @@ public class AnnouncementImageService {
     @Transactional
     public void deleteImage(UUID imageId) {
         AnnouncementImage image = imageRepository.findById(imageId)
-                .orElseThrow(() -> new RuntimeException("Imagen no encontrada con ID: " + imageId));
+                .orElseThrow(() -> new RuntimeException("Image not found with ID: " + imageId));
 
         String fileUrl = image.getFileUrl();
         String filePath = extractPathFromUrl(fileUrl, announcementsBucket);
@@ -136,7 +136,7 @@ public class AnnouncementImageService {
                 try {
                     storageService.deleteFile(announcementsBucket, filePath);
                 } catch (Exception e) {
-                    System.err.println("No se pudo borrar el archivo físico del bucket: " + e.getMessage());
+                    System.err.println("Could not delete the file from the bucket: " + e.getMessage());
                 }
             }
         }
@@ -150,7 +150,7 @@ public class AnnouncementImageService {
                 return fileUrl.substring(index + marker.length());
             }
         } catch (Exception e) {
-            System.err.println("Error al extraer la ruta de la URL: " + e.getMessage());
+            System.err.println("Error extracting the path from the URL: " + e.getMessage());
         }
         return null;
     }

@@ -13,7 +13,7 @@ import taller.multimedia.backend.model.group.TeacherGroup;
 @Repository
 public interface TeacherGroupRepository extends JpaRepository<TeacherGroup, Long> {
 
-    /** Quita al docente de todos los grupos donde está asignado (los grupos no se tocan). */
+    /** Removes the teacher from every group they are assigned to; the groups themselves are kept. */
     @Modifying(flushAutomatically = true)
     @Query("DELETE FROM TeacherGroup tg WHERE tg.teacher.id = :teacherId")
     int deleteByTeacherId(@Param("teacherId") UUID teacherId);

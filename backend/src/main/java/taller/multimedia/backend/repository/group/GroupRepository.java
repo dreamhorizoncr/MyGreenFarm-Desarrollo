@@ -23,4 +23,8 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
 
     @Query("SELECT DISTINCT g FROM Group g JOIN g.teacherGroups tg WHERE tg.teacher.id = :teacherId")
     List<Group> findByTeacherId(@Param("teacherId") UUID teacherId);
+
+    boolean existsByNameIgnoreCase(String name);
+
+    boolean existsByNameIgnoreCaseAndIdNot(String name, Long id);
 }

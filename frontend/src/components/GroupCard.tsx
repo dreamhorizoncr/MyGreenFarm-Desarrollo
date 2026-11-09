@@ -3,11 +3,13 @@ import {UsersIcon,UserIcon,FileTextIcon,} from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import Skeleton from './ui/Skeleton.tsx'
 import CardActionButton from './ui/CardActionButton.tsx'
+import Tag from './ui/Tag.tsx'
 import type { Group } from '../types/group.ts'
 
     interface GroupCardProps {
     group?: Group
     onEdit?: (group: Group) => void
+    onDelete?: (group: Group) => void
     onView?: (group: Group) => void
     loading?: boolean
     canManage?: boolean
@@ -29,7 +31,7 @@ import type { Group } from '../types/group.ts'
     )
     }
 
-    function GroupCardSkeleton() {
+    function GroupCardSkeleton({ withActions }: Readonly<{ withActions: boolean }>) {
     return (
         <article className="card-hover min-w-0 rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
         <div className="flex items-start justify-between gap-4">
@@ -38,7 +40,12 @@ import type { Group } from '../types/group.ts'
             <Skeleton shape="line" className="mt-2 h-3 w-1/3" />
             </div>
 
-            <Skeleton shape="circle" className="size-10 shrink-0" />
+            {withActions && (
+                <div className="flex shrink-0 items-center gap-2">
+                <Skeleton shape="circle" className="size-10" />
+                <Skeleton shape="circle" className="size-10" />
+                </div>
+            )}
         </div>
 
         <div className="mt-6 flex flex-col gap-4">
@@ -57,13 +64,14 @@ import type { Group } from '../types/group.ts'
     function GroupCard({
     group,
     onEdit,
+    onDelete,
     onView,
     loading = false,
     canManage = false,
     }: Readonly<GroupCardProps>) {
     const { t } = useTranslation()
 
-    if (loading || !group) return <GroupCardSkeleton />
+    if (loading || !group) return <GroupCardSkeleton withActions={canManage} />
 
     let availabilityLabel = t('admin.groups.availableSpots', { count: group.availableSpots ?? 0 })
     if (group.availableSpots === null) availabilityLabel = t('admin.groups.unlimitedCapacity')
@@ -71,7 +79,6 @@ import type { Group } from '../types/group.ts'
 
     return (
         <article className="card-hover min-w-0 rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
-        {/* Header */}
         <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 flex-1">
             <h2 className="break-words font-heading text-h5 font-bold text-heading">
@@ -83,7 +90,6 @@ import type { Group } from '../types/group.ts'
             </p>
             </div>
 
-            {/* Actions */}
             {canManage &&
             onEdit && (
                 <div className="flex shrink-0 items-center gap-2">
@@ -93,13 +99,20 @@ import type { Group } from '../types/group.ts'
                     title={t('admin.groups.editTitle')}
                     onClick={() => onEdit(group)}
                 />
+                {onDelete && (
+                    <CardActionButton
+                    action="delete"
+                    label={`${t('admin.groups.deleteTitle')} ${group.name}`}
+                    title={t('admin.groups.deleteTitle')}
+                    onClick={() => onDelete(group)}
+                    />
+                )}
                 </div>
             )}
         </div>
 
         {/* Information */}
         <div className="mt-6 flex flex-col gap-4">
-            {/* Teacher */}
             <div className="flex items-start gap-3">
             <UserIcon
                 size={18}
@@ -118,7 +131,6 @@ import type { Group } from '../types/group.ts'
             </div>
             </div>
 
-            {/* Capacity */}
             <div className="flex items-start gap-3">
             <UsersIcon
                 size={18}
@@ -140,7 +152,6 @@ import type { Group } from '../types/group.ts'
             </div>
             </div>
 
-            {/* Description */}
             <div className="flex items-start gap-3">
             <FileTextIcon
                 size={18}
@@ -161,18 +172,9 @@ import type { Group } from '../types/group.ts'
             </div>
         </div>
 
-        {/* Availability */}
         <div className="mt-6 border-t border-neutral-100 pt-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
-            <span
-                className={`rounded-full px-sm py-2xs font-body text-caption font-semibold ${
-                group.availableSpots === 0
-                    ? 'bg-red-50 text-red-600'
-                    : 'bg-green-50 text-green-700'
-                }`}
-            >
-                {availabilityLabel}
-            </span>
+            <Tag>{availabilityLabel}</Tag>
 
             {onView && (
                 <button

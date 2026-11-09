@@ -45,7 +45,7 @@ public class ExpedientController {
         } catch (InvalidFieldException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Error al procesar el expediente: " + e.getMessage());
+            throw new RuntimeException("Error processing the record: " + e.getMessage());
         }
     }
 
@@ -92,7 +92,7 @@ public class ExpedientController {
         } catch (InvalidFieldException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Error al actualizar el expediente: " + e.getMessage());
+            throw new RuntimeException("Error updating the record: " + e.getMessage());
         }
     }
 }

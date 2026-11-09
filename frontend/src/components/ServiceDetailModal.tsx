@@ -44,7 +44,6 @@ import CurrencyToggle from './currency/CurrencyToggle.tsx'
             dialogRef.current?.showModal()
         }, [])
 
-        // Cálculo del precio según la moneda seleccionada en el Toggle
         const price = exchangeRate
             ? convertCurrency(plan.price, cleanCurrency(plan.currency), currency, 'buy', exchangeRate)
             : plan.price

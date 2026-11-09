@@ -44,7 +44,7 @@ function AppointmentDetailsModal({ appointment, onClose }: Readonly<AppointmentD
         if (!cancelled) setTranslations(result)
       })
       .catch(() => {
-        // Si falla la traducción se muestra el texto original.
+        // Keep the original text if translation fails.
       })
     return () => {
       cancelled = true

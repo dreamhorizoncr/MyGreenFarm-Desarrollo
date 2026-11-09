@@ -30,7 +30,7 @@ public class EvaluationService {
         public Evaluation createEvaluation(EvaluationRequest request) {
                 Expedient expedient = expedientRepository.findById(request.getExpedientId())
                                 .orElseThrow(() -> new RuntimeException(
-                                                "Expediente no encontrado con ID: " + request.getExpedientId()));
+                                                "Record not found with ID: " + request.getExpedientId()));
 
                 Evaluation evaluation = new Evaluation();
                 evaluation.setEvaluationDate(request.getEvaluationDate());
@@ -68,7 +68,7 @@ public class EvaluationService {
         @Transactional(readOnly = true)
         public Evaluation getEvaluationById(UUID id) {
                 return evaluationRepository.findById(id)
-                                .orElseThrow(() -> new RuntimeException("Evaluación no encontrada con ID: " + id));
+                                .orElseThrow(() -> new RuntimeException("Evaluation not found with ID: " + id));
         }
 
         @Transactional
@@ -77,7 +77,7 @@ public class EvaluationService {
 
                 Expedient expedient = expedientRepository.findById(request.getExpedientId())
                                 .orElseThrow(() -> new RuntimeException(
-                                                "Expediente no encontrado con ID: " + request.getExpedientId()));
+                                                "Record not found with ID: " + request.getExpedientId()));
 
                 existingEvaluation.setEvaluationDate(request.getEvaluationDate());
                 existingEvaluation.setExpedientId(expedient);

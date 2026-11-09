@@ -39,7 +39,7 @@ async function translateClubNames(children: Child[], targetLang: string): Promis
             }
         }
     } catch {
-        // Sin catálogo de clubes se conservan los nombres originales
+        // Keep the original names without the clubs catalog
     }
 
     return translatedClubName

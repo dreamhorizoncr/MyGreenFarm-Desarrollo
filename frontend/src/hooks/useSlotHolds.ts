@@ -14,7 +14,7 @@ function readHolderId(storageKey: string): string {
     if (saved) return saved
     sessionStorage.setItem(storageKey, fresh)
   } catch {
-    // Sin sessionStorage se usa un identificador nuevo en cada carga
+    // Without sessionStorage a new ID is used on every load
   }
   return fresh
 }
@@ -52,7 +52,7 @@ export function useSlotHolds(storageKey: string = HOLDER_KEY) {
         if (key === myHoldRef.current) return
         setHeldByOthers((current) => (status === 'HELD' ? withKey(current, key) : withoutKey(current, key)))
       } catch {
-        // Un evento mal formado se ignora; el servidor vuelve a validar al reservar
+        // Ignore malformed events; the server validates again when booking
       }
     })
     return () => source.close()

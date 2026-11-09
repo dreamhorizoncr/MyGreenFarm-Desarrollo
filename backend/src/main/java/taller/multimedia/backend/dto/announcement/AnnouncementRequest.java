@@ -10,19 +10,19 @@ import lombok.Data;
 
 @Data
 public class AnnouncementRequest {
-    @NotBlank(message = "El título es obligatorio") 
-    @Size(min = 3, max = 70, message = "El título debe tener entre 3 y 70 caracteres")
+    @NotBlank(message = "The title is required") 
+    @Size(min = 3, max = 70, message = "The title must be between 3 and 70 characters")
     private String title;
 
-    @NotBlank(message = "El contenido es obligatorio")
-    @Size(min = 10, max = 4000, message = "El contenido no puede superar los 4000 caracteres")
+    @NotBlank(message = "The content is required")
+    @Size(min = 10, max = 4000, message = "The content cannot exceed 4000 characters")
     private String content;
 
-    @NotNull(message = "La categoría es obligatoria")
+    @NotNull(message = "The category is required")
     private UUID categoryId;
 
     private LocalDateTime eventDate;
-    @Size(min = 5, max = 255, message = "La locación no puede superar los 255 caracteres")
+    @Size(min = 5, max = 255, message = "The location cannot exceed 255 characters")
     private String location;
 
     public String getLocation() {

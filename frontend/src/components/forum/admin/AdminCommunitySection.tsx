@@ -47,7 +47,7 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
           try {
             translated = await forumService.translateBatch(COMMUNITY_POST_TRANSLATION_TYPE, language, items)
           } catch {
-            // Si la traducción falla se muestran los textos originales.
+            // Keep the original texts if translation fails.
           }
         }
         if (cancelled) return

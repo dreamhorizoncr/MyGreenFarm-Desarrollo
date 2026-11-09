@@ -65,8 +65,8 @@ function BlogPostPage() {
   useEffect(() => {
     if (!post) {
       setPageSEO({
-        title: 'Artículo | My Green Farm',
-        description: 'Lee artículos y experiencias compartidas por la comunidad de My Green Farm.',
+        title: t('seo.articleTitle'),
+        description: t('seo.articleDescription'),
       })
       return
     }
@@ -79,9 +79,9 @@ function BlogPostPage() {
 
     setPageSEO({
       title: `${post.title} | My Green Farm`,
-      description: description || 'Descubre este artículo de la comunidad de My Green Farm.',
+      description: description || t('seo.articleFallbackDescription'),
     })
-  }, [post?.title, post?.content])
+  }, [post?.title, post?.content, t])
 
   const comments = post ? getComments(post.id) : []
 
