@@ -128,15 +128,7 @@ import CurrencyToggle from './currency/CurrencyToggle.tsx'
                             </div>
                         </div>
 
-                        <div className="mt-xl">
-                            <button
-                                type="button"
-                                onClick={requestClose}
-                                className="h-12 w-full rounded-full border border-green-500 px-lg font-body text-body font-semibold text-heading transition-colors hover:bg-green-50"
-                            >
-                                {t('common.close')}
-                            </button>
-                        </div>
+                        
                     </section>
                 </div>
             </dialog>
