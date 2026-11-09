@@ -56,7 +56,7 @@ function CommunityPostCard({ post, onToggleLike, onOpenComments, onDelete, loadi
         )}
       </header>
 
-      <p className="m-0 mt-md flex-1 whitespace-pre-line break-words font-body text-body-sm leading-[1.6] text-body-text">
+      <p className="m-0 mt-md flex-1 whitespace-pre-line wrap-break-word font-body text-body-sm leading-[1.6] text-body-text">
         {post!.content}
       </p>
       <div className="mt-md flex items-center gap-lg border-t border-neutral-100 pt-md">

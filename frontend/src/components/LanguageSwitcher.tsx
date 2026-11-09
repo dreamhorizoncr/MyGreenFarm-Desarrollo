@@ -38,7 +38,7 @@ function LanguageSwitcher() {
     <div className="relative inline-flex" ref={rootRef}>
       <button
         type="button"
-        className="inline-flex min-w-0 items-center justify-center gap-xs rounded-2xl border border-neutral-200 bg-white p-xs font-body text-body-sm text-heading transition-colors duration-200 hover:border-link focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:min-w-[160px] md:px-md md:py-sm"
+        className="inline-flex min-w-0 items-center justify-center gap-xs rounded-2xl border border-neutral-200 bg-white p-xs font-body text-body-sm text-heading transition-colors duration-200 hover:border-link focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2 md:min-w-40 md:px-md md:py-sm"
         onClick={() => {
           const next = !open
           setOpen(next)
@@ -65,7 +65,7 @@ function LanguageSwitcher() {
       {open && (
         <motion.ul
           {...dropdownMotion}
-          className="absolute right-0 top-[calc(100%+var(--spacing-xs))] z-10 m-0 min-w-[168px] list-none rounded-xl border border-neutral-200 bg-white p-xs md:left-0 md:right-auto md:w-full"
+          className="absolute right-0 top-[calc(100%+var(--spacing-xs))] z-10 m-0 min-w-42 list-none rounded-xl border border-neutral-200 bg-white p-xs md:left-0 md:right-auto md:w-full"
           role="menu"
         >
           {SUPPORTED_LANGUAGES.map((language) => (

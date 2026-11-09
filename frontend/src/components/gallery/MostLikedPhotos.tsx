@@ -62,7 +62,7 @@ function MostLikedPhotos({ galleries }: Readonly<MostLikedPhotosProps>) {
         <div className="flex w-full flex-col items-start gap-sm text-left">
           <h2 className="m-0 font-heading text-h2 font-bold text-heading">{t('home.gallery.mostLikedTitle')}</h2>
           <div className="h-1 w-12 rounded-full bg-orange-500" aria-hidden="true" />
-          <p className="m-0 max-w-[30rem] font-body text-body text-body-text">{t('home.gallery.mostLikedDescription')}</p>
+          <p className="m-0 max-w-120 font-body text-body text-body-text">{t('home.gallery.mostLikedDescription')}</p>
         </div>
 
         <div className="flex w-full gap-sm pb-8 md:gap-md md:pb-10">
@@ -82,7 +82,7 @@ function MostLikedPhotos({ galleries }: Readonly<MostLikedPhotosProps>) {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: '0px 0px -10% 0px' }}
                     transition={{ duration: 0.5, delay: (index % columns) * 0.08, ease: 'easeOut' }}
-                    className="group relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-2xl bg-neutral-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--orange-500)]"
+                    className="group relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-2xl bg-neutral-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--orange-500)"
                   >
                     <img
                       src={photo.fileUrl}

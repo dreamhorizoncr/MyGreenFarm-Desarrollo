@@ -44,7 +44,7 @@ function JoinSection() {
   }
 
   return (
-    <section id="join" className="relative flex w-full flex-col md:min-h-[100svh]">
+    <section id="join" className="relative flex w-full flex-col md:min-h-svh">
       <div className="relative w-full overflow-hidden leading-none">
         <img
           src={cloudsPink}
@@ -103,11 +103,11 @@ function JoinSection() {
                 </span>
               </h2>
 
-              <p className="mt-md max-w-[30rem] font-body text-body font-normal text-white">
+              <p className="mt-md max-w-120 font-body text-body font-normal text-white">
                 {t('home.join.description')}
               </p>
 
-              <form onSubmit={handleSubmit} noValidate className="mt-xl w-full max-w-[30rem]">
+              <form onSubmit={handleSubmit} noValidate className="mt-xl w-full max-w-120">
                 <div className="flex flex-col gap-sm sm:flex-row">
                   <input
                     type="email"
@@ -122,7 +122,7 @@ function JoinSection() {
                     aria-invalid={!!emailError}
                     aria-describedby={emailError ? 'join-email-error' : undefined}
                     disabled={loading}
-                    className={`h-11 w-full min-w-0 rounded-xl border bg-white px-md font-body text-body-sm font-normal text-body-text-dark outline-none placeholder:text-[var(--grey-700)] focus:border-heading sm:flex-1 ${
+                    className={`h-11 w-full min-w-0 rounded-xl border bg-white px-md font-body text-body-sm font-normal text-body-text-dark outline-none placeholder:text-(--grey-700) focus:border-heading sm:flex-1 ${
                       emailError ? 'border-danger' : 'border-neutral-200'
                     }`}
                   />
