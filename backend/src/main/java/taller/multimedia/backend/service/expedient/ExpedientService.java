@@ -155,7 +155,7 @@ public class ExpedientService {
         if (file != null && !file.isEmpty()) {
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
-                throw new IllegalArgumentException("Unsupported format. Only PNG, JPG, JPEG and SVG are accepted.");
+                throw new IllegalArgumentException("Unsupported format. Only PNG, JPG, JPEG, WEBP and SVG are accepted.");
             }
 
             if (existing.getPhotoUrl() != null && !existing.getPhotoUrl().isEmpty()) {
@@ -194,6 +194,7 @@ public class ExpedientService {
         return contentType.equals("image/png") ||
                 contentType.equals("image/jpg") ||
                 contentType.equals("image/jpeg") ||
+                contentType.equals("image/webp") ||
                 contentType.equals("image/svg+xml");
     }
 

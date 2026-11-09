@@ -74,7 +74,7 @@ public class ClubImageService {
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
                 throw new IllegalArgumentException(
-                        "One of the files has an unsupported format. Only PNG, JPG, JPEG, SVG and WEBP are allowed.");
+                        "One of the files has an unsupported format. Only PNG, JPG, JPEG, SVG, and WEBP are allowed.");
             }
 
             String fileUrl = storageService.uploadFile(file, clubsBucket, folder);

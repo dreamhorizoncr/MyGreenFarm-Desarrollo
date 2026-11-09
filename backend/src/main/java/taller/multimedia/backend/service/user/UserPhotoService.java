@@ -39,7 +39,7 @@ public class UserPhotoService {
 
         String contentType = file.getContentType();
         if (contentType == null || !isValidImageFormat(contentType)) {
-            throw new IllegalArgumentException("Unsupported image format. Only PNG, JPG, JPEG and SVG are accepted.");
+            throw new IllegalArgumentException("Unsupported image format. Only PNG, JPG, JPEG, WEBP and SVG are accepted.");
         }
 
         if (user.getPhotoUrl() != null && !user.getPhotoUrl().isBlank()) {
@@ -87,6 +87,7 @@ public class UserPhotoService {
         return contentType.equals("image/png") ||
                 contentType.equals("image/jpg") ||
                 contentType.equals("image/jpeg") ||
+                contentType.equals("image/webp") ||
                 contentType.equals("image/svg+xml");
     }
 

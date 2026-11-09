@@ -1,6 +1,9 @@
 package taller.multimedia.backend.controller.service_plan;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +17,6 @@ import taller.multimedia.backend.service.service_plan.ServicePlanService;
 import taller.multimedia.backend.service.spelling.SpellingCorrectionAsyncService;
 import tools.jackson.databind.ObjectMapper;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -28,11 +30,10 @@ public class ServicePlanController {
     private final ObjectMapper objectMapper;
 
     @GetMapping
-    public ResponseEntity<List<ServicePlan>> getAllPlans(@RequestParam(required = false) Boolean activeOnly) {
-        List<ServicePlan> plans = (activeOnly != null && activeOnly)
-                ? servicePlanService.getActivePlans()
-                : servicePlanService.getAllPlans();
-        return ResponseEntity.ok(plans);
+    public ResponseEntity<Page<ServicePlan>> getAllPlans(
+            @RequestParam(required = false) Boolean activeOnly,
+            @PageableDefault(size = 10, sort = "name") Pageable pageable) {
+        return ResponseEntity.ok(servicePlanService.getPlans(activeOnly, pageable));
     }
 
     @GetMapping("/{id}")

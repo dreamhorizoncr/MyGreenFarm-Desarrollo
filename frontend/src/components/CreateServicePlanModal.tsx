@@ -17,7 +17,7 @@ import { emptySchedule, parseSchedule, serializeSchedule, validateSchedule } fro
 import FieldHint from './ui/FieldHint.tsx'
 import Select, { type SelectOption } from './ui/Select.tsx'
 
-const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml']
+const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml','image/webp']
 
 interface SelectedImage {
   file: File

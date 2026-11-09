@@ -154,7 +154,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
               <input
                 ref={certificatesInputRef}
                 type="file"
-                accept="application/pdf,image/png,image/jpeg"
+                accept="application/pdf,image/png,image/jpeg,image/webp"
                 multiple
                 onChange={(e) => form.handleCertificatesChange(e.target.files)}
                 className="hidden"

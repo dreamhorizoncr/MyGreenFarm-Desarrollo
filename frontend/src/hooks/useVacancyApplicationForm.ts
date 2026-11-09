@@ -8,7 +8,7 @@ import type { OptionalApplicationField } from '../types/vacancy.ts'
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
 const MAX_CERTIFICATES = 5
-const CERTIFICATE_TYPES = new Set(['application/pdf', 'image/png', 'image/jpeg'])
+const CERTIFICATE_TYPES = new Set(['application/pdf', 'image/png', 'image/jpeg','image/webp'])
 
 interface ApplicationFormTarget {
   vacancyId: string | null

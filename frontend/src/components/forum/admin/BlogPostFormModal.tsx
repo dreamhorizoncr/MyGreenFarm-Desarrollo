@@ -14,6 +14,7 @@ const ALLOWED_IMAGE_TYPES = new Set([
   'image/png',
   'image/jpg',
   'image/jpeg',
+  'image/webp',
   'image/svg+xml',
 ])
 
@@ -289,7 +290,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
             <ImagePickerButton
               label={t('adminForum.chooseImage')}
               replacesCurrent={Boolean(form.imageUrl)}
-              accept="image/png,image/jpg,image/jpeg,image/svg+xml"
+              accept="image/png,image/jpg,image/jpeg,image/svg+xml,image/webp"
               onSelect={(files) => handleFileChange(files[0])}
             />
 
