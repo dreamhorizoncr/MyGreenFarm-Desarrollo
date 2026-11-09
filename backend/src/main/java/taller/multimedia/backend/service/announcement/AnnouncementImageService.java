@@ -71,7 +71,7 @@ public class AnnouncementImageService {
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
                 throw new IllegalArgumentException(
-                        "One of the files has an unsupported format. Only PNG, JPG, JPEG and SVG are allowed.");
+                        "One of the files has an unsupported format. Only PNG, JPG, JPEG, WEBP and SVG are allowed.");
             }
 
             String fileUrl = storageService.uploadFile(file, announcementsBucket, folder);
@@ -101,6 +101,7 @@ public class AnnouncementImageService {
         return contentType.equals("image/png") ||
                 contentType.equals("image/jpg") ||
                 contentType.equals("image/jpeg") ||
+                contentType.equals("image/webp") ||
                 contentType.equals("image/svg+xml");
     }
 

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import chicks from '../../assets/imgs/chicks.webp'
 import cloudsPink from '../../assets/imgs/cloudsPink.svg'
 import pencil from '../../assets/imgs/pencil.svg'
-import transportador from '../../assets/imgs/transportador.svg'
+import protractor from '../../assets/imgs/protractor.svg'
 import abacus from '../../assets/imgs/abacus.svg'
 import scissors from '../../assets/imgs/scissors.svg'
 import Container from '../../components/home/Container.tsx'
@@ -16,7 +16,7 @@ const BRUSH_UNDERLINE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org
 
 const DOODLES = [
   { src: pencil, className: 'left-[3%] top-[8%] h-16 -rotate-12' },
-  { src: transportador, className: 'right-[4%] top-[6%] h-14 rotate-12' },
+  { src: protractor, className: 'right-[4%] top-[6%] h-14 rotate-12' },
   { src: abacus, className: 'bottom-[10%] left-[30%] hidden h-14 rotate-6 md:block' },
   { src: scissors, className: 'right-[30%] bottom-[8%] hidden h-12 -rotate-12 md:block' },
 ]
@@ -44,7 +44,7 @@ function JoinSection() {
   }
 
   return (
-    <section id="join" className="relative flex w-full flex-col md:min-h-[100svh]">
+    <section id="join" className="relative flex w-full flex-col md:min-h-svh">
       <div className="relative w-full overflow-hidden leading-none">
         <img
           src={cloudsPink}
@@ -103,11 +103,11 @@ function JoinSection() {
                 </span>
               </h2>
 
-              <p className="mt-md max-w-[30rem] font-body text-body font-normal text-white">
+              <p className="mt-md max-w-120 font-body text-body font-normal text-white">
                 {t('home.join.description')}
               </p>
 
-              <form onSubmit={handleSubmit} noValidate className="mt-xl w-full max-w-[30rem]">
+              <form onSubmit={handleSubmit} noValidate className="mt-xl w-full max-w-120">
                 <div className="flex flex-col gap-sm sm:flex-row">
                   <input
                     type="email"
@@ -122,7 +122,7 @@ function JoinSection() {
                     aria-invalid={!!emailError}
                     aria-describedby={emailError ? 'join-email-error' : undefined}
                     disabled={loading}
-                    className={`h-11 w-full min-w-0 rounded-xl border bg-white px-md font-body text-body-sm font-normal text-body-text-dark outline-none placeholder:text-[var(--grey-700)] focus:border-heading sm:flex-1 ${
+                    className={`h-11 w-full min-w-0 rounded-xl border bg-white px-md font-body text-body-sm font-normal text-body-text-dark outline-none placeholder:text-(--grey-700) focus:border-heading sm:flex-1 ${
                       emailError ? 'border-danger' : 'border-neutral-200'
                     }`}
                   />

@@ -9,7 +9,7 @@ import ScallopEdge from '../components/ui/ScallopEdge.tsx'
 import BlobButton from '../components/ui/BlobButton.tsx'
 import pencil from '../assets/imgs/pencil.svg'
 import scissors from '../assets/imgs/scissors.svg'
-import eraser from '../assets/imgs/eraser.svg'
+import glue from '../assets/imgs/glue.svg'
 import goat from '../assets/imgs/goat.svg'
 import ModalCloseButton from '../components/ui/ModalCloseButton.tsx'
 import { useVacancies } from '../hooks/useVacancies.ts'
@@ -40,7 +40,7 @@ interface VacancyCardProps {
   position?: number
 }
 
-const HEADER_ILLUSTRATIONS = [pencil, scissors, eraser, goat]
+const HEADER_ILLUSTRATIONS = [pencil, scissors, glue, goat]
 
 function toneAttributes(position: number) {
   const mobilePink = position % 2 === 0
@@ -120,7 +120,7 @@ function VacancyCard({ title, description, onApply, loading = false, position = 
       <ScallopEdge className="text-(--tone-soft) transition-colors duration-300 group-hover:text-(--tone) group-data-active:text-(--tone)" />
 
       <div className="flex flex-1 flex-col p-lg pt-md">
-      <p className="m-0 flex-1 font-body text-body-sm text-[var(--grey-600)]">
+      <p className="m-0 flex-1 font-body text-body-sm text-(--grey-600)">
         {description}
       </p>
 
@@ -184,8 +184,20 @@ function VacanciesPage() {
     <div id="vacancies-page" className="min-h-screen bg-bg-page">
       <Navbar />
 
-      <section className="flex min-h-[280px] items-start bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
-        <div className="mx-auto w-full max-w-175">
+      <section className="relative flex min-h-70 items-start overflow-hidden bg-white px-7.5 pt-12 pb-10 text-center md:min-h-80 md:pt-12">
+        <img
+          src={goat}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute left-[3%] top-[25%] w-[clamp(3rem,9vw,6rem)] -rotate-12 select-none opacity-50 md:left-[8%] md:top-[25%] lg:left-[10%] lg:top-[25%]"
+        />
+        <img
+          src={scissors}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute right-[3%] top-[25%] w-[clamp(3rem,9vw,6rem)] rotate-12 select-none opacity-50 md:right-[8%] md:top-[25%] lg:right-[10%] lg:top-[25%]"
+        />
+        <div className="relative z-10 mx-auto w-full max-w-175">
           <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">
             {t('vacancies.title')}
           </h1>
@@ -214,7 +226,7 @@ function VacanciesPage() {
                   <button
                     type="button"
                     onClick={openSpontaneousApply}
-                    className="mt-xs inline-flex h-11 items-center whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--orange-500)]"
+                    className="mt-xs inline-flex h-11 items-center whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--orange-500)"
                   >
                     {t('vacancies.spontaneousCta')}
                   </button>

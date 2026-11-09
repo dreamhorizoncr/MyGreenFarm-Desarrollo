@@ -1318,7 +1318,7 @@ export default {
       newPhotos: "Nouvelles photos",
       addPhotosHelp: "Choisissez plusieurs ou ajoutez-les une à une.",
       invalidFileType:
-        "«{{name}}» n’est pas une image valide. Seuls PNG, JPG, JPEG ou SVG sont autorisés.",
+        "«{{name}}» n’est pas une image valide. Seuls PNG, JPG, JPEG, WEBP ou SVG sont autorisés.",
       prevAlbums: "Albums précédents",
       nextAlbums: "Albums suivants",
       actions: "Actions de l’album",
@@ -1404,7 +1404,7 @@ export default {
       imageSelected: "Image sélectionnée",
       currentImage: "Image actuelle",
       invalidFileType:
-        "«{{name}}» n'est pas une image valide. Seuls PNG, JPG, JPEG ou SVG sont autorisés.",
+        "«{{name}}» n'est pas une image valide. Seuls PNG, JPG, JPEG, WEBP ou SVG sont autorisés.",
       create: "Créer le plan",
       deleteTitle: "Supprimer le plan",
       deleteConfirm:
@@ -1778,12 +1778,12 @@ export default {
     fileTooLarge: "Le fichier ne peut pas dépasser 5 Mo",
     fileRequired: "Vous devez joindre votre CV au format PDF",
     certificates: "Diplômes et certificats",
-    certificatesHint: "Facultatif. Maximum 5 fichiers (PDF, PNG ou JPG).",
+    certificatesHint: "Facultatif. Maximum 5 fichiers (PDF, PNG, WEBP ou JPG).",
     chooseCertificates: "Ajouter des fichiers",
     noCertificatesChosen: "Aucun fichier sélectionné",
     removeCertificate: "Retirer le fichier",
     tooManyCertificates: "Vous pouvez joindre au maximum {{max}} fichiers",
-    invalidCertificateType: "Les fichiers doivent être PDF, PNG ou JPG",
+    invalidCertificateType: "Les fichiers doivent être PDF, PNG, WEBP ou JPG",
     certificateTooLarge: "Chaque fichier ne peut pas dépasser 5 Mo",
     certificatesRequired:
       "Vous devez joindre au moins un diplôme ou certificat",

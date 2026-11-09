@@ -53,7 +53,7 @@ function ForumCommentsModal<T extends ForumCommentItem>({
   const { closing, requestClose } = useModalExit(onClose)
 
   return (
-    <div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
+    <div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-4 md:p-[30px]">
       <button
         type="button"
         tabIndex={-1}
@@ -62,7 +62,7 @@ function ForumCommentsModal<T extends ForumCommentItem>({
         onClick={requestClose}
       />
 
-      <div className={`relative mx-auto max-h-full modal-scroll w-full max-w-[680px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}>
+      <div className={`relative mx-auto max-h-full modal-scroll w-full max-w-170 rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}>
         <div className="flex items-center justify-between gap-md">
           <div className="min-w-0">
             <h2 className="m-0 font-heading text-h4 font-bold text-heading">
@@ -111,7 +111,7 @@ function ForumCommentsModal<T extends ForumCommentItem>({
                 <p className="m-0 font-body text-body-sm font-bold text-heading">
                   {comment.alias}
                 </p>
-                <p className="m-0 mt-2xs whitespace-pre-line break-words font-body text-body-sm text-body-text">
+                <p className="m-0 mt-2xs whitespace-pre-line wrap-break-word font-body text-body-sm text-body-text">
                   {comment.content}
                 </p>
                 <p className="m-0 mt-2xs font-body text-caption text-neutral-400">

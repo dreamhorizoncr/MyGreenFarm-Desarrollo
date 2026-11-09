@@ -13,7 +13,7 @@ import CarouselDots from "../../components/ui/CarouselDots.tsx";
 import CarouselArrowIcon from "../../components/ui/CarouselArrowIcon.tsx";
 import pencil from "../../assets/imgs/pencil.svg";
 import scissors from "../../assets/imgs/scissors.svg";
-import eraser from "../../assets/imgs/eraser.svg";
+import glue from "../../assets/imgs/glue.svg";
 import goat from "../../assets/imgs/goat.svg";
 import { animationsStopped } from "../../utils/reducedMotion";
 import { useAccessibility } from "../../contexts/accessibility";
@@ -101,7 +101,7 @@ function TestimonialsSection() {
     <section
       ref={sectionRef}
       id="testimonials"
-      className="relative flex min-h-[100svh] w-full flex-col"
+      className="relative flex min-h-svh w-full flex-col"
     >
       <div className="relative w-full overflow-hidden leading-none">
         <img
@@ -118,7 +118,7 @@ function TestimonialsSection() {
           src={pencil}
           alt=""
           aria-hidden="true"
-          className="absolute top-[1%] right-[3%] rotate-[18deg]
+          className="absolute top-[1%] right-[3%] rotate-18
     w-[clamp(4.5rem,11vw,12rem)]
     sm:right-[2%] sm:top-[3%]
     lg:top-[6%] lg:right-[4%]
@@ -126,7 +126,7 @@ function TestimonialsSection() {
         />
 
         <img
-          src={eraser}
+          src={glue}
           alt=""
           aria-hidden="true"
           className="absolute top-[11%] left-[1%] rotate-[-20deg]
@@ -140,7 +140,7 @@ function TestimonialsSection() {
           src={scissors}
           alt=""
           aria-hidden="true"
-          className="absolute bottom-[2%] left-[3%] rotate-[70deg]
+          className="absolute bottom-[2%] left-[3%] rotate-70
     w-[clamp(4rem,10vw,11rem)]
     sm:left-[3%]
     lg:bottom-[5%] lg:left-[7%]
@@ -165,7 +165,7 @@ function TestimonialsSection() {
           </h2>
 
           <div className="flex w-full flex-col items-center gap-1200">
-            <p className="max-w-[30rem] text-center font-body text-body font-normal text-body-text">
+            <p className="max-w-120 text-center font-body text-body font-normal text-body-text">
               {t("home.testimonials.description")}
             </p>
 
@@ -218,7 +218,7 @@ function TestimonialsSection() {
                     <span className="testimonial-card__quote font-body">
                       {testimonial.quote}
                     </span>
-                    <span className="mt-5 border-t border-[var(--grey-100)] pt-4">
+                    <span className="mt-5 border-t border-(--grey-100) pt-4">
                       <span className="flex items-center gap-3">
                         <Blobatar
                           name={name}
@@ -232,10 +232,10 @@ function TestimonialsSection() {
                           className="size-11 shrink-0 rounded-full"
                         />
                         <span className="flex min-w-0 flex-col">
-                          <span className="font-body text-body-sm font-bold text-[var(--grey-800)]">
+                          <span className="font-body text-body-sm font-bold text-(--grey-800)">
                             {name}
                           </span>
-                          <span className="font-body text-caption text-[var(--grey-500)]">
+                          <span className="font-body text-caption text-(--grey-500)">
                             {role}
                           </span>
                           <span className="sr-only">{style.initials}</span>
@@ -249,7 +249,7 @@ function TestimonialsSection() {
                 type="button"
                 aria-label={t("home.testimonials.previous")}
                 onClick={() => move(-1)}
-                className="testimonial-carousel__arrow testimonial-carousel__arrow--left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--orange-500)]"
+                className="testimonial-carousel__arrow testimonial-carousel__arrow--left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--orange-500)"
               >
                 <CarouselArrowIcon flip />
               </button>
@@ -257,7 +257,7 @@ function TestimonialsSection() {
                 type="button"
                 aria-label={t("home.testimonials.next")}
                 onClick={() => move(1)}
-                className="testimonial-carousel__arrow testimonial-carousel__arrow--right focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--orange-500)]"
+                className="testimonial-carousel__arrow testimonial-carousel__arrow--right focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--orange-500)"
               >
                 <CarouselArrowIcon />
               </button>

@@ -28,11 +28,11 @@ export default function ChatWidget() {
   })
 
   return (
-    <div ref={chatRef} className="fixed bottom-6 left-6 z-[999] flex flex-col items-start gap-3">
+    <div ref={chatRef} className="fixed bottom-6 left-6 z-999 flex flex-col items-start gap-3">
       {open && (
         <dialog
           open
-          className="static mx-0 mt-0 p-0 text-inherit mb-1 h-[min(72vh,560px)] w-[calc(100vw-2rem)] max-w-[390px] overflow-hidden max-sm:fixed max-sm:inset-x-6 max-sm:bottom-[5.5rem] max-sm:mx-auto max-sm:mb-0 max-sm:h-[min(72svh,560px)] max-sm:w-auto rounded-[20px] border border-neutral-200 bg-white shadow-lg animate-in fade-in slide-in-from-bottom-3 duration-200"
+          className="static mx-0 mt-0 p-0 text-inherit mb-1 h-[min(72vh,560px)] w-[calc(100vw-2rem)] max-w-[390px] overflow-hidden max-sm:fixed max-sm:inset-x-6 max-sm:bottom-22 max-sm:mx-auto max-sm:mb-0 max-sm:h-[min(72svh,560px)] max-sm:w-auto rounded-[20px] border border-neutral-200 bg-white shadow-lg animate-in fade-in slide-in-from-bottom-3 duration-200"
           aria-modal="false"
           aria-label={t('chat.title')}
         >

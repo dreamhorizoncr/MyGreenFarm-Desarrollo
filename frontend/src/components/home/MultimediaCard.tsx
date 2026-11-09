@@ -15,7 +15,7 @@ function MultimediaCard({ imageSrc, alt, badge, title, description, onClick, loa
     return (
       <article className="flex h-full flex-col rounded-3xl bg-white shadow">
         <div className="m-sm overflow-hidden rounded-[20px]">
-          <Skeleton shape="rect" className="aspect-[4/3] w-full" />
+          <Skeleton shape="rect" className="aspect-4/3 w-full" />
         </div>
         <div className="flex flex-col gap-sm px-lg pb-lg text-left">
           <Skeleton shape="line" className="h-5 w-4/5" />
@@ -32,9 +32,9 @@ function MultimediaCard({ imageSrc, alt, badge, title, description, onClick, loa
         <img
           src={imageSrc}
           alt={alt}
-          className="block aspect-[4/3] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+          className="block aspect-4/3 w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
         />
-        <span className="absolute bottom-sm left-sm rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
+        <span className="absolute bottom-sm left-sm rounded-full bg-(--pink-400) px-sm py-2xs font-body text-caption font-semibold text-white shadow">
           {badge}
         </span>
       </div>
@@ -43,7 +43,7 @@ function MultimediaCard({ imageSrc, alt, badge, title, description, onClick, loa
         <h3 className="m-0 line-clamp-2 font-heading text-h4 font-bold text-heading">
           {title}
         </h3>
-        <p className="mb-0 mt-xs line-clamp-5 min-h-[7.5em] font-body text-body-sm font-normal leading-[1.5] text-body-text-dark">
+        <p className="mb-0 mt-xs line-clamp-5 min-h-[7.5em] font-body text-body-sm font-normal leading-normal text-body-text-dark">
           {description}
         </p>
       </div>

@@ -16,9 +16,14 @@ export function useServicePlanAdmin() {
     setLoading(true)
     setError(null)
     try {
-      const dbPlansRes = await servicePlanService.getAllPlans()
+      const pageSize = 100
+      const firstPage = await servicePlanService.getAllPlans(0, pageSize)
+      const dbPlans = [...firstPage.content]
 
-      const dbPlans = Array.isArray(dbPlansRes) ? dbPlansRes : dbPlansRes.content
+      for (let page = 1; page < firstPage.totalPages; page += 1) {
+        const nextPage = await servicePlanService.getAllPlans(page, pageSize)
+        dbPlans.push(...nextPage.content)
+      }
 
       setSourcePlans(dbPlans)
 

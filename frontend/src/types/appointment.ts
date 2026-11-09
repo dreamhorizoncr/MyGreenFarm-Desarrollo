@@ -31,7 +31,14 @@ export interface Appointment {
   referralSource: ReferralSource
   referralOtherDetail: string | null
   teacherConclusion: string | null
-  googleEventId: string | null
+}
+
+export interface AppointmentPage {
+  content: Appointment[]
+  totalPages: number
+  totalElements: number
+  number: number
+  size: number
 }
 
 export interface AvailableDay {

@@ -14,6 +14,7 @@ const ALLOWED_IMAGE_TYPES = new Set([
   'image/png',
   'image/jpg',
   'image/jpeg',
+  'image/webp',
   'image/svg+xml',
 ])
 
@@ -87,7 +88,6 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
       document.body.style.overflow = previousOverflow
       if (image) URL.revokeObjectURL(image.previewUrl)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [image])
 
   function handleFileChange(file: File | undefined) {
@@ -157,7 +157,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
 
   return (
     <div
-      className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]"
+      className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-4 md:p-[30px]"
     >
       <button
         type="button"
@@ -169,7 +169,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
 
       <form
         onSubmit={handleSubmit}
-        className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+        className={`relative mx-auto max-h-full modal-scroll w-full max-w-205 rounded-[20px] border border-neutral-200 bg-white p-lg md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
       >
         <div className="flex items-center justify-between gap-md">
           <h2 className="m-0 font-heading text-h4 font-bold text-heading">
@@ -290,7 +290,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
             <ImagePickerButton
               label={t('adminForum.chooseImage')}
               replacesCurrent={Boolean(form.imageUrl)}
-              accept="image/png,image/jpg,image/jpeg,image/svg+xml"
+              accept="image/png,image/jpg,image/jpeg,image/svg+xml,image/webp"
               onSelect={(files) => handleFileChange(files[0])}
             />
 

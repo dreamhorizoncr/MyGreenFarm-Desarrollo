@@ -11,6 +11,8 @@ import Navbar from '../components/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import CarouselArrowIcon from '../components/ui/CarouselArrowIcon.tsx'
 import greenKids from '../assets/imgs/greenKids.webp'
+import pencil from '../assets/imgs/pencil.svg'
+import glue from '../assets/imgs/glue.svg'
 import puzzlePiece1 from '../assets/imgs/puzzlePiece1.svg?raw'
 import puzzlePiece2 from '../assets/imgs/puzzlePiece2.svg?raw'
 import puzzlePiece3 from '../assets/imgs/puzzlePiece3.svg?raw'
@@ -96,10 +98,22 @@ function GreenHeartsPage() {
     <>
       <Navbar />
       <main className="overflow-hidden bg-bg-page text-body-text">
-        <section className="flex min-h-[280px] items-start bg-white px-[30px] pb-[40px] pt-[48px] text-center md:min-h-[320px] md:pt-[72px]">
-          <div className="mx-auto w-full max-w-[700px]">
+        <section className="relative flex min-h-70 items-start overflow-hidden bg-white px-7.5 pb-10 pt-12 text-center md:min-h-80 md:pt-18">
+          <img
+            src={pencil}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute left-[3%] top-[25%] w-[clamp(3rem,8vw,5.5rem)] -rotate-12 select-none opacity-50 md:left-[8%] md:top-[25%] lg:left-[10%] lg:top-[25%]"
+          />
+          <img
+            src={glue}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute right-[3%] top-[25%] w-[clamp(3rem,8vw,5.5rem)] rotate-12 select-none opacity-50 md:right-[8%] md:top-[25%] lg:right-[10%] lg:top-[25%]"
+          />
+          <div className="relative z-10 mx-auto w-full max-w-175">
             <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">{t('greenHearts.hero.title')}</h1>
-            <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">{t('greenHearts.hero.description')}</p>
+            <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">{t('greenHearts.hero.description')}</p>
           </div>
         </section>
 
@@ -137,7 +151,7 @@ function GreenHeartsPage() {
 
         <section className="pb-16 pt-16 sm:pb-24 sm:pt-24">
           <Container>
-            <div className="mb-10 text-left"><h2 className="m-0 font-heading text-h2 font-bold leading-tight text-heading">{t('greenHearts.direction.title')}</h2><p className="mt-3 w-full max-w-[42rem] font-body text-body leading-[1.6] text-body-text">{t('greenHearts.direction.description')}</p></div>
+            <div className="mb-10 text-left"><h2 className="m-0 font-heading text-h2 font-bold leading-tight text-heading">{t('greenHearts.direction.title')}</h2><p className="mt-3 w-full max-w-168 font-body text-body leading-[1.6] text-body-text">{t('greenHearts.direction.description')}</p></div>
             <div className="grid gap-5 md:grid-cols-2">
               <article className="rounded-3xl border border-neutral-200 bg-white p-7 text-left shadow sm:p-10"><div className="mb-5 flex items-center gap-3"><h3 className="m-0 font-heading text-h4 font-bold leading-snug text-heading">{t('greenHearts.direction.missionTitle')}</h3></div><p className="m-0 font-body text-body leading-[1.6] text-body-text">{t('greenHearts.direction.mission')}</p></article>
               <article className="rounded-3xl border border-neutral-200 bg-white p-7 text-left shadow sm:p-10"><div className="mb-5 flex items-center gap-3"><h3 className="m-0 font-heading text-h4 font-bold leading-snug text-heading">{t('greenHearts.direction.visionTitle')}</h3></div><p className="m-0 font-body text-body leading-[1.6] text-body-text">{t('greenHearts.direction.vision')}</p></article>
@@ -146,7 +160,7 @@ function GreenHeartsPage() {
         </section>
 
         <section data-scroll-bg="green" className="bg-green-500 py-16 text-white sm:py-24" id="action-lines">
-          <div className="mx-auto w-full max-w-[1200px] px-6">
+          <div className="mx-auto w-full max-w-300 px-6">
             <div className="mb-10 text-left md:mb-12">
               <Tag className="mb-6 block w-fit">{t('greenHearts.actions.label')}</Tag>
               <div className="green-hearts-actions-header grid gap-4">
@@ -177,8 +191,8 @@ function GreenHeartsPage() {
                 a11y={{ enabled: true }}
               >
                 {actions.map(({ titleKey, textKey, icon: Icon, number }) => (
-                  <SwiperSlide key={titleKey} className="!h-auto">
-                    <article className="h-full min-h-[380px] rounded-3xl bg-white p-7 text-left sm:p-9">
+                  <SwiperSlide key={titleKey} className="h-auto!">
+                    <article className="h-full min-h-95 rounded-3xl bg-white p-7 text-left sm:p-9">
                       <div className="mb-8 flex items-center justify-between gap-4">
                         <span className="font-heading text-h1 font-bold leading-none text-green-500">{number}</span>
                         <span className="flex size-20 shrink-0 items-center justify-center text-orange-500"><Icon size={38} strokeWidth={1.8} /></span>
@@ -252,7 +266,7 @@ function GreenHeartsPage() {
             >
               {values.map(({ labelKey, icon: Icon }, index) => {
                 return (
-                  <SwiperSlide key={labelKey} className="!h-auto px-4">
+                  <SwiperSlide key={labelKey} className="h-auto! px-4">
                     <motion.article
                       initial={reduceMotion ? false : 'hidden'}
                       whileInView="visible"
@@ -264,7 +278,7 @@ function GreenHeartsPage() {
                         hover: { y: -4, scale: 1.015 },
                       }}
                       transition={{ duration: reduceMotion ? 0 : 0.45, delay: reduceMotion ? 0 : index * 0.08, ease: 'easeOut' }}
-                      className="green-hearts-value-card relative mx-auto aspect-square w-full max-w-[19rem] text-white"
+                      className="green-hearts-value-card relative mx-auto aspect-square w-full max-w-76 text-white"
                     >
                       <PuzzlePiece svg={puzzlePieceCard} className="green-hearts-value-piece absolute inset-0 size-full" style={{ color: pieceFill(puzzlePieces[index].svg) }} />
                       <div className="absolute inset-[14.3%] flex flex-col items-center justify-center gap-2 px-3 text-center">
@@ -293,7 +307,7 @@ function GreenHeartsPage() {
         <section className="w-full bg-white py-14 text-center sm:py-20">
           <Container className="flex w-full flex-col items-center">
             <h2 className="mb-3 w-full font-heading text-h2 font-bold leading-tight text-heading">{t('greenHearts.closing.title')}</h2>
-            <p className="mb-0 w-full max-w-[900px] font-body text-body leading-[1.6] text-body-text">{t('greenHearts.closing.description')}</p>
+            <p className="mb-0 w-full max-w-225 font-body text-body leading-[1.6] text-body-text">{t('greenHearts.closing.description')}</p>
           </Container>
         </section>
       </main>

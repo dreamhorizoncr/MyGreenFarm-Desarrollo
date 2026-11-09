@@ -19,7 +19,7 @@ function WizardSteps({ steps, current }: Readonly<WizardStepsProps>) {
         return (
           <Fragment key={label}>
             {index > 0 && (
-              <span className="mt-4 h-0.5 flex-1 overflow-hidden bg-[var(--grey-100)]" aria-hidden="true">
+              <span className="mt-4 h-0.5 flex-1 overflow-hidden bg-(--grey-100)" aria-hidden="true">
                 <span
                   className={`block h-full origin-left bg-green-500 transition-transform duration-500 ease-out ${
                     index <= current ? 'scale-x-100' : 'scale-x-0'

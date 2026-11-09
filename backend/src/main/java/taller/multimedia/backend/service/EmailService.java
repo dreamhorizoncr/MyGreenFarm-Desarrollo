@@ -1,6 +1,5 @@
 package taller.multimedia.backend.service;
 
-import taller.multimedia.backend.dto.newsletter_subscriber.SubscriberInfo;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
 import taller.multimedia.backend.model.curriculum.Curriculum;
@@ -11,7 +10,6 @@ import taller.multimedia.backend.service.electronic_billing.ElectronicBillingSer
 import taller.multimedia.backend.service.translation.TranslationService;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;

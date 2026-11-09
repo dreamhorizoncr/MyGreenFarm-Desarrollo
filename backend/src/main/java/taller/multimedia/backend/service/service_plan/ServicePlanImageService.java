@@ -34,7 +34,7 @@ public class ServicePlanImageService {
 
         String contentType = file.getContentType();
         if (contentType == null || !isValidImageFormat(contentType)) {
-            throw new IllegalArgumentException("Unsupported format. Only PNG, JPG, JPEG and SVG are allowed.");
+            throw new IllegalArgumentException("Unsupported format. Only PNG, JPG, JPEG, WEBP and SVG are allowed.");
         }
 
         long uploadStart = System.currentTimeMillis();
@@ -74,7 +74,7 @@ public class ServicePlanImageService {
         if (file != null && !file.isEmpty()) {
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
-                throw new IllegalArgumentException("Unsupported format. Only PNG, JPG, JPEG and SVG are allowed.");
+                throw new IllegalArgumentException("Unsupported format. Only PNG, JPG, JPEG, WEBP and SVG are allowed.");
             }
 
             if (existing.getImageUrl() != null && !existing.getImageUrl().isEmpty()) {
@@ -144,6 +144,7 @@ public class ServicePlanImageService {
         return contentType.equals("image/png") ||
                 contentType.equals("image/jpg") ||
                 contentType.equals("image/jpeg") ||
+                contentType.equals("image/webp") ||
                 contentType.equals("image/svg+xml");
     }
 

@@ -20,8 +20,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.gallery.ImageLikeResponse;
 import taller.multimedia.backend.service.gallery.ImageLikeService;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 @RestController
 @RequestMapping("/api/gallery/likes")
