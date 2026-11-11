@@ -12,6 +12,7 @@ import TabHighlight from './ui/TabHighlight.tsx'
 import FieldHint from './ui/FieldHint.tsx'
 import AutoHeight from './ui/AutoHeight.tsx'
 import TeacherPhotoField from './TeacherPhotoField.tsx'
+import CheckboxField from './ui/CheckboxField.tsx'
 import { adminService } from '../services/admin.ts'
 import { notify, notifyError } from '../utils/notifications.ts'
 
@@ -44,6 +45,7 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
   const [role, setRole] = useState<Role | ''>('')
   const [birthday, setBirthday] = useState('')
   const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [showOnAboutUs, setShowOnAboutUs] = useState(true)
   const [errors, setErrors] = useState<Record<string, string | null>>({})
 
   useEffect(() => {
@@ -73,6 +75,7 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
         password,
         role,
         birthday: role === 'TEACHER' && birthday ? birthday : undefined,
+        showOnAboutUs: role === 'TEACHER' ? showOnAboutUs : undefined,
       },
       async (response) => {
         if (role === 'TEACHER' && photoFile && response.id) {
@@ -219,6 +222,15 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
             onFileChange={setPhotoFile}
             onRemovedChange={(removed) => { if (removed) setPhotoFile(null) }}
           />
+        )}
+
+        {role === 'TEACHER' && (
+          <div>
+            <CheckboxField checked={showOnAboutUs} onChange={setShowOnAboutUs}>
+              {t('admin.teachers.showOnAboutUs')}
+            </CheckboxField>
+            <FieldHint>{t('admin.teachers.showOnAboutUsHint')}</FieldHint>
+          </div>
         )}
       </AutoHeight>
       </div>

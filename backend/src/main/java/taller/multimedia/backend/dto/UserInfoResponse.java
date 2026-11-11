@@ -14,6 +14,7 @@ public class UserInfoResponse {
     private String role;
     private LocalDate birthday;
     private String photoUrl;
+    private Boolean showOnAboutUs;
 
     public UserInfoResponse(UUID id, String email, String firstName, String lastName, String role, LocalDate birthday) {
         this.id = id;
@@ -32,6 +33,11 @@ public class UserInfoResponse {
         this.role = role;
         this.birthday = birthday;
         this.photoUrl = photoUrl;
+    }
+
+    public UserInfoResponse(UUID id, String email, String firstName, String lastName, String role, LocalDate birthday, String photoUrl, boolean showOnAboutUs) {
+        this(id, email, firstName, lastName, role, birthday, photoUrl);
+        this.showOnAboutUs = showOnAboutUs;
     }
 
 }

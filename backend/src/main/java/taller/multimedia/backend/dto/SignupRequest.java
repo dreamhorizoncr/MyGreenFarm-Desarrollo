@@ -35,4 +35,6 @@ public class SignupRequest {
 
     private LocalDate birthday;
 
+    private Boolean showOnAboutUs;
+
 }

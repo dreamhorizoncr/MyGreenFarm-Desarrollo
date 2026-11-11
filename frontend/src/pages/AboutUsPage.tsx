@@ -29,7 +29,7 @@ import FamilySection from './about/FamilySection.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 
 import { adminService } from '../services/admin.ts'
-import type { UserInfo } from '../types/auth.ts'
+import type { PublicTeacher } from '../types/auth.ts'
 import { setPageSEO } from '../utils/seo.ts'
 
 const DECORATION_COLORS = ['text-accent', 'text-link', 'text-green-500']
@@ -110,7 +110,7 @@ const DECORATION_LAYOUTS = [
         })
     }, [t])
 
-    const [teachers, setTeachers] = useState<UserInfo[]>([])
+    const [teachers, setTeachers] = useState<PublicTeacher[]>([])
     const [teachersLoading, setTeachersLoading] = useState(true)
     const [teachersError, setTeachersError] = useState(false)
 
@@ -119,12 +119,10 @@ const DECORATION_LAYOUTS = [
 
         const loadTeachers = async () => {
         try {
-            const data = await adminService.getTeachers()
+            const data = await adminService.getAboutUsTeachers()
 
             if (active) {
-            setTeachers(
-                shuffled(data.filter((user) => user.role === 'TEACHER'))
-            )
+            setTeachers(shuffled(data))
             setTeachersError(false)
             }
         } catch {

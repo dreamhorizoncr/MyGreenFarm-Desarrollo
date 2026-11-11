@@ -128,7 +128,7 @@ public class ListCountsController {
         tasks.put("clubs", async(() -> firstPage(clubService.getAll(SOURCE_LANG, PageRequest.of(0, 1, Sort.by("name"))).getTotalElements())));
         tasks.put("forum-blog", async(() -> firstPage(forumArticleService.getAll(null, PageRequest.of(0, 1), null).getTotalElements())));
         tasks.put("forum-community", async(() -> firstPage(forumCommunityPostService.getAll(PageRequest.of(0, 1)).getTotalElements())));
-        tasks.put("about-teachers", async(() -> (int) userService.getTeachers().stream().filter(u -> "TEACHER".equals(u.getRole())).count()));
+        tasks.put("about-teachers", async(() -> userService.getAboutUsTeachers().size()));
 
         long deadline = System.nanoTime() + TIMEOUT.toNanos();
         Map<String, Integer> counts = new LinkedHashMap<>();

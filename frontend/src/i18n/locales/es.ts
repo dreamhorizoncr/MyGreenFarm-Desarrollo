@@ -1179,6 +1179,8 @@ export default {
       photoUploadError: "El usuario se creó, pero no se pudo subir la fotografía.",
       photoLabel: "Fotografía (opcional)",
       photoHint: "Se muestra en la sección de docentes de Nosotros. Máximo 5 MB.",
+      showOnAboutUs: "Mostrar en la página Nosotros",
+      showOnAboutUsHint: "Desmárcalo si este docente prefiere no aparecer en el equipo. Seguirá disponible para asignarlo a grupos.",
       title: 'Gestión de Docentes',
       description: 'Administra los docentes de My Green Farm.',
       searchPlaceholder: 'Buscar Docente...',
