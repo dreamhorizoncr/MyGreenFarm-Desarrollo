@@ -14,10 +14,11 @@ function PageLoader() {
     return () => window.clearTimeout(timer)
   }, [])
 
-  if (!visible) return <span className="sr-only" role="status">{t('common.status.loading')}</span>
+  // Keeps the footer below the screen while the page loads.
+  if (!visible) return <div className="min-h-svh" role="status"><span className="sr-only">{t('common.status.loading')}</span></div>
 
   return (
-    <div role="status" aria-busy="true" className="mx-auto flex w-full max-w-[75rem] flex-col gap-lg px-md py-2xl md:px-xl">
+    <div role="status" aria-busy="true" className="mx-auto flex min-h-svh w-full max-w-[75rem] flex-col gap-lg px-md py-2xl md:px-xl">
       <span className="sr-only">{t('common.status.loading')}</span>
       <Skeleton shape="line" className="h-10 w-2/3 max-w-[28rem]" />
       <Skeleton shape="line" className="h-5 w-full max-w-[40rem]" />

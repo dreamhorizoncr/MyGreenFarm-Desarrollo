@@ -47,6 +47,7 @@ function JoinSection() {
     <section id="join" className="relative flex w-full flex-col md:min-h-[100svh]">
       <div className="relative w-full overflow-hidden leading-none">
         <img
+          loading="lazy"
           src={cloudsPink}
           alt=""
           aria-hidden="true"
@@ -58,6 +59,7 @@ function JoinSection() {
         <Container className="py-1500">
           <div className="relative mt-1000 md:mt-0">
           <img
+            loading="lazy"
             src={chicks}
             alt=""
             aria-hidden="true"
@@ -66,6 +68,7 @@ function JoinSection() {
           <div className="group relative overflow-hidden rounded-3xl bg-orange-500">
             {DOODLES.map(({ src, className }) => (
               <img
+                loading="lazy"
                 key={src}
                 src={src}
                 alt=""
@@ -75,12 +78,14 @@ function JoinSection() {
             ))}
 
             <img
+              loading="lazy"
               src={chicks}
               alt=""
               aria-hidden="true"
               className="absolute bottom-0 left-[9%] hidden h-[210px] w-auto origin-bottom transition-transform duration-500 ease-out group-hover:-rotate-6 md:block"
             />
             <img
+              loading="lazy"
               src={chicks}
               alt=""
               aria-hidden="true"
