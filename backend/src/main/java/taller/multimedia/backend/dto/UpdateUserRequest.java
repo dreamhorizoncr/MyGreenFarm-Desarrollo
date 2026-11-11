@@ -27,4 +27,6 @@ public class UpdateUserRequest {
     private String photoUrl;
 
     private LocalDate birthday;
+
+    private Boolean showOnAboutUs;
 }

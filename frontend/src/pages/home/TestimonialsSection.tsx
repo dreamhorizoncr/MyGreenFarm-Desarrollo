@@ -105,6 +105,7 @@ function TestimonialsSection() {
     >
       <div className="relative w-full overflow-hidden leading-none">
         <img
+          loading="lazy"
           src={cloudsDown}
           alt=""
           aria-hidden="true"
@@ -115,6 +116,7 @@ function TestimonialsSection() {
 
       <div className="relative overflow-hidden min-h-screen">
         <img
+          loading="lazy"
           src={pencil}
           alt=""
           aria-hidden="true"
@@ -126,6 +128,7 @@ function TestimonialsSection() {
         />
 
         <img
+          loading="lazy"
           src={glue}
           alt=""
           aria-hidden="true"
@@ -137,6 +140,7 @@ function TestimonialsSection() {
         />
 
         <img
+          loading="lazy"
           src={scissors}
           alt=""
           aria-hidden="true"
@@ -148,6 +152,7 @@ function TestimonialsSection() {
         />
 
         <img
+          loading="lazy"
           src={goat}
           alt=""
           aria-hidden="true"

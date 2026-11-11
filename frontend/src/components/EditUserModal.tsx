@@ -10,6 +10,7 @@ import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 import FieldHint from './ui/FieldHint.tsx'
 import TeacherPhotoField from './TeacherPhotoField.tsx'
+import CheckboxField from './ui/CheckboxField.tsx'
 
 interface EditUserModalProps {
   userToEdit: UserInfo
@@ -34,6 +35,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onUploadPhoto, onDelet
   const [birthday, setBirthday] = useState(userToEdit.birthday ?? '')
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoRemoved, setPhotoRemoved] = useState(false)
+  const [showOnAboutUs, setShowOnAboutUs] = useState(userToEdit.showOnAboutUs !== false)
   const isTeacher = userToEdit.role === 'TEACHER'
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
@@ -65,6 +67,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onUploadPhoto, onDelet
         lastName: lastName.trim(),
         email: email.trim(),
         birthday: birthday || undefined,
+        showOnAboutUs: isTeacher ? showOnAboutUs : undefined,
       })
       if (isTeacher && photoRemoved && userToEdit.photoUrl) await onDeletePhoto(userToEdit.id)
       if (isTeacher && photoFile) await onUploadPhoto(userToEdit.id, photoFile)
@@ -168,6 +171,15 @@ function EditUserModal({ userToEdit, currentUser, onSave, onUploadPhoto, onDelet
             onRemovedChange={setPhotoRemoved}
             className="md:col-span-2"
           />
+        )}
+
+        {isTeacher && (
+          <div className="md:col-span-2">
+            <CheckboxField checked={showOnAboutUs} onChange={setShowOnAboutUs}>
+              {t('admin.teachers.showOnAboutUs')}
+            </CheckboxField>
+            <FieldHint>{t('admin.teachers.showOnAboutUsHint')}</FieldHint>
+          </div>
         )}
       </div>
 

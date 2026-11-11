@@ -74,6 +74,9 @@ public class AuthService {
                 role,
                 true);
         user.setBirthday(birthday);
+        if (role == Role.TEACHER && Boolean.FALSE.equals(request.getShowOnAboutUs())) {
+            user.setShowOnAboutUs(false);
+        }
 
         User saved = userRepository.save(user);
 

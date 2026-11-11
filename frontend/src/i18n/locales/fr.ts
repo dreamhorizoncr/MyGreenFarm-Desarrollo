@@ -1183,6 +1183,8 @@ export default {
       photoUploadError: "L'utilisateur a été créé, mais la photo n'a pas pu être téléversée.",
       photoLabel: "Photo (facultative)",
       photoHint: "Affichée dans la section des enseignants de À propos. 5 Mo maximum.",
+      showOnAboutUs: "Afficher sur la page À propos",
+      showOnAboutUsHint: "Décochez si cet enseignant préfère ne pas apparaître dans l'équipe. Il reste disponible pour les groupes.",
       title: 'Gestion des enseignants',
       description: 'Gérez les enseignants de My Green Farm.',
       searchPlaceholder: 'Rechercher un enseignant...',

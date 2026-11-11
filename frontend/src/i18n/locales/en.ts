@@ -1176,6 +1176,8 @@ export default {
       photoUploadError: "The user was created, but the photo could not be uploaded.",
       photoLabel: "Photo (optional)",
       photoHint: "Shown in the teachers section of About Us. Up to 5 MB.",
+      showOnAboutUs: "Show on the About Us page",
+      showOnAboutUsHint: "Uncheck it if this teacher prefers not to appear in the team. They can still be assigned to groups.",
       title: 'Teacher Management',
       description: 'Manage My Green Farm teachers.',
       searchPlaceholder: 'Search for a teacher...',

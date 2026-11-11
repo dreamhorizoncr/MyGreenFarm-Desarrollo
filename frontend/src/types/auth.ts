@@ -5,6 +5,7 @@ export interface RegisterData {
   lastName: string
   role: string
   birthday?: string
+  showOnAboutUs?: boolean
 }
 
 export interface RegisterResponse {
@@ -25,7 +26,10 @@ export interface UserInfo {
   role: string
   birthday?: string | null
   photoUrl?: string | null
+  showOnAboutUs?: boolean | null
 }
+
+export type PublicTeacher = Pick<UserInfo, 'id' | 'firstName' | 'lastName' | 'role' | 'photoUrl'>
 
 export interface LoginResponse {
   token: string
@@ -54,4 +58,5 @@ export interface UpdateUserData {
   lastName: string
   email: string
   birthday?: string
+  showOnAboutUs?: boolean
 }

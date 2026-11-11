@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import headerImage from '../../assets/imgs/temporaryHeader.webp'
+import { heroImage } from './heroImage.ts'
 import cloudsUp from '../../assets/imgs/cloudsUp.svg'
 import Container from '../../components/home/Container.tsx'
 import BlobButton from '../../components/ui/BlobButton.tsx'
@@ -39,7 +39,9 @@ function HeaderSection() {
             </div>
 
             <img
-              src={headerImage}
+              src={heroImage.src}
+              srcSet={heroImage.srcSet}
+              sizes={heroImage.sizes}
               alt={t('home.header.heroAlt')}
               width={602}
               height={436}

@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.ColumnDefault;
 import taller.multimedia.backend.model.group.TeacherGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -53,6 +54,10 @@ public class User {
 
     @Column(name = "photo_url")
     private String photoUrl;
+
+    @Column(name = "show_on_about_us", nullable = false)
+    @ColumnDefault("true")
+    private boolean showOnAboutUs = true;
 
     @Column(name = "birthday", nullable = true)
     private LocalDate birthday;

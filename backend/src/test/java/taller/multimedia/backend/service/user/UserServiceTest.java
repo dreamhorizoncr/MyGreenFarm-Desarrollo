@@ -20,7 +20,10 @@ import taller.multimedia.backend.repository.forum.ForumArticleRepository;
 import taller.multimedia.backend.repository.group.TeacherGroupRepository;
 import taller.multimedia.backend.repository.user.UserRepository;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.lenient;
@@ -42,6 +45,50 @@ class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
+
+    @Test
+    void getAboutUsTeachers_leavesOutTeachersWhoOptedOutAndInactiveOnes() {
+        User visible = userWith(Role.TEACHER);
+        User hidden = userWith(Role.TEACHER);
+        hidden.setShowOnAboutUs(false);
+        User inactive = userWith(Role.TEACHER);
+        inactive.setActive(false);
+        when(userRepository.findByRole(Role.TEACHER)).thenReturn(java.util.List.of(visible, hidden, inactive));
+
+        var teachers = userService.getAboutUsTeachers();
+
+        assertEquals(1, teachers.size());
+        assertEquals(visible.getId(), teachers.get(0).getId());
+    }
+
+    @Test
+    void getTeachers_stillIncludesTeachersWhoOptedOut() {
+        User hidden = userWith(Role.TEACHER);
+        hidden.setShowOnAboutUs(false);
+        when(userRepository.findByRole(Role.TEACHER)).thenReturn(java.util.List.of(hidden));
+
+        assertEquals(1, userService.getTeachers().size());
+    }
+
+    @Test
+    void updateUser_keepsTheChoiceWhenTheRequestDoesNotSendIt() {
+        User owner = userWith(Role.OWNER);
+        User teacher = userWith(Role.TEACHER);
+        teacher.setShowOnAboutUs(false);
+        when(userRepository.findByEmail("owner@ejemplo.com")).thenReturn(Optional.of(owner));
+        when(userRepository.findById(teacher.getId())).thenReturn(Optional.of(teacher));
+
+        UpdateUserRequest request = new UpdateUserRequest();
+        request.setFirstName("Ana");
+        request.setLastName("Pérez");
+        request.setEmail("ana@gmail.com");
+        userService.updateUser(teacher.getId(), request, "owner@ejemplo.com");
+        assertFalse(teacher.isShowOnAboutUs());
+
+        request.setShowOnAboutUs(true);
+        userService.updateUser(teacher.getId(), request, "owner@ejemplo.com");
+        assertTrue(teacher.isShowOnAboutUs());
+    }
 
     private User userWith(Role role) {
         User user = new User("owner@ejemplo.com", "hashed", "Nombre", "Apellido", role, true);

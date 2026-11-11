@@ -28,6 +28,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import taller.multimedia.backend.dto.MessageResponse;
 import taller.multimedia.backend.dto.UpdateUserRequest;
+import taller.multimedia.backend.dto.PublicTeacherResponse;
 import taller.multimedia.backend.dto.UserInfoResponse;
 import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.service.user.UserPhotoService;
@@ -102,6 +103,11 @@ public class UserController {
     @GetMapping("/teachers")
     public ResponseEntity<List<UserInfoResponse>> getTeachers() {
         return ResponseEntity.ok(userService.getTeachers());
+    }
+
+    @GetMapping("/teachers/about-us")
+    public ResponseEntity<List<PublicTeacherResponse>> getAboutUsTeachers() {
+        return ResponseEntity.ok(userService.getAboutUsTeachers());
     }
 
     @PostMapping("/{id}/photo")

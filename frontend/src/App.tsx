@@ -87,11 +87,20 @@ function GlobalFooter() {
   return <Footer />
 }
 
+// Other pages are fetched only once the current one has finished, so they never compete with it.
+const PRELOAD_DELAY_MS = 5000
+
+type NetworkInformation = { saveData?: boolean; effectiveType?: string }
+
 function PagePreloader() {
   useEffect(() => {
+    const { connection } = navigator as Navigator & { connection?: NetworkInformation }
+    if (connection?.saveData || /2g|3g/.test(connection?.effectiveType ?? '')) return
+
     const loaders = [...publicPageLoaders, ...(userStorage.getUser() ? privatePageLoaders : [])]
     let cancelled = false
     let handle = 0
+    let startTimer = 0
     const idle = (fn: () => void) =>
       typeof window.requestIdleCallback === 'function' ? window.requestIdleCallback(fn, { timeout: 2000 }) : window.setTimeout(fn, 300)
     const next = (index: number) => {
@@ -102,9 +111,15 @@ function PagePreloader() {
           .finally(() => next(index + 1))
       })
     }
-    next(0)
+    const start = () => {
+      startTimer = window.setTimeout(() => next(0), PRELOAD_DELAY_MS)
+    }
+    if (document.readyState === 'complete') start()
+    else window.addEventListener('load', start, { once: true })
     return () => {
       cancelled = true
+      window.removeEventListener('load', start)
+      window.clearTimeout(startTimer)
       if (typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(handle)
       else window.clearTimeout(handle)
     }
