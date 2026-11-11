@@ -10,7 +10,7 @@ interface CarouselDotsProps {
 
 function CarouselDots({ count, activeIndex, onSelect, ariaLabel, getItemLabel, className = '' }: Readonly<CarouselDotsProps>) {
   return (
-    <div className={`flex items-center gap-2 ${className}`} aria-label={ariaLabel}>
+    <div className={`flex items-center ${className}`} aria-label={ariaLabel}>
       {Array.from({ length: count }, (_, index) => (
         <button
           key={index}
@@ -18,8 +18,11 @@ function CarouselDots({ count, activeIndex, onSelect, ariaLabel, getItemLabel, c
           aria-label={getItemLabel(index)}
           aria-current={index === activeIndex ? 'true' : undefined}
           onClick={() => onSelect(index)}
-          className={`relative size-2 rounded-full transition-transform before:absolute before:-inset-2 before:content-[''] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--green-500)] ${index === activeIndex ? 'scale-125 bg-[var(--green-500)]' : 'bg-[var(--grey-300)]'}`}
-        />
+          className="inline-flex size-6 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--green-500)]"
+        >
+          {/* 24 px to tap (WCAG 2.2), the visible dot stays 8 px */}
+          <span className={`size-2 rounded-full transition-transform ${index === activeIndex ? 'scale-125 bg-[var(--green-500)]' : 'bg-[var(--grey-300)]'}`} />
+        </button>
       ))}
     </div>
   )

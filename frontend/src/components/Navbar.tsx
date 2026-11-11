@@ -23,7 +23,7 @@ function Brand({ showName = true, compact, linkRef, nameRef }: Readonly<BrandPro
       to='/'
       className="flex shrink-0 items-center gap-3 no-underline"
     >
-      <img src={logo} alt="My Green Farm" className="h-12 w-auto max-w-[48px] object-contain" />
+      <img src={logo} alt="My Green Farm" width={38} height={48} className="h-12 w-auto max-w-[48px] object-contain" />
       {showName && <span ref={nameRef} className={`whitespace-nowrap font-heading text-h6 text-heading${compact ? ` navbar-brand-name-${compact}` : ''}`}>My Green Farm</span>}
     </Link>
   )

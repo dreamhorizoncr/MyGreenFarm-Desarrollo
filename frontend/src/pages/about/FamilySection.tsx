@@ -24,7 +24,9 @@ import {
 } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 
-import foundingFamily from '../../assets/imgs/foundingFamily.jpeg'
+import foundingFamily480 from '../../assets/imgs/foundingFamily-480.webp'
+import foundingFamily800 from '../../assets/imgs/foundingFamily-800.webp'
+import foundingFamily1214 from '../../assets/imgs/foundingFamily-1214.webp'
 import Container from '../../components/home/Container.tsx'
 
 type IconHandle = { startAnimation: () => void; stopAnimation: () => void }
@@ -189,10 +191,15 @@ function FamilySection() {
             className="relative mx-auto m-0 w-full max-w-[24rem]"
           >
             <div className="relative -rotate-2 rounded-[2rem] border-[3px] border-dashed border-green-500 bg-white p-sm shadow-sm transition-transform duration-500 hover:rotate-0">
+              {/* It is the largest thing on the first screen of About Us: no lazy loading, high priority.
+                  It shows at most 369 px wide; on phones it is the screen width minus about 106 px. */}
               <img
-                src={foundingFamily}
+                src={foundingFamily800}
+                srcSet={`${foundingFamily480} 480w, ${foundingFamily800} 800w, ${foundingFamily1214} 1214w`}
+                sizes="(min-width: 600px) 369px, calc(100vw - 106px)"
                 alt={t('aboutUsPage.family.imageAlt')}
-                loading="lazy"
+                fetchPriority="high"
+                decoding="async"
                 width={1214}
                 height={1600}
                 className="block aspect-[4/5] w-full rounded-[1.5rem] object-cover object-top"

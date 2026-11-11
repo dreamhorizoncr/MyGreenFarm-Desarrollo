@@ -107,6 +107,8 @@ function TestimonialsSection() {
         <img
           loading="lazy"
           src={cloudsDown}
+          width={1440}
+          height={175}
           alt=""
           aria-hidden="true"
           data-scroll-bg="green"
@@ -206,7 +208,6 @@ function TestimonialsSection() {
                     key={testimonial.author}
                     type="button"
                     onClick={() => setActiveIndex(index)}
-                    aria-label={`${name}, ${role}`}
                     aria-current={isActive ? "true" : undefined}
                     data-position={position}
                     className="testimonial-card flex flex-col overflow-hidden rounded-2xl border-t-4 bg-white p-7 text-left"

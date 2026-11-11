@@ -2,7 +2,7 @@ import { Images } from 'lucide-react'
 import SkeletonList from '../../components/ui/SkeletonList.tsx'
 import StatusMessage from '../../components/ui/StatusMessage.tsx'
 import { useSkeletonCount } from '../../hooks/useSkeletonCount.ts'
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowRightIcon } from '@animateicons/react/lucide'
@@ -18,18 +18,35 @@ function MultimediaSection() {
   const { allGalleries, loading, error, fetchGallery } = useGallery()
   const featuredGalleries = allGalleries.filter((gallery) => gallery.featured)
   const skeletonCount = useSkeletonCount('home-multimedia', loading, featuredGalleries.length, 3)
+  const sectionRef = useRef<HTMLElement>(null)
+  // The section is far below the hero: its photos are fetched only when it gets close,
+  // so they do not compete with the first screen on slow connections.
+  const [near, setNear] = useState(() => typeof IntersectionObserver === 'undefined')
 
   useEffect(() => {
+    const section = sectionRef.current
+    if (near || !section) return
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setNear(true)
+    }, { rootMargin: '600px 0px' })
+    observer.observe(section)
+    return () => observer.disconnect()
+  }, [near])
+
+  useEffect(() => {
+    if (!near) return
     void fetchGallery(i18n.language)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [i18n.language])
+  }, [near, i18n.language])
 
   return (
-    <section id="multimedia" className="relative flex min-h-[100svh] w-full flex-col bg-pink-400">
+    <section ref={sectionRef} id="multimedia" className="relative flex min-h-[100svh] w-full flex-col bg-pink-400">
       <div className="relative w-full overflow-hidden leading-none">
         <img
           loading="lazy"
           src={cloudWhiteDown}
+          width={1441}
+          height={175}
           alt=""
           aria-hidden="true"
           className="relative -mb-1 block w-[110vw] max-w-none -translate-x-1/2 left-1/2 object-cover"

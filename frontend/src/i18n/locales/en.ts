@@ -209,7 +209,7 @@ export default {
       title: "Multimedia",
       description:
         "Moments that tell our story. Discover through our photographs how we experience learning at My Green Farm.",
-      viewMore: "See more",
+      viewMore: "See the whole gallery",
       albumTitle: "Albums",
       albumCount: "20 photos",
       cardText:

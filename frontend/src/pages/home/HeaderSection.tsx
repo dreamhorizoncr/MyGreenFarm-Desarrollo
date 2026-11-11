@@ -55,6 +55,8 @@ function HeaderSection() {
       <div className="relative w-full overflow-hidden leading-none">
         <img
           src={cloudsUp}
+          width={1441}
+          height={175}
           alt=""
           aria-hidden="true"
           data-scroll-bg="green"
