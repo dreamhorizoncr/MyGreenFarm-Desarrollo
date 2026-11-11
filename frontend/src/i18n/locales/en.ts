@@ -1314,7 +1314,7 @@ export default {
       newPhotos: "New photos",
       addPhotosHelp: "Pick several or add them one by one.",
       invalidFileType:
-        "«{{name}}» is not a valid image. Only PNG, JPG, JPEG or SVG are allowed.",
+        "«{{name}}» is not a valid image. Only PNG, JPG, JPEG, WEBP or SVG are allowed.",
       prevAlbums: "Previous albums",
       nextAlbums: "Next albums",
       actions: "Album actions",
@@ -1399,7 +1399,7 @@ export default {
       imageSelected: "Image selected",
       currentImage: "Current image",
       invalidFileType:
-        '"{{name}}" is not a valid image. Only PNG, JPG, JPEG or SVG are allowed.',
+        '"{{name}}" is not a valid image. Only PNG, JPG, JPEG, WEBP or SVG are allowed.',
       create: "Create plan",
       deleteTitle: "Delete plan",
       deleteConfirm:
@@ -1772,12 +1772,12 @@ export default {
     fileTooLarge: "The file cannot exceed 5 MB",
     fileRequired: "You must attach your resume as a PDF",
     certificates: "Degrees and certificates",
-    certificatesHint: "Optional. Maximum 5 files (PDF, PNG or JPG).",
+    certificatesHint: "Optional. Maximum 5 files (PDF, PNG, WEBP or JPG).",
     chooseCertificates: "Add files",
     noCertificatesChosen: "No files selected",
     removeCertificate: "Remove file",
     tooManyCertificates: "You can attach at most {{max}} files",
-    invalidCertificateType: "Files must be PDF, PNG or JPG",
+    invalidCertificateType: "Files must be PDF, PNG, WEBP or JPG",
     certificateTooLarge: "Each file cannot exceed 5 MB",
     certificatesRequired: "You must attach at least one degree or certificate",
     submitApplication: "Send",

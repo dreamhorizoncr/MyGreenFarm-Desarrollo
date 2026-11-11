@@ -2,6 +2,7 @@ import { apiClient } from './api.ts'
 import type {
   Appointment,
   AppointmentRequest,
+  AppointmentPage,
   AppointmentStatus,
   AvailableWeek,
 } from '../types/appointment.ts'
@@ -39,13 +40,20 @@ export const appointmentService = {
     return `${apiClient.defaults.baseURL}/appointments/holds/stream`
   },
 
-  async createAppointment(data: AppointmentRequest): Promise<Appointment> {
-    const response = await apiClient.post<Appointment>('/appointments', data)
-    return response.data
+  async createAppointment(data: AppointmentRequest): Promise<void> {
+    await apiClient.post('/appointments', data)
   },
 
-  async getAppointments(): Promise<Appointment[]> {
-    const response = await apiClient.get<Appointment[]>('/appointments')
+  async getAppointments(params: {
+    page: number
+    size: number
+    status?: AppointmentStatus
+    date?: string
+    search?: string
+    excludePast: boolean
+    notBefore: string
+  }): Promise<AppointmentPage> {
+    const response = await apiClient.get<AppointmentPage>('/appointments', { params })
     return response.data
   },
 

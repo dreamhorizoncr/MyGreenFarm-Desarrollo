@@ -1,8 +1,6 @@
 package taller.multimedia.backend.controller.club;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.club.ClubRequest;
 import taller.multimedia.backend.dto.club.ClubResponse;
@@ -12,9 +10,7 @@ import taller.multimedia.backend.util.ImageAltText;
 import tools.jackson.databind.ObjectMapper;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

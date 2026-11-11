@@ -6,13 +6,9 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-import jakarta.transaction.Transactional;
-import taller.multimedia.backend.dto.forum.ForumPostLikeResponse;
 import taller.multimedia.backend.model.forum.ForumPostLike;
 
-@Repository 
 public interface ForumPostLikeRepository extends JpaRepository<ForumPostLike, UUID> {
 boolean existsByCommunityPost_IdAndAnonId(UUID communityPostId, String anonId);
 

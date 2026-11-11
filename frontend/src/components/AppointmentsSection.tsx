@@ -13,7 +13,6 @@ import CalendarPanel from './ui/CalendarPanel.tsx'
 import CardActionButton from './ui/CardActionButton.tsx'
 import Pagination from './ui/Pagination.tsx'
 import { useAppointments } from '../hooks/useAppointments.ts'
-import { useClientPagination } from '../hooks/useClientPagination.ts'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import SkeletonList from './ui/SkeletonList.tsx'
 import { notify, notifyError } from '../utils/notifications.ts'
@@ -23,6 +22,12 @@ import TabHighlight from './ui/TabHighlight.tsx'
 import { tabCarouselClass, useTabCarousel } from '../hooks/useTabCarousel.ts'
 
 type StatusFilter = 'ALL' | 'BY_DATE' | AppointmentStatus
+
+function localDateTimeNow() {
+  const now = new Date()
+  const pad = (value: number) => String(value).padStart(2, '0')
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
+}
 
 const STATUS_FILTERS: StatusFilter[] = ['ALL', 'BY_DATE', 'PENDING', 'CONFIRMED', 'CANCELLED']
 
@@ -120,6 +125,7 @@ function AppointmentsSection() {
   const { t, i18n } = useTranslation()
   const {
     appointments,
+    totalPages,
     loading,
     error,
     actionId,
@@ -136,9 +142,11 @@ function AppointmentsSection() {
   }, [loadExceptions, i18n.language])
 
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('BY_DATE')
+  const [currentPage, setCurrentPage] = useState(1)
   const tabRowRef = useTabCarousel(statusFilter)
   const [selectedDate, setSelectedDate] = useState<CalendarDate | null>(today(getLocalTimeZone()))
   const [searchTerm, setSearchTerm] = useState('')
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   const [appointmentToEdit, setAppointmentToEdit] = useState<Appointment | null>(null)
   const [appointmentToReschedule, setAppointmentToReschedule] = useState<Appointment | null>(null)
   const [appointmentToView, setAppointmentToView] = useState<Appointment | null>(null)
@@ -148,38 +156,29 @@ function AppointmentsSection() {
   }, [exceptions])
 
   useEffect(() => {
-    fetchAppointments()
-  }, [])
+    const timer = window.setTimeout(() => setDebouncedSearchTerm(searchTerm), 300)
+    return () => window.clearTimeout(timer)
+  }, [searchTerm])
 
-  const filteredAppointments = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase()
-    const startOfToday = new Date()
-    startOfToday.setHours(0, 0, 0, 0)
-    return appointments.filter((appointment) => {
-      const isPast = new Date(appointment.appointmentDate) < startOfToday
-      if (isPast && statusFilter !== 'PENDING') return false
-
-      if (statusFilter === 'BY_DATE') {
-        if (!selectedDate) return false
-        const appDate = new Date(appointment.appointmentDate)
-        if (
-          appDate.getFullYear() !== selectedDate.year ||
-          appDate.getMonth() + 1 !== selectedDate.month ||
-          appDate.getDate() !== selectedDate.day
-        ) {
-          return false
-        }
-      } else if (statusFilter !== 'ALL' && appointment.status !== statusFilter) {
-        return false
-      }
-
-      if (!term) return true
-      return [appointment.childName, appointment.parentName, appointment.parentEmail, appointment.parentPhone]
-        .some((field) => field.toLowerCase().includes(term))
+  useEffect(() => {
+    if (searchTerm !== debouncedSearchTerm) return
+    void fetchAppointments({
+      page: currentPage - 1,
+      size: 10,
+      status: statusFilter === 'ALL' || statusFilter === 'BY_DATE' ? undefined : statusFilter,
+      date: statusFilter === 'BY_DATE' ? selectedDate?.toString() : undefined,
+      search: debouncedSearchTerm.trim() || undefined,
+      excludePast: statusFilter !== 'PENDING',
+      notBefore: localDateTimeNow(),
     })
-  }, [appointments, statusFilter, selectedDate, searchTerm])
+  }, [fetchAppointments, statusFilter, selectedDate, searchTerm, debouncedSearchTerm, currentPage])
 
-  const { currentPage, setPage, totalPages, pageItems: pagedAppointments } = useClientPagination(filteredAppointments)
+  const pagedAppointments = appointments
+  useEffect(() => {
+    if (!loading && currentPage > Math.max(totalPages, 1)) {
+      setCurrentPage(Math.max(totalPages, 1))
+    }
+  }, [loading, currentPage, totalPages])
   const isDayView = statusFilter === 'BY_DATE'
   const daySkeletonCount = useSkeletonCount('appointments-day', loading || !isDayView, pagedAppointments.length, 2)
   const statusSkeletonCount = useSkeletonCount('appointments-status', loading || isDayView, pagedAppointments.length, 4)
@@ -249,7 +248,10 @@ function AppointmentsSection() {
             className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
             placeholder={t('teacherAppointments.searchPlaceholder')}
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value)
+              setCurrentPage(1)
+            }}
             aria-label={t('teacherAppointments.searchPlaceholder')}
           />
         </div>
@@ -260,7 +262,10 @@ function AppointmentsSection() {
               key={filter}
               type="button"
               aria-pressed={statusFilter === filter}
-              onClick={() => setStatusFilter(filter)}
+              onClick={() => {
+                setStatusFilter(filter)
+                setCurrentPage(1)
+              }}
               className={filterClassName(statusFilter === filter)}
             >
               {statusFilter === filter && <TabHighlight layoutId="appointments-status-tab" className="bg-green-500" />}
@@ -276,7 +281,14 @@ function AppointmentsSection() {
 
       {statusFilter === 'BY_DATE' ? (
         <div className="grid grid-cols-1 gap-xl lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] items-start">
-          <CalendarPanel value={selectedDate} onChange={setSelectedDate} markedDates={specialScheduleDates} />
+          <CalendarPanel
+            value={selectedDate}
+            onChange={(date) => {
+              setSelectedDate(date)
+              setCurrentPage(1)
+            }}
+            markedDates={specialScheduleDates}
+          />
 
           <div className="flex flex-col gap-md">
             <h2 className="m-0 font-heading text-h4 font-bold text-heading">
@@ -292,7 +304,7 @@ function AppointmentsSection() {
             {error && <StatusMessage variant="error" description={error} />}
 
             {!loading && !error && (
-              filteredAppointments.length === 0 ? (
+              appointments.length === 0 ? (
                 <StatusMessage icon={CalendarX} description={t('teacherAppointments.calendar.noAppointmentsForDay')} />
               ) : (
                 <>
@@ -311,7 +323,7 @@ function AppointmentsSection() {
                       />
                     ))}
                   </div>
-                  <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+                  <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
                 </>
               )
             )}
@@ -328,7 +340,7 @@ function AppointmentsSection() {
           {error && <StatusMessage variant="error" description={error} />}
 
           {!loading && !error && (
-            filteredAppointments.length === 0 ? (
+            appointments.length === 0 ? (
               <StatusMessage
                 icon={searchTerm.trim() || statusFilter !== 'ALL' ? SearchX : CalendarX}
                 description={searchTerm.trim() || statusFilter !== 'ALL' ? t('teacherAppointments.noResults') : t('teacherAppointments.empty')}
@@ -350,7 +362,7 @@ function AppointmentsSection() {
                     />
                   ))}
                 </div>
-                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setPage} />
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
               </>
             )
           )}

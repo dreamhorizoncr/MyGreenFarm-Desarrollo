@@ -6,12 +6,11 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-import jakarta.transaction.Transactional;
 import taller.multimedia.backend.model.forum.ForumArticleLike;
 
-@Repository
+import jakarta.transaction.Transactional;
+
 public interface ForumArticleLikeRepository extends JpaRepository<ForumArticleLike, UUID> {
 
     boolean existsByArticleIdAndAnonId(UUID articleId, String anonId);

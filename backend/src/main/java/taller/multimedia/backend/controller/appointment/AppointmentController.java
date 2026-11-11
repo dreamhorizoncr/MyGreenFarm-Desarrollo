@@ -8,9 +8,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,12 +22,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import taller.multimedia.backend.dto.appointment.AppointmentRequest;
+import taller.multimedia.backend.dto.appointment.AppointmentResponse;
 import taller.multimedia.backend.dto.appointment.AvailableDayResponse;
 import taller.multimedia.backend.dto.appointment.SlotHoldRequest;
 import taller.multimedia.backend.model.appointment.Appointment;
@@ -36,7 +41,6 @@ import taller.multimedia.backend.service.appointment.SlotHoldService;
 
 @RestController
 @RequestMapping("/api/appointments")
-@CrossOrigin(origins = "*")
 public class AppointmentController {
 
     @Autowired
@@ -55,12 +59,12 @@ public class AppointmentController {
     }
 
     @PostMapping
-    public ResponseEntity<Appointment> createAppointment(@Valid @RequestBody AppointmentRequest requestDTO) {
-        Appointment newAppointment = slotHoldService.bookExclusively(
+    public ResponseEntity<Void> createAppointment(@Valid @RequestBody AppointmentRequest requestDTO) {
+        slotHoldService.bookExclusively(
                 requestDTO.getAppointmentDate(),
                 requestDTO.getHoldId(),
                 () -> appointmentService.createAppointment(requestDTO));
-        return ResponseEntity.ok(newAppointment);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/holds")
@@ -88,26 +92,35 @@ public class AppointmentController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Appointment>> getAllAppointments() {
-        List<Appointment> appointments = appointmentService.getAllAppointments();
-        return ResponseEntity.ok(appointments);
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    public ResponseEntity<Page<AppointmentResponse>> getAllAppointments(
+            @RequestParam(required = false) AppointmentStatus status,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "true") boolean excludePast,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime notBefore,
+            @PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(appointmentService.getAppointments(
+                status, date, search, excludePast, notBefore, pageable));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Appointment> getAppointmentById(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    public ResponseEntity<AppointmentResponse> getAppointmentById(@PathVariable UUID id) {
         Appointment appointment = appointmentService.getAppointmentById(id);
-        return ResponseEntity.ok(appointment);
+        return ResponseEntity.ok(AppointmentResponse.from(appointment));
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<Appointment> updateStatus(
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    public ResponseEntity<AppointmentResponse> updateStatus(
             @PathVariable UUID id,
             @RequestParam AppointmentStatus status,
             @RequestParam(required = false) String conclusion,
             @RequestParam(required = false, defaultValue = "es") String lang) {
 
         Appointment updated = appointmentService.updateAppointmentStatus(id, status, conclusion, lang);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(AppointmentResponse.from(updated));
     }
 
     @GetMapping("/available-slots")
@@ -133,17 +146,19 @@ public class AppointmentController {
     }
 
     @PatchMapping("/{id}/reschedule")
-    public ResponseEntity<Appointment> rescheduleAppointment(
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
+    public ResponseEntity<AppointmentResponse> rescheduleAppointment(
             @PathVariable UUID id,
             @RequestParam LocalDateTime newDate,
             @RequestParam(required = false, defaultValue = "es") String lang) {
 
         Appointment updatedAppointment = slotHoldService.bookExclusively(
                 newDate, null, () -> appointmentService.rescheduleAppointment(id, newDate, lang));
-        return ResponseEntity.ok(updatedAppointment);
+        return ResponseEntity.ok(AppointmentResponse.from(updatedAppointment));
     }
 
     @GetMapping("/test-reminders")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<String> testReminders() {
         appointmentService.send24HourReminders();
         return ResponseEntity.ok("Reminder task run manually.");

@@ -69,7 +69,7 @@ public class CurriculumService {
             for (MultipartFile certificateFile : certificates) {
                 if (certificateFile == null || certificateFile.isEmpty()) continue;
                 if (!isValidCertificateFormat(certificateFile.getContentType())) {
-                    throw new IllegalArgumentException("Certificates must be PDF, PNG or JPEG.");
+                    throw new IllegalArgumentException("Certificates must be PDF, PNG, WEBP or JPEG.");
                 }
 
                 CurriculumCertificate certificate = new CurriculumCertificate();
@@ -186,7 +186,8 @@ public class CurriculumService {
         return contentType != null && (
                 contentType.equals("application/pdf") ||
                 contentType.equals("image/png") ||
-                contentType.equals("image/jpeg"));
+                contentType.equals("image/jpeg") ||
+                contentType.equals("image/webp"));
     }
 
     private String extractPathFromUrl(String fileUrl, String bucketName) {

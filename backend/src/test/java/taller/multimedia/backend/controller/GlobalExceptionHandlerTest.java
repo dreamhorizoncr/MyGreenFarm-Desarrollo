@@ -49,7 +49,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void tooLargeUploads_andDuplicates_explainTheCause() {
-        assertThat(handler.handleMaxUploadSize(new MaxUploadSizeExceededException(1)).getStatusCode()).isEqualTo(HttpStatus.PAYLOAD_TOO_LARGE);
+        assertThat(handler.handleMaxUploadSize(new MaxUploadSizeExceededException(1)).getStatusCode()).isEqualTo(HttpStatus.CONTENT_TOO_LARGE);
         ResponseEntity<MessageResponse> duplicate = handler.handleDataIntegrity(new DataIntegrityViolationException("duplicate key"));
         assertThat(duplicate.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
         assertThat(duplicate.getBody().getMessage()).doesNotContain("duplicate key");

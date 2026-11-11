@@ -8,11 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import taller.multimedia.backend.model.announcement.Announcement;
 
-@Repository
 public interface AnnouncementRepository extends JpaRepository<Announcement, UUID>{
     @EntityGraph(attributePaths = "category")
     Page<Announcement> findByCreatedAtAfter(LocalDateTime date, Pageable pageable);

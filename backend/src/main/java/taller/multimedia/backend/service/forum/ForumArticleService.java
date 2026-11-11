@@ -34,7 +34,7 @@ import taller.multimedia.backend.util.Sanitizer;
 public class ForumArticleService {
 
     private static final String[] ALLOWED_IMAGE_TYPES = {
-            "image/png", "image/jpg", "image/jpeg", "image/svg+xml"
+            "image/png", "image/jpg", "image/jpeg", "image/svg+xml", "image/webp"
     };
 
     private final ForumArticleRepository articleRepository;

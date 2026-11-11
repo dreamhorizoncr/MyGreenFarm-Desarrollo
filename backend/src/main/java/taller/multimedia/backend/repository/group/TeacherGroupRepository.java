@@ -6,11 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import taller.multimedia.backend.model.group.TeacherGroup;
 
-@Repository
 public interface TeacherGroupRepository extends JpaRepository<TeacherGroup, Long> {
 
     /** Removes the teacher from every group they are assigned to; the groups themselves are kept. */

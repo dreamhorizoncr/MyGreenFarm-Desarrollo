@@ -65,7 +65,7 @@ public class GalleryImageService {
             String contentType = file.getContentType();
             if (contentType == null || !isValidImageFormat(contentType)) {
                 throw new IllegalArgumentException(
-                        "One of the files has an unsupported format. Only PNG, JPG, JPEG and SVG are allowed.");
+                        "One of the files has an unsupported format. Only PNG, JPG, JPEG, WEBP and SVG are allowed.");
             }
 
             long uploadStart = System.currentTimeMillis();
@@ -97,6 +97,7 @@ public class GalleryImageService {
         return contentType.equals("image/png") ||
                 contentType.equals("image/jpg") ||
                 contentType.equals("image/jpeg") ||
+                contentType.equals("image/webp") ||
                 contentType.equals("image/svg+xml");
     }
 

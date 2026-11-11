@@ -1221,7 +1221,7 @@ export default {
       newPhotos: "Nuevas fotos",
       addPhotosHelp: "Elegí varias o agregá de a una.",
       invalidFileType:
-        "«{{name}}» no es una imagen válida. Solo se permiten PNG, JPG, JPEG o SVG.",
+        "«{{name}}» no es una imagen válida. Solo se permiten PNG, JPG, JPEG, WEBP o SVG.",
       prevAlbums: "Álbumes anteriores",
       nextAlbums: "Siguientes álbumes",
       actions: "Acciones del álbum",
@@ -1306,7 +1306,7 @@ export default {
       imageSelected: "Imagen seleccionada",
       currentImage: "Imagen actual",
       invalidFileType:
-        '"{{name}}" no es una imagen válida. Solo se permiten PNG, JPG, JPEG o SVG.',
+        '"{{name}}" no es una imagen válida. Solo se permiten PNG, JPG, JPEG, WEBP o SVG.',
       create: "Agregar",
       deleteTitle: "Eliminar plan",
       deleteConfirm:
@@ -1776,12 +1776,12 @@ export default {
     fileTooLarge: "El archivo no puede superar los 5 MB",
     fileRequired: "Debes adjuntar tu currículum en PDF",
     certificates: "Títulos y certificados",
-    certificatesHint: "Opcional. Máximo 5 archivos (PDF, PNG o JPG).",
+    certificatesHint: "Opcional. Máximo 5 archivos (PDF, PNG, WEBP o JPG).",
     chooseCertificates: "Agregar archivos",
     noCertificatesChosen: "Ningún archivo seleccionado",
     removeCertificate: "Quitar archivo",
     tooManyCertificates: "Puedes adjuntar como máximo {{max}} archivos",
-    invalidCertificateType: "Los archivos deben ser PDF, PNG o JPG",
+    invalidCertificateType: "Los archivos deben ser PDF, PNG, WEBP o JPG",
     certificateTooLarge: "Cada archivo no puede superar los 5 MB",
     certificatesRequired: "Debes adjuntar al menos un título o certificado",
     submitApplication: "Enviar",

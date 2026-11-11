@@ -5,14 +5,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import taller.multimedia.backend.model.child.Child;
 
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public interface ChildRepository extends JpaRepository<Child, Long> {
 
     Page<Child> findByParentId(Long parentId, Pageable pageable);

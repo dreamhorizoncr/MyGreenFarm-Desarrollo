@@ -19,6 +19,8 @@ import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import StatusMessage from '../components/ui/StatusMessage.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
+import pencilSharpener from '../assets/imgs/pencilSharpener.svg'
+import glue from '../assets/imgs/glue.svg'
 
 const cleanCurrency = (value?: string): Currency => {
   const upper = value?.toUpperCase()
@@ -46,7 +48,7 @@ function PlanCard({
   if (loading) {
     return (
       <article className="flex h-full flex-col overflow-hidden rounded-3xl border border-neutral-200 bg-white">
-        <Skeleton shape="rect" className="h-[180px] w-full rounded-none" />
+        <Skeleton shape="rect" className="h-45 w-full rounded-none" />
 
         <div className="flex flex-1 flex-col gap-sm p-lg">
           <Skeleton shape="line" className="h-5 w-3/4" />
@@ -72,7 +74,7 @@ function PlanCard({
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white card-hover">
-      <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
+      <div className="relative h-45 w-full overflow-hidden bg-neutral-100">
         {plan!.imageUrl ? (
           <img
             src={plan!.imageUrl}
@@ -84,7 +86,7 @@ function PlanCard({
             <span className="font-body text-body-sm text-neutral-400">{plan!.name}</span>
           </div>
         )}
-        <span className="absolute bottom-sm left-sm flex items-center gap-1 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
+        <span className="absolute bottom-sm left-sm flex items-center gap-1 rounded-full bg-(--pink-400) px-sm py-2xs font-body text-caption font-semibold text-white shadow">
           {getPlanTypeLabel(plan!.type, t as never)}
         </span>
       </div>
@@ -149,19 +151,31 @@ function ServicesPage() {
     <div className="min-h-screen bg-bg-page">
       <Navbar />
 
-      <section className="flex min-h-[280px] items-start bg-white px-[30px] pt-[48px] pb-[40px] text-center md:min-h-[320px] md:pt-[72px]">
-        <div className="mx-auto w-full max-w-[700px]">
+      <section className="relative flex min-h-70 items-start overflow-hidden bg-white px-7.5 pt-12 pb-10 text-center md:min-h-80 md:pt-18">
+        <img
+          src={pencilSharpener}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute left-[3%] top-[25%] w-[clamp(3rem,9vw,6rem)] -rotate-12 select-none opacity-50 md:left-[8%] md:top-[25%] lg:left-[10%] lg:top-[25%]"
+        />
+        <img
+          src={glue}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute right-[3%] top-[25%] w-[clamp(3rem,9vw,6rem)] rotate-12 select-none opacity-50 md:right-[8%] md:top-[25%] lg:right-[10%] lg:top-[25%]"
+        />
+        <div className="relative z-10 mx-auto w-full max-w-175">
           <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">
             {t('services.title')}
           </h1>
-          <p className="mx-auto mt-[20px] max-w-[560px] font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">
+          <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">
             {t('services.description')}
           </p>
         </div>
       </section>
 
       <section className="relative w-full bg-bg-page py-10 md:py-12">
-        <Container className="mb-[36px] flex justify-start md:mb-[48px]">
+        <Container className="mb-9 flex justify-start md:mb-12">
           <ExchangeRateWidget
             data={exchangeRate}
             loading={exchangeRateLoading}
@@ -170,8 +184,8 @@ function ServicesPage() {
           />
         </Container>
 
-        <Container className="flex flex-col gap-[36px]">
-          <div className="grid grid-cols-1 gap-[20px] md:grid-cols-3">
+        <Container className="flex flex-col gap-9">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
             {loading && (
               <SkeletonList count={skeletonCount}>{() => <PlanCard loading />}</SkeletonList>
             )}

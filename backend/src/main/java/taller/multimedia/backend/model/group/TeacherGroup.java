@@ -1,7 +1,5 @@
 package taller.multimedia.backend.model.group;
 
-import java.util.UUID;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;

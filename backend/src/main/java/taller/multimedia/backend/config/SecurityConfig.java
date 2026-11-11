@@ -101,7 +101,6 @@ public class SecurityConfig {
                 "/forgot-password",
                 "/reset-password",
                 "/api/announcements",
-                "/api/appointments/**",
                 "/api/translations",
                 "/api/translations/batch",
                 "/api/stripe-plans",
@@ -109,6 +108,17 @@ public class SecurityConfig {
                 "/api/webhooks/**",
                 "/api/gallery/likes/**")
             .permitAll()
+            .requestMatchers(HttpMethod.POST,
+                "/api/appointments",
+                "/api/appointments/holds",
+                "/api/appointments/holds/release")
+            .permitAll()
+            .requestMatchers(HttpMethod.GET,
+                "/api/appointments/available-slots",
+                "/api/appointments/available-week",
+                "/api/appointments/holds/stream")
+            .permitAll()
+            .requestMatchers("/api/appointments/**").hasAnyRole("OWNER", "ADMIN")
               .requestMatchers("/api/forum/articles/likes/**").permitAll()
               .requestMatchers(HttpMethod.DELETE, "/api/forum/community/*", "/api/forum/community/*/comments/*").hasRole("OWNER")
               .requestMatchers("/api/forum/community/**", "/api/forum/posts/likes/**").permitAll()

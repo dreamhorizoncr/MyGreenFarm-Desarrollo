@@ -6,11 +6,9 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 
 import taller.multimedia.backend.model.announcement.AnnouncementCategory;
 
-@Repository
 public interface AnnouncementCategoryRepository extends JpaRepository<AnnouncementCategory, UUID> {
     List<AnnouncementCategory> findAllByOrderByPositionAscTitleAsc();
 

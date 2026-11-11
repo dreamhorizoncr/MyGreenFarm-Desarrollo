@@ -1,7 +1,5 @@
 package taller.multimedia.backend.repository.user;
 
-import org.springframework.stereotype.Repository;
-
 import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.model.user.User;
 
@@ -15,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
 
