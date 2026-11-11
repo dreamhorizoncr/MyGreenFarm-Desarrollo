@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState, type RefObject } from 'react'
+import { flushSync } from 'react-dom'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { LockIcon, MenuIcon, XIcon } from '@animateicons/react/lucide'
@@ -70,8 +71,10 @@ function useBrandNameFits(language: string, isAuthenticated: boolean) {
       setCollapse(brandWithoutName + menuWidth + options.offsetWidth > available)
     }
 
-    measure()
-    const observer = new ResizeObserver(measure)
+    // The observer reports right after the browser lays the page out and before it paints, so reading
+    // widths there costs nothing; measuring here would force an extra layout. flushSync applies the
+    // result in that same frame, so the first paint already shows the right menu.
+    const observer = new ResizeObserver(() => flushSync(measure))
     observer.observe(row)
     void document.fonts?.ready.then(measure)
     return () => observer.disconnect()

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { MailIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
-import chicks from '../../assets/imgs/chicks.webp'
+import chicks from '../../assets/imgs/chicks-420.webp'
 import cloudsPink from '../../assets/imgs/cloudsPink.svg'
 import pencil from '../../assets/imgs/pencil.svg'
 import protractor from '../../assets/imgs/protractor.svg'
@@ -82,6 +82,9 @@ function JoinSection() {
             <img
               loading="lazy"
               src={chicks}
+              width={213}
+              height={420}
+              decoding="async"
               alt=""
               aria-hidden="true"
               className="absolute bottom-0 left-[9%] hidden h-[210px] w-auto origin-bottom transition-transform duration-500 ease-out group-hover:-rotate-6 md:block"
@@ -89,6 +92,9 @@ function JoinSection() {
             <img
               loading="lazy"
               src={chicks}
+              width={213}
+              height={420}
+              decoding="async"
               alt=""
               aria-hidden="true"
               className="absolute bottom-0 right-[9%] hidden h-[210px] w-auto origin-bottom -scale-x-100 transition-transform duration-500 ease-out group-hover:rotate-6 md:block"

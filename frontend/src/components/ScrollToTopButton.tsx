@@ -5,6 +5,9 @@ import { ChevronUpIcon } from '@animateicons/react/lucide'
 
 const ADMIN_SCROLL_CONTAINER_ID = 'admin-scroll-container'
 
+// Every page opens at the top, also after a reload (the button resets the scroll on each route change).
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+
 function isDashboardPath(pathname: string) {
     return pathname.startsWith('/admin') || pathname === '/profile'
 }
@@ -36,21 +39,33 @@ function ScrollToTopButton() {
     const [visible, setVisible] = useState(false)
     const [overGreen, setOverGreen] = useState(false)
     const buttonRef = useRef<HTMLButtonElement>(null)
+    const firstPage = useRef(true)
 
     useEffect(() => {
         const el = getScrollElement(pathname)
-        if (el) el.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+        // A freshly loaded page already starts at the top (see scrollRestoration below), so only a
+        // route change needs the reset. Scrolling on load would force a layout before the first paint.
+        if (firstPage.current) firstPage.current = false
+        else if (el) el.scrollTo({ top: 0, left: 0, behavior: 'auto' })
         else window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
 
         if (!supportsScrollToTop(pathname)) return
         const target: HTMLElement | Window = el ?? window
         const onScroll = () => {
-            setVisible((el ? el.scrollTop : window.scrollY) > 400)
-            if (buttonRef.current) setOverGreen(isOverGreenSection(buttonRef.current))
+            const show = (el ? el.scrollTop : window.scrollY) > 400
+            setVisible(show)
+            // The colour only matters while the button shows.
+            if (show && buttonRef.current) setOverGreen(isOverGreenSection(buttonRef.current))
         }
-        onScroll()
+        // First check after the page has painted, when reading the scroll position is free.
+        let timer = 0
+        const frame = requestAnimationFrame(() => { timer = window.setTimeout(onScroll) })
         target.addEventListener('scroll', onScroll, { passive: true })
-        return () => target.removeEventListener('scroll', onScroll)
+        return () => {
+            cancelAnimationFrame(frame)
+            clearTimeout(timer)
+            target.removeEventListener('scroll', onScroll)
+        }
     }, [pathname])
 
     if (!supportsScrollToTop(pathname)) return null
