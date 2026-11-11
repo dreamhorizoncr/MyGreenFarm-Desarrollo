@@ -6,6 +6,19 @@ import App from './App.tsx'
 import { installModalScrollbars } from './utils/modalScrollbars.ts'
 import { installReducedMotionBridge } from './utils/reducedMotion.ts'
 import { preloadListCounts } from './services/listCounts.ts'
+import { heroImage } from './pages/home/heroImage.ts'
+
+// The home hero is the largest thing on the first screen: start fetching it before React renders.
+if (window.location.pathname === '/') {
+  const preload = document.createElement('link')
+  preload.rel = 'preload'
+  preload.as = 'image'
+  preload.href = heroImage.src
+  preload.imageSrcset = heroImage.srcSet
+  preload.imageSizes = heroImage.sizes
+  preload.fetchPriority = 'high'
+  document.head.append(preload)
+}
 
 preloadListCounts()
 installReducedMotionBridge()

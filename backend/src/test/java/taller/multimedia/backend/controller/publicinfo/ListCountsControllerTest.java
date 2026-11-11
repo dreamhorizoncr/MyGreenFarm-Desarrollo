@@ -31,7 +31,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
-import taller.multimedia.backend.dto.UserInfoResponse;
+import taller.multimedia.backend.dto.PublicTeacherResponse;
 import taller.multimedia.backend.dto.vacancy.VacancyResponse;
 import taller.multimedia.backend.model.gallery.Gallery;
 import taller.multimedia.backend.model.service_plans.ServicePlan;
@@ -74,7 +74,7 @@ class ListCountsControllerTest {
                 .thenReturn(new PageImpl<>(List.of(), PageRequest.of(0, 1), 4));
         lenient().when(forumCommunityPostService.getAll(any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(), PageRequest.of(0, 1), 2));
-        lenient().when(userService.getTeachers()).thenReturn(List.of(teacher("TEACHER"), teacher("TEACHER"), teacher("ADMIN")));
+        lenient().when(userService.getAboutUsTeachers()).thenReturn(List.of(teacher(), teacher()));
     }
 
     @AfterEach
@@ -103,7 +103,7 @@ class ListCountsControllerTest {
         for (int i = 0; i < 50; i++) controller.getCounts();
 
         verify(galleryRepository, times(1)).findAllByOrderByCreatedAtDesc(any(Pageable.class));
-        verify(userService, times(1)).getTeachers();
+        verify(userService, times(1)).getAboutUsTeachers();
     }
 
     @Test
@@ -148,7 +148,7 @@ class ListCountsControllerTest {
         return VacancyResponse.builder().id(UUID.randomUUID()).title("Vacante").open(open).build();
     }
 
-    private static UserInfoResponse teacher(String role) {
-        return new UserInfoResponse(UUID.randomUUID(), "teacher@example.com", "Ana", "Pérez", role, null);
+    private static PublicTeacherResponse teacher() {
+        return new PublicTeacherResponse(UUID.randomUUID(), "Ana", "Pérez", "TEACHER", null);
     }
 }

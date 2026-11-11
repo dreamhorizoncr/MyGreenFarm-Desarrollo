@@ -65,7 +65,8 @@ public class UserPhotoService {
                 saved.getLastName(),
                 saved.getRole().name(),
                 saved.getBirthday(),
-                saved.getPhotoUrl());
+                saved.getPhotoUrl(),
+                saved.isShowOnAboutUs());
     }
 
     @Transactional

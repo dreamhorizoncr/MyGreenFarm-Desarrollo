@@ -12,6 +12,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import jakarta.transaction.Transactional;
 import taller.multimedia.backend.dto.UpdateUserRequest;
+import taller.multimedia.backend.dto.PublicTeacherResponse;
 import taller.multimedia.backend.dto.UserInfoResponse;
 import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.model.user.User;
@@ -95,6 +96,7 @@ public class UserService {
 
         applyBirthday(targetUser, request.getBirthday());
         applyPhotoUrl(targetUser, request.getPhotoUrl());
+        applyShowOnAboutUs(targetUser, request.getShowOnAboutUs());
 
         return toResponse(targetUser);
     }
@@ -136,6 +138,12 @@ public class UserService {
 
         String cleanPhotoUrl = Sanitizer.requireClean("photoUrl", rawPhotoUrl);
         user.setPhotoUrl(cleanPhotoUrl);
+    }
+
+    private void applyShowOnAboutUs(User user, Boolean showOnAboutUs) {
+        if (showOnAboutUs != null && user.getRole() == Role.TEACHER) {
+            user.setShowOnAboutUs(showOnAboutUs);
+        }
     }
 
     private void scheduleBirthdaySync(UUID userId) {
@@ -181,7 +189,8 @@ public class UserService {
                 user.getLastName(),
                 user.getRole().name(),
                 user.getBirthday(),
-                user.getPhotoUrl());
+                user.getPhotoUrl(),
+                user.isShowOnAboutUs());
     }
 
     private boolean canManageUsers(Role role) {
@@ -217,6 +226,19 @@ public class UserService {
                 .stream()
                 .filter(user -> Boolean.TRUE.equals(user.getIsActive()))
                 .map(this::toResponse)
+                .toList();
+    }
+
+    public List<PublicTeacherResponse> getAboutUsTeachers() {
+        return userRepository.findByRole(Role.TEACHER)
+                .stream()
+                .filter(user -> Boolean.TRUE.equals(user.getIsActive()) && user.isShowOnAboutUs())
+                .map(user -> new PublicTeacherResponse(
+                        user.getId(),
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getRole().name(),
+                        user.getPhotoUrl()))
                 .toList();
     }
 }

@@ -28,6 +28,7 @@ function MultimediaSection() {
     <section id="multimedia" className="relative flex min-h-[100svh] w-full flex-col bg-pink-400">
       <div className="relative w-full overflow-hidden leading-none">
         <img
+          loading="lazy"
           src={cloudWhiteDown}
           alt=""
           aria-hidden="true"

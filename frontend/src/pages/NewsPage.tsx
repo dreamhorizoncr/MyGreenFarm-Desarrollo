@@ -163,6 +163,7 @@ function NewsPage() {
                           formattedDate={formatNewsDate(a.eventDate, i18n.language)}
                           coverImage={getCoverImage(a.id)}
                           coverAlt={getCoverAlt(a.id)}
+                          priority={rowIndex === 0 && colIndex === 0}
                           onReadMore={() => setSelectedAnnouncement(a)}
                         />
                       );

@@ -23,6 +23,7 @@ function PhilosophySection() {
         <Container className="py-1500">
           <div className="grid w-full items-center gap-lg rounded-3xl bg-white p-lg md:grid-cols-2 md:gap-xl md:p-xl">
             <img
+              loading="lazy"
               src={child}
               alt={t('home.philosophy.imageAlt')}
               data-scroll-bg="green"

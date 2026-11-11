@@ -1,5 +1,5 @@
 import { apiClient, type PageResponse } from './api.ts'
-import type { UserInfo, UpdateUserData } from '../types/auth.ts'
+import type { PublicTeacher, UserInfo, UpdateUserData } from '../types/auth.ts'
 
 export const adminService = {
   async getUsers(page = 0, size = 10, role?: string): Promise<PageResponse<UserInfo>> {
@@ -20,6 +20,11 @@ export const adminService = {
 
   async getTeachers(): Promise<UserInfo[]> {
     const response = await apiClient.get<UserInfo[]>('/users/teachers')
+    return response.data
+  },
+
+  async getAboutUsTeachers(): Promise<PublicTeacher[]> {
+    const response = await apiClient.get<PublicTeacher[]>('/users/teachers/about-us')
     return response.data
   },
 

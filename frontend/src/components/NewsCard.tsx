@@ -16,12 +16,13 @@ interface NewsCardProps {
   previewLinkLabel?: string
   actions?: ReactNode
   loading?: boolean
+  priority?: boolean
   className?: string
 }
 
-function CoverImage({ coverImage, title, alt }: Readonly<{ coverImage?: string; title: string; alt?: string }>) {
+function CoverImage({ coverImage, title, alt, priority }: Readonly<{ coverImage?: string; title: string; alt?: string; priority?: boolean }>) {
   return coverImage ? (
-    <img src={coverImage} alt={alt || title} className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" />
+    <img src={coverImage} alt={alt || title} loading={priority ? "eager" : "lazy"} decoding="async" fetchPriority={priority ? "high" : undefined} className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" />
   ) : (
     <div className="flex h-full w-full items-center justify-center bg-bg-page">
       <img src={LowCortisol} alt="" className="h-[75%] w-[75%] object-contain" />
@@ -29,7 +30,7 @@ function CoverImage({ coverImage, title, alt }: Readonly<{ coverImage?: string; 
   );
 }
 
-function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverImage, coverAlt, onReadMore, previewLinkLabel, actions, loading = false, className = "" }: Readonly<NewsCardProps>) {
+function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverImage, coverAlt, onReadMore, previewLinkLabel, actions, loading, priority = false, className = "" }: Readonly<NewsCardProps>) {
   const { t } = useTranslation();
 
   if (loading && big) {
@@ -101,7 +102,7 @@ function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverIm
     return (
       <article className={`group relative overflow-hidden rounded-[22px] border border-neutral-200 bg-white shadow card-hover md:flex md:min-h-[340px] ${className}`}>
         <div className="relative h-[240px] overflow-hidden md:h-auto md:w-1/2 md:shrink-0">
-          <CoverImage coverImage={coverImage} title={announcement!.title} alt={coverAlt} />
+          <CoverImage coverImage={coverImage} title={announcement!.title} alt={coverAlt} priority={priority} />
 
           <span className="absolute left-[14px] top-[14px] rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
             {typeLabel}
@@ -132,7 +133,7 @@ function NewsCard({ big = false, announcement, typeLabel, formattedDate, coverIm
   return (
     <article className={`group relative overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow card-hover md:flex md:min-h-[340px] md:flex-col ${className}`}>
       <div className="relative h-[200px] overflow-hidden md:h-[125px] md:shrink-0">
-        <CoverImage coverImage={coverImage} title={announcement!.title} alt={coverAlt} />
+        <CoverImage coverImage={coverImage} title={announcement!.title} alt={coverAlt} priority={priority} />
 
         <span className="absolute left-[14px] top-[14px] rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white">
           {typeLabel}
