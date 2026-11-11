@@ -10,7 +10,7 @@ import logo from '../assets/imgs/Logo.svg'
 function Brand() {
   return (
     <div className="flex items-center gap-3">
-      <img src={logo} alt="My Green Farm" className="h-12 w-auto max-w-[48px] object-contain" />
+      <img src={logo} alt="My Green Farm" width={38} height={48} className="h-12 w-auto max-w-[48px] object-contain" />
       <span className="font-heading text-h6 text-white">My Green Farm</span>
     </div>
   )

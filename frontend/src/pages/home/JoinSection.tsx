@@ -49,6 +49,8 @@ function JoinSection() {
         <img
           loading="lazy"
           src={cloudsPink}
+          width={1453}
+          height={175}
           alt=""
           aria-hidden="true"
           className="relative -mb-1 block w-[110vw] max-w-none -translate-x-1/2 left-1/2 object-cover"

@@ -36,7 +36,7 @@ function FooterSocialLinks() {
           aria-label={t(label)}
           className="inline-flex size-10 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
         >
-          <Icon className="h-5 w-5" />
+          <Icon className="h-5 w-5" aria-hidden="true" focusable="false" />
         </a>
       ))}
     </nav>
