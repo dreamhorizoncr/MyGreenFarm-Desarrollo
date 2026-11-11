@@ -32,6 +32,8 @@ function MultimediaCard({ imageSrc, alt, badge, title, description, onClick, loa
         <img
           src={imageSrc}
           alt={alt}
+          loading="lazy"
+          decoding="async"
           className="block aspect-4/3 w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
         />
         <span className="absolute bottom-sm left-sm rounded-full bg-(--pink-400) px-sm py-2xs font-body text-caption font-semibold text-white shadow">
