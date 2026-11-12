@@ -21,6 +21,20 @@ import type { Group, GroupRequest } from "../types/group";
         return response.data;
     },
 
+    async addChild(groupId: number, childId: number): Promise<Group> {
+        const response = await apiClient.post<Group>(
+        `/groups/${groupId}/children/${childId}`,
+        );
+        return response.data;
+    },
+
+    async removeChild(groupId: number, childId: number): Promise<Group> {
+        const response = await apiClient.delete<Group>(
+        `/groups/${groupId}/children/${childId}`,
+        );
+        return response.data;
+    },
+
     async create(data: GroupRequest): Promise<Group> {
         const response = await apiClient.post<Group>("/groups", data);
         return response.data;
