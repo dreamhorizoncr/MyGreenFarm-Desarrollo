@@ -18,12 +18,11 @@ export function useServicePlanAdmin() {
     try {
       const pageSize = 100
       const firstPage = await servicePlanService.getAllPlans(0, pageSize)
-      const dbPlans = [...firstPage.content]
-
-      for (let page = 1; page < firstPage.totalPages; page += 1) {
-        const nextPage = await servicePlanService.getAllPlans(page, pageSize)
-        dbPlans.push(...nextPage.content)
-      }
+      const otherPages = await Promise.all(
+        Array.from({ length: Math.max(0, firstPage.totalPages - 1) }, (_, index) =>
+          servicePlanService.getAllPlans(index + 1, pageSize)),
+      )
+      const dbPlans = [firstPage, ...otherPages].flatMap((page) => page.content)
 
       setSourcePlans(dbPlans)
 

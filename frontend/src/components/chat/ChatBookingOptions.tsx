@@ -44,7 +44,7 @@ export default function ChatBookingOptions({
   )
 
   return (
-    <div className="flex flex-col gap-sm" role="group" aria-label={t('chat.booking.options')}>
+    <fieldset className="m-0 flex min-w-0 flex-col gap-sm border-0 p-0" aria-label={t('chat.booking.options')}>
       {choices.length > 0 && (
         <div className="flex flex-wrap gap-xs">
           {choices.map((option) => renderButton(option, CHOICE_CLASS))}
@@ -55,6 +55,6 @@ export default function ChatBookingOptions({
           {actions.map((option) => renderButton(option, actionClassName(option.variant)))}
         </div>
       )}
-    </div>
+    </fieldset>
   )
 }

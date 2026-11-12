@@ -15,10 +15,10 @@ function PageLoader() {
   }, [])
 
   // Keeps the footer below the screen while the page loads.
-  if (!visible) return <div className="min-h-svh" role="status"><span className="sr-only">{t('common.status.loading')}</span></div>
+  if (!visible) return <output className="block min-h-svh"><span className="sr-only">{t('common.status.loading')}</span></output>
 
   return (
-    <div role="status" aria-busy="true" className="mx-auto flex min-h-svh w-full max-w-[75rem] flex-col gap-lg px-md py-2xl md:px-xl">
+    <output aria-busy="true" className="mx-auto flex min-h-svh w-full max-w-[75rem] flex-col gap-lg px-md py-2xl md:px-xl">
       <span className="sr-only">{t('common.status.loading')}</span>
       <Skeleton shape="line" className="h-10 w-2/3 max-w-[28rem]" />
       <Skeleton shape="line" className="h-5 w-full max-w-[40rem]" />
@@ -27,7 +27,7 @@ function PageLoader() {
         <Skeleton className="h-48 w-full" />
         <Skeleton className="hidden h-48 w-full lg:block" />
       </div>
-    </div>
+    </output>
   )
 }
 

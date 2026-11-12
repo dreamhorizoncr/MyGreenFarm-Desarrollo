@@ -15,6 +15,7 @@ import { getErrorMessage } from '../utils/error.ts'
 import { hasUnsafeText } from '../utils/validators.ts'
 import FieldHint from '../components/ui/FieldHint.tsx'
 import { setPageSEO } from '../utils/seo.ts'
+import { htmlToText } from '../utils/html.ts'
 
 const MAX_CONTENT = 4000
 
@@ -71,11 +72,7 @@ function BlogPostPage() {
       return
     }
 
-    const description = post.content
-      .replace(/<[^>]*>/g, '')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .slice(0, 155)
+    const description = htmlToText(post.content).slice(0, 155)
 
     setPageSEO({
       title: `${post.title} | My Green Farm`,

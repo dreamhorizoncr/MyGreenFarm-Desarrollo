@@ -6,13 +6,7 @@ import { AccessibilityContext, type AccessibilityContextType, type ColorMode, ty
 const COLOR_MODES = new Set<string>(["normal", "monochrome", "low-saturation", "high-saturation"]);
 
 function persistFlag(key: string, enabled: boolean) {
-    if (enabled) localStorage.setItem(key, "true");
-    else localStorage.removeItem(key);
-}
-
-function persistDefaultOnFlag(key: string, enabled: boolean) {
-    if (enabled) localStorage.removeItem(key);
-    else localStorage.setItem(key, "false");
+    localStorage.setItem(key, String(enabled));
 }
 
 function applyFlag(root: HTMLElement, className: string, key: string, enabled: boolean) {
@@ -95,10 +89,10 @@ export function AccessibilityProvider({ children }: Readonly<{ children: ReactNo
 
         applyFlag(root, "voice-reader-mode", "a11y_voice_reader", voiceReader);
 
-        persistDefaultOnFlag("a11y_reader_modals", autoReadModals);
-        persistDefaultOnFlag("a11y_reader_alerts", announceAlerts);
-        persistDefaultOnFlag("a11y_reader_click", clickToRead);
-        persistDefaultOnFlag("a11y_reader_focus", readFocus);
+        persistFlag("a11y_reader_modals", autoReadModals);
+        persistFlag("a11y_reader_alerts", announceAlerts);
+        persistFlag("a11y_reader_click", clickToRead);
+        persistFlag("a11y_reader_focus", readFocus);
     }, [
         fontSize,
         highContrast,

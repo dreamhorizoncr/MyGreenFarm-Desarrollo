@@ -84,7 +84,12 @@
   }
 
   #values .green-hearts-values-puzzle-art svg {
+    position: absolute;
+    max-width: none;
     pointer-events: none;
+    transform: scale(1.006);
+    transform-origin: center;
+    transition: transform 180ms ease, filter 180ms ease;
   }
 
   #values .green-hearts-values-puzzle-art .puzzle-piece__shape {
@@ -94,15 +99,12 @@
 
   /* Text lets the pointer through to the pieces */
   #values .green-hearts-values-puzzle-content {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    justify-items: center;
     pointer-events: none;
-  }
-
-  #values .green-hearts-values-puzzle-art svg {
-    position: absolute;
-    max-width: none;
-    transform: scale(1.006);
-    transform-origin: center;
-    transition: transform 180ms ease, filter 180ms ease;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -139,14 +141,6 @@
     z-index: 1;
     transform: translateY(-8px) scale(1.025);
     filter: drop-shadow(0 8px 8px rgb(0 0 0 / 18%));
-  }
-
-  #values .green-hearts-values-puzzle-content {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    grid-template-rows: repeat(2, minmax(0, 1fr));
-    align-items: center;
-    justify-items: center;
   }
 
   #values .green-hearts-puzzle-value {
