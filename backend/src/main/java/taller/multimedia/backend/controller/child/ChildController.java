@@ -87,6 +87,7 @@ public class ChildController {
     }
 
     @GetMapping("/options")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<List<ChildOptionResponse>> getChildrenOptions() {
         return ResponseEntity.ok(childService.getChildrenOptions());
     }

@@ -119,6 +119,7 @@ function AdminSidebar() {
   ]
   const teacherItems: SidebarItem[] = [
     { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
+    { id: 'groups', icon: BookOpenTextIcon, path: '/admin/groups' },
     { id: 'forum', icon: MessageSquarePlusIcon, path: '/admin/forum' },
     { id: 'children', icon: UserStarIcon, path: '/admin/expedients' },
     { id: 'myProfile', icon: UserIcon, path: '/profile' },
@@ -127,7 +128,7 @@ function AdminSidebar() {
   const items = itemsByRole[role ?? ''] ?? teacherItems
 
   const isChildrenModulePath =
-    CHILDREN_MODULE_PATHS.has(pathname) || (role === 'TEACHER' && pathname === '/admin/groups')
+    CHILDREN_MODULE_PATHS.has(pathname)
   const activeItem =
     items.find((item) => item.path === pathname) ??
     (isChildrenModulePath ? items.find((item) => item.id === 'children') : undefined) ??

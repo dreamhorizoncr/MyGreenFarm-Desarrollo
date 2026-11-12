@@ -22,6 +22,12 @@ export interface Child {
     isActive: boolean
 }
 
+export interface ChildOption {
+    id: number
+    studentId: string
+    fullName: string
+}
+
 export interface ChildRequest {
     parentIdentification: string
     relationship: Relationship

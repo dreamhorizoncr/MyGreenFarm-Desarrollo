@@ -100,6 +100,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     @GetMapping("/teachers")
     public ResponseEntity<List<UserInfoResponse>> getTeachers() {
         return ResponseEntity.ok(userService.getTeachers());
