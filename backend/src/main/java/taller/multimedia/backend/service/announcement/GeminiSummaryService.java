@@ -62,6 +62,7 @@ public class GeminiSummaryService {
                     + "Mention the relevant appointments and pending items using only the information provided. "
                     + "If a category has no items, say so briefly. "
                     + "Do not make up data or add recommendations. "
+                    + "Never mention names or any personal data of people; talk only about counts, times and statuses. "
                     + "Reply ONLY with the summary in plain text, without Markdown.\n\nDay data:\n";
 
     private final ObjectMapper objectMapper;

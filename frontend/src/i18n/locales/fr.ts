@@ -1097,6 +1097,21 @@ export default {
       activityTimeFour: "Il y a 2 heures",
       activityTimeFive: "Il y a 3 heures",
       emptyState: "Aucun élément en attente dans cette section.",
+      teacher: {
+        groupsTitle: "Mes groupes",
+        noGroups: "Vous n'avez pas encore de groupe assigné.",
+        groupChildren_one: "{{count}} enfant",
+        groupChildren_other: "{{count}} enfants",
+        stats: {
+          myGroups: "Mes groupes",
+          groupChildren: "Enfants de mes groupes",
+          forumArticles: "Mes articles du forum",
+        },
+        viewGroups: "Voir mes groupes",
+        viewExpedients: "Voir les dossiers",
+        viewArticles: "Voir mes articles",
+        articlesTitle: "Mes articles récents",
+      },
       calendar: {
         title: "Calendrier",
         ariaLabel: "Calendrier mensuel du tableau de bord",

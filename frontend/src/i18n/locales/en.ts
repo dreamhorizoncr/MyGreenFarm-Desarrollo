@@ -1088,6 +1088,21 @@ export default {
       activityTimeFour: "2 hours ago",
       activityTimeFive: "3 hours ago",
       emptyState: "There are no pending items in this section.",
+      teacher: {
+        groupsTitle: "My groups",
+        noGroups: "You have no groups assigned yet.",
+        groupChildren_one: "{{count}} child",
+        groupChildren_other: "{{count}} children",
+        stats: {
+          myGroups: "My groups",
+          groupChildren: "Children in my groups",
+          forumArticles: "My forum articles",
+        },
+        viewGroups: "View my groups",
+        viewExpedients: "View records",
+        viewArticles: "View my articles",
+        articlesTitle: "My recent articles",
+      },
       calendar: {
         title: "Calendar",
         ariaLabel: "Dashboard monthly calendar",

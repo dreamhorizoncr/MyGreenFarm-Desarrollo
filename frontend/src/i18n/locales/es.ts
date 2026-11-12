@@ -1092,6 +1092,21 @@ export default {
       activityTimeFour: "Hace 2 horas",
       activityTimeFive: "Hace 3 horas",
       emptyState: "No hay elementos pendientes en esta sección.",
+      teacher: {
+        groupsTitle: "Mis grupos",
+        noGroups: "Todavía no tienes grupos asignados.",
+        groupChildren_one: "{{count}} niño",
+        groupChildren_other: "{{count}} niños",
+        stats: {
+          myGroups: "Mis grupos",
+          groupChildren: "Niños en mis grupos",
+          forumArticles: "Mis artículos del foro",
+        },
+        viewGroups: "Ver mis grupos",
+        viewExpedients: "Ver expedientes",
+        viewArticles: "Ver mis artículos",
+        articlesTitle: "Mis artículos recientes",
+      },
       calendar: {
         title: "Calendario",
         ariaLabel: "Calendario mensual del dashboard",
