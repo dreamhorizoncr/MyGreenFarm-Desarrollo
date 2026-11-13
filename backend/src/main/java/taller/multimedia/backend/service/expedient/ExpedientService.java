@@ -91,6 +91,32 @@ public class ExpedientService {
     }
 
     @Transactional(readOnly = true)
+    public Page<ExpedientResponse> getExpedientsForChildren(java.util.Set<Long> childIds, Pageable pageable) {
+        if (childIds.isEmpty()) {
+            return Page.empty(pageable);
+        }
+        return expedientRepository.findActiveByChildIds(childIds, pageable).map(this::mapToResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public Long getChildId(UUID expedientId) {
+        return findEntityById(expedientId).getChild().getId();
+    }
+
+    @Transactional(readOnly = true)
+    public ExpedientResponse getExpedientByStudentId(String studentId) {
+        return expedientRepository.findByChildStudentId(studentId)
+                .map(this::mapToResponse)
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(
+                        org.springframework.http.HttpStatus.NOT_FOUND, "This child has no record yet"));
+    }
+
+    @Transactional(readOnly = true)
+    public java.util.Optional<Long> findChildIdByStudentId(String studentId) {
+        return childRepository.findByStudentId(studentId).map(Child::getId);
+    }
+
+    @Transactional(readOnly = true)
     public ExpedientResponse getExpedientById(UUID id) {
         Expedient expedient = expedientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Record not found with ID: " + id));

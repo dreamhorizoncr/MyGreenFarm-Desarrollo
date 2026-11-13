@@ -149,7 +149,7 @@ function PublishExperienceModal({
             <Button
               onClick={handleSubmit}
               disabled={submitted || !name.trim() || !content.trim()}
-              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600"
+              className="h-11 flex-1 rounded-full blob-fill bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600"
             >
               {t('forum.community.submit')}
             </Button>

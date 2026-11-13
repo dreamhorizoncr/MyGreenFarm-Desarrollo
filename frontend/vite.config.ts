@@ -1,10 +1,8 @@
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import { HERO_SIZES } from './src/pages/home/heroSizes.ts'
+import { HEADER_BG_SIZES } from './src/pages/home/heroSizes.ts'
 
-// The home hero is the largest thing on the first screen. This writes a tiny script into
-// index.html that asks for it right away on the home page, before the JavaScript bundle loads.
 function heroPreload(): Plugin {
   return {
     name: 'mgf-hero-preload',
@@ -14,11 +12,17 @@ function heroPreload(): Plugin {
       handler(html, ctx) {
         const assets = Object.values(ctx.bundle ?? {}).filter((file) => file.type === 'asset')
         const find = (name: string) => assets.find((file) => file.names?.includes(name))?.fileName
-        const small = find('temporaryHeader-640.webp')
-        const medium = find('temporaryHeader-960.webp')
-        const large = find('temporaryHeader.webp')
-        if (!small || !medium || !large) return html
-        const script = `<script>if(location.pathname==='/'){var l=document.createElement('link');l.rel='preload';l.as='image';l.fetchPriority='high';l.href='/${large}';l.imageSrcset='/${small} 640w, /${medium} 960w, /${large} 1204w';l.imageSizes='${HERO_SIZES}';document.head.appendChild(l)}</script>`
+        const images = [
+          { files: [['homeHeaderBg-640.webp', 640], ['homeHeaderBg-1024.webp', 1024], ['homeHeaderBg-1600.webp', 1600]], sizes: HEADER_BG_SIZES },
+        ] as const
+        const preloads = images.map(({ files, sizes }) => {
+          const found = files.map(([name, width]) => [find(name), width] as const)
+          if (found.some(([fileName]) => !fileName)) return null
+          const srcset = found.map(([fileName, width]) => `/${fileName} ${width}w`).join(', ')
+          return `{h:'/${found[found.length - 1][0]}',s:'${srcset}',z:'${sizes}'}`
+        })
+        if (preloads.includes(null)) return html
+        const script = `<script>if(location.pathname==='/'){[${preloads.join(',')}].forEach(function(i){var l=document.createElement('link');l.rel='preload';l.as='image';l.fetchPriority='high';l.href=i.h;l.imageSrcset=i.s;l.imageSizes=i.z;document.head.appendChild(l)})}</script>`
         return html.replace('</title>', `</title>\n    ${script}`)
       },
     },

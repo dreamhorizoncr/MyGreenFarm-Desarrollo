@@ -116,7 +116,7 @@ function PlanCard({
           <button
             type="button"
             onClick={() => onSelect?.(currency)}
-            className="h-11 w-full rounded-full bg-orange-500 font-body text-body-sm font-semibold text-white transition hover:bg-orange-600"
+            className="h-11 w-full rounded-full blob-fill bg-orange-500 font-body text-body-sm font-semibold text-white transition hover:bg-orange-600"
           >
             {t('clubs.moreInfo')}
           </button>

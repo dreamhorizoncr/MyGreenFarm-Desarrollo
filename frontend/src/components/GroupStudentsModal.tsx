@@ -120,6 +120,10 @@ function GroupStudentsModal({
 
   if (!shouldRender || !currentGroup) return null
 
+  let studentPlaceholder = t('admin.groups.selectStudent')
+  if (loadingChildren) studentPlaceholder = t('admin.children.loadingOptions')
+  else if (availableChildren.length === 0) studentPlaceholder = t('admin.groups.noAvailableStudents')
+
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-4 text-left md:p-[30px]">
@@ -183,11 +187,7 @@ function GroupStudentsModal({
                 className="h-11 min-w-0 flex-1 rounded-xl border border-neutral-200 bg-white px-md font-body text-body-sm text-heading outline-none focus:border-heading disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <option value="">
-                  {loadingChildren
-                    ? t('admin.children.loadingOptions')
-                    : availableChildren.length === 0
-                      ? t('admin.groups.noAvailableStudents')
-                      : t('admin.groups.selectStudent')}
+                  {studentPlaceholder}
                 </option>
                 {availableChildren.map((child) => (
                   <option key={child.id} value={child.id}>
@@ -200,7 +200,7 @@ function GroupStudentsModal({
                 type="button"
                 onClick={() => void handleAdd()}
                 disabled={!selectedChildId || saving}
-                className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+                className="h-11 rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {saving ? t('common.loading') : t('admin.groups.assignStudent')}
               </button>

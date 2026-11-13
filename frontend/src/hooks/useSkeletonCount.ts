@@ -1,7 +1,5 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 
-// Count priority: server totals for this visit, then the last count stored in this browser,
-// then the fallback. Only the first load of each visit is stored, including 0.
 const STORAGE_PREFIX = 'mgf:skeleton-count:'
 
 const seeded = new Map<string, number>()

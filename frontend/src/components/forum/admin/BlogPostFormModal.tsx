@@ -354,7 +354,7 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
           <Button
             type="submit"
             disabled={!form.title.trim() || !form.topic.trim() || !(form.authorName ?? '').trim() || !(form.authorRole ?? '').trim() || !form.content.trim()}
-            className="h-11 w-auto rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
+            className="h-11 w-auto rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
           >
             {post ? t('adminForum.saveChanges') : t('adminForum.publish')}
           </Button>

@@ -55,7 +55,6 @@ const actions = [
 
 const PUZZLE_ALIGNMENTS = ['left', 'center', 'right'] as const
 
-// The carousel shows one symmetric piece in each desktop piece's color.
 const pieceFill = (svg: string) => /<path[^>]*\sfill="([^"]+)"/.exec(svg)?.[1]
 
 function GreenHeartsPage() {
@@ -74,10 +73,9 @@ function GreenHeartsPage() {
   const [valuesSwiper, setValuesSwiper] = useState<SwiperInstance | null>(null)
   const [valuesIndex, setValuesIndex] = useState(0)
   const [hoveredPuzzlePiece, setHoveredPuzzlePiece] = useState<number | null>(null)
-  // Without IntersectionObserver the puzzle is shown right away
   const [puzzleInView, setPuzzleInView] = useState(() => typeof window !== 'undefined' && !('IntersectionObserver' in window))
   const puzzleRef = useRef<HTMLDivElement | null>(null)
-  const actionArrowClass = 'z-10 flex size-11 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-[scale,opacity] duration-300 enabled:hover:scale-105 enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:bg-orange-500 disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2'
+  const actionArrowClass = 'z-10 flex size-11 items-center justify-center rounded-full blob-fill bg-orange-500 text-white shadow-lg transition-[scale,opacity] duration-300 enabled:hover:scale-105 enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:bg-orange-500 disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2'
 
   useEffect(() => {
     const puzzle = puzzleRef.current

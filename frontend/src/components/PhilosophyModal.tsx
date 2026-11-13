@@ -6,7 +6,8 @@ import Button from './ui/Button.tsx'
 import PhilosophyPillarItem from './PhilosophyPillarItem.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
-import child from '../assets/imgs/child.webp'
+import childLarge from '../assets/imgs/philosophyChild-1080.webp'
+import childSmall from '../assets/imgs/philosophyChild-640.webp'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface PhilosophyModalProps {
@@ -79,11 +80,16 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
         />
 
         <img
-          src={child}
+          src={childLarge}
+          srcSet={`${childSmall} 640w, ${childLarge} 1080w`}
+          sizes="(min-width: 1024px) 950px, 100vw"
+          width={1080}
+          height={964}
           alt=""
           aria-hidden="true"
+          decoding="async"
           data-scroll-bg="green"
-          className="h-64 w-full rounded-t-[20px] object-cover md:h-80"
+          className="h-64 w-full rounded-t-[20px] object-cover object-[center_22%] md:h-80"
         />
 
         <div className="p-lg md:p-xl">
@@ -117,7 +123,7 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
               <Button
                 variant="primary"
                 onClick={handleCtaClick}
-                className="h-11 rounded-full bg-orange-500 px-lg font-body text-button font-semibold tracking-wide text-white hover:bg-orange-600"
+                className="h-11 rounded-full blob-fill bg-orange-500 px-lg font-body text-button font-semibold tracking-wide text-white hover:bg-orange-600"
               >
                 {t('home.philosophy.modalCta')}
               </Button>

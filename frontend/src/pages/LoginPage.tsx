@@ -156,7 +156,7 @@ function LoginPage() {
             loading={loading}
             disabled={!email.trim() || !password}
             variant="success"
-            className="h-11 w-full rounded-full bg-orange-500 font-body text-button font-semibold text-white hover:bg-orange-600"
+            className="h-11 w-full rounded-full blob-fill bg-orange-500 font-body text-button font-semibold text-white hover:bg-orange-600"
           >
             {loading ? t("login.loading") : t("login.buttonLabel")}
           </Button>

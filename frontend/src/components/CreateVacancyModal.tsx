@@ -159,7 +159,7 @@ function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalPr
           onClick={handleSubmit}
           loading={saving}
           disabled={!title.trim() || !description.trim()}
-          className="h-11 w-auto rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
+          className="h-11 w-auto rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
         >
           {saving ? t('common.loading') : t('vacancies.publish')}
         </Button>

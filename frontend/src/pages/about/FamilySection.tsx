@@ -191,8 +191,6 @@ function FamilySection() {
             className="relative mx-auto m-0 w-full max-w-[24rem]"
           >
             <div className="relative -rotate-2 rounded-[2rem] border-[3px] border-dashed border-green-500 bg-white p-sm shadow-sm transition-transform duration-500 hover:rotate-0">
-              {/* It is the largest thing on the first screen of About Us: no lazy loading, high priority.
-                  It shows at most 369 px wide; on phones it is the screen width minus about 106 px. */}
               <img
                 src={foundingFamily800}
                 srcSet={`${foundingFamily480} 480w, ${foundingFamily800} 800w, ${foundingFamily1214} 1214w`}

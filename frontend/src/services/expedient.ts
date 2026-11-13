@@ -15,6 +15,11 @@ export const expedientService = {
     return response.data;
   },
 
+  async getByStudentId(studentId: string): Promise<Expedient> {
+    const response = await apiClient.get<Expedient>(`/expedients/student/${encodeURIComponent(studentId)}`);
+    return response.data;
+  },
+
   async getById(id: string): Promise<Expedient> {
     const response = await apiClient.get<Expedient>(`/expedients/${id}`);
     return response.data;

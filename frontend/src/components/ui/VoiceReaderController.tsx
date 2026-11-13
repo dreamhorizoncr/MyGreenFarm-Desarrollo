@@ -150,7 +150,6 @@ export default function VoiceReaderController() {
 
         if (voiceReaderRef.current && autoReadModalsRef.current) {
           lastSignatureRef.current = getBlockSignature(dialog);
-          // Mark the start so the modal auto-focus is not announced.
           dialogReadAtRef.current = Date.now();
           scheduleModalRead(dialog);
         }
@@ -323,7 +322,6 @@ export default function VoiceReaderController() {
         if (!dialog) return false;
         if (target === dialog) return true;
         if (target.closest('dialog, [role="dialog"]') !== dialog) return true;
-        // Do not cut the modal auto-reading because of the initial focus.
         return Date.now() - dialogReadAtRef.current < 1000;
       };
 
@@ -366,7 +364,7 @@ export default function VoiceReaderController() {
       data-voice-reader-ui=""
       onClick={stop}
       aria-label={t("accessibility.stopReading", { defaultValue: "Detener lectura" })}
-      className="fixed bottom-6 left-1/2 z-[100000] flex h-11 -translate-x-1/2 items-center gap-2 rounded-full bg-orange-500 px-5 font-body text-body-sm font-semibold text-white shadow-lg transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+      className="fixed bottom-6 left-1/2 z-[100000] flex h-11 -translate-x-1/2 items-center gap-2 rounded-full blob-fill bg-orange-500 px-5 font-body text-body-sm font-semibold text-white shadow-lg transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
     >
       <VolumeXIcon size={18} aria-hidden="true" />
       {t("accessibility.stopReading", { defaultValue: "Detener lectura" })}

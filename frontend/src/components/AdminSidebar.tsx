@@ -88,7 +88,6 @@ function AdminSidebar() {
   const { setSidebarHovered } = useProfileAvatar()
 
   const role = userStorage.getUser()?.role
-  // Each path must appear once, otherwise two items are highlighted as active.
   const ownerItems: SidebarItem[] = [
     { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
     { id: 'appointments', icon: CalendarDaysIcon, path: '/admin/appointments' },
@@ -119,8 +118,8 @@ function AdminSidebar() {
   ]
   const teacherItems: SidebarItem[] = [
     { id: 'dashboard', icon: LayoutDashboardIcon, path: '/admin/dashboard' },
-    { id: 'groups', icon: BookOpenTextIcon, path: '/admin/groups' },
     { id: 'forum', icon: MessageSquarePlusIcon, path: '/admin/forum' },
+    { id: 'groups', icon: BookOpenTextIcon, path: '/admin/groups' },
     { id: 'children', icon: UserStarIcon, path: '/admin/expedients' },
     { id: 'myProfile', icon: UserIcon, path: '/profile' },
   ]

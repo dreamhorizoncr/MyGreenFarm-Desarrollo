@@ -87,7 +87,6 @@ function GlobalFooter() {
   return <Footer />
 }
 
-// Other pages are fetched only once the current one has finished, so they never compete with it.
 const PRELOAD_DELAY_MS = 5000
 
 type NetworkInformation = { saveData?: boolean; effectiveType?: string }

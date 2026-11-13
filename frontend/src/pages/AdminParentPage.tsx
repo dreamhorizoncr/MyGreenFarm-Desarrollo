@@ -80,7 +80,7 @@ function AdminParentsPage() {
                         <button
                             type="button"
                             onClick={() => setIsCreateModalOpen(true)}
-                            className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-all duration-300 hover:scale-105 hover:bg-orange-600"
+                            className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full blob-fill bg-orange-500 text-white transition-all duration-300 hover:scale-105 hover:bg-orange-600"
                             aria-label={t("admin.parents.addTitle")}
                             title={t("admin.parents.addTitle")}
                         >

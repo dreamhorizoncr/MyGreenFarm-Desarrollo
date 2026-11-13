@@ -225,7 +225,7 @@ function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose
               onClick={handleSubmitClick}
               loading={form.submitting}
               disabled={!form.name.trim() || !form.email.trim() || (form.showPhone && !form.phone.trim()) || (form.showFile && !form.file)}
-              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
+              className="h-11 flex-1 rounded-full blob-fill bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
             >
               {form.submitting ? t('common.loading') : t('vacancies.submitApplication')}
             </Button>

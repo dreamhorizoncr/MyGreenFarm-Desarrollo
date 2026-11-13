@@ -59,6 +59,28 @@ public class EvaluationService {
         }
 
         @Transactional(readOnly = true)
+        public List<EvaluationResponse> getEvaluationsForChildren(java.util.Set<Long> childIds) {
+                if (childIds.isEmpty()) {
+                        return List.of();
+                }
+                return evaluationRepository.findByChildIds(childIds).stream()
+                                .map(this::mapToResponse)
+                                .collect(Collectors.toList());
+        }
+
+        @Transactional(readOnly = true)
+        public Long getChildId(UUID evaluationId) {
+                return getEvaluationById(evaluationId).getExpedientId().getChild().getId();
+        }
+
+        @Transactional(readOnly = true)
+        public Long getChildIdOfExpedient(UUID expedientId) {
+                return expedientRepository.findById(expedientId)
+                                .orElseThrow(() -> new RuntimeException("Record not found with ID: " + expedientId))
+                                .getChild().getId();
+        }
+
+        @Transactional(readOnly = true)
         public List<Evaluation> getEvaluationsByExpedient(UUID expedientId) {
                 return evaluationRepository.findByExpedientIdId(expedientId);
         }

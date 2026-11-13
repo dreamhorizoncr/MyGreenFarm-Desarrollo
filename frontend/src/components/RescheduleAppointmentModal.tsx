@@ -191,7 +191,7 @@ function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Readonl
                   variant="primary"
                   onClick={() => setStep(1)}
                   disabled={!date || !selectedSlot}
-                  className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
+                  className="h-11 flex-1 rounded-full blob-fill bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
                 >
                   {t('teacherAppointments.continue')}
                 </Button>
@@ -217,7 +217,7 @@ function RescheduleAppointmentModal({ appointment, onConfirm, onClose }: Readonl
                   variant="primary"
                   onClick={handleConfirm}
                   loading={saving}
-                  className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
+                  className="h-11 flex-1 rounded-full blob-fill bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
                 >
                   {saving ? t('common.loading') : t('teacherAppointments.rescheduleAction')}
                 </Button>
