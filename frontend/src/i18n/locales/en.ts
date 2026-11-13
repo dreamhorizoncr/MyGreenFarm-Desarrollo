@@ -151,7 +151,6 @@ export default {
       description:
         "At My Green Farm, we accompany every stage of childhood with education, love, and meaningful experiences, integrating learning, languages, play, and contact with nature.",
       cta: "Book an appointment",
-      heroAlt: "Cover image",
     },
     philosophy: {
       imageAlt: 'Girl with her arms outstretched outdoors',
@@ -1088,6 +1087,17 @@ export default {
       activityTimeFour: "2 hours ago",
       activityTimeFive: "3 hours ago",
       emptyState: "There are no pending items in this section.",
+      teacher: {
+        stats: {
+          myGroups: "My groups",
+          groupChildren: "Children in my groups",
+          forumArticles: "My forum articles",
+        },
+        viewGroups: "View my groups",
+        viewExpedients: "View records",
+        viewArticles: "View my articles",
+        articlesTitle: "My recent articles",
+      },
       calendar: {
         title: "Calendar",
         ariaLabel: "Dashboard monthly calendar",
@@ -1430,6 +1440,9 @@ export default {
       notes: "General Observations",
 
       addTitle: "Add Record",
+      featuredTitle: "Record of {{name}}",
+      featuredMissing: "Student {{studentId}} has no record yet.",
+      showAll: "See all records",
       editTitle: "Edit Record",
       addDescription: "Enter the child’s academic information.",
       editDescription: "Update the child’s academic information.",
@@ -1493,7 +1506,6 @@ export default {
       teachersSelected_other: "{{count}} teachers selected",
       removeTeacher: "Remove {{name}}",
       deleteConfirm: "Are you sure you want to delete the group \"{{name}}\"? Its children and teachers will no longer be assigned to it. This action cannot be undone.",
-      "tabLabel": "Groups",
       "title": "Groups",
       "description": "Organize and manage student groups and their teachers.",
       "searchPlaceholder": "Search by group, teacher, or student...",
@@ -1527,6 +1539,7 @@ export default {
       "students": "Students",
       "viewStudents": "View students",
       "hideStudents": "Hide students",
+      "openExpedient": "See the record of {{name}}",
       "studentId": "Student ID",
       "noStudents": "This group does not have any assigned students yet.",
       "assignStudent": "Assign student",

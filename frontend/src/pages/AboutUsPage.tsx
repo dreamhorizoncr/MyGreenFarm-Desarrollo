@@ -73,7 +73,7 @@ const DECORATION_LAYOUTS = [
     const teamSlideClass = 'flex shrink-0 justify-center px-sm pb-xs pt-[4.5rem] sm:pb-lg'
 
     const teamArrowClass =
-    'z-20 size-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition hover:scale-105 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--orange-500)]'
+    'z-20 size-11 shrink-0 items-center justify-center rounded-full blob-fill bg-orange-500 text-white shadow-lg transition hover:scale-105 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--orange-500)]'
 
     const TEAM_BREAKPOINTS = [
     { query: '(min-width: 80rem)', perView: 4 },
@@ -83,7 +83,6 @@ const DECORATION_LAYOUTS = [
 
     const LARGE_TEXT_CLASSES = ['text-large', 'text-xlarge', 'dyslexia-font']
 
-    // Media queries ignore the in-app text size, so larger text shows one card less per page.
     const teamPerView = () => {
     const base = TEAM_BREAKPOINTS.find(({ query }) => window.matchMedia(query).matches)?.perView ?? 1
     const largeText = LARGE_TEXT_CLASSES.some((name) => document.documentElement.classList.contains(name))

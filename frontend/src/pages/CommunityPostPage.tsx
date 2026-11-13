@@ -148,7 +148,7 @@ function CommunityPostPage() {
         </div>
       </section>
       <div className="mt-md flex flex-col items-center">
-        <button type="button" onClick={() => setFormOpen((open) => !open)} aria-expanded={formOpen} className="w-full rounded-full bg-orange-500 px-lg py-sm font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600">
+        <button type="button" onClick={() => setFormOpen((open) => !open)} aria-expanded={formOpen} className="w-full rounded-full blob-fill bg-orange-500 px-lg py-sm font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600">
           {formOpen ? t('forum.community.cancel') : t('forum.community.addComment')}
         </button>
         {formOpen && <form onSubmit={submitComment} className="mt-md flex w-full flex-col gap-md rounded-2xl border border-neutral-200 bg-white p-lg">
@@ -159,7 +159,7 @@ function CommunityPostPage() {
           </div>          <div>
             <textarea value={content} onChange={(event) => setContent(event.target.value)} maxLength={4000} rows={5} required aria-label={t('forum.community.commentContentLabel')} placeholder={t('forum.community.commentContentLabel')} className="min-h-[130px] w-full resize-y rounded-xl border border-neutral-300 bg-white p-md font-body text-body-sm text-body-text-dark outline-none focus:border-heading" />
             <FieldHint>{t('fields.comment.content.hint')}</FieldHint>
-          </div>          <Button type="submit" disabled={!name.trim() || !content.trim()} className="h-11 rounded-full bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600">{t('forum.community.commentSubmit')}</Button>
+          </div>          <Button type="submit" disabled={!name.trim() || !content.trim()} className="h-11 rounded-full blob-fill bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600">{t('forum.community.commentSubmit')}</Button>
         </form>}
       </div>
     </main>

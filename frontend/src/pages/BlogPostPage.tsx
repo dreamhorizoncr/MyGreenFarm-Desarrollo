@@ -15,6 +15,7 @@ import { getErrorMessage } from '../utils/error.ts'
 import { hasUnsafeText } from '../utils/validators.ts'
 import FieldHint from '../components/ui/FieldHint.tsx'
 import { setPageSEO } from '../utils/seo.ts'
+import { htmlToText } from '../utils/html.ts'
 
 const MAX_CONTENT = 4000
 
@@ -71,11 +72,7 @@ function BlogPostPage() {
       return
     }
 
-    const description = post.content
-      .replace(/<[^>]*>/g, '')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .slice(0, 155)
+    const description = htmlToText(post.content).slice(0, 155)
 
     setPageSEO({
       title: `${post.title} | My Green Farm`,
@@ -300,7 +297,7 @@ function BlogPostPage() {
                 <Button
                   onClick={handleSubmit}
                   disabled={!name.trim() || !content.trim()}
-                  className="mt-md h-11 rounded-full bg-orange-500 font-body text-button font-normal text-white"
+                  className="mt-md h-11 rounded-full blob-fill bg-orange-500 font-body text-button font-normal text-white"
                 >
                   {t('forum.blog.commentSubmit')}
                 </Button>

@@ -226,7 +226,7 @@ function VacanciesPage() {
                   <button
                     type="button"
                     onClick={openSpontaneousApply}
-                    className="mt-xs inline-flex h-11 items-center whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--orange-500)"
+                    className="mt-xs inline-flex h-11 items-center whitespace-nowrap rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--orange-500)"
                   >
                     {t('vacancies.spontaneousCta')}
                   </button>

@@ -238,6 +238,11 @@ function GroupFormModal({
 
     if (!shouldRender) return null
 
+    let teacherPlaceholder = t('admin.groups.selectTeacher')
+    if (loadingTeachers) teacherPlaceholder = t('admin.children.loadingOptions')
+    else if (teachers.length === 0) teacherPlaceholder = t('admin.groups.loadError')
+    else if (form.teacherIds.length > 0) teacherPlaceholder = t('admin.groups.teachersSelected', { count: form.teacherIds.length })
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-4 text-left md:p-[30px]">
             <button
@@ -334,13 +339,7 @@ function GroupFormModal({
                                 className="flex h-11 w-full items-center justify-between gap-sm rounded-xl border border-neutral-200 bg-white px-md text-left font-body text-body-sm font-normal text-heading outline-none transition-colors hover:border-neutral-400 focus:border-heading disabled:cursor-not-allowed disabled:opacity-60"
                             >
                                 <span className="truncate text-neutral-600">
-                                    {loadingTeachers
-                                        ? t('admin.children.loadingOptions')
-                                        : teachers.length === 0
-                                            ? t('admin.groups.loadError')
-                                            : form.teacherIds.length > 0
-                                                ? t('admin.groups.teachersSelected', { count: form.teacherIds.length })
-                                                : t('admin.groups.selectTeacher')}
+                                    {teacherPlaceholder}
                                 </span>
 
                                 <svg
@@ -513,7 +512,7 @@ function GroupFormModal({
                             !form.name.trim() ||
                             form.teacherIds.length === 0
                         }
-                        className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="h-11 rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         {t(
                             group

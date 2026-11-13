@@ -182,7 +182,7 @@ import { ClipboardList } from 'lucide-react'
             <button
               type="button"
               onClick={() => setShowCreateModal(true)}
-              className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
+              className="inline-flex h-11 items-center gap-xs rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
             >
               <PlusIcon size={18} aria-hidden="true" />
               {t('admin.services.addPlan')}

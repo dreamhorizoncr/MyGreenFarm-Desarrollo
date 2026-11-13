@@ -19,8 +19,6 @@ function MultimediaSection() {
   const featuredGalleries = allGalleries.filter((gallery) => gallery.featured)
   const skeletonCount = useSkeletonCount('home-multimedia', loading, featuredGalleries.length, 3)
   const sectionRef = useRef<HTMLElement>(null)
-  // The section is far below the hero: its photos are fetched only when it gets close,
-  // so they do not compete with the first screen on slow connections.
   const [near, setNear] = useState(() => typeof IntersectionObserver === 'undefined')
 
   useEffect(() => {

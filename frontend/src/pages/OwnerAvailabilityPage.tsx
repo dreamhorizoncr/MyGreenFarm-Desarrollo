@@ -424,7 +424,7 @@ function OwnerAvailabilityPage() {
                       )
                     }
                     onClick={() => void handleSaveWeekly()}
-                    className="inline-flex h-11 items-center justify-center gap-sm rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-orange-500 focus-visible:outline-2 focus-visible:outline-link"
+                    className="inline-flex h-11 items-center justify-center gap-sm rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-orange-500 focus-visible:outline-2 focus-visible:outline-link"
                   >
                     {weeklySaving && (
                       <span
@@ -454,7 +454,7 @@ function OwnerAvailabilityPage() {
                 <button
                   type="button"
                   onClick={() => openException()}
-                  className="inline-flex min-h-11 items-center justify-center gap-xs rounded-full bg-orange-500 px-lg font-body text-button font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link"
+                  className="inline-flex min-h-11 items-center justify-center gap-xs rounded-full blob-fill bg-orange-500 px-lg font-body text-button font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link"
                 >
                   <PlusIcon size={18} aria-hidden="true" />{" "}
                   {t("admin.availability.addSpecial")}

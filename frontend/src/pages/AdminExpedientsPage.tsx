@@ -1,6 +1,7 @@
 import StatusMessage from '../components/ui/StatusMessage.tsx'
 import { FolderOpen, SearchX } from 'lucide-react'
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import { SearchIcon } from "@animateicons/react/lucide";
 
@@ -47,6 +48,32 @@ function AdminExpedientsPage() {
     void fetchExpedients(currentPage - 1, i18n.language);
   }, [currentPage, i18n.language]);
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const featuredStudentId = searchParams.get("estudiante");
+  const [featured, setFeatured] = useState<{ key: string; expedient: Expedient | null } | null>(null);
+  const [featuredRefresh, setFeaturedRefresh] = useState(0);
+  const featuredKey = featuredStudentId ? `${featuredStudentId}:${featuredRefresh}` : null;
+
+  useEffect(() => {
+    if (!featuredStudentId || !featuredKey) return;
+    let current = true;
+    expedientService.getByStudentId(featuredStudentId)
+      .then((expedient) => { if (current) setFeatured({ key: featuredKey, expedient }); })
+      .catch(() => { if (current) setFeatured({ key: featuredKey, expedient: null }); });
+    return () => { current = false; };
+  }, [featuredStudentId, featuredKey]);
+
+  const featuredState = featured?.key === featuredKey ? featured : null;
+  const featuredLoading = featuredStudentId !== null && featuredState === null;
+  const featuredExpedient = featuredState?.expedient ?? null;
+  const featuredMissing = featuredState !== null && featuredState.expedient === null;
+  const clearFeatured = () => setSearchParams({}, { replace: true });
+
+  const refreshAll = () => {
+    void fetchExpedients(currentPage - 1, i18n.language);
+    setFeaturedRefresh((value) => value + 1);
+  };
+
   const filteredExpedients = expedients.filter((expedient, index) => {
     const search = searchTerm.trim().toLowerCase();
     if (!search) return true;
@@ -64,6 +91,7 @@ function AdminExpedientsPage() {
     try {
       await expedientService.delete(expedientToDelete.id);
 
+      if (featuredExpedient?.id === expedientToDelete.id) clearFeatured();
       await fetchExpedients(currentPage - 1, i18n.language);
 
       notify.success(t("admin.expedients.deleteSuccessToastTitle"));
@@ -95,7 +123,7 @@ function AdminExpedientsPage() {
             <button
               type="button"
               onClick={() => setIsCreateModalOpen(true)}
-              className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-all duration-300 hover:scale-105 hover:bg-orange-600"
+              className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full blob-fill bg-orange-500 text-white transition-all duration-300 hover:scale-105 hover:bg-orange-600"
               aria-label={t("admin.expedients.addTitle")}
               title={t("admin.expedients.addTitle")}
             >
@@ -110,7 +138,10 @@ function AdminExpedientsPage() {
                 type="search"
                 placeholder={t("admin.children.searchPlaceholder")}
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  if (featuredStudentId) clearFeatured();
+                }}
                 aria-label={t("admin.children.searchPlaceholder")}
                 className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
               />
@@ -120,45 +151,90 @@ function AdminExpedientsPage() {
 
         <ChildrenModuleTabs />
 
-        {loading && (
+        {featuredStudentId && featuredLoading && (
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <SkeletonList count={skeletonCount}>{() => <ExpedientCard loading />}</SkeletonList>
+            <ExpedientCard loading />
           </div>
         )}
 
-        {error && <StatusMessage variant="error" description={error} className="mt-8" />}
-
-        {!loading && !error && filteredExpedients.length > 0 && (
-          <>
-            <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {filteredExpedients.map((expedient) => (
-                <ExpedientCard
-                  key={expedient.id}
-                  expedient={expedient}
-                  onEdit={setEditingExpedient}
-                  onDelete={setExpedientToDelete}
-                />
-              ))}
+        {featuredStudentId && !featuredLoading && (
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-sm">
+            <p className="m-0 font-body text-body-sm text-neutral-500">
+              {featuredMissing
+                ? t("admin.expedients.featuredMissing", { studentId: featuredStudentId })
+                : t("admin.expedients.featuredTitle", { name: featuredExpedient?.childName })}
+            </p>
+            <div className="flex items-center gap-md">
+              {featuredMissing && (
+                <button
+                  type="button"
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="font-body text-body-sm font-semibold text-green-500 underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
+                >
+                  {t("admin.expedients.addTitle")}
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={clearFeatured}
+                className="font-body text-body-sm font-semibold text-green-500 underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
+              >
+                {t("admin.expedients.showAll")}
+              </button>
             </div>
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+          </div>
+        )}
+
+        {featuredExpedient && (
+          <div className="mt-md grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <ExpedientCard
+              expedient={featuredExpedient}
+              onEdit={setEditingExpedient}
+              onDelete={setExpedientToDelete}
+            />
+          </div>
+        )}
+
+        {!featuredStudentId && (
+          <>
+            {loading && (
+              <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <SkeletonList count={skeletonCount}>{() => <ExpedientCard loading />}</SkeletonList>
+              </div>
+            )}
+
+            {error && <StatusMessage variant="error" description={error} className="mt-8" />}
+
+            {!loading && !error && filteredExpedients.length > 0 && (
+              <>
+                <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+                  {filteredExpedients.map((expedient) => (
+                    <ExpedientCard
+                      key={expedient.id}
+                      expedient={expedient}
+                      onEdit={setEditingExpedient}
+                      onDelete={setExpedientToDelete}
+                    />
+                  ))}
+                </div>
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+              </>
+            )}
+
+            {!loading && !error && expedients.length === 0 && (
+              <StatusMessage icon={FolderOpen} description={t("admin.expedients.noExpedients")} className="mt-8" />
+            )}
+
+            {!loading && !error && expedients.length > 0 && filteredExpedients.length === 0 && (
+              <StatusMessage icon={SearchX} description={t("admin.expedients.noMatches")} className="mt-8" />
+            )}
           </>
         )}
-
-        {!loading && !error && expedients.length === 0 && (
-          <StatusMessage icon={FolderOpen} description={t("admin.expedients.noExpedients")} className="mt-8" />
-        )}
-
-        {!loading &&
-          !error &&
-          expedients.length > 0 &&
-          filteredExpedients.length === 0 && (
-            <StatusMessage icon={SearchX} description={t("admin.expedients.noMatches")} className="mt-8" />
-          )}
 
         {isCreateModalOpen && (
           <ExpedientFormModal
             onClose={() => setIsCreateModalOpen(false)}
-            onCreated={() => { void fetchExpedients(currentPage - 1, i18n.language); }}
+            onCreated={refreshAll}
           />
         )}
 
@@ -166,7 +242,7 @@ function AdminExpedientsPage() {
           <ExpedientFormModal
             expedient={editingExpedient}
             onClose={() => setEditingExpedient(null)}
-            onCreated={() => { void fetchExpedients(currentPage - 1, i18n.language); }}
+            onCreated={refreshAll}
           />
         )}
 

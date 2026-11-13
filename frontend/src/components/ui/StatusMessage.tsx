@@ -58,7 +58,7 @@ function StatusMessage({
         <button
           type="button"
           onClick={onRetry ?? (() => window.location.reload())}
-          className="mt-xs inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--orange-500)]"
+          className="mt-xs inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--orange-500)]"
         >
           <RotateCw size={16} aria-hidden="true" />
           {t('common.status.retry')}

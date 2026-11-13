@@ -151,7 +151,6 @@ export default {
       description:
         "Chez My Green Farm, nous accompagnons chaque étape de l'enfance avec éducation, amour et des expériences enrichissantes, en intégrant l'apprentissage, les langues, le jeu et le contact avec la nature.",
       cta: "Réserver un rendez-vous",
-      heroAlt: "Image de couverture",
     },
     philosophy: {
       imageAlt: 'Fillette les bras tendus en plein air',
@@ -1097,6 +1096,17 @@ export default {
       activityTimeFour: "Il y a 2 heures",
       activityTimeFive: "Il y a 3 heures",
       emptyState: "Aucun élément en attente dans cette section.",
+      teacher: {
+        stats: {
+          myGroups: "Mes groupes",
+          groupChildren: "Enfants de mes groupes",
+          forumArticles: "Mes articles du forum",
+        },
+        viewGroups: "Voir mes groupes",
+        viewExpedients: "Voir les dossiers",
+        viewArticles: "Voir mes articles",
+        articlesTitle: "Mes articles récents",
+      },
       calendar: {
         title: "Calendrier",
         ariaLabel: "Calendrier mensuel du tableau de bord",
@@ -1438,6 +1448,9 @@ export default {
       notes: "Observations générales",
 
       addTitle: "Ajouter un dossier",
+      featuredTitle: "Dossier de {{name}}",
+      featuredMissing: "L'élève {{studentId}} n'a pas encore de dossier.",
+      showAll: "Voir tous les dossiers",
       editTitle: "Modifier le dossier",
       addDescription: "Saisissez les informations académiques de l’enfant.",
       editDescription: "Modifiez les informations académiques de l’enfant.",
@@ -1501,7 +1514,6 @@ export default {
       teachersSelected_other: "{{count}} enseignants sélectionnés",
       removeTeacher: "Retirer {{name}}",
       deleteConfirm: "Voulez-vous vraiment supprimer le groupe « {{name}} » ? Ses enfants et enseignants n'y seront plus assignés. Cette action est irréversible.",
-      "tabLabel": "Groupes",
       "title": "Groupes",
       "description": "Organisez et gérez les groupes d'élèves et leurs enseignants.",
       "searchPlaceholder": "Rechercher par groupe, enseignant ou élève...",
@@ -1535,6 +1547,7 @@ export default {
       "students": "Élèves",
       "viewStudents": "Voir les élèves",
       "hideStudents": "Masquer les élèves",
+      "openExpedient": "Voir le dossier de {{name}}",
       "studentId": "Identifiant de l'élève",
       "noStudents": "Ce groupe n'a pas encore d'élèves inscrits.",
       "assignStudent": "Affecter un élève",
