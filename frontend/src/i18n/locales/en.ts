@@ -271,7 +271,7 @@ export default {
     tagline: "The second home of your children.",
     navigation: "Navigation",
     contact: "Contact",
-    contactEmail: "mygreenfarmcr@gmail.com",
+    contactEmail: "monicapr@mygreenfarmcr.com",
     contactPhone: "+506 8327-8347",
     contactAddress: "Liberia, Guanacaste, Costa Rica",
     socialLabel: "Social media",
@@ -356,7 +356,7 @@ export default {
     tabPrivacy: "Privacy Policy",
     close: "Close",
     termsIntro:
-      "By using My Green Farm's services, families and students accept the following terms. If you have any questions, you can reach us at mygreenfarmcr@gmail.com.",
+      "By using My Green Farm's services, families and students accept the following terms. If you have any questions, you can reach us at monicapr@mygreenfarmcr.com.",
     terms1Title: "Use of the Service",
     terms1Body:
       "My Green Farm provides educational and childcare services for children in accordance with the guidelines of the Ministry of Public Education (MEP). Registration and use of our platforms is intended for mothers, fathers, legal guardians and authorized staff.",
@@ -382,7 +382,7 @@ export default {
       "Photos and videos taken during activities may be used in our gallery and social media for educational and outreach purposes. If you'd prefer your child not to appear, you can let the administration know directly.",
     privacy4Title: "Your Rights",
     privacy4Body:
-      "You can request access to, correction of, or deletion of the information we hold about your family at any time by writing to mygreenfarmcr@gmail.com.",
+      "You can request access to, correction of, or deletion of the information we hold about your family at any time by writing to monicapr@mygreenfarmcr.com.",
   },
   aboutUsPage: {
     hero: {
