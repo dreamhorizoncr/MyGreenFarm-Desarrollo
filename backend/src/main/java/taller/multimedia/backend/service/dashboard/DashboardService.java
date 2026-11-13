@@ -74,13 +74,16 @@ public class DashboardService {
 
         private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("HH:mm");
 
-        /** A child is due a new evaluation when the last one is older than this. */
         private static final int EVALUATION_INTERVAL_DAYS = 90;
 
-        /**
-         * Dashboard of the owner and the admin. Both see appointments, children, news, gallery and
-         * curriculums; only the owner manages the forum, so forum activity is left out for the admin.
-         */
+        private final Map<String, String> teacherSummaries = java.util.Collections.synchronizedMap(
+                        new LinkedHashMap<>(64, 0.75f, true) {
+                                @Override
+                                protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+                                        return size() > 500;
+                                }
+                        });
+
         @Transactional(readOnly = true)
         public DashboardSummaryResponse getSummary(LocalDate date, boolean includeForum) {
                 List<DashboardAppointmentResponse> appointments = appointmentRepository
@@ -102,8 +105,6 @@ public class DashboardService {
                                 .forEach(item -> activities.add(new DashboardActivityResponse(
                                                 item.getId().toString(), "gallery", item.getTitle(),
                                                 item.getCreatedAt(), "/admin/gallery")));
-                // The AI summary is cached per day and shared by the owner and the admin, so it is built
-                // only from what both of them can see (no forum).
                 List<DashboardActivityResponse> sharedActivities = activities.stream()
                                 .sorted(Comparator.comparing(DashboardActivityResponse::createdAt).reversed())
                                 .limit(5)
@@ -146,17 +147,12 @@ public class DashboardService {
                                 aiSummary);
         }
 
-        /**
-         * Dashboard of a teacher: their groups and the active children in them, what those children
-         * still need (an expedient, or a new evaluation), and the teacher's own forum articles.
-         */
         @Transactional(readOnly = true)
         public TeacherDashboardResponse getTeacherSummary(String email) {
                 User teacher = userRepository.findByEmail(email)
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
                 List<Group> groups = groupRepository.findByTeacherId(teacher.getId());
-                // By id: the entities use Lombok @Data and point at each other, so they are not put in sets.
                 Map<Long, Child> children = new LinkedHashMap<>();
                 List<TeacherDashboardResponse.Group> groupSummaries = groups.stream()
                                 .sorted(Comparator.comparing(Group::getName, String.CASE_INSENSITIVE_ORDER))
@@ -212,13 +208,46 @@ public class DashboardService {
                                                 "/admin/forum"))
                                 .toList();
 
+                long missingExpedients = priorities.stream().filter(item -> "expedient".equals(item.type())).count();
+                long dueEvaluations = priorities.stream().filter(item -> "evaluation".equals(item.type())).count();
+                String context = teacherAiContext(today, groupSummaries.size(), children.size(), missingExpedients,
+                                dueEvaluations, articles.getTotalElements());
+
                 return new TeacherDashboardResponse(
                                 groupSummaries,
                                 children.size(),
                                 articles.getTotalElements(),
                                 priorities.size(),
                                 priorities.stream().limit(6).toList(),
-                                activities);
+                                activities,
+                                teacherAiSummary(today, context));
+        }
+
+        static String teacherAiContext(LocalDate date, int groups, int children, long missingExpedients,
+                        long dueEvaluations, long articles) {
+                return """
+                                Date: %s
+                                Groups taught: %d
+                                Active children in those groups: %d
+                                Children without a record yet: %d
+                                Children due a new evaluation: %d
+                                Forum articles written: %d
+                                """.formatted(date, groups, children, missingExpedients, dueEvaluations, articles);
+        }
+
+        private String teacherAiSummary(LocalDate date, String context) {
+                String key = date + "|" + context;
+                String cached = teacherSummaries.get(key);
+                if (cached != null) {
+                        return cached;
+                }
+                String summary = geminiSummaryService.generateTeacherDashboardSummary(context);
+                if (summary == null || summary.isBlank()) {
+                        log.error("Could not generate the teacher dashboard AI summary for {}", date);
+                        summary = "";
+                }
+                teacherSummaries.put(key, summary);
+                return summary;
         }
 
         private String generateAiSummary(
@@ -242,12 +271,6 @@ public class DashboardService {
                 return summary;
         }
 
-        /**
-         * What the AI gets to write the summary. It goes to an outside service, so it carries no personal
-         * data: no names of parents, children or applicants, only times, statuses, types and counts. It also
-         * has no free text typed by the public (such as the name in a booking), so nobody can slip
-         * instructions into the prompt.
-         */
         static String aiContext(
                         LocalDate date,
                         List<DashboardAppointmentResponse> appointments,

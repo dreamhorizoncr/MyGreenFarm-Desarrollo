@@ -212,6 +212,11 @@ class DashboardServiceTest {
         when(evaluationRepository.findByExpedientIdId(expedient.getId())).thenReturn(List.of(oldEvaluation));
         when(forumArticleRepository.findAllByAuthor_IdOrderByCreatedAtDesc(any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(article)));
+        when(geminiSummaryService.generateTeacherDashboardSummary(org.mockito.ArgumentMatchers.argThat(context ->
+                context.contains("Groups taught: 1") && context.contains("Children without a record yet: 1")
+                        && context.contains("Children due a new evaluation: 1")
+                        && !context.contains("Alfredo") && !context.contains("Pollitos") && !context.contains("Jugar"))))
+                .thenReturn("Resumen para el docente.");
 
         var result = dashboardService.getTeacherSummary("alfredo.teacher@test.com");
 
@@ -228,6 +233,7 @@ class DashboardServiceTest {
             assertThat(item.type()).isEqualTo("forum");
             assertThat(item.href()).isEqualTo("/admin/forum");
         });
+        assertThat(result.aiSummary()).isEqualTo("Resumen para el docente.");
     }
 
     private static Child child(Long id, String firstName, String lastName, boolean active) {

@@ -151,7 +151,6 @@ export default {
       description:
         "En My Green Farm acompañamos cada etapa de la infancia con educación, amor y experiencias significativas, integrando el aprendizaje, los idiomas, el juego y el contacto con la naturaleza.",
       cta: "Reservar cita",
-      heroAlt: "Imagen de portada",
     },
     philosophy: {
       imageAlt: 'Niña con los brazos extendidos al aire libre',
@@ -1093,10 +1092,6 @@ export default {
       activityTimeFive: "Hace 3 horas",
       emptyState: "No hay elementos pendientes en esta sección.",
       teacher: {
-        groupsTitle: "Mis grupos",
-        noGroups: "Todavía no tienes grupos asignados.",
-        groupChildren_one: "{{count}} niño",
-        groupChildren_other: "{{count}} niños",
         stats: {
           myGroups: "Mis grupos",
           groupChildren: "Niños en mis grupos",
@@ -1352,6 +1347,9 @@ export default {
       notes: "Observaciones Generales",
 
       addTitle: "Agregar Expediente",
+      featuredTitle: "Expediente de {{name}}",
+      featuredMissing: "El estudiante {{studentId}} todavía no tiene expediente.",
+      showAll: "Ver todos los expedientes",
       editTitle: "Editar Expediente",
       addDescription: "Ingresa la información académica del niño o niña.",
       editDescription: "Modifica la información académica del niño o niña.",
@@ -1415,7 +1413,6 @@ export default {
       teachersSelected_other: "{{count}} docentes seleccionados",
       removeTeacher: "Quitar a {{name}}",
       deleteConfirm: "¿Seguro que deseas eliminar el grupo \"{{name}}\"? Los niños y docentes quedarán sin este grupo asignado. Esta acción no se puede deshacer.",
-      "tabLabel": "Grupos",
       "title": "Grupos",
       "description": "Organiza y administra los grupos de estudiantes y sus docentes.",
       "searchPlaceholder": "Buscar por grupo, docente o estudiante...",
@@ -1449,6 +1446,7 @@ export default {
       "students": "Estudiantes",
       "viewStudents": "Ver estudiantes",
       "hideStudents": "Ocultar estudiantes",
+      "openExpedient": "Ver el expediente de {{name}}",
       "studentId": "Identificación estudiantil",
       "noStudents": "Este grupo todavía no tiene estudiantes asignados.",
       "assignStudent": "Asignar estudiante",

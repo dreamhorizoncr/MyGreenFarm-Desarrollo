@@ -32,10 +32,6 @@ public class CalendarEventService {
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
 
-    /**
-     * Calendar of a teacher: no appointments, only birthdays of the teachers and of the active
-     * children in the groups this teacher has.
-     */
     @Transactional(readOnly = true)
     public List<CalendarEventResponse> getTeacherEvents(String email, LocalDate from, LocalDate to) {
         User teacher = userRepository.findByEmail(email)

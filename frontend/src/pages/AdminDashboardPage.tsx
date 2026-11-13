@@ -1,6 +1,6 @@
 import StatusMessage from '../components/ui/StatusMessage.tsx'
-import { CalendarX, Sparkles, UsersRound } from 'lucide-react'
-import { useCallback, useEffect, useMemo, useState, type ComponentType } from 'react'
+import { CalendarX, Sparkles } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { getLocalTimeZone, today, type CalendarDate } from '@internationalized/date'
@@ -20,11 +20,13 @@ import type {
 } from '../types/dashboard.ts'
 import {
   BookOpenTextIcon,
+  CalendarClockIcon,
   CalendarDaysIcon,
   CheckIcon,
   ChevronRightIcon,
   ClockIcon,
   FileTextIcon,
+  GiftIcon,
   MessageSquarePlusIcon,
   RefreshCwIcon,
   UserIcon,
@@ -72,14 +74,13 @@ const ACTIVITY_ICONS: Record<DashboardActivity['type'], Icon> = {
 }
 
 const priorityClasses = {
-  high: 'border-danger-100 bg-danger-50 text-danger',
-  medium: 'border-warning-200 bg-warning-50 text-warning',
-  low: 'border-info-200 bg-info-50 text-info',
+  high: 'border-(--danger-100) bg-(--danger-50) text-danger',
+  medium: 'border-(--warning-200) bg-(--warning-50) text-warning',
+  low: 'border-(--info-200) bg-(--info-50) text-info',
 } as const
 
 const cardClasses = 'rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm'
 
-/** Calendar month and selected day, shared by every dashboard. */
 function useDashboardCalendar() {
   const [selectedDate, setSelectedDate] = useState<CalendarDate | null>(() => today(getLocalTimeZone()))
   const [calendarMonth, setCalendarMonth] = useState(() => today(getLocalTimeZone()).toString().slice(0, 7))
@@ -146,15 +147,15 @@ function StatCards({ stats }: Readonly<{ stats: StatCard[] }>) {
           <Link
             key={key}
             to={href}
-            className="group rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm transition hover:-translate-y-0.5 hover:border-orange-300 hover:shadow-md focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+            className="card-hover group rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
           >
             <div className="flex items-start justify-between gap-sm">
               <span className="flex size-11 items-center justify-center rounded-full bg-green-50 text-heading"><StatIcon size={21} aria-hidden={true} /></span>
-              <ChevronRightIcon size={18} className="text-neutral-400 transition group-hover:translate-x-1 group-hover:text-link" aria-hidden="true" />
+              <ChevronRightIcon size={18} className="text-neutral-400 transition group-hover:translate-x-1 group-hover:text-green-500" aria-hidden="true" />
             </div>
             <p className="m-0 mt-lg font-body text-body-sm font-semibold text-neutral-500">{label}</p>
             <p className="m-0 mt-2xs font-heading text-h2 font-bold text-heading">{value ?? '—'}</p>
-            <span className="mt-md inline-block font-body text-body-sm font-semibold text-link underline-offset-2 group-hover:underline">{linkLabel}</span>
+            <span className="mt-md inline-block font-body text-body-sm font-semibold text-green-500 underline-offset-2 transition-opacity hover:underline hover:opacity-80">{linkLabel}</span>
           </Link>
         ))}
       </div>
@@ -215,6 +216,39 @@ function ActivityList({ title, items, loading }: Readonly<{ title: string; items
   )
 }
 
+type IconHandle = { startAnimation: () => void; stopAnimation: () => void }
+
+function AgendaEvent({ event, past }: Readonly<{ event: CalendarEvent; past: boolean }>) {
+  const { t, i18n } = useTranslation()
+  const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
+  const iconRef = useRef<IconHandle>(null)
+  const isBirthday = event.type === 'BIRTHDAY'
+  const name = event.title.replace(/^(Cumpleaños|Cita):\s*/, '')
+  const time = eventTime(event, locale)
+
+  return (
+    <li
+      onMouseEnter={() => iconRef.current?.startAnimation()}
+      onMouseLeave={() => iconRef.current?.stopAnimation()}
+      className={`flex items-center gap-sm rounded-xl border border-neutral-100 bg-white p-sm ${past ? 'opacity-60' : ''}`}
+    >
+      <span
+        aria-hidden="true"
+        className="flex size-10 shrink-0 items-center justify-center rounded-full bg-(--warning-50) text-warning"
+      >
+        {isBirthday ? <GiftIcon ref={iconRef} size={20} /> : <CalendarClockIcon ref={iconRef} size={20} />}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate font-body text-body-sm font-bold text-heading">{name}</span>
+        <span className="block font-body text-caption text-neutral-500">
+          {t(`admin.dashboard.calendar.eventTypes.${event.type}`)}
+          {time && <> · <time dateTime={event.start}>{time}</time></>}
+        </span>
+      </span>
+    </li>
+  )
+}
+
 function CalendarAside({ calendar, showAppointmentsLink }: Readonly<{ calendar: DashboardCalendar; showAppointmentsLink: boolean }>) {
   const { t, i18n } = useTranslation()
   const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
@@ -244,20 +278,12 @@ function CalendarAside({ calendar, showAppointmentsLink }: Readonly<{ calendar: 
 
       <section aria-labelledby="dashboard-agenda-title" className={cardClasses}>
         <h2 id="dashboard-agenda-title" className="m-0 font-heading text-h4 font-bold text-heading">{t('admin.dashboard.agenda.title')}</h2>
-        <p className="m-0 mt-2xs font-body text-body-sm capitalize text-neutral-500">
+        <p className="m-0 mt-2xs font-body text-body-sm text-neutral-500">
           {shortDateFormatter.format(new Date(shownDate.year, shownDate.month - 1, shownDate.day))}
         </p>
-        <ol className="m-0 mt-lg list-none space-y-md p-0">
+        <ol className="m-0 mt-lg list-none space-y-sm p-0">
           {selectedDateEvents.map((event) => (
-            <li key={event.id} className={`relative flex gap-sm ${event.date < currentDate ? 'opacity-60' : ''}`}>
-              <time className="w-12 shrink-0 pt-2xs font-body text-caption font-bold text-neutral-500">{eventTime(event, locale) ?? '—'}</time>
-              <div className="relative flex-1 border-l-2 border-green-100 pl-md">
-                <span className="block font-body text-body-sm font-bold text-heading">{event.title}</span>
-                <span className={`mt-xs inline-block rounded-full px-sm py-2xs font-body text-caption font-bold ${event.type === 'BIRTHDAY' ? 'bg-info-50 text-info' : 'bg-warning-50 text-warning'}`}>
-                  {t(`admin.dashboard.calendar.eventTypes.${event.type}`)}
-                </span>
-              </div>
-            </li>
+            <AgendaEvent key={event.id} event={event} past={event.date < currentDate} />
           ))}
           {selectedDateEvents.length === 0 && (
             <li><StatusMessage compact icon={CalendarX} description={t('admin.dashboard.calendar.emptyDay')} /></li>
@@ -265,7 +291,7 @@ function CalendarAside({ calendar, showAppointmentsLink }: Readonly<{ calendar: 
         </ol>
       </section>
       {showAppointmentsLink && (
-        <Link to="/admin/appointments" className="inline-flex w-full items-center justify-center rounded-full bg-orange-500 px-lg py-sm font-body text-body-sm font-bold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2">
+        <Link to="/admin/appointments" className="inline-flex w-full items-center justify-center rounded-full blob-fill bg-orange-500 px-lg py-sm font-body text-body-sm font-bold text-white transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2">
           {t('admin.dashboard.agenda.viewAll')}
         </Link>
       )}
@@ -273,10 +299,6 @@ function CalendarAside({ calendar, showAppointmentsLink }: Readonly<{ calendar: 
   )
 }
 
-/**
- * Dashboard of the owner and the admin. The backend leaves the forum activity out for the admin,
- * who has no forum in the sidebar; everything else here is in both sidebars.
- */
 function ManagerDashboard() {
   const { t } = useTranslation()
   const calendar = useDashboardCalendar()
@@ -372,10 +394,6 @@ function ManagerDashboard() {
   )
 }
 
-/**
- * Dashboard of a teacher. Their sidebar has only the forum and the children module (groups,
- * expedients, evaluations), so there are no appointments, curriculums or AI summary here.
- */
 function TeacherDashboard() {
   const { t } = useTranslation()
   const calendar = useDashboardCalendar()
@@ -425,26 +443,20 @@ function TeacherDashboard() {
 
       <div className="mt-xl grid grid-cols-1 gap-xl xl:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-xl">
-          <section aria-labelledby="dashboard-groups-title" className={cardClasses}>
-            <h2 id="dashboard-groups-title" className="m-0 font-heading text-h4 font-bold text-heading">{t('admin.dashboard.teacher.groupsTitle')}</h2>
-            {loading && <p className="m-0 mt-sm font-body text-body text-neutral-500">{t('admin.dashboard.loading')}</p>}
-            {!loading && data && data.groups.length > 0 && (
-              <ul className="m-0 mt-md flex list-none flex-wrap gap-sm p-0">
-                {data.groups.map((group) => (
-                  <li key={group.id}>
-                    <Link
-                      to="/admin/groups"
-                      className="inline-flex items-center gap-xs rounded-full border border-green-100 bg-green-50 px-md py-xs font-body text-body-sm font-semibold text-heading transition hover:border-green-300 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
-                    >
-                      {group.name}
-                      <span className="font-normal text-neutral-500">· {t('admin.dashboard.teacher.groupChildren', { count: group.childCount })}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-            {!loading && data?.groups.length === 0 && (
-              <StatusMessage compact variant="empty" icon={UsersRound} description={t('admin.dashboard.teacher.noGroups')} className="mt-md" />
+          <section aria-labelledby="dashboard-summary-title" className={cardClasses}>
+            <h2 id="dashboard-summary-title" className="m-0 font-heading text-h4 font-bold text-heading">{t('admin.dashboard.summaryTitle')}</h2>
+            {loading || data?.aiSummary ? (
+              <p className="m-0 mt-sm font-body text-body text-neutral-500">
+                {loading ? t('admin.dashboard.summaryLoading') : data?.aiSummary}
+              </p>
+            ) : (
+              <StatusMessage
+                compact
+                variant={currentError ? 'error' : 'empty'}
+                icon={currentError ? undefined : Sparkles}
+                description={t('admin.dashboard.summaryUnavailable')}
+                className="mt-md"
+              />
             )}
           </section>
 

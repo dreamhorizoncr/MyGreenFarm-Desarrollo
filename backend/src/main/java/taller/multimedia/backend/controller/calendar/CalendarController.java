@@ -37,7 +37,6 @@ public class CalendarController {
         if (ChronoUnit.DAYS.between(from, to) > 31) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The maximum range is 31 days");
         }
-        // Teachers do not handle appointments: they get birthdays only (colleagues and the children in their groups).
         boolean isTeacher = authentication.getAuthorities().stream()
                 .anyMatch(authority -> "ROLE_TEACHER".equals(authority.getAuthority()));
         if (isTeacher) {

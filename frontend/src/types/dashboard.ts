@@ -17,15 +17,14 @@ export interface AdminDashboardSummary {
   aiSummary: string
 }
 
-/** Dashboard of a teacher: only their groups, the children in them and their forum articles. */
 export interface TeacherDashboardSummary {
   groups: TeacherDashboardGroup[]
   childrenCount: number
   articleCount: number
-  /** All pending tasks; `priorities` holds only the first six. */
   pendingCount: number
   priorities: DashboardPriority[]
   activities: DashboardActivity[]
+  aiSummary: string
 }
 
 export interface TeacherDashboardGroup {
@@ -46,7 +45,6 @@ export interface DashboardPriority {
   id: string
   type: 'appointment' | 'curriculum' | 'expedient' | 'evaluation'
   title: string
-  /** Missing when the task has no date, such as a child who still needs an expedient. */
   dueAt: string | null
   priority: 'high' | 'medium' | 'low'
   href: string
