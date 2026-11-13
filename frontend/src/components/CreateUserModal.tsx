@@ -248,7 +248,7 @@ function CreateUserModal({ onCreated, onClose }: Readonly<CreateUserModalProps>)
           onClick={handleSave}
           loading={loading}
           disabled={!firstName.trim() || !lastName.trim() || !email.trim() || !password || !role}
-          className="h-11 w-auto rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
+          className="h-11 w-auto rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
         >
           {loading ? t('signup.loading') : t('signup.buttonLabel')}
         </Button>

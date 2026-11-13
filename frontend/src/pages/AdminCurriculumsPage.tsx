@@ -144,7 +144,7 @@ function AdminCurriculumsPage() {
             <button
               type="button"
               onClick={() => setShowCreateVacancy(true)}
-              className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+              className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
             >
               <PlusIcon size={18} aria-hidden="true" />
               {t('vacancies.publish')}

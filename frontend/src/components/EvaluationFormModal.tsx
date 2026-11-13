@@ -348,7 +348,7 @@ function EvaluationFormModal({
                     <button
                         type="submit"
                         disabled={saving || loadingOptions || !form.expedientId || !form.evaluationDate || !form.communicationProgress.trim() || !form.languageProgress.trim() || !form.readingProgress.trim() || !form.motorProgress.trim() || !form.teacherObservation.trim()}
-                        className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="h-11 rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         {submitLabel}
                     </button>

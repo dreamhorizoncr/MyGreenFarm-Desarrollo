@@ -149,7 +149,7 @@ function ScheduleExceptionModal({ exception, exceptions, onSave, onClose }: Read
           {formError && <p className="m-0 text-body-sm text-danger" role="alert">{formError}</p>}
           <div className="flex justify-end gap-md *:flex-1">
             <button type="button" onClick={onClose} className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-link">{t('admin.availability.modal.cancel')}</button>
-            <button type="button" onClick={() => void handleSubmit()} disabled={saving || !date || (!closed && (!startTime || !endTime))} className="inline-flex h-11 items-center justify-center gap-sm rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-link">
+            <button type="button" onClick={() => void handleSubmit()} disabled={saving || !date || (!closed && (!startTime || !endTime))} className="inline-flex h-11 items-center justify-center gap-sm rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-link">
               {saving && <span className="size-4 animate-spin rounded-full border-2 border-white border-r-transparent" aria-hidden="true" />}
               {exception ? t('admin.availability.modal.saveChanges') : t('admin.availability.modal.add')}
             </button>

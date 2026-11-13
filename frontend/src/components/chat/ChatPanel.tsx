@@ -270,7 +270,7 @@ export default function ChatPanel({ chat, onClose, onOpenTerms }: Readonly<ChatP
               type="submit"
               disabled={busy || !input.trim()}
               aria-label={t('chat.send')}
-              className="flex size-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-colors hover:bg-orange-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex size-11 shrink-0 items-center justify-center rounded-full blob-fill bg-orange-500 text-white transition-colors hover:bg-orange-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <SendIcon size={20} aria-hidden="true" />
             </button>
@@ -307,7 +307,7 @@ export default function ChatPanel({ chat, onClose, onOpenTerms }: Readonly<ChatP
               type="submit"
               disabled={booking.busy || !input.trim()}
               aria-label={t('chat.send')}
-              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-colors hover:bg-orange-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex size-10 shrink-0 items-center justify-center rounded-full blob-fill bg-orange-500 text-white transition-colors hover:bg-orange-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <SendIcon size={18} aria-hidden="true" />
             </button>

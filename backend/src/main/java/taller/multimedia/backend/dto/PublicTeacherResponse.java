@@ -5,7 +5,6 @@ import lombok.Getter;
 
 import java.util.UUID;
 
-// What the public About Us page may show about a teacher: no email or birthday.
 @Getter
 @AllArgsConstructor
 public class PublicTeacherResponse {

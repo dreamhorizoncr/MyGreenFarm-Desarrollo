@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import { SearchIcon } from '@animateicons/react/lucide'
 
 import AdminLayout from '../layout/AdminLayout.tsx'
-import ChildrenModuleTabs from '../components/ChildrenModuleTabs.tsx'
 import GroupCard from '../components/GroupCard.tsx'
 import GroupFormModal from '../components/GroupFormModal.tsx'
 import GroupStudentsModal from '../components/GroupStudentsModal.tsx'
@@ -144,7 +143,7 @@ import { notify, notifyError } from '../utils/notifications.ts'
                     onClick={handleCreate}
                     aria-label={t('admin.groups.addGroup')}
                     title={t('admin.groups.addGroup')}
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-2xl font-light leading-none text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full blob-fill bg-orange-500 text-2xl font-light leading-none text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
                 >
                     +
                 </button>
@@ -167,8 +166,6 @@ import { notify, notifyError } from '../utils/notifications.ts'
                 </div>
             </div>
             </div>
-
-            {!isOwner && <ChildrenModuleTabs />}
 
             <div className="mt-6">
             {loading && (

@@ -411,7 +411,7 @@ function OwnerClubsPage() {
         <button
           type="button"
           onClick={openCreate}
-          className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
+          className="inline-flex h-11 items-center gap-xs rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
         >
           <PlusIcon size={18} aria-hidden="true" />
           {t("ownerClubs.addClub")}
@@ -657,7 +657,7 @@ function OwnerClubsPage() {
               <button
                 type="submit"
                 disabled={!form.name?.trim() || !form.description?.trim() || !schedule.every((block) => block.days.length > 0 && block.start && block.end)}
-                className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+                className="h-11 rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {idleSubmitLabel}
               </button>

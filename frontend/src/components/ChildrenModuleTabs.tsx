@@ -12,11 +12,6 @@ const moduleSections = [
     roles: ['OWNER', 'ADMIN'],
   },
   {
-    path: '/admin/groups',
-    labelKey: 'admin.groups.tabLabel',
-    roles: ['TEACHER'],
-  },
-  {
     path: '/admin/expedients',
     labelKey: 'admin.expedients.tabLabel',
     roles: null,

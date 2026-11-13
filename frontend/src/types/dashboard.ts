@@ -17,6 +17,22 @@ export interface AdminDashboardSummary {
   aiSummary: string
 }
 
+export interface TeacherDashboardSummary {
+  groups: TeacherDashboardGroup[]
+  childrenCount: number
+  articleCount: number
+  pendingCount: number
+  priorities: DashboardPriority[]
+  activities: DashboardActivity[]
+  aiSummary: string
+}
+
+export interface TeacherDashboardGroup {
+  id: number
+  name: string
+  childCount: number
+}
+
 export interface DashboardActivity {
   id: string
   type: 'announcement' | 'gallery' | 'forum'
@@ -27,9 +43,9 @@ export interface DashboardActivity {
 
 export interface DashboardPriority {
   id: string
-  type: 'appointment' | 'curriculum'
+  type: 'appointment' | 'curriculum' | 'expedient' | 'evaluation'
   title: string
-  dueAt: string
+  dueAt: string | null
   priority: 'high' | 'medium' | 'low'
   href: string
 }

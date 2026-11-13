@@ -469,7 +469,7 @@ export default function AccessibilityMenu() {
                         <button
                             type="button"
                             onClick={resetAccessibility}
-                            className="mt-md h-11 w-full rounded-full bg-orange-500 font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+                            className="mt-md h-11 w-full rounded-full blob-fill bg-orange-500 font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
                         >
                             {t('accessibility.reset')}
                         </button>

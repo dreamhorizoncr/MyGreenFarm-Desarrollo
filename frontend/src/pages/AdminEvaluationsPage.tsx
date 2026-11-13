@@ -147,7 +147,7 @@ function AdminEvaluationsPage() {
                                 setSelectedEvaluation(null);
                                 setIsFormOpen(true);
                             }}
-                            className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-all duration-300 hover:scale-105 hover:bg-orange-600"
+                            className="group flex h-11 w-11 shrink-0 items-center justify-center rounded-full blob-fill bg-orange-500 text-white transition-all duration-300 hover:scale-105 hover:bg-orange-600"
                             aria-label={t("admin.evaluations.registerEvaluation")}
                             title={t("admin.evaluations.registerEvaluation")}
                         >
