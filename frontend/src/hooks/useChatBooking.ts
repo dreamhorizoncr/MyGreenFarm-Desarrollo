@@ -10,11 +10,13 @@ import {
 } from '../utils/bookingDate.ts'
 import {
   extractBookingData,
+  buildBookingTemplate,
   normalizePhone,
   parseIdType,
   parseReferral,
   validateBookingForm,
   type BookingFormValues,
+  type BookingField,
 } from '../utils/bookingDataParser.ts'
 import type { AvailableWeek, ReferralSource } from '../types/appointment.ts'
 import type { ChatMessage } from './useChat.ts'
@@ -77,6 +79,7 @@ export function useChatBooking(appendMessage: AppendMessage) {
   const [stage, setStage] = useState<ChatBookingStage>('idle')
   const [week, setWeek] = useState<AvailableWeek>({})
   const [form, setForm] = useState<BookingFormValues>(emptyForm)
+  const [invalidFields, setInvalidFields] = useState<BookingField[]>([])
   const [dataReady, setDataReady] = useState(false)
   const [day, setDay] = useState<string | null>(null)
   const [time, setTime] = useState<string | null>(null)
@@ -179,6 +182,7 @@ export function useChatBooking(appendMessage: AppendMessage) {
   const start = useCallback((announce = true) => {
     setActive(true)
     setForm(emptyForm())
+    setInvalidFields([])
     setDataReady(false)
     setErrorContext(null)
     submittingRef.current = false
@@ -269,6 +273,7 @@ export function useChatBooking(appendMessage: AppendMessage) {
 
     const result = await validateBookingForm(next, t)
     setForm(next)
+    setInvalidFields(result.fields)
 
     if (result.errors.length > 0) {
       const message = [
@@ -473,6 +478,10 @@ export function useChatBooking(appendMessage: AppendMessage) {
     active,
     stage,
     options,
+    copyTemplate: buildBookingTemplate(
+      form, invalidFields, t('chat.booking.dataTemplate'),
+      form.referralSource ? t(`booking.referral.options.${form.referralSource}`) : '',
+    ),
     busy: stage === 'loading' || stage === 'submitting',
     start,
     handleText,

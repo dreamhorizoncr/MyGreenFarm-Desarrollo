@@ -4,6 +4,7 @@ import ChatPanel from './ChatPanel'
 import ChickAvatar from './ChickAvatar'
 import TermsModal from '../TermsModal'
 import { useChat } from '../../hooks/useChat'
+import { useChatBooking } from '../../hooks/useChatBooking'
 import { useTranslation } from 'react-i18next'
 import useDismiss from '../../hooks/useDismiss'
 
@@ -13,6 +14,7 @@ export default function ChatWidget() {
   const [hovering, setHovering] = useState(false)
   const [byeKey, setByeKey] = useState(0)
   const chat = useChat()
+  const booking = useChatBooking(chat.appendMessage)
   const chatRef = useRef<HTMLDivElement>(null)
   const { t } = useTranslation()
 
@@ -36,7 +38,7 @@ export default function ChatWidget() {
           aria-modal="false"
           aria-label={t('chat.title')}
         >
-          <ChatPanel chat={chat} onClose={closeChat} onOpenTerms={() => setTermsOpen(true)} />
+          <ChatPanel chat={chat} booking={booking} onClose={closeChat} onOpenTerms={() => setTermsOpen(true)} />
         </dialog>
       )}
 
