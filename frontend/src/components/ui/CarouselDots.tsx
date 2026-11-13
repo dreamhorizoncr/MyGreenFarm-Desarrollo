@@ -20,7 +20,6 @@ function CarouselDots({ count, activeIndex, onSelect, ariaLabel, getItemLabel, c
           onClick={() => onSelect(index)}
           className="inline-flex size-6 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--green-500)]"
         >
-          {/* 24 px to tap (WCAG 2.2), the visible dot stays 8 px */}
           <span className={`size-2 rounded-full transition-transform ${index === activeIndex ? 'scale-125 bg-[var(--green-500)]' : 'bg-[var(--grey-300)]'}`} />
         </button>
       ))}

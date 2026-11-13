@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Skeleton from './Skeleton.tsx'
 
-// Pages that load quickly show their own skeletons instead of this generic one.
 const SHOW_AFTER_MS = 600
 
 function PageLoader() {
@@ -14,7 +13,6 @@ function PageLoader() {
     return () => window.clearTimeout(timer)
   }, [])
 
-  // Keeps the footer below the screen while the page loads.
   if (!visible) return <output className="block min-h-svh"><span className="sr-only">{t('common.status.loading')}</span></output>
 
   return (

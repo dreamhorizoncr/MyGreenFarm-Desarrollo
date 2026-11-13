@@ -35,7 +35,6 @@ class StaticAssetsConfigTest {
 
     @BeforeEach
     void setUp() {
-        // The same header filter Spring Security installs, which would otherwise write no-store.
         mvc = MockMvcBuilders.webAppContextSetup(context)
                 .addFilters(new HeaderWriterFilter(List.of(new CacheControlHeadersWriter())))
                 .build();

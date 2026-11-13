@@ -67,13 +67,9 @@ function useBrandNameFits(language: string, isAuthenticated: boolean) {
 
       setShowName(brand.offsetWidth + nameWidth + menuWidth + options.offsetWidth <= available)
       const brandWithoutName = brand.offsetWidth - (nameRef.current ? nameWidthRef.current + BRAND_GAP : 0)
-      // With large text the links may not fit even without the name: use the compact menu instead.
       setCollapse(brandWithoutName + menuWidth + options.offsetWidth > available)
     }
 
-    // The observer reports right after the browser lays the page out and before it paints, so reading
-    // widths there costs nothing; measuring here would force an extra layout. flushSync applies the
-    // result in that same frame, so the first paint already shows the right menu.
     const observer = new ResizeObserver(() => flushSync(measure))
     observer.observe(row)
     void document.fonts?.ready.then(measure)
@@ -248,7 +244,6 @@ function Navbar() {
                   {t('navbar.dashboard')}
                 </Link>
 
-
                 <button
                   type="button"
                   onClick={handleLogout}
@@ -298,7 +293,6 @@ function Navbar() {
             >
               {t('navbar.dashboard')}
             </Link>
-
 
             <button
               type="button"

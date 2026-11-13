@@ -97,7 +97,6 @@
     cursor: default;
   }
 
-  /* Text lets the pointer through to the pieces */
   #values .green-hearts-values-puzzle-content {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -213,7 +212,6 @@
   container-type: inline-size;
 }
 
-/* Large text and the wider dyslexia font: the title follows the piece width so words stay whole inside it. */
 html:is(.text-large, .text-xlarge) #values .green-hearts-value-title {
   font-size: 8.6cqi;
   overflow-wrap: normal;

@@ -124,7 +124,6 @@ public class GalleryImageService {
         return imagesPage.map(image -> mapToResponse(image, likeCounts.getOrDefault(image.getId(), 0L)));
     }
 
-    /** Latest images of several galleries with two queries in total, grouped by gallery. */
     @Transactional(readOnly = true)
     public Map<UUID, List<GalleryImageResponse>> getImagesByGalleries(Collection<UUID> galleryIds, int limitPerGallery) {
         if (galleryIds.isEmpty()) return Map.of();
@@ -157,7 +156,6 @@ public class GalleryImageService {
         imageRepository.delete(image);
     }
     
-
     @Transactional
     public void deleteAllImagesByGallery(UUID galleryId) {
         List<GalleryImages> images = imageRepository.findByGalleryId(galleryId);
