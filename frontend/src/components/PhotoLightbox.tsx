@@ -24,7 +24,7 @@ interface PhotoLightboxProps {
 const ARROW_GAP = 12
 
 const arrowClassName =
-  'absolute top-1/2 z-10 flex size-[36px] -translate-y-1/2 items-center justify-center rounded-full bg-orange-500 text-white shadow-lg transition-[left,right,scale,opacity] duration-300 enabled:hover:scale-105 enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 md:size-[44px]'
+  'absolute top-1/2 z-10 flex size-[36px] -translate-y-1/2 items-center justify-center rounded-full blob-fill bg-orange-500 text-white shadow-lg transition-[left,right,scale,opacity] duration-300 enabled:hover:scale-105 enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 md:size-[44px]'
 
 function PhotoLightbox({ images, initialIndex, alt, onClose }: Readonly<PhotoLightboxProps>) {
   const { t } = useTranslation()

@@ -905,7 +905,7 @@ function BookingPage() {
                   type="button"
                   onClick={() => void handleNext()}
                   disabled={!stepFilled}
-                  className="flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-orange-500"
+                  className="flex h-11 items-center gap-xs rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-orange-500"
                 >
                   {returnToSummary ? t('booking.wizard.edit') : t('booking.wizard.next')}
                 </button>
@@ -914,7 +914,7 @@ function BookingPage() {
                   type="button"
                   onClick={handleSubmit}
                   disabled={submitting}
-                  className="flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:bg-[var(--grey-600)] disabled:hover:bg-[var(--grey-600)]"
+                  className="flex h-11 items-center gap-xs rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:bg-[var(--grey-600)] disabled:hover:bg-[var(--grey-600)]"
                 >
                   {submitting ? t('booking.submitting') : t('booking.wizard.confirm')}
                   <CheckIcon size={16} />

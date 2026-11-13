@@ -17,7 +17,7 @@ const ACTION_BASE =
 
 const actionClassName = (variant: ChatBookingOption['variant']) =>
   variant === 'primary' || variant === 'danger'
-    ? `${ACTION_BASE} bg-orange-500 text-white hover:bg-orange-600`
+    ? `${ACTION_BASE} blob-fill bg-orange-500 text-white hover:bg-orange-600`
     : `${ACTION_BASE} border border-green-500 bg-white text-heading hover:bg-green-50`
 
 export default function ChatBookingOptions({

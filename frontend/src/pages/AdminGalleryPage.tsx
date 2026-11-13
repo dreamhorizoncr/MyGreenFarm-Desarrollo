@@ -542,7 +542,7 @@ function AdminGalleryPage() {
 					<button
 						type="button"
 						onClick={openCreate}
-						className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
+						className="inline-flex h-11 items-center gap-xs rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
 					>
 						<PlusIcon size={18} aria-hidden="true" />
 						{t('admin.gallery.addAlbum')}
@@ -717,7 +717,7 @@ function AdminGalleryPage() {
 						<button
 							type="submit"
 							disabled={submitting || !form.title.trim() || !form.description.trim() || !form.categoryId}
-							className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-60"
+							className="h-11 rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-60"
 						>
 							{submitting ? t('common.loading') : idleSubmitLabel}
 						</button>

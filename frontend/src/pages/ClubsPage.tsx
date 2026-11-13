@@ -68,7 +68,7 @@ function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
                         type="button"
                         onClick={onSelect}
                         disabled={isFull}
-                        className="inline-flex w-full items-center justify-center gap-xs rounded-full bg-orange-500 px-lg py-sm font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-orange-500"
+                        className="inline-flex w-full items-center justify-center gap-xs rounded-full blob-fill bg-orange-500 px-lg py-sm font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-orange-500"
                     >
                         {isFull ? t("ownerClubs.noSpotsShort") : translateKey("clubs.moreInfo")}
                     </button>

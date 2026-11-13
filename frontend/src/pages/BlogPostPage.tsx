@@ -297,7 +297,7 @@ function BlogPostPage() {
                 <Button
                   onClick={handleSubmit}
                   disabled={!name.trim() || !content.trim()}
-                  className="mt-md h-11 rounded-full bg-orange-500 font-body text-button font-normal text-white"
+                  className="mt-md h-11 rounded-full blob-fill bg-orange-500 font-body text-button font-normal text-white"
                 >
                   {t('forum.blog.commentSubmit')}
                 </Button>

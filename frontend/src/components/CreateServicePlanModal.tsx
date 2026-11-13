@@ -335,7 +335,7 @@ function CreateServicePlanModal({ planToEdit, onSave, onUpdate, onClose, onImage
             type="submit"
             loading={saving}
             disabled={!includes.trim() || !schedule.every((block) => block.days.length > 0 && block.start && block.end) || (!isEditing && !selectedImage)}
-            className="h-11 w-auto rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
+            className="h-11 w-auto rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
           >
             {saving ? t('common.loading') : idleSubmitLabel}
           </Button>

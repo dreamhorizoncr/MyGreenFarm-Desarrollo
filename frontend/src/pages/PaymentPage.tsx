@@ -535,7 +535,7 @@ export default function PaymentPage() {
                                 <button
                                     type="submit"
                                     disabled={loading || quoteLoading || !quote}
-                                    className="mt-lg flex h-12 w-full items-center justify-center gap-xs rounded-full bg-orange-500 font-body text-body font-semibold text-white transition hover:bg-orange-600 disabled:opacity-60"
+                                    className="mt-lg flex h-12 w-full items-center justify-center gap-xs rounded-full blob-fill bg-orange-500 font-body text-body font-semibold text-white transition hover:bg-orange-600 disabled:opacity-60"
                                 >
                                     <LockIcon size={18} />
                                     {cardPayLabel}
@@ -590,7 +590,7 @@ export default function PaymentPage() {
                                 <button
                                     type="submit"
                                     disabled={loading || quoteLoading || !quote}
-                                    className="mt-lg flex h-12 w-full items-center justify-center gap-xs rounded-full bg-orange-500 font-body text-body font-semibold text-white transition hover:bg-orange-600 disabled:opacity-60"
+                                    className="mt-lg flex h-12 w-full items-center justify-center gap-xs rounded-full blob-fill bg-orange-500 font-body text-body font-semibold text-white transition hover:bg-orange-600 disabled:opacity-60"
                                 >
                                     <CheckCheckIcon size={18} />
                                     {loading ? t('services.verify') : t('services.confirmSinpe')}

@@ -222,6 +222,90 @@ html [data-sileo-button][data-state] {
   border-color: var(--color-orange-600);
 }
 
+.blob-btn:hover .blob-btn__inner {
+  background: var(--orange-500);
+  transition: background 0.2s ease 0.45s;
+}
+
+.blob-btn--filled:hover .blob-btn__inner {
+  background: var(--color-orange-600);
+}
+
+@layer components {
+  .blob-fill {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .blob-fill::before,
+  .blob-fill::after {
+    content: "";
+    position: absolute;
+    inset: -30% -1rem;
+    z-index: -1;
+    pointer-events: none;
+    filter: url("#blob-goo");
+    translate: 0 100%;
+  }
+
+  .blob-fill::before {
+    background-image: radial-gradient(closest-side, var(--color-orange-600) 97%, transparent);
+    background-size: 4rem 100%;
+    background-repeat: round no-repeat;
+    background-position: 0 50%;
+    transition: translate 0.45s cubic-bezier(0.3, 0.7, 0.4, 1);
+  }
+
+  .blob-fill::after {
+    background-image:
+      radial-gradient(closest-side, var(--color-orange-600) 97%, transparent),
+      linear-gradient(var(--color-orange-600), var(--color-orange-600));
+    background-size: 4rem 100%, 0% 0%;
+    background-repeat: round no-repeat, no-repeat;
+    background-position: 2rem 50%, 50% 50%;
+    transition:
+      translate 0.45s cubic-bezier(0.3, 0.7, 0.4, 1),
+      background-size 0s;
+  }
+
+  .blob-fill:not(:disabled):hover::before,
+  .blob-fill:not(:disabled):hover::after {
+    translate: 0 0;
+  }
+
+  .blob-fill:not(:disabled):hover::after {
+    background-size: 4rem 100%, 100% 100%;
+    transition:
+      translate 0.45s cubic-bezier(0.3, 0.7, 0.4, 1) 0.1s,
+      background-size 0.2s ease 0.4s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blob-fill::before {
+      display: none;
+    }
+
+    .blob-fill::after,
+    .blob-fill:not(:disabled):hover::after {
+      translate: 0 0;
+      background-image: linear-gradient(var(--color-orange-600), var(--color-orange-600));
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .blob-fill:not(:disabled):hover::after {
+      opacity: 1;
+    }
+  }
+}
+
+.blob-fill:not(:disabled):hover {
+  background-color: var(--orange-500);
+}
+
 /* ---------------------------------------------------------------------------
    HTML — root typography, background and color
    --------------------------------------------------------------------------- */
@@ -521,7 +605,6 @@ html.dyslexia-font body * {
 }
 
 @layer base {
-  /* Larger or wider text: long words wrap instead of pushing the layout off-screen. */
   :where(html.text-large, html.text-xlarge, html.dyslexia-font) :where(body) :where(h1, h2, h3, h4, h5, h6, p, li, dd, dt, blockquote, label, a, span, td, th, figcaption, strong, em) {
     overflow-wrap: anywhere;
   }
@@ -634,4 +717,3 @@ html.big-cursor * {
   color: #1e293b !important;
   box-decoration-break: clone;
 }
-
