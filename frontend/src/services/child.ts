@@ -3,6 +3,7 @@ import { apiClient } from "./api";
 import type { Child, ChildPage, ChildRequest, ChildStatusFilter } from "../types/child";
 
 export interface ChildOption {
+  id: number;
   studentId: string;
   childName: string;
   fullName: string;
@@ -62,6 +63,7 @@ export const childService = {
   async getAvailableForExpedientOptions(): Promise<ChildOption[]> {
     const response = await apiClient.get<Child[]>("/child/available-for-expedient");
     return response.data.map((child) => ({
+      id: child.id,
       studentId: child.studentId,
       childName: `${child.firstName} ${child.lastName}`,
       fullName: `${child.firstName} ${child.lastName}`,

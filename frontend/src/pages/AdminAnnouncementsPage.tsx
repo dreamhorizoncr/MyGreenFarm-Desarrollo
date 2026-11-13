@@ -306,7 +306,7 @@ function AnnouncementsPage() {
         <button
           type="button"
           onClick={openCreate}
-          className="inline-flex h-11 items-center gap-xs rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
+          className="inline-flex h-11 items-center gap-xs rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
         >
           <PlusIcon size={18} aria-hidden="true" />
           {t("adminNews.addNews")}
@@ -557,7 +557,7 @@ function AnnouncementsPage() {
               <button
                 type="submit"
                 disabled={loading || !form.title.trim() || !form.content.trim() || !form.categoryId}
-                className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-60"
+                className="h-11 rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-60"
               >
                 {loading ? t("adminNews.newssaving") : idleSubmitLabel}
               </button>

@@ -320,7 +320,7 @@ function ParentFormModal({
           <button
             type="submit"
             disabled={saving || !firstName.trim() || !lastName.trim() || !identification.trim() || !phoneNumber.trim() || !email.trim() || !address.trim()}
-            className="h-11 rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+            className="h-11 rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {saving ? t("admin.parents.saving") : idleSaveLabel}
           </button>

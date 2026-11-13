@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { StarIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
-import child from '../../assets/imgs/child.webp'
-import childSmall from '../../assets/imgs/child-640.webp'
+import childLarge from '../../assets/imgs/philosophyChild-1080.webp'
+import childSmall from '../../assets/imgs/philosophyChild-640.webp'
 import Container from '../../components/home/Container.tsx'
 import BlobButton from '../../components/ui/BlobButton.tsx'
 import PhilosophyModal from '../../components/PhilosophyModal.tsx'
@@ -26,10 +26,10 @@ function PhilosophySection() {
             <img
               loading="lazy"
               src={childSmall}
-              srcSet={`${childSmall} 640w, ${child} 1300w`}
+              srcSet={`${childSmall} 640w, ${childLarge} 1080w`}
               sizes="(min-width: 1024px) 508px, (min-width: 768px) 292px, calc(100vw - 136px)"
-              width={1300}
-              height={996}
+              width={1080}
+              height={964}
               decoding="async"
               alt={t('home.philosophy.imageAlt')}
               data-scroll-bg="green"

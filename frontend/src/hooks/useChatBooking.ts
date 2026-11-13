@@ -10,11 +10,13 @@ import {
 } from '../utils/bookingDate.ts'
 import {
   extractBookingData,
+  buildBookingTemplate,
   normalizePhone,
   parseIdType,
   parseReferral,
   validateBookingForm,
   type BookingFormValues,
+  type BookingField,
 } from '../utils/bookingDataParser.ts'
 import type { AvailableWeek, ReferralSource } from '../types/appointment.ts'
 import type { ChatMessage } from './useChat.ts'
@@ -65,7 +67,7 @@ function emptyForm(): BookingFormValues {
 
 function clean(value: string | undefined): string | undefined {
   const trimmed = value?.trim()
-  return trimmed ? trimmed : undefined
+  return trimmed || undefined
 }
 
 export function useChatBooking(appendMessage: AppendMessage) {
@@ -77,6 +79,7 @@ export function useChatBooking(appendMessage: AppendMessage) {
   const [stage, setStage] = useState<ChatBookingStage>('idle')
   const [week, setWeek] = useState<AvailableWeek>({})
   const [form, setForm] = useState<BookingFormValues>(emptyForm)
+  const [invalidFields, setInvalidFields] = useState<BookingField[]>([])
   const [dataReady, setDataReady] = useState(false)
   const [day, setDay] = useState<string | null>(null)
   const [time, setTime] = useState<string | null>(null)
@@ -90,7 +93,8 @@ export function useChatBooking(appendMessage: AppendMessage) {
     if (!weekdayKey) return date
     const dayNumber = String(parsed.getDate()).padStart(2, '0')
     const month = String(parsed.getMonth() + 1).padStart(2, '0')
-    return `${t(`booking.days.${weekdayKey}`)} ${dayNumber}/${month}`
+    const weekday = t(`booking.days.${weekdayKey}`)
+    return `${weekday} ${dayNumber}/${month}`
   }, [t])
 
   const longDayLabel = useCallback((date: string) => {
@@ -125,11 +129,11 @@ export function useChatBooking(appendMessage: AppendMessage) {
     const referral = values.referralSource === 'OTHER' && values.referralOtherDetail
       ? `${referralLabel}: ${values.referralOtherDetail}`
       : referralLabel
-    const idTypeLabel = values.idType === 'Costarricense'
-      ? t('booking.idTypeOptions.costarricense')
-      : values.idType === 'Extranjero'
-        ? t('booking.idTypeOptions.extranjero')
-        : values.idType
+    const idTypeLabels: Record<string, string> = {
+      Costarricense: t('booking.idTypeOptions.costarricense'),
+      Extranjero: t('booking.idTypeOptions.extranjero'),
+    }
+    const idTypeLabel = idTypeLabels[values.idType] ?? values.idType
 
     return [
       t('chat.booking.reviewTitle'),
@@ -179,6 +183,7 @@ export function useChatBooking(appendMessage: AppendMessage) {
   const start = useCallback((announce = true) => {
     setActive(true)
     setForm(emptyForm())
+    setInvalidFields([])
     setDataReady(false)
     setErrorContext(null)
     submittingRef.current = false
@@ -210,7 +215,7 @@ export function useChatBooking(appendMessage: AppendMessage) {
     if (!day) return
     const key = slotKey(day, startTime)
     if (myHold && myHold.key !== key) release()
-    if (!myHold || myHold.key !== key) {
+    if (myHold?.key !== key) {
       const result = await hold(key)
       if (!result.ok) {
         appendMessage('bot', result.message ?? t('chat.booking.slotUnavailable'), { ephemeral: true })
@@ -269,6 +274,7 @@ export function useChatBooking(appendMessage: AppendMessage) {
 
     const result = await validateBookingForm(next, t)
     setForm(next)
+    setInvalidFields(result.fields)
 
     if (result.errors.length > 0) {
       const message = [
@@ -392,17 +398,18 @@ export function useChatBooking(appendMessage: AppendMessage) {
       return
     }
 
-    if (stage === 'review') {
-      if (optionId === 'confirm') void confirm()
-      if (optionId === 'change-schedule') changeSchedule()
-      return
+    const stageActions: Partial<Record<ChatBookingStage, Record<string, () => void>>> = {
+      review: {
+        confirm: () => void confirm(),
+        'change-schedule': changeSchedule,
+      },
+      error: {
+        retry: () => void loadWeek(),
+        'retry-submit': () => void confirm(),
+        'change-schedule': changeSchedule,
+      },
     }
-
-    if (stage === 'error') {
-      if (optionId === 'retry') void loadWeek()
-      if (optionId === 'retry-submit') void confirm()
-      if (optionId === 'change-schedule') changeSchedule()
-    }
+    stageActions[stage]?.[optionId]?.()
   }, [active, appendMessage, cancel, changeSchedule, chooseDay, chooseTime, confirm, loadWeek, stage, t])
 
   const options = useMemo<ChatBookingOption[]>(() => {
@@ -473,6 +480,10 @@ export function useChatBooking(appendMessage: AppendMessage) {
     active,
     stage,
     options,
+    copyTemplate: buildBookingTemplate(
+      form, invalidFields, t('chat.booking.dataTemplate'),
+      form.referralSource ? t(`booking.referral.options.${form.referralSource}`) : '',
+    ),
     busy: stage === 'loading' || stage === 'submitting',
     start,
     handleText,

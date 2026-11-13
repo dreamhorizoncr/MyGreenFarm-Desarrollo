@@ -100,7 +100,7 @@ function ConfirmCurriculumDecisionModal({ application, action, onConfirm, vacanc
               variant="success"
               onClick={handleConfirm}
               loading={submitting}
-              className="h-11 flex-1 rounded-full bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
+              className="h-11 flex-1 rounded-full blob-fill bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
             >
               {submitting ? t('common.loading') : confirmLabel}
             </Button>

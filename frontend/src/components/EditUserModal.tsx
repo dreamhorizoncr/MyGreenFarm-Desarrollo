@@ -200,7 +200,7 @@ function EditUserModal({ userToEdit, currentUser, onSave, onUploadPhoto, onDelet
           onClick={handleSave}
           loading={saving}
           disabled={!firstName.trim() || !lastName.trim()}
-          className="h-11 w-auto rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
+          className="h-11 w-auto rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
         >
           {saving ? t('common.loading') : t('admin.save')}
         </Button>

@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next'
 import { SearchIcon } from '@animateicons/react/lucide'
 
 import AdminLayout from '../layout/AdminLayout.tsx'
-import ChildrenModuleTabs from '../components/ChildrenModuleTabs.tsx'
 import GroupCard from '../components/GroupCard.tsx'
 import GroupFormModal from '../components/GroupFormModal.tsx'
+import GroupStudentsModal from '../components/GroupStudentsModal.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
 
 import { useGroups } from '../hooks/useGroups.ts'
@@ -39,6 +39,7 @@ import { notify, notifyError } from '../utils/notifications.ts'
     const [currentPage, setCurrentPage] = useState(1)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selectedGroup, setSelectedGroup] = useState<Group | null>(null)
+    const [groupToManageStudents, setGroupToManageStudents] = useState<Group | null>(null)
     const [groupToDelete, setGroupToDelete] = useState<Group | null>(null)
 
     const role = userStorage.getUser()?.role
@@ -142,7 +143,7 @@ import { notify, notifyError } from '../utils/notifications.ts'
                     onClick={handleCreate}
                     aria-label={t('admin.groups.addGroup')}
                     title={t('admin.groups.addGroup')}
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-2xl font-light leading-none text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full blob-fill bg-orange-500 text-2xl font-light leading-none text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
                 >
                     +
                 </button>
@@ -166,8 +167,6 @@ import { notify, notifyError } from '../utils/notifications.ts'
             </div>
             </div>
 
-            {!isOwner && <ChildrenModuleTabs />}
-
             <div className="mt-6">
             {loading && (
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -189,6 +188,9 @@ import { notify, notifyError } from '../utils/notifications.ts'
                     canManage={isOwner}
                     onEdit={() => handleEdit(group)}
                     onDelete={isOwner ? () => setGroupToDelete(group) : undefined}
+                    onManageStudents={
+                        isOwner ? () => setGroupToManageStudents(group) : undefined
+                    }
                     />
                 ))}
                 </div>
@@ -220,6 +222,17 @@ import { notify, notifyError } from '../utils/notifications.ts'
                 group={selectedGroup}
                 onClose={handleClose}
                 onSaved={handleSaved}
+            />
+            )}
+
+            {isOwner && groupToManageStudents && (
+            <GroupStudentsModal
+                isOpen
+                group={groupToManageStudents}
+                onClose={() => setGroupToManageStudents(null)}
+                onChanged={() => {
+                    void refreshGroups(i18n.language)
+                }}
             />
             )}
         </section>

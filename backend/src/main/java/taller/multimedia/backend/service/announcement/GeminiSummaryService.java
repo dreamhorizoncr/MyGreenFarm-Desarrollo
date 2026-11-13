@@ -62,7 +62,17 @@ public class GeminiSummaryService {
                     + "Mention the relevant appointments and pending items using only the information provided. "
                     + "If a category has no items, say so briefly. "
                     + "Do not make up data or add recommendations. "
+                    + "Never mention names or any personal data of people; talk only about counts, times and statuses. "
                     + "Reply ONLY with the summary in plain text, without Markdown.\n\nDay data:\n";
+
+    private static final String PROMPT_TEACHER_DASHBOARD =
+            "Summarize the day's work of a teacher at an educational center in 2 short sentences "
+                    + "(50 words maximum), in Spanish, speaking to the teacher in a warm and clear tone. "
+                    + "Mention their groups and what is pending (records to create, evaluations due) "
+                    + "using only the counts provided. If nothing is pending, say so briefly. "
+                    + "Do not make up data or add recommendations. "
+                    + "Never mention names or any personal data of people; talk only about counts. "
+                    + "Reply ONLY with the summary in plain text, without Markdown.\n\nTeacher data:\n";
 
     private final ObjectMapper objectMapper;
 
@@ -95,6 +105,10 @@ public class GeminiSummaryService {
 
     public String generateDashboardSummary(String context) {
         return callGemini(PROMPT_DASHBOARD + context);
+    }
+
+    public String generateTeacherDashboardSummary(String context) {
+        return callGemini(PROMPT_TEACHER_DASHBOARD + context);
     }
 
     private String callGemini(String prompt) {

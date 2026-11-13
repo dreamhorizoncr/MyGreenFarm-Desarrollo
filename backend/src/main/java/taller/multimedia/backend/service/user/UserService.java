@@ -174,8 +174,6 @@ public class UserService {
             throw new RuntimeException("You do not have permission to delete this user");
         }
 
-        // Release references first: forum articles keep no author and the teacher leaves their
-        // groups, otherwise the teacher_groups foreign key blocks the delete.
         forumArticleRepository.unlinkAuthor(targetUser.getId());
         teacherGroupRepository.deleteByTeacherId(targetUser.getId());
         userRepository.delete(targetUser);

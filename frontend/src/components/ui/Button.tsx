@@ -39,6 +39,7 @@ function Button({
   children,
   ...rest
 }: Readonly<ButtonProps>) {
+  const isOrange = variant === 'primary' && !/(^|\s)bg-(?!primary\b|orange-)/.test(className ?? '')
   return (
     <button
       type={type}
@@ -46,7 +47,7 @@ function Button({
         variant,
         isDisabled: disabled,
         isLoading: loading,
-        className,
+        className: isOrange ? `blob-fill enabled:hover:opacity-100 ${className ?? ''}` : className,
       })}
       disabled={disabled || loading}
       {...rest}

@@ -1,6 +1,8 @@
 
 import {UsersIcon,UserIcon,FileTextIcon,} from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import Skeleton from './ui/Skeleton.tsx'
 import CardActionButton from './ui/CardActionButton.tsx'
 import Tag from './ui/Tag.tsx'
@@ -10,6 +12,7 @@ import type { Group } from '../types/group.ts'
     group?: Group
     onEdit?: (group: Group) => void
     onDelete?: (group: Group) => void
+    onManageStudents?: (group: Group) => void
     onView?: (group: Group) => void
     loading?: boolean
     canManage?: boolean
@@ -65,11 +68,13 @@ import type { Group } from '../types/group.ts'
     group,
     onEdit,
     onDelete,
+    onManageStudents,
     onView,
     loading = false,
     canManage = false,
     }: Readonly<GroupCardProps>) {
     const { t } = useTranslation()
+    const [showStudents, setShowStudents] = useState(false)
 
     if (loading || !group) return <GroupCardSkeleton withActions={canManage} />
 
@@ -170,21 +175,84 @@ import type { Group } from '../types/group.ts'
                 </p>
             </div>
             </div>
+
+            {!canManage && showStudents && (
+            <div className="flex items-start gap-3">
+            <UsersIcon
+                size={18}
+                className="mt-0.5 shrink-0 text-heading"
+                aria-hidden="true"
+            />
+
+            <div className="min-w-0 flex-1">
+                {group.children.length === 0 ? (
+                    <p className="font-body text-body-sm text-neutral-500">
+                        {t('admin.groups.noStudents')}
+                    </p>
+                ) : (
+                    <ul
+                        aria-label={t('admin.groups.students')}
+                        className="max-h-40 space-y-xs overflow-y-auto pr-xs"
+                    >
+                        {group.children.map((child) => (
+                        <li key={child.id}>
+                            <Link
+                            to={`/admin/expedients?estudiante=${encodeURIComponent(child.studentId)}`}
+                            aria-label={t('admin.groups.openExpedient', { name: child.fullName })}
+                            className="group flex min-w-0 items-center justify-between gap-sm rounded-lg bg-neutral-50 px-sm py-xs font-body text-body-sm text-body-text transition-colors hover:bg-green-50 hover:text-heading focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+                            >
+                            <span className="min-w-0 truncate group-hover:underline group-hover:underline-offset-2">{child.fullName}</span>
+                            <span className="shrink-0 text-caption text-neutral-500">
+                            {child.studentId}
+                            </span>
+                            </Link>
+                        </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+            </div>
+            )}
         </div>
 
         <div className="mt-6 border-t border-neutral-100 pt-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
             <Tag>{availabilityLabel}</Tag>
 
-            {onView && (
-                <button
-                type="button"
-                onClick={() => onView(group)}
-                className="font-body text-body-sm font-semibold text-green-700 transition-colors hover:text-green-900"
-                >
-                {t('admin.groups.viewDetails')}
-                </button>
-            )}
+            <div className="flex flex-wrap items-center gap-md">
+                {canManage && onManageStudents && (
+                    <button
+                    type="button"
+                    onClick={() => onManageStudents(group)}
+                    className="font-body text-body-sm font-semibold text-green-500 underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
+                    >
+                    {t('admin.groups.manageStudents')}
+                    </button>
+                )}
+
+                {!canManage && (
+                    <button
+                    type="button"
+                    onClick={() => setShowStudents((current) => !current)}
+                    className="font-body text-body-sm font-semibold text-green-500 underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
+                    aria-expanded={showStudents}
+                    >
+                    {showStudents
+                        ? t('admin.groups.hideStudents')
+                        : t('admin.groups.viewStudents')}
+                    </button>
+                )}
+
+                {onView && (
+                    <button
+                    type="button"
+                    onClick={() => onView(group)}
+                    className="font-body text-body-sm font-semibold text-green-500 underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
+                    >
+                    {t('admin.groups.viewDetails')}
+                    </button>
+                )}
+            </div>
             </div>
         </div>
         </article>

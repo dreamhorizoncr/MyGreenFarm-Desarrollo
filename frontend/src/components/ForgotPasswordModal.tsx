@@ -105,7 +105,7 @@ function ForgotPasswordModal({ email, onClose }: Readonly<ForgotPasswordModalPro
                   variant="success"
                   onClick={handleSubmit}
                   loading={loading}
-                  className="h-11 w-auto rounded-full bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
+                  className="h-11 w-auto rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
                 >
                   {loading ? t('forgotPassword.loading') : t('forgotPassword.buttonLabel')}
                 </Button>

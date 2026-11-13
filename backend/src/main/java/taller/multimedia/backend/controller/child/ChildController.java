@@ -11,6 +11,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ import taller.multimedia.backend.dto.child.ChildRequest;
 import taller.multimedia.backend.dto.child.ChildResponse;
 import taller.multimedia.backend.dto.child.ChildStatusFilter;
 import taller.multimedia.backend.service.child.ChildService;
+import taller.multimedia.backend.service.group.TeacherScopeService;
 
 @Validated
 @RestController
@@ -27,6 +29,7 @@ import taller.multimedia.backend.service.child.ChildService;
 public class ChildController {
 
     private final ChildService childService;
+    private final TeacherScopeService teacherScope;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
@@ -52,8 +55,11 @@ public class ChildController {
 
     @GetMapping("/available-for-expedient")
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
-    public ResponseEntity<List<ChildResponse>> getAvailableChildrenForExpedient() {
-        List<ChildResponse> children = childService.getAvailableChildrenForExpedient();
+    public ResponseEntity<List<ChildResponse>> getAvailableChildrenForExpedient(Authentication authentication) {
+        List<ChildResponse> all = childService.getAvailableChildrenForExpedient();
+        List<ChildResponse> children = teacherScope.visibleChildIds(authentication)
+                .map(childIds -> all.stream().filter(child -> childIds.contains(child.getId())).toList())
+                .orElse(all);
         return ResponseEntity.ok(children);
     }
 
@@ -87,6 +93,7 @@ public class ChildController {
     }
 
     @GetMapping("/options")
+    @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<List<ChildOptionResponse>> getChildrenOptions() {
         return ResponseEntity.ok(childService.getChildrenOptions());
     }

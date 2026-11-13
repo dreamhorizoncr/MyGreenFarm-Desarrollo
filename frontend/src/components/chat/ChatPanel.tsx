@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { SendIcon, XIcon } from '@animateicons/react/lucide'
 import type { ChatController } from '../../hooks/useChat'
 import type { ChatResponse } from '../../services/chat.service'
-import { useChatBooking } from '../../hooks/useChatBooking'
+import type { useChatBooking } from '../../hooks/useChatBooking'
 import ChatMessage from './ChatMessage'
 import ChatSuggestions from './ChatSuggestions'
 import ChatBookingOptions from './ChatBookingOptions'
@@ -35,13 +35,13 @@ function nextWordEnd(text: string, from: number) {
 
 interface ChatPanelProps {
   chat: ChatController
+  booking: ReturnType<typeof useChatBooking>
   onClose: () => void
   onOpenTerms: () => void
 }
 
-export default function ChatPanel({ chat, onClose, onOpenTerms }: Readonly<ChatPanelProps>) {
-  const { messages, input, setInput, sendMessage, loading, appendMessage } = chat
-  const booking = useChatBooking(appendMessage)
+export default function ChatPanel({ chat, booking, onClose, onOpenTerms }: Readonly<ChatPanelProps>) {
+  const { messages, input, setInput, sendMessage, loading } = chat
   const { t } = useTranslation()
   const navigate = useNavigate()
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -49,6 +49,7 @@ export default function ChatPanel({ chat, onClose, onOpenTerms }: Readonly<ChatP
   const isAuthenticated = Boolean(user)
   const firstName = user?.firstName?.trim()
   const [focused, setFocused] = useState(false)
+  const [copyReply, setCopyReply] = useState<string | null>(null)
   const [mood, setMood] = useState<ChickMood>('neutral')
   const [reaction, setReaction] = useState<{ type: ChickReaction; key: number } | null>(null)
   const [talk, setTalk] = useState<{ text: string; shown: number } | null>(null)
@@ -161,6 +162,7 @@ export default function ChatPanel({ chat, onClose, onOpenTerms }: Readonly<ChatP
     window.clearTimeout(actionTimer.current)
 
     if (booking.active) {
+      setCopyReply(null)
       setInput('')
       await booking.handleText(trimmed)
       return
@@ -176,9 +178,18 @@ export default function ChatPanel({ chat, onClose, onOpenTerms }: Readonly<ChatP
     onClose()
   }
 
+  const copyBookingTemplate = async () => {
+    try {
+      await navigator.clipboard.writeText(booking.copyTemplate)
+      setCopyReply(t('chat.booking.copied'))
+    } catch {
+      setCopyReply(t('chat.booking.copyError'))
+    }
+  }
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, loading, booking.active, booking.stage])
+  }, [messages, loading, booking.active, booking.stage, copyReply])
 
   return (
     <section className="flex h-full min-h-0 flex-col bg-white text-body-text-dark">
@@ -243,9 +254,17 @@ export default function ChatPanel({ chat, onClose, onOpenTerms }: Readonly<ChatP
         )}
         {booking.active && (
           <ChatBookingOptions
-            options={booking.options}
-            onSelect={booking.handleOption}
+            options={booking.stage === 'data'
+              ? [{ id: 'copy', label: t('chat.booking.copy'), variant: 'secondary' }, ...booking.options]
+              : booking.options}
+            onSelect={(optionId) => {
+              if (optionId === 'copy') void copyBookingTemplate()
+              else booking.handleOption(optionId)
+            }}
           />
+        )}
+        {booking.active && booking.stage === 'data' && copyReply && (
+          <ChatMessage message={{ id: 'booking-copy-reply', role: 'bot', content: copyReply }} />
         )}
         <div ref={messagesEndRef} />
       </div>
@@ -270,7 +289,7 @@ export default function ChatPanel({ chat, onClose, onOpenTerms }: Readonly<ChatP
               type="submit"
               disabled={busy || !input.trim()}
               aria-label={t('chat.send')}
-              className="flex size-11 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-colors hover:bg-orange-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex size-11 shrink-0 items-center justify-center rounded-full blob-fill bg-orange-500 text-white transition-colors hover:bg-orange-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <SendIcon size={20} aria-hidden="true" />
             </button>
@@ -301,13 +320,12 @@ export default function ChatPanel({ chat, onClose, onOpenTerms }: Readonly<ChatP
             aria-label={t('chat.booking.dataPlaceholder')}
             className="w-full resize-none rounded-xl border border-neutral-200 bg-white px-md py-sm font-body text-body-sm text-body-text-dark outline-none placeholder:text-(--grey-700) focus:border-heading"
           />
-          <div className="mt-xs flex items-center justify-between gap-xs">
-            <p className="m-0 font-body text-[11px] leading-snug text-(--grey-600)">{t('chat.booking.dataHint')}</p>
+          <div className="mt-xs flex items-center justify-end gap-xs">
             <button
               type="submit"
               disabled={booking.busy || !input.trim()}
               aria-label={t('chat.send')}
-              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white transition-colors hover:bg-orange-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex size-10 shrink-0 items-center justify-center rounded-full blob-fill bg-orange-500 text-white transition-colors hover:bg-orange-600 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
               <SendIcon size={18} aria-hidden="true" />
             </button>

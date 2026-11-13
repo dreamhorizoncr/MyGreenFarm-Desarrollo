@@ -1,6 +1,5 @@
 import type { CSSProperties, PointerEventHandler } from 'react'
 
-// Drawn as inline SVG so hover follows the piece outline, not its bounding box.
 interface PieceShape {
   viewBox: string
   d: string

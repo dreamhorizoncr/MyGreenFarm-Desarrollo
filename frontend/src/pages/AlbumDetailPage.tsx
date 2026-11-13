@@ -13,6 +13,7 @@ import type { Gallery } from '../types/gallery.ts'
 import { galleryService } from '../services/gallery.ts'
 import { useImageLikes } from '../hooks/useImageLikes.ts'
 import { setPageSEO } from '../utils/seo.ts'
+import { htmlToText } from '../utils/html.ts'
 
 interface LikeBadgeProps {
   albumTitle: string
@@ -73,11 +74,7 @@ function AlbumDetailPage() {
         return
       }
 
-      const description = album.description
-        .replace(/<[^>]*>/g, '')
-        .replace(/\s+/g, ' ')
-        .trim()
-        .slice(0, 155)
+      const description = htmlToText(album.description).slice(0, 155)
 
       setPageSEO({
         title: `${album.title} | My Green Farm`,
