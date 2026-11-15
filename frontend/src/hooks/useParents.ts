@@ -17,8 +17,10 @@ export function useParents() {
 
     const cacheRef = useRef<Map<number, CacheData>>(new Map());
 
-    const fetchParents = async (page = 0) => {
-        if (cacheRef.current.has(page)) {
+    const fetchParents = async (page = 0, forceRefresh = false) => {
+        if (forceRefresh) {
+            cacheRef.current.clear();
+        } else if (cacheRef.current.has(page)) {
             const cached = cacheRef.current.get(page)!;
             setParents(cached.parents);
             setTotalPages(cached.totalPages);
