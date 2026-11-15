@@ -51,7 +51,7 @@ function AdminParentsPage() {
 
         try {
             await parentService.delete(parentToDelete.id);
-            await fetchParents(currentPage - 1);
+            await fetchParents(currentPage - 1, true);
             notify.success(t("admin.parents.deleteSuccessToastTitle"));
             setParentToDelete(null);
         } catch (error) {
@@ -147,7 +147,7 @@ function AdminParentsPage() {
                 {isCreateModalOpen && (
                     <ParentFormModal
                         onClose={() => setIsCreateModalOpen(false)}
-                        onCreated={() => fetchParents(currentPage - 1)}
+                        onCreated={() => fetchParents(currentPage - 1, true)}
                     />
                 )}
 
@@ -155,7 +155,7 @@ function AdminParentsPage() {
                     <ParentFormModal
                         parent={editingParent}
                         onClose={() => setEditingParent(null)}
-                        onCreated={() => fetchParents(currentPage - 1)}
+                        onCreated={() => fetchParents(currentPage - 1, true)}
                     />
                 )}
 

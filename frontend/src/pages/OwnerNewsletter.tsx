@@ -365,7 +365,7 @@ function AdminNewsletterPage() {
                                     <button
                                         type="submit"
                                         disabled={broadcastLoading || !subject.trim() || !message.trim()}
-                                        className="inline-flex h-11 items-center gap-xs rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
+                                        className="inline-flex h-11 items-center gap-xs rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60 justify-center"
                                     >
                                         <SendIcon size={16} aria-hidden="true" />
                                         {t('admin.newsletter.send')}
