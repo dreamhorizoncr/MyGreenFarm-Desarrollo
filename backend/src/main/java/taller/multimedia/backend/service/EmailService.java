@@ -6,7 +6,6 @@ import taller.multimedia.backend.model.curriculum.Curriculum;
 import taller.multimedia.backend.model.user.User;
 import taller.multimedia.backend.repository.newsletter_subscriber.NewsletterSubscriberRepository;
 import taller.multimedia.backend.repository.newsletter_subscriber.SubscriberEmailProjection;
-import taller.multimedia.backend.service.electronic_billing.ElectronicBillingService;
 import taller.multimedia.backend.service.translation.TranslationService;
 
 import java.io.IOException;
@@ -43,9 +42,6 @@ public class EmailService {
     private final NewsletterSubscriberRepository newsletterRepository;
     private final TranslationService translationService;
     private final JavaMailSender mailSender;
-
-    @Autowired
-    private ElectronicBillingService electronicBillingService;
 
     @Value("${mail.support}")
     private String supportEmail;
@@ -424,49 +420,49 @@ public class EmailService {
         }
     }
 
-    @Async
-    public void sendInvoiceWithPdf(String clientEmail, String clientName, Map<String, Object> invoiceResponse) {
-        sendInvoiceWithPdf(clientEmail, clientName, invoiceResponse, Locale.forLanguageTag("es"));
-    }
+    // @Async
+    // public void sendInvoiceWithPdf(String clientEmail, String clientName, Map<String, Object> invoiceResponse) {
+    //     sendInvoiceWithPdf(clientEmail, clientName, invoiceResponse, Locale.forLanguageTag("es"));
+    // }
 
-    @Async
-    public void sendInvoiceWithPdf(String clientEmail, String clientName, Map<String, Object> invoiceResponse,
-            Locale requestedLocale) {
-        try {
-            byte[] pdfBytes = null;
+    // @Async
+    // public void sendInvoiceWithPdf(String clientEmail, String clientName, Map<String, Object> invoiceResponse,
+    //         Locale requestedLocale) {
+    //     try {
+    //         byte[] pdfBytes = null;
 
-            if (invoiceResponse != null) {
-                if (invoiceResponse.get("pdf") != null) {
-                    String pdfBase64 = (String) invoiceResponse.get("pdf");
-                    if (!pdfBase64.isBlank()) {
-                        pdfBytes = java.util.Base64.getDecoder().decode(pdfBase64);
-                    }
-                }
-                else if (invoiceResponse.get("documentId") != null) {
-                    String documentId = (String) invoiceResponse.get("documentId");
-                    log.info(">>> Documento en cola detectado (ID: {}). Iniciando reintentos de descarga...",
-                            documentId);
+    //         if (invoiceResponse != null) {
+    //             if (invoiceResponse.get("pdf") != null) {
+    //                 String pdfBase64 = (String) invoiceResponse.get("pdf");
+    //                 if (!pdfBase64.isBlank()) {
+    //                     pdfBytes = java.util.Base64.getDecoder().decode(pdfBase64);
+    //                 }
+    //             }
+    //             else if (invoiceResponse.get("documentId") != null) {
+    //                 String documentId = (String) invoiceResponse.get("documentId");
+    //                 log.info(">>> Documento en cola detectado (ID: {}). Iniciando reintentos de descarga...",
+    //                         documentId);
 
-                    pdfBytes = electronicBillingService.downloadPdfWithRetry(documentId);
-                }
-            }
+    //                 pdfBytes = electronicBillingService.downloadPdfWithRetry(documentId);
+    //             }
+    //         }
 
-            Locale locale = resolveInvoiceLocale(requestedLocale);
-            Context context = createBaseContext(locale);
-            context.setVariable("clientName", clientName);
-            context.setVariable("websiteUrl", frontendUrl);
+    //         Locale locale = resolveInvoiceLocale(requestedLocale);
+    //         Context context = createBaseContext(locale);
+    //         context.setVariable("clientName", clientName);
+    //         context.setVariable("websiteUrl", frontendUrl);
 
-            String htmlContent = templateEngine.process("email/electronic_billing/invoice-success", context);
+    //         String htmlContent = templateEngine.process("email/electronic_billing/invoice-success", context);
 
-            String subject = messageSource.getMessage("email.billing.subject", null, locale);
-            sendEmailWithAttachment(clientEmail, subject, htmlContent, pdfBytes, "FacturaElectronica.pdf");
+    //         String subject = messageSource.getMessage("email.billing.subject", null, locale);
+    //         sendEmailWithAttachment(clientEmail, subject, htmlContent, pdfBytes, "FacturaElectronica.pdf");
 
-            log.info("Email with attached electronic invoice sent successfully to: {}", clientEmail);
-        } catch (Exception e) {
-            log.error("Error sending the electronic invoice email with attachment to {}: {}", clientEmail,
-                    e.getMessage(), e);
-        }
-    }
+    //         log.info("Email with attached electronic invoice sent successfully to: {}", clientEmail);
+    //     } catch (Exception e) {
+    //         log.error("Error sending the electronic invoice email with attachment to {}: {}", clientEmail,
+    //                 e.getMessage(), e);
+    //     }
+    // }
 
     private Locale resolveInvoiceLocale(Locale requestedLocale) {
         if (requestedLocale == null) {
