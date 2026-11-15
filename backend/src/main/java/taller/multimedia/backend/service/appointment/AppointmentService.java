@@ -22,6 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import lombok.extern.slf4j.Slf4j;
 import taller.multimedia.backend.dto.appointment.AppointmentRequest;
 import taller.multimedia.backend.dto.appointment.AppointmentResponse;
@@ -134,7 +136,12 @@ public class AppointmentService {
         log.info("Saving the appointment took {} ms", System.currentTimeMillis() - start);
         appointmentRepository.flush();
 
-        calendarSyncAsyncService.addAppointmentAsync(savedAppointment.getId());
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                calendarSyncAsyncService.addAppointmentAsync(savedAppointment.getId());
+            }
+        });
 
         Locale locale = Locale.forLanguageTag(langCode);
 

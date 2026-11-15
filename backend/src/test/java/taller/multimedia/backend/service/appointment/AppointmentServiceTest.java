@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import taller.multimedia.backend.dto.appointment.AppointmentRequest;
 import taller.multimedia.backend.exception.InvalidFieldException;
@@ -132,6 +135,29 @@ class AppointmentServiceTest {
         ArgumentCaptor<Appointment> savedAppointment = ArgumentCaptor.forClass(Appointment.class);
         verify(appointmentRepository).save(savedAppointment.capture());
         assertThat(savedAppointment.getValue().getParentNotes()).isEqualTo(multilineNotes);
+    }
+
+    @Test
+    void createAppointment_schedulesCalendarSyncAfterTransactionCommit() {
+        AppointmentRequest request = validRequest();
+        Appointment savedAppointment = new Appointment();
+        savedAppointment.setId(UUID.randomUUID());
+        when(appointmentRepository.save(any())).thenReturn(savedAppointment);
+
+        TransactionSynchronizationManager.initSynchronization();
+        try {
+            appointmentService.createAppointment(request);
+
+            verify(calendarSyncAsyncService, never()).addAppointmentAsync(savedAppointment.getId());
+
+            List<TransactionSynchronization> synchronizations =
+                    TransactionSynchronizationManager.getSynchronizations();
+            synchronizations.forEach(TransactionSynchronization::afterCommit);
+
+            verify(calendarSyncAsyncService).addAppointmentAsync(savedAppointment.getId());
+        } finally {
+            TransactionSynchronizationManager.clearSynchronization();
+        }
     }
 
     @Test
