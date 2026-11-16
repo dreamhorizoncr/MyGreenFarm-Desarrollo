@@ -138,7 +138,7 @@ function LoginPage() {
         <div className="mt-[12px] text-right md:mt-[15px]">
           <Link
             to="/forgot-password"
-            className="font-link text-caption text-heading transition-opacity hover:opacity-70 md:text-body-sm"
+            className="inline-flex min-h-6 items-center font-link text-caption text-heading transition-opacity hover:opacity-70 md:text-body-sm"
           >
             {t("login.forgotPassword")}
           </Link>

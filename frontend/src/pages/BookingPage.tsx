@@ -875,9 +875,9 @@ function BookingPage() {
               >
                 <ArrowLeftIcon size={30} aria-hidden="true" />
               </button>
-              <h2 className="m-0 text-left font-heading text-h3 leading-tight text-heading">
+              <h1 className="m-0 text-left font-heading text-h3 leading-tight text-heading">
                 {t('booking.title')}
-              </h2>
+              </h1>
             </div>
 
             <WizardProgress step={step} />

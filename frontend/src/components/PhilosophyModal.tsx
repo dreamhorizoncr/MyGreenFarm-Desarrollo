@@ -6,7 +6,7 @@ import Button from './ui/Button.tsx'
 import PhilosophyPillarItem from './PhilosophyPillarItem.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
-import childLarge from '../assets/imgs/philosophyChild-1080.webp'
+import childLarge from '../assets/imgs/philosophyChild-900.webp'
 import childSmall from '../assets/imgs/philosophyChild-640.webp'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
@@ -81,15 +81,15 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
 
         <img
           src={childLarge}
-          srcSet={`${childSmall} 640w, ${childLarge} 1080w`}
+          srcSet={`${childSmall} 640w, ${childLarge} 900w`}
           sizes="(min-width: 1024px) 950px, 100vw"
-          width={1080}
-          height={964}
+          width={900}
+          height={803}
           alt=""
           aria-hidden="true"
           decoding="async"
           data-scroll-bg="green"
-          className="h-64 w-full rounded-t-[20px] object-cover object-[center_22%] md:h-80"
+          className="h-64 w-full rounded-t-[20px] object-cover object-[center_8%] md:h-80"
         />
 
         <div className="p-lg md:p-xl">
