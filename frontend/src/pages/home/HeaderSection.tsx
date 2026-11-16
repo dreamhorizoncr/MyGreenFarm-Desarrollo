@@ -4,7 +4,6 @@ import { HEADER_BG_SIZES } from './heroSizes.ts'
 import headerBgSmall from '../../assets/imgs/homeHeaderBg-640.webp'
 import headerBgMedium from '../../assets/imgs/homeHeaderBg-1024.webp'
 import headerBgLarge from '../../assets/imgs/homeHeaderBg-1600.webp'
-import header from '../../assets/imgs/homeHeaderBg.webp'
 import cloudsUp from '../../assets/imgs/cloudsUp.svg'
 import Container from '../../components/home/Container.tsx'
 import BlobButton from '../../components/ui/BlobButton.tsx'
@@ -21,8 +20,8 @@ function HeaderSection() {
   return (
     <section id="header" className="relative isolate flex min-h-[100svh] w-full flex-col overflow-hidden text-left">
       <img
-        src={header}
-        srcSet={header}
+        src={headerBg.src}
+        srcSet={headerBg.srcSet}
         sizes={HEADER_BG_SIZES}
         alt=""
         aria-hidden="true"

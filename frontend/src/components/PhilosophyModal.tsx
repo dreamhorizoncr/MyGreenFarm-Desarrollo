@@ -6,8 +6,6 @@ import Button from './ui/Button.tsx'
 import PhilosophyPillarItem from './PhilosophyPillarItem.tsx'
 import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
-import childLarge from '../assets/imgs/philosophyChild-900.webp'
-import childSmall from '../assets/imgs/philosophyChild-640.webp'
 import child from '../assets/imgs/philosophyChild.webp'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
