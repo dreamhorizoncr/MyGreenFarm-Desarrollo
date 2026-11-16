@@ -37,7 +37,7 @@ function ForumSidebar({
   return (
     <aside
       aria-label={t('forum.sidebarLabel')}
-      className="grid grid-cols-1 gap-md lg:sticky lg:top-6 lg:max-h-[calc(100svh-3rem)] lg:grid-cols-1 lg:overflow-y-auto lg:overscroll-contain"
+      className="grid grid-cols-1 gap-md lg:sticky lg:top-6 lg:grid-cols-1"
     >
       {showControls && showPublish && onPublish && <div className="hidden lg:block"><PublishButtonCard onPublish={onPublish} /></div>}
 

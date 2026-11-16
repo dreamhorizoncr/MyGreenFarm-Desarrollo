@@ -4,6 +4,7 @@ import { HEADER_BG_SIZES } from './heroSizes.ts'
 import headerBgSmall from '../../assets/imgs/homeHeaderBg-640.webp'
 import headerBgMedium from '../../assets/imgs/homeHeaderBg-1024.webp'
 import headerBgLarge from '../../assets/imgs/homeHeaderBg-1600.webp'
+import header from '../../assets/imgs/homeHeaderBg.webp'
 import cloudsUp from '../../assets/imgs/cloudsUp.svg'
 import Container from '../../components/home/Container.tsx'
 import BlobButton from '../../components/ui/BlobButton.tsx'
@@ -20,8 +21,8 @@ function HeaderSection() {
   return (
     <section id="header" className="relative isolate flex min-h-[100svh] w-full flex-col overflow-hidden text-left">
       <img
-        src={headerBg.src}
-        srcSet={headerBg.srcSet}
+        src={header}
+        srcSet={header}
         sizes={HEADER_BG_SIZES}
         alt=""
         aria-hidden="true"
@@ -29,11 +30,11 @@ function HeaderSection() {
         height={1484}
         fetchPriority="high"
         decoding="async"
-        className="absolute inset-0 -z-20 size-full object-cover object-[72%_30%]"
+        className="absolute inset-0 -z-20 size-full object-cover object-[64%_30%]"
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-black/50 md:bg-transparent md:bg-linear-to-r md:from-black/65 md:via-black/45 md:to-black/25"
+        className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-r from-black/60 via-black/35 to-transparent"
       />
 
       <div className="flex w-full flex-1 flex-col justify-center">

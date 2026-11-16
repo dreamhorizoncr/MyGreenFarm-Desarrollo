@@ -89,16 +89,6 @@ const DECORATION_LAYOUTS = [
     return largeText ? Math.max(1, base - 1) : base
     }
 
-    const shuffled = <T,>(items: T[]) => {
-    const result = [...items]
-    const random = crypto.getRandomValues(new Uint32Array(result.length))
-    for (let i = result.length - 1; i > 0; i--) {
-        const j = random[i] % (i + 1)
-        ;[result[i], result[j]] = [result[j], result[i]]
-    }
-    return result
-    }
-
     function AboutUsPage() {
     const reduceMotion = useReducedMotion()
     const { t } = useTranslation()
@@ -121,7 +111,15 @@ const DECORATION_LAYOUTS = [
             const data = await adminService.getAboutUsTeachers()
 
             if (active) {
-            setTeachers(shuffled(data))
+            setTeachers(
+                [...data].sort((first, second) =>
+                    `${first.firstName} ${first.lastName}`.localeCompare(
+                        `${second.firstName} ${second.lastName}`,
+                        'es',
+                        { sensitivity: 'base' },
+                    ),
+                ),
+            )
             setTeachersError(false)
             }
         } catch {
