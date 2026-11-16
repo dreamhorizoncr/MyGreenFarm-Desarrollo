@@ -1,4 +1,4 @@
-import temporaryCover from '../../assets/imgs/temporaryCover.jpeg'
+import temporaryCover from '../../assets/imgs/niños.jpeg'
 
 export const featuredBanner = {
   imageUrl: temporaryCover,

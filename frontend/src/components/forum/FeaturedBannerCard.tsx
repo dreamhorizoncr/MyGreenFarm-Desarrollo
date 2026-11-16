@@ -9,7 +9,7 @@ function FeaturedBannerCard() {
       <img
         src={featuredBanner.imageUrl}
         alt={featuredBanner.alt}
-        className="h-[160px] w-full rounded-[15px] object-cover xs:h-[200px]"
+        className="h-[160px] w-full rounded-[15px] object-cover object-[center_70%] xs:h-[200px]"
       />
     </a>
   )

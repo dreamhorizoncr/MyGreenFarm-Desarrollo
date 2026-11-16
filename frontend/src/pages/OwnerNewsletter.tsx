@@ -195,7 +195,7 @@ function AdminNewsletterPage() {
                         </p>
                     </div>
 
-                    <div className="relative inline-flex" ref={sendMenuRef}>
+                    <div className="relative inline-flex w-full sm:w-auto" ref={sendMenuRef}>
                         <button
                             type="button"
                             onClick={() => setIsSendMenuOpen((prev) => !prev)}
@@ -214,14 +214,14 @@ function AdminNewsletterPage() {
 
                         {isSendMenuOpen && (
                             <div
-                                className="absolute right-0 top-[calc(100%+var(--spacing-2xs))] z-30 min-w-[220px] rounded-xl border border-neutral-200 bg-white p-xs shadow animate-[admin-row-menu-in_0.12s_ease-out]"
+                                className="absolute left-0 top-[calc(100%+var(--spacing-2xs))] z-30 w-max min-w-[220px] max-w-full sm:left-auto sm:right-0 sm:max-w-none rounded-xl border border-neutral-200 bg-white p-xs shadow animate-[admin-row-menu-in_0.12s_ease-out]"
                                 role="menu"
                             >
                                 <button
                                     type="button"
                                     role="menuitem"
                                     onClick={() => handleOpenBroadcast('SUBSCRIBERS')}
-                                    className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100"
+                                    className="flex w-full cursor-pointer items-center gap-sm whitespace-normal rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100"
                                 >
                                     {t('admin.newsletter.sendSubscribers')}
                                 </button>
@@ -229,7 +229,7 @@ function AdminNewsletterPage() {
                                     type="button"
                                     role="menuitem"
                                     onClick={() => handleOpenBroadcast('PARENTS')}
-                                    className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100"
+                                    className="flex w-full cursor-pointer items-center gap-sm whitespace-normal rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100"
                                 >
                                     {t('admin.newsletter.sendParents')}
                                 </button>
@@ -237,7 +237,7 @@ function AdminNewsletterPage() {
                                     type="button"
                                     role="menuitem"
                                     onClick={() => handleOpenBroadcast('BOTH')}
-                                    className="flex w-full cursor-pointer items-center gap-sm whitespace-nowrap rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100"
+                                    className="flex w-full cursor-pointer items-center gap-sm whitespace-normal rounded-lg px-md py-sm text-left font-body text-body-sm text-heading transition-colors duration-150 hover:bg-orange-100"
                                 >
                                     {t('admin.newsletter.sendAll')}
                                 </button>
