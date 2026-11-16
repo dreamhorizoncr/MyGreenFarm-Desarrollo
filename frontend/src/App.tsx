@@ -25,6 +25,7 @@ import ChatWidget from './components/chat/ChatWidget.tsx'
 import GroupsRoute from './routes/GroupsRoute.tsx'
 import PageLoader from './components/ui/PageLoader.tsx'
 import { userStorage } from './utils/userStorage.ts'
+import { setRouteSEO } from './utils/seo.ts'
 
 type PageModule = { default: ComponentType }
 const publicPageLoaders: (() => Promise<PageModule>)[] = []
@@ -68,6 +69,16 @@ const GreenHeartsPage = lazyPage(() => import('./pages/GreenHeartsPage.tsx'))
 const ServicesPage = lazyPage(() => import('./pages/ServicesPage.tsx'))
 const AdminServicePlansPage = lazyPage(() => import('./pages/AdminServicePlansPage.tsx'), true)
 
+function SeoRouteGuard() {
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    setRouteSEO(pathname)
+  }, [pathname])
+
+  return null
+}
+
 function SessionWatcher() {
   useSessionExpiredNotice()
   return null
@@ -89,40 +100,69 @@ function GlobalFooter() {
 
 const PRELOAD_DELAY_MS = 5000
 
-type NetworkInformation = { saveData?: boolean; effectiveType?: string }
+type NetworkInformation = {
+  saveData?: boolean
+  effectiveType?: string
+}
 
 function PagePreloader() {
   useEffect(() => {
-    const { connection } = navigator as Navigator & { connection?: NetworkInformation }
-    if (connection?.saveData || /2g|3g/.test(connection?.effectiveType ?? '')) return
+    const { connection } = navigator as Navigator & {
+      connection?: NetworkInformation
+    }
 
-    const loaders = [...publicPageLoaders, ...(userStorage.getUser() ? privatePageLoaders : [])]
+    if (
+      connection?.saveData ||
+      /2g|3g/.test(connection?.effectiveType ?? '')
+    ) return
+
+    const loaders = [
+      ...publicPageLoaders,
+      ...(userStorage.getUser() ? privatePageLoaders : [])
+    ]
+
     let cancelled = false
     let handle = 0
     let startTimer = 0
+
     const idle = (fn: () => void) =>
-      typeof window.requestIdleCallback === 'function' ? window.requestIdleCallback(fn, { timeout: 2000 }) : window.setTimeout(fn, 300)
+      typeof window.requestIdleCallback === 'function'
+        ? window.requestIdleCallback(fn, { timeout: 2000 })
+        : window.setTimeout(fn, 300)
+
     const next = (index: number) => {
       if (cancelled || index >= loaders.length) return
+
       handle = idle(() => {
         loaders[index]()
           .catch(() => undefined)
           .finally(() => next(index + 1))
       })
     }
+
     const start = () => {
-      startTimer = window.setTimeout(() => next(0), PRELOAD_DELAY_MS)
+      startTimer = window.setTimeout(
+        () => next(0),
+        PRELOAD_DELAY_MS
+      )
     }
+
     if (document.readyState === 'complete') start()
     else window.addEventListener('load', start, { once: true })
+
     return () => {
       cancelled = true
       window.removeEventListener('load', start)
       window.clearTimeout(startTimer)
-      if (typeof window.cancelIdleCallback === 'function') window.cancelIdleCallback(handle)
-      else window.clearTimeout(handle)
+
+      if (typeof window.cancelIdleCallback === 'function') {
+        window.cancelIdleCallback(handle)
+      } else {
+        window.clearTimeout(handle)
+      }
     }
   }, [])
+
   return null
 }
 
@@ -137,78 +177,89 @@ function App() {
       <AccessibilityProvider>
         <BrowserRouter>
           <VoiceReaderProvider>
+            <SeoRouteGuard />
             <Toaster position="top-right" offset={{ top: 76 }} />
             <SessionWatcher />
             <PagePreloader />
             <BlobGooFilter />
+
             <div className="flex min-h-svh flex-col">
               <MotionBoundary>
-              <div className="flex-1">
-                <ProfileAvatarProvider>
-                  <ForumFeedProvider>
-                    <Suspense fallback={<PageLoader />}>
-                    <Routes>
-                      <Route element={<ProtectedRoute />}>
-                        <Route path="/profile" element={<ProfilePage />} />
-                        <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
-                      </Route>
-                      <Route element={<ForumManagementRoute />}>
-                        <Route path="/admin/forum" element={<AdminForumPage />} />
-                      </Route>
-                      <Route element={<AdminRoute />}>
-                        <Route path="/admin/appointments" element={<AdminAppointmentsPage />} />
-                        <Route path="/admin/users" element={<AdminUsersPage />} />
-                        <Route path="/admin/announcements" element={<AnnouncementsPage />} />
-                        <Route path="/admin/gallery" element={<AdminGalleryPage />} />
-                        <Route path="/admin/curriculums" element={<AdminCurriculumsPage />} />
-                        <Route path="/admin/clubs" element={<OwnerClubsPage />} />
-                        <Route path="/admin/parents" element={<AdminParentsPage />} />
-                        <Route path="/admin/children" element={<AdminChildrenPage />} />
-                        <Route element={<OwnerRoute />}>
-                          <Route path="/admin/availability" element={<OwnerAvailabilityPage />} />
-                          <Route path="/admin/newsletter" element={<OwnerNewsletter />} />
-                          <Route path="/admin/services" element={<AdminServicePlansPage />} />
-                        </Route>
-                      </Route>
-                      <Route element={<GroupsRoute />}>
-                        <Route path="/admin/groups" element={<AdminGroupsPage />} />
-                      </Route>
-                      <Route element={<ExpedientsRoute />}>
-                        <Route path="/admin/expedients" element={<AdminExpedientsPage />} />
-                        <Route path="/admin/evaluations" element={<AdminEvaluationsPage />} />
-                      </Route>
-                      <Route path="/" element={<HomePage />} />
-                      <Route path="/booking" element={<BookingPage />} />
-                      <Route path="/login" element={<LoginPage />} />
-                      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                      <Route path="/reset-password" element={<ResetPasswordPage />} />
-                      <Route path="/news" element={<NewsPage />} />
-                      <Route path="/forum" element={<ForumPage />} />
-                      <Route path="/forum/blog/:id" element={<BlogPostPage />} />
-                      <Route path="/forum/community/:id" element={<CommunityPostPage />} />
-                      <Route path="/multimedia" element={<GalleryPage />} />
-                      <Route path="/services" element={<ServicesPage />} />
-                      <Route path="/albums/:id" element={<AlbumDetailPage />} />
-                      <Route path="/vacancies" element={<VacanciesPage />} />
-                      <Route path="/clubs" element={<ClubsPage />} />
-                      <Route path="/about-us" element={<AboutUsPage />} />
-                      <Route path="/green-hearts" element={<GreenHeartsPage />} />
-                      <Route path="/signup" element={<Navigate to="/admin/users" replace />} />
-                      <Route path="/vacantes" element={<Navigate to="/vacancies" replace />} />
-                      <Route path="/albumes/:id" element={<LegacyAlbumRedirect />} />
-                      <Route path="/admin/citas" element={<Navigate to="/admin/appointments" replace />} />
-                      <Route path="/admin/disponibilidad" element={<Navigate to="/admin/availability" replace />} />
-                      <Route path="/admin/teachers" element={<Navigate to="/admin/groups" replace />} />
-                      <Route path="*" element={<Navigate to="/" replace />} />
-                    </Routes>
-                    </Suspense>
-                  </ForumFeedProvider>
-                </ProfileAvatarProvider>
-              </div>
-              <GlobalFooter />
-              <ScrollToTopButton />
-              <ChatWidget />
+                <div className="flex-1">
+                  <ProfileAvatarProvider>
+                    <ForumFeedProvider>
+                      <Suspense fallback={<PageLoader />}>
+                        <Routes>
+                          <Route element={<ProtectedRoute />}>
+                            <Route path="/profile" element={<ProfilePage />} />
+                            <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+                          </Route>
+
+                          <Route element={<ForumManagementRoute />}>
+                            <Route path="/admin/forum" element={<AdminForumPage />} />
+                          </Route>
+
+                          <Route element={<AdminRoute />}>
+                            <Route path="/admin/appointments" element={<AdminAppointmentsPage />} />
+                            <Route path="/admin/users" element={<AdminUsersPage />} />
+                            <Route path="/admin/announcements" element={<AnnouncementsPage />} />
+                            <Route path="/admin/gallery" element={<AdminGalleryPage />} />
+                            <Route path="/admin/curriculums" element={<AdminCurriculumsPage />} />
+                            <Route path="/admin/clubs" element={<OwnerClubsPage />} />
+                            <Route path="/admin/parents" element={<AdminParentsPage />} />
+                            <Route path="/admin/children" element={<AdminChildrenPage />} />
+
+                            <Route element={<OwnerRoute />}>
+                              <Route path="/admin/availability" element={<OwnerAvailabilityPage />} />
+                              <Route path="/admin/newsletter" element={<OwnerNewsletter />} />
+                              <Route path="/admin/services" element={<AdminServicePlansPage />} />
+                            </Route>
+                          </Route>
+
+                          <Route element={<GroupsRoute />}>
+                            <Route path="/admin/groups" element={<AdminGroupsPage />} />
+                          </Route>
+
+                          <Route element={<ExpedientsRoute />}>
+                            <Route path="/admin/expedients" element={<AdminExpedientsPage />} />
+                            <Route path="/admin/evaluations" element={<AdminEvaluationsPage />} />
+                          </Route>
+
+                          <Route path="/" element={<HomePage />} />
+                          <Route path="/booking" element={<BookingPage />} />
+                          <Route path="/login" element={<LoginPage />} />
+                          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                          <Route path="/reset-password" element={<ResetPasswordPage />} />
+                          <Route path="/news" element={<NewsPage />} />
+                          <Route path="/forum" element={<ForumPage />} />
+                          <Route path="/forum/blog/:id" element={<BlogPostPage />} />
+                          <Route path="/forum/community/:id" element={<CommunityPostPage />} />
+                          <Route path="/multimedia" element={<GalleryPage />} />
+                          <Route path="/services" element={<ServicesPage />} />
+                          <Route path="/albums/:id" element={<AlbumDetailPage />} />
+                          <Route path="/vacancies" element={<VacanciesPage />} />
+                          <Route path="/clubs" element={<ClubsPage />} />
+                          <Route path="/about-us" element={<AboutUsPage />} />
+                          <Route path="/green-hearts" element={<GreenHeartsPage />} />
+
+                          <Route path="/signup" element={<Navigate to="/admin/users" replace />} />
+                          <Route path="/vacantes" element={<Navigate to="/vacancies" replace />} />
+                          <Route path="/albumes/:id" element={<LegacyAlbumRedirect />} />
+                          <Route path="/admin/citas" element={<Navigate to="/admin/appointments" replace />} />
+                          <Route path="/admin/disponibilidad" element={<Navigate to="/admin/availability" replace />} />
+                          <Route path="/admin/teachers" element={<Navigate to="/admin/groups" replace />} />
+                          <Route path="*" element={<Navigate to="/" replace />} />
+                        </Routes>
+                      </Suspense>
+                    </ForumFeedProvider>
+                  </ProfileAvatarProvider>
+                </div>
+
+                <GlobalFooter />
+                <ScrollToTopButton />
+                <ChatWidget />
               </MotionBoundary>
+
               <AccessibilityMenu />
               <VoiceReaderController />
               <ReadingGuide />
