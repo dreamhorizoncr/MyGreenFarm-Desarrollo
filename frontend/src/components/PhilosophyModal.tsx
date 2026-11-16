@@ -8,6 +8,7 @@ import { useModalExit } from '../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../hooks/useDialogDismiss.ts'
 import childLarge from '../assets/imgs/philosophyChild-900.webp'
 import childSmall from '../assets/imgs/philosophyChild-640.webp'
+import child from '../assets/imgs/philosophyChild.webp'
 import ModalCloseButton from './ui/ModalCloseButton.tsx'
 
 interface PhilosophyModalProps {
@@ -80,8 +81,8 @@ function PhilosophyModal({ onClose }: Readonly<PhilosophyModalProps>) {
         />
 
         <img
-          src={childLarge}
-          srcSet={`${childSmall} 640w, ${childLarge} 900w`}
+          src={child}
+          srcSet={`${child} 640w, ${child} 900w`}
           sizes="(min-width: 1024px) 950px, 100vw"
           width={900}
           height={803}
