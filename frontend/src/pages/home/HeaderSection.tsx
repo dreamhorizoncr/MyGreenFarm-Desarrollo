@@ -29,7 +29,7 @@ function HeaderSection() {
         height={1484}
         fetchPriority="high"
         decoding="async"
-        className="absolute inset-0 -z-20 size-full object-cover object-[64%_30%]"
+        className="absolute inset-0 -z-20 size-full object-cover object-[64%_42%]"
       />
       <div
         aria-hidden="true"
