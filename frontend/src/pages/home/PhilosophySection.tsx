@@ -3,6 +3,7 @@ import { StarIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
 import childLarge from '../../assets/imgs/philosophyChild-900.webp'
 import childSmall from '../../assets/imgs/philosophyChild-640.webp'
+import child from '../../assets/imgs/philosophyChild.webp'
 import Container from '../../components/home/Container.tsx'
 import BlobButton from '../../components/ui/BlobButton.tsx'
 import PhilosophyModal from '../../components/PhilosophyModal.tsx'
@@ -25,8 +26,8 @@ function PhilosophySection() {
           <div className="grid w-full items-center gap-lg rounded-3xl bg-white p-lg md:grid-cols-2 md:gap-xl md:p-xl">
             <img
               loading="lazy"
-              src={childSmall}
-              srcSet={`${childSmall} 640w, ${childLarge} 900w`}
+              src={child}
+              srcSet={`${child} 640w, ${child} 900w`}
               sizes="(min-width: 1024px) 508px, (min-width: 768px) 292px, calc(100vw - 136px)"
               width={900}
               height={803}

@@ -77,11 +77,11 @@ import CurrencyToggle from './currency/CurrencyToggle.tsx'
                     </header>
 
                     {plan.imageUrl && (
-                        <div className="mt-10 overflow-hidden rounded-[22px]">
+                        <div className="mt-10">
                             <img
                                 src={plan.imageUrl}
                                 alt={plan.imageAlt || plan.name}
-                                className="h-65 w-full object-cover sm:h-90 md:h-120"
+                                className="h-65 w-full rounded-[22px] object-cover sm:h-90 md:h-120"
                             />
                         </div>
                     )}
