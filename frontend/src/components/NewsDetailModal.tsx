@@ -194,6 +194,10 @@ function NewsDetailModal({
                                 coverLoaded ? 'relative h-auto opacity-100' : 'absolute inset-0 h-full opacity-0'
                             }`}
                         />
+                        <span
+                            aria-hidden="true"
+                            className="pointer-events-none absolute inset-0 z-20 rounded-[22px] border border-white/45"
+                        />
                     </div>
                 )}
 
@@ -248,6 +252,10 @@ function NewsDetailModal({
                                 <ZoomIn size={20} aria-hidden="true" />
                             </span>
                         </button>
+                        <span
+                            aria-hidden="true"
+                            className="pointer-events-none absolute inset-0 z-20 rounded-2xl border border-white/45"
+                        />
                     </div>
                     ))}
                 </div>
