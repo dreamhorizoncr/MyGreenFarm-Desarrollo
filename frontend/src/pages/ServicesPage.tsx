@@ -21,6 +21,7 @@ import StatusMessage from '../components/ui/StatusMessage.tsx'
 import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import pencilSharpener from '../assets/imgs/pencilSharpener.svg'
 import glue from '../assets/imgs/glue.svg'
+import { setPageSEO } from '../utils/seo.ts'
 
 const cleanCurrency = (value?: string): Currency => {
   const upper = value?.toUpperCase()
@@ -39,10 +40,19 @@ function PlanCard({
   loading?: boolean
 }>) {
   const { t, i18n } = useTranslation()
-  const [currency, setCurrency] = useState<Currency>(() => cleanCurrency(plan?.currency))
+
+  const [currency, setCurrency] = useState<Currency>(
+    () => cleanCurrency(plan?.currency)
+  )
 
   const price = plan && exchangeRate
-    ? convertCurrency(plan.price, cleanCurrency(plan.currency), currency, 'buy', exchangeRate)
+    ? convertCurrency(
+        plan.price,
+        cleanCurrency(plan.currency),
+        currency,
+        'buy',
+        exchangeRate
+      )
     : plan?.price ?? 0
 
   if (loading) {
@@ -83,9 +93,12 @@ function PlanCard({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <span className="font-body text-body-sm text-neutral-400">{plan!.name}</span>
+            <span className="font-body text-body-sm text-neutral-400">
+              {plan!.name}
+            </span>
           </div>
         )}
+
         <span className="absolute bottom-sm left-sm flex items-center gap-1 rounded-full bg-(--pink-400) px-sm py-2xs font-body text-caption font-semibold text-white shadow">
           {getPlanTypeLabel(plan!.type, t as never)}
         </span>
@@ -103,11 +116,22 @@ function PlanCard({
         </p>
 
         <div className="mt-auto flex flex-col items-start gap-2xs pt-xs [&>div:first-child]:justify-start">
-            <CurrencyToggle value={currency} onChange={setCurrency} hasExchangeRate={Boolean(exchangeRate)} />
+          <CurrencyToggle
+            value={currency}
+            onChange={setCurrency}
+            hasExchangeRate={Boolean(exchangeRate)}
+          />
+
           <span className="text-left font-heading text-h2 font-bold text-green-500">
             <AnimatedNumber
               value={price}
-              format={(n) => `${currencySymbol(currency)}${formatCurrency(n, currency, i18n.language)}`}
+              format={(n) =>
+                `${currencySymbol(currency)}${formatCurrency(
+                  n,
+                  currency,
+                  i18n.language
+                )}`
+              }
             />
           </span>
         </div>
@@ -129,23 +153,57 @@ function PlanCard({
 function ServicesPage() {
   const { t, i18n } = useTranslation()
 
-  const { plans, loading, error, fetchPlans, totalPages } = useServicePlans()
+  // SEO: posicionamiento local en Liberia, Guanacaste
+  useEffect(() => {
+    setPageSEO({
+      title:
+        'Guardería, Preescolar y Servicios Educativos en Liberia | My Green Farm',
+      description:
+        'Conocé los programas y servicios educativos de My Green Farm en Liberia, Guanacaste. Un espacio para el desarrollo infantil, el aprendizaje y la naturaleza.',
+    })
+  }, [])
+
+  const {
+    plans,
+    loading,
+    error,
+    fetchPlans,
+    totalPages
+  } = useServicePlans()
+
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = useGridPageSize({ base: 1, md: 3 })
   const [lastPageSize, setLastPageSize] = useState(pageSize)
+
   if (lastPageSize !== pageSize) {
     setLastPageSize(pageSize)
     setCurrentPage(1)
   }
 
-  const { data: exchangeRate, loading: exchangeRateLoading, error: exchangeRateError, reload: reloadExchangeRate } = useExchangeRate()
-  const [selectedPlan, setSelectedPlan] = useState<{ plan: ServicePlan; currency: Currency } | null>(null)
+  const {
+    data: exchangeRate,
+    loading: exchangeRateLoading,
+    error: exchangeRateError,
+    reload: reloadExchangeRate
+  } = useExchangeRate()
+
+  const [selectedPlan, setSelectedPlan] =
+    useState<{ plan: ServicePlan; currency: Currency } | null>(null)
 
   useEffect(() => {
-    void fetchPlans(currentPage - 1, i18n.language, pageSize)
+    void fetchPlans(
+      currentPage - 1,
+      i18n.language,
+      pageSize
+    )
   }, [currentPage, i18n.language, pageSize])
 
-  const skeletonCount = useSkeletonCount('services', loading, plans.length, 3)
+  const skeletonCount = useSkeletonCount(
+    'services',
+    loading,
+    plans.length,
+    3
+  )
 
   return (
     <div className="min-h-screen bg-bg-page">
@@ -158,16 +216,19 @@ function ServicesPage() {
           aria-hidden="true"
           className="pointer-events-none absolute left-[3%] top-[25%] w-[clamp(3rem,9vw,6rem)] -rotate-12 select-none opacity-50 md:left-[8%] md:top-[25%] lg:left-[10%] lg:top-[25%]"
         />
+
         <img
           src={glue}
           alt=""
           aria-hidden="true"
           className="pointer-events-none absolute right-[3%] top-[25%] w-[clamp(3rem,9vw,6rem)] rotate-12 select-none opacity-50 md:right-[8%] md:top-[25%] lg:right-[10%] lg:top-[25%]"
         />
+
         <div className="relative z-10 mx-auto w-full max-w-175">
           <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">
             {t('services.title')}
           </h1>
+
           <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">
             {t('services.description')}
           </p>
@@ -187,20 +248,34 @@ function ServicesPage() {
         <Container className="flex flex-col gap-9">
           <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
             {loading && (
-              <SkeletonList count={skeletonCount}>{() => <PlanCard loading />}</SkeletonList>
+              <SkeletonList count={skeletonCount}>
+                {() => <PlanCard loading />}
+              </SkeletonList>
             )}
 
-            {error && <StatusMessage variant="error" description={error} className="col-span-full" />}
+            {error && (
+              <StatusMessage
+                variant="error"
+                description={error}
+                className="col-span-full"
+              />
+            )}
 
             {!loading && !error && plans.length === 0 && (
-              <StatusMessage icon={ClipboardList} description={t('services.empty')} className="col-span-full" />
+              <StatusMessage
+                icon={ClipboardList}
+                description={t('services.empty')}
+                className="col-span-full"
+              />
             )}
 
             {!loading && !error && plans.map(plan => (
               <PlanCard
                 key={plan.id}
                 plan={plan}
-                onSelect={(currency) => setSelectedPlan({ plan, currency })}
+                onSelect={(currency) =>
+                  setSelectedPlan({ plan, currency })
+                }
                 exchangeRate={exchangeRate}
               />
             ))}
