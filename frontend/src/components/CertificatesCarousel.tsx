@@ -15,7 +15,6 @@ function CertificatesCarousel({ certificates }: Readonly<CertificatesCarouselPro
   if (certificates.length === 0) return null
 
   const current = certificates[index]
-  const isImage = current.fileUrl.startsWith('data:image/')
   const hasMultiple = certificates.length > 1
 
   const goPrev = () => setIndex((prev) => (prev === 0 ? certificates.length - 1 : prev - 1))
@@ -27,13 +26,7 @@ function CertificatesCarousel({ certificates }: Readonly<CertificatesCarouselPro
         {t('admin.curriculums.certificates')}
       </p>
 
-      {isImage ? (
-        <div className="h-90 w-full overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50 p-sm">
-          <img src={current.fileUrl} alt={current.fileName} className="h-full w-full object-contain" />
-        </div>
-      ) : (
-        <PdfViewer key={current.id} url={current.fileUrl} fileName={current.fileName} title={current.fileName} className="h-90" />
-      )}
+      <PdfViewer key={current.id} url={current.fileUrl} fileName={current.fileName} title={current.fileName} className="h-90" />
 
       {hasMultiple && (
         <div className="mt-sm flex items-center justify-between gap-sm">
