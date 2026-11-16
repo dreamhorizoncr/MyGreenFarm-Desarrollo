@@ -126,7 +126,7 @@ function GroupStudentsModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-4 text-left md:p-[30px]">
+      <div className="modal-overlay fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-4 text-left md:p-[30px]">
         <button
           type="button"
           tabIndex={-1}

@@ -244,7 +244,7 @@ function GroupFormModal({
     else if (form.teacherIds.length > 0) teacherPlaceholder = t('admin.groups.teachersSelected', { count: form.teacherIds.length })
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-4 text-left md:p-[30px]">
+        <div className="modal-overlay fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-4 text-left md:p-[30px]">
             <button
                 type="button"
                 tabIndex={-1}

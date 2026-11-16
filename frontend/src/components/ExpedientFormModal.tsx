@@ -186,7 +186,7 @@ function ExpedientFormModal({
     : t("admin.expedients.save");
 
   return (
-    <div className="text-left fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
+    <div className="text-left modal-overlay fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
       <button
         type="button"
         tabIndex={-1}

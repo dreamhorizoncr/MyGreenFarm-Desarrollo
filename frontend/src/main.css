@@ -166,6 +166,22 @@ input[type="password"]::-ms-clear {
   overscroll-behavior: contain;
 }
 
+/* While any modal is open, the page behind it must not scroll (mobile browsers ignore a lock on body alone). */
+html:has(dialog:modal, [aria-modal='true'], .modal-overlay),
+html:has(dialog:modal, [aria-modal='true'], .modal-overlay) body,
+html:has(dialog:modal, [aria-modal='true'], .modal-overlay) #admin-scroll-container {
+  overflow: hidden;
+}
+
+dialog,
+dialog *,
+[aria-modal='true'],
+[aria-modal='true'] *,
+.modal-overlay,
+.modal-overlay * {
+  overscroll-behavior: contain;
+}
+
 .modal-scrollbar {
   position: absolute;
   right: 4px;
