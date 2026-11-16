@@ -6,9 +6,9 @@ import { LockIcon, MenuIcon, XIcon } from '@animateicons/react/lucide'
 import LanguageSwitcher from './LanguageSwitcher.tsx'
 import ProfileButton from './ProfileButton.tsx'
 import { userStorage } from '../utils/userStorage.ts'
-import logo from '../assets/imgs/logo-48.webp'
-import logo2x from '../assets/imgs/logo-96.webp'
-import logo3x from '../assets/imgs/logo-144.webp'
+import logo from '../assets/imgs/48.svg'
+import logo2x from '../assets/imgs/96.svg'
+import logo3x from '../assets/imgs/144.svg'
 import { authService } from '../services/auth.ts'
 import { tokenStorage } from '../utils/token.ts'
 
@@ -26,7 +26,7 @@ function Brand({ showName = true, compact, linkRef, nameRef }: Readonly<BrandPro
       to='/'
       className="flex shrink-0 items-center gap-3 no-underline"
     >
-      <img src={logo} srcSet={`${logo} 1x, ${logo2x} 2x, ${logo3x} 3x`} alt="My Green Farm" width={49} height={48} className="h-12 w-auto object-contain" />
+      <img src={logo} srcSet={`${logo} 1x, ${logo2x} 2x, ${logo3x} 3x`} alt="My Green Farm" width={48} height={48} className="h-12 w-auto object-contain" />
       {showName && <span ref={nameRef} className={['whitespace-nowrap font-heading text-h6 text-heading', compact && `navbar-brand-name-${compact}`].filter(Boolean).join(' ')}>My Green Farm</span>}
     </Link>
   )
