@@ -52,6 +52,28 @@ export interface BookingValidationResult {
   fields: BookingField[]
 }
 
+export function buildBookingTemplate(
+  form: BookingFormValues,
+  invalidFields: BookingField[],
+  template: string,
+  referralLabel: string,
+): string {
+  const referral = form.referralSource === 'OTHER'
+    ? `${referralLabel}: ${form.referralOtherDetail}`
+    : referralLabel
+  const fields: BookingField[] = [
+    'childName', 'reason', 'referralSource', 'fullName', 'idType',
+    'idNumber', 'email', 'phone', 'occupation',
+  ]
+  return template.split('\n').map((line, index) => {
+    const field = fields[index]
+    const invalid = invalidFields.includes(field)
+      || (field === 'referralSource' && invalidFields.includes('referralOtherDetail'))
+    const value = invalid ? '' : field === 'referralSource' ? referral : form[field]
+    return `${line.slice(0, line.indexOf(':') + 1)} ${value}`
+  }).join('\n')
+}
+
 const FIELD_ALIASES: Array<[BookingField, string[]]> = [
   ['childName', [
     'nino', 'nina', 'nombre del nino', 'nombre del nino o nina', 'nombre del nino nina',
@@ -72,7 +94,7 @@ const FIELD_ALIASES: Array<[BookingField, string[]]> = [
     'precision', 'precisions',
   ]],
   ['fullName', [
-    'encargado', 'nombre del encargado', 'nombre completo', 'nombre del padre',
+    'encargado', 'nombre del encargado', 'nombre del encargado legal', 'nombre completo', 'nombre del padre',
     'nombre del tutor', 'parent', 'parent name', 'guardian', 'guardian name',
     'guardian s name', 'legal guardian', 'full name',
     'responsable', 'nom du responsable', 'nom complet',
@@ -167,7 +189,11 @@ export function parseReferral(value: string): { source: ReferralSource | null; d
   const separator = value.search(/[:;,-]/)
   const sourcePart = separator >= 0 ? value.slice(0, separator) : value
   const detail = separator >= 0 ? value.slice(separator + 1).trim() : ''
-  return { source: parseReferralSource(sourcePart), detail }
+  const source = parseReferralSource(sourcePart)
+  if (!source && value.trim()) {
+    return { source: 'OTHER', detail: value.trim() }
+  }
+  return { source, detail }
 }
 
 export function parseIdType(value: string): string | null {
@@ -208,6 +234,32 @@ function extractLabeled(lines: string[]): ExtractedBookingData | null {
   return found > 0 ? result : null
 }
 
+function extractInlineLabeled(text: string): ExtractedBookingData | null {
+  const accents: Record<string, string> = {
+    a: '[aáàâäã]', e: '[eéèêë]', i: '[iíìîï]',
+    o: '[oóòôöõ]', u: '[uúùûü]', n: '[nñ]', c: '[cç]',
+  }
+  const aliases = FIELD_ALIASES.flatMap(([, names]) => names)
+    .sort((a, b) => b.length - a.length)
+    .map((alias) => normalizeKey(alias).split(' ').map((word) =>
+      [...word].map((letter) => accents[letter] ?? letter).join(''),
+    ).join("[\\s'’?-]+"))
+  const pattern = new RegExp(`(?:^|[\\s|]+)(?:\\d{1,2}\\s*[.)-]\\s*)?(${aliases.join('|')})\\s*[:=]`, 'giu')
+  const matches = [...text.matchAll(pattern)]
+  if (matches.length < 2) return null
+
+  const result: ExtractedBookingData = {}
+  matches.forEach((match, index) => {
+    const key = normalizeKey(match[1])
+    const field = FIELD_ALIASES.find(([, names]) =>
+      names.some((name) => normalizeKey(name) === key))?.[0]
+    if (field) {
+      result[field] = text.slice(match.index! + match[0].length, matches[index + 1]?.index).trim()
+    }
+  })
+  return result
+}
+
 function extractOrdered(lines: string[]): ExtractedBookingData {
   const values = lines.map(stripLineDecoration).filter(Boolean)
   if (values.length === 0) return {}
@@ -241,6 +293,9 @@ export function extractBookingData(text: string): ExtractedBookingData {
   const normalizedText = text.replace(/\r\n?/g, '\n').trim()
   if (!normalizedText) return {}
 
+  const inline = extractInlineLabeled(normalizedText)
+  if (inline) return inline
+
   const singleLine = !normalizedText.includes('\n')
   const lines = singleLine && normalizedText.includes('|')
     ? normalizedText.split('|')
@@ -268,9 +323,21 @@ export function validateBookingForm(
 
   const errors: string[] = []
   const fields: BookingField[] = []
+  const fieldNumbers: Record<BookingField, number> = {
+    childName: 1,
+    reason: 2,
+    referralSource: 3,
+    referralOtherDetail: 3,
+    fullName: 4,
+    idType: 5,
+    idNumber: 6,
+    email: 7,
+    phone: 8,
+    occupation: 9,
+  }
   const add = (field: BookingField, message: string | null) => {
     if (!message) return
-    errors.push(message)
+    errors.push(`${fieldNumbers[field]}. ${labels[field]}: ${message}`)
     if (!fields.includes(field)) fields.push(field)
   }
   const maxLength = (field: BookingField, value: string, max: number) =>
@@ -297,13 +364,16 @@ export function validateBookingForm(
   if (form.fullName.trim()) add('fullName', validateMinLength(form.fullName, 2, t))
   add('fullName', maxLength('fullName', form.fullName, 150))
 
-  add('idType', validateRequired(form.idType, labels.idType, t))
+  const idTypeError = validateRequired(form.idType, labels.idType, t)
+  add('idType', idTypeError
+    ? `${idTypeError} (${t('booking.idTypeOptions.costarricense')} / ${t('booking.idTypeOptions.extranjero')})`
+    : null)
   add('idNumber', validateRequired(form.idNumber, labels.idNumber, t))
   add('idNumber', validateIdNumber(form.idNumber, form.idType, t))
 
-  add('email', validateRequired(form.email, labels.email, t))
-  add('email', validateEmail(form.email, t))
-  add('email', validateBookingEmailDomain(form.email, t))
+  add('email', validateRequired(form.email, labels.email, t)
+    ?? validateEmail(form.email, t)
+    ?? validateBookingEmailDomain(form.email, t))
   add('email', maxLength('email', form.email, 255))
 
   add('occupation', validateRequired(form.occupation, labels.occupation, t))
@@ -313,8 +383,9 @@ export function validateBookingForm(
   const phoneRequired = validateRequired(form.phone, labels.phone, t)
   add('phone', phoneRequired)
   if (!phoneRequired) {
-    add('phone', maxLength('phone', form.phone, 35))
-    if (!errors.includes(t('validation.maxLength', { field: labels.phone, max: 35 }))) {
+    const phoneLengthError = maxLength('phone', form.phone, 35)
+    add('phone', phoneLengthError)
+    if (!phoneLengthError) {
       return import('./phoneValidators.ts').then(({ validatePhoneNumber }) => {
         add('phone', validatePhoneNumber(form.phone, t))
         return { errors, fields }

@@ -36,11 +36,15 @@ export default {
       noTimes: "Il ne reste plus d’horaires pour ce jour. Veuillez choisir un autre jour.",
       slotUnavailable: "Cet horaire vient d’être pris. Veuillez en choisir un autre.",
       dataPrompt: "Pour continuer, envoyez-moi toutes ces informations dans un seul message, une par ligne :\n\n1. Nom de l'enfant\n2. Motif du rendez-vous\n3. Comment nous avez-vous connu ? (un ami ou un proche, réseaux sociaux, recherche Google, affiche ou publicité ou autre ; si autre, écrivez le détail après deux-points)\n4. Nom complet du responsable\n5. Type de pièce d'identité (Costaricien ou Étranger)\n6. Numéro de pièce d'identité\n7. Adresse e-mail (Gmail, Hotmail ou Outlook)\n8. Numéro de téléphone\n9. Profession",
+      copy: "Copier",
+      copied: "Liste copiée. Collez-la ici et complétez chaque information après les deux-points.",
+      copyError: "Impossible de copier. Sélectionnez et copiez la liste du message.",
+      dataTemplate: "1. Nom de l'enfant: \n2. Motif: \n3. Comment nous avez-vous connu: \n4. Nom du responsable: \n5. Type d'identification: \n6. Numéro d'identification: \n7. Courriel: \n8. Numéro de téléphone: \n9. Profession: ",
       dataPlaceholder: "Écrivez ici toutes les informations demandées...",
       dataHint: "Maj + Entrée pour une nouvelle ligne",
       dataParseError: "Je n’ai pas pu identifier les informations. Envoyez-les à nouveau dans l’ordre indiqué, une par ligne.",
       fixData: "J’ai trouvé ces détails à corriger :",
-      resend: "Envoyez-moi à nouveau la liste complète avec les corrections.",
+      resend: "Les autres informations sont conservées. Envoyez uniquement les corrections, une par ligne, avec le nom du champ et deux-points (par exemple, Courriel: nom@gmail.com). Vous pouvez aussi appuyer sur Copier : les informations valides seront remplies et les champs à corriger seront vides.",
       reviewTitle: "Voici le récapitulatif de votre rendez-vous :",
       reviewSchedule: "Date et heure",
       confirmQuestion: "Confirmez-vous que les informations sont correctes ?",
@@ -270,7 +274,7 @@ export default {
     tagline: "Le second foyer de vos enfants.",
     navigation: "Navigation",
     contact: "Contact",
-    contactEmail: "mygreenfarmcr@gmail.com",
+    contactEmail: "monicapr@mygreenfarmcr.com",
     contactPhone: "+506 8327-8347",
     contactAddress: "Liberia, Guanacaste, Costa Rica",
     socialLabel: "Réseaux sociaux",
@@ -355,7 +359,7 @@ export default {
     tabPrivacy: "Politique de Confidentialité",
     close: "Fermer",
     termsIntro:
-      "En utilisant les services de My Green Farm, les familles et les élèves acceptent les termes suivants. Pour toute question, vous pouvez nous écrire à mygreenfarmcr@gmail.com.",
+      "En utilisant les services de My Green Farm, les familles et les élèves acceptent les termes suivants. Pour toute question, vous pouvez nous écrire à monicapr@mygreenfarmcr.com.",
     terms1Title: "Utilisation du Service",
     terms1Body:
       "My Green Farm propose des services éducatifs et de garde pour les enfants conformément aux directives du Ministère de l’Éducation Publique (MEP). L’inscription et l’utilisation de nos plateformes sont destinées aux mères, pères, tuteurs légaux et personnel autorisé.",
@@ -381,7 +385,7 @@ export default {
       "Les photos et vidéos prises pendant les activités peuvent être utilisées dans notre galerie et sur les réseaux sociaux à des fins éducatives et de communication. Si vous préférez que votre enfant n’y apparaisse pas, vous pouvez en informer directement l’administration.",
     privacy4Title: "Vos Droits",
     privacy4Body:
-      "Vous pouvez demander à tout moment l’accès, la correction ou la suppression des informations que nous détenons sur votre famille en écrivant à mygreenfarmcr@gmail.com.",
+      "Vous pouvez demander à tout moment l’accès, la correction ou la suppression des informations que nous détenons sur votre famille en écrivant à monicapr@mygreenfarmcr.com.",
   },
     
   aboutUsPage: {

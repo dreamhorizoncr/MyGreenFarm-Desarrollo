@@ -36,11 +36,15 @@ export default {
       noTimes: "There are no times left for that day. Please choose another day.",
       slotUnavailable: "That time was just taken. Please choose another one.",
       dataPrompt: "To continue, send me all of these details in a single message, one per line:\n\n1. Child's name\n2. Reason for the appointment\n3. How did you hear about us? (friend or family, social media, Google search, flyer or ad or other; if other, write the detail after a colon)\n4. Legal guardian's full name\n5. ID type (Costa Rican or Foreign)\n6. ID number\n7. Email address (Gmail, Hotmail or Outlook)\n8. Phone number\n9. Occupation",
+      copy: "Copy",
+      copied: "List copied. Paste it here and fill in each detail after the colon.",
+      copyError: "Could not copy. Select and copy the list from the message.",
+      dataTemplate: "1. Child name: \n2. Reason for appointment: \n3. How did you hear about us: \n4. Guardian name: \n5. ID type: \n6. ID number: \n7. Email: \n8. Phone number: \n9. Occupation: ",
       dataPlaceholder: "Write all the requested details here...",
       dataHint: "Shift + Enter for a new line",
       dataParseError: "I couldn’t identify the details. Please send them again in the indicated order, one per line.",
       fixData: "I found these details to fix:",
-      resend: "Send me the full list again with the corrections.",
+      resend: "I kept the other details. Send only the corrections, one per line, with the field name and a colon (for example, Email: name@gmail.com). You can also press Copy: valid details will be filled in and fields to correct will be blank.",
       reviewTitle: "Here is your appointment summary:",
       reviewSchedule: "Date and time",
       confirmQuestion: "Do you confirm the details are correct?",
@@ -270,7 +274,7 @@ export default {
     tagline: "The second home of your children.",
     navigation: "Navigation",
     contact: "Contact",
-    contactEmail: "mygreenfarmcr@gmail.com",
+    contactEmail: "monicapr@mygreenfarmcr.com",
     contactPhone: "+506 8327-8347",
     contactAddress: "Liberia, Guanacaste, Costa Rica",
     socialLabel: "Social media",
@@ -355,7 +359,7 @@ export default {
     tabPrivacy: "Privacy Policy",
     close: "Close",
     termsIntro:
-      "By using My Green Farm's services, families and students accept the following terms. If you have any questions, you can reach us at mygreenfarmcr@gmail.com.",
+      "By using My Green Farm's services, families and students accept the following terms. If you have any questions, you can reach us at monicapr@mygreenfarmcr.com.",
     terms1Title: "Use of the Service",
     terms1Body:
       "My Green Farm provides educational and childcare services for children in accordance with the guidelines of the Ministry of Public Education (MEP). Registration and use of our platforms is intended for mothers, fathers, legal guardians and authorized staff.",
@@ -381,7 +385,7 @@ export default {
       "Photos and videos taken during activities may be used in our gallery and social media for educational and outreach purposes. If you'd prefer your child not to appear, you can let the administration know directly.",
     privacy4Title: "Your Rights",
     privacy4Body:
-      "You can request access to, correction of, or deletion of the information we hold about your family at any time by writing to mygreenfarmcr@gmail.com.",
+      "You can request access to, correction of, or deletion of the information we hold about your family at any time by writing to monicapr@mygreenfarmcr.com.",
   },
   aboutUsPage: {
     hero: {

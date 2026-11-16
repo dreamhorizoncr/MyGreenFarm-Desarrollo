@@ -4,7 +4,7 @@ export const footerColumns = [
     links: [
       {
         label: 'footer.contactEmail',
-        href: 'https://mail.google.com/mail/?view=cm&fs=1&to=mygreenfarmcr@gmail.com',
+        href: 'https://mail.google.com/mail/?view=cm&fs=1&to=monicapr@mygreenfarmcr.com',
       },
       {
         label: 'footer.contactPhone',

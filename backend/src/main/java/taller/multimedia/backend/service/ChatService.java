@@ -113,18 +113,22 @@ public class ChatService {
             for (ChatTurn turn : request.getHistory()) {
                 if (turn == null || turn.getContent() == null || turn.getRole() == null) continue;
                 String role = "user".equals(turn.getRole()) ? "User" : "Assistant";
-                String content = turn.getContent().trim()
-                        .replace("<question>", "")
-                        .replace("</question>", "")
-                        .replace("<history>", "")
-                        .replace("</history>", "");
+                String content = removePromptDelimiters(turn.getContent().trim());
                 if (!content.isBlank()) prompt.append(role).append(": ").append(content).append('\n');
             }
         }
         return prompt.append("\nNEW USER QUESTION:\n<question>")
-                .append(question)
+                .append(removePromptDelimiters(question))
                 .append("</question>")
                 .toString();
+    }
+
+    private static String removePromptDelimiters(String content) {
+        return content == null ? "" : content
+                .replace("<question>", "")
+                .replace("</question>", "")
+                .replace("<history>", "")
+                .replace("</history>", "");
     }
 
     public static String validConversationId(String candidate) {

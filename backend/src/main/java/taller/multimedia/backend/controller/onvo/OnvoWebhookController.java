@@ -1,50 +1,50 @@
-package taller.multimedia.backend.controller.onvo;
+// package taller.multimedia.backend.controller.onvo;
 
-import java.util.Map;
+// import java.util.Map;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+// import org.springframework.http.ResponseEntity;
+// import org.springframework.web.bind.annotation.PostMapping;
+// import org.springframework.web.bind.annotation.RequestBody;
+// import org.springframework.web.bind.annotation.RequestMapping;
+// import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/api/webhooks")
-public class OnvoWebhookController {
+// @RestController
+// @RequestMapping("/api/webhooks")
+// public class OnvoWebhookController {
 
-    @PostMapping("/onvo")
-    public ResponseEntity<String> handleOnvoWebhook(@RequestBody Map<String, Object> payload) {
-        System.out.println("Webhook received successfully!");
-        String eventType = (String) payload.get("type");
-        Map<String, Object> data = (Map<String, Object>) payload.get("data");
+//     @PostMapping("/onvo")
+//     public ResponseEntity<String> handleOnvoWebhook(@RequestBody Map<String, Object> payload) {
+//         System.out.println("Webhook received successfully!");
+//         String eventType = (String) payload.get("type");
+//         Map<String, Object> data = (Map<String, Object>) payload.get("data");
 
-        if (data == null) {
-            return ResponseEntity.ok("Received");
-        }
+//         if (data == null) {
+//             return ResponseEntity.ok("Received");
+//         }
 
-        boolean paymentSucceeded = "checkout-session.succeeded".equals(eventType)
-                || "checkout.session.completed".equals(eventType)
-                || "payment.successful".equals(eventType);
-        boolean paymentFailed = "checkout-session.failed".equals(eventType)
-                || "checkout-session.expired".equals(eventType)
-                || "payment-intent.failed".equals(eventType);
+//         boolean paymentSucceeded = "checkout-session.succeeded".equals(eventType)
+//                 || "checkout.session.completed".equals(eventType)
+//                 || "payment.successful".equals(eventType);
+//         boolean paymentFailed = "checkout-session.failed".equals(eventType)
+//                 || "checkout-session.expired".equals(eventType)
+//                 || "payment-intent.failed".equals(eventType);
 
-        if (paymentSucceeded || paymentFailed) {
-            Object metadataValue = data.get("metadata");
-            String gatewaySessionId = null;
+//         if (paymentSucceeded || paymentFailed) {
+//             Object metadataValue = data.get("metadata");
+//             String gatewaySessionId = null;
 
-            if (metadataValue instanceof Map<?, ?> metadata) {
-                Object sessionIdValue = metadata.get("gatewaySessionId");
-                gatewaySessionId = sessionIdValue == null ? null : sessionIdValue.toString();
-            }
+//             if (metadataValue instanceof Map<?, ?> metadata) {
+//                 Object sessionIdValue = metadata.get("gatewaySessionId");
+//                 gatewaySessionId = sessionIdValue == null ? null : sessionIdValue.toString();
+//             }
 
-            if (gatewaySessionId == null || gatewaySessionId.isEmpty()) {
-                gatewaySessionId = (String) data.get("id");
-            }
+//             if (gatewaySessionId == null || gatewaySessionId.isEmpty()) {
+//                 gatewaySessionId = (String) data.get("id");
+//             }
 
-        }
+//         }
 
-        return ResponseEntity.ok("Received");
-    }
+//         return ResponseEntity.ok("Received");
+//     }
 
-}
+// }
