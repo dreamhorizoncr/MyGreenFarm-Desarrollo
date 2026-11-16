@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { StarIcon } from '@animateicons/react/lucide'
 import { useTranslation } from 'react-i18next'
-import childLarge from '../../assets/imgs/philosophyChild-900.webp'
-import childSmall from '../../assets/imgs/philosophyChild-640.webp'
 import child from '../../assets/imgs/philosophyChild.webp'
 import Container from '../../components/home/Container.tsx'
 import BlobButton from '../../components/ui/BlobButton.tsx'
