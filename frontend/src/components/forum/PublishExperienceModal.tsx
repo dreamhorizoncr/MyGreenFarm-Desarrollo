@@ -23,11 +23,16 @@ function PublishExperienceModal({
   const [name, setName] = useState('')
   const [content, setContent] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const isSubmittingRef = useRef(false)
+
+  function handleClose() {
+    if (!isSubmittingRef.current) onClose()
+  }
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
+      if (event.key === 'Escape' && !isSubmittingRef.current) onClose()
     }
 
     document.addEventListener('keydown', handleEscape)
@@ -41,7 +46,7 @@ function PublishExperienceModal({
     }
   }, [onClose])
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (isSubmittingRef.current) return
 
     const trimmedName = name.trim()
@@ -64,17 +69,19 @@ function PublishExperienceModal({
     }
 
     isSubmittingRef.current = true
-    setSubmitted(true)
-    onPublish({ name: trimmedName, content: trimmedContent })
-      .then(() => {
-        notify.success({
-          title: t('forum.community.toastTitle'),
-          description: t('forum.community.toastDescription'),
-        })
+    setIsSubmitting(true)
+    try {
+      await onPublish({ name: trimmedName, content: trimmedContent })
+      setSubmitted(true)
+      notify.success({
+        title: t('forum.community.toastTitle'),
+        description: t('forum.community.toastDescription'),
       })
-      .catch((err) => {
-        notify.error(getErrorMessage(err))
-      })
+    } catch (err) {
+      isSubmittingRef.current = false
+      setIsSubmitting(false)
+      notify.error(getErrorMessage(err))
+    }
   }
 
   if (submitted) {
@@ -96,7 +103,7 @@ function PublishExperienceModal({
         tabIndex={-1}
         aria-label={t('forum.community.cancel')}
         className="absolute inset-0 size-full cursor-default"
-        onClick={onClose}
+        onClick={handleClose}
       />
 
       <article
@@ -107,13 +114,18 @@ function PublishExperienceModal({
             <h2 className="m-0 font-heading text-h4 font-bold text-heading">
               {t('forum.community.modalTitle')}
             </h2>
-            <ModalCloseButton onClick={onClose} aria-label={t('forum.community.cancel')} />
+            <ModalCloseButton
+              onClick={handleClose}
+              disabled={isSubmitting}
+              aria-label={t('forum.community.cancel')}
+            />
           </div>
 
           <input
             id="community-name"
             type="text"
             value={name}
+            disabled={isSubmitting}
             onChange={(event) => setName(event.target.value)}
             maxLength={40}
             aria-label={t('forum.community.nameLabel')}
@@ -125,6 +137,7 @@ function PublishExperienceModal({
           <textarea
             id="community-content"
             value={content}
+            disabled={isSubmitting}
             onChange={(event) => setContent(event.target.value)}
             maxLength={MAX_CONTENT}
             rows={6}
@@ -141,17 +154,19 @@ function PublishExperienceModal({
           <div className="mt-lg flex gap-md">
             <Button
               variant="secondary"
-              onClick={onClose}
+              onClick={handleClose}
+              disabled={isSubmitting}
               className="h-11 flex-1 rounded-full border-green-500 font-body text-button text-heading hover:bg-green-50"
             >
               {t('forum.community.cancel')}
             </Button>
             <Button
               onClick={handleSubmit}
-              disabled={submitted || !name.trim() || !content.trim()}
+              disabled={!name.trim() || !content.trim()}
+              loading={isSubmitting}
               className="h-11 flex-1 rounded-full blob-fill bg-orange-500 font-body text-button font-normal text-white hover:bg-orange-600"
             >
-              {t('forum.community.submit')}
+              {isSubmitting ? t('common.loading') : t('forum.community.submit')}
             </Button>
           </div>
         </div>
