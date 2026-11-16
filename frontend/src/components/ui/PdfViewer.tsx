@@ -9,6 +9,16 @@ GlobalWorkerOptions.workerSrc = workerSrc
 
 const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2]
 const PAGE_GAP = 16
+const IMAGE_FILE = /\.(jpe?g|png|webp|gif|avif|bmp|svg)$/i
+
+function isImageFile(url: string, fileName?: string | null) {
+  if (url.startsWith('data:image/') || (fileName && IMAGE_FILE.test(fileName))) return true
+  try {
+    return IMAGE_FILE.test(new URL(url, window.location.href).pathname)
+  } catch {
+    return false
+  }
+}
 
 interface PdfViewerProps {
   url: string
@@ -67,8 +77,11 @@ function PdfViewer({ url, fileName, title, className = 'h-105' }: Readonly<PdfVi
   const [containerWidth, setContainerWidth] = useState(0)
   const [zoomIndex, setZoomIndex] = useState(2)
   const [currentPage, setCurrentPage] = useState(1)
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const isImage = isImageFile(url, fileName)
 
   useEffect(() => {
+    if (isImage) return
     let cancelled = false
     const task = getDocument({url})
     task.promise
@@ -78,7 +91,7 @@ function PdfViewer({ url, fileName, title, className = 'h-105' }: Readonly<PdfVi
       cancelled = true
       void task.destroy()
     }
-  }, [url])
+  }, [url, isImage])
 
   useEffect(() => {
     const el = scrollRef.current
@@ -100,6 +113,7 @@ function PdfViewer({ url, fileName, title, className = 'h-105' }: Readonly<PdfVi
   const zoom = ZOOM_STEPS[zoomIndex]
   const pageWidth = Math.max(0, containerWidth * zoom)
   const total = pdf?.numPages ?? 0
+  const canZoom = isImage ? imageLoaded : Boolean(pdf)
 
   return (
     <div className={`flex w-full flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white ${className}`}>
@@ -116,13 +130,13 @@ function PdfViewer({ url, fileName, title, className = 'h-105' }: Readonly<PdfVi
         )}
 
         <div className="hidden shrink-0 items-center sm:flex">
-          <button type="button" onClick={() => setZoomIndex((i) => i - 1)} disabled={!pdf || zoomIndex === 0} aria-label={t('pdfViewer.zoomOut')} title={t('pdfViewer.zoomOut')} className={iconButtonClass}>
+          <button type="button" onClick={() => setZoomIndex((i) => i - 1)} disabled={!canZoom || zoomIndex === 0} aria-label={t('pdfViewer.zoomOut')} title={t('pdfViewer.zoomOut')} className={iconButtonClass}>
             <MinusIcon size={16} aria-hidden="true" />
           </button>
           <span className="hidden w-11 text-center font-body text-caption font-semibold text-neutral-500 sm:inline" aria-live="polite">
             {Math.round(zoom * 100)}%
           </span>
-          <button type="button" onClick={() => setZoomIndex((i) => i + 1)} disabled={!pdf || zoomIndex === ZOOM_STEPS.length - 1} aria-label={t('pdfViewer.zoomIn')} title={t('pdfViewer.zoomIn')} className={iconButtonClass}>
+          <button type="button" onClick={() => setZoomIndex((i) => i + 1)} disabled={!canZoom || zoomIndex === ZOOM_STEPS.length - 1} aria-label={t('pdfViewer.zoomIn')} title={t('pdfViewer.zoomIn')} className={iconButtonClass}>
             <PlusIcon size={16} aria-hidden="true" />
           </button>
         </div>
@@ -153,7 +167,19 @@ function PdfViewer({ url, fileName, title, className = 'h-105' }: Readonly<PdfVi
           </div>
         )}
 
-        {!error && !pdf && (
+        {isImage && !error && (
+          <img
+            src={url}
+            alt={fileName ?? title}
+            decoding="async"
+            onLoad={() => setImageLoaded(true)}
+            onError={() => setError(true)}
+            style={{ width: pageWidth > 0 ? pageWidth : undefined }}
+            className={`mx-auto block h-auto max-w-none rounded-lg bg-white shadow-[0_2px_12px_rgb(0_0_0/0.08)] ${imageLoaded ? '' : 'invisible absolute'}`}
+          />
+        )}
+
+        {!error && (isImage ? !imageLoaded : !pdf) && (
           <output className="mx-auto flex flex-col gap-md" style={{ width: pageWidth || '100%' }} aria-label={t('pdfViewer.loading')}>
             <Skeleton className="aspect-[1/1.294] w-full rounded-lg" />
           </output>

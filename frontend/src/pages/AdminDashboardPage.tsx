@@ -272,7 +272,7 @@ function CalendarAside({ calendar, showAppointmentsLink }: Readonly<{ calendar: 
           ariaLabel={t('admin.dashboard.calendar.ariaLabel')}
           showShortcuts={false}
           compact
-          className="border-0 p-0 shadow-none"
+          bare
         />
       </section>
 
@@ -382,7 +382,7 @@ function ManagerDashboard() {
 
           <StatCards stats={stats} />
 
-          <div className="grid gap-xl lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-xl lg:grid-cols-2">
             <PriorityList items={dashboardData?.priorities} loading={dashboardLoading} />
             <ActivityList title={t('admin.dashboard.activity')} items={dashboardData?.activities} loading={dashboardLoading} />
           </div>
@@ -462,7 +462,7 @@ function TeacherDashboard() {
 
           <StatCards stats={stats} />
 
-          <div className="grid gap-xl lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-xl lg:grid-cols-2">
             <PriorityList items={data?.priorities} loading={loading} />
             <ActivityList title={t('admin.dashboard.teacher.articlesTitle')} items={data?.activities} loading={loading} />
           </div>
