@@ -69,7 +69,8 @@ export function buildBookingTemplate(
     const field = fields[index]
     const invalid = invalidFields.includes(field)
       || (field === 'referralSource' && invalidFields.includes('referralOtherDetail'))
-    const value = invalid ? '' : field === 'referralSource' ? referral : form[field]
+    const fieldValue = field === 'referralSource' ? referral : form[field]
+    const value = invalid ? '' : fieldValue
     return `${line.slice(0, line.indexOf(':') + 1)} ${value}`
   }).join('\n')
 }
@@ -243,8 +244,8 @@ function extractInlineLabeled(text: string): ExtractedBookingData | null {
     .sort((a, b) => b.length - a.length)
     .map((alias) => normalizeKey(alias).split(' ').map((word) =>
       [...word].map((letter) => accents[letter] ?? letter).join(''),
-    ).join("[\\s'’?-]+"))
-  const pattern = new RegExp(`(?:^|[\\s|]+)(?:\\d{1,2}\\s*[.)-]\\s*)?(${aliases.join('|')})\\s*[:=]`, 'giu')
+    ).join(String.raw`[\s'’?-]+`))
+  const pattern = new RegExp(String.raw`(?:^|[\s|]+)(?:\d{1,2}\s*[.)-]\s*)?(${aliases.join('|')})\s*[:=]`, 'giu')
   const matches = [...text.matchAll(pattern)]
   if (matches.length < 2) return null
 
