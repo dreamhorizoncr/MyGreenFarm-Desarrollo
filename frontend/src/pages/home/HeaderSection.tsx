@@ -26,10 +26,10 @@ function HeaderSection() {
         alt=""
         aria-hidden="true"
         width={1600}
-        height={1200}
+        height={1484}
         fetchPriority="high"
         decoding="async"
-        className="absolute inset-0 -z-20 size-full object-cover object-[70%_80%]"
+        className="absolute inset-0 -z-20 size-full object-cover object-[72%_30%]"
       />
       <div
         aria-hidden="true"
