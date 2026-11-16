@@ -1,4 +1,22 @@
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+
+const LIST_TOP_GAP = 16
+
+function scrollToListStart(pagination: HTMLElement | null) {
+  const container = document.getElementById('admin-scroll-container')
+  const list = pagination?.closest('section')
+  const behavior: ScrollBehavior = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+
+  if (container) {
+    const top = list ? list.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop - LIST_TOP_GAP : 0
+    if (container.scrollTop > top) container.scrollTo({ top: Math.max(0, top), behavior })
+    return
+  }
+
+  const top = list ? list.getBoundingClientRect().top + window.scrollY - LIST_TOP_GAP : 0
+  if (window.scrollY > top) window.scrollTo({ top: Math.max(0, top), behavior })
+}
 
 interface PaginationProps {
   currentPage: number
@@ -10,6 +28,7 @@ const MAX_VISIBLE_PAGES = 10
 
 function Pagination({ currentPage, totalPages, onPageChange }: Readonly<PaginationProps>) {
   const { t } = useTranslation()
+  const ref = useRef<HTMLDivElement>(null)
   if (totalPages <= 1) return null
 
   const visiblePages = Math.min(totalPages, MAX_VISIBLE_PAGES)
@@ -19,17 +38,12 @@ function Pagination({ currentPage, totalPages, onPageChange }: Readonly<Paginati
   )
 
   const goToPage = (page: number) => {
+    scrollToListStart(ref.current)
     onPageChange(page)
-    const container = document.getElementById('admin-scroll-container')
-    if (container) {
-      container.scrollTo({ top: 0, behavior: 'smooth' })
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
   }
 
   return (
-    <div className="mt-lg flex items-center justify-center gap-[8px]">
+    <div ref={ref} className="mt-lg flex items-center justify-center gap-[8px]">
       <button
         type="button"
         onClick={() => goToPage(Math.max(currentPage - 1, 1))}

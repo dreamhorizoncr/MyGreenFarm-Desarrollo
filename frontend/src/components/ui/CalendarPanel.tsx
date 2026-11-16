@@ -16,12 +16,14 @@ interface CalendarPanelProps {
   ariaLabel?: string
   showShortcuts?: boolean
   compact?: boolean
+  bare?: boolean
   className?: string
 }
 
 const SIZES = {
   regular: {
-    card: 'max-w-[420px] p-md gap-4 sm:p-lg',
+    card: 'max-w-[420px] gap-4',
+    frame: 'p-md sm:p-lg',
     header: 'pb-4',
     gridHeader: 'mb-3',
     grid: '',
@@ -31,7 +33,8 @@ const SIZES = {
     clear: 'px-6 py-2',
   },
   compact: {
-    card: 'p-sm gap-1',
+    card: 'gap-1',
+    frame: 'p-sm',
     header: 'pb-1',
     gridHeader: '',
     grid: 'min-h-[204px]',
@@ -54,7 +57,7 @@ function clampDate(date: CalendarDate, minValue?: CalendarDate, maxValue?: Calen
 const shortcutClassName =
   'min-w-0 flex-1 rounded-2xl px-xs py-2 text-white font-medium hover:bg-green-400/40 transition-colors data-[pressed=true]:scale-95 disabled:opacity-50 sm:px-8'
 
-function CalendarPanel({ value, onChange, onFocusChange, markedDates, minValue, maxValue, ariaLabel, showShortcuts = true, compact = false, className = '' }: Readonly<CalendarPanelProps>) {
+function CalendarPanel({ value, onChange, onFocusChange, markedDates, minValue, maxValue, ariaLabel, showShortcuts = true, compact = false, bare = false, className = '' }: Readonly<CalendarPanelProps>) {
   const { t, i18n } = useTranslation()
   const size = SIZES[compact ? 'compact' : 'regular']
   const [focusedDate, setFocusedDate] = useState<CalendarDate>(value ?? today(getLocalTimeZone()))
@@ -81,12 +84,12 @@ function CalendarPanel({ value, onChange, onFocusChange, markedDates, minValue, 
   }
 
   const monthOptions = useMemo(() => {
-    const format = new Intl.DateTimeFormat(locale, { month: 'long' })
+    const format = new Intl.DateTimeFormat(locale, { month: compact ? 'short' : 'long' })
     return Array.from({ length: 12 }, (_, index) => {
-      const label = format.format(new Date(2000, index, 1))
+      const label = format.format(new Date(2000, index, 1)).replace('.', '')
       return { value: String(index + 1), label: label.charAt(0).toUpperCase() + label.slice(1) }
     })
-  }, [locale])
+  }, [locale, compact])
   const firstYear = minValue?.year ?? todayDate.year - YEARS_BACK
   const lastYear = maxValue?.year ?? todayDate.year + YEARS_AHEAD
   const yearOptions = useMemo(
@@ -102,7 +105,7 @@ function CalendarPanel({ value, onChange, onFocusChange, markedDates, minValue, 
   const monthStart = startOfMonth(todayDate)
 
   return (
-    <div className={`w-full rounded-2xl border border-neutral-200 bg-white shadow-sm flex flex-col items-center ${size.card} ${className}`}>
+    <div className={`w-full flex flex-col items-center ${size.card} ${bare ? '' : `rounded-2xl border border-neutral-200 bg-white shadow-sm ${size.frame}`} ${className}`}>
       {showShortcuts && (
         <ButtonGroup
           fullWidth
@@ -135,31 +138,31 @@ function CalendarPanel({ value, onChange, onFocusChange, markedDates, minValue, 
         >
           <Calendar.Header className={`a11y-calendar-header w-full flex justify-between items-center gap-xs ${compact ? '' : 'sm:px-2'} ${size.header}`}>
             <Calendar.Heading className="sr-only" />
-            <div className="flex items-center gap-xs">
-              <div className={compact ? 'w-[116px]' : 'w-[110px] sm:w-[140px]'}>
+            <div className="flex min-w-0 flex-1 items-center gap-xs">
+              <div className={compact ? 'min-w-0 max-w-[116px] flex-1' : 'min-w-0 max-w-[110px] flex-1 sm:max-w-[140px]'}>
                 <Select
                   compact={compact}
                   value={String(focusedDate.month)}
                   onChange={(month) => moveTo(focusedDate.set({ month: Number(month) }))}
                   options={monthOptions}
                   aria-label={t('common.calendar.month')}
-                  className="w-full rounded-lg border border-neutral-200 bg-white px-sm font-semibold text-heading"
+                  className={`w-full rounded-lg border border-neutral-200 bg-white font-semibold text-heading ${compact ? 'px-xs' : 'px-sm'}`}
                 />
               </div>
-              <div className={compact ? 'w-[90px]' : 'w-[94px] sm:w-[96px]'}>
+              <div className={compact ? 'w-[72px] shrink-0' : 'w-[94px] shrink-0 sm:w-[96px]'}>
                 <Select
                   compact={compact}
                   value={String(focusedDate.year)}
                   onChange={(year) => moveTo(focusedDate.set({ year: Number(year) }))}
                   options={yearOptions}
                   aria-label={t('common.calendar.year')}
-                  className="w-full rounded-lg border border-neutral-200 bg-white px-sm font-semibold text-heading"
+                  className={`w-full rounded-lg border border-neutral-200 bg-white font-semibold text-heading ${compact ? 'px-xs' : 'px-sm'}`}
                 />
               </div>
             </div>
-            <div className="flex items-center gap-1">
-              <Calendar.NavButton slot="previous" className="size-9" />
-              <Calendar.NavButton slot="next" className="size-9" />
+            <div className="flex shrink-0 items-center gap-1">
+              <Calendar.NavButton slot="previous" className={compact ? 'size-8' : 'size-9'} />
+              <Calendar.NavButton slot="next" className={compact ? 'size-8' : 'size-9'} />
             </div>
           </Calendar.Header>
           <div className={`w-full ${size.grid}`}>

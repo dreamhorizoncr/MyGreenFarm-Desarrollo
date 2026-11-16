@@ -86,13 +86,13 @@ function Select({
         aria-haspopup="listbox"
         aria-expanded={open}
         {...aria}
-        className={`flex items-center justify-between gap-xs text-left font-body text-body-text ${compact ? 'h-8 text-caption' : 'h-11 text-body-sm'} outline-none transition-colors focus:border-heading disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
+        className={`flex items-center justify-between text-left font-body text-body-text ${compact ? 'h-8 gap-1 text-caption' : 'h-11 gap-xs text-body-sm'} outline-none transition-colors focus:border-heading disabled:cursor-not-allowed disabled:opacity-60 ${className}`}
       >
         <span className={`truncate ${selected ? '' : 'text-neutral-400'}`}>
           {selected?.label ?? placeholder ?? ''}
         </span>
         <ChevronDownIcon
-          size={16}
+          size={compact ? 14 : 16}
           className={`shrink-0 text-neutral-500 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
           aria-hidden="true"
         />
