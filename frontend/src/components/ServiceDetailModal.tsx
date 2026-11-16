@@ -60,7 +60,7 @@ import CurrencyToggle from './currency/CurrencyToggle.tsx'
                     <ModalCloseButton
                         onClick={requestClose}
                         aria-label={t('common.close')}
-                        className="absolute right-[22px] top-10 z-20 md:right-[55px] md:top-[55px]"
+                        className="absolute right-lg top-lg z-20 md:right-xl md:top-xl"
                     />
 
                     <header className="mx-auto max-w-[850px] text-center">

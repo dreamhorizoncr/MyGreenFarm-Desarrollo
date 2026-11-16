@@ -113,8 +113,8 @@ function AdminUsersPage() {
           </button>
         </div>
 
-        <div className="mb-lg mt-xl flex flex-col-reverse gap-md md:flex-row md:items-center md:justify-between">
-          <div ref={tabRowRef} className={`${tabCarouselClass} -my-1 min-w-0 md:flex-1`}>
+        <div className="mb-lg mt-xl flex flex-col-reverse gap-md xl:flex-row xl:items-center xl:justify-between">
+          <div ref={tabRowRef} className={`${tabCarouselClass} -my-1 min-w-0 xl:flex-1`}>
             {ROLE_OPTIONS.map((role) => (
               <button
                 key={role}
@@ -132,7 +132,7 @@ function AdminUsersPage() {
             ))}
           </div>
 
-          <div className="flex h-11 w-full min-w-0 shrink-0 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 md:w-[360px]">
+          <div className="flex h-11 w-full min-w-0 shrink-0 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 xl:w-[360px]">
             <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
             <input
               type="search"
