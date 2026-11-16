@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ModalCloseButton from "../components/ui/ModalCloseButton.tsx";
-import illustration from "../assets/imgs/temporaryCover.jpeg";
+import illustration from "../assets/imgs/niños.jpeg";
 import Navbar from "../components/Navbar.tsx";
 
 interface AuthLayoutProps {
@@ -41,8 +41,13 @@ function AuthLayout({
           className="absolute inset-0 h-full w-full object-cover object-[center_65%] md:object-center"
         />
 
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-black/50 md:bg-transparent md:bg-linear-to-r md:from-black/65 md:via-black/45 md:to-black/25"
+        />
+
         <div className="absolute left-0 top-[18px] z-10 w-full text-center md:top-[9%]">
-          <h1 className="m-0 font-heading text-h6 leading-none tracking-wide text-heading md:text-h1">
+          <h1 className="m-0 font-heading text-h6 leading-none tracking-wide text-white md:text-h1">
             {overtitle}
           </h1>
         </div>
