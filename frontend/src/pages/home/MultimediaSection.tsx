@@ -66,7 +66,7 @@ function MultimediaSection() {
 
             <Link
               to="/multimedia"
-              className="inline-flex items-center gap-xs whitespace-nowrap font-link text-body-sm text-white underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
+              className="inline-flex min-h-6 items-center gap-xs whitespace-nowrap font-link text-body-sm text-white underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
             >
               {t('home.multimedia.viewMore')}
               <ArrowRightIcon size={16} aria-hidden="true" />

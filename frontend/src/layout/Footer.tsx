@@ -5,12 +5,14 @@ import FooterSocialLinks from '../components/footer/FooterSocialLinks.tsx'
 import TermsModal from '../components/TermsModal.tsx'
 import { footerColumns, legalLink } from '../components/footer/footerData.ts'
 import cloudFooter from '../assets/imgs/cloudFooter.svg'
-import logo from '../assets/imgs/Logo.svg'
+import logo from '../assets/imgs/logo-48.webp'
+import logo2x from '../assets/imgs/logo-96.webp'
+import logo3x from '../assets/imgs/logo-144.webp'
 
 function Brand() {
   return (
     <div className="flex items-center gap-3">
-      <img src={logo} alt="My Green Farm" width={38} height={48} className="h-12 w-auto max-w-[48px] object-contain" />
+      <img src={logo} srcSet={`${logo} 1x, ${logo2x} 2x, ${logo3x} 3x`} alt="My Green Farm" width={49} height={48} loading="lazy" decoding="async" className="h-12 w-auto object-contain" />
       <span className="font-heading text-h6 text-white">My Green Farm</span>
     </div>
   )
@@ -65,7 +67,7 @@ function Footer() {
             <button
               type="button"
               onClick={() => setIsLegalModalOpen(true)}
-              className="bg-transparent text-white underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
+              className="min-h-6 bg-transparent text-white underline-offset-2 transition-opacity hover:opacity-80 hover:underline"
             >
               {t(legalLink.label)}
             </button>
