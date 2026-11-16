@@ -19,7 +19,7 @@ function heroPreload(): Plugin {
           const found = files.map(([name, width]) => [find(name), width] as const)
           if (found.some(([fileName]) => !fileName)) return null
           const srcset = found.map(([fileName, width]) => `/${fileName} ${width}w`).join(', ')
-          return `{h:'/${found[found.length - 1][0]}',s:'${srcset}',z:'${sizes}'}`
+          return `{h:'/${found.at(-1)?.[0]}',s:'${srcset}',z:'${sizes}'}`
         })
         if (preloads.includes(null)) return html
         const script = `<script>if(location.pathname==='/'){[${preloads.join(',')}].forEach(function(i){var l=document.createElement('link');l.rel='preload';l.as='image';l.fetchPriority='high';l.href=i.h;l.imageSrcset=i.s;l.imageSizes=i.z;document.head.appendChild(l)})}</script>`
