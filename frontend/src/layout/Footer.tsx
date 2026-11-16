@@ -5,14 +5,14 @@ import FooterSocialLinks from '../components/footer/FooterSocialLinks.tsx'
 import TermsModal from '../components/TermsModal.tsx'
 import { footerColumns, legalLink } from '../components/footer/footerData.ts'
 import cloudFooter from '../assets/imgs/cloudFooter.svg'
-import logo from '../assets/imgs/logo-48.webp'
-import logo2x from '../assets/imgs/logo-96.webp'
-import logo3x from '../assets/imgs/logo-144.webp'
+import logo from '../assets/imgs/48.svg'
+import logo2x from '../assets/imgs/96.svg'
+import logo3x from '../assets/imgs/144.svg'
 
 function Brand() {
   return (
     <div className="flex items-center gap-3">
-      <img src={logo} srcSet={`${logo} 1x, ${logo2x} 2x, ${logo3x} 3x`} alt="My Green Farm" width={49} height={48} loading="lazy" decoding="async" className="h-12 w-auto object-contain" />
+      <img src={logo} srcSet={`${logo} 1x, ${logo2x} 2x, ${logo3x} 3x`} alt="My Green Farm" width={48} height={48} loading="lazy" decoding="async" className="h-12 w-auto object-contain" />
       <span className="font-heading text-h6 text-white">My Green Farm</span>
     </div>
   )
