@@ -227,11 +227,8 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
               placeholder={t('fields.post.authorName.placeholder')}
               maxLength={120}
               value={form.authorName ?? ''}
-              onChange={(event) => {
-                setForm({ ...form, authorName: event.target.value })
-                clearFieldError('authorName')
-              }}
-              className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+              disabled
+              className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-500"
             />
             <FieldHint>{t('fields.post.authorName.hint')}</FieldHint>
             {fieldErrors.authorName && (
@@ -245,11 +242,8 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
               placeholder={t('fields.post.authorRole.placeholder')}
               maxLength={40}
               value={form.authorRole ?? ''}
-              onChange={(event) => {
-                setForm({ ...form, authorRole: event.target.value })
-                clearFieldError('authorRole')
-              }}
-              className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+              disabled
+              className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-500"
             />
             <FieldHint>{t('fields.post.authorRole.hint')}</FieldHint>
             {fieldErrors.authorRole && (

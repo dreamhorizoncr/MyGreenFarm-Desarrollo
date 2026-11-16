@@ -174,11 +174,8 @@ html:has(dialog:modal, [aria-modal='true'], .modal-overlay) #admin-scroll-contai
 }
 
 dialog,
-dialog *,
 [aria-modal='true'],
-[aria-modal='true'] *,
-.modal-overlay,
-.modal-overlay * {
+.modal-overlay {
   overscroll-behavior: contain;
 }
 
