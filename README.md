@@ -4,12 +4,12 @@ Sistema Web y panel administrativo de My Green Farm, un centro educativo acredit
 
 ## Descripción
 
-El proyecto combina un sitio público (información institucional, noticias, foro, galería, vacantes, reserva de citas y pago de servicios) con un panel de gestión interno para el personal del centro (padres, niños, expedientes, evaluaciones, clubes, disponibilidad, newsletter, usuarios).
+El proyecto combina un sitio público (información institucional, noticias, foro, galería, servicios, clubes, vacantes, Nosotros, Green Hearts y reserva de citas, con un asistente virtual) con un panel de gestión interno para el personal del centro (citas, usuarios, noticias, galería, currículums, clubes, padres, niños, grupos, expedientes, evaluaciones, disponibilidad, newsletter y planes de servicio). El dashboard del panel muestra un resumen distinto según el rol de quien inicia sesión.
 
 Es un monorepo con dos aplicaciones:
 
-- **`backend/`** — API REST en Java 21 + Spring Boot 4.1. Maneja autenticación (JWT), persistencia en PostgreSQL y la integración con servicios externos: almacenamiento de archivos (S3/Supabase), correo (SMTP + Brevo), pagos (ONVO), calendario (Google Calendar), traducción (Google Cloud Translate) y resúmenes generados por IA (Gemini, vía Spring AI).
-- **`frontend/`** — SPA en React 19 + TypeScript + Vite, con Tailwind CSS, React Router y soporte de i18n (es/en/fr) vía i18next. Consume la API y ofrece tanto el sitio público como el panel administrativo.
+- **`backend/`** — API REST en Java 21 + Spring Boot 4.1. Maneja autenticación (JWT), persistencia en PostgreSQL y la integración con servicios externos: almacenamiento de archivos (S3/Supabase), correo (SMTP + Brevo), calendario (Google Calendar), traducción (Google Cloud Translate), tipo de cambio (BAC) e IA con Gemini vía Spring AI (resúmenes y chatbot).
+- **`frontend/`** — SPA en React 19 + TypeScript + Vite, con Tailwind CSS 4, React Router y soporte de i18n (es/en/fr) vía i18next. Consume la API y ofrece tanto el sitio público como el panel administrativo.
 
 En producción, ambas se despliegan como un único contenedor: el build de Vite se empaqueta dentro del `.jar` de Spring Boot, que lo sirve como contenido estático.
 
@@ -20,7 +20,7 @@ En producción, ambas se despliegan como un único contenedor: el build de Vite 
 - Node.js 20 o superior
 - Java 21 o superior (el Dockerfile usa JDK 22)
 - PostgreSQL (en pruebas el backend puede usar H2 en memoria)
-- Credenciales de los servicios externos que quieras probar (S3/Supabase, Brevo, SMTP, Google, ONVO, Gemini); sin ellas, los módulos que dependen de cada integración no van a funcionar
+- Credenciales de los servicios externos que quieras probar (S3/Supabase, Brevo, SMTP, Google, Gemini); sin ellas, los módulos que dependen de cada integración no van a funcionar
 
 ### Clonar el repositorio
 
@@ -44,7 +44,7 @@ VITE_API_URL=http://localhost:8080
 
 ### Backend
 
-El backend lee su configuración desde variables de entorno (ver `backend/.env.example` como referencia). Definilas en tu shell, tu IDE o el panel de tu proveedor antes de levantar la aplicación:
+El backend lee su configuración desde variables de entorno. Definilas en tu shell, tu IDE, un archivo `.env` propio o el panel de tu proveedor antes de levantar la aplicación (no subas ese archivo al repositorio):
 
 | Variable | Descripción |
 | --- | --- |
@@ -56,13 +56,12 @@ El backend lee su configuración desde variables de entorno (ver `backend/.env.e
 | `RESEND_TOKEN` | Token del proveedor de envío de correo |
 | `BREVO_API_KEY`, `BREVO_SENDER_EMAIL`, `BREVO_SENDER_NAME` | Envío de boletines (newsletter) |
 | `SUPABASE_ENDPOINT`, `SUPABASE_REGION`, `SUPABASE_ACCESS_KEY`, `SUPABASE_SECRET_KEY` | Conexión al storage S3 |
-| `SUPABASE_ANNOUNCEMENTS`, `SUPABASE_GALLERY`, `SUPABASE_EXPEDIENTS`, `SUPABASE_SERVICE_PLANS`, `SUPABASE_CURRICULUMS`, `SUPABASE_FORUM`, `SUPABASE_CLUBS` | Buckets usados por cada módulo |
+| `SUPABASE_ANNOUNCEMENTS`, `SUPABASE_GALLERY`, `SUPABASE_EXPEDIENTS`, `SUPABASE_SERVICE_PLANS`, `SUPABASE_CURRICULUMS`, `SUPABASE_FORUM`, `SUPABASE_CLUBS`, `SUPABASE_USERS` | Buckets usados por cada módulo |
 | `GOOGLE_CLOUD_CREDENTIALS_JSON`, `GOOGLE_CLOUD_PROJECT_ID` | Traducción automática de contenido |
 | `CALENDAR_CREDENTIALS_PATH`, `CALENDAR_ID`, `GOOGLE_CREDENTIALS_JSON` | Sincronización de citas con Google Calendar |
-| `ONVO_API_KEY`, `ONVO_API_URL`, `PAYMENTS_SUCCESS_URL`, `PAYMENTS_CANCEL_URL` | Pasarela de pagos |
-| `GEMINI_API_KEY`, `GEMINI_MODEL`, `GEMINI_BASE_URL` | Resúmenes generados por IA |
+| `GEMINI_API_KEY`, `GEMINI_MODEL`, `GEMINI_BASE_URL` | Resúmenes con IA y chatbot (`GEMINI_MODEL` usa `gemini-2.5-flash` por defecto) |
 | `SOCIAL_LINK`, `DAYCARE_MAIL_ADMIN` | Datos de contacto usados en correos |
-| `BAC_XML_URL` | Fuente del tipo de cambio (tiene valor por defecto) |
+| `BAC_XML_URL` | Fuente del tipo de cambio. Es obligatoria: sin ella el backend no arranca. Normalmente es `https://www.sucursalelectronica.com/exchangerate/showXmlExchangeRate.do` |
 
 ## Uso
 
@@ -103,56 +102,72 @@ npm run preview   # sirve el build localmente
 MyGreenFarm-Desarrollo/
 ├── Dockerfile                  # build multi-stage: frontend + backend en un solo contenedor
 ├── backend/
-│   └── src/main/java/taller/multimedia/backend/
-│       ├── config/             # S3, Brevo, Google Translate, async, etc.
-│       ├── controller/         # endpoints REST por módulo
-│       ├── dto/                # objetos de petición/respuesta
-│       ├── model/               # entidades JPA
-│       ├── repository/          # repositorios Spring Data
-│       ├── security/             # configuración de JWT y seguridad
-│       ├── service/              # lógica de negocio
-│       ├── scheduler/            # tareas programadas (tipo de cambio, etc.)
-│       └── exception/            # manejo de errores
+│   └── src/main/
+│       ├── java/taller/multimedia/backend/
+│       │   ├── config/         # S3, Brevo, Google Translate, async, etc.
+│       │   ├── controller/     # endpoints REST por módulo
+│       │   ├── dto/            # objetos de petición/respuesta
+│       │   ├── exception/      # manejo de errores
+│       │   ├── i18n/           # traducción de mensajes del backend
+│       │   ├── model/          # entidades JPA
+│       │   ├── repository/     # repositorios Spring Data
+│       │   ├── scheduler/      # tareas programadas (resumen semestral de evaluaciones)
+│       │   ├── security/       # configuración de JWT y seguridad
+│       │   ├── service/        # lógica de negocio (incluye el chatbot)
+│       │   └── util/, utils/   # utilidades compartidas
+│       └── resources/
+│           ├── application.properties
+│           ├── messages*.properties   # textos del backend en es/en/fr
+│           └── templates/email/       # plantillas HTML de los correos
 └── frontend/
     └── src/
-        ├── assets/              # imágenes y recursos estáticos
-        ├── components/          # UI, tarjetas, modales, layout
-        ├── contexts/            # providers de React Context
-        ├── hooks/                # hooks reutilizables
-        ├── i18n/                 # traducciones es/en/fr
-        ├── layout/               # layouts del panel y del sitio público
-        ├── pages/                # vistas organizadas por módulo
-        ├── routes/               # guards de rutas protegidas por rol
-        ├── schemas/               # validaciones con Zod
-        ├── services/              # llamadas a la API (axios)
-        ├── tokens/                 # tokens de diseño (colores, espaciados, etc.)
-        ├── types/                  # tipos compartidos
-        └── utils/                  # utilidades (notificaciones, validadores, etc.)
+        ├── assets/             # imágenes (WebP) y recursos estáticos
+        ├── components/         # UI, tarjetas, modales, chatbot
+        ├── contexts/           # providers de React Context
+        ├── hooks/              # hooks reutilizables
+        ├── i18n/               # traducciones es/en/fr
+        ├── layout/             # layouts del panel y del sitio público
+        ├── pages/              # vistas organizadas por módulo
+        ├── routes/             # guards de rutas protegidas por rol
+        ├── services/           # llamadas a la API (axios)
+        ├── styles/             # estilos base globales
+        ├── tokens/             # tokens de diseño (colores, espaciados, etc.)
+        ├── types/              # tipos compartidos
+        └── utils/              # utilidades (notificaciones, validadores, etc.)
 ```
 
 ### Rutas principales
 
-La app usa React Router con rutas públicas y rutas protegidas por sesión/rol (`ADMIN`, `OWNER`, `TEACHER`).
+La app usa React Router con rutas públicas y rutas protegidas por sesión y rol (`OWNER`, `ADMIN`, `TEACHER`).
 
 **Públicas**
-- `/` — landing page
+- `/` — página de inicio
 - `/booking` — reserva de cita
-- `/login`, `/signup`, `/forgot-password`, `/reset-password`
+- `/login`, `/forgot-password`, `/reset-password`
 - `/news` — noticias
 - `/forum`, `/forum/blog/:id`, `/forum/community/:id` — foro
 - `/multimedia`, `/albums/:id` — galería
 - `/services` — planes de servicio
-- `/vacancies` — vacantes de empleo
 - `/clubs` — clubes
-- `/payment-success`, `/payment-failed`
+- `/vacancies` — vacantes de empleo
+- `/about-us` — Nosotros
+- `/green-hearts` — Green Hearts
 
 **Panel (requieren sesión)**
-- `/profile` — perfil del usuario
-- `/admin/dashboard` — resumen general
-- `/admin/forum` — moderación del foro
-- `/admin/appointments`, `/admin/users`, `/admin/announcements`, `/admin/gallery`, `/admin/curriculums`, `/admin/clubs`, `/admin/parents`, `/admin/children`, `/admin/evaluations` — módulos de `ADMIN`
-- `/admin/service-plans`, `/admin/availability`, `/admin/newsletter` — módulos de `OWNER`
-- `/admin/expedients` — expedientes (docentes y administración)
+
+| Ruta | Roles |
+| --- | --- |
+| `/profile`, `/admin/dashboard` | Todos (el dashboard cambia según el rol) |
+| `/admin/appointments`, `/admin/users`, `/admin/announcements`, `/admin/gallery`, `/admin/curriculums`, `/admin/clubs`, `/admin/parents`, `/admin/children` | `OWNER`, `ADMIN` |
+| `/admin/availability`, `/admin/newsletter`, `/admin/services` | `OWNER` |
+| `/admin/forum`, `/admin/groups` | `OWNER`, `TEACHER` |
+| `/admin/expedients`, `/admin/evaluations` | `OWNER`, `ADMIN`, `TEACHER` (un docente solo ve a los niños de sus grupos) |
+
+Los usuarios nuevos los crea la administración desde `/admin/users`; no hay registro público.
+
+### Imágenes
+
+Las fotos y el logo del sitio se guardan en WebP comprimido y, cuando se muestran a distintos tamaños, en varias resoluciones (por ejemplo `logo-48.webp`, `logo-96.webp` y `logo-144.webp`). El `srcSet` de cada `<img>` hace que el navegador descargue solo la versión que necesita su pantalla; el tamaño en pantalla lo sigue definiendo el CSS. El favicon (`public/favicon-32.png`) y el icono para iPhone (`public/apple-touch-icon.png`) se quedan en PNG.
 
 ### Despliegue
 
@@ -162,18 +177,21 @@ El proyecto se despliega como un único contenedor Docker (actualmente en Railwa
 2. El build (`frontend/dist`) se copia dentro de `backend/src/main/resources/static`, para que Spring Boot lo sirva como contenido estático.
 3. Se compila el backend con Maven y se empaqueta todo en un solo `.jar`.
 
-Para construir la imagen localmente:
+Para construir la imagen localmente (con las variables de entorno en un archivo `.env` propio):
 ```
 docker build -t mygreenfarm .
-docker run -p 8080:8080 --env-file backend/.env mygreenfarm
+docker run -p 8080:8080 --env-file .env mygreenfarm
 ```
 
 ## Estado del proyecto
 
 En desarrollo activo. El proyecto ya cuenta con:
 
-- Sitio público completo (noticias, foro, galería, servicios, vacantes, clubes, reserva de citas)
+- Sitio público completo (noticias, foro, galería, servicios, clubes, vacantes, Nosotros, Green Hearts y reserva de citas)
+- Asistente virtual (chatbot) que orienta a las familias y ayuda a reservar citas
 - Autenticación, roles y protección de rutas
-- Panel administrativo con todos los módulos de gestión del centro
-- Integraciones con storage, correo, pagos, calendario, traducción e IA
+- Panel administrativo con todos los módulos de gestión del centro y un dashboard por rol
+- Integraciones con storage, correo, calendario, traducción, tipo de cambio e IA
 - Despliegue como contenedor único (frontend + backend)
+
+Los pagos en línea (ONVO) y la facturación electrónica están deshabilitados por ahora: su código sigue en el repositorio, pero comentado.
