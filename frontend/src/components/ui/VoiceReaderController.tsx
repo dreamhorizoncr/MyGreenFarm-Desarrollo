@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { VolumeXIcon } from "@animateicons/react/lucide";
 import { useAccessibility } from "../../contexts/accessibility";
-import { useVoiceReader } from "../../contexts/VoiceReaderContext";
+import { useVoiceReader } from "../../contexts/voiceReader";
 import {
   findReadableTarget,
   getBlockSignature,
@@ -32,6 +32,11 @@ function isAssertive(region: HTMLElement) {
   );
 }
 
+/**
+ * Connects the voice reader with the page according to the accessibility options: reads the modals
+ * when they open, the alerts, the element that gets the focus and what is clicked, and shows a button to
+ * stop reading.
+ */
 export default function VoiceReaderController() {
   const { voiceReader, autoReadModals, announceAlerts, clickToRead, readFocus } = useAccessibility();
   const { isSpeaking, readElement, readFocusTarget, stop } = useVoiceReader();

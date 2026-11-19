@@ -6,6 +6,11 @@ import { getErrorMessage } from '../utils/error.ts'
 const SOURCE_LANG = 'es'
 const EXCEPTION_ENTITY_TYPE = 'schedule_exception'
 
+/**
+ * Visiting hours of each weekday and their exceptions, with the actions to save them.
+ *
+ * @returns the hours and exceptions, the loading, saving and error states, the actions, and `reload`
+ */
 export function useAvailability() {
   const [weekly, setWeekly] = useState<WeeklySchedule[]>([])
   const [exceptions, setExceptions] = useState<ScheduleException[]>([])

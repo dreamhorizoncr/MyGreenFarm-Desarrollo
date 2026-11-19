@@ -7,6 +7,12 @@ import type {
   AvailableWeek,
 } from '../types/appointment.ts'
 
+/**
+ * Visit booking page: the free slots of a week and the sending of the booking.
+ *
+ * @returns the free slots, the loading and sending states, `fetchWeek`, and `submit`, which tells
+ *   whether it worked, the message to show and whether the slot was taken by someone else
+ */
 export function useBooking() {
   const [availability, setAvailability] = useState<AvailableWeek>({})
   const [slotsLoading, setSlotsLoading] = useState(false)

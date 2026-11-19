@@ -21,12 +21,14 @@ const skeleton = tv({
   },
 })
 
+/** Props of {@link Skeleton}. */
 interface SkeletonProps {
   shape?: 'line' | 'circle' | 'rect' | 'pill'
   effect?: 'shimmer' | 'pulse'
   className?: string
 }
 
+/** Placeholder shape shown while content loads. */
 function Skeleton({ shape, effect, className }: Readonly<SkeletonProps>) {
   return <span className={skeleton({ shape, effect, className })} aria-hidden="true" />
 }

@@ -2,6 +2,9 @@ package taller.multimedia.backend.dto.onvo;
 
 import lombok.Data;
 
+/**
+ * Payment request by plan. Part of online payments, which are currently disabled.
+ */
 @Data 
 public class PaymentRequest {
 

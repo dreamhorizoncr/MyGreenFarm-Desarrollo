@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import taller.multimedia.backend.model.forum.ForumCommunityComment;
 
+/**
+ * Storage of the comments on community posts.
+ */
 public interface ForumCommunityCommentRepository extends JpaRepository<ForumCommunityComment, UUID> {
     Page<ForumCommunityComment> findByCommunityPost_IdOrderByCreatedAtAsc(UUID postId, Pageable pageable);
     long countByCommunityPost_Id(UUID postId);

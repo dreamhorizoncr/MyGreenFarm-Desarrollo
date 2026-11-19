@@ -3,6 +3,11 @@ import { calendarService } from '../services/calendar.ts'
 import type { CalendarEvent } from '../types/calendar.ts'
 import { getErrorMessage } from '../utils/error.ts'
 
+/**
+ * Events of the admin calendar.
+ *
+ * @returns the events, the loading and error state, and `fetchEvents` for a range of days
+ */
 export function useCalendarEvents() {
   const [events, setEvents] = useState<CalendarEvent[]>([])
   const [loading, setLoading] = useState(false)

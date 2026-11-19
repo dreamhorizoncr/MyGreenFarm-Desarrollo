@@ -15,6 +15,10 @@ import taller.multimedia.backend.model.forum.ForumArticleLike;
 import taller.multimedia.backend.repository.forum.ForumArticleLikeRepository;
 import taller.multimedia.backend.repository.forum.ForumArticleRepository;
 
+/**
+ * Likes on forum articles from anonymous visitors, identified by an anonymous ID stored in their
+ * browser.
+ */
 @Service
 @RequiredArgsConstructor
 public class ForumArticleLikeService {
@@ -22,6 +26,18 @@ public class ForumArticleLikeService {
     private final ForumArticleLikeRepository likeRepository;
     private final ForumArticleRepository articleRepository;
 
+    /**
+     * Adds the visitor's like to an article, or removes it if they had already liked it.
+     *
+     * <p>If two requests from the same visitor race and the unique constraint rejects the second
+     * insert, the article is reported as liked.
+     *
+     * @param articleId forum article
+     * @param anonId anonymous visitor ID
+     * @return whether the article is now liked by the visitor and its total likes
+     * @throws ResponseStatusException with 400 if {@code anonId} is blank, or 404 if the article
+     *     does not exist
+     */
     @Transactional
     public ForumArticleLikeResponse toggleLike(UUID articleId, String anonId) {
         if (anonId == null || anonId.isBlank()) {
@@ -53,6 +69,11 @@ public class ForumArticleLikeService {
         return new ForumArticleLikeResponse(articleId, totalLikes, liked);
     }
 
+    /**
+     * @param anonId anonymous visitor ID, may be blank
+     * @return IDs of the articles the visitor has liked, or an empty list when there is no visitor
+     *     ID
+     */
     @Transactional(readOnly = true)
     public List<UUID> findLikedArticleIds(String anonId) {
         if (anonId == null || anonId.isBlank()) {

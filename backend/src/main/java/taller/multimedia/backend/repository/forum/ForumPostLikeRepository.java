@@ -9,6 +9,9 @@ import org.springframework.data.repository.query.Param;
 
 import taller.multimedia.backend.model.forum.ForumPostLike;
 
+/**
+ * Storage of the likes on community posts.
+ */
 public interface ForumPostLikeRepository extends JpaRepository<ForumPostLike, UUID> {
 boolean existsByCommunityPost_IdAndAnonId(UUID communityPostId, String anonId);
 
@@ -20,6 +23,10 @@ void deleteByCommunityPost_Id(UUID communityPostId);
 
     List<ForumPostLike> findByAnonId(String anonId);
 
+    /**
+     * @param postIds posts to count
+     * @return the likes of each post in one query; posts without likes are not included
+     */
     @Query("SELECT fal.communityPost.id AS postId, COUNT(fal) AS total "
             + "FROM ForumPostLike fal "
             + "WHERE fal.communityPost.id IN :postIds "

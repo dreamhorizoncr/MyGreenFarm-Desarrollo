@@ -7,6 +7,9 @@ import lombok.Data;
 
 import java.util.UUID;
 
+/**
+ * Applicant's data of a job application. Without a vacancy it is an open application.
+ */
 @Data
 public class ApplicationRequest {
 

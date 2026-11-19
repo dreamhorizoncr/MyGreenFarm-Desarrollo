@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import taller.multimedia.backend.dto.UpdateUserRequest;
+import taller.multimedia.backend.dto.user.UpdateUserRequest;
 import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.model.user.User;

@@ -21,6 +21,7 @@ const DOODLES = [
   { src: scissors, className: 'right-[30%] bottom-[8%] hidden h-12 -rotate-12 md:block' },
 ]
 
+/** Newsletter subscription of the home page. */
 function JoinSection() {
   const { t } = useTranslation()
   const [email, setEmail] = useState('')

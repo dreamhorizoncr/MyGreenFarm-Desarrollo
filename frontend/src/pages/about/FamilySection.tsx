@@ -94,6 +94,7 @@ function useHoverIcon() {
   }
 }
 
+/** Title of a chapter of the family's story, with its animated icon. */
 function ChapterTitle({ Icon, color, children }: Readonly<{ Icon: AnimatedIcon; color: string; children: ReactNode }>) {
   const { ref, hover } = useHoverIcon()
   return (
@@ -106,6 +107,7 @@ function ChapterTitle({ Icon, color, children }: Readonly<{ Icon: AnimatedIcon; 
   )
 }
 
+/** A value of the family, with its animated icon. */
 function PillarItem({ Icon, color, label, index }: Readonly<{ Icon: AnimatedIcon; color: string; label: string; index: number }>) {
   const reduceMotion = useReducedMotion()
   const { ref, hover } = useHoverIcon()
@@ -130,6 +132,7 @@ function PillarItem({ Icon, color, label, index }: Readonly<{ Icon: AnimatedIcon
   )
 }
 
+/** A dream of the family, with its animated icon. */
 function DreamItem({ Icon, color, label }: Readonly<{ Icon: AnimatedIcon; color: string; label: string }>) {
   const { ref, hover } = useHoverIcon()
   return (
@@ -145,6 +148,7 @@ function DreamItem({ Icon, color, label }: Readonly<{ Icon: AnimatedIcon; color:
   )
 }
 
+/** Story of the founding family on the About Us page. */
 function FamilySection() {
   const { t } = useTranslation()
   const reduceMotion = useReducedMotion()

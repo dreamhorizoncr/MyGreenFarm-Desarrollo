@@ -8,6 +8,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * Data to create or update an announcement. The event date and location are optional, for
+ * announcements about events.
+ */
 @Data
 public class AnnouncementRequest {
     @NotBlank(message = "The title is required") 

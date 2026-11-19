@@ -8,6 +8,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * An image of a club sent with the club data.
+ */
 @Data
 @Builder
 @NoArgsConstructor

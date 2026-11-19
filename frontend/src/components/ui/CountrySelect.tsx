@@ -14,6 +14,7 @@ interface CountryOption {
   divider?: boolean
 }
 
+/** Props of {@link CountrySelect}, as `react-phone-number-input` passes them. */
 interface CountrySelectProps {
   value?: Country
   onChange: (value?: Country) => void
@@ -31,6 +32,7 @@ const normalize = (text: string) => text.normalize('NFD').replace(/[̀-ͯ]/g, ''
 
 const callingCode = (country?: Country) => (country ? `+${getCountryCallingCode(country)}` : '')
 
+/** Country selector of the phone fields, with a search box. */
 function CountrySelect({
   value,
   onChange,

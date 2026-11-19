@@ -1,4 +1,4 @@
-import Navbar from '../components/Navbar.tsx'
+import Navbar from '../components/navigation/Navbar.tsx'
 import HeaderSection from './home/HeaderSection.tsx'
 import PhilosophySection from './home/PhilosophySection.tsx'
 import TestimonialsSection from './home/TestimonialsSection.tsx'
@@ -8,6 +8,7 @@ import { setPageSEO } from '../utils/seo.ts'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
+/** Home page: header, philosophy, gallery, testimonials and newsletter subscription. */
 function HomePage() {
   const { t, i18n } = useTranslation()
 

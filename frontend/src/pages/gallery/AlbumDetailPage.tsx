@@ -1,0 +1,226 @@
+import { useEffect, useEffectEvent, useState } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import LikeHeart from '../../components/ui/LikeHeart.tsx'
+import Navbar from '../../components/navigation/Navbar.tsx'
+import Container from '../../components/home/Container.tsx'
+import PhotoLightbox from '../../components/gallery/PhotoLightbox.tsx'
+import Skeleton from '../../components/ui/Skeleton.tsx'
+import SkeletonList from '../../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../../hooks/useSkeletonCount.ts'
+import { useGallery } from '../../hooks/useGallery.ts'
+import type { Gallery } from '../../types/gallery.ts'
+import { galleryService } from '../../services/gallery.ts'
+import { useImageLikes } from '../../hooks/useImageLikes.ts'
+import { setPageSEO } from '../../utils/seo.ts'
+import { htmlToText } from '../../utils/html.ts'
+
+/** Props of {@link LikeBadge}. */
+interface LikeBadgeProps {
+  albumTitle: string
+  liked: boolean
+  totalLikes: number
+  loading: boolean
+  onToggle: () => void
+}
+
+/** Like button of a photo with its count. */
+function LikeBadge({ albumTitle, liked, totalLikes, loading, onToggle }: Readonly<LikeBadgeProps>) {
+  const { t } = useTranslation()
+
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation()
+        onToggle()
+      }}
+      disabled={loading}
+      className="absolute bottom-[10px] right-[10px] flex items-center gap-[6px] rounded-full bg-white px-[10px] py-[5px] shadow-md transition hover:scale-105 disabled:opacity-70"
+      aria-label={`${liked ? t('home.gallery.unlike') : t('home.gallery.like')} · ${albumTitle}`}
+      aria-pressed={liked}
+    >
+      <LikeHeart liked={liked} size={14} className={liked ? 'text-pink-400' : 'text-neutral-400'} />
+      <span className="font-body text-caption font-bold text-neutral-800">{totalLikes}</span>
+    </button>
+  )
+}
+
+
+/** Page of an album: its photos with their likes, opened in the lightbox. */
+function AlbumDetailPage() {
+  const { t, i18n } = useTranslation()
+  const { id } = useParams<{ id: string }>()
+  const { categories, galleriesByCategory, fetchGallery, loading, error } = useGallery()
+  const { imageLikes, initializeLikes, toggleReaction } = useImageLikes()
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
+
+  useEffect(() => {
+    void fetchGallery(i18n.language)
+  }, [fetchGallery, i18n.language])
+
+  const albumEntry = id
+    ? Object.entries(galleriesByCategory).find(([, galleries]) =>
+      galleries.some((gallery) => gallery.id === id),
+    )
+    : undefined
+
+  const album: Gallery | undefined = albumEntry?.[1].find((gallery) => gallery.id === id)
+
+  useEffect(() => {
+    if (!album) {
+      setPageSEO({
+        title: t('seo.albumTitle'),
+        description: t('seo.albumDescription'),
+      })
+      return
+    }
+
+    const description = htmlToText(album.description).slice(0, 155)
+
+    setPageSEO({
+      title: `${album.title} | My Green Farm`,
+      description: description || t('seo.albumFallbackDescription'),
+    })
+  }, [album, t])
+
+  const category = categories.find((candidate) => candidate.id === albumEntry?.[0])
+
+  // the likes are loaded once per album, not again when its texts arrive translated
+  const albumId = album?.id
+  const loadAlbumLikes = useEffectEvent(() => {
+    if (!album || album.galleryImages.length === 0) return
+    void galleryService.getMyLikes().then((likedImageIds) => {
+      initializeLikes(album.galleryImages, likedImageIds)
+    })
+  })
+
+  useEffect(() => {
+    if (albumId) loadAlbumLikes()
+  }, [albumId])
+
+  const skeletonCount = useSkeletonCount(`album-${id}`, loading, album?.galleryImages.length ?? 0, 8)
+
+  return (
+    <div id="album-detail-page" className="min-h-screen bg-bg-page">
+      <Navbar />
+
+      <section className="bg-white py-[50px] md:py-[70px]">
+        <Container>
+          <nav
+            aria-label={t('home.gallery.breadcrumbLabel')}
+            className="flex flex-wrap items-center gap-[6px] font-body text-body text-neutral-500"
+          >
+            <Link className="transition hover:text-green-500" to="/multimedia">
+              {t('home.gallery.breadcrumbGallery')}
+            </Link>
+            <span aria-hidden="true">/</span>
+            <Link className="transition hover:text-green-500" to="/multimedia">
+              {t('home.gallery.breadcrumbAlbums')}
+            </Link>
+            {category && (
+              <>
+                <span aria-hidden="true">/</span>
+                <Link className="transition hover:text-green-500" to="/multimedia">
+                  {category.title}
+                </Link>
+              </>
+            )}
+            {album && (
+              <>
+                <span aria-hidden="true">/</span>
+                <span className="text-green-500">{album.title}</span>
+              </>
+            )}
+          </nav>
+
+          {album && (
+            <header className="mx-auto mt-[32px] max-w-[760px] text-center">
+              <h1 className="mt-0 font-heading text-h1 font-bold leading-tight text-green-500">
+                {album.title}
+              </h1>
+
+              <p className="mt-[16px] font-body text-body-sm leading-[1.7] text-green-500 md:text-body-sm">
+                {album.description}
+              </p>
+            </header>
+          )}
+        </Container>
+      </section>
+
+      <main>
+        <Container className="py-[60px] md:py-[80px]">
+          {loading && (
+            <div className="grid grid-cols-2 gap-[12px] md:grid-cols-4 md:gap-[14px]">
+              <SkeletonList count={skeletonCount}>{(position) => (
+                <Skeleton
+                  shape="rect"
+                  className={`aspect-square w-full ${position === 0 ? 'col-span-2 row-span-2' : ''}`}
+                />
+              )}</SkeletonList>
+            </div>
+          )}
+
+          {!loading && error && (
+            <p className="m-0 p-xl text-center font-body text-body text-danger">
+              {error}
+            </p>
+          )}
+
+          {!loading && !error && !album && (
+            <p className="m-0 p-xl text-center font-body text-body text-neutral-500">
+              {t('home.gallery.notFoundAlbum')}
+            </p>
+          )}
+
+          {!loading && !error && album && album.galleryImages.length > 0 && (
+            <div className="grid grid-cols-2 gap-[12px] md:grid-cols-4 md:gap-[14px]">
+              {album.galleryImages.map((image, index) => {
+                const likeState = imageLikes[image.id]
+                return (
+                  <div
+                    key={image.id}
+                    className={`group relative aspect-square overflow-hidden rounded-[14px] shadow ${index === 0 ? 'col-span-2 row-span-2' : ''
+                      }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setLightboxIndex(index)}
+                      className="absolute inset-0 h-full w-full focus-visible:outline-2 focus-visible:outline-orange-500 focus-visible:outline-offset-2"
+                      aria-label={`${t('home.gallery.imageGallery')}: ${album.title} ${index + 1}`}
+                    >
+                      <img
+                        src={image.fileUrl}
+                        alt={`${album.title} ${index + 1}`}
+                        className="h-full w-full object-cover transition duration-300 ease-in-out group-hover:scale-[1.04]"
+                        loading="lazy"
+                      />
+                    </button>
+                    <LikeBadge
+                      albumTitle={album.title}
+                      liked={likeState?.liked ?? false}
+                      totalLikes={likeState?.totalLikes ?? image.likeCount ?? 0}
+                      loading={likeState?.loading ?? false}
+                      onToggle={() => toggleReaction(image.id)}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </Container>
+      </main>
+
+      {album && lightboxIndex !== null && album.galleryImages[lightboxIndex] && (
+        <PhotoLightbox
+          images={album.galleryImages}
+          initialIndex={lightboxIndex}
+          alt={album.title}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
+    </div>
+  )
+}
+
+export default AlbumDetailPage

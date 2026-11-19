@@ -12,7 +12,6 @@ import org.springframework.web.server.ResponseStatusException;
 import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.forum.ForumCommentRequest;
 import taller.multimedia.backend.dto.forum.ForumCommentResponse;
-import taller.multimedia.backend.dto.forum.ForumMapper;
 import taller.multimedia.backend.model.forum.ForumArticle;
 import taller.multimedia.backend.model.forum.ForumComment;
 import taller.multimedia.backend.model.user.Role;
@@ -22,6 +21,9 @@ import taller.multimedia.backend.repository.forum.ForumCommentRepository;
 import taller.multimedia.backend.repository.user.UserRepository;
 import taller.multimedia.backend.util.Sanitizer;
 
+/**
+ * Comments that visitors leave on forum articles.
+ */
 @Service
 @RequiredArgsConstructor
 public class ForumCommentService {
@@ -32,6 +34,12 @@ public class ForumCommentService {
     private final ForumMapper forumMapper;
     private final ForumModerationService moderationService;
 
+    /**
+     * @param articleId forum article
+     * @param pageable page to return
+     * @return the article's comments, newest first
+     * @throws ResponseStatusException with 404 if the article does not exist
+     */
     @Transactional(readOnly = true)
     public Page<ForumCommentResponse> getByArticle(UUID articleId, Pageable pageable) {
         ensureArticleExists(articleId);
@@ -39,6 +47,16 @@ public class ForumCommentService {
                 .map(forumMapper::toCommentResponse);
     }
 
+    /**
+     * Publishes a comment on an article after sanitizing it, checking the alias and checking that
+     * the content is appropriate and related to the article's topic.
+     *
+     * @param articleId forum article
+     * @param request alias and content; line breaks in the content are kept
+     * @return the published comment
+     * @throws ResponseStatusException with 404 if the article does not exist
+     * @throws taller.multimedia.backend.exception.InvalidFieldException if the alias or content is unsafe, inappropriate or off-topic
+     */
     @Transactional
     public ForumCommentResponse create(UUID articleId, ForumCommentRequest request) {
         ForumArticle article = findArticle(articleId);
@@ -56,6 +74,14 @@ public class ForumCommentService {
         return forumMapper.toCommentResponse(commentRepository.save(comment));
     }
 
+    /**
+     * Deletes a comment. Only the owner role may do it.
+     *
+     * @param commentId comment to delete
+     * @param currentEmail email of the authenticated user
+     * @throws ResponseStatusException with 401 if the user does not exist, 403 if the user is not
+     *     an owner, or 404 if the comment does not exist
+     */
     @Transactional
     public void delete(UUID commentId, String currentEmail) {
         User currentUser = userRepository.findByEmail(currentEmail)

@@ -20,11 +20,20 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import taller.multimedia.backend.security.services.UserDetailsServiceImpl;
+import taller.multimedia.backend.security.service.UserDetailsServiceImpl;
 import taller.multimedia.backend.security.jwt.AuthEntryPointJwt;
 import taller.multimedia.backend.security.jwt.AuthTokenFilter;
 import taller.multimedia.backend.security.jwt.JwtUtils;
 
+/**
+ * Security of the API: stateless sessions with a JWT, CORS for the frontend origin, and which
+ * routes are public.
+ *
+ * <p>Public routes are the site's static files and the read-only or visitor endpoints
+ * (announcements, gallery, services, vacancies, clubs, booking, newsletter, chat...). Every other
+ * {@code /api} route requires a signed-in user, and the endpoints check the role with {@code
+ * @PreAuthorize}.
+ */
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
@@ -42,22 +51,37 @@ public class SecurityConfig {
     this.jwtUtils = jwtUtils;
   }
 
+  /**
+   * @return the filter that reads the JWT of each request
+   */
   @Bean
   public AuthTokenFilter authenticationJwtTokenFilter() {
     return new AuthTokenFilter(jwtUtils, userDetailsService);
   }
 
 
+  /**
+   * @param authConfig Spring's authentication configuration
+   * @return the manager that checks email and password at sign-in
+   * @throws Exception if it cannot be created
+   */
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
     return authConfig.getAuthenticationManager();
   }
 
+  /**
+   * @return BCrypt, used to hash and check passwords
+   */
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 
+  /**
+   * @return CORS rules that only allow the frontend origin ({@code frontend.origin}) to call the
+   *     API with credentials
+   */
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
@@ -71,6 +95,11 @@ public class SecurityConfig {
     return source;
   }
 
+  /**
+   * @param http security builder
+   * @return the filter chain with the public routes, the JWT filter and the JSON 401 handler
+   * @throws Exception if it cannot be built
+   */
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
@@ -96,15 +125,9 @@ public class SecurityConfig {
                 "/api/auth/forgot-password",
                 "/api/auth/reset-password",
                 "/api/health",
-                "/login",
-                "/signup",
-                "/forgot-password",
-                "/reset-password",
                 "/api/announcements",
                 "/api/translations",
                 "/api/translations/batch",
-                "/api/stripe-plans",
-                "/api/create-checkout-session",
                 "/api/webhooks/**",
                 "/api/gallery/likes/**")
             .permitAll()
@@ -133,18 +156,13 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.GET, "/api/public/list-counts").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/exchange-rate/**").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/applications").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/service-plans/onvo").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/payments/create-checkout-session").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/service-plans/*/checkout").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/newsletter/subscribe").permitAll()
-            .requestMatchers(HttpMethod.POST, "/api/service-plans/*/checkout").permitAll()
-            .requestMatchers(HttpMethod.GET, "/api/service-plans/status/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/clubs").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/clubs/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/users/teachers/about-us").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/chat").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/chat/health").permitAll()
-            .requestMatchers("/api/service-plans/webhooks/**").permitAll()
             .requestMatchers(request -> !request.getRequestURI().startsWith("/api")).permitAll()
             .anyRequest().authenticated())
         .csrf(csrf -> csrf.disable())

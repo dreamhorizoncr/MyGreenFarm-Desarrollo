@@ -9,6 +9,12 @@ interface ImageLikeState {
     loading: boolean
 }
 
+/**
+ * Likes of the photos of an album, updated optimistically and reverted if the request fails.
+ *
+ * @returns the likes by image, `initializeLikes` with the album's images and the visitor's likes, and
+ *   `toggleReaction`
+ */
 export function useImageLikes() {
     const [imageLikes, setImageLikes] = useState<Record<string, ImageLikeState>>({})
 

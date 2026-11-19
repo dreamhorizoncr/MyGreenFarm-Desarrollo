@@ -1,12 +1,19 @@
 import { useEffect, type RefObject } from 'react'
 
+/** Options of {@link useDismiss}. */
 interface UseDismissOptions {
   ref: RefObject<HTMLElement | null>
   isOpen: boolean
   onClose: () => void
+  /** Whether a click outside closes it, true by default. */
   includeClickOutside?: boolean
 }
 
+/**
+ * Closes a menu or popover with Escape or with a click outside it, while it is open.
+ *
+ * @param options - the element, whether it is open, and the function that closes it
+ */
 function useDismiss({
   ref,
   isOpen,

@@ -1,9 +1,11 @@
 import { useId } from 'react'
 
+/** Props of {@link ScallopEdge}. */
 interface ScallopEdgeProps {
   className?: string
 }
 
+/** Scalloped edge between two sections; it takes the color of the text. */
 function ScallopEdge({ className = 'text-green-500' }: Readonly<ScallopEdgeProps>) {
   const patternId = useId()
 

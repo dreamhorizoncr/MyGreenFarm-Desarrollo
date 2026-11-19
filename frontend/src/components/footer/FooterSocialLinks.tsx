@@ -19,6 +19,7 @@ const socialLinks: SocialLink[] = [
   { label: 'footer.whatsapp', href: 'https://wa.me/50683278347', Icon: SiWhatsapp },
 ]
 
+/** Links to the school's social networks. */
 function FooterSocialLinks() {
   const { t } = useTranslation()
 

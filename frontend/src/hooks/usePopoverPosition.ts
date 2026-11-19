@@ -1,5 +1,6 @@
 import { useLayoutEffect, useState, type RefObject } from 'react'
 
+/** Fixed position of a popover: below the trigger (`top`) or above it (`bottom`). */
 export interface PopoverPosition {
   top?: number
   bottom?: number
@@ -9,14 +10,22 @@ export interface PopoverPosition {
 const GAP = 4
 const VIEWPORT_MARGIN = 8
 
+/** Options of {@link usePopoverPosition}. */
 interface UsePopoverPositionOptions {
   triggerRef: RefObject<HTMLElement | null>
   open: boolean
   width: number
   height: number
+  /** Whether it lines up with the left or right edge of the trigger. */
   align?: 'start' | 'end'
 }
 
+/**
+ * Places a popover of known size next to its trigger without leaving the window.
+ *
+ * @param options - the trigger, whether it is open, its size and alignment
+ * @returns the position, or `null` while it is closed
+ */
 export function usePopoverPosition({ triggerRef, open, width, height, align = 'start' }: UsePopoverPositionOptions) {
   const [position, setPosition] = useState<PopoverPosition | null>(null)
 

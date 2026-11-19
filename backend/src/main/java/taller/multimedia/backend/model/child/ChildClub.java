@@ -18,6 +18,9 @@ import lombok.NoArgsConstructor;
 
 import taller.multimedia.backend.model.club.Club;
 
+/**
+ * Enrollment of a child in a club.
+ */
 @Entity
 @Table(name = "child_clubs")
 @Data
@@ -40,6 +43,9 @@ public class ChildClub {
     @Column(name = "registered_at")
     private LocalDateTime registeredAt;
 
+    /**
+     * Records when the child was enrolled in the club.
+     */
     @PrePersist
     public void prePersist() {
         this.registeredAt = LocalDateTime.now();

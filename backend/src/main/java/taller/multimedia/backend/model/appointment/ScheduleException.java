@@ -5,6 +5,9 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+/**
+ * Special hours or a closed day for a specific date, which replaces the weekly schedule.
+ */
 @Entity
 @Table(name = "schedule_exceptions")
 @Data

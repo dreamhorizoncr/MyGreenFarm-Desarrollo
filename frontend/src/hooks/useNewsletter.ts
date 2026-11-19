@@ -8,6 +8,11 @@ function currentLang(): string {
     return (i18n.language ?? 'es').split('-')[0] ?? 'es'
 }
 
+/**
+ * Newsletter subscriptions and broadcasts.
+ *
+ * @returns the loading, error and success state, and the actions
+ */
 export function useNewsletter() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)

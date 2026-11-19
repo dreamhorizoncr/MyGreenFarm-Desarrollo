@@ -1,0 +1,85 @@
+import { useEffect, useRef, useState } from 'react'
+import { useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { ChevronUpIcon } from '@animateicons/react/lucide'
+
+const ADMIN_SCROLL_CONTAINER_ID = 'admin-scroll-container'
+
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual'
+
+function isDashboardPath(pathname: string) {
+    return pathname.startsWith('/admin') || pathname === '/profile'
+}
+
+function getScrollElement(pathname: string): HTMLElement | null {
+    return isDashboardPath(pathname) ? document.getElementById(ADMIN_SCROLL_CONTAINER_ID) : null
+}
+
+function isOverGreenSection(button: HTMLElement): boolean {
+    const rect = button.getBoundingClientRect()
+    const x = rect.left + rect.width / 2
+    const y = rect.top + rect.height / 2
+
+    const previousPointerEvents = button.style.pointerEvents
+    button.style.pointerEvents = 'none'
+    const elementBelow = document.elementFromPoint(x, y)
+    button.style.pointerEvents = previousPointerEvents
+
+    return !!elementBelow?.closest('[data-scroll-bg="green"]')
+}
+
+/**
+ * Goes back to the top of the page on every navigation, and shows a button to do it after scrolling
+ * down. On admin pages it scrolls their own container. Its color changes over green sections.
+ */
+function ScrollToTopButton() {
+    const { t } = useTranslation()
+    const { pathname } = useLocation()
+    const [visible, setVisible] = useState(false)
+    const [overGreen, setOverGreen] = useState(false)
+    const buttonRef = useRef<HTMLButtonElement>(null)
+    const firstPage = useRef(true)
+
+    useEffect(() => {
+        const el = getScrollElement(pathname)
+        if (firstPage.current) firstPage.current = false
+        else if (el) el.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+        else window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+        const target: HTMLElement | Window = el ?? window
+        const onScroll = () => {
+            const show = (el ? el.scrollTop : window.scrollY) > 400
+            setVisible(show)
+            if (show && buttonRef.current) setOverGreen(isOverGreenSection(buttonRef.current))
+        }
+        let timer = 0
+        const frame = requestAnimationFrame(() => { timer = window.setTimeout(onScroll) })
+        target.addEventListener('scroll', onScroll, { passive: true })
+        return () => {
+            cancelAnimationFrame(frame)
+            clearTimeout(timer)
+            target.removeEventListener('scroll', onScroll)
+        }
+    }, [pathname])
+
+    const handleClick = () => {
+        const el = getScrollElement(pathname)
+        if (el) el.scrollTo({ top: 0, behavior: 'auto' })
+        else window.scrollTo(0, 0)
+    }
+
+    return (
+        <button
+            ref={buttonRef}
+            type="button"
+            onClick={handleClick}
+            aria-label={t('common.scrollToTop')}
+            className={`fixed bottom-21 right-6 z-40 flex size-12 items-center justify-center rounded-full text-white shadow-lg transition-all duration-300 hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link ${
+                overGreen ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-500 hover:bg-green-600'
+            } ${visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-3 opacity-0'}`}
+        >
+            <ChevronUpIcon size={22} isAnimated={false} aria-hidden="true" />
+        </button>
+    )
+}
+
+export default ScrollToTopButton

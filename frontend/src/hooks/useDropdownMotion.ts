@@ -6,6 +6,13 @@ const EXPANDED = 'inset(-50% -50% -50% -50%)'
 const COLLAPSED_DOWN = 'inset(-50% -50% 100% -50%)'
 const COLLAPSED_UP = 'inset(100% -50% -50% -50%)'
 
+/**
+ * Animation of the dropdown menus for Motion: they unfold from the trigger, or only fade with reduced
+ * motion.
+ *
+ * @param opensUpward - whether the menu opens above the trigger
+ * @returns the `initial`, `animate`, `exit` and `transition` props of the menu
+ */
 export function useDropdownMotion(opensUpward = false): Pick<HTMLMotionProps<'div'>, 'initial' | 'animate' | 'exit' | 'transition'> {
   const reduceMotion = useReducedMotion()
   const collapsed = opensUpward ? COLLAPSED_UP : COLLAPSED_DOWN

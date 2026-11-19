@@ -1,9 +1,11 @@
 import type { ChatMessage } from '../../hooks/useChat'
 
+/** Props of {@link ChatMessage}. */
 interface ChatMessageProps {
   message: ChatMessage
 }
 
+/** A bubble of the chat: the user's on the right, the assistant's on the left. */
 export default function ChatMessage({ message }: Readonly<ChatMessageProps>) {
   const isUser = message.role === 'user'
   if (isUser) {

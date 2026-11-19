@@ -4,6 +4,7 @@ import { getErrorMessage } from '../utils/error.ts'
 import i18n from '../i18n/index.ts'
 import type { AppointmentPage, AppointmentStatus } from '../types/appointment.ts'
 
+/** Filters and page of the appointments list. */
 export interface AppointmentQuery {
   page: number
   size: number
@@ -11,6 +12,7 @@ export interface AppointmentQuery {
   date?: string
   search?: string
   excludePast: boolean
+  /** Local date and time; with `excludePast`, appointments before it are hidden. */
   notBefore: string
 }
 
@@ -20,12 +22,21 @@ const EMPTY_PAGE: AppointmentPage = {
   totalElements: 0,
   number: 0,
   size: 10,
+  first: true,
+  last: true,
 }
 
 function currentLang(): string {
   return (i18n.language ?? 'es').split('-')[0] ?? 'es'
 }
 
+/**
+ * Appointments for the admin list. A request that finishes after a newer one is ignored, so fast
+ * filter changes never show stale results.
+ *
+ * @returns the appointments, the page totals, the loading and error state, which appointment has an
+ *   action in progress, and the actions to change its status or reschedule it
+ */
 export function useAppointments() {
   const [appointmentPage, setAppointmentPage] = useState<AppointmentPage>(EMPTY_PAGE)
   const [loading, setLoading] = useState(true)

@@ -11,13 +11,18 @@ import taller.multimedia.backend.model.announcement.Announcement;
 import taller.multimedia.backend.model.announcement.AnnouncementImage;
 import taller.multimedia.backend.repository.announcement.AnnouncementImageRepository;
 import taller.multimedia.backend.repository.announcement.AnnouncementRepository;
-import taller.multimedia.backend.service.StorageService;
+import taller.multimedia.backend.service.storage.StorageService;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Images of announcements: one optional cover and up to four images for the announcement's gallery.
+ */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AnnouncementImageService {
@@ -29,6 +34,20 @@ public class AnnouncementImageService {
     @Value("${supabase.s3.buckets.announcements}")
     private String announcementsBucket;
 
+    /**
+     * Uploads images to an announcement. A new cover replaces the previous one, which is also
+     * deleted from storage.
+     *
+     * @param announcementId announcement ID
+     * @param files images in PNG, JPG, JPEG, WEBP or SVG format
+     * @param isCover {@code true} to upload the cover (only one file allowed)
+     * @param altTexts alternative texts in the same order as the files; missing ones are left empty
+     * @return the saved images
+     * @throws RuntimeException if the announcement does not exist
+     * @throws IllegalArgumentException if there are no files, more than one cover or a format is
+     *     not allowed
+     * @throws IllegalStateException if the gallery would have more than four images
+     */
     @Transactional
     public List<AnnouncementImageResponse> uploadImages(UUID announcementId, List<MultipartFile> files,
             boolean isCover, List<String> altTexts) {
@@ -44,7 +63,7 @@ public class AnnouncementImageService {
         }
 
         List<AnnouncementImage> existingImages = imageRepository.findByAnnouncementId(announcementId);
-        long currentGalleryCount = existingImages.stream().filter(img -> !img.getIsCover()).count();
+        long currentGalleryCount = existingImages.stream().filter(image -> !image.getIsCover()).count();
 
         if (!isCover && (currentGalleryCount + files.size() > 4)) {
             throw new IllegalStateException(
@@ -89,6 +108,11 @@ public class AnnouncementImageService {
         return responses;
     }
 
+    /**
+     * @param imageId image ID
+     * @param altText new alternative text; it is cleaned before saving
+     * @throws RuntimeException if the image does not exist
+     */
     @Transactional
     public void updateAltText(UUID imageId, String altText) {
         AnnouncementImage image = imageRepository.findById(imageId)
@@ -105,6 +129,10 @@ public class AnnouncementImageService {
                 contentType.equals("image/svg+xml");
     }
 
+    /**
+     * @param announcementId announcement ID
+     * @return the cover and gallery images of the announcement
+     */
     @Transactional(readOnly = true)
     public List<AnnouncementImageResponse> getImagesByAnnouncement(UUID announcementId) {
         return imageRepository.findByAnnouncementId(announcementId).stream()
@@ -112,6 +140,12 @@ public class AnnouncementImageService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Deletes an image from storage and from the announcement.
+     *
+     * @param imageId image ID
+     * @throws RuntimeException if the image does not exist
+     */
     @Transactional
     public void deleteImage(UUID imageId) {
         AnnouncementImage image = imageRepository.findById(imageId)
@@ -127,6 +161,12 @@ public class AnnouncementImageService {
         imageRepository.delete(image);
     }
 
+    /**
+     * Deletes the files of all the images of an announcement from storage, before the announcement
+     * itself is deleted. A file that cannot be deleted is logged and skipped.
+     *
+     * @param announcementId announcement ID
+     */
     @Transactional
     public void deleteAllImagesByAnnouncement(UUID announcementId) {
         List<AnnouncementImage> images = imageRepository.findByAnnouncementId(announcementId);
@@ -137,12 +177,17 @@ public class AnnouncementImageService {
                 try {
                     storageService.deleteFile(announcementsBucket, filePath);
                 } catch (Exception e) {
-                    System.err.println("Could not delete the file from the bucket: " + e.getMessage());
+                    log.warn("Could not delete the file from the bucket: {}", e.getMessage());
                 }
             }
         }
     }
 
+    /**
+     * @param fileUrl public URL of a stored file
+     * @param bucketName bucket that contains the file
+     * @return the file's path inside the bucket, or {@code null} if the URL does not belong to it
+     */
     private String extractPathFromUrl(String fileUrl, String bucketName) {
         try {
             String marker = "/" + bucketName + "/";
@@ -151,7 +196,7 @@ public class AnnouncementImageService {
                 return fileUrl.substring(index + marker.length());
             }
         } catch (Exception e) {
-            System.err.println("Error extracting the path from the URL: " + e.getMessage());
+            log.warn("Error extracting the path from the URL: {}", e.getMessage());
         }
         return null;
     }

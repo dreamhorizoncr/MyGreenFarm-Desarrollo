@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import Navbar from '../components/Navbar.tsx'
+import Navbar from '../components/navigation/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import { ClipboardList } from 'lucide-react'
 import { useServicePlans } from '../hooks/useServicePlans.ts'
@@ -13,7 +13,7 @@ import AnimatedNumber from '../components/ui/AnimatedNumber.tsx'
 import CurrencyToggle from '../components/currency/CurrencyToggle.tsx'
 import type { Currency, ExchangeRate } from '../types/exchangeRate.ts'
 import { convertCurrency, currencySymbol, formatCurrency } from '../utils/currency.ts'
-import ServiceDetailModal from '../components/ServiceDetailModal.tsx'
+import ServiceDetailModal from '../components/services/ServiceDetailModal.tsx'
 import type { ServicePlan } from '../types/servicePlan.ts'
 import { getPlanTypeLabel } from '../utils/planTypeLabels.ts'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
@@ -28,6 +28,7 @@ const cleanCurrency = (value?: string): Currency => {
   return upper === 'USD' || upper === 'EUR' ? upper : 'CRC'
 }
 
+/** Card of a service plan with its price in the chosen currency. */
 function PlanCard({
   plan,
   onSelect,
@@ -125,13 +126,7 @@ function PlanCard({
           <span className="text-left font-heading text-h2 font-bold text-green-500">
             <AnimatedNumber
               value={price}
-              format={(n) =>
-                `${currencySymbol(currency)}${formatCurrency(
-                  n,
-                  currency,
-                  i18n.language
-                )}`
-              }
+              format={(n) => `${currencySymbol(currency)}${formatCurrency(n, currency, i18n.language)}`}
             />
           </span>
         </div>
@@ -150,6 +145,7 @@ function PlanCard({
   )
 }
 
+/** Public page of the service plans, with the exchange rate and the currency toggle. */
 function ServicesPage() {
   const { t, i18n } = useTranslation()
 
@@ -196,7 +192,7 @@ function ServicesPage() {
       i18n.language,
       pageSize
     )
-  }, [currentPage, i18n.language, pageSize])
+  }, [currentPage, i18n.language, pageSize, fetchPlans])
 
   const skeletonCount = useSkeletonCount(
     'services',

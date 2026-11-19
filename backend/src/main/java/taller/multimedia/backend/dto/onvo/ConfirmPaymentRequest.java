@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Card payment confirmation. Part of online payments with Onvo, which are currently disabled.
+ */
 @Data
 @Builder 
 @NoArgsConstructor

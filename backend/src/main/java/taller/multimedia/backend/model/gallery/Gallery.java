@@ -24,6 +24,9 @@ import java.util.List;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+/**
+ * A photo gallery.
+ */
 @Entity
 @Table(name = "gallery")
 @Data
@@ -50,8 +53,11 @@ public class Gallery {
 
     @OneToMany(mappedBy = "gallery", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @BatchSize(size = 20)
-    private List<GalleryImages> galleryImages = new ArrayList<>();
+    private List<GalleryImage> galleryImages = new ArrayList<>();
 
+    /**
+     * Whether it is shown on the home page; at most three galleries can be featured.
+     */
     @Column(nullable = false)
     private Boolean featured = false;
 }

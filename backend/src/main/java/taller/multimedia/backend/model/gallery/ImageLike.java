@@ -17,6 +17,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Like of an anonymous visitor on a gallery image; a visitor can like an image once.
+ */
 @Entity
 @Table(name = "photo_likes", uniqueConstraints = @UniqueConstraint(columnNames = { "gallery_images_id", "anon_id" }))
 @Data
@@ -31,8 +34,11 @@ public class ImageLike {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gallery_images_id", nullable = false)
-    private GalleryImages galleryImages;
+    private GalleryImage galleryImages;
 
+    /**
+     * Random ID stored in the visitor's {@code anon_id} cookie.
+     */
     @Column(name = "anon_id", nullable = false, length = 36)
     private String anonId;
 }

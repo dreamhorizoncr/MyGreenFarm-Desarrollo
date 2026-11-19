@@ -18,6 +18,14 @@ import okhttp3.Response;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
+/**
+ * Generates short texts with Google Gemini: announcement and forum article summaries, semiannual
+ * evaluation summaries for parents and the daily dashboard summaries. All texts are written in
+ * Spanish.
+ *
+ * <p>Every method returns {@code null} instead of throwing when Gemini fails, so callers can simply
+ * skip the summary.
+ */
 @Service
 @RequiredArgsConstructor
 public class GeminiSummaryService {
@@ -90,27 +98,57 @@ public class GeminiSummaryService {
             .readTimeout(20, TimeUnit.SECONDS)
             .build();
 
+    /**
+     * @param content announcement text
+     * @return a summary of up to 45 words, or {@code null} if it could not be generated
+     */
     public String generateSummary(String content) {
         return callGemini(PROMPT_BASE + content);
     }
 
+    /**
+     * @param childName child's full name, used in the message
+     * @param evaluationHistory evaluations of the semester as plain text
+     * @return a message for the parents of up to 120 words, or {@code null} if it could not be
+     *     generated
+     */
     public String generateSemiannualEvaluationSummary(String childName, String evaluationHistory) {
         String prompt = String.format(PROMPT_EVALUATION, childName, evaluationHistory);
         return callGemini(prompt);
     }
 
+    /**
+     * @param content forum article text
+     * @return a one-sentence summary of up to 30 words, or {@code null} if it could not be
+     *     generated
+     */
     public String generateArticleSummary(String content) {
         return callGemini(PROMPT_FORUM_ARTICLE + content);
     }
 
+    /**
+     * @param context day's appointments and pending items, without personal data
+     * @return a summary of up to 70 words for administrators, or {@code null} if it could not be
+     *     generated
+     */
     public String generateDashboardSummary(String context) {
         return callGemini(PROMPT_DASHBOARD + context);
     }
 
+    /**
+     * @param context teacher's groups and pending work, as counts only
+     * @return a summary of up to 50 words for the teacher, or {@code null} if it could not be
+     *     generated
+     */
     public String generateTeacherDashboardSummary(String context) {
         return callGemini(PROMPT_TEACHER_DASHBOARD + context);
     }
 
+    /**
+     * @param prompt full prompt
+     * @return the generated text without leading notes, or {@code null} if the call failed or
+     *     returned nothing
+     */
     private String callGemini(String prompt) {
         try {
             String url = baseUrl + "/models/" + model + ":generateContent";
@@ -163,6 +201,13 @@ public class GeminiSummaryService {
         }
     }
 
+    /**
+     * Removes a note in asterisks that the model sometimes adds before the answer (for example
+     * {@code *Note: ...*}).
+     *
+     * @param text generated text
+     * @return the text without that note, or the original if nothing else is left
+     */
     private String stripMetaNotes(String text) {
         String withoutLeadingNote = text.replaceFirst("^\\*[^*]+\\*\\s*", "");
         return withoutLeadingNote.isBlank() ? text : withoutLeadingNote.trim();

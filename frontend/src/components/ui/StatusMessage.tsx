@@ -3,6 +3,7 @@ import type { LucideIcon } from 'lucide-react'
 import { CloudOff, RotateCw, Sprout } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+/** Props of {@link StatusMessage}. */
 type StatusMessageProps = Readonly<{
   variant?: 'empty' | 'error'
   title?: string
@@ -14,6 +15,7 @@ type StatusMessageProps = Readonly<{
   className?: string
 }>
 
+/** Message for an empty list or an error, with an icon and, for errors, a retry button. */
 function StatusMessage({
   variant = 'empty',
   title,

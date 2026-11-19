@@ -9,6 +9,7 @@ GlobalWorkerOptions.workerSrc = workerSrc
 
 const ZOOM_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2]
 const PAGE_GAP = 16
+/** Extensions shown as an image instead of a PDF. */
 const IMAGE_FILE = /\.(jpe?g|png|webp|gif|avif|bmp|svg)$/i
 
 function isImageFile(url: string, fileName?: string | null) {
@@ -20,6 +21,7 @@ function isImageFile(url: string, fileName?: string | null) {
   }
 }
 
+/** Props of {@link PdfViewer}. */
 interface PdfViewerProps {
   url: string
   fileName?: string | null
@@ -30,6 +32,7 @@ interface PdfViewerProps {
 const iconButtonClass =
   'inline-flex size-9 shrink-0 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-(--grey-100) hover:text-heading disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2'
 
+/** One page of the PDF, drawn in a canvas at the viewer's width. */
 function PdfPage({ pdf, pageNumber, width, label }: Readonly<{ pdf: PDFDocumentProxy; pageNumber: number; width: number; label: string }>) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [ratio, setRatio] = useState(1.294)
@@ -69,6 +72,10 @@ function PdfPage({ pdf, pageNumber, width, label }: Readonly<{ pdf: PDFDocumentP
   )
 }
 
+/**
+ * Shows a PDF (or an image) inside the page, with zoom, a page counter and buttons to open and
+ * download it.
+ */
 function PdfViewer({ url, fileName, title, className = 'h-105' }: Readonly<PdfViewerProps>) {
   const { t } = useTranslation()
   const scrollRef = useRef<HTMLDivElement>(null)

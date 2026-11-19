@@ -1,6 +1,7 @@
 
 import type { ReactNode } from 'react'
 
+/** Props of {@link CheckboxField}. */
 interface CheckboxFieldProps {
   checked: boolean
   onChange: (checked: boolean) => void
@@ -8,6 +9,7 @@ interface CheckboxFieldProps {
   className?: string
 }
 
+/** Checkbox with the design system's style and its label. */
 function CheckboxField({ checked, onChange, children, className = '' }: Readonly<CheckboxFieldProps>) {
   return (
     <label className={`flex cursor-pointer items-center gap-sm rounded-xl border border-neutral-200 px-md py-sm font-body text-body-sm text-body-text ${className}`}>

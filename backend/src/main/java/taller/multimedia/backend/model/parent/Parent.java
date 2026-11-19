@@ -12,6 +12,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * A parent or guardian of enrolled children. Parents are deactivated instead of deleted, and active
+ * parents receive the newsletter.
+ */
 @Entity 
 @Table (name = "parents")
 @Data 
@@ -58,6 +62,9 @@ public class Parent {
         isActive = active;
     }
 
+    /**
+     * @return whether the parent receives the newsletter, which is the case while they are active
+     */
     public boolean isActiveForNewsletter() {
         return Boolean.TRUE.equals(isActive);
     }

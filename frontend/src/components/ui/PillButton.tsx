@@ -1,10 +1,12 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
+/** Props of {@link PillButton}; the rest go to the `<button>`. */
 interface PillButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string
   children: ReactNode
 }
 
+/** Pill-shaped secondary button. */
 function PillButton({ type = 'button', className, children, ...rest }: Readonly<PillButtonProps>) {
   return (
     <button

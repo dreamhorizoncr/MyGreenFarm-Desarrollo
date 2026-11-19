@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useEffectEvent, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import Button from '../../ui/Button.tsx'
 import { useModalExit } from '../../../hooks/useModalExit.ts'
@@ -22,17 +22,23 @@ const MAX_TITLE = 120
 const MAX_TOPIC = 60
 const MAX_CONTENT = 4000
 
+/** Image chosen in the form, with its preview URL. */
 interface SelectedImage {
   file: File
   previewUrl: string
 }
 
+/** Props of {@link BlogPostFormModal}. */
 interface BlogPostFormModalProps {
+  /** Article to edit; `null` to create one. */
   post: BlogPost | null
   onClose: () => void
   onSubmit: (input: BlogPostInput) => void
 }
 
+/**
+ * Form to write or edit an article: title, topic, author, content and image with its alternative text.
+ */
 function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormModalProps>) {
   const { t } = useTranslation()
   const currentUser = userStorage.getUser()
@@ -73,9 +79,12 @@ function BlogPostFormModal({ post, onClose, onSubmit }: Readonly<BlogPostFormMod
     })
   }
 
+  // reads the latest requestClose without registering the listener again on every render
+  const closeOnEscape = useEffectEvent(() => requestClose())
+
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') requestClose()
+      if (event.key === 'Escape') closeOnEscape()
     }
 
     document.addEventListener('keydown', handleEscape)

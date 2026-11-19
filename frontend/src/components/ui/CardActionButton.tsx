@@ -34,13 +34,16 @@ const ICON_SIZE = { md: 17, sm: 16 } as const
 type CardAction = keyof typeof ICONS
 type CardActionSize = keyof typeof ICON_SIZE
 
+/** Props of {@link CardActionButton}; the rest go to the `<button>`. */
 interface CardActionButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'aria-label' | 'aria-pressed'> {
   action: CardAction
+  /** Accessible name, also shown as a tooltip. */
   label: string
   size?: CardActionSize
   pressed?: boolean
 }
 
+/** Round icon button for the actions of a card: edit, reschedule, feature or delete. */
 function CardActionButton({ action, label, size = 'md', pressed, type = 'button', className, ...rest }: Readonly<CardActionButtonProps>) {
   const Icon = ICONS[action]
 

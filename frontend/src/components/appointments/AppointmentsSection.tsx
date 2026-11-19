@@ -1,0 +1,403 @@
+import StatusMessage from '../ui/StatusMessage.tsx'
+import { CalendarX, SearchX } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { SearchIcon } from '@animateicons/react/lucide'
+import { today, getLocalTimeZone } from '@internationalized/date'
+import type { CalendarDate } from '@internationalized/date'
+import ChangeAppointmentStatusModal from './ChangeAppointmentStatusModal.tsx'
+import RescheduleAppointmentModal from './RescheduleAppointmentModal.tsx'
+import AppointmentDetailsModal from './AppointmentDetailsModal.tsx'
+import Skeleton from '../ui/Skeleton.tsx'
+import CalendarPanel from '../ui/CalendarPanel.tsx'
+import CardActionButton from '../ui/CardActionButton.tsx'
+import Pagination from '../ui/Pagination.tsx'
+import { useAppointments } from '../../hooks/useAppointments.ts'
+import { useSkeletonCount } from '../../hooks/useSkeletonCount.ts'
+import SkeletonList from '../ui/SkeletonList.tsx'
+import { notify, notifyError } from '../../utils/notifications.ts'
+import type { Appointment, AppointmentStatus } from '../../types/appointment.ts'
+import { useAvailability } from '../../hooks/useAvailability.ts'
+import TabHighlight from '../ui/TabHighlight.tsx'
+import { tabCarouselClass, useTabCarousel } from '../../hooks/useTabCarousel.ts'
+
+type StatusFilter = 'ALL' | 'BY_DATE' | AppointmentStatus
+
+function localDateTimeNow() {
+  const now = new Date()
+  const pad = (value: number) => String(value).padStart(2, '0')
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
+}
+
+const STATUS_FILTERS: StatusFilter[] = ['ALL', 'BY_DATE', 'PENDING', 'CONFIRMED', 'CANCELLED']
+
+/** Props of {@link AppointmentCard}; without `appointment` it shows a skeleton. */
+interface AppointmentCardProps {
+  appointment?: Appointment
+  statusLabel?: string
+  badgeClassName?: string
+  formattedDate?: string
+  disabled?: boolean
+  onView?: () => void
+  onReschedule?: () => void
+  onChangeStatus?: () => void
+  loading?: boolean
+}
+
+/** Card of an appointment with its date, status and actions. */
+function AppointmentCard({
+  appointment,
+  statusLabel,
+  badgeClassName,
+  formattedDate,
+  disabled,
+  onView,
+  onReschedule,
+  onChangeStatus,
+  loading = false,
+}: Readonly<AppointmentCardProps>) {
+  const { t } = useTranslation()
+
+  if (loading) {
+    return (
+      <div className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm">
+        <div className="flex items-center justify-between gap-sm">
+          <Skeleton shape="pill" className="h-6 w-24" />
+          <div className="flex items-center gap-xs">
+            <Skeleton shape="circle" className="size-10" />
+            <Skeleton shape="circle" className="size-10" />
+          </div>
+        </div>
+        <Skeleton shape="line" className="mt-sm h-5 w-1/2" />
+        <Skeleton shape="line" className="mt-2 h-3 w-1/3" />
+        <Skeleton shape="line" className="mt-md h-4 w-2/5" />
+      </div>
+    )
+  }
+
+  return (
+    <div
+      className={`flex flex-col rounded-2xl border border-neutral-200 bg-white p-lg shadow-sm card-hover ${
+        disabled ? 'opacity-60' : ''
+      }`}
+    >
+      <header className="flex items-center justify-between gap-sm">
+        <span className={`inline-flex rounded-full px-sm py-2xs font-body text-caption font-semibold ${badgeClassName}`}>
+          {statusLabel}
+        </span>
+
+        <div className="flex items-center gap-xs">
+          <CardActionButton
+            action="reschedule"
+            label={t('teacherAppointments.rescheduleTitle')}
+            title={t('teacherAppointments.rescheduleTitle')}
+            disabled={disabled || appointment!.status === 'CANCELLED'}
+            onClick={() => onReschedule?.()}
+          />
+
+          <CardActionButton
+            action="edit"
+            label={t('teacherAppointments.changeStatus')}
+            title={t('teacherAppointments.changeStatus')}
+            disabled={disabled}
+            onClick={() => onChangeStatus?.()}
+          />
+        </div>
+      </header>
+
+      <h3 className="m-0 mt-sm font-heading text-h5 font-bold leading-snug text-heading">
+        {appointment!.childName}
+      </h3>
+      <p className="m-0 font-body text-body-sm text-neutral-500">
+        {formattedDate}
+      </p>
+
+      <button
+        type="button"
+        onClick={onView}
+        className="mt-md self-start rounded font-body text-body-sm font-semibold text-link underline-offset-2 transition-colors hover:underline focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+      >
+        {t('teacherAppointments.viewDetails')}
+      </button>
+    </div>
+  )
+}
+
+/**
+ * Appointments of the admin page: filters by status or day, search, pagination, and the modals to see,
+ * reschedule or change the status of an appointment.
+ */
+function AppointmentsSection() {
+  const { t, i18n } = useTranslation()
+  const {
+    appointments,
+    totalPages,
+    loading,
+    error,
+    actionId,
+    actionError,
+    fetchAppointments,
+    changeStatus,
+    rescheduleAppointment,
+  } = useAppointments()
+
+  const { exceptions, reload: loadExceptions } = useAvailability()
+
+  useEffect(() => {
+    loadExceptions(i18n.language)
+  }, [loadExceptions, i18n.language])
+
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('BY_DATE')
+  const [currentPage, setCurrentPage] = useState(1)
+  const tabRowRef = useTabCarousel(statusFilter)
+  const [selectedDate, setSelectedDate] = useState<CalendarDate | null>(today(getLocalTimeZone()))
+  const [searchTerm, setSearchTerm] = useState('')
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
+  const [appointmentToEdit, setAppointmentToEdit] = useState<Appointment | null>(null)
+  const [appointmentToReschedule, setAppointmentToReschedule] = useState<Appointment | null>(null)
+  const [appointmentToView, setAppointmentToView] = useState<Appointment | null>(null)
+
+  const specialScheduleDates = useMemo(() => {
+    return new Set(exceptions.map((item) => item.exceptionDate))
+  }, [exceptions])
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedSearchTerm(searchTerm), 300)
+    return () => window.clearTimeout(timer)
+  }, [searchTerm])
+
+  useEffect(() => {
+    if (searchTerm !== debouncedSearchTerm) return
+    void fetchAppointments({
+      page: currentPage - 1,
+      size: 10,
+      status: statusFilter === 'ALL' || statusFilter === 'BY_DATE' ? undefined : statusFilter,
+      date: statusFilter === 'BY_DATE' ? selectedDate?.toString() : undefined,
+      search: debouncedSearchTerm.trim() || undefined,
+      excludePast: statusFilter !== 'PENDING',
+      notBefore: localDateTimeNow(),
+    })
+  }, [fetchAppointments, statusFilter, selectedDate, searchTerm, debouncedSearchTerm, currentPage])
+
+  const pagedAppointments = appointments
+  // when the list shrinks and the page no longer exists, go to the last one
+  if (!loading && currentPage > Math.max(totalPages, 1)) {
+    setCurrentPage(Math.max(totalPages, 1))
+  }
+  const isDayView = statusFilter === 'BY_DATE'
+  const daySkeletonCount = useSkeletonCount('appointments-day', loading || !isDayView, pagedAppointments.length, 2)
+  const statusSkeletonCount = useSkeletonCount('appointments-status', loading || isDayView, pagedAppointments.length, 4)
+
+  const statusLabel = (filter: StatusFilter): string => {
+    if (filter === 'BY_DATE') return t('teacherAppointments.byDate')
+    return filter === 'ALL'
+      ? t('teacherAppointments.all')
+      : t(`teacherAppointments.status.${filter.toLowerCase()}` as 'teacherAppointments.status.pending')
+  }
+
+  const filterClassName = (active: boolean) =>
+    `relative rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
+      active
+        ? 'border-green-500 text-white'
+        : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
+    }`
+
+  const badgeClassName = (status: AppointmentStatus) => {
+    if (status === 'CONFIRMED') return 'bg-green-100 text-green-700'
+    if (status === 'CANCELLED') return 'bg-red-100 text-red-700'
+    return 'bg-[var(--info-100)] text-[var(--info-700)]'
+  }
+
+  const formatDate = (iso: string) => {
+    const locale = i18n.resolvedLanguage ?? i18n.language ?? 'es'
+    return new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(iso))
+  }
+
+  const handleChangeStatus = async (id: string, status: AppointmentStatus, conclusion?: string) => {
+    try {
+      await changeStatus(id, status, conclusion)
+      notify.success(t('teacherAppointments.statusUpdatedToastTitle'))
+    } catch (err) {
+      notifyError(t('teacherAppointments.statusUpdateErrorToastTitle'), err)
+      throw err
+    }
+  }
+
+  const handleReschedule = async (id: string, newDate: string) => {
+    try {
+      await rescheduleAppointment(id, newDate)
+      notify.success({
+        title: t('teacherAppointments.rescheduledToastTitle'),
+        description: t('teacherAppointments.rescheduledToastDescription'),
+      })
+    } catch (err) {
+      notifyError(t('teacherAppointments.rescheduleErrorToastTitle'), err)
+      throw err
+    }
+  }
+
+  return (
+    <div id="appointments-section">
+      <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
+        {t('teacherAppointments.title')}
+      </h1>
+      <p className="mt-2 font-body text-body text-neutral-500">
+        {t('teacherAppointments.subtitle')}
+      </p>
+
+      <div className="mb-[var(--spacing-lg)] mt-[var(--spacing-xl)] flex flex-wrap items-center justify-between gap-md">
+        <div className="flex h-11 w-full min-w-0 max-w-[420px] flex-1 sm:min-w-[240px] items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500">
+          <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
+          <input
+            type="search"
+            className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
+            placeholder={t('teacherAppointments.searchPlaceholder')}
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value)
+              setCurrentPage(1)
+            }}
+            aria-label={t('teacherAppointments.searchPlaceholder')}
+          />
+        </div>
+
+        <div ref={tabRowRef} className={`${tabCarouselClass} -my-1 w-[calc(100%+0.5rem)] min-w-0 items-center md:w-auto`}>
+          {STATUS_FILTERS.map((filter) => (
+            <button
+              key={filter}
+              type="button"
+              aria-pressed={statusFilter === filter}
+              onClick={() => {
+                setStatusFilter(filter)
+                setCurrentPage(1)
+              }}
+              className={filterClassName(statusFilter === filter)}
+            >
+              {statusFilter === filter && <TabHighlight layoutId="appointments-status-tab" className="bg-green-500" />}
+              {statusLabel(filter)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {actionError && (
+        <p className="m-0 mb-md text-left font-body text-body-sm text-danger">{actionError}</p>
+      )}
+
+      {statusFilter === 'BY_DATE' ? (
+        <div className="grid grid-cols-1 gap-xl lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)] items-start">
+          <CalendarPanel
+            value={selectedDate}
+            onChange={(date) => {
+              setSelectedDate(date)
+              setCurrentPage(1)
+            }}
+            markedDates={specialScheduleDates}
+          />
+
+          <div className="flex flex-col gap-md">
+            <h2 className="m-0 font-heading text-h4 font-bold text-heading">
+              {t('teacherAppointments.calendar.appointmentsForDay')}: <span className="text-green-600">{selectedDate?.toString()}</span>
+            </h2>
+
+            {loading && (
+              <div className="grid grid-cols-1 gap-md">
+                <SkeletonList count={daySkeletonCount}>{() => <AppointmentCard loading />}</SkeletonList>
+              </div>
+            )}
+
+            {error && <StatusMessage variant="error" description={error} />}
+
+            {!loading && !error && (
+              appointments.length === 0 ? (
+                <StatusMessage icon={CalendarX} description={t('teacherAppointments.calendar.noAppointmentsForDay')} />
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 gap-md">
+                    {pagedAppointments.map((appointment) => (
+                      <AppointmentCard
+                        key={appointment.id}
+                        appointment={appointment}
+                        statusLabel={statusLabel(appointment.status)}
+                        badgeClassName={badgeClassName(appointment.status)}
+                        formattedDate={formatDate(appointment.appointmentDate)}
+                        disabled={actionId === appointment.id}
+                        onView={() => setAppointmentToView(appointment)}
+                        onReschedule={() => setAppointmentToReschedule(appointment)}
+                        onChangeStatus={() => setAppointmentToEdit(appointment)}
+                      />
+                    ))}
+                  </div>
+                  <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                </>
+              )
+            )}
+          </div>
+        </div>
+      ) : (
+        <>
+          {loading && (
+            <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
+              <SkeletonList count={statusSkeletonCount}>{() => <AppointmentCard loading />}</SkeletonList>
+            </div>
+          )}
+
+          {error && <StatusMessage variant="error" description={error} />}
+
+          {!loading && !error && (
+            appointments.length === 0 ? (
+              <StatusMessage
+                icon={searchTerm.trim() || statusFilter !== 'ALL' ? SearchX : CalendarX}
+                description={searchTerm.trim() || statusFilter !== 'ALL' ? t('teacherAppointments.noResults') : t('teacherAppointments.empty')}
+              />
+            ) : (
+              <>
+                <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
+                  {pagedAppointments.map((appointment) => (
+                    <AppointmentCard
+                      key={appointment.id}
+                      appointment={appointment}
+                      statusLabel={statusLabel(appointment.status)}
+                      badgeClassName={badgeClassName(appointment.status)}
+                      formattedDate={formatDate(appointment.appointmentDate)}
+                      disabled={actionId === appointment.id}
+                      onView={() => setAppointmentToView(appointment)}
+                      onReschedule={() => setAppointmentToReschedule(appointment)}
+                      onChangeStatus={() => setAppointmentToEdit(appointment)}
+                    />
+                  ))}
+                </div>
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+              </>
+            )
+          )}
+        </>
+      )}
+
+      {appointmentToEdit && (
+        <ChangeAppointmentStatusModal
+          appointment={appointmentToEdit}
+          onConfirm={handleChangeStatus}
+          onClose={() => setAppointmentToEdit(null)}
+        />
+      )}
+
+      {appointmentToReschedule && (
+        <RescheduleAppointmentModal
+          appointment={appointmentToReschedule}
+          onConfirm={handleReschedule}
+          onClose={() => setAppointmentToReschedule(null)}
+        />
+      )}
+
+      {appointmentToView && (
+        <AppointmentDetailsModal
+          appointment={appointmentToView}
+          onClose={() => setAppointmentToView(null)}
+        />
+      )}
+    </div>
+  )
+}
+
+export default AppointmentsSection

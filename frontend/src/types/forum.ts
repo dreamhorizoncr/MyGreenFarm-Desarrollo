@@ -1,15 +1,27 @@
+import type { PageResponse } from './page.ts'
+
+/** Post of a family in the forum's community. */
 export interface CommunityPost {
   id: string
   name: string
   createdAt: string
   content: string
   likeCount: number
+  /** Whether this visitor likes it. */
   reacted: boolean
   commentCount: number
 }
 
-export interface CommunityComment { id: string; communityPostId: string; alias: string; content: string; createdAt: string }
+/** Comment of a community post. */
+export interface CommunityComment {
+  id: string
+  communityPostId: string
+  alias: string
+  content: string
+  createdAt: string
+}
 
+/** Article of the forum's blog, as the pages use it. */
 export interface BlogPost {
   id: string
   title: string
@@ -27,6 +39,7 @@ export interface BlogPost {
   commentCount: number
 }
 
+/** Comment of an article. */
 export interface BlogComment {
   id: string
   articleId: string
@@ -35,6 +48,7 @@ export interface BlogComment {
   content: string
 }
 
+/** Data to create or update an article. */
 export interface BlogPostInput {
   title: string
   topic: string
@@ -44,15 +58,18 @@ export interface BlogPostInput {
   imageUrl?: string
   imageAlt?: string
   imageFile?: File
+  /** Whether to remove the current image. */
   removeImage?: boolean
 }
 
+/** Likes of an article after liking it or removing the like. */
 export interface ForumArticleLikeResponse {
   articleId: string
   totalLikes: number
   liked: boolean
 }
 
+/** Article as the backend sends it; see {@link BlogPost}. */
 export interface ForumArticleResponse {
   id: string
   title: string
@@ -70,26 +87,11 @@ export interface ForumArticleResponse {
   commentCount: number
 }
 
-export interface ForumArticlePage {
-  content: BlogPost[]
-  totalPages: number
-  totalElements: number
-  number: number
-  size: number
-}
+/** A page of articles. */
+export type ForumArticlePage = PageResponse<BlogPost>
 
-export interface ForumCommentPage {
-  content: BlogComment[]
-  totalPages: number
-  totalElements: number
-  number: number
-  size: number
-}
+/** A page of comments of an article. */
+export type ForumCommentPage = PageResponse<BlogComment>
 
-export interface ForumCommunityPage {
-  content: CommunityPost[]
-  totalPages: number
-  totalElements: number
-  number: number
-  size: number
-}
+/** A page of community posts. */
+export type ForumCommunityPage = PageResponse<CommunityPost>

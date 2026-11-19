@@ -21,6 +21,15 @@ import taller.multimedia.backend.exception.InvalidFieldException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
+/**
+ * Moderates what visitors publish in the forum (community posts, comments and the names they sign
+ * with) using Google Gemini, and fixes their spelling.
+ *
+ * <p>It rejects profanity in Spanish and English (including Latin American slang), sexual or
+ * discriminatory content, politics and religion outside their topic, spam, personal data, emojis,
+ * and fake names that impersonate public figures or hide a double meaning. When Gemini cannot be
+ * reached, content is rejected with a "try again" message instead of being published unchecked.
+ */
 @Service
 @RequiredArgsConstructor
 public class ForumModerationService {
@@ -132,6 +141,13 @@ public class ForumModerationService {
             .readTimeout(15, TimeUnit.SECONDS)
             .build();
 
+    /**
+     * Checks a community wall post.
+     *
+     * @param content post text
+     * @return the text with its spelling corrected
+     * @throws InvalidFieldException if it has emojis, breaks the rules, or could not be checked
+     */
     public String assertAppropriate(String content) {
         rejectIfEmoji("content", content);
         JsonNode result = callGemini("content", APPROPRIATE_PROMPT.formatted(content), false);
@@ -144,6 +160,16 @@ public class ForumModerationService {
         return correctedContent(result, content);
     }
 
+    /**
+     * Checks a comment on a blog article: it must follow the rules and be related to the article.
+     *
+     * @param articleTopic topic of the article
+     * @param articleTitle title of the article
+     * @param commentContent comment text
+     * @return the text with its spelling corrected
+     * @throws InvalidFieldException if it has emojis, breaks the rules, is off-topic, or could not
+     *     be checked
+     */
     public String assertCommentRelevant(String articleTopic, String articleTitle, String commentContent) {
         rejectIfEmoji("content", commentContent);
         JsonNode result = callGemini("content", COMMENT_PROMPT.formatted(articleTopic, articleTitle, commentContent), false);
@@ -157,6 +183,16 @@ public class ForumModerationService {
         return correctedContent(result, commentContent);
     }
 
+    /**
+     * Checks the name or alias someone signs with. Gemini may use Google Search to tell whether a
+     * full name belongs to a public figure; if the search quota is exhausted, the check runs
+     * without it.
+     *
+     * @param fieldName form field, used in the error
+     * @param name name to check
+     * @throws InvalidFieldException if it has emojis, is offensive, has a double meaning,
+     *     impersonates a public figure, or could not be checked
+     */
     public void assertAppropriateName(String fieldName, String name) {
         rejectIfEmoji(fieldName, name);
         JsonNode result = callGemini(fieldName, NAME_PROMPT.formatted(name), true);
@@ -178,6 +214,13 @@ public class ForumModerationService {
         return corrected == null || corrected.isBlank() ? original : corrected;
     }
 
+    /**
+     * @param fieldName form field, used in the error
+     * @param prompt moderation prompt
+     * @param withSearchGrounding whether Gemini may use Google Search
+     * @return the JSON verdict returned by Gemini
+     * @throws InvalidFieldException if Gemini blocked the content or the call failed
+     */
     private JsonNode callGemini(String fieldName, String prompt, boolean withSearchGrounding) {
         try {
             String url = baseUrl + "/models/" + model + ":generateContent";
@@ -245,6 +288,10 @@ public class ForumModerationService {
         }
     }
 
+    /**
+     * @param text model answer, which may wrap the JSON in extra text
+     * @return the text from the first {@code {} to the last {@code }}
+     */
     private String extractJson(String text) {
         String trimmed = text.trim();
         int start = trimmed.indexOf('{');

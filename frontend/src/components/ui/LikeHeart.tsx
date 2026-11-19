@@ -1,11 +1,13 @@
 import { HeartIcon } from '@animateicons/react/lucide'
 
+/** Props of {@link LikeHeart}. */
 interface LikeHeartProps {
   liked: boolean
   size: number
   className?: string
 }
 
+/** Heart of the like buttons: filled when liked, with a small bounce. */
 function LikeHeart({ liked, size, className = '' }: Readonly<LikeHeartProps>) {
   if (!liked) return <HeartIcon size={size} className={className} aria-hidden="true" />
 

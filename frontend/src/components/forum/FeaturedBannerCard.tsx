@@ -1,5 +1,6 @@
 import { featuredBanner } from './forumData.ts'
 
+/** Picture of the forum's sidebar that jumps to the feed. */
 function FeaturedBannerCard() {
   return (
     <a

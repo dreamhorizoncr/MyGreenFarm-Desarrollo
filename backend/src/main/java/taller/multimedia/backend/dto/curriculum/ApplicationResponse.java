@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * A job application with temporary links to its CV and certificates.
+ */
 @Data
 @Builder
 public class ApplicationResponse {

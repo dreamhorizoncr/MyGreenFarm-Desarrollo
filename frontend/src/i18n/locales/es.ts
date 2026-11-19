@@ -84,6 +84,8 @@ export default {
     ownerPanel: "Panel del propietario",
     teacherPanel: "Panel docente",
     adminPanel: "Panel de administrador",
+    openMenu: "Abrir menú",
+    closeMenu: "Cerrar menú",
   },
   greenHearts: {
     navLabel: "Green Hearts",
@@ -242,6 +244,7 @@ export default {
       like: "Dar me gusta",
       unlike: "Quitar me gusta",
       breadcrumbGallery: "Galería de Recuerdos",
+      breadcrumbLabel: "Ruta de navegación",
       breadcrumbAlbums: "Álbumes",
       emptyPhotos: "Este álbum todavía no tiene fotos.",
       notFoundAlbum: "No se encontró el álbum solicitado.",
@@ -987,7 +990,7 @@ export default {
     usersSubtitle:
       "Consulta y administra los usuarios del centro educativo.",
     searchPlaceholder: "Buscar por nombre, apellido, correo o rol",
-    addDocente: "Agregar usuario",
+    addUser: "Agregar usuario",
     allRoles: "Todos",
     roles: {
       OWNER: "Propietario",
@@ -1013,10 +1016,10 @@ export default {
     deleteConfirmFieldLabel: 'Para confirmar, escribe "{{name}}"',
     deleteConfirmPlaceholder: 'Escribe "{{name}}"',
     selfDeleteNotAllowed: "No puedes eliminar tu propia cuenta",
-    updateDocenteToastTitle: "Usuario actualizado",
-    updateDocenteErrorToastTitle: "No se pudo actualizar el usuario",
-    deleteDocenteToastTitle: "Usuario eliminado",
-    deleteDocenteErrorToastTitle: "No se pudo eliminar el usuario",
+    updateUserToastTitle: "Usuario actualizado",
+    updateUserErrorToastTitle: "No se pudo actualizar el usuario",
+    deleteUserToastTitle: "Usuario eliminado",
+    deleteUserErrorToastTitle: "No se pudo eliminar el usuario",
     newsletter: {
       title: "Gestión de Boletín",
       subtitle: "Administra suscriptores, padres de familia y realiza envíos masivos.",
@@ -1290,6 +1293,7 @@ export default {
       description: "Descripción",
       price: "Precio informativo",
       currency: "Moneda",
+      currencyPlaceholder: "Selecciona una moneda",
       serviceFrequency: "Frecuencia del servicio",
       selectServiceFrequency: "Seleccione la frecuencia del servicio",
       oneTime: "Una sola vez",
@@ -1340,6 +1344,7 @@ export default {
     },
     expedients: {
       noMatches: 'No se encontraron expedientes con ese nombre.',
+      loadChildrenError: "No se pudieron cargar los niños disponibles.",
       title: "Gestión de Expedientes Académicos",
       tabLabel: "Expedientes académicos",
       description:
@@ -1347,7 +1352,7 @@ export default {
       searchbutton: "Buscar niño",
       editbutton: "Editar",
       deletebutton: "Eliminar",
-      admisiondate: "Fecha de Admisión:",
+      admissionDate: "Fecha de Admisión:",
       grade: "Nivel Educativo:",
       notes: "Observaciones Generales",
 
@@ -1895,7 +1900,7 @@ export default {
       noAppointmentsForDay: "No hay citas programadas para este día."
     },
   },
-  moneda: {
+  currency: {
     title: "Conversor de moneda",
     convertTo: "Mostrar precio en",
     buyRate: "Tipo de Cambio",
@@ -2035,10 +2040,10 @@ export default {
       identificationNumber: { hint: "Sin guiones ni espacios." },
       cardHolderName: { hint: "Tal como aparece impreso en la tarjeta." },
       cardNumber: { hint: "Los 16 dígitos del frente de la tarjeta." },
-      expiry: { hint: "Mes y año de vencimiento." },
+      expiry: { hint: "Mes y año de vencimiento.", placeholder: "MM/AA" },
       cvc: { hint: "Los 3 o 4 dígitos del reverso." },
       senderPhone: { hint: "Número desde el que hiciste el SINPE Móvil, sin guiones." },
-      referenceNumber: { hint: "Aparece en el comprobante de la transferencia." },
+      referenceNumber: { hint: "Aparece en el comprobante de la transferencia.", placeholder: "Ej. 123456789" },
     },
     news: {
       title: {

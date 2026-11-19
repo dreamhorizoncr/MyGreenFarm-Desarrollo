@@ -1,10 +1,13 @@
 import { motion, useReducedMotion } from 'motion/react'
 
+/** Props of {@link TabHighlight}. */
 interface TabHighlightProps {
+  /** Shared by the tabs of one group, so the highlight slides between them. */
   layoutId: string
   className?: string
 }
 
+/** Background of the active tab, which slides to the tab chosen. */
 function TabHighlight({ layoutId, className = 'bg-orange-500' }: Readonly<TabHighlightProps>) {
   const reduceMotion = useReducedMotion()
 

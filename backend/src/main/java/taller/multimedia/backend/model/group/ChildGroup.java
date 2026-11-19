@@ -21,6 +21,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import taller.multimedia.backend.model.child.Child;
 
+/**
+ * Membership of a child in a class group; a child belongs to one group at most.
+ */
 @Entity
 @Table(name = "child_groups", uniqueConstraints = @UniqueConstraint(
         name = "uk_child_single_group",
@@ -49,6 +52,9 @@ public class ChildGroup {
     @Column(name = "assigned_at", nullable = false)
     private LocalDateTime assignedAt;
 
+    /**
+     * Records when the child was added to the group, unless it was already set.
+     */
     @PrePersist
     public void prePersist() {
         if (assignedAt == null) {

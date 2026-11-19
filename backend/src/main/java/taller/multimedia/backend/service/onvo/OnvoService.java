@@ -2,14 +2,14 @@
 
 // import lombok.RequiredArgsConstructor;
 // import taller.multimedia.backend.dto.onvo.PaymentQuote;
-// import taller.multimedia.backend.model.exchange_rate.ExchangeRate;
+// import taller.multimedia.backend.model.exchangerate.ExchangeRate;
 // import taller.multimedia.backend.model.onvo.PaymentIntentPricing;
-// import taller.multimedia.backend.model.service_plans.ServicePlan;
-// import taller.multimedia.backend.repository.exchange_rate.ExchangeRateRepository;
+// import taller.multimedia.backend.model.serviceplan.ServicePlan;
+// import taller.multimedia.backend.repository.exchangerate.ExchangeRateRepository;
 // import taller.multimedia.backend.repository.onvo.PaymentIntentPricingRepository;
-// import taller.multimedia.backend.repository.service_plan.ServicePlanRepository;
-// import taller.multimedia.backend.service.EmailService;
-// import taller.multimedia.backend.service.electronic_billing.ElectronicBillingService;
+// import taller.multimedia.backend.repository.serviceplan.ServicePlanRepository;
+// import taller.multimedia.backend.service.email.EmailService;
+// import taller.multimedia.backend.service.electronicbilling.ElectronicBillingService;
 
 // import java.math.BigDecimal;
 // import java.math.RoundingMode;

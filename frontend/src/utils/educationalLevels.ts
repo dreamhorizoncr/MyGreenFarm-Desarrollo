@@ -1,5 +1,6 @@
 import type { EducationalLevel } from "../types/expedient.ts";
 
+/** Translation key (under `admin.expedients.levels`) of each educational level of the backend. */
 export const educationalLevelKeys = {
   LACTANTES: "lactantes",
   MATERNAL: "maternal",

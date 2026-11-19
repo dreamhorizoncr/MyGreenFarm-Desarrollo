@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * A club with its images and its current free spots (capacity minus enrolled children).
+ */
 @Data
 @Builder
 @NoArgsConstructor

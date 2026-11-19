@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * Published comment on a forum article.
+ */
 @Data
 @Builder
 @AllArgsConstructor

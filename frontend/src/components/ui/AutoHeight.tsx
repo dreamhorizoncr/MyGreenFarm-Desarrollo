@@ -1,11 +1,13 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { motion } from 'motion/react'
 
+/** Props of {@link AutoHeight}. */
 interface AutoHeightProps {
   children: ReactNode
   className?: string
 }
 
+/** Animates its height when its content grows or shrinks. */
 function AutoHeight({ children, className = '' }: Readonly<AutoHeightProps>) {
   const contentRef = useRef<HTMLDivElement>(null)
   const [height, setHeight] = useState<number | 'auto'>('auto')

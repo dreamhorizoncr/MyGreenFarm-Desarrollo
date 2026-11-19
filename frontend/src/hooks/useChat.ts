@@ -1,14 +1,17 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { sendChatMessage } from '../services/chat.service'
-import type { ChatResponse } from '../services/chat.service'
+import { sendChatMessage } from '../services/chat'
+import type { ChatResponse } from '../services/chat'
 import { userStorage } from '../utils/userStorage'
 import i18n from '../i18n'
 
+/** A message of the chat with the assistant. */
 export interface ChatMessage {
   id: string
   role: 'user' | 'bot'
   content: string
+  /** Whether the moderation rejected it. */
   blocked?: boolean
+  /** Whether it is a temporary message that is not kept in the history. */
   ephemeral?: boolean
   action?: string | null
   target?: string | null
@@ -131,6 +134,13 @@ function saveHistory(messages: ChatMessage[], conversationId: string | null) {
   }
 }
 
+/**
+ * Conversation with the site's assistant, kept in `sessionStorage` while the tab is open. It greets
+ * the user by name and never shows answers that reveal internal instructions.
+ *
+ * @returns the messages, the input and its setter, `sendMessage`, the loading state, `clearChat`, the
+ *   conversation's ID and `appendMessage` for the booking flow
+ */
 export function useChat() {
   const closedRef = useRef(false)
   const [messages, setMessages] = useState<ChatMessage[]>(() => loadHistory())
@@ -247,4 +257,5 @@ export function useChat() {
   }
 }
 
+/** Everything {@link useChat} returns. */
 export type ChatController = ReturnType<typeof useChat>

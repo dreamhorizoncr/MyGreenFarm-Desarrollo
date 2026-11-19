@@ -17,7 +17,7 @@ import taller.multimedia.backend.model.gallery.Gallery;
 import taller.multimedia.backend.repository.gallery.GalleryImageRepository;
 import taller.multimedia.backend.repository.gallery.GalleryRepository;
 import taller.multimedia.backend.repository.gallery.ImageLikeRepository;
-import taller.multimedia.backend.service.StorageService;
+import taller.multimedia.backend.service.storage.StorageService;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;

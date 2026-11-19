@@ -3,6 +3,9 @@ import { useAccessibility } from "../../contexts/accessibility";
 
 const BAND_HEIGHT = 132;
 
+/**
+ * Band that follows the pointer and dims the rest of the page, when the reading guide option is on.
+ */
 export default function ReadingGuide() {
   const { readingGuide } = useAccessibility();
   const [position, setPosition] = useState(() =>

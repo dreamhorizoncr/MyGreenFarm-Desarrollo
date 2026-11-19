@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * A job opening. It is open unless an application was hired for it.
+ */
 @Data
 @Builder
 public class VacancyResponse {

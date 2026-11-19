@@ -15,17 +15,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import taller.multimedia.backend.dto.AuthResult;
-import taller.multimedia.backend.dto.ForgotPasswordRequest;
-import taller.multimedia.backend.dto.LoginRequest;
-import taller.multimedia.backend.dto.MessageResponse;
-import taller.multimedia.backend.dto.ResetPasswordRequest;
-import taller.multimedia.backend.dto.SignupRequest;
-import taller.multimedia.backend.dto.SigninResponse;
+import taller.multimedia.backend.dto.auth.AuthResult;
+import taller.multimedia.backend.dto.auth.ForgotPasswordRequest;
+import taller.multimedia.backend.dto.auth.LoginRequest;
+import taller.multimedia.backend.dto.common.MessageResponse;
+import taller.multimedia.backend.dto.auth.ResetPasswordRequest;
+import taller.multimedia.backend.dto.auth.SignupRequest;
+import taller.multimedia.backend.dto.auth.SigninResponse;
 import taller.multimedia.backend.security.jwt.JwtUtils;
-import taller.multimedia.backend.security.services.UserDetailsImpl;
+import taller.multimedia.backend.security.service.UserDetailsImpl;
 import taller.multimedia.backend.service.user.AuthService;
 
+/**
+ * Sign-in, sign-out, staff registration and password recovery.
+ */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -38,6 +41,13 @@ public class AuthController {
         this.jwtUtils = jwtUtils;
     }
 
+    /**
+     * {@code POST /api/auth/signin}
+     *
+     * @param loginRequest email and password
+     * @return the JWT and the user's data, plus the same JWT in an HTTP-only cookie; 401 if the
+     *     credentials are wrong
+     */
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         AuthResult result = authService.authenticateUser(loginRequest);
@@ -45,17 +55,19 @@ public class AuthController {
         UserDetailsImpl userDetails = result.getUserDetails();
 
         String token = jwtUtils.generateJwtToken(userDetails);
-        ResponseCookie jwtCookie = ResponseCookie.from("jwt", token)
-                .path("/")
-                .maxAge(24 * 60 * 60)
-                .httpOnly(true)
-                .build();
+        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(token);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .body(new SigninResponse(token, result.getUserInfo()));
     }
 
+    /**
+     * {@code POST /api/auth/signup}, owner and admins: creates a staff user.
+     *
+     * @param signUpRequest user data
+     * @return the new user's ID, or 400 with the reason
+     */
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
@@ -72,6 +84,11 @@ public class AuthController {
         }
     }
 
+    /**
+     * {@code POST /api/auth/signout}
+     *
+     * @return a confirmation and an expired cookie that removes the session
+     */
     @PostMapping("/signout")
     public ResponseEntity<?> logoutUser() {
         ResponseCookie cookie = authService.logoutUser();
@@ -80,6 +97,12 @@ public class AuthController {
                 .body(new MessageResponse("You've been signed out!"));
     }
 
+    /**
+     * {@code POST /api/auth/forgot-password}: emails a reset link valid for 15 minutes.
+     *
+     * @param request user's email
+     * @return a confirmation, or 400 with the reason
+     */
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
         try {
@@ -91,6 +114,12 @@ public class AuthController {
         }
     }
 
+    /**
+     * {@code POST /api/auth/reset-password}
+     *
+     * @param request reset token and new password
+     * @return a confirmation, or 400 if the token is invalid or expired
+     */
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         try {

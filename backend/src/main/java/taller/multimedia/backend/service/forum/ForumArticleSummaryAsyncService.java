@@ -11,8 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 import taller.multimedia.backend.model.forum.ForumArticle;
 import taller.multimedia.backend.repository.forum.ForumArticleRepository;
 import taller.multimedia.backend.service.announcement.GeminiSummaryService;
-import taller.multimedia.backend.utils.HashUtils;
+import taller.multimedia.backend.util.HashUtils;
 
+/**
+ * Generates the AI summary of forum articles in the background so publishing an article does not
+ * wait for the AI provider.
+ */
 @Service
 public class ForumArticleSummaryAsyncService {
 
@@ -28,6 +32,16 @@ public class ForumArticleSummaryAsyncService {
         this.geminiSummaryService = geminiSummaryService;
     }
 
+    /**
+     * Generates and stores the AI summary of an article on the {@code taskExecutor} thread pool.
+     *
+     * <p>The summary is only regenerated when the article content changed since the last summary
+     * (compared by SHA-256 hash) or when {@code force} is set. Errors are logged and never
+     * propagated, because nobody waits for this task.
+     *
+     * @param articleId article to summarize
+     * @param force {@code true} to regenerate even if the content did not change
+     */
     @Async("taskExecutor")
     @Transactional
     public void generateSummaryAsync(UUID articleId, boolean force) {

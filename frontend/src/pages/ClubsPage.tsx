@@ -3,9 +3,9 @@ import { parseSchedule } from '../utils/schedule.ts'
 import { useTranslation } from 'react-i18next'
 import { UsersIcon } from '@animateicons/react/lucide'
 import { Users } from 'lucide-react'
-import Navbar from '../components/Navbar.tsx'
+import Navbar from '../components/navigation/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
-import ClubDetailModal from '../components/ClubDetailModal.tsx'
+import ClubDetailModal from '../components/clubs/ClubDetailModal.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import StatusMessage from '../components/ui/StatusMessage.tsx'
@@ -14,11 +14,13 @@ import { clubService } from '../services/clubs.ts'
 import type { ClubResponse } from '../types/clubs.ts'
 import { setPageSEO } from '../utils/seo.ts'
 
+/** Props of {@link PublicClubCard}; without `club` it shows a skeleton. */
 interface PublicClubCardProps {
     club: ClubResponse
     onSelect: () => void
 }
 
+/** Card of a club for families: cover, name, free places and schedule. */
 function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
     const { t: translate } = useTranslation()
     const translateKey = translate as (key: string, options?: Record<string, unknown>) => string
@@ -78,6 +80,7 @@ function PublicClubCard({ club, onSelect }: Readonly<PublicClubCardProps>) {
     )
 }
 
+/** Public page of the clubs, translated; a club opens its details. */
 function ClubsPage() {
     const { t, i18n } = useTranslation()
         useEffect(() => {
@@ -137,8 +140,8 @@ function ClubsPage() {
                                 ? translations[`${club.id}:schedule`] ?? club.schedule
                                 : club.schedule,
                         }))
-                    } catch (translationError) {
-                        console.error("Could not translate the clubs:", translationError)
+                    } catch {
+                        // without a translation the clubs are shown in Spanish
                     }
                 }
 
@@ -147,15 +150,14 @@ function ClubsPage() {
                 )
 
                 setClubs(publishedClubs)
-            } catch (err) {
-                console.error(err)
+            } catch {
                 setError(true)
             } finally {
                 setLoading(false)
             }
         }
         void fetchClubs()
-    }, [i18n.language])
+    }, [i18n.language, i18n.resolvedLanguage])
 
     const skeletonCount = useSkeletonCount('clubs', loading, clubs.length, 3)
 

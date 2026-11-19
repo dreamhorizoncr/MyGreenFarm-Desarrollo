@@ -1,41 +1,33 @@
+/** Weekdays on which visits can be booked. */
 export type DayOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY'
 
+/** Visiting hours of a weekday. */
 export interface WeeklySchedule {
   id?: number
   dayOfWeek: DayOfWeek
+  /** Opening time, `HH:mm:ss`. */
   startTime: string
+  /** Closing time, `HH:mm:ss`. */
   endTime: string
+  /** Whether visits can be booked that weekday. */
   active: boolean
 }
 
+/** A day with different hours than usual, or closed. */
 export interface ScheduleException {
   id?: number
+  /** Day, `yyyy-MM-dd`. */
   exceptionDate: string
   startTime: string
   endTime: string
+  /** Whether the school receives no visits that day. */
   closed: boolean
   reason?: string | null
 }
 
+/** Hours of a weekday being edited. */
 export interface WeeklyScheduleDraft extends WeeklySchedule {
+  /** Whether it has changes that are not saved. */
   dirty?: boolean
 }
 
-export const WEEK_DAYS: Array<{ value: DayOfWeek }> = [
-  { value: 'MONDAY' },
-  { value: 'TUESDAY' },
-  { value: 'WEDNESDAY' },
-  { value: 'THURSDAY' },
-  { value: 'FRIDAY' },
-]
-
-export const DEFAULT_START_TIME = '06:00:00'
-export const DEFAULT_END_TIME = '20:00:00'
-
-export function timeValue(time: string): string {
-  return time.slice(0, 5)
-}
-
-export function toApiTime(time: string): string {
-  return time.length === 5 ? `${time}:00` : time
-}

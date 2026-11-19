@@ -16,19 +16,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
 
 import org.apache.commons.text.StringEscapeUtils;
 
-import taller.multimedia.backend.model.translations.EntityTranslation;
+import taller.multimedia.backend.model.translation.EntityTranslation;
 import taller.multimedia.backend.repository.translation.EntityTranslationRepository;
-import taller.multimedia.backend.utils.HashUtils;
+import taller.multimedia.backend.util.HashUtils;
 import taller.multimedia.backend.dto.translation.TranslationItem;
 
+/**
+ * Translates site content with Google Cloud Translation and caches each translation in the
+ * database.
+ *
+ * <p>A cached translation is reused while the original text does not change, which is detected by
+ * comparing its SHA-256 hash. Long content fields are translated paragraph by paragraph so their
+ * line breaks are kept.
+ */
 @Service
 @RequiredArgsConstructor
 public class TranslationService {
+
+    private static final String CONTENT_FIELD = "content";
+    private static final String PARAGRAPH_SEPARATOR = "\n\n";
 
     private final EntityTranslationRepository repository;
     private final GoogleCredentials googleCredentials;
@@ -39,6 +51,18 @@ public class TranslationService {
 
     private final OkHttpClient httpClient = new OkHttpClient();
 
+    /**
+     * Returns the translation of one field, translating it only if it is not cached or the original
+     * changed.
+     *
+     * @param entityType type of the translated entity, for example {@code announcement}
+     * @param entityId entity ID
+     * @param fieldName translated field; {@code content} is split into paragraphs
+     * @param originalText text in Spanish
+     * @param targetLanguage language code, for example {@code en}
+     * @return the translated text
+     * @throws IOException if Google Translation fails
+     */
     public String getOrTranslate(String entityType, UUID entityId, String fieldName,
             String originalText, String targetLanguage) throws IOException {
 
@@ -53,28 +77,7 @@ public class TranslationService {
             return unescapeHtml(existing.get().getTranslatedText());
         }
 
-        String translatedText;
-
-        if("content".equals(fieldName)){
-            List<String> paragraphs = List.of(originalText.split("\n\n"));
-
-            List<String> translatedParagraphs = callTranslateApiBatch(
-                paragraphs,
-                targetLanguage
-            );
-
-            translatedText = String.join("\n\n", translatedParagraphs);
-
-        }else{
-
-            List<String> translated = callTranslateApiBatch(
-            List.of(originalText),
-            targetLanguage
-            );
-
-            translatedText = translated.get(0);
-
-        }
+        String translatedText = translateField(fieldName, originalText, targetLanguage);
 
         EntityTranslation translation = new EntityTranslation();
         translation.setEntityType(entityType);
@@ -88,6 +91,16 @@ public class TranslationService {
         return translatedText;
     }
 
+    /**
+     * Translates several fields of the same entity type at once, reusing the cached ones. Entities
+     * with numeric IDs (such as clubs) are cached under a UUID derived from their type and ID.
+     *
+     * @param entityType type of the translated entities
+     * @param items fields to translate
+     * @param targetLanguage language code
+     * @return translations by {@code entityId:fieldName}
+     * @throws IOException if Google Translation fails
+     */
     public Map<String, String> getOrTranslateBatch(String entityType, List<TranslationItem> items,
         String targetLanguage) throws IOException {
 
@@ -98,9 +111,9 @@ public class TranslationService {
 
     Map<String, EntityTranslation> cache = existing.stream()
             .collect(Collectors.toMap(
-                    e -> key(e.getEntityId(), e.getFieldName()),
-                    e -> e,
-                    (a, b) -> a));
+                    translation -> key(translation.getEntityId(), translation.getFieldName()),
+                    Function.identity(),
+                    (first, duplicate) -> first));
 
     Map<String, String> result = new HashMap<>();
     List<TranslationItem> toTranslate = new ArrayList<>();
@@ -128,30 +141,7 @@ public class TranslationService {
 
         for (TranslationItem item : toTranslate) {
 
-            String translated;
-
-            if ("content".equals(item.fieldName())) {
-
-                List<String> paragraphs = List.of(
-                        item.originalText().split("\n\n")
-                );
-
-                List<String> translatedParagraphs = callTranslateApiBatch(
-                        paragraphs,
-                        targetLanguage
-                );
-
-                translated = String.join("\n\n", translatedParagraphs);
-
-            } else {
-
-                List<String> translatedTexts = callTranslateApiBatch(
-                        List.of(item.originalText()),
-                        targetLanguage
-                );
-
-                translated = translatedTexts.get(0);
-            }
+            String translated = translateField(item.fieldName(), item.originalText(), targetLanguage);
 
             UUID translationEntityId = translationEntityId(entityType, item.entityId());
             result.put(responseKey(item.entityId(), item.fieldName()), translated);
@@ -185,9 +175,34 @@ public class TranslationService {
     return result;
 }
 
+    /**
+     * Translates texts without caching them, for one-off texts such as the evaluation summaries
+     * emailed to parents.
+     *
+     * @param texts texts to translate
+     * @param targetLanguage language code
+     * @param mimeType {@code text/plain} or {@code text/html}
+     * @return the translations, in the same order
+     * @throws IOException if Google Translation fails
+     */
     public List<String> translateBatchWithoutSaving(List<String> texts, String targetLanguage,
             String mimeType) throws IOException {
         return callTranslateApiBatch(texts, null, targetLanguage, mimeType);
+    }
+
+    /**
+     * @param fieldName translated field; {@code content} is translated paragraph by paragraph
+     * @param text text to translate
+     * @param targetLanguage language code
+     * @return the translated text
+     * @throws IOException if Google Translation fails
+     */
+    private String translateField(String fieldName, String text, String targetLanguage) throws IOException {
+        if (CONTENT_FIELD.equals(fieldName)) {
+            List<String> translatedParagraphs = callTranslateApiBatch(List.of(text.split(PARAGRAPH_SEPARATOR)), targetLanguage);
+            return String.join(PARAGRAPH_SEPARATOR, translatedParagraphs);
+        }
+        return callTranslateApiBatch(List.of(text), targetLanguage).get(0);
     }
 
     private String unescapeHtml(String text) {
@@ -198,6 +213,13 @@ public class TranslationService {
         return entityId + ":" + fieldName;
     }
 
+    /**
+     * @param entityType type of the entity
+     * @param entityId entity ID as text
+     * @return the ID itself when it is a UUID, or a UUID derived from the type and ID when it is
+     *     numeric
+     * @throws IllegalArgumentException if the ID is neither
+     */
     private UUID translationEntityId(String entityType, String entityId) {
         try {
             return UUID.fromString(entityId);
@@ -217,6 +239,14 @@ public class TranslationService {
         return callTranslateApiBatch(texts, null, targetLanguage, null);
     }
 
+    /**
+     * @param texts texts to translate
+     * @param sourceLanguage source language, or {@code null} to let Google detect it
+     * @param targetLanguage language code
+     * @param mimeType content type, or {@code null} for HTML
+     * @return the translations, in the same order
+     * @throws IOException if the call fails or returns a different number of translations
+     */
     private List<String> callTranslateApiBatch(List<String> texts, String sourceLanguage,
             String targetLanguage, String mimeType) throws IOException {
         googleCredentials.refreshIfExpired();

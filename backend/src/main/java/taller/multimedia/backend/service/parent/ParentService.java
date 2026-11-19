@@ -1,5 +1,6 @@
 package taller.multimedia.backend.service.parent;
 
+import taller.multimedia.backend.util.SearchPattern;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,10 @@ import taller.multimedia.backend.util.Sanitizer;
 
 import java.util.List;
 
+/**
+ * Parents or guardians of the enrolled children. Deleting a parent deactivates it instead of
+ * removing the row.
+ */
 @Service
 public class ParentService {
 
@@ -34,36 +39,69 @@ public class ParentService {
         this.childClubRepository = childClubRepository;
     }
 
-    public Parent createParent(ParentRequest dto) {
-        String cleanEmail = sanitizeEmail(dto.getEmail());
+    /**
+     * @param request parent data; texts are sanitized and the identification is normalized
+     * @return the created parent, active unless the request says otherwise
+     * @throws InvalidFieldException if the email is invalid, not from an allowed provider or
+     *     already used, or a field is unsafe
+     */
+    public Parent createParent(ParentRequest request) {
+        String cleanEmail = sanitizeEmail(request.getEmail());
 
         if (parentRepository.findByEmail(cleanEmail).isPresent()) {
             throw new InvalidFieldException(EMAIL_FIELD, "A parent with this email already exists.");
         }
 
         Parent parent = new Parent();
-        parent.setIdentification(normalizeIdentification(Sanitizer.requireClean("identification", dto.getIdentification())));
+        parent.setIdentification(normalizeIdentification(Sanitizer.requireClean("identification", request.getIdentification())));
         parent.setEmail(cleanEmail);
-        parent.setPhoneNumber(Sanitizer.requireClean("phoneNumber", dto.getPhoneNumber()));
-        parent.setAddress(Sanitizer.requireClean("address", dto.getAddress()));
-        parent.setFirstName(Sanitizer.requireClean("firstName", dto.getFirstName()));
-        parent.setLastName(Sanitizer.requireClean("lastName", dto.getLastName()));
-        parent.setLanguage(resolverLangCode(dto.getLanguage()));
-        parent.setIsActive(dto.getIsActive() != null ? dto.getIsActive() : true);
+        parent.setPhoneNumber(Sanitizer.requireClean("phoneNumber", request.getPhoneNumber()));
+        parent.setAddress(Sanitizer.requireClean("address", request.getAddress()));
+        parent.setFirstName(Sanitizer.requireClean("firstName", request.getFirstName()));
+        parent.setLastName(Sanitizer.requireClean("lastName", request.getLastName()));
+        parent.setLanguage(resolveLanguageCode(request.getLanguage()));
+        parent.setIsActive(request.getIsActive() != null ? request.getIsActive() : true);
 
         return parentRepository.save(parent);
     }
 
+    /**
+     * @param pageable page to return
+     * @return active parents only
+     */
     public Page<Parent> getAllParents(Pageable pageable) {
-        return parentRepository.findByIsActiveTrue(pageable);
+        return getAllParents(pageable, null);
     }
 
+    /**
+     * @param pageable page to return
+     * @param search text to look for in the name, identification, email and phone, optional
+     * @return active parents, filtered by the text when there is one
+     */
+    public Page<Parent> getAllParents(Pageable pageable, String search) {
+        return SearchPattern.of(search)
+                .map(pattern -> parentRepository.searchActive(pattern, pageable))
+                .orElseGet(() -> parentRepository.findByIsActiveTrue(pageable));
+    }
+
+    /**
+     * Removes spaces and hyphens from numeric identifications (for example {@code 1-2345-6789}
+     * becomes {@code 123456789}). Identifications with letters, such as passports, are only
+     * trimmed.
+     *
+     * @param identification identification as typed
+     * @return the normalized identification, or an empty string for {@code null}
+     */
     static String normalizeIdentification(String identification) {
         String trimmed = identification == null ? "" : identification.trim();
         return trimmed.matches("[\\d\\s-]+") ? trimmed.replaceAll("\\D", "") : trimmed;
     }
 
-    private String resolverLangCode(String lang) {
+    /**
+     * @param lang language code from the form
+     * @return {@code en}, {@code fr} or {@code es} (the default)
+     */
+    private String resolveLanguageCode(String lang) {
         if (lang == null || lang.isBlank()) {
             return "es";
         }
@@ -75,6 +113,14 @@ public class ParentService {
         return "es";
     }
 
+    /**
+     * Lowercases an email and checks that it comes from an allowed provider (Gmail, Hotmail,
+     * Outlook or UCR).
+     *
+     * @param email address entered in the form
+     * @return the cleaned email
+     * @throws InvalidFieldException if the email is missing, malformed or from another domain
+     */
     private String sanitizeEmail(String email) {
         if (email == null || email.isBlank()) {
             throw new InvalidFieldException(EMAIL_FIELD, "The email is required.");
@@ -117,36 +163,55 @@ public class ParentService {
         return cleanEmail;
     }
 
+    /**
+     * @param id parent ID
+     * @return the parent, active or not
+     * @throws RuntimeException if it does not exist
+     */
     public Parent getParentById(Integer id) {
         return parentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("No parent was found with the given ID."));
     }
 
-    public Parent updateParent(Integer id, ParentRequest dto) {
+    /**
+     * @param id parent ID
+     * @param request new data; {@code isActive} is only changed when it is sent
+     * @return the updated parent
+     * @throws RuntimeException if the parent does not exist
+     * @throws InvalidFieldException if the email belongs to another parent or a field is invalid
+     */
+    public Parent updateParent(Integer id, ParentRequest request) {
         Parent existingParent = getParentById(id);
 
-        parentRepository.findByEmail(dto.getEmail()).ifPresent(parent -> {
+        parentRepository.findByEmail(request.getEmail()).ifPresent(parent -> {
             if (!parent.getId().equals(id)) {
                 throw new InvalidFieldException(EMAIL_FIELD, "Another parent with this email already exists.");
             }
         });
 
-        existingParent.setIdentification(normalizeIdentification(Sanitizer.requireClean("identification", dto.getIdentification())));
-        existingParent.setEmail(sanitizeEmail(dto.getEmail()));
-        existingParent.setPhoneNumber(Sanitizer.requireClean("phoneNumber", dto.getPhoneNumber()));
-        existingParent.setAddress(Sanitizer.requireClean("address", dto.getAddress()));
-        existingParent.setFirstName(Sanitizer.requireClean("firstName", dto.getFirstName()));
-        existingParent.setLastName(Sanitizer.requireClean("lastName", dto.getLastName()));
+        existingParent.setIdentification(normalizeIdentification(Sanitizer.requireClean("identification", request.getIdentification())));
+        existingParent.setEmail(sanitizeEmail(request.getEmail()));
+        existingParent.setPhoneNumber(Sanitizer.requireClean("phoneNumber", request.getPhoneNumber()));
+        existingParent.setAddress(Sanitizer.requireClean("address", request.getAddress()));
+        existingParent.setFirstName(Sanitizer.requireClean("firstName", request.getFirstName()));
+        existingParent.setLastName(Sanitizer.requireClean("lastName", request.getLastName()));
 
-        existingParent.setLanguage(resolverLangCode(dto.getLanguage()));
+        existingParent.setLanguage(resolveLanguageCode(request.getLanguage()));
 
-        if (dto.getIsActive() != null) {
-            existingParent.setIsActive(dto.getIsActive());
+        if (request.getIsActive() != null) {
+            existingParent.setIsActive(request.getIsActive());
         }
 
         return parentRepository.save(existingParent);
     }
 
+    /**
+     * Deactivates a parent and their children, removes the children from their clubs and
+     * recalculates the free spots of those clubs.
+     *
+     * @param id parent ID
+     * @throws RuntimeException if the parent does not exist
+     */
     @Transactional
     public void deleteParent(Integer id) {
         Parent parent = getParentById(id);
@@ -170,6 +235,14 @@ public class ParentService {
         });
     }
 
+    /**
+     * Unsubscribes a parent from the newsletter. Parents receive it while they are active, so this
+     * deactivates the parent.
+     *
+     * @param email parent's email
+     * @throws InvalidFieldException if the email is invalid
+     * @throws RuntimeException if no parent has that email
+     */
     public void unsubscribeFromNewsletter(String email) {
         String cleanEmail = sanitizeEmail(email);
         Parent parent = parentRepository.findByEmail(cleanEmail)

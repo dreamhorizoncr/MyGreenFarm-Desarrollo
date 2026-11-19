@@ -1,4 +1,5 @@
 
+/** Props of {@link CarouselDots}. */
 interface CarouselDotsProps {
   count: number
   activeIndex: number
@@ -8,6 +9,7 @@ interface CarouselDotsProps {
   className?: string
 }
 
+/** Dots of a carousel; each one goes to its slide. */
 function CarouselDots({ count, activeIndex, onSelect, ariaLabel, getItemLabel, className = '' }: Readonly<CarouselDotsProps>) {
   return (
     <div className={`flex items-center ${className}`} aria-label={ariaLabel}>

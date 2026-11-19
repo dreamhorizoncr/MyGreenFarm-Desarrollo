@@ -13,6 +13,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * The dashboard AI summary of one day and how many times it was generated.
+ */
 @Entity
 @Table(name = "dashboard_summary_cache", uniqueConstraints = @UniqueConstraint(columnNames = "summary_date"))
 @Getter
@@ -30,6 +33,9 @@ public class DashboardSummaryCache {
     @Column(name = "summary", columnDefinition = "TEXT")
     private String summary;
 
+    /**
+     * Generation attempts of the day; limited to avoid spending the AI quota.
+     */
     @Column(name = "generation_count", nullable = false)
     private int generationCount;
 

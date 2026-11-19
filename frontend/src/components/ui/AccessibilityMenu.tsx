@@ -21,7 +21,7 @@ import {
 } from 'lucide-react'
 import { useAccessibility, type ColorMode } from '../../contexts/accessibility'
 import accessibilityIcon from '../../assets/imgs/accessibilityIcon.svg'
-import { useVoiceReader } from '../../contexts/VoiceReaderContext'
+import { useVoiceReader } from '../../contexts/voiceReader'
 import useDismiss from '../../hooks/useDismiss.ts'
 import { useDropdownMotion } from '../../hooks/useDropdownMotion.ts'
 import ModalCloseButton from './ModalCloseButton.tsx'
@@ -52,6 +52,7 @@ const TABS = [
     { value: 'tools', labelKey: 'accessibility.tabTools' },
 ] as const satisfies readonly { value: MenuTab; labelKey: string }[]
 
+/** Props of {@link ToggleRow}. */
 interface ToggleRowProps {
     label: string
     icon: ReactNode
@@ -60,6 +61,7 @@ interface ToggleRowProps {
     disabled?: boolean
 }
 
+/** An option of the menu that is switched on and off. */
 function ToggleRow({ label, icon, checked, onChange, disabled = false }: Readonly<ToggleRowProps>) {
     return (
         <label
@@ -87,6 +89,10 @@ function ToggleRow({ label, icon, checked, onChange, disabled = false }: Readonl
     )
 }
 
+/**
+ * Floating accessibility menu: text size, contrast, color filters, readable font, spacing, big cursor,
+ * reading guide, stop animations and the voice reader options.
+ */
 export default function AccessibilityMenu() {
     const [isOpen, setIsOpen] = useState(false)
     const [activeTab, setActiveTab] = useState<MenuTab>('reading')
