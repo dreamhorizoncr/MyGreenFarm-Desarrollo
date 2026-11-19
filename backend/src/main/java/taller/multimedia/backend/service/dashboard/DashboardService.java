@@ -52,6 +52,11 @@ import taller.multimedia.backend.repository.user.UserRepository;
 import taller.multimedia.backend.repository.vacancy.VacancyRepository;
 import taller.multimedia.backend.service.announcement.GeminiSummaryService;
 
+/**
+ * Data of the admin panel's home page: the day's appointments, recent activity, priority tasks and
+ * an AI summary. Teachers get their own version with their groups and pending student records or
+ * evaluations.
+ */
 @Service
 @RequiredArgsConstructor
 public class DashboardService {
@@ -74,8 +79,15 @@ public class DashboardService {
 
         private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("HH:mm");
 
+        /**
+         * A child is due a new evaluation this many days after the last one.
+         */
         private static final int EVALUATION_INTERVAL_DAYS = 90;
 
+        /**
+         * Teachers' AI summaries by date and data, so the same summary is not generated twice.
+         * Keeps the 500 most recently used.
+         */
         private final Map<String, String> teacherSummaries = java.util.Collections.synchronizedMap(
                         new LinkedHashMap<>(64, 0.75f, true) {
                                 @Override
@@ -84,6 +96,18 @@ public class DashboardService {
                                 }
                         });
 
+        /**
+         * Builds the dashboard of the owner or an admin.
+         *
+         * <p>Activity is the latest announcements, galleries and (if allowed) forum articles of the
+         * last 30 days. Priorities are the pending appointments of the next 7 days (high if they
+         * are within 2 days) and the pending applications of the last 30 days. The AI summary is
+         * shared by everyone, so it only uses activity that every role can see.
+         *
+         * @param date day to show
+         * @param includeForum whether the user may see forum activity
+         * @return the dashboard data
+         */
         @Transactional(readOnly = true)
         public DashboardSummaryResponse getSummary(LocalDate date, boolean includeForum) {
                 List<DashboardAppointmentResponse> appointments = appointmentRepository
@@ -147,6 +171,14 @@ public class DashboardService {
                                 aiSummary);
         }
 
+        /**
+         * Builds a teacher's dashboard: their groups, the active children in them, children without
+         * a record (high priority) or due an evaluation, and their latest forum articles.
+         *
+         * @param email teacher's email
+         * @return the dashboard data
+         * @throws ResponseStatusException with 404 if the user does not exist
+         */
         @Transactional(readOnly = true)
         public TeacherDashboardResponse getTeacherSummary(String email) {
                 User teacher = userRepository.findByEmail(email)
@@ -178,7 +210,7 @@ public class DashboardService {
                                                 "Crear el expediente de " + name, null, "high", "/admin/expedients"));
                                 continue;
                         }
-                        Optional<LocalDate> lastEvaluation = evaluationRepository.findByExpedientIdId(expedient.get().getId())
+                        Optional<LocalDate> lastEvaluation = evaluationRepository.findByExpedientId(expedient.get().getId())
                                         .stream()
                                         .map(Evaluation::getEvaluationDate)
                                         .filter(Objects::nonNull)
@@ -223,6 +255,15 @@ public class DashboardService {
                                 teacherAiSummary(today, context));
         }
 
+        /**
+         * @param date day
+         * @param groups groups the teacher leads
+         * @param children active children in those groups
+         * @param missingExpedients children without a record
+         * @param dueEvaluations children due an evaluation
+         * @param articles forum articles the teacher wrote
+         * @return the data sent to the AI, with counts only and no names
+         */
         static String teacherAiContext(LocalDate date, int groups, int children, long missingExpedients,
                         long dueEvaluations, long articles) {
                 return """
@@ -250,6 +291,14 @@ public class DashboardService {
                 return summary;
         }
 
+        /**
+         * @param date day of the summary
+         * @param appointments day's appointments
+         * @param activities recent activity
+         * @param priorities priority tasks
+         * @return the cached or newly generated summary, or an empty string when the daily limit
+         *     was reached or generation failed
+         */
         private String generateAiSummary(
                         LocalDate date,
                         List<DashboardAppointmentResponse> appointments,
@@ -271,6 +320,13 @@ public class DashboardService {
                 return summary;
         }
 
+        /**
+         * @param date day
+         * @param appointments day's appointments
+         * @param activities recent activity
+         * @param priorities priority tasks
+         * @return the data sent to the AI: times, statuses, types and counts, never names
+         */
         static String aiContext(
                         LocalDate date,
                         List<DashboardAppointmentResponse> appointments,
@@ -306,6 +362,10 @@ public class DashboardService {
                                 priorityLines.isEmpty() ? "None" : priorityLines);
         }
 
+        /**
+         * @param curriculum pending application
+         * @return the task title, with the vacancy title when there is one
+         */
         private String curriculumTitle(Curriculum curriculum) {
                 if (curriculum.getVacancyId() == null) {
                         return "Nuevo currículum recibido";

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { galleryService } from '../services/gallery.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type {
@@ -9,6 +9,7 @@ import type {
 	GalleryRequest,
 } from '../types/gallery.ts'
 
+/** Gallery for the admin page: years and albums with the actions to manage them and their images. */
 export function useGalleryAdmin() {
 	const [categories, setCategories] = useState<GalleryCategory[]>([])
 	const [galleriesByCategory, setGalleriesByCategory] = useState<
@@ -17,7 +18,7 @@ export function useGalleryAdmin() {
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
 
-	const fetchAll = async (lang: string) => {
+	const fetchAll = useCallback(async (lang: string) => {
     setLoading(true)
     setError(null)
 
@@ -125,7 +126,7 @@ export function useGalleryAdmin() {
     } finally {
         setLoading(false)
     }
-}
+}, [])
 
 const createCategory = async (dto: GalleryCategoryRequest) => {
 	const created = await galleryService.createCategory(dto)

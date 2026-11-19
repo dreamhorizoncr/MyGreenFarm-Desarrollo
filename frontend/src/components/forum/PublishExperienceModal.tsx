@@ -10,11 +10,16 @@ import FieldHint from '../ui/FieldHint.tsx'
 
 const MAX_CONTENT = 4000
 
+/** Props of {@link PublishExperienceModal}. */
 interface PublishExperienceModalProps {
   onClose: () => void
   onPublish: (input: { name: string; content: string }) => Promise<void>
 }
 
+/**
+ * Form to share an experience in the community: name and text. After sending it, it tells the user
+ * that it waits for the moderation.
+ */
 function PublishExperienceModal({
   onClose,
   onPublish,

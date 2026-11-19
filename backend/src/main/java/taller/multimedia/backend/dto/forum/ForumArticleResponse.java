@@ -7,6 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * A forum article with its likes, comment count and whether the current visitor liked it. The
+ * author fields are empty when the author was deleted.
+ */
 @Data
 @Builder
 @AllArgsConstructor

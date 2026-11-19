@@ -2,10 +2,12 @@
 import type { ButtonHTMLAttributes } from 'react'
 import { XIcon } from '@animateicons/react/lucide'
 
+/** Props of {@link ModalCloseButton}; the rest go to the `<button>`. */
 interface ModalCloseButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'type'> {
   className?: string
 }
 
+/** Close button of the modals, at their top right corner. */
 function ModalCloseButton({ className = '', ...props }: Readonly<ModalCloseButtonProps>) {
   return (
     <button

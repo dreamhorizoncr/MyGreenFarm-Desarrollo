@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 
+/**
+ * A progress evaluation of a student.
+ */
 public class EvaluationResponse {
     private UUID id;
     private LocalDate evaluationDate;

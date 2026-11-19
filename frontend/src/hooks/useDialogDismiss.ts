@@ -1,5 +1,14 @@
 import { useEffect, type RefObject } from 'react'
 
+/**
+ * Closes a native `<dialog>` with Escape or with a click on the backdrop (only when the click also
+ * started there, so selecting text and releasing outside does not close it). When it opens with the
+ * focus on a button, the focus moves to the dialog itself.
+ *
+ * @param dialogRef - the dialog
+ * @param onDismiss - closes it
+ * @param enabled - false to ignore Escape and the backdrop, for example while saving
+ */
 export function useDialogDismiss(dialogRef: RefObject<HTMLDialogElement | null>, onDismiss: () => void, enabled = true) {
   useEffect(() => {
     const frame = requestAnimationFrame(() => {

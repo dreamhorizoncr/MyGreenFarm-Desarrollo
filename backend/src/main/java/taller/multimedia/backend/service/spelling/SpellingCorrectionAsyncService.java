@@ -19,16 +19,20 @@ import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.model.announcement.Announcement;
 import taller.multimedia.backend.model.club.Club;
 import taller.multimedia.backend.model.forum.ForumArticle;
-import taller.multimedia.backend.model.service_plans.ServicePlan;
+import taller.multimedia.backend.model.serviceplan.ServicePlan;
 import taller.multimedia.backend.model.vacancy.Vacancy;
 import taller.multimedia.backend.repository.announcement.AnnouncementRepository;
 import taller.multimedia.backend.repository.club.ClubRepository;
 import taller.multimedia.backend.repository.forum.ForumArticleRepository;
-import taller.multimedia.backend.repository.service_plan.ServicePlanRepository;
+import taller.multimedia.backend.repository.serviceplan.ServicePlanRepository;
 import taller.multimedia.backend.repository.vacancy.VacancyRepository;
 import taller.multimedia.backend.service.announcement.AnnouncementSummaryAsyncService;
 import taller.multimedia.backend.service.forum.ForumArticleSummaryAsyncService;
 
+/**
+ * Corrects the spelling of published texts in the background with AI, so saving content does not
+ * wait for the AI provider.
+ */
 @Service
 @RequiredArgsConstructor
 public class SpellingCorrectionAsyncService {
@@ -45,13 +49,27 @@ public class SpellingCorrectionAsyncService {
     private final AnnouncementSummaryAsyncService announcementSummaryAsyncService;
     private final ForumArticleSummaryAsyncService articleSummaryAsyncService;
 
+    /**
+     * A text field of an entity that can be corrected.
+     *
+     * @param name field name sent to the corrector
+     * @param getter reads the field
+     * @param setter writes the corrected text
+     * @param <T> entity type
+     */
     private record TextField<T>(String name, Function<T, String> getter, BiConsumer<T, String> setter) {
     }
 
+    /**
+     * Corrects the title and content of an announcement and then refreshes its AI summary, even if
+     * the correction failed.
+     *
+     * @param id announcement ID
+     */
     @Async("taskExecutor")
     public void correctAnnouncement(UUID id) {
         try {
-            correct("noticia", id, announcementRepository, List.of(
+            correct("announcement", id, announcementRepository, List.of(
                     new TextField<>("title", Announcement::getTitle, Announcement::setTitle),
                     new TextField<>("content", Announcement::getContent, Announcement::setContent)));
         } finally {
@@ -59,10 +77,16 @@ public class SpellingCorrectionAsyncService {
         }
     }
 
+    /**
+     * Corrects the title and content of a forum article and then refreshes its AI summary, even if
+     * the correction failed.
+     *
+     * @param id article ID
+     */
     @Async("taskExecutor")
     public void correctArticle(UUID id) {
         try {
-            correct("blog post", id, articleRepository, List.of(
+            correct("forum article", id, articleRepository, List.of(
                     new TextField<>("title", ForumArticle::getTitle, ForumArticle::setTitle),
                     new TextField<>("content", ForumArticle::getContent, ForumArticle::setContent)));
         } finally {
@@ -70,13 +94,23 @@ public class SpellingCorrectionAsyncService {
         }
     }
 
+    /**
+     * Corrects the title and description of a vacancy.
+     *
+     * @param id vacancy ID
+     */
     @Async("taskExecutor")
     public void correctVacancy(UUID id) {
-        correct("vacante", id, vacancyRepository, List.of(
+        correct("vacancy", id, vacancyRepository, List.of(
                 new TextField<>("title", Vacancy::getTitle, Vacancy::setTitle),
                 new TextField<>("description", Vacancy::getDescription, Vacancy::setDescription)));
     }
 
+    /**
+     * Corrects the name, description and schedule of a club.
+     *
+     * @param id club ID
+     */
     @Async("taskExecutor")
     public void correctClub(Long id) {
         correct("club", id, clubRepository, List.of(
@@ -85,15 +119,35 @@ public class SpellingCorrectionAsyncService {
                 new TextField<>("schedule", Club::getSchedule, Club::setSchedule)));
     }
 
+    /**
+     * Corrects the name, description, schedule and included items of a service plan.
+     *
+     * @param id service plan ID
+     */
     @Async("taskExecutor")
     public void correctServicePlan(UUID id) {
-        correct("servicio", id, servicePlanRepository, List.of(
+        correct("service plan", id, servicePlanRepository, List.of(
                 new TextField<>("name", ServicePlan::getName, ServicePlan::setName),
                 new TextField<>("description", ServicePlan::getDescription, ServicePlan::setDescription),
                 new TextField<>("schedule", ServicePlan::getSchedule, ServicePlan::setSchedule),
                 new TextField<>("includes", ServicePlan::getIncludes, ServicePlan::setIncludes)));
     }
 
+    /**
+     * Reads the fields, asks for corrections outside any transaction (the AI call can be slow) and
+     * saves them in a new transaction.
+     *
+     * <p>A correction is only applied if the field still has the text that was sent, so an edit
+     * made by a user while the AI was working is never overwritten. Errors are logged and never
+     * propagated.
+     *
+     * @param label entity name used in the logs
+     * @param id entity ID
+     * @param repository repository of the entity
+     * @param fields fields to correct
+     * @param <T> entity type
+     * @param <I> ID type
+     */
     private <T, I> void correct(String label, I id, JpaRepository<T, I> repository, List<TextField<T>> fields) {
         try {
             Map<String, String> original = transactionTemplate.execute(status -> repository.findById(id)

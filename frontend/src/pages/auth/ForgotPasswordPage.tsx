@@ -1,0 +1,102 @@
+import { useState, type FormEvent } from "react";
+import { useTranslation } from "react-i18next";
+import TextField from "../../components/ui/TextField.tsx";
+import AuthButton from "../../components/ui/AuthButton.tsx";
+import AuthLayout from "../../layout/AuthLayout.tsx";
+import { useForgotPassword } from "../../hooks/useForgotPassword.ts";
+import { validateEmail } from "../../utils/validators.ts";
+import { notify } from "../../utils/notifications.ts";
+import { userStorage } from "../../utils/userStorage.ts";
+
+/** Page to ask for a password reset email. */
+function ForgotPasswordPage() {
+  const { t } = useTranslation();
+  const isAuthenticated = !!userStorage.getUser();
+  const [email, setEmail] = useState("");
+  const [showEmailError, setShowEmailError] = useState(false);
+  const emailValidationError = showEmailError ? validateEmail(email, t) : null;
+
+  const { submitForgotPassword, loading, error, success } = useForgotPassword();
+
+  const handleForgotPassword = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const emailErrorMessage = validateEmail(email, t);
+
+    setShowEmailError(emailErrorMessage !== null);
+
+    if (emailErrorMessage) return;
+
+    await submitForgotPassword(
+      { email },
+      () => {
+        notify.success({
+          title: t("forgotPassword.successToastTitle"),
+          description: t("forgotPassword.success"),
+        });
+      },
+      (message) => {
+        notify.error({
+          title: t("forgotPassword.errorToastTitle"),
+          description: message,
+        });
+      },
+    );
+  };
+
+  return (
+    <AuthLayout
+      overtitle={t("forgotPassword.overtitle")}
+      closeTo={isAuthenticated ? "/profile" : "/login"}
+      contentClassName="max-w-[303px] md:max-w-[430px]"
+    >
+      <h2 className="mb-[28px] text-left font-heading text-h3 leading-tight text-heading md:mb-[45px]">
+        {t("forgotPassword.title")}
+      </h2>
+
+      <p className="mb-[36px] text-left font-body text-body-sm leading-[1.5] text-body-text md:mb-[50px] md:text-body-sm md:leading-[1.7]">
+        {t("forgotPassword.description")}
+      </p>
+
+      <form onSubmit={handleForgotPassword} noValidate>
+        <TextField
+          hint={t("fields.auth.email.hint")}
+          placeholder={t("fields.auth.email.placeholder")}
+          id="forgot-password-email"
+          type="email"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+
+              setShowEmailError(false);
+          }}
+          label={t("forgotPassword.email")}
+          error={emailValidationError}
+        />
+
+        {error && (
+          <p className="mt-4 text-center font-body text-body-sm text-danger">
+            {error}
+          </p>
+        )}
+
+        {success && (
+          <p className="mt-4 text-center font-body text-body-sm text-body-text">
+            {t("forgotPassword.success")}
+          </p>
+        )}
+
+        <div className="mt-[28px] w-full md:mt-[35px]">
+          <AuthButton loading={loading} disabled={!email.trim()}>
+            {loading
+              ? t("forgotPassword.loading")
+              : t("forgotPassword.buttonLabel")}
+          </AuthButton>
+        </div>
+
+      </form>
+    </AuthLayout>
+  );
+}
+
+export default ForgotPasswordPage

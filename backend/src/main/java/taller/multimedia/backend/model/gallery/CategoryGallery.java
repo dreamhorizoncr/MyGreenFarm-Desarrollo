@@ -21,6 +21,9 @@ import org.hibernate.annotations.BatchSize;
 
 import java.util.List;
 
+/**
+ * A category that groups photo galleries.
+ */
 @Entity 
 @Table(name = "category_gallery")
 @Data

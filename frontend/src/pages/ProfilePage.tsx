@@ -7,12 +7,13 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { useLogin } from '../hooks/useLogin.ts'
-import { useProfileAvatar } from '../contexts/ProfileAvatarContext.tsx'
+import { useProfileAvatar } from '../contexts/profileAvatar.ts'
 import AdminLayout from '../layout/AdminLayout.tsx'
-import ForgotPasswordModal from '../components/ForgotPasswordModal.tsx'
+import ForgotPasswordModal from '../components/auth/ForgotPasswordModal.tsx'
 import { notify } from '../utils/notifications.ts'
 import { userStorage } from '../utils/userStorage.ts'
 
+/** Profile of the signed-in user: their data, password reset and sign-out. */
 function ProfilePage() {
   const { t } = useTranslation()
   const navigate = useNavigate()

@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import taller.multimedia.backend.model.forum.ForumComment;
 
+/**
+ * Storage of the comments on forum articles.
+ */
 public interface ForumCommentRepository extends JpaRepository<ForumComment, UUID> {
 
     Page<ForumComment> findByArticleIdOrderByCreatedAtDesc(UUID articleId, Pageable pageable);

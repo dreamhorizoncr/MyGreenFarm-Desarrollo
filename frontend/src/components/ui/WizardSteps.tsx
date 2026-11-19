@@ -1,11 +1,14 @@
 import { Fragment } from 'react'
 import { CheckIcon } from '@animateicons/react/lucide'
 
+/** Props of {@link WizardSteps}. */
 interface WizardStepsProps {
   steps: string[]
+  /** Index of the current step, starting at 0. */
   current: number
 }
 
+/** Progress of a modal with several steps. */
 function WizardSteps({ steps, current }: Readonly<WizardStepsProps>) {
   return (
     <ol className="flex items-start">

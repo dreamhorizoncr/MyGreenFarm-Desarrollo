@@ -1,0 +1,173 @@
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import Button from '../ui/Button.tsx'
+import { validateRequired, validateSafeText } from '../../utils/validators.ts'
+import { getErrorMessage } from '../../utils/error.ts'
+import { useModalExit } from '../../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../../hooks/useDialogDismiss.ts'
+import type { OptionalApplicationField, VacancyInput } from '../../types/vacancy.ts'
+import CheckboxField from '../ui/CheckboxField.tsx'
+import ModalCloseButton from '../ui/ModalCloseButton.tsx'
+import FieldHint from '../ui/FieldHint.tsx'
+
+/** Props of {@link CreateVacancyModal}. */
+interface CreateVacancyModalProps {
+  onCreate: (data: VacancyInput) => Promise<void>
+  onClose: () => void
+}
+
+const ALL_OPTIONAL_FIELDS: OptionalApplicationField[] = ['applicantPhone', 'file', 'certificates']
+
+/** Form to publish a vacancy: title, description and which fields its applications require. */
+function CreateVacancyModal({ onCreate, onClose }: Readonly<CreateVacancyModalProps>) {
+  const { t } = useTranslation()
+  const dialogRef = useRef<HTMLDialogElement>(null)
+  const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
+
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+  const [requiredFields, setRequiredFields] = useState<OptionalApplicationField[]>(ALL_OPTIONAL_FIELDS)
+  const [titleError, setTitleError] = useState<string | null>(null)
+  const [descriptionError, setDescriptionError] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
+
+  const toggleField = (field: OptionalApplicationField) => {
+    setRequiredFields((prev) =>
+      prev.includes(field) ? prev.filter((current) => current !== field) : prev.concat(field),
+    )
+  }
+
+  useEffect(() => {
+    dialogRef.current?.showModal()
+  }, [])
+
+  const handleSubmit = async () => {
+    const titleErrorMessage = validateRequired(title, t('vacancies.formTitle'), t) ?? validateSafeText(title, t)
+    const descriptionErrorMessage = validateRequired(description, t('vacancies.formDescription'), t) ?? validateSafeText(description, t)
+
+    setTitleError(titleErrorMessage)
+    setDescriptionError(descriptionErrorMessage)
+
+    if (titleErrorMessage || descriptionErrorMessage) return
+
+    setSaving(true)
+    setSaveError(null)
+    try {
+      await onCreate({ title: title.trim(), description: description.trim(), requiredFields })
+      requestClose()
+    } catch (err) {
+      setSaveError(getErrorMessage(err))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <dialog
+      ref={dialogRef}
+      onClose={requestClose}
+      aria-label={t('vacancies.publishModalTitle')}
+      className={`text-left fixed inset-0 m-auto max-h-[90vh] w-[min(820px,92vw)] max-w-none modal-scroll rounded-[20px] border border-neutral-200 bg-white p-lg backdrop:bg-scrim md:p-xl ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+    >
+      <div className="flex items-center justify-between gap-md">
+        <h2 className="m-0 font-heading text-h4 font-bold text-heading">
+          {t('vacancies.publishModalTitle')}
+        </h2>
+
+        <ModalCloseButton
+          onClick={requestClose}
+          aria-label={t('admin.cancel')}
+        />
+      </div>
+
+      <div className="mt-lg grid gap-md">
+        <label className="font-body text-body-sm font-semibold text-heading">
+          {t('vacancies.formTitle')}
+          <input
+            placeholder={t('fields.vacancy.title.placeholder')}
+            id="vacancy-title"
+            type="text"
+            value={title}
+            onChange={(e) => {
+              setTitle(e.target.value)
+              if (titleError) setTitleError(null)
+            }}
+            className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+          />
+          <FieldHint>{t('fields.vacancy.title.hint')}</FieldHint>
+          {titleError && (
+            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{titleError}</span>
+          )}
+        </label>
+
+        <label className="font-body text-body-sm font-semibold text-heading">
+          {t('vacancies.formDescription')}
+          <textarea
+            placeholder={t('fields.vacancy.description.placeholder')}
+            id="vacancy-description"
+            rows={4}
+            value={description}
+            onChange={(e) => {
+              setDescription(e.target.value)
+              if (descriptionError) setDescriptionError(null)
+            }}
+            className="mt-xs w-full resize-none rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
+          />
+          {descriptionError && (
+            <span className="mt-xs block font-body text-body-sm font-normal text-danger">{descriptionError}</span>
+          )}
+        </label>
+
+        <fieldset>
+          <legend className="mb-xs font-body text-body-sm font-semibold text-heading">
+            {t('vacancies.formFieldsSectionTitle')}
+          </legend>
+          <p className="mb-sm font-body text-caption font-normal text-neutral-500">
+            {t('vacancies.formFieldsSectionHint')}
+          </p>
+
+          <div className="flex flex-col gap-xs">
+            <CheckboxField checked={requiredFields.includes('applicantPhone')} onChange={() => toggleField('applicantPhone')}>
+              {t('vacancies.applicantPhone')}
+            </CheckboxField>
+
+            <CheckboxField checked={requiredFields.includes('file')} onChange={() => toggleField('file')}>
+              {t('vacancies.resumeLabel')}
+            </CheckboxField>
+
+            <CheckboxField checked={requiredFields.includes('certificates')} onChange={() => toggleField('certificates')}>
+              {t('vacancies.certificates')}
+            </CheckboxField>
+          </div>
+        </fieldset>
+      </div>
+
+      {saveError && (
+        <p className="mt-md rounded-xl bg-red-50 p-md font-body text-body-sm text-red-700">{saveError}</p>
+      )}
+
+      <div className="mt-lg flex justify-end gap-md *:flex-1">
+        <Button
+          variant="secondary"
+          onClick={requestClose}
+          className="h-11 w-auto rounded-full border-green-500 px-lg font-body text-body-sm font-semibold text-heading hover:bg-green-50"
+        >
+          {t('admin.cancel')}
+        </Button>
+        <Button
+          variant="success"
+          onClick={handleSubmit}
+          loading={saving}
+          disabled={!title.trim() || !description.trim()}
+          className="h-11 w-auto rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white hover:bg-orange-600"
+        >
+          {saving ? t('common.loading') : t('vacancies.publish')}
+        </Button>
+      </div>
+    </dialog>
+  )
+}
+
+export default CreateVacancyModal

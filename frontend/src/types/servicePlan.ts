@@ -1,10 +1,12 @@
 import type { Currency } from './exchangeRate.ts'
 
+/** Service plan offered to families. */
 export interface ServicePlan {
   id: string
   name: string
   description: string
   currency?: Currency;
+  /** Billing period, for example `MONTHLY` or `3_MONTHS`; see {@link getPlanTypeLabel}. */
   type: string
   imageUrl: string
   imageAlt?: string | null
@@ -12,10 +14,12 @@ export interface ServicePlan {
   schedule: string
   includes: string
   isActive: boolean
+  /** Code of the service in the CABYS catalog, for the electronic invoice. */
   cabysCode?: string
   couponCode?: string | null
 }
 
+/** Breakdown of the price to pay for a plan. */
 export interface PaymentQuote {
   servicePlanId: string
   baseAmount: number
@@ -32,6 +36,7 @@ export interface PaymentQuote {
   cabysDescription: string
 }
 
+/** Data to create or update a plan. */
 export interface ServicePlanRequest {
   schedule: string
   includes: string
@@ -43,6 +48,7 @@ export interface ServicePlanRequest {
   currency?: string
 }
 
+/** Card payment of a payment intent, with the customer's billing data. */
 export interface ConfirmPaymentPayload {
   paymentIntentId: string
   cardNumber: string
@@ -61,6 +67,7 @@ export interface ConfirmPaymentPayload {
   saveSubscription?: boolean
 }
 
+/** SINPE Móvil payment of a payment intent, with the customer's billing data. */
 export interface ConfirmSinpePayload {
   paymentIntentId: string
   phoneNumber: string
@@ -74,4 +81,14 @@ export interface ConfirmSinpePayload {
   currency: string
   servicePlanId: string
   couponCode?: string
+}
+
+/** Result of confirming a payment with the gateway. */
+export interface PaymentConfirmation {
+  /** Gateway status, for example `succeeded`, `processing` or `requires_action`. */
+  status: string
+  /** Why the recurring subscription could not be created, when the payment itself went through. */
+  subscriptionError?: string
+  /** Why the electronic invoice could not be issued, when the payment itself went through. */
+  invoiceError?: string
 }

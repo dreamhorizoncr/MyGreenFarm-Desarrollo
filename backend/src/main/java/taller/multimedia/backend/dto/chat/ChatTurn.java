@@ -7,6 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * One previous turn of a chat conversation: who said it ({@code user} or {@code assistant}) and
+ * what.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

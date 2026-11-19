@@ -37,6 +37,7 @@ const avatarAnimation = (
   return { animate: playing ? "always" : "hover" };
 };
 
+/** Carousel of testimonials of families. */
 function TestimonialsSection() {
   const { stopAnimations } = useAccessibility();
   const { t } = useTranslation();

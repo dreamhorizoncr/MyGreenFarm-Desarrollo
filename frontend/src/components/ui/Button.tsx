@@ -24,12 +24,15 @@ const button = tv({
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'success'
 
+/** Props of {@link Button}; the rest go to the `<button>`. */
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant
+  /** Shows a spinner and disables the button. */
   loading?: boolean
   children: ReactNode
 }
 
+/** Button of the design system in its primary, secondary, danger or success variant. */
 function Button({
   variant = 'primary',
   loading = false,

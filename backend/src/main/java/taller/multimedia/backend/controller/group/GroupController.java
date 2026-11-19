@@ -21,9 +21,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.group.GroupRequest;
 import taller.multimedia.backend.dto.group.GroupResponse;
-import taller.multimedia.backend.security.services.UserDetailsImpl;
+import taller.multimedia.backend.security.service.UserDetailsImpl;
 import taller.multimedia.backend.service.group.GroupService;
 
+/**
+ * Class groups. The owner manages them; a teacher may only see the groups they are assigned to.
+ */
 @Validated
 @RestController
 @RequestMapping("/api/groups")
@@ -32,12 +35,24 @@ public class GroupController {
 
     private final GroupService groupService;
 
+    /**
+     * {@code POST /api/groups}
+     *
+     * @param request group data, teachers and children
+     * @return 201 with the created group
+     */
     @PostMapping
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<GroupResponse> create(@Valid @RequestBody GroupRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(groupService.create(request));
     }
 
+    /**
+     * {@code GET /api/groups}
+     *
+     * @param authentication current user
+     * @return every group for the owner, or the teacher's own groups
+     */
     @GetMapping
     @PreAuthorize("hasAnyRole('OWNER', 'TEACHER')")
     public ResponseEntity<List<GroupResponse>> getAll(Authentication authentication) {
@@ -49,6 +64,13 @@ public class GroupController {
         return ResponseEntity.ok(groupService.getByTeacher(currentUser.getId()));
     }
 
+    /**
+     * {@code GET /api/groups/{id}}
+     *
+     * @param id group ID
+     * @param authentication current user
+     * @return the group; a teacher gets 403 if not assigned to it
+     */
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('OWNER', 'TEACHER')")
     public ResponseEntity<GroupResponse> getById(
@@ -62,6 +84,13 @@ public class GroupController {
         return ResponseEntity.ok(groupService.getByIdForTeacher(id, currentUser.getId()));
     }
 
+    /**
+     * {@code GET /api/groups/teacher/{teacherId}}
+     *
+     * @param teacherId teacher ID
+     * @param authentication current user
+     * @return the teacher's groups; a teacher may only ask for their own
+     */
     @GetMapping("/teacher/{teacherId}")
     @PreAuthorize("hasAnyRole('OWNER', 'TEACHER')")
     public ResponseEntity<List<GroupResponse>> getByTeacher(
@@ -78,6 +107,13 @@ public class GroupController {
         return ResponseEntity.ok(groupService.getByTeacher(teacherId));
     }
 
+    /**
+     * {@code PUT /api/groups/{id}}
+     *
+     * @param id group ID
+     * @param request new data
+     * @return the updated group
+     */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<GroupResponse> update(
@@ -86,6 +122,12 @@ public class GroupController {
         return ResponseEntity.ok(groupService.update(id, request));
     }
 
+    /**
+     * {@code DELETE /api/groups/{id}}
+     *
+     * @param id group ID
+     * @return 204
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
@@ -93,6 +135,13 @@ public class GroupController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * {@code POST /api/groups/{groupId}/children/{childId}}
+     *
+     * @param groupId group ID
+     * @param childId child to add
+     * @return the updated group
+     */
     @PostMapping("/{groupId}/children/{childId}")
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<GroupResponse> addChild(
@@ -101,6 +150,13 @@ public class GroupController {
         return ResponseEntity.ok(groupService.addChild(groupId, childId));
     }
 
+    /**
+     * {@code DELETE /api/groups/{groupId}/children/{childId}}
+     *
+     * @param groupId group ID
+     * @param childId child to remove
+     * @return the updated group
+     */
     @DeleteMapping("/{groupId}/children/{childId}")
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<GroupResponse> removeChild(

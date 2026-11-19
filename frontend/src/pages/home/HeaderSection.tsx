@@ -13,6 +13,7 @@ const headerBg = {
   srcSet: `${headerBgSmall} 640w, ${headerBgMedium} 1024w, ${headerBgLarge} 1600w`,
 }
 
+/** Header of the home page: welcome, description and the button to book a visit. */
 function HeaderSection() {
   const { t } = useTranslation()
   const navigate = useNavigate()

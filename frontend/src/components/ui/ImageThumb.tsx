@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { ChevronDownIcon, Trash2Icon } from '@animateicons/react/lucide'
 
+/** Props of {@link ImageThumb}: an uploaded image (`src`) or a chosen file (`file`). */
 interface ImageThumbProps {
   src?: string
   file?: File
@@ -15,6 +16,7 @@ interface ImageThumbProps {
   altError?: string | null
 }
 
+/** Thumbnail of an image with its alternative text field and a delete button. */
 function ImageThumb({ src, file, label, onDelete, deleteLabel, altText, onAltChange, altLabel, altPlaceholder, altError }: Readonly<ImageThumbProps>) {
   const imgRef = useRef<HTMLImageElement>(null)
 
@@ -65,6 +67,7 @@ function ImageThumb({ src, file, label, onDelete, deleteLabel, altText, onAltCha
   )
 }
 
+/** Props of {@link ImageThumbList}. */
 interface ImageThumbListProps {
   title?: string
   children: ReactNode
@@ -74,6 +77,7 @@ interface ImageThumbListProps {
   forceOpen?: boolean
 }
 
+/** List of thumbnails with a title; it can be collapsible. */
 export function ImageThumbList({ title, children, className = 'mt-lg', collapsible = false, summary, forceOpen = false }: Readonly<ImageThumbListProps>) {
   const [open, setOpen] = useState(false)
   const expanded = !collapsible || open || forceOpen

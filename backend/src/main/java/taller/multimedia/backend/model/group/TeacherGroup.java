@@ -16,6 +16,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import taller.multimedia.backend.model.user.User;
 
+/**
+ * Assignment of a teacher to a class group.
+ */
 @Entity
 @Table(name = "teacher_groups", uniqueConstraints = @UniqueConstraint(
         name = "uk_teacher_group",

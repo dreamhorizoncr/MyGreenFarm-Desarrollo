@@ -1,12 +1,7 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
+import { useMemo, useState, type ReactNode } from 'react'
+import { ProfileAvatarContext } from './profileAvatar.ts'
 
-interface ProfileAvatarContextValue {
-  sidebarHovered: boolean
-  setSidebarHovered: (hovered: boolean) => void
-}
-
-const ProfileAvatarContext = createContext<ProfileAvatarContextValue | null>(null)
-
+/** Shares whether the pointer is over the admin sidebar with the profile avatar. */
 export function ProfileAvatarProvider({
   children,
 }: Readonly<{
@@ -20,12 +15,4 @@ export function ProfileAvatarProvider({
       {children}
     </ProfileAvatarContext.Provider>
   )
-}
-
-export function useProfileAvatar() {
-  const context = useContext(ProfileAvatarContext)
-  if (!context) {
-    throw new Error('useProfileAvatar must be used inside ProfileAvatarProvider')
-  }
-  return context
 }

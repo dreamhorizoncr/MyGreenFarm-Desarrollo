@@ -1,8 +1,13 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { galleryService } from '../services/gallery.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { Gallery, GalleryCategory, GalleryImage } from '../types/gallery.ts'
 
+/**
+ * Public photo gallery: years and albums with their texts translated.
+ *
+ * @returns the years, the albums (all and by year), the loading and error state, and `fetchGallery`
+ */
 export function useGallery() {
 	const [categories, setCategories] = useState<GalleryCategory[]>([])
 	const [galleriesByCategory, setGalleriesByCategory] = useState<
@@ -12,7 +17,7 @@ export function useGallery() {
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState<string | null>(null)
 
-	const fetchGallery = async (lang: string) => {
+	const fetchGallery = useCallback(async (lang: string) => {
 		setLoading(true)
 		setError(null)
 		try {
@@ -107,7 +112,7 @@ export function useGallery() {
 		} finally {
 			setLoading(false)
 		}
-	}
+	}, [])
 
 	const getGalleriesByCategory = (categoryId: string) =>
 		galleriesByCategory[categoryId] ?? []

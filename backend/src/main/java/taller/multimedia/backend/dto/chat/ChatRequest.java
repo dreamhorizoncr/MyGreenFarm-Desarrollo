@@ -7,6 +7,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.List;
 
+/**
+ * A message sent to the chat assistant, with the previous turns of the conversation so it keeps the
+ * context.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

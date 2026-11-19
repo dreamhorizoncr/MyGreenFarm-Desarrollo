@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * Data to create an announcement category.
+ */
 @Data
 public class AnnouncementCategoryRequest {
     @NotBlank(message = "The category name is required")

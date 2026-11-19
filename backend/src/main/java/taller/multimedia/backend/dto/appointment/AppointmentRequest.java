@@ -9,9 +9,15 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import taller.multimedia.backend.model.appointment.ReferralSource;
 
+/**
+ * Booking form of a visit appointment, filled in by a family.
+ */
 @Data
 public class AppointmentRequest {
 
+    /**
+     * {@code Costarricense} or {@code Extranjero}; decides the format of the ID number.
+     */
     @NotBlank(message = "The ID type is required")
     private String idType;
 
@@ -55,6 +61,10 @@ public class AppointmentRequest {
     
     private String language;
 
+    /**
+     * Random ID of the booking form that holds the slot, so the booking is not rejected by its own
+     * hold.
+     */
     @Size(max = 64)
     private String holdId;
 }

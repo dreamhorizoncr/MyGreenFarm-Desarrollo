@@ -1,8 +1,14 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { announcementService } from "../services/announcement.ts";
 import { getErrorMessage } from "../utils/error.ts";
 import type { AnnouncementImageResponse } from "../types/announcement.ts";
 
+/**
+ * Images of several announcements, to show their covers.
+ *
+ * @returns the images by announcement, `fetchImages`, and `getCoverImage`/`getCoverAlt` for the
+ *   cover of each announcement (the first image when none is marked as cover)
+ */
 export function useAnnouncementImages() {
   const [images, setImages] = useState<
     Record<string, AnnouncementImageResponse[]>
@@ -10,7 +16,7 @@ export function useAnnouncementImages() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchImages = async (announcementIds: string[]) => {
+  const fetchImages = useCallback(async (announcementIds: string[]) => {
     if (announcementIds.length === 0) {
       setImages({});
       return;
@@ -34,7 +40,7 @@ export function useAnnouncementImages() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const getCoverImage = (announcementId: string) => {
     const announcementImages = images[announcementId] ?? [];

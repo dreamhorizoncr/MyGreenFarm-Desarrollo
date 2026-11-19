@@ -5,12 +5,14 @@ import { useModalExit } from '../../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../../hooks/useDialogDismiss.ts'
 import ModalCloseButton from '../ui/ModalCloseButton.tsx'
 
+/** Props of {@link ForumPendingReviewModal}. */
 interface ForumPendingReviewModalProps {
   title: string
   description: string
   onClose: () => void
 }
 
+/** Tells the user that their post or comment will be published once the moderation reviews it. */
 function ForumPendingReviewModal({ title, description, onClose }: Readonly<ForumPendingReviewModalProps>) {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)

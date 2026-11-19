@@ -11,14 +11,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Storage of student evaluations.
+ */
 public interface EvaluationRepository extends JpaRepository<Evaluation, UUID> {
-    List<Evaluation> findByExpedientIdId(UUID expedientId);
+    List<Evaluation> findByExpedientId(UUID expedientId);
 
-    @Query("SELECT e FROM Evaluation e WHERE e.expedientId.child.id IN :childIds")
+    /**
+     * @param childIds children to include
+     * @return the evaluations of those children's records
+     */
+    @Query("SELECT e FROM Evaluation e WHERE e.expedient.child.id IN :childIds")
     List<Evaluation> findByChildIds(@Param("childIds") Collection<Long> childIds);
 
-    List<Evaluation> findByExpedientIdIdAndEvaluationDateAfter(UUID expedientId, LocalDate date);
-
-    List<Evaluation> findByExpedientIdIdAndEvaluationDateAfterOrderByEvaluationDateAsc(UUID expedientId, LocalDate date);
+    List<Evaluation> findByExpedientIdAndEvaluationDateAfterOrderByEvaluationDateAsc(UUID expedientId, LocalDate date);
 
 }

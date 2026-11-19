@@ -20,6 +20,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+/**
+ * A class group with its teachers, its children and an optional capacity.
+ */
 @Entity
 @Table(name = "groups")
 @Data

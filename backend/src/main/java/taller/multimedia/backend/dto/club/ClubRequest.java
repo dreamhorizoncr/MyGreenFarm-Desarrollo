@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * Data to create or update a club.
+ */
 @Data
 @Builder
 @NoArgsConstructor

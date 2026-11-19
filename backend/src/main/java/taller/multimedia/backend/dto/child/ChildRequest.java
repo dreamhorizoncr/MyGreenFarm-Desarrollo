@@ -12,6 +12,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import taller.multimedia.backend.model.child.Relationship;
 
+/**
+ * Data to enroll or update a child. The parent is found by identification, and the club IDs are the
+ * clubs the child belongs to.
+ */
 @NoArgsConstructor 
 @AllArgsConstructor 
 @Data 

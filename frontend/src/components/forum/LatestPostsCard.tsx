@@ -1,11 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import type { BlogPost } from '../../types/forum.ts'
 
+/** Props of {@link LatestPostsCard}. */
 interface LatestPostsCardProps {
   blogPosts: BlogPost[]
   onOpen: (postId: string) => void
 }
 
+/** The latest articles of the blog, with their image. */
 function LatestPostsCard({ blogPosts, onOpen }: Readonly<LatestPostsCardProps>) {
   const { t } = useTranslation()
   const latestPosts = [...blogPosts]

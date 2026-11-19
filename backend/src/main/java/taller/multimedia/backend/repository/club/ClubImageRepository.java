@@ -7,6 +7,9 @@ import taller.multimedia.backend.model.club.ClubImage;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Storage of club images.
+ */
 public interface ClubImageRepository extends JpaRepository<ClubImage, Long> {
 
     List<ClubImage> findByClubIdOrderBySortOrderAsc(Long clubId);

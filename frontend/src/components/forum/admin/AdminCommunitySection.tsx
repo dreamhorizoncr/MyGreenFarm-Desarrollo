@@ -15,10 +15,14 @@ import { useSkeletonCount } from '../../../hooks/useSkeletonCount.ts'
 const COMMUNITY_POST_TRANSLATION_TYPE = 'FORUM_COMMUNITY_POST'
 const COMMUNITY_COMMENT_TRANSLATION_TYPE = 'FORUM_COMMUNITY_COMMENT'
 
+/** Props of {@link AdminCommunitySection}. */
 interface AdminCommunitySectionProps {
   canDelete: boolean
 }
 
+/**
+ * Community posts on the admin page, translated, with their comments and the actions to delete them.
+ */
 function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProps>) {
   const { t, i18n } = useTranslation()
   const language = i18n.language.split('-')[0]
@@ -47,6 +51,7 @@ function AdminCommunitySection({ canDelete }: Readonly<AdminCommunitySectionProp
           try {
             translated = await forumService.translateBatch(COMMUNITY_POST_TRANSLATION_TYPE, language, items)
           } catch {
+            // without a translation the posts are shown in their original language
           }
         }
         if (cancelled) return

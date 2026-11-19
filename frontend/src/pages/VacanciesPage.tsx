@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import Navbar from '../components/Navbar.tsx'
+import Navbar from '../components/navigation/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import { BriefcaseBusiness } from 'lucide-react'
-import ApplyVacancyModal from '../components/ApplyVacancyModal.tsx'
+import ApplyVacancyModal from '../components/vacancies/ApplyVacancyModal.tsx'
 import Skeleton from '../components/ui/Skeleton.tsx'
 import ScallopEdge from '../components/ui/ScallopEdge.tsx'
 import BlobButton from '../components/ui/BlobButton.tsx'
@@ -32,6 +32,7 @@ interface ApplyTarget {
 
 const SPONTANEOUS_REQUIRED_FIELDS: OptionalApplicationField[] = ['file']
 
+/** Props of {@link VacancyCard}. */
 interface VacancyCardProps {
   title?: string
   description?: string
@@ -68,6 +69,7 @@ function useCenterActive<T extends HTMLElement>() {
   return ref
 }
 
+/** Card of an open vacancy with the button to apply. */
 function VacancyCard({ title, description, onApply, loading = false, position = 0 }: Readonly<VacancyCardProps>) {
   const { t } = useTranslation()
   const tone = toneAttributes(position)
@@ -134,6 +136,7 @@ function VacancyCard({ title, description, onApply, loading = false, position = 
   )
 }
 
+/** Public page of the open vacancies; it also accepts spontaneous applications. */
 function VacanciesPage() {
   const { t, i18n } = useTranslation()
 
@@ -155,8 +158,7 @@ function VacanciesPage() {
 
   useEffect(() => {
     void fetchVacancies(i18n.language)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [i18n.language])
+  }, [fetchVacancies, i18n.language])
 
   const openVacancies = vacancies.filter((v) => v.isOpen)
 

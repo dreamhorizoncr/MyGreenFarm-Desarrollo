@@ -1,16 +1,17 @@
-
-    interface SeoMetadata {
+/** Metadata of a page for search engines and social networks. */
+interface SeoMetadata {
     title: string
     description: string
     noIndex?: boolean
     image?: string
     type?: 'website' | 'article'
-    }
+}
 
-    const SITE_URL = 'https://mygreenfarmcr.com'
-    const SITE_NAME = 'My Green Farm'
+const SITE_URL = 'https://mygreenfarmcr.com'
+const SITE_NAME = 'My Green Farm'
 
-    const PRIVATE_ROUTES = [
+/** Routes that must not be indexed, besides the admin ones. */
+const PRIVATE_ROUTES = [
     '/login',
     '/signup',
     '/profile',
@@ -18,13 +19,14 @@
     '/reset-password',
     '/payment-success',
     '/payment-failed',
-    ]
+]
 
-    function setMeta(
+/** Creates or updates a `<meta>` tag of the document's head. */
+function setMeta(
     attribute: 'name' | 'property',
     key: string,
     content: string
-    ): void {
+): void {
     let element = document.querySelector<HTMLMetaElement>(
         `meta[${attribute}="${key}"]`
     )
@@ -36,13 +38,14 @@
     }
 
     element.content = content
-    }
+}
 
-    function absoluteURL(path: string): string {
+function absoluteURL(path: string): string {
     return new URL(path, SITE_URL).href
-    }
+}
 
-    function setCanonical(url: string): void {
+/** Creates or updates the canonical link. */
+function setCanonical(url: string): void {
     let element = document.querySelector<HTMLLinkElement>(
         'link[rel="canonical"]'
     )
@@ -54,15 +57,21 @@
     }
 
     element.href = url
-    }
+}
 
-    export function setRouteSEO(pathname: string): void {
+/**
+ * Sets the canonical URL of the route and keeps the admin and private routes out of search engines.
+ * It runs on every navigation.
+ *
+ * @param pathname - current route
+ */
+export function setRouteSEO(pathname: string): void {
     const canonical = absoluteURL(pathname)
 
     const isPrivate =
-        pathname === '/admin' ||
-        pathname.startsWith('/admin/') ||
-        PRIVATE_ROUTES.includes(pathname)
+    pathname === '/admin' ||
+    pathname.startsWith('/admin/') ||
+    PRIVATE_ROUTES.includes(pathname)
 
     setCanonical(canonical)
 
@@ -75,15 +84,20 @@
     )
 
     setMeta('property', 'og:url', canonical)
-    }
+}
 
-    export function setPageSEO({
+/**
+ * Sets the title, description and Open Graph / Twitter tags of the current page.
+ *
+ * @param metadata - the page's title, description and, optionally, image and type
+ */
+export function setPageSEO({
     title,
     description,
     noIndex = false,
     image,
     type = 'website',
-    }: SeoMetadata): void {
+}: SeoMetadata): void {
     const pathname = window.location.pathname
 
     document.title = title

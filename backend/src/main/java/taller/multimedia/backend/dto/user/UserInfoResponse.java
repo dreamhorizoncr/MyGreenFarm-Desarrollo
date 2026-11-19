@@ -1,0 +1,46 @@
+package taller.multimedia.backend.dto.user;
+
+import lombok.Getter;
+
+import java.time.LocalDate;
+import java.util.UUID;
+
+/**
+ * A staff user as shown in the admin panel.
+ */
+@Getter 
+public class UserInfoResponse {
+    private UUID id;
+    private String email;
+    private String firstName;
+    private String lastName;
+    private String role;
+    private LocalDate birthday;
+    private String photoUrl;
+    private Boolean showOnAboutUs;
+
+    public UserInfoResponse(UUID id, String email, String firstName, String lastName, String role, LocalDate birthday) {
+        this.id = id;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.role = role;
+        this.birthday = birthday;
+    }
+
+    public UserInfoResponse(UUID id, String email, String firstName, String lastName, String role, LocalDate birthday, String photoUrl) {
+        this.id = id;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.role = role;
+        this.birthday = birthday;
+        this.photoUrl = photoUrl;
+    }
+
+    public UserInfoResponse(UUID id, String email, String firstName, String lastName, String role, LocalDate birthday, String photoUrl, boolean showOnAboutUs) {
+        this(id, email, firstName, lastName, role, birthday, photoUrl);
+        this.showOnAboutUs = showOnAboutUs;
+    }
+
+}

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import FooterColumn from '../components/footer/FooterColumn.tsx'
 import FooterSocialLinks from '../components/footer/FooterSocialLinks.tsx'
-import TermsModal from '../components/TermsModal.tsx'
+import TermsModal from '../components/legal/TermsModal.tsx'
 import { footerColumns, legalLink } from '../components/footer/footerData.ts'
 import cloudFooter from '../assets/imgs/cloudFooter.svg'
 import logo from '../assets/imgs/48.svg'
@@ -18,6 +18,7 @@ function Brand() {
   )
 }
 
+/** Footer of the public pages: logo, social networks, link columns, credits and the legal terms. */
 function Footer() {
   const { t } = useTranslation()
   const year = new Date().getFullYear()

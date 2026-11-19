@@ -27,6 +27,9 @@ import lombok.ToString;
 import taller.multimedia.backend.model.group.ChildGroup;
 import taller.multimedia.backend.model.parent.Parent;
 
+/**
+ * An enrolled child. Children are deactivated instead of deleted.
+ */
 @Entity 
 @Table (name = "childrens")
 @Data 
@@ -44,6 +47,9 @@ public class Child {
     @EqualsAndHashCode.Exclude
     private Parent parent;
 
+    /**
+     * Student ID such as {@code A6001}, generated at enrollment.
+     */
     @Column(name = "student_id", nullable = false, unique = true, length = 10)
     private String studentId;
 

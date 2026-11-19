@@ -6,8 +6,8 @@ import { Clock, Mail } from 'lucide-react'
 import PhoneInput, { formatPhoneNumberIntl } from 'react-phone-number-input'
 import { useNavigate } from 'react-router-dom'
 import 'react-phone-number-input/style.css'
-import BookingSuccessModal from '../components/BookingSuccessModal.tsx'
-import Navbar from '../components/Navbar.tsx'
+import BookingSuccessModal from '../components/appointments/BookingSuccessModal.tsx'
+import Navbar from '../components/navigation/Navbar.tsx'
 import TextField from '../components/ui/TextField.tsx'
 import CardActionButton from '../components/ui/CardActionButton.tsx'
 import Select from '../components/ui/Select.tsx'
@@ -33,6 +33,7 @@ import TabHighlight from '../components/ui/TabHighlight.tsx'
 import { tabCarouselClass, useTabCarousel } from '../hooks/useTabCarousel.ts'
 import { setPageSEO } from '../utils/seo.ts'
 
+/** Text input of the phone field with the form's styles. */
 function BookingPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
@@ -65,6 +66,7 @@ const STEPS = [
   { key: 'confirm', label: 'booking.wizard.confirm' },
 ]
 
+/** Progress bar of the booking steps. */
 function WizardProgress({ step }: Readonly<{ step: number }>) {
   return (
     <div className="mb-lg flex w-full items-center gap-sm">
@@ -101,6 +103,10 @@ function WizardProgress({ step }: Readonly<{ step: number }>) {
   )
 }
 
+/**
+ * Booking of a visit in three steps: day and time (held while the form is filled in), the family's
+ * data, and confirmation.
+ */
 function BookingPage() {
   const { t, i18n } = useTranslation()
   useEffect(() => {
@@ -108,7 +114,7 @@ function BookingPage() {
       title: t('seo.bookingTitle'),
       description: t('seo.bookingDescription'),
     })
-  }, [i18n.resolvedLanguage]) 
+  }, [t])
   const navigate = useNavigate()
   const {
     availability,

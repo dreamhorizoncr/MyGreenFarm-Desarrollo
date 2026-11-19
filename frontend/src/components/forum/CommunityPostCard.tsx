@@ -6,6 +6,7 @@ import PostAvatar from './PostAvatar.tsx'
 import Skeleton from '../ui/Skeleton.tsx'
 import CardActionButton from '../ui/CardActionButton.tsx'
 
+/** Props of {@link CommunityPostCard}; without `post` or while `loading` it shows a skeleton. */
 interface CommunityPostCardProps {
   post?: CommunityPost
   onToggleLike?: (postId: string) => void
@@ -14,6 +15,7 @@ interface CommunityPostCardProps {
   loading?: boolean
 }
 
+/** Card of a community post: author, date, text, likes and comments. */
 function CommunityPostCard({ post, onToggleLike, onOpenComments, onDelete, loading = false }: Readonly<CommunityPostCardProps>) {
   const { t } = useTranslation()
 

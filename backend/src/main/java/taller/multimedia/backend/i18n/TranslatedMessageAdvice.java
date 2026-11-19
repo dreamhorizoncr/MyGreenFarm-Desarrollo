@@ -15,8 +15,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import lombok.RequiredArgsConstructor;
-import taller.multimedia.backend.dto.MessageResponse;
+import taller.multimedia.backend.dto.common.MessageResponse;
 
+/**
+ * Translates the messages returned by the API to the request's language before they are sent:
+ * {@code MessageResponse} bodies, plain text bodies and the {@code message}, {@code error} and
+ * {@code invoiceError} fields of map bodies. Other bodies are returned unchanged.
+ */
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class TranslatedMessageAdvice implements ResponseBodyAdvice<Object> {

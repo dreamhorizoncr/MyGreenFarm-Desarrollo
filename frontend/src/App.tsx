@@ -4,71 +4,78 @@ import { Toaster } from 'sileo'
 
 import HomePage from './pages/HomePage.tsx'
 import ProtectedRoute from './routes/ProtectedRoute.tsx'
-import AdminRoute from './routes/AdminRoute.tsx'
-import OwnerRoute from './routes/OwnerRoute.tsx'
-import ForumManagementRoute from './routes/ForumManagementRoute.tsx'
-import ExpedientsRoute from './routes/ExpedientsRoute.tsx'
+import RoleRoute from './routes/RoleRoute.tsx'
 import Footer from './layout/Footer.tsx'
-import ScrollToTopButton from './components/ScrollToTopButton.tsx'
+import ScrollToTopButton from './components/navigation/ScrollToTopButton.tsx'
 import { ProfileAvatarProvider } from './contexts/ProfileAvatarContext.tsx'
-import { ForumFeedProvider } from './contexts/ForumFeedContext.tsx'
-import { AccessibilityProvider } from '../src/contexts/AccessibilityContext.tsx'
+import { ForumFeedLayout } from './contexts/ForumFeedContext.tsx'
+import { AccessibilityProvider } from './contexts/AccessibilityContext.tsx'
 import { useMotionKey } from './hooks/useMotionKey.ts'
 import { VoiceReaderProvider } from './contexts/VoiceReaderContext.tsx'
 import AccessibilityMenu from './components/ui/AccessibilityMenu.tsx'
 import VoiceReaderController from './components/ui/VoiceReaderController.tsx'
 import ReadingGuide from './components/ui/ReadingGuide.tsx'
 import { useSessionExpiredNotice } from './hooks/useSessionExpiredNotice.ts'
-import { ErrorBoundary } from './components/ErrorBoundary.tsx'
+import { ErrorBoundary } from './components/ui/ErrorBoundary.tsx'
 import BlobGooFilter from './components/ui/BlobGooFilter.tsx'
 import ChatWidget from './components/chat/ChatWidget.tsx'
-import GroupsRoute from './routes/GroupsRoute.tsx'
 import PageLoader from './components/ui/PageLoader.tsx'
 import { userStorage } from './utils/userStorage.ts'
 import { setRouteSEO } from './utils/seo.ts'
 
+/** Module of a page loaded on demand. */
 type PageModule = { default: ComponentType }
+/** Loaders of the public pages, preloaded by {@link PagePreloader}. */
 const publicPageLoaders: (() => Promise<PageModule>)[] = []
+/** Loaders of the pages that need a session; preloaded only for signed-in users. */
 const privatePageLoaders: (() => Promise<PageModule>)[] = []
 
+/**
+ * Loads a page on demand and registers it to preload it later.
+ *
+ * @param loader - imports the page
+ * @param isPrivate - whether the page needs a session
+ * @returns the lazy component
+ */
 function lazyPage(loader: () => Promise<PageModule>, isPrivate = false) {
   ;(isPrivate ? privatePageLoaders : publicPageLoaders).push(loader)
   return lazy(loader)
 }
 
 const BookingPage = lazyPage(() => import('./pages/BookingPage.tsx'))
-const LoginPage = lazyPage(() => import('./pages/LoginPage.tsx'))
-const ForgotPasswordPage = lazyPage(() => import('./pages/ForgotPasswordPage.tsx'))
-const ResetPasswordPage = lazyPage(() => import('./pages/ResetPasswordPage.tsx'))
-const AdminUsersPage = lazyPage(() => import('./pages/AdminUsersPage.tsx'), true)
-const AdminDashboardPage = lazyPage(() => import('./pages/AdminDashboardPage.tsx'), true)
-const AdminAppointmentsPage = lazyPage(() => import('./pages/AdminAppointmentsPage.tsx'), true)
+const LoginPage = lazyPage(() => import('./pages/auth/LoginPage.tsx'))
+const ForgotPasswordPage = lazyPage(() => import('./pages/auth/ForgotPasswordPage.tsx'))
+const ResetPasswordPage = lazyPage(() => import('./pages/auth/ResetPasswordPage.tsx'))
+const AdminUsersPage = lazyPage(() => import('./pages/admin/AdminUsersPage.tsx'), true)
+const AdminDashboardPage = lazyPage(() => import('./pages/admin/AdminDashboardPage.tsx'), true)
+const AdminAppointmentsPage = lazyPage(() => import('./pages/admin/AdminAppointmentsPage.tsx'), true)
 const ProfilePage = lazyPage(() => import('./pages/ProfilePage.tsx'), true)
-const NewsPage = lazyPage(() => import('./pages/NewsPage.tsx'))
-const ForumPage = lazyPage(() => import('./pages/ForumPage.tsx'))
-const BlogPostPage = lazyPage(() => import('./pages/BlogPostPage.tsx'))
-const CommunityPostPage = lazyPage(() => import('./pages/CommunityPostPage.tsx'))
-const AdminForumPage = lazyPage(() => import('./pages/AdminForumPage.tsx'), true)
-const AnnouncementsPage = lazyPage(() => import('./pages/AdminAnnouncementsPage.tsx'), true)
-const AdminExpedientsPage = lazyPage(() => import('./pages/AdminExpedientsPage.tsx'), true)
-const AdminParentsPage = lazyPage(() => import('./pages/AdminParentPage.tsx'), true)
-const AdminChildrenPage = lazyPage(() => import('./pages/AdminChildrenPage.tsx'), true)
-const AdminEvaluationsPage = lazyPage(() => import('./pages/AdminEvaluationsPage.tsx'), true)
-const GalleryPage = lazyPage(() => import('./pages/GalleryPage.tsx'))
-const AlbumDetailPage = lazyPage(() => import('./pages/AlbumDetailPage.tsx'))
-const AdminGalleryPage = lazyPage(() => import('./pages/AdminGalleryPage.tsx'), true)
-const AdminCurriculumsPage = lazyPage(() => import('./pages/AdminCurriculumsPage.tsx'), true)
+const NewsPage = lazyPage(() => import('./pages/forum/NewsPage.tsx'))
+const ForumPage = lazyPage(() => import('./pages/forum/ForumPage.tsx'))
+const BlogPostPage = lazyPage(() => import('./pages/forum/BlogPostPage.tsx'))
+const CommunityPostPage = lazyPage(() => import('./pages/forum/CommunityPostPage.tsx'))
+const AdminForumPage = lazyPage(() => import('./pages/admin/AdminForumPage.tsx'), true)
+const AdminAnnouncementsPage = lazyPage(() => import('./pages/admin/AdminAnnouncementsPage.tsx'), true)
+const AdminExpedientsPage = lazyPage(() => import('./pages/admin/AdminExpedientsPage.tsx'), true)
+const AdminParentsPage = lazyPage(() => import('./pages/admin/AdminParentsPage.tsx'), true)
+const AdminChildrenPage = lazyPage(() => import('./pages/admin/AdminChildrenPage.tsx'), true)
+const AdminEvaluationsPage = lazyPage(() => import('./pages/admin/AdminEvaluationsPage.tsx'), true)
+const GalleryPage = lazyPage(() => import('./pages/gallery/GalleryPage.tsx'))
+const AlbumDetailPage = lazyPage(() => import('./pages/gallery/AlbumDetailPage.tsx'))
+const AdminGalleryPage = lazyPage(() => import('./pages/admin/AdminGalleryPage.tsx'), true)
+const AdminCurriculumsPage = lazyPage(() => import('./pages/admin/AdminCurriculumsPage.tsx'), true)
 const VacanciesPage = lazyPage(() => import('./pages/VacanciesPage.tsx'))
-const OwnerAvailabilityPage = lazyPage(() => import('./pages/OwnerAvailabilityPage.tsx'), true)
-const OwnerNewsletter = lazyPage(() => import('./pages/OwnerNewsletter.tsx'), true)
-const OwnerClubsPage = lazyPage(() => import('./pages/OwnerClubsPage.tsx'), true)
+const OwnerAvailabilityPage = lazyPage(() => import('./pages/admin/OwnerAvailabilityPage.tsx'), true)
+const AdminNewsletterPage = lazyPage(() => import('./pages/admin/AdminNewsletterPage.tsx'), true)
+const OwnerClubsPage = lazyPage(() => import('./pages/admin/OwnerClubsPage.tsx'), true)
 const ClubsPage = lazyPage(() => import('./pages/ClubsPage.tsx'))
 const AboutUsPage = lazyPage(() => import('./pages/AboutUsPage.tsx'))
-const AdminGroupsPage = lazyPage(() => import('./pages/AdminGroupsPage.tsx'), true)
+const AdminGroupsPage = lazyPage(() => import('./pages/admin/AdminGroupsPage.tsx'), true)
 const GreenHeartsPage = lazyPage(() => import('./pages/GreenHeartsPage.tsx'))
 const ServicesPage = lazyPage(() => import('./pages/ServicesPage.tsx'))
-const AdminServicePlansPage = lazyPage(() => import('./pages/AdminServicePlansPage.tsx'), true)
+const AdminServicePlansPage = lazyPage(() => import('./pages/admin/AdminServicePlansPage.tsx'), true)
 
+/** Updates the canonical URL and the indexing of every route. */
 function SeoRouteGuard() {
   const { pathname } = useLocation()
 
@@ -79,32 +86,42 @@ function SeoRouteGuard() {
   return null
 }
 
+/** Warns and goes to the login page when the session ends (see {@link useSessionExpiredNotice}). */
 function SessionWatcher() {
   useSessionExpiredNotice()
   return null
 }
 
+/** @returns whether the route belongs to the admin area, which has no footer */
 function isDashboardPath(pathname: string) {
   return pathname === '/profile' || pathname.startsWith('/admin')
 }
 
+/** Mounts its content again when the stop animations option changes (see {@link useMotionKey}). */
 function MotionBoundary({ children }: Readonly<{ children: ReactNode }>) {
   return <Fragment key={useMotionKey()}>{children}</Fragment>
 }
 
+/** Footer of every page outside the admin area. */
 function GlobalFooter() {
   const { pathname } = useLocation()
   if (isDashboardPath(pathname)) return null
   return <Footer />
 }
 
+/** Wait after the page loads before preloading the other pages. */
 const PRELOAD_DELAY_MS = 5000
 
+/** Part of `navigator.connection` used to skip the preload on slow or data-saving connections. */
 type NetworkInformation = {
   saveData?: boolean
   effectiveType?: string
 }
 
+/**
+ * Downloads the code of the other pages one by one while the browser is idle, so navigating is
+ * instant. It does nothing on slow or data-saving connections.
+ */
 function PagePreloader() {
   useEffect(() => {
     const { connection } = navigator as Navigator & {
@@ -166,11 +183,16 @@ function PagePreloader() {
   return null
 }
 
+/** Sends the old album address (`/albumes/:id`) to the new one. */
 function LegacyAlbumRedirect() {
   const { id } = useParams()
   return <Navigate to={`/albums/${id ?? ''}`} replace />
 }
 
+/**
+ * Root of the app: providers, routes (the admin ones guarded by role), and the global widgets: chat,
+ * accessibility menu, voice reader, toasts and scroll-to-top button.
+ */
 function App() {
   return (
     <ErrorBoundary>
@@ -187,7 +209,6 @@ function App() {
               <MotionBoundary>
                 <div className="flex-1">
                   <ProfileAvatarProvider>
-                    <ForumFeedProvider>
                       <Suspense fallback={<PageLoader />}>
                         <Routes>
                           <Route element={<ProtectedRoute />}>
@@ -195,32 +216,37 @@ function App() {
                             <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
                           </Route>
 
-                          <Route element={<ForumManagementRoute />}>
-                            <Route path="/admin/forum" element={<AdminForumPage />} />
+                          <Route element={<ForumFeedLayout />}>
+                            <Route element={<RoleRoute roles={['OWNER', 'TEACHER']} />}>
+                              <Route path="/admin/forum" element={<AdminForumPage />} />
+                            </Route>
+                            <Route path="/forum" element={<ForumPage />} />
+                            <Route path="/forum/blog/:id" element={<BlogPostPage />} />
+                            <Route path="/forum/community/:id" element={<CommunityPostPage />} />
                           </Route>
 
-                          <Route element={<AdminRoute />}>
+                          <Route element={<RoleRoute roles={['OWNER', 'ADMIN']} />}>
                             <Route path="/admin/appointments" element={<AdminAppointmentsPage />} />
                             <Route path="/admin/users" element={<AdminUsersPage />} />
-                            <Route path="/admin/announcements" element={<AnnouncementsPage />} />
+                            <Route path="/admin/announcements" element={<AdminAnnouncementsPage />} />
                             <Route path="/admin/gallery" element={<AdminGalleryPage />} />
                             <Route path="/admin/curriculums" element={<AdminCurriculumsPage />} />
                             <Route path="/admin/clubs" element={<OwnerClubsPage />} />
                             <Route path="/admin/parents" element={<AdminParentsPage />} />
                             <Route path="/admin/children" element={<AdminChildrenPage />} />
 
-                            <Route element={<OwnerRoute />}>
+                            <Route element={<RoleRoute roles={['OWNER']} />}>
                               <Route path="/admin/availability" element={<OwnerAvailabilityPage />} />
-                              <Route path="/admin/newsletter" element={<OwnerNewsletter />} />
+                              <Route path="/admin/newsletter" element={<AdminNewsletterPage />} />
                               <Route path="/admin/services" element={<AdminServicePlansPage />} />
                             </Route>
                           </Route>
 
-                          <Route element={<GroupsRoute />}>
+                          <Route element={<RoleRoute roles={['OWNER', 'TEACHER']} />}>
                             <Route path="/admin/groups" element={<AdminGroupsPage />} />
                           </Route>
 
-                          <Route element={<ExpedientsRoute />}>
+                          <Route element={<RoleRoute roles={['OWNER', 'ADMIN', 'TEACHER']} />}>
                             <Route path="/admin/expedients" element={<AdminExpedientsPage />} />
                             <Route path="/admin/evaluations" element={<AdminEvaluationsPage />} />
                           </Route>
@@ -231,9 +257,6 @@ function App() {
                           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                           <Route path="/reset-password" element={<ResetPasswordPage />} />
                           <Route path="/news" element={<NewsPage />} />
-                          <Route path="/forum" element={<ForumPage />} />
-                          <Route path="/forum/blog/:id" element={<BlogPostPage />} />
-                          <Route path="/forum/community/:id" element={<CommunityPostPage />} />
                           <Route path="/multimedia" element={<GalleryPage />} />
                           <Route path="/services" element={<ServicesPage />} />
                           <Route path="/albums/:id" element={<AlbumDetailPage />} />
@@ -251,7 +274,6 @@ function App() {
                           <Route path="*" element={<Navigate to="/" replace />} />
                         </Routes>
                       </Suspense>
-                    </ForumFeedProvider>
                   </ProfileAvatarProvider>
                 </div>
 

@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * A job application with the applicant's CV and certificates, stored in the private résumés bucket.
+ */
 @Entity
 @Table(name = "curriculums")
 @Data
@@ -28,6 +31,9 @@ public class Curriculum {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    /**
+     * Vacancy applied to, or {@code null} for an open application.
+     */
     @Column(name = "vacancy_id")
     private UUID vacancyId;
 

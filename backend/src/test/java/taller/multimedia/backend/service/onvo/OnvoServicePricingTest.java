@@ -16,12 +16,12 @@
 // import org.springframework.web.client.RestTemplate;
 
 // import taller.multimedia.backend.dto.onvo.PaymentQuote;
-// import taller.multimedia.backend.model.service_plans.ServicePlan;
-// import taller.multimedia.backend.repository.exchange_rate.ExchangeRateRepository;
+// import taller.multimedia.backend.model.serviceplan.ServicePlan;
+// import taller.multimedia.backend.repository.exchangerate.ExchangeRateRepository;
 // import taller.multimedia.backend.repository.onvo.PaymentIntentPricingRepository;
-// import taller.multimedia.backend.repository.service_plan.ServicePlanRepository;
-// import taller.multimedia.backend.service.EmailService;
-// import taller.multimedia.backend.service.electronic_billing.ElectronicBillingService;
+// import taller.multimedia.backend.repository.serviceplan.ServicePlanRepository;
+// import taller.multimedia.backend.service.email.EmailService;
+// import taller.multimedia.backend.service.electronicbilling.ElectronicBillingService;
 
 // import static org.junit.jupiter.api.Assertions.assertEquals;
 // import static org.mockito.ArgumentMatchers.any;

@@ -1,5 +1,6 @@
 import { useLayoutEffect, useState, type RefObject } from 'react'
 
+/** Fixed position of a menu: below the trigger (`top`) or above it (`bottom`). */
 export interface MenuPosition {
   top?: number
   bottom?: number
@@ -12,14 +13,23 @@ const MENU_GAP = 4
 const VIEWPORT_MARGIN = 8
 const MIN_MENU_HEIGHT = 40
 
+/** Options of {@link useMenuPosition}. */
 interface UseMenuPositionOptions {
   triggerRef: RefObject<HTMLElement | null>
   open: boolean
+  /** Height the menu needs to show every option. */
   desiredHeight: number
   maxHeight: number
   minWidth?: number
 }
 
+/**
+ * Places a menu below its trigger, or above it when there is more room there, without leaving the
+ * window. It follows the trigger when the page scrolls or the window is resized.
+ *
+ * @param options - the trigger, whether the menu is open and its sizes
+ * @returns the position, or `null` while it is closed
+ */
 export function useMenuPosition({ triggerRef, open, desiredHeight, maxHeight, minWidth = 0 }: UseMenuPositionOptions) {
   const [position, setPosition] = useState<MenuPosition | null>(null)
 

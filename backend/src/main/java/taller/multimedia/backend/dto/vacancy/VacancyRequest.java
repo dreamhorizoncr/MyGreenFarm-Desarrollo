@@ -7,6 +7,9 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * Data of a job opening and the fields applicants must fill in.
+ */
 @Data
 public class VacancyRequest {
 

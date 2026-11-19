@@ -1,24 +1,37 @@
 import type { TFunction } from 'i18next'
 
+/** Some days of the week with the same hours. */
 export interface ScheduleBlock {
+  /** Days, from 1 (Monday) to 7 (Sunday). */
   days: number[]
+  /** Opening time, `HH:mm`. */
   start: string
+  /** Closing time, `HH:mm`. */
   end: string
 }
 
+/** A schedule: one or more blocks of days and hours. */
 export type ScheduleValue = ScheduleBlock[]
 
+/** Days of the week, from Monday (1) to Sunday (7). */
 export const WEEK_DAYS = [1, 2, 3, 4, 5, 6, 7]
 
+/** @returns a block without days or hours, to fill in the form */
 export const emptyScheduleBlock = (): ScheduleBlock => ({ days: [], start: '', end: '' })
 
+/** @returns a schedule with one empty block */
 export const emptySchedule = (): ScheduleValue => [emptyScheduleBlock()]
 
+/** A stored block, for example `1,2,3 08:00-12:00`. */
 const BLOCK_PATTERN = /^([1-7](?:,[1-7])*) (\d{2}:\d{2})-(\d{2}:\d{2})$/
 const BLOCK_SEPARATOR = '; '
 
 const sortDays = (days: number[]) => Array.from(new Set(days)).sort((a, b) => a - b)
 
+/**
+ * @param value - schedule as stored, blocks separated by `;`
+ * @returns the schedule, or `null` when it is empty or is free text written before this format
+ */
 export function parseSchedule(value: string | null | undefined): ScheduleValue | null {
   const text = value?.trim()
   if (!text) return null
@@ -31,12 +44,22 @@ export function parseSchedule(value: string | null | undefined): ScheduleValue |
   return blocks
 }
 
+/**
+ * @param schedule - schedule from the form
+ * @returns the text stored by the backend, for example `1,2,3 08:00-12:00; 6 09:00-11:00`
+ */
 export function serializeSchedule(schedule: ScheduleValue): string {
   return schedule
     .map(({ days, start, end }) => `${sortDays(days).join(',')} ${start}-${end}`)
     .join(BLOCK_SEPARATOR)
 }
 
+/**
+ * @param schedule - schedule from the form
+ * @param t - translation function
+ * @returns the translated error of the first block without days or hours, or that ends before it
+ *   starts
+ */
 export function validateSchedule(schedule: ScheduleValue, t: TFunction): string | null {
   for (const { days, start, end } of schedule) {
     if (days.length === 0) return t('common.schedule.daysRequired')
@@ -48,10 +71,17 @@ export function validateSchedule(schedule: ScheduleValue, t: TFunction): string 
 
 const dayDate = (day: number) => new Date(2023, 0, 1 + day)
 
+/**
+ * @param day - day, from 1 (Monday) to 7 (Sunday)
+ * @param language - language
+ * @param style - long, short or narrow name
+ * @returns the day's name in that language
+ */
 export function dayName(day: number, language: string, style: 'long' | 'short' | 'narrow' = 'long'): string {
   return new Intl.DateTimeFormat(language, { weekday: style }).format(dayDate(day))
 }
 
+/** @returns the time in the language's format; 24-hour clock in French */
 function formatTime(time: string, language: string): string {
   const [hours, minutes] = time.split(':').map(Number)
   return new Intl.DateTimeFormat(language, { hour: 'numeric', minute: '2-digit', hour12: !language.startsWith('fr') }).format(
@@ -59,6 +89,7 @@ function formatTime(time: string, language: string): string {
   )
 }
 
+/** @returns the days grouped in runs of consecutive days, for example `[[1, 2, 3], [5]]` */
 function dayRuns(days: number[]): number[][] {
   return days.reduce<number[][]>((runs, day) => {
     const last = runs.at(-1)
@@ -72,11 +103,13 @@ function capitalize(text: string): string {
   return text.charAt(0).toLocaleUpperCase() + text.slice(1)
 }
 
+/** A block of a schedule as text, for example `Lunes a viernes` and `8:00 a. m. a 12:00 p. m.`. */
 export interface ScheduleEntry {
   days: string
   hours: string
 }
 
+/** @returns the block as text: three or more consecutive days become a range */
 function formatBlock({ days, start, end }: ScheduleBlock, t: TFunction, language: string): ScheduleEntry {
   const parts = dayRuns(days).flatMap((run) =>
     run.length >= 3
@@ -88,6 +121,7 @@ function formatBlock({ days, start, end }: ScheduleBlock, t: TFunction, language
   return { days: dayText, hours }
 }
 
+/** @returns the schedule with the blocks of the same hours merged and sorted by their first day */
 function mergeSameHours(schedule: ScheduleValue): ScheduleValue {
   const byHours = new Map<string, ScheduleBlock>()
   for (const block of schedule) {
@@ -98,21 +132,43 @@ function mergeSameHours(schedule: ScheduleValue): ScheduleValue {
   return [...byHours.values()].sort((a, b) => a.days[0] - b.days[0] || a.start.localeCompare(b.start))
 }
 
+/**
+ * @param value - schedule as stored
+ * @param t - translation function
+ * @param language - language
+ * @returns each block as text; free text written before this format is returned as it is
+ */
 export function formatScheduleEntries(value: string | null | undefined, t: TFunction, language: string): ScheduleEntry[] {
   const schedule = parseSchedule(value)
   if (!schedule) return value ? [{ days: value, hours: '' }] : []
   return mergeSameHours(schedule).map((block) => formatBlock(block, t, language))
 }
 
+/**
+ * @param value - schedule as stored
+ * @returns how many different days of the week it covers
+ */
 export function countScheduleDays(value: string | null | undefined): number {
   const schedule = parseSchedule(value)
   return schedule ? new Set(schedule.flatMap((block) => block.days)).size : 0
 }
 
+/**
+ * @param value - schedule as stored
+ * @param t - translation function
+ * @param language - language
+ * @returns one line per block, `days, hours`
+ */
 export function formatScheduleLines(value: string | null | undefined, t: TFunction, language: string): string[] {
   return formatScheduleEntries(value, t, language).map(({ days, hours }) => (hours ? `${days}, ${hours}` : days))
 }
 
+/**
+ * @param value - schedule as stored
+ * @param t - translation function
+ * @param language - language
+ * @returns the schedule as text, one block per line
+ */
 export function formatSchedule(value: string | null | undefined, t: TFunction, language: string): string {
   return formatScheduleLines(value, t, language).join('\n')
 }

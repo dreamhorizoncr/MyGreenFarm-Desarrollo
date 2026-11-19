@@ -1,0 +1,243 @@
+import { useEffect, useRef, type InputHTMLAttributes } from 'react'
+import { useTranslation } from 'react-i18next'
+import { FileTextIcon, XIcon } from '@animateicons/react/lucide'
+import PhoneInput from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
+import Button from '../ui/Button.tsx'
+import TextField from '../ui/TextField.tsx'
+import CountrySelect from '../ui/CountrySelect.tsx'
+import { phoneLabels } from '../../utils/phoneLabels.ts'
+import { useVacancyApplicationForm } from '../../hooks/useVacancyApplicationForm.ts'
+import { useModalExit } from '../../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../../hooks/useDialogDismiss.ts'
+import { useBodyScrollLock } from '../../hooks/useBodyScrollLock.ts'
+import type { OptionalApplicationField } from '../../types/vacancy.ts'
+import type { ApplicationInput } from '../../types/curriculum.ts'
+import ModalCloseButton from '../ui/ModalCloseButton.tsx'
+
+/** Text input of the phone field with the form's styles. */
+function VacancyPhoneInput(props: InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      {...props}
+      className="h-full w-full bg-transparent pl-2 font-body text-body-sm text-body-text-dark outline-none"
+    />
+  )
+}
+
+/** Props of {@link ApplyVacancyModal}. */
+interface ApplyVacancyModalProps {
+  title: string
+  /** Vacancy applied for; `null` for a spontaneous application. */
+  vacancyId: string | null
+  requiredFields: OptionalApplicationField[]
+  onSubmit: (data: ApplicationInput) => Promise<void>
+  onClose: () => void
+}
+
+/** Job application form: name, email and the phone, CV and certificates the vacancy requires. */
+function ApplyVacancyModal({ title, vacancyId, requiredFields, onSubmit, onClose }: Readonly<ApplyVacancyModalProps>) {
+  const { t, i18n } = useTranslation()
+  const dialogRef = useRef<HTMLDialogElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const certificatesInputRef = useRef<HTMLInputElement>(null)
+
+  const form = useVacancyApplicationForm({ vacancyId, requiredFields }, onSubmit)
+  const heading = vacancyId === null ? title : t('vacancies.applyModalTitle')
+  const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
+  useBodyScrollLock()
+
+  useEffect(() => {
+    dialogRef.current?.showModal()
+  }, [])
+
+  const handleSubmitClick = async () => {
+    const succeeded = await form.handleSubmit()
+    if (succeeded) requestClose()
+  }
+
+  return (
+    <dialog
+      ref={dialogRef}
+      onClose={requestClose}
+      aria-label={heading}
+      className={`fixed inset-0 m-auto max-h-[90vh] w-[min(620px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+    >
+      <div className="relative p-lg md:p-xl">
+        <div className="mb-lg flex items-start justify-between gap-md">
+          <div className="min-w-0 text-left">
+            <h2 className="m-0 font-heading text-h4 font-bold leading-tight text-heading">
+              {heading}
+            </h2>
+            {vacancyId !== null && (
+              <p className="m-0 mt-2xs font-body text-body-sm text-neutral-500">{title}</p>
+            )}
+          </div>
+          <ModalCloseButton onClick={requestClose} aria-label={t('admin.cancel')} />
+        </div>
+
+        <div className="flex flex-col gap-md text-left">
+          <TextField
+            hint={t('fields.apply.name.hint')}
+            placeholder={t('fields.apply.name.placeholder')}
+            id="apply-name"
+            label={t('vacancies.applicantName')}
+            value={form.name}
+            onChange={(e) => form.handleNameChange(e.target.value)}
+            error={form.nameError}
+          />
+
+          <TextField
+            hint={t('fields.apply.email.hint')}
+            placeholder={t('fields.apply.email.placeholder')}
+            id="apply-email"
+            type="email"
+            label={t('vacancies.applicantEmail')}
+            value={form.email}
+            onChange={(e) => form.handleEmailChange(e.target.value)}
+            error={form.emailError}
+          />
+
+          {form.showPhone && (
+            <TextField
+              hint={t('fields.apply.phone.hint')}
+              id="apply-phone"
+              label={t('vacancies.applicantPhone')}
+              error={form.phoneError}
+            >
+              <PhoneInput
+                placeholder={t('fields.apply.phone.placeholder')}
+                id="apply-phone"
+                className="h-11 rounded-xl border border-neutral-200 bg-white px-md"
+                value={form.phone}
+                onChange={form.handlePhoneChange}
+                onCountryChange={form.handleCountryChange}
+                onBlur={form.handlePhoneBlur}
+                inputComponent={VacancyPhoneInput}
+                countrySelectComponent={CountrySelect}
+                labels={phoneLabels(i18n.language)}
+              />
+            </TextField>
+          )}
+
+          {form.showFile && (
+            <div className="flex flex-col">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="application/pdf"
+                onChange={(e) => form.handleFileChange(e.target.files?.[0] ?? null)}
+                className="hidden"
+                id="apply-file-input"
+              />
+
+              <p className="mb-2xs font-body text-body-sm font-semibold text-heading">
+                {t('vacancies.resumeLabel')}
+              </p>
+
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="inline-flex w-fit items-center gap-xs whitespace-nowrap h-11 rounded-full border border-green-500 bg-white px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+              >
+                <FileTextIcon size={17} aria-hidden="true" />
+                <span>{t('vacancies.chooseFile')}</span>
+              </button>
+
+              <p className="mt-2xs font-body text-caption font-normal text-neutral-500">
+                {form.file ? form.file.name : t('vacancies.noFileChosen')}
+              </p>
+
+              {form.fileError && <p className="mt-2xs text-left font-body text-body-sm text-danger">{form.fileError}</p>}
+            </div>
+          )}
+
+          {form.showCertificates && (
+            <div className="flex flex-col">
+              <input
+                ref={certificatesInputRef}
+                type="file"
+                accept="application/pdf,image/png,image/jpeg,image/webp"
+                multiple
+                onChange={(e) => form.handleCertificatesChange(e.target.files)}
+                className="hidden"
+                id="apply-certificates-input"
+              />
+
+              <p className="mb-2xs font-body text-body-sm font-semibold text-heading">
+                {t('vacancies.certificates')}
+              </p>
+              <p className="mb-xs font-body text-caption font-normal text-neutral-500">
+                {t('vacancies.certificatesHint')}
+              </p>
+
+              <button
+                type="button"
+                onClick={() => certificatesInputRef.current?.click()}
+                className="inline-flex w-fit items-center gap-xs whitespace-nowrap h-11 rounded-full border border-green-500 bg-white px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
+              >
+                <FileTextIcon size={17} aria-hidden="true" />
+                <span>{t('vacancies.chooseCertificates')}</span>
+              </button>
+
+              {form.certificates.length === 0 ? (
+                <p className="mt-2xs font-body text-caption font-normal text-neutral-500">
+                  {t('vacancies.noCertificatesChosen')}
+                </p>
+              ) : (
+                <ul className="mt-xs flex flex-col gap-2xs">
+                  {form.certificates.map((certificateFile, index) => (
+                    <li
+                      key={`${certificateFile.name}-${index}`}
+                      className="flex items-center justify-between gap-sm rounded-lg border border-neutral-200 bg-white px-sm py-2xs"
+                    >
+                      <span className="min-w-0 truncate font-body text-body-sm text-body-text">
+                        {certificateFile.name}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => form.handleRemoveCertificate(index)}
+                        aria-label={t('vacancies.removeCertificate')}
+                        className="inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-transparent text-neutral-400 transition-colors hover:bg-(--grey-100) hover:text-danger focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+                      >
+                        <XIcon size={14} aria-hidden="true" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {form.certificatesError && (
+                <p className="mt-2xs text-left font-body text-body-sm text-danger">{form.certificatesError}</p>
+              )}
+            </div>
+          )}
+
+          {form.submitError && <p className="text-left font-body text-body-sm text-danger">{form.submitError}</p>}
+
+          <div className="mt-sm flex gap-md">
+            <Button
+              variant="secondary"
+              onClick={requestClose}
+              className="h-11 flex-1 rounded-full border-green-500 font-body text-button font-bold text-heading hover:bg-green-50"
+            >
+              {t('admin.cancel')}
+            </Button>
+            <Button
+              variant="success"
+              onClick={handleSubmitClick}
+              loading={form.submitting}
+              disabled={!form.name.trim() || !form.email.trim() || (form.showPhone && !form.phone.trim()) || (form.showFile && !form.file)}
+              className="h-11 flex-1 rounded-full blob-fill bg-orange-500 font-body text-button font-bold text-white hover:bg-orange-600"
+            >
+              {form.submitting ? t('common.loading') : t('vacancies.submitApplication')}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+  )
+}
+
+export default ApplyVacancyModal

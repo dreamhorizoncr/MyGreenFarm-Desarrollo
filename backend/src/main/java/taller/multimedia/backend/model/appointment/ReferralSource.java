@@ -1,5 +1,8 @@
 package taller.multimedia.backend.model.appointment;
 
+/**
+ * How a family heard about the center, with the label shown in Spanish.
+ */
 public enum ReferralSource {
     FRIEND("De un amigo o familiar"),
     SOCIAL_MEDIA("Redes sociales"),
@@ -13,6 +16,9 @@ public enum ReferralSource {
         this.displayName = displayName;
     }
 
+    /**
+     * @return label shown in the forms
+     */
     public String getDisplayName() {
         return displayName;
     }

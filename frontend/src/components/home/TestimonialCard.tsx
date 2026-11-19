@@ -1,5 +1,6 @@
 type CardColor = 'orange' | 'green' | 'pink'
 
+/** Props of {@link TestimonialCard}. */
 interface TestimonialCardProps {
   color?: CardColor
   quote: string
@@ -13,6 +14,7 @@ const backgrounds: Record<CardColor, string> = {
   pink: 'bg-[var(--accent-pink)]',
 }
 
+/** Testimonial of a family: the quote, its author and their initials. */
 function TestimonialCard({ color = 'orange', quote, author, initials }: Readonly<TestimonialCardProps>) {
   return (
     <figure className={`relative flex min-h-64 flex-col justify-center rounded-3xl ${backgrounds[color]} p-xl text-left`}>

@@ -1,8 +1,13 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useRef } from 'react'
 import { adminService } from '../services/admin.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { UserInfo, UpdateUserData } from '../types/auth.ts'
 
+/**
+ * User accounts for the users page: one page of users and the actions to edit or delete them.
+ *
+ * @returns the users, the loading and error state, the page totals and the actions
+ */
 export function useAdmin() {
   const [users, setUsers] = useState<UserInfo[]>([])
   const [loading, setLoading] = useState(true)
@@ -10,18 +15,23 @@ export function useAdmin() {
   const [totalPages, setTotalPages] = useState(1)
   const [totalElements, setTotalElements] = useState(0)
 
-  const fetchUsers = useCallback(async (page = 0, role?: string) => {
+  const requestIdRef = useRef(0)
+
+  const fetchUsers = useCallback(async (page = 0, role?: string, search?: string) => {
+    const requestId = ++requestIdRef.current
     setLoading(true)
     setError(null)
     try {
-      const data = await adminService.getUsers(page, 10, role)
+      const data = await adminService.getUsers(page, 10, role, search)
+      // a newer request (another page, role or search) already started
+      if (requestId !== requestIdRef.current) return
       setUsers(data.content)
       setTotalPages(data.totalPages)
       setTotalElements(data.totalElements)
     } catch (err) {
-      setError(getErrorMessage(err))
+      if (requestId === requestIdRef.current) setError(getErrorMessage(err))
     } finally {
-      setLoading(false)
+      if (requestId === requestIdRef.current) setLoading(false)
     }
   }, [])
 

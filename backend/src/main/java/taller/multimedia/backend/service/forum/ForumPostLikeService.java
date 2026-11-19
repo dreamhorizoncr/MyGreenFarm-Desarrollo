@@ -15,12 +15,28 @@ import taller.multimedia.backend.model.forum.ForumPostLike;
 import taller.multimedia.backend.repository.forum.ForumCommunityPostRepository;
 import taller.multimedia.backend.repository.forum.ForumPostLikeRepository;
 
+/**
+ * Likes on community forum posts from anonymous visitors, identified by an anonymous ID stored in
+ * their browser.
+ */
 @Service 
 @RequiredArgsConstructor
 public class ForumPostLikeService {
     private final ForumPostLikeRepository postLikeRepository;
     private final ForumCommunityPostRepository communityPostRepository;
 
+    /**
+     * Adds the visitor's like to a community post, or removes it if they had already liked it.
+     *
+     * <p>If two requests from the same visitor race and the unique constraint rejects the second
+     * insert, the post is reported as liked.
+     *
+     * @param communityPostId community post
+     * @param anonId anonymous visitor ID
+     * @return whether the post is now liked by the visitor and its total likes
+     * @throws ResponseStatusException with 400 if {@code anonId} is blank, or 404 if the post does
+     *     not exist
+     */
     @Transactional 
     public ForumPostLikeResponse toggleLike(UUID communityPostId, String anonId) {
         if (anonId == null || anonId.isBlank()) {
@@ -52,6 +68,11 @@ public class ForumPostLikeService {
         return new ForumPostLikeResponse(communityPostId, totalLikes, liked);
     }
 
+    /**
+     * @param anonId anonymous visitor ID, may be blank
+     * @return IDs of the community posts the visitor has liked, or an empty list when there is no
+     *     visitor ID
+     */
     @Transactional (readOnly = true)
     public List<UUID> findLikedPostIds(String anonId) {
         if (anonId == null || anonId.isBlank()) {

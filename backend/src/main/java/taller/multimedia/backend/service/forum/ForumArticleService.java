@@ -17,7 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.forum.ForumArticleRequest;
 import taller.multimedia.backend.dto.forum.ForumArticleResponse;
-import taller.multimedia.backend.dto.forum.ForumMapper;
 import taller.multimedia.backend.model.forum.ForumArticle;
 import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.model.user.User;
@@ -26,9 +25,13 @@ import taller.multimedia.backend.repository.forum.ForumArticleLikeRepository;
 import taller.multimedia.backend.repository.forum.ForumArticleRepository;
 import taller.multimedia.backend.repository.forum.ForumCommentRepository;
 import taller.multimedia.backend.repository.user.UserRepository;
-import taller.multimedia.backend.service.StorageService;
+import taller.multimedia.backend.service.storage.StorageService;
 import taller.multimedia.backend.util.Sanitizer;
 
+/**
+ * Articles that staff publish in the forum's blog, with an optional image stored in the forum
+ * bucket. The owner may manage every article; a teacher only their own.
+ */
 @Service
 @RequiredArgsConstructor
 public class ForumArticleService {
@@ -47,6 +50,20 @@ public class ForumArticleService {
     @Value("${supabase.s3.buckets.forum:}")
     private String forumBucket;
 
+    /**
+     * Publishes an article. When the author name or role is not given, the user's full name and a
+     * default role (teacher or administration) are used.
+     *
+     * @param request title, topic, content (line breaks kept), author fields and image alt text
+     * @param image optional image in PNG, JPG, JPEG, SVG or WEBP format; the alt text is then
+     *     required
+     * @param currentEmail email of the authenticated user
+     * @param anonId anonymous visitor ID, used to report whether the visitor liked it
+     * @return the published article
+     * @throws ResponseStatusException with 401 if the user does not exist, 400 if the image is not
+     *     valid, or 500 if the forum bucket is not configured
+     * @throws taller.multimedia.backend.exception.InvalidFieldException if a text is unsafe
+     */
     @Transactional
     public ForumArticleResponse create(ForumArticleRequest request, MultipartFile image, String currentEmail,
             String anonId) {
@@ -69,6 +86,13 @@ public class ForumArticleService {
         return toResponse(saved, anonId);
     }
 
+    /**
+     * @param topic topic to filter by (case-insensitive), or blank for all
+     * @param pageable page to return
+     * @param anonId anonymous visitor ID, may be {@code null}
+     * @return articles, newest first, with likes, comment counts and whether the visitor liked each
+     *     one
+     */
     @Transactional(readOnly = true)
     public Page<ForumArticleResponse> getAll(String topic, Pageable pageable, String anonId) {
         Page<ForumArticle> articles = topic == null || topic.isBlank()
@@ -78,6 +102,13 @@ public class ForumArticleService {
         return mapPage(articles, anonId);
     }
 
+    /**
+     * @param currentEmail email of the authenticated user
+     * @param pageable page to return
+     * @param anonId anonymous visitor ID, may be {@code null}
+     * @return the user's own articles, newest first
+     * @throws ResponseStatusException with 401 if the user does not exist
+     */
     @Transactional(readOnly = true)
     public Page<ForumArticleResponse> getMine(String currentEmail, Pageable pageable, String anonId) {
         User author = findUser(currentEmail);
@@ -86,12 +117,32 @@ public class ForumArticleService {
         return mapPage(articles, anonId);
     }
 
+    /**
+     * @param id article ID
+     * @param anonId anonymous visitor ID, may be {@code null}
+     * @return the article
+     * @throws ResponseStatusException with 404 if it does not exist
+     */
     @Transactional(readOnly = true)
     public ForumArticleResponse getById(UUID id, String anonId) {
         ForumArticle article = findArticle(id);
         return toResponse(article, anonId);
     }
 
+    /**
+     * Updates an article. The image can be kept, replaced or removed; a replaced or removed image
+     * is deleted from storage.
+     *
+     * @param id article ID
+     * @param request new data; {@code removeImage} removes the current image
+     * @param image new image, optional
+     * @param currentEmail email of the authenticated user
+     * @param anonId anonymous visitor ID, may be {@code null}
+     * @return the updated article
+     * @throws ResponseStatusException with 401, 403 if the user may not manage it, 404 if it does
+     *     not exist, or 400 if the image is not valid
+     * @throws taller.multimedia.backend.exception.InvalidFieldException if a text is unsafe
+     */
     @Transactional
     public ForumArticleResponse update(UUID id, ForumArticleRequest request, MultipartFile image,
             String currentEmail, String anonId) {
@@ -125,6 +176,14 @@ public class ForumArticleService {
         return toResponse(updated, anonId);
     }
 
+    /**
+     * Deletes an article with its image, likes and comments.
+     *
+     * @param id article ID
+     * @param currentEmail email of the authenticated user
+     * @throws ResponseStatusException with 401, 403 if the user may not manage it, or 404 if it
+     *     does not exist
+     */
     @Transactional
     public void delete(UUID id, String currentEmail) {
         User currentUser = findUser(currentEmail);
@@ -137,6 +196,11 @@ public class ForumArticleService {
         articleRepository.delete(article);
     }
 
+    /**
+     * @param articles page of articles
+     * @param anonId anonymous visitor ID, may be {@code null}
+     * @return the responses; like counts are loaded with one query for the whole page
+     */
     private Page<ForumArticleResponse> mapPage(Page<ForumArticle> articles, String anonId) {
         List<UUID> articleIds = articles.getContent().stream()
                 .map(ForumArticle::getId)
@@ -178,6 +242,12 @@ public class ForumArticleService {
                         "Article not found: " + id));
     }
 
+    /**
+     * @param article article to manage
+     * @param currentUser authenticated user
+     * @throws ResponseStatusException with 403 unless the user is the owner, or a teacher who wrote
+     *     the article
+     */
     private void ensureCanManage(ForumArticle article, User currentUser) {
         boolean owner = currentUser.getRole() == Role.OWNER;
         boolean ownArticle = article.getAuthor() != null
@@ -190,6 +260,12 @@ public class ForumArticleService {
         }
     }
 
+    /**
+     * @param request article data, for the alt text
+     * @param image uploaded image, may be {@code null}
+     * @throws ResponseStatusException with 400 if there is an image without alt text or with a
+     *     format that is not allowed
+     */
     private void validateImage(ForumArticleRequest request, MultipartFile image) {
         if (image == null || image.isEmpty()) {
             return;
@@ -240,6 +316,12 @@ public class ForumArticleService {
         return (user.getFirstName() + " " + user.getLastName()).trim();
     }
 
+    /**
+     * @param value value typed by the user, may be blank
+     * @param fallback value to use when it is blank
+     * @return the sanitized value
+     * @throws taller.multimedia.backend.exception.InvalidFieldException if the value is unsafe
+     */
     private String displayValue(String value, String fallback) {
         String normalized = value == null ? "" : value.trim();
         return Sanitizer.requireClean("author", normalized.isBlank() ? fallback : normalized);

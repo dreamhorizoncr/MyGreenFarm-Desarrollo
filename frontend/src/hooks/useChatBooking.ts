@@ -21,6 +21,7 @@ import {
 import type { AvailableWeek, ReferralSource } from '../types/appointment.ts'
 import type { ChatMessage } from './useChat.ts'
 
+/** Steps of booking a visit from the chat. */
 export type ChatBookingStage =
   | 'idle'
   | 'loading'
@@ -31,8 +32,10 @@ export type ChatBookingStage =
   | 'submitting'
   | 'error'
 
+/** Look of an option button. */
 export type ChatBookingOptionVariant = 'primary' | 'secondary' | 'danger'
 
+/** A button the chat offers in the current step, such as a day or a time. */
 export interface ChatBookingOption {
   id: string
   label: string
@@ -70,12 +73,22 @@ function clean(value: string | undefined): string | undefined {
   return trimmed || undefined
 }
 
+/**
+ * Books a visit from the chat: the user picks a day and a time, then writes or pastes their data, which
+ * is read with {@link extractBookingData}, checks it and confirms. The chosen slot is held as in the
+ * booking page.
+ *
+ * @param appendMessage - adds a message of the assistant to the chat
+ * @returns whether the flow is active, its step and options, the template to copy, whether it is busy,
+ *   and the handlers for text, options, starting and cancelling
+ */
 export function useChatBooking(appendMessage: AppendMessage) {
   const { t, i18n } = useTranslation()
   const { fetchWeek, submit } = useBooking()
-  const { holderId, myHold, hold, release, forget, isUnavailable } = useSlotHolds(CHAT_HOLDER_KEY)
-
   const [active, setActive] = useState(false)
+  // the slots stream is only open while the user books from the chat, not on every page
+  const { holderId, myHold, hold, release, forget, isUnavailable } = useSlotHolds(CHAT_HOLDER_KEY, active)
+
   const [stage, setStage] = useState<ChatBookingStage>('idle')
   const [week, setWeek] = useState<AvailableWeek>({})
   const [form, setForm] = useState<BookingFormValues>(emptyForm)

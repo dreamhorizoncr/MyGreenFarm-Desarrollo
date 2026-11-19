@@ -20,6 +20,9 @@ import lombok.NoArgsConstructor;
 @Table(name = "forum_community_posts", indexes = {
         @Index(name = "idx_forum_community_posts_created_at", columnList = "created_at")
 })
+/**
+ * Post that a visitor published on the community wall, already moderated.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -6,8 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 import taller.multimedia.backend.dto.gallery.GalleryImageResponse;
@@ -18,11 +16,16 @@ import taller.multimedia.backend.model.gallery.Gallery;
 import taller.multimedia.backend.repository.gallery.CategoryGalleryRepository;
 import taller.multimedia.backend.repository.gallery.GalleryRepository;
 import taller.multimedia.backend.util.Sanitizer;
+import taller.multimedia.backend.util.AfterCommit;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Photo galleries. Each gallery belongs to a category, and lists return at most {@code
+ * IMAGES_PER_GALLERY} images per gallery so pages stay light.
+ */
 @Service
 @RequiredArgsConstructor
 public class GalleryService {
@@ -33,30 +36,50 @@ public class GalleryService {
     private final GalleryRepository galleryRepository;
     private final CategoryGalleryRepository categoryGalleryRepository;
 
+    /**
+     * @param request category, title and description (sanitized)
+     * @return the created gallery
+     * @throws RuntimeException if the category does not exist
+     * @throws taller.multimedia.backend.exception.InvalidFieldException if the title or description is unsafe
+     */
     @Transactional
-    public GalleryResponse create(GalleryRequest dto) {
-        CategoryGallery category = categoryGalleryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found with ID: " + dto.getCategoryId()));
+    public GalleryResponse create(GalleryRequest request) {
+        CategoryGallery category = categoryGalleryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found with ID: " + request.getCategoryId()));
 
         Gallery gallery = new Gallery();
         gallery.setCategoryGallery(category);
-        gallery.setTitle(Sanitizer.requireClean("title", dto.getTitle()));
-        gallery.setDescription(Sanitizer.requireClean("description", dto.getDescription()));
+        gallery.setTitle(Sanitizer.requireClean("title", request.getTitle()));
+        gallery.setDescription(Sanitizer.requireClean("description", request.getDescription()));
 
         Gallery saved = galleryRepository.save(gallery);
         return mapToResponse(saved);
     }
 
+    /**
+     * @param pageable page to return
+     * @return galleries, newest first, with their first images
+     */
     @Transactional(readOnly = true)
     public Page<GalleryResponse> getAll(Pageable pageable) {
         return withImages(galleryRepository.findAllByOrderByCreatedAtDesc(pageable));
     }
 
+    /**
+     * @param categoryId gallery category
+     * @param pageable page to return
+     * @return the category's galleries, newest first, with their first images
+     */
     @Transactional(readOnly = true)
     public Page<GalleryResponse> getByCategory(UUID categoryId, Pageable pageable) {
         return withImages(galleryRepository.findByCategoryGalleryIdOrderByCreatedAtDesc(categoryId, pageable));
     }
 
+    /**
+     * @param id gallery ID
+     * @return the gallery with its first images
+     * @throws RuntimeException if it does not exist
+     */
     @Transactional(readOnly = true)
     public GalleryResponse getById(UUID id) {
         return galleryRepository.findById(id)
@@ -64,15 +87,25 @@ public class GalleryService {
                 .orElseThrow(() -> new RuntimeException("Gallery not found with ID: " + id));
     }
 
+    /**
+     * Updates a gallery. At most three galleries can be featured on the home page at the same time.
+     *
+     * @param id gallery ID
+     * @param request new category, title, description and featured flag
+     * @return the updated gallery
+     * @throws RuntimeException if the gallery or category does not exist
+     * @throws ResponseStatusException with 409 if featuring it would exceed three featured
+     *     galleries
+     */
     @Transactional
-    public GalleryResponse update(UUID id, GalleryRequest dto) {
+    public GalleryResponse update(UUID id, GalleryRequest request) {
         Gallery gallery = galleryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Gallery not found with ID: " + id));
 
-        CategoryGallery category = categoryGalleryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found with ID: " + dto.getCategoryId()));
+        CategoryGallery category = categoryGalleryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found with ID: " + request.getCategoryId()));
 
-        if (Boolean.TRUE.equals(dto.getFeatured()) && !Boolean.TRUE.equals(gallery.getFeatured())) {
+        if (Boolean.TRUE.equals(request.getFeatured()) && !Boolean.TRUE.equals(gallery.getFeatured())) {
             long currentFeaturedCount = galleryRepository.countByFeaturedTrue();
             if (currentFeaturedCount >= 3) {
                 throw new ResponseStatusException(
@@ -82,14 +115,21 @@ public class GalleryService {
         }
 
         gallery.setCategoryGallery(category);
-        gallery.setTitle(Sanitizer.requireClean("title", dto.getTitle()));
-        gallery.setDescription(Sanitizer.requireClean("description", dto.getDescription()));
-        gallery.setFeatured(dto.getFeatured() != null ? dto.getFeatured() : false);
+        gallery.setTitle(Sanitizer.requireClean("title", request.getTitle()));
+        gallery.setDescription(Sanitizer.requireClean("description", request.getDescription()));
+        gallery.setFeatured(request.getFeatured() != null ? request.getFeatured() : false);
 
         Gallery updated = galleryRepository.save(gallery);
         return mapToResponse(updated);
     }
 
+/**
+ * Deletes a gallery and its images. The image files are removed from storage only after the
+ * transaction commits, so a failed delete never leaves the gallery without its files.
+ *
+ * @param id gallery ID
+ * @throws RuntimeException if the gallery does not exist
+ */
     @Transactional
 public void delete(UUID id) {
     Gallery gallery = galleryRepository.findById(id)
@@ -100,14 +140,12 @@ public void delete(UUID id) {
     galleryRepository.delete(gallery);
     galleryRepository.flush(); // fail here on a blocking FK, before touching the bucket
 
-    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-        @Override
-        public void afterCommit() {
-            galleryImageService.deleteFiles(filePaths);
-        }
-    });
+    AfterCommit.run(() -> galleryImageService.deleteFiles(filePaths));
 }
 
+    /**
+     * @return the galleries featured on the home page, with their first images
+     */
     @Transactional(readOnly = true)
     public List<GalleryResponse> getFeaturedGalleries() {
         List<Gallery> featured = galleryRepository.findByFeaturedTrue();

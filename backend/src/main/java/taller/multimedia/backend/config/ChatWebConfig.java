@@ -4,6 +4,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Applies the chat rate limit ({@link ChatRateLimitInterceptor}) to {@code /api/chat}.
+ */
 @Configuration
 public class ChatWebConfig implements WebMvcConfigurer {
     private final ChatRateLimitInterceptor interceptor;

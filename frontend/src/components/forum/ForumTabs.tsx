@@ -1,13 +1,16 @@
 import { useTranslation } from 'react-i18next'
 import TabHighlight from '../ui/TabHighlight.tsx'
 
+/** Sections of the forum. */
 export type ForumTab = 'community' | 'blog'
 
+/** Props of {@link ForumTabs}. */
 interface ForumTabsProps {
   activeTab: ForumTab
   onChange: (tab: ForumTab) => void
 }
 
+/** Tabs to switch between the blog and the community. */
 function ForumTabs({ activeTab, onChange }: Readonly<ForumTabsProps>) {
   const { t } = useTranslation()
 

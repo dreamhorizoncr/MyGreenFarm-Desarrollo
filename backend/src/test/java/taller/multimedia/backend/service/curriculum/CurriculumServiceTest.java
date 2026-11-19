@@ -18,8 +18,8 @@ import taller.multimedia.backend.model.curriculum.CurriculumStatus;
 import taller.multimedia.backend.model.vacancy.Vacancy;
 import taller.multimedia.backend.repository.curriculum.CurriculumRepository;
 import taller.multimedia.backend.repository.vacancy.VacancyRepository;
-import taller.multimedia.backend.service.EmailService;
-import taller.multimedia.backend.service.StorageService;
+import taller.multimedia.backend.service.email.EmailService;
+import taller.multimedia.backend.service.storage.StorageService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -75,6 +75,43 @@ class CurriculumServiceTest {
 
         verify(curriculumRepository, never()).save(any());
         verify(emailService, never()).sendApplicationReceivedEmail(any(), any(), any());
+    }
+
+    private Vacancy vacancyRequiring(String requiredFields, boolean open) {
+        Vacancy vacancy = new Vacancy();
+        vacancy.setId(UUID.randomUUID());
+        vacancy.setTitle("Docente");
+        vacancy.setOpen(open);
+        vacancy.setRequiredFields(requiredFields);
+        when(vacancyRepository.findById(vacancy.getId())).thenReturn(Optional.of(vacancy));
+        return vacancy;
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "file", "applicantPhone", "certificates" })
+    void submitApplication_rejectsAMissingFieldThatTheVacancyRequires(String requiredField) {
+        ApplicationRequest request = requestWith("Ana Pérez", "ana@ejemplo.com", null);
+        request.setVacancyId(vacancyRequiring(requiredField, true).getId());
+
+        InvalidFieldException exception = assertThrows(InvalidFieldException.class,
+                () -> curriculumService.submitApplication(request, null, null));
+
+        assertThat(exception.getField()).isEqualTo(requiredField);
+        verify(storageService, never()).uploadFile(any(), any(), any());
+        verify(curriculumRepository, never()).save(any());
+    }
+
+    @Test
+    void submitApplication_rejectsAClosedOrMissingVacancy() {
+        ApplicationRequest closed = requestWith("Ana Pérez", "ana@ejemplo.com", null);
+        closed.setVacancyId(vacancyRequiring("", false).getId());
+        assertThrows(InvalidFieldException.class, () -> curriculumService.submitApplication(closed, null, null));
+
+        ApplicationRequest missing = requestWith("Ana Pérez", "ana@ejemplo.com", null);
+        missing.setVacancyId(UUID.randomUUID());
+        assertThrows(InvalidFieldException.class, () -> curriculumService.submitApplication(missing, null, null));
+
+        verify(curriculumRepository, never()).save(any());
     }
 
     private Curriculum spontaneousApplication() {

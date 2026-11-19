@@ -4,6 +4,9 @@ import { Navigate, Outlet } from 'react-router-dom'
 import { tokenStorage } from '../utils/token.ts'
 import { notify } from '../utils/notifications.ts'
 
+/**
+ * Lets only signed-in users into its nested routes; the others go to the login page with a notice.
+ */
 function ProtectedRoute() {
   const { t } = useTranslation()
   const token = tokenStorage.getToken()

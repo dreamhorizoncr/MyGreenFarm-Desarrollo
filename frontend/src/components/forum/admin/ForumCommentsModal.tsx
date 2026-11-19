@@ -5,6 +5,7 @@ import ModalCloseButton from '../../ui/ModalCloseButton.tsx'
 import Skeleton from '../../ui/Skeleton.tsx'
 import SkeletonList from '../../ui/SkeletonList.tsx'
 
+/** Fields of a comment that the modal shows; articles and community posts share them. */
 export interface ForumCommentItem {
   id: string
   alias: string
@@ -12,6 +13,7 @@ export interface ForumCommentItem {
   createdAt: string
 }
 
+/** Props of {@link ForumCommentsModal}. */
 interface ForumCommentsModalProps<T extends ForumCommentItem> {
   subtitle: string
   comments: T[]
@@ -24,6 +26,7 @@ interface ForumCommentsModalProps<T extends ForumCommentItem> {
   onClose: () => void
 }
 
+/** Placeholder of a comment while they load. */
 function CommentRowSkeleton({ canDelete }: Readonly<{ canDelete: boolean }>) {
   return (
     <div className="flex items-start justify-between gap-md border-b border-neutral-100 py-md last:border-0">
@@ -38,6 +41,7 @@ function CommentRowSkeleton({ canDelete }: Readonly<{ canDelete: boolean }>) {
   )
 }
 
+/** Comments of an article or community post, with the action to delete each one. */
 function ForumCommentsModal<T extends ForumCommentItem>({
   subtitle,
   comments,

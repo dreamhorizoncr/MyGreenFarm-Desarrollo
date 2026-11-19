@@ -21,6 +21,9 @@ import lombok.NoArgsConstructor;
 @Table (name = "forum_community_post_likes", uniqueConstraints = @UniqueConstraint (columnNames = {
         "community_post_id", "anon_id"
 }))
+/**
+ * Like of an anonymous visitor on a community post; a visitor can like a post once.
+ */
 @Data 
 @NoArgsConstructor 
 @AllArgsConstructor 
@@ -35,6 +38,9 @@ public class ForumPostLike {
     @JoinColumn (name = "community_post_id", nullable = false)
     private ForumCommunityPost communityPost;
 
+    /**
+     * Random ID stored in the visitor's {@code anon_id} cookie.
+     */
     @Column (name = "anon_id", nullable = false, length = 36)
     private String anonId;
 }

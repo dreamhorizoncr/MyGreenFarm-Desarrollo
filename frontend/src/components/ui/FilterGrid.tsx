@@ -91,11 +91,16 @@ function pruneRects(rects: Map<string, Rect>, keys: string[], nodes: HTMLElement
   }
 }
 
+/** Props of {@link FilterGrid}. */
 interface FilterGridProps {
   children: ReactNode
   className?: string
 }
 
+/**
+ * Grid that animates its items when the list changes: the ones that stay move to their new place, the
+ * new ones appear and the removed ones fade out. Without animation when they are stopped.
+ */
 export function FilterGrid({ children, className = '' }: Readonly<FilterGridProps>) {
   const gridRef = useRef<HTMLDivElement>(null)
   const rects = useRef(new Map<string, Rect>())
@@ -134,8 +139,8 @@ export function FilterGrid({ children, className = '' }: Readonly<FilterGridProp
     gridHeight.current = grid.offsetHeight
 
     updateRects(nodes, rects.current, animate)
-    pruneRects(rects.current, keys, nodes)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // the keys come from the signature so the animation only runs when the set of items changes
+    pruneRects(rects.current, keySignature ? keySignature.split('|') : [], nodes)
   }, [keySignature])
 
   useEffect(() => {
@@ -162,10 +167,12 @@ export function FilterGrid({ children, className = '' }: Readonly<FilterGridProp
   )
 }
 
+/** Props of {@link FilterGridItem}; the rest go to the `<div>`. */
 interface FilterGridItemProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode
 }
 
+/** An item of a {@link FilterGrid}; it needs a `key`. */
 export function FilterGridItem({ children, className = 'rounded-[20px]', ...rest }: Readonly<FilterGridItemProps>) {
   return (
     <div className={className} {...rest}>

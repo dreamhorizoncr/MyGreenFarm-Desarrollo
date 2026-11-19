@@ -16,7 +16,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
@@ -25,7 +24,7 @@ import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.ReferralSource;
 import taller.multimedia.backend.repository.appointment.AppointmentRepository;
-import taller.multimedia.backend.service.EmailService;
+import taller.multimedia.backend.service.email.EmailService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -54,10 +53,8 @@ class AppointmentServiceTest {
 
     @BeforeEach
     void setUp() {
-        appointmentService = new AppointmentService(calendarSyncAsyncService);
-        ReflectionTestUtils.setField(appointmentService, "appointmentRepository", appointmentRepository);
-        ReflectionTestUtils.setField(appointmentService, "emailService", emailService);
-        ReflectionTestUtils.setField(appointmentService, "scheduleConfigService", scheduleConfigService);
+        appointmentService = new AppointmentService(calendarSyncAsyncService, appointmentRepository, emailService,
+                scheduleConfigService);
     }
 
     private AppointmentRequest validRequest() {

@@ -8,6 +8,9 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.UUID;
 
+/**
+ * Data of a progress evaluation of a student's record.
+ */
 @Data
 public class EvaluationRequest {
 

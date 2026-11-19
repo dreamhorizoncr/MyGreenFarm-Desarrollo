@@ -4,6 +4,10 @@ import java.util.UUID;
 
 import lombok.Data;
 
+/**
+ * SINPE Móvil payment confirmation. Part of online payments with Onvo, which are currently
+ * disabled.
+ */
 @Data 
 public class ConfirmSinpeRequest {
     private String paymentIntentId;

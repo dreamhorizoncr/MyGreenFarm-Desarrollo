@@ -7,6 +7,9 @@ import taller.multimedia.backend.model.expedient.EducationalLevel;
 
 import java.time.LocalDate;
 
+/**
+ * Data of a student record. The child is found by student ID.
+ */
 @Data
 public class ExpedientRequest {
 
@@ -14,7 +17,7 @@ public class ExpedientRequest {
     private String studentId;
 
     @NotNull(message = "The admission date is required")
-    private LocalDate admisionDate;
+    private LocalDate admissionDate;
 
     @NotNull(message = "The education level is required")
     private EducationalLevel educationalLevel;

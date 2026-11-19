@@ -84,6 +84,8 @@ export default {
     ownerPanel: "Panneau du propriétaire",
     teacherPanel: "Panneau enseignant",
     adminPanel: "Panneau administrateur",
+    openMenu: "Ouvrir le menu",
+    closeMenu: "Fermer le menu",
   },
   greenHearts: {
     navLabel: "Green Hearts",
@@ -243,6 +245,7 @@ export default {
       like: "liker la photo",
       unlike: "ne plus liker la photo",
       breadcrumbGallery: "Galerie de Souvenirs",
+      breadcrumbLabel: "Fil d'Ariane",
       breadcrumbAlbums: "Albums",
       emptyPhotos: "Cet album n’a pas encore de photos.",
       notFoundAlbum: "L’album demandé est introuvable.",
@@ -992,7 +995,7 @@ export default {
     usersTitle: "Gestion des Utilisateurs",
     usersSubtitle: "Consultez et gérez les utilisateurs du centre éducatif.",
     searchPlaceholder: "Rechercher par nom, prénom, e-mail ou rôle",
-    addDocente: "Ajouter un utilisateur",
+    addUser: "Ajouter un utilisateur",
     allRoles: "Tous",
     roles: {
       OWNER: "Propriétaire",
@@ -1018,10 +1021,10 @@ export default {
     deleteConfirmFieldLabel: 'Pour confirmer, écrivez "{{name}}"',
     deleteConfirmPlaceholder: 'Écrivez "{{name}}"',
     selfDeleteNotAllowed: "Vous ne pouvez pas supprimer votre propre compte",
-    updateDocenteToastTitle: "Utilisateur mis à jour",
-    updateDocenteErrorToastTitle: "Impossible de mettre à jour l'utilisateur",
-    deleteDocenteToastTitle: "Utilisateur supprimé",
-    deleteDocenteErrorToastTitle: "Impossible de supprimer l'utilisateur",
+    updateUserToastTitle: "Utilisateur mis à jour",
+    updateUserErrorToastTitle: "Impossible de mettre à jour l'utilisateur",
+    deleteUserToastTitle: "Utilisateur supprimé",
+    deleteUserErrorToastTitle: "Impossible de supprimer l'utilisateur",
     newsletter: {
       title: "Gestion de la Newsletter",
       subtitle: "Gérez les abonnés et les parents, et envoyez des e-mails groupés.",
@@ -1389,6 +1392,7 @@ export default {
       description: "Description",
       price: "Prix indicatif",
       currency: "Devise",
+      currencyPlaceholder: "Choisissez une devise",
       serviceFrequency: "Fréquence du service",
       selectServiceFrequency: "Sélectionnez la fréquence du service",
       oneTime: "Une fois",
@@ -1440,6 +1444,7 @@ export default {
 
     expedients: {
       noMatches: 'Aucun dossier trouvé avec ce nom.',
+      loadChildrenError: "Impossible de charger les enfants disponibles.",
       title: "Gestion des Dossiers Académiques",
       tabLabel: "Dossiers académiques",
       description:
@@ -1447,7 +1452,7 @@ export default {
       searchbutton: "Rechercher un enfant",
       editbutton: "Modifier",
       deletebutton: "Supprimer",
-      admisiondate: "Date d’admission:",
+      admissionDate: "Date d’admission:",
       grade: "Niveau éducatif:",
       notes: "Observations générales",
 
@@ -1899,7 +1904,7 @@ export default {
       noAppointmentsForDay: "Aucun rendez-vous prévu pour ce jour."
     }
   },
-  moneda: {
+  currency: {
     convertTo: "Afficher le prix en",
     buyRate: "Taux de change",
     todayRate: "Taux indicatif",
@@ -2039,10 +2044,10 @@ export default {
       identificationNumber: { hint: "Sans tirets ni espaces." },
       cardHolderName: { hint: "Tel qu’il est imprimé sur la carte." },
       cardNumber: { hint: "Les 16 chiffres au recto de la carte." },
-      expiry: { hint: "Mois et année d’expiration." },
+      expiry: { hint: "Mois et année d’expiration.", placeholder: "MM/AA" },
       cvc: { hint: "Les 3 ou 4 chiffres au verso." },
       senderPhone: { hint: "Le numéro depuis lequel vous avez fait le SINPE Móvil, sans tirets." },
-      referenceNumber: { hint: "Il figure sur le reçu du virement." },
+      referenceNumber: { hint: "Il figure sur le reçu du virement.", placeholder: "Ex. 123456789" },
     },
     news: {
       title: {

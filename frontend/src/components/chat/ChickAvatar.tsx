@@ -1,23 +1,32 @@
 import { useEffect, useRef } from 'react'
 import { useAccessibility } from '../../contexts/accessibility'
 
+/** What the assistant is doing, which sets how it moves. */
 export type ChickState = 'idle' | 'listening' | 'thinking' | 'speaking'
+/** Expression of the assistant. */
 export type ChickMood = 'neutral' | 'happy' | 'worried'
+/** Short animations the assistant plays once. */
 export type ChickReaction = 'thanks' | 'point' | 'shake' | 'nod' | 'tickle' | 'bye'
 
+/** Props of {@link ChickAvatar}. */
 interface ChickAvatarProps {
   state?: ChickState
   mood?: ChickMood
+  /** Changes with every word written, to move the beak. */
   talkTick?: number
+  /** Changes to make it jump. */
   jumpKey?: number
   waving?: boolean
+  /** Where it looks while the user writes. */
   inputDirection?: 'up' | 'down'
+  /** Reaction to play; a new `key` plays it again. */
   reaction?: { type: ChickReaction; key: number } | null
   size?: number
   className?: string
   label?: string
 }
 
+/** Parameters of the body's movement, interpolated between states with a spring. */
 interface Motion {
   wobble: number
   speed: number
@@ -264,6 +273,11 @@ function featherOpacityAt(featherTime: number) {
   return featherTime < 0.2 ? featherTime / 0.2 : Math.min(1, (2.4 - featherTime) / 0.5)
 }
 
+/**
+ * The assistant's chick, drawn in SVG with a soft blob body. It breathes, blinks, looks around and
+ * falls asleep when idle, and reacts to what happens in the chat. With animations stopped it stays
+ * still.
+ */
 function ChickAvatar({
   state = 'idle',
   mood = 'neutral',

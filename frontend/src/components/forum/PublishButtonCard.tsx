@@ -1,10 +1,12 @@
 import { useTranslation } from 'react-i18next'
 import { MessageSquarePlusIcon } from '@animateicons/react/lucide'
 
+/** Props of {@link PublishButtonCard}. */
 interface PublishButtonCardProps {
   onPublish: () => void
 }
 
+/** Button to share an experience in the community. */
 function PublishButtonCard({ onPublish }: Readonly<PublishButtonCardProps>) {
   const { t } = useTranslation()
 

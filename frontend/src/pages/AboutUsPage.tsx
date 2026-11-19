@@ -19,7 +19,7 @@ import {
     } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
-import Navbar from '../components/Navbar.tsx'
+import Navbar from '../components/navigation/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import SkeletonList from '../components/ui/SkeletonList.tsx'
 import StatusMessage from '../components/ui/StatusMessage.tsx'
@@ -89,6 +89,7 @@ const DECORATION_LAYOUTS = [
     return largeText ? Math.max(1, base - 1) : base
     }
 
+    /** About Us page: the school's story, its founding family and the team of teachers. */
     function AboutUsPage() {
     const reduceMotion = useReducedMotion()
     const { t } = useTranslation()

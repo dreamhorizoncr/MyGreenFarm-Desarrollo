@@ -1,8 +1,10 @@
+/** A piece of the page that the voice reader reads in one go, with the element to highlight. */
 export interface ReadableBlock {
   element: HTMLElement;
   text: string;
 }
 
+/** Translated words the voice reader says about the state of form controls. */
 export interface ReadableControlLabels {
   checked: string;
   unchecked: string;
@@ -12,6 +14,7 @@ export interface ReadableControlLabels {
   password: string;
 }
 
+/** Options of {@link getReadableBlocks}. */
 interface ReadableOptions {
   includeControls?: boolean;
   controlLabels?: ReadableControlLabels;
@@ -159,6 +162,11 @@ function getTextByIds(ids: string) {
     .join(" ");
 }
 
+/**
+ * @param element - an element
+ * @returns its accessible name: `aria-labelledby`, `aria-label`, its label, `alt` or `title`, in that
+ *   order
+ */
 export function getAccessibleName(element: Element | null | undefined) {
   if (!element) return "";
 
@@ -325,6 +333,15 @@ function walk(element: Element, state: WalkState) {
   }
 }
 
+/**
+ * Splits the visible content of an element into the blocks the voice reader reads: paragraphs,
+ * headings, list items, images with alternative text and, optionally, form controls with their state.
+ * Hidden elements and the reader's own controls are skipped.
+ *
+ * @param root - element to read
+ * @param options - whether to include the controls and the words for their states
+ * @returns the blocks in reading order
+ */
 export function getReadableBlocks(root: HTMLElement, options: ReadableOptions = {}): ReadableBlock[] {
   if (!isElementVisible(root)) return [];
 
@@ -342,6 +359,11 @@ export function getReadableBlocks(root: HTMLElement, options: ReadableOptions = 
   return state.blocks;
 }
 
+/**
+ * @param dialog - an open dialog
+ * @param options - as in {@link getReadableBlocks}
+ * @returns its blocks, starting with its name when the content does not already start with it
+ */
 export function getDialogBlocks(dialog: HTMLElement, options: ReadableOptions = {}): ReadableBlock[] {
   const blocks = getReadableBlocks(dialog, options);
   const name = getAccessibleName(dialog);
@@ -354,6 +376,7 @@ export function getDialogBlocks(dialog: HTMLElement, options: ReadableOptions = 
   return [{ element: dialog, text: name }, ...blocks];
 }
 
+/** @returns the dialog opened last that is visible, or `null` */
 export function getTopDialog(): HTMLElement | null {
   const candidates = Array.from(
     document.querySelectorAll<HTMLElement>('dialog[open], [role="dialog"][aria-modal="true"]'),
@@ -362,10 +385,18 @@ export function getTopDialog(): HTMLElement | null {
   return candidates.at(-1) ?? null;
 }
 
+/**
+ * @param options - as in {@link getReadableBlocks}
+ * @returns the blocks of the whole page
+ */
 export function getPageBlocks(options: ReadableOptions = {}): ReadableBlock[] {
   return getReadableBlocks(document.body, options);
 }
 
+/**
+ * @param root - element
+ * @returns a summary of its text, to notice when its content changes and read it again
+ */
 export function getBlockSignature(root: HTMLElement) {
   return getReadableBlocks(root, { includeControls: false })
     .map((block) => block.text)
@@ -373,6 +404,9 @@ export function getBlockSignature(root: HTMLElement) {
     .slice(0, 4000);
 }
 
+/**
+ * Translated words the voice reader says about the element that gets the focus: its role and state.
+ */
 export interface ReadableFocusLabels extends ReadableControlLabels {
   roleLink: string;
   roleButton: string;
@@ -520,6 +554,12 @@ function isFocusTargetVisible(element: HTMLElement) {
   return isSelfRenderable(element);
 }
 
+/**
+ * @param element - element that got the focus
+ * @param labels - translated words for roles and states
+ * @returns what to say: its name, role, state and value, for example `Correo, cuadro de texto,
+ *   obligatorio`; empty when it is not visible
+ */
 export function getFocusAnnouncement(element: HTMLElement, labels: ReadableFocusLabels) {
   if (!isFocusTargetVisible(element)) return "";
 
@@ -554,6 +594,12 @@ export function getFocusAnnouncement(element: HTMLElement, labels: ReadableFocus
   return normalizeText(Array.from(new Set(parts.filter(Boolean))).join(", "));
 }
 
+/**
+ * Finds what to read when the user clicks somewhere with the click-to-read option on.
+ *
+ * @param target - element clicked
+ * @returns the text block around it, or `null` for interactive elements, which keep working as usual
+ */
 export function findReadableTarget(target: Element): HTMLElement | null {
   const interactiveSelector =
     "a, button, input, select, textarea, label, summary, [contenteditable='true'], [role='button'], [role='link'], [role='checkbox'], [role='radio'], [role='switch'], [role='tab'], [role='menuitem'], [data-voice-reader-ui]";

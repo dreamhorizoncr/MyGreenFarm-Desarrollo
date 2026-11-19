@@ -17,6 +17,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import taller.multimedia.backend.model.expedient.Expedient;
 
+/**
+ * A progress evaluation written by a teacher for a student's record.
+ */
 @Entity 
 @Table (name = "evaluation")
 @Data 
@@ -30,9 +33,13 @@ public class Evaluation {
     @Column(name= "evaluation_date", nullable = false)
     private LocalDate evaluationDate;
 
+    /**
+     * Student record the evaluation belongs to. Despite its name, it holds the record itself, not
+     * its ID; the name is kept because it is part of the API's JSON.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "expedient_id", nullable = false)
-    private Expedient expedientId;
+    private Expedient expedient;
 
     @Column(name = "communication_progress", nullable = false, length = 2000)
     private String communicationProgress;

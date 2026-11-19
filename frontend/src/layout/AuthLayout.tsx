@@ -3,18 +3,23 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import ModalCloseButton from "../components/ui/ModalCloseButton.tsx";
 import illustration from "../assets/imgs/niños.jpeg";
-import Navbar from "../components/Navbar.tsx";
+import Navbar from "../components/navigation/Navbar.tsx";
 
+/** Props of {@link AuthLayout}. */
 interface AuthLayoutProps {
   overtitle: string;
   rightPanelClassName?: string;
   contentClassName?: string;
   containerClassName?: string;
   scrollable?: boolean;
+  /** Route the close button goes to, the home page by default. */
   closeTo?: string;
   children: ReactNode;
 }
 
+/**
+ * Frame of the sign-in and password pages: a photo with a title on one side and the form on the other.
+ */
 function AuthLayout({
   overtitle,
   rightPanelClassName = "px-[15px] pb-[28px] pt-[65px] md:px-[70px] md:py-[55px]",

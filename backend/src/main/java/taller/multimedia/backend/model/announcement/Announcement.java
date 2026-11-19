@@ -23,6 +23,9 @@ import java.util.UUID;
 
 import org.hibernate.annotations.BatchSize;
 
+/**
+ * A news item or announcement published on the site.
+ */
 @Entity
 @Table(name = "announcements")
 @Data
@@ -39,6 +42,9 @@ public class Announcement {
     @Column(nullable = false, length = 4000)
     private String content;
 
+    /**
+     * Legacy type from before categories existed; kept in sync with the category's code.
+     */
     @Column(nullable = false, length = 30)
     private String type;
 
@@ -55,6 +61,10 @@ public class Announcement {
     @Column(name = "ai_summary", columnDefinition = "TEXT")
     private String aiSummary;
 
+    /**
+     * SHA-256 of the content the AI summary was generated from, to know when it must be
+     * regenerated.
+     */
     @Column(name = "ai_summary_content_hash", length = 64)
     private String aiSummaryContentHash;
 

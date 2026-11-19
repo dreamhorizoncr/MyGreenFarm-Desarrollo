@@ -5,6 +5,11 @@ const STORAGE_PREFIX = 'mgf:skeleton-count:'
 const seeded = new Map<string, number>()
 const listeners = new Set<() => void>()
 
+/**
+ * Stores how many items each list has, as the backend reports them on start.
+ *
+ * @param counts - number of items by list key
+ */
 export function seedSkeletonCounts(counts: Record<string, number>) {
   for (const [key, value] of Object.entries(counts)) {
     if (Number.isInteger(value) && value >= 0) seeded.set(key, value)
@@ -38,6 +43,17 @@ function writeCount(key: string, count: number) {
   }
 }
 
+/**
+ * How many placeholders a list's skeleton shows: the count reported by the backend, else the one
+ * remembered from the last visit, else the fallback. Once loaded, it remembers how many items there
+ * were.
+ *
+ * @param key - name of the list
+ * @param loading - whether the list is loading
+ * @param visibleCount - items shown once loaded
+ * @param fallback - placeholders when nothing is known
+ * @returns the number of placeholders
+ */
 export function useSkeletonCount(key: string, loading: boolean, visibleCount: number, fallback = 3): number {
   const fromServer = useSyncExternalStore(subscribe, () => seeded.get(key) ?? null)
   const [remembered] = useState(() => readCount(key))

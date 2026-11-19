@@ -16,12 +16,23 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
+/**
+ * Answers requests that need a session and have none with a JSON 401. When the JWT expired, the
+ * code is {@code SESSION_EXPIRED} so the frontend can tell the user to sign in again.
+ */
 @Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
   private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
   private final ObjectMapper mapper = new ObjectMapper();
 
+  /**
+   * @param request request that was rejected
+   * @param response response to write
+   * @param authException reason of the rejection
+   * @throws IOException if the response cannot be written
+   * @throws ServletException never; required by the interface
+   */
   @Override
   public void commence(HttpServletRequest request, HttpServletResponse response,
       AuthenticationException authException) throws IOException, ServletException {
