@@ -24,6 +24,9 @@ import lombok.NoArgsConstructor;
         @Index(name = "idx_forum_comments_article_id", columnList = "article_id"),
         @Index(name = "idx_forum_comments_created_at", columnList = "created_at")
 })
+/**
+ * Comment that a visitor published on a forum article, already moderated.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

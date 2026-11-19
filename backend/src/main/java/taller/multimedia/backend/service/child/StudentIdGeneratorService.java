@@ -7,6 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import taller.multimedia.backend.repository.child.ChildRepository;
 
+/**
+ * Generates sequential student IDs for newly enrolled children.
+ */
 @Service
 public class StudentIdGeneratorService {
 
@@ -16,6 +19,16 @@ public class StudentIdGeneratorService {
         this.childRepository = childRepository;
     }
 
+    /**
+     * Builds the next student ID for the current year.
+     *
+     * <p>The format is a decade letter (A for the 2020s, B for the 2030s, C for the 2040s, X
+     * otherwise), the last digit of the year and a three-digit sequence, for example {@code A6001}
+     * for the first student of 2026. The sequence continues from the highest ID already stored with
+     * the same prefix and restarts at 1 if that ID cannot be parsed.
+     *
+     * @return the next free student ID
+     */
     @Transactional
     public String generateNextStudentId() {
         int currentYear = LocalDate.now().getYear(); 
@@ -40,6 +53,10 @@ public class StudentIdGeneratorService {
         return String.format("%s%03d", prefix, nextSequence);
     }
 
+    /**
+     * @param year calendar year
+     * @return the letter that identifies the decade of {@code year}
+     */
     private char getDecadePrefix(int year) {
         if (year >= 2020 && year < 2030) return 'A';
         if (year >= 2030 && year < 2040) return 'B';

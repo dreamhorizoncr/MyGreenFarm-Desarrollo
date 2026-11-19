@@ -19,12 +19,25 @@ import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.calendar.CalendarEventResponse;
 import taller.multimedia.backend.service.calendar.CalendarEventService;
 
+/**
+ * Events of the dashboard calendar.
+ */
 @RestController
 @RequestMapping("/api/calendar")
 @RequiredArgsConstructor
 public class CalendarController {
     private final CalendarEventService calendarEventService;
 
+    /**
+     * {@code GET /api/calendar/events}: teachers get the birthdays of teachers and of their
+     * students; the owner and admins get appointments and teachers' birthdays.
+     *
+     * @param from first day, inclusive
+     * @param to last day, inclusive; at most 31 days after {@code from}
+     * @param authentication current user
+     * @return the events sorted by start
+     * @throws ResponseStatusException with 400 if the range is reversed or longer than 31 days
+     */
     @GetMapping("/events")
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN', 'TEACHER')")
     public ResponseEntity<List<CalendarEventResponse>> getEvents(

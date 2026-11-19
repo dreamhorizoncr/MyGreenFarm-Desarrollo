@@ -5,11 +5,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import taller.multimedia.backend.dto.appointment.AvailableDayResponse;
@@ -22,39 +23,49 @@ import taller.multimedia.backend.repository.appointment.ScheduleExceptionReposit
 import taller.multimedia.backend.repository.appointment.WeeklyScheduleRepository;
 import taller.multimedia.backend.util.Sanitizer;
 
+/**
+ * Opening hours for appointments: the regular weekly schedule plus exceptions for specific dates
+ * (holidays or special hours). Appointments last one hour and start on the hour from the opening
+ * time.
+ */
 @Service
+@RequiredArgsConstructor
 public class ScheduleConfigService {
 
-    @Autowired
-    private WeeklyScheduleRepository weeklyRepo;
+    private final WeeklyScheduleRepository weeklyScheduleRepository;
+    private final ScheduleExceptionRepository scheduleExceptionRepository;
+    private final AppointmentRepository appointmentRepository;
 
-    @Autowired
-    private ScheduleExceptionRepository exceptionRepo;
-
-    @Autowired
-    private AppointmentRepository appointmentRepository;
-
+    /**
+     * Calculates the free one-hour slots of a day.
+     *
+     * <p>An exception for the date replaces the weekly schedule; a closed exception or an inactive
+     * weekday leaves no slots. Slots that overlap a pending or confirmed appointment are removed.
+     *
+     * @param date day to check
+     * @return start times of the free slots, in order
+     */
     public List<LocalTime> getAvailableSlotsForDate(LocalDate date) {
         DayOfWeek dayOfWeek = date.getDayOfWeek();
 
-        Optional<ScheduleException> exceptionOpt = exceptionRepo.findByExceptionDate(date);
+        Optional<ScheduleException> scheduledException = scheduleExceptionRepository.findByExceptionDate(date);
 
         LocalTime startTime;
         LocalTime endTime;
 
-        if (exceptionOpt.isPresent()) {
-            ScheduleException exception = exceptionOpt.get();
+        if (scheduledException.isPresent()) {
+            ScheduleException exception = scheduledException.get();
             if (exception.isClosed()) {
                 return new ArrayList<>();
             }
             startTime = exception.getStartTime();
             endTime = exception.getEndTime();
         } else {
-            Optional<WeeklySchedule> scheduleOpt = weeklyRepo.findByDayOfWeek(dayOfWeek);
-            if (scheduleOpt.isEmpty() || !scheduleOpt.get().isActive()) {
+            Optional<WeeklySchedule> weeklySchedule = weeklyScheduleRepository.findByDayOfWeek(dayOfWeek);
+            if (weeklySchedule.isEmpty() || !weeklySchedule.get().isActive()) {
                 return new ArrayList<>();
             }
-            WeeklySchedule regular = scheduleOpt.get();
+            WeeklySchedule regular = weeklySchedule.get();
             startTime = regular.getStartTime();
             endTime = regular.getEndTime();
         }
@@ -74,7 +85,7 @@ public class ScheduleConfigService {
                 endOfDay);
 
         List<LocalDateTime> bookedAppointmentStarts = existingAppointments.stream()
-                .filter(a -> a.getStatus() == AppointmentStatus.PENDING || a.getStatus() == AppointmentStatus.CONFIRMED)
+                .filter(appointment -> appointment.getStatus() == AppointmentStatus.PENDING || appointment.getStatus() == AppointmentStatus.CONFIRMED)
                 .map(Appointment::getAppointmentDate)
                 .toList();
 
@@ -89,17 +100,25 @@ public class ScheduleConfigService {
         return slots;
     }
 
+    /**
+     * Free slots for seven consecutive days, never starting before tomorrow. Saturdays and Sundays
+     * have no slots.
+     *
+     * @param startDate first day requested
+     * @return slots by date ({@code yyyy-MM-dd}), with whether the day has an exception and its
+     *     reason
+     */
     public Map<String, AvailableDayResponse> getAvailableSlotsForWeek(LocalDate startDate) {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         LocalDate effectiveStart = startDate.isBefore(tomorrow) ? tomorrow : startDate;
 
-        Map<String, AvailableDayResponse> weekSlots = new java.util.LinkedHashMap<>();
+        Map<String, AvailableDayResponse> weekSlots = new LinkedHashMap<>();
 
         for (int i = 0; i < 7; i++) {
             LocalDate currentDay = effectiveStart.plusDays(i); 
-            Optional<ScheduleException> exceptionOpt = exceptionRepo.findByExceptionDate(currentDay);
-            boolean specialDay = exceptionOpt.isPresent();
-            String eventName = specialDay ? exceptionOpt.get().getReason() : null;
+            Optional<ScheduleException> scheduledException = scheduleExceptionRepository.findByExceptionDate(currentDay);
+            boolean specialDay = scheduledException.isPresent();
+            String eventName = specialDay ? scheduledException.get().getReason() : null;
             List<LocalTime> slots;
 
             if (currentDay.getDayOfWeek().getValue() >= 6) {
@@ -113,36 +132,56 @@ public class ScheduleConfigService {
         return weekSlots;
     }
 
+    /**
+     * Creates or replaces the schedule of a weekday.
+     *
+     * @param schedule weekday, opening and closing times and whether it is active
+     * @return the saved schedule
+     */
     public WeeklySchedule saveWeeklySchedule(WeeklySchedule schedule) {
-        Optional<WeeklySchedule> existingOpt = weeklyRepo.findByDayOfWeek(schedule.getDayOfWeek());
+        Optional<WeeklySchedule> existingSchedule = weeklyScheduleRepository.findByDayOfWeek(schedule.getDayOfWeek());
 
-        if (existingOpt.isPresent()) {
-            WeeklySchedule existing = existingOpt.get();
+        if (existingSchedule.isPresent()) {
+            WeeklySchedule existing = existingSchedule.get();
             existing.setStartTime(schedule.getStartTime());
             existing.setEndTime(schedule.getEndTime());
             existing.setActive(schedule.isActive());
-            return weeklyRepo.save(existing);
+            return weeklyScheduleRepository.save(existing);
         } else {
-            return weeklyRepo.save(schedule);
+            return weeklyScheduleRepository.save(schedule);
         }
     }
 
+    /**
+     * @param exception date, special hours or closed flag, and an optional reason (sanitized)
+     * @return the saved exception
+     * @throws taller.multimedia.backend.exception.InvalidFieldException if the reason is unsafe
+     */
     public ScheduleException saveException(ScheduleException exception) {
         if (exception.getReason() != null) {
             exception.setReason(Sanitizer.requireClean("reason", exception.getReason()));
         }
-        return exceptionRepo.save(exception);
+        return scheduleExceptionRepository.save(exception);
     }
 
+    /**
+     * @param id exception to delete
+     */
     public void deleteException(Long id) {
-        exceptionRepo.deleteById(id);
+        scheduleExceptionRepository.deleteById(id);
     }
 
+    /**
+     * @return the schedule of every configured weekday
+     */
     public List<WeeklySchedule> getAllWeeklySchedules() {
-        return weeklyRepo.findAll();
+        return weeklyScheduleRepository.findAll();
     }
 
+    /**
+     * @return all date exceptions
+     */
     public List<ScheduleException> getAllExceptions() {
-        return exceptionRepo.findAll();
+        return scheduleExceptionRepository.findAll();
     }
 }

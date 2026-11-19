@@ -10,11 +10,20 @@ const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
 const MAX_CERTIFICATES = 5
 const CERTIFICATE_TYPES = new Set(['application/pdf', 'image/png', 'image/jpeg','image/webp'])
 
+/** Vacancy applied for and the fields it requires. */
 interface ApplicationFormTarget {
   vacancyId: string | null
   requiredFields: OptionalApplicationField[]
 }
 
+/**
+ * State and validation of the job application form: name, email, phone, CV (up to 5 MB) and up to five
+ * certificates (PDF or image).
+ *
+ * @param target - the vacancy and its required fields
+ * @param onSubmit - sends the application
+ * @returns the values, their errors, which optional fields to show, and the handlers
+ */
 export function useVacancyApplicationForm(target: ApplicationFormTarget, onSubmit: (data: ApplicationInput) => Promise<void>) {
   const { t, i18n } = useTranslation()
 

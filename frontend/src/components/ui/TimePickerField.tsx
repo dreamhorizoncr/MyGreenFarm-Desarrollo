@@ -6,6 +6,7 @@ import { AnimatePresence, animate, motion, useMotionValue, useReducedMotion } fr
 import { usePopoverPosition } from '../../hooks/usePopoverPosition.ts'
 import { useDropdownMotion } from '../../hooks/useDropdownMotion.ts'
 
+/** Props of {@link TimePickerField}; the time is `HH:mm`. */
 interface TimePickerFieldProps {
   value: string
   onChange: (value: string) => void
@@ -43,6 +44,7 @@ const pointAt = (step: number, steps: number, radius = NUMBER_RADIUS) => {
 const defaultTriggerClassName =
   'mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading'
 
+/** Time field that opens a clock to choose the hour and then the minutes. */
 function TimePickerField({
   value,
   onChange,

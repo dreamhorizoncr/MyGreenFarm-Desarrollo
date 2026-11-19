@@ -1,0 +1,192 @@
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import useEmblaCarousel from 'embla-carousel-react'
+import Navbar from '../../components/navigation/Navbar.tsx'
+import Container from '../../components/home/Container.tsx'
+import { Images } from 'lucide-react'
+import MultimediaCard from '../../components/home/MultimediaCard.tsx'
+import { useGallery } from '../../hooks/useGallery.ts'
+import children from '../../assets/imgs/children.webp'
+import SkeletonList from '../../components/ui/SkeletonList.tsx'
+import StatusMessage from '../../components/ui/StatusMessage.tsx'
+import { useSkeletonCount } from '../../hooks/useSkeletonCount.ts'
+import TabHighlight from '../../components/ui/TabHighlight.tsx'
+import { FilterGrid, FilterGridItem } from '../../components/ui/FilterGrid.tsx'
+import MostLikedPhotos from '../../components/gallery/MostLikedPhotos.tsx'
+import protractor from "../../assets/imgs/protractor.svg";
+import abacus from "../../assets/imgs/abacus.svg";
+import { setPageSEO } from '../../utils/seo.ts'
+
+/** Public page of the gallery: albums filtered by year and the most liked photos. */
+function GalleryPage() {
+  const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
+  const { categories, allGalleries, getGalleriesByCategory, loading, error, fetchGallery } = useGallery()
+  const [activeCategory, setActiveCategory] = useState<string | null>(null)
+
+  useEffect(() => {
+    void fetchGallery(i18n.language)
+  }, [fetchGallery, i18n.language])
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({ align: 'start' })
+  const [fits, setFits] = useState(true)
+
+  useEffect(() => {
+    setPageSEO({
+      title: `${t('navbar.multimedia')} | My Green Farm`,
+      description: t('seo.galleryDescription'),
+    })
+  }, [t, i18n.resolvedLanguage])
+
+  useEffect(() => {
+    if (!emblaApi) return
+    const updateFits = () => setFits(!emblaApi.canScrollPrev() && !emblaApi.canScrollNext())
+    updateFits()
+    emblaApi.on('select', updateFits)
+    emblaApi.on('reInit', updateFits)
+    return () => {
+      emblaApi.off('select', updateFits)
+      emblaApi.off('reInit', updateFits)
+    }
+  }, [emblaApi])
+
+  const visibleGalleries = activeCategory ? getGalleriesByCategory(activeCategory) : allGalleries
+  const galleriesInYearOrder = [...categories]
+    .sort((a, b) => b.title.localeCompare(a.title, undefined, { numeric: true }))
+    .map((category) => ({
+      category,
+      galleries: getGalleriesByCategory(category.id),
+    }))
+    .filter((group) => group.galleries.length > 0)
+    .flatMap((group) => group.galleries)
+
+  const selectCategory = (categoryId: string | null) => {
+    setActiveCategory(categoryId)
+  }
+
+  const skeletonCount = useSkeletonCount('gallery', loading, visibleGalleries.length, 3)
+
+  return (
+    <div id="gallery-page" className="min-h-screen bg-bg-page">
+      <Navbar />
+
+      <section className="flex min-h-70 items-start bg-white px-7.5 pt-12 pb-10 text-center md:min-h-80 md:pt-18">
+        <img
+          src={abacus}
+          alt=""
+          aria-hidden="true"
+          className="absolute top-[24%] left-[3%] rotate-[-20deg]
+              w-[clamp(3rem,12vw,8rem)]
+              md:top-[25%] md:left-[8%]
+              lg:top-[25%] lg:left-[10%] 
+              pointer-events-none select-none opacity-50"
+        />
+
+        <img
+          src={protractor}
+          alt=""
+          aria-hidden="true"
+          className="absolute top-[25%] right-[3%]
+              w-[clamp(3rem,13vw,9rem)]
+              md:top-[25%] md:right-[8%]
+              lg:top-[25%] lg:right-[10%] 
+              pointer-events-none select-none opacity-50"
+        />
+
+        <div className="mx-auto w-full max-w-175">
+          <h1 className="m-0 font-heading text-h1 font-bold leading-tight text-green-500">
+            {t('home.gallery.title')}
+          </h1>
+
+          <p className="mx-auto mt-5 max-w-140 font-body text-body-sm leading-[1.6] text-green-500 md:text-body-sm">
+            {t('home.gallery.description')}
+          </p>
+
+          <div className="mt-6 w-full overflow-hidden" ref={emblaRef}>
+            <div className={`isolate flex items-center gap-2.5 ${fits ? 'w-full justify-center' : ''}`}>
+              <button
+                type="button"
+                onClick={() => selectCategory(null)}
+                className={`relative shrink-0 rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${activeCategory === null
+                    ? 'border-orange-500 text-white'
+                    : 'border-orange-500 bg-transparent text-orange-600 hover:bg-orange-50'
+                  }`}
+              >
+                {activeCategory === null && <TabHighlight layoutId="gallery-category-tab" className="bg-orange-500" />}
+                {t('home.gallery.filterAll')}
+              </button>
+
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  type="button"
+                  onClick={() => selectCategory(category.id)}
+                  className={`relative shrink-0 rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${activeCategory === category.id
+                      ? 'border-orange-500 text-white'
+                      : 'border-orange-500 bg-transparent text-orange-600 hover:bg-orange-50'
+                    }`}
+                >
+                  {activeCategory === category.id && <TabHighlight layoutId="gallery-category-tab" className="bg-orange-500" />}
+                  {category.title}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section data-scroll-bg="green" className="relative w-full bg-green-500 py-10 md:py-12">
+        <div className="flex w-full flex-col gap-6">
+          <Container className="flex flex-col items-start gap-4 text-left">
+            <h2 className="m-0 font-heading text-h2 font-bold text-white">
+              {t('home.gallery.albumTitle')}
+            </h2>
+
+            <div className="h-1 w-12 rounded-full bg-orange-500" aria-hidden="true" />
+
+            <p className="max-w-100 font-body text-body font-normal text-white">
+              {t('home.gallery.description')}
+            </p>
+          </Container>
+
+          <Container className="flex flex-col gap-8">
+            {loading && (
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                <SkeletonList count={skeletonCount}>{() => <MultimediaCard loading />}</SkeletonList>
+              </div>
+            )}
+
+            {error && <StatusMessage variant="error" description={error} />}
+
+            {!loading && !error && visibleGalleries.length === 0 && (
+              <StatusMessage icon={Images} description={activeCategory ? t('home.gallery.empty') : t('home.gallery.noGalleries')} />
+            )}
+
+            {!loading && !error && (
+              <FilterGrid className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                {(activeCategory ? visibleGalleries : galleriesInYearOrder).map((gallery) => (
+                  <FilterGridItem key={gallery.id} className="rounded-3xl">
+                    <MultimediaCard
+                      imageSrc={gallery.galleryImages[0]?.fileUrl ?? children}
+                      alt={gallery.title}
+                      badge={t('home.gallery.photoCount', { count: gallery.galleryImages.length })}
+                      title={gallery.title}
+                      description={gallery.description}
+                      onClick={() => navigate(`/albums/${gallery.id}`)}
+                    />
+                  </FilterGridItem>
+                ))}
+              </FilterGrid>
+            )}
+          </Container>
+        </div>
+      </section>
+
+      <MostLikedPhotos galleries={allGalleries} />
+
+    </div>
+  )
+}
+
+export default GalleryPage

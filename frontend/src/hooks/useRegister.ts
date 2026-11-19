@@ -4,6 +4,11 @@ import { authService } from '../services/auth.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { RegisterData, RegisterResponse } from '../types/auth.ts'
 
+/**
+ * Creation of a user account.
+ *
+ * @returns `submitRegister`, and its loading, error and success state
+ */
 export function useRegister() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

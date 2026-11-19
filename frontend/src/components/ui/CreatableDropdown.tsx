@@ -6,11 +6,13 @@ import useDismiss from '../../hooks/useDismiss.ts'
 import { useDropdownMotion } from '../../hooks/useDropdownMotion.ts'
 import { validateSafeText } from '../../utils/validators.ts'
 
+/** An option of {@link CreatableDropdown}. */
 export interface CreatableOption {
   id: string
   label: string
 }
 
+/** Translated texts of {@link CreatableDropdown}. */
 interface CreatableDropdownLabels {
   placeholder: string
   add: string
@@ -18,6 +20,7 @@ interface CreatableDropdownLabels {
   delete: string
 }
 
+/** Props of {@link CreatableDropdown}. */
 interface CreatableDropdownProps {
   options: CreatableOption[]
   value: string
@@ -28,6 +31,10 @@ interface CreatableDropdownProps {
   maxLength?: number
 }
 
+/**
+ * Dropdown that also lets create a new option and delete the existing ones, such as the categories of
+ * the announcements.
+ */
 function CreatableDropdown({ options, value, onChange, onCreate, onDelete, labels, maxLength }: Readonly<CreatableDropdownProps>) {
   const { t } = useTranslation()
   const [open, setOpen] = useState(false)

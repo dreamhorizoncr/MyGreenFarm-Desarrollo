@@ -13,8 +13,6 @@ import com.google.auth.oauth2.GoogleCredentials;
 import lombok.extern.slf4j.Slf4j;
 import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.user.User;
-import taller.multimedia.backend.dto.calendar.CalendarEventResponse;
-import taller.multimedia.backend.service.CalendarServiceException;
 
 import org.springframework.beans.factory.annotation.Value;
 
@@ -27,17 +25,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+/**
+ * Writes appointments and teachers' birthdays to the center's Google Calendar ({@code
+ * google.calendar.id}) using a service account.
+ *
+ * <p>Credentials are read from the {@code GOOGLE_CREDENTIALS_JSON} environment variable or, if it
+ * is not set, from the file in {@code google.calendar.credentials.path}. Appointment events last 59
+ * minutes so consecutive appointments do not overlap.
+ */
 @Slf4j
 @Service
 public class GoogleCalendarService {
@@ -49,6 +49,13 @@ public class GoogleCalendarService {
     @Value("${google.calendar.credentials.path:#{null}}")
     private Resource credentialsResource;
 
+    /**
+     * @return a Google Calendar client with a 5-second connect timeout and 15-second read and write
+     *     timeouts
+     * @throws FileNotFoundException if no credentials are configured
+     * @throws IOException if the credentials cannot be read
+     * @throws GeneralSecurityException if the HTTPS transport cannot be created
+     */
     private Calendar getCalendarService() throws IOException, GeneralSecurityException {
         InputStream credentialsStream;
 
@@ -86,149 +93,13 @@ public class GoogleCalendarService {
                 .build();
     }
 
-
-
-
-
-
-
-
-    private List<String> calculateFreeSlots(LocalDate date, List<TimePeriod> busyPeriods) {
-        List<String> freeSlots = new ArrayList<>();
-        LocalTime dayStart = LocalTime.of(7, 0);
-        LocalTime dayEnd = LocalTime.of(17, 0);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        java.time.ZoneId zoneId = java.time.ZoneId.systemDefault();
-
-        LocalTime currentSlotStart = dayStart;
-
-        while (currentSlotStart.plusHours(1).compareTo(dayEnd) <= 0) {
-            LocalTime currentSlotEnd = currentSlotStart.plusHours(1);
-            boolean isBusy = false;
-
-            if (busyPeriods != null) {
-                java.time.ZonedDateTime slotStartZdt = date.atTime(currentSlotStart).atZone(zoneId);
-                java.time.ZonedDateTime slotEndZdt = date.atTime(currentSlotEnd).atZone(zoneId);
-
-                Instant slotStartInstant = slotStartZdt.toInstant();
-                Instant slotEndInstant = slotEndZdt.toInstant();
-
-                for (TimePeriod period : busyPeriods) {
-                    Instant busyStartInstant = Instant.parse(period.getStart().toString());
-                    Instant busyEndInstant = Instant.parse(period.getEnd().toString());
-
-                    if (slotStartInstant.isBefore(busyEndInstant) && slotEndInstant.isAfter(busyStartInstant)) {
-                        isBusy = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!isBusy) {
-                freeSlots.add(currentSlotStart.format(formatter) + " - " + currentSlotEnd.format(formatter));
-            }
-            currentSlotStart = currentSlotStart.plusHours(1);
-        }
-
-        return freeSlots;
-    }
-
-    public Map<String, List<String>> getAvailableSlotsForWeek(LocalDate referenceDate) {
-        try {
-            Calendar service = getCalendarService();
-
-            LocalDate monday = referenceDate
-                    .with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
-            LocalDate friday = referenceDate
-                    .with(java.time.temporal.TemporalAdjusters.nextOrSame(java.time.DayOfWeek.FRIDAY));
-
-            String timeMin = monday.atTime(7, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toString();
-            String timeMax = friday.atTime(17, 0).atZone(java.time.ZoneId.systemDefault()).toInstant().toString();
-
-            FreeBusyRequest requestBody = new FreeBusyRequest();
-            requestBody.setTimeMin(new com.google.api.client.util.DateTime(timeMin));
-            requestBody.setTimeMax(new com.google.api.client.util.DateTime(timeMax));
-
-            FreeBusyRequestItem item = new FreeBusyRequestItem();
-            item.setId(calendarId);
-            requestBody.setItems(List.of(item));
-
-            FreeBusyResponse response = service.freebusy().query(requestBody).execute();
-
-            if (response.getCalendars() == null || response.getCalendars().get(calendarId) == null) {
-                log.error("Could not access the calendar with ID: {}", calendarId);
-                throw new CalendarServiceException("Availability could not be loaded right now");
-            }
-
-            List<TimePeriod> busyPeriods = response.getCalendars().get(calendarId).getBusy();
-
-            Map<String, List<String>> weeklySlots = new java.util.LinkedHashMap<>();
-            LocalDate current = monday;
-            while (!current.isAfter(friday)) {
-                weeklySlots.put(current.toString(), calculateFreeSlots(current, busyPeriods));
-                current = current.plusDays(1);
-            }
-            return weeklySlots;
-
-        } catch (CalendarServiceException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error fetching weekly availability for {}", referenceDate, e);
-            throw new CalendarServiceException("Availability could not be loaded right now");
-        }
-    }
-
-    public List<Event> listEvents(LocalDate from, LocalDate to) {
-        try {
-            Calendar service = getCalendarService();
-            String timeMin = from.atStartOfDay(CALENDAR_ZONE).toInstant().toString();
-            String timeMax = to.plusDays(1).atStartOfDay(CALENDAR_ZONE).toInstant().toString();
-
-            Events events = service.events().list(calendarId)
-                    .setTimeMin(new DateTime(timeMin))
-                    .setTimeMax(new DateTime(timeMax))
-                    .setSingleEvents(true)
-                    .setOrderBy("startTime")
-                    .setMaxResults(2500)
-                    .execute();
-            return events.getItems() == null ? List.of() : events.getItems();
-        } catch (Exception e) {
-            log.error("Error fetching Google Calendar events between {} and {}", from, to, e);
-            throw new CalendarServiceException("The calendar events could not be loaded");
-        }
-    }
-
-    public CalendarEventResponse toResponse(Event event, String type, String title) {
-        boolean allDay = event.getStart().getDate() != null;
-        String start;
-        String end;
-        String date;
-
-        if (allDay) {
-            start = event.getStart().getDate().toStringRfc3339();
-            end = event.getEnd().getDate().toStringRfc3339();
-            date = start;
-        } else {
-            ZonedDateTime startDateTime = Instant.ofEpochMilli(event.getStart().getDateTime().getValue())
-                    .atZone(CALENDAR_ZONE);
-            ZonedDateTime endDateTime = Instant.ofEpochMilli(event.getEnd().getDateTime().getValue())
-                    .atZone(CALENDAR_ZONE);
-            start = startDateTime.toString();
-            end = endDateTime.toString();
-            date = startDateTime.toLocalDate().toString();
-        }
-
-        return new CalendarEventResponse(
-                event.getId(),
-                title == null || title.isBlank() ? "Evento de calendario" : title,
-                start,
-                end,
-                date,
-                type,
-                allDay);
-    }
-
+    /**
+     * Creates the event of an appointment, with the parent's contact details in the description,
+     * and stores the Google event ID in the appointment (the caller saves it).
+     *
+     * @param appointment new appointment
+     * @throws RuntimeException if Google Calendar fails
+     */
     public void addAppointmentToCalendar(Appointment appointment) {
         try {
             Calendar service = getCalendarService();
@@ -258,6 +129,12 @@ public class GoogleCalendarService {
         }
     }
 
+    /**
+     * Deletes the event of an appointment. Does nothing if the appointment has no event.
+     *
+     * @param appointment cancelled appointment
+     * @throws RuntimeException if Google Calendar fails
+     */
     public void removeAppointmentFromCalendar(Appointment appointment) {
         try {
             if (appointment.getGoogleEventId() == null || appointment.getGoogleEventId().isEmpty()) {
@@ -273,6 +150,14 @@ public class GoogleCalendarService {
         }
     }
 
+    /**
+     * Changes the title of an appointment's event, for example to mark it as confirmed. Does
+     * nothing if the appointment has no event.
+     *
+     * @param appointment updated appointment
+     * @param newPrefix text placed before the child's name in the title
+     * @throws RuntimeException if Google Calendar fails
+     */
     public void updateAppointmentInCalendar(Appointment appointment, String newPrefix) {
         try {
             if (appointment.getGoogleEventId() == null || appointment.getGoogleEventId().isEmpty()) {
@@ -292,6 +177,14 @@ public class GoogleCalendarService {
         }
     }
 
+    /**
+     * Moves the event of a rescheduled appointment. If the event no longer exists in Google, a new
+     * one is created.
+     *
+     * @param appointment rescheduled appointment
+     * @param newStartDateTime new start date and time
+     * @throws RuntimeException if Google Calendar fails
+     */
     public void rescheduleAppointmentInCalendar(Appointment appointment, LocalDateTime newStartDateTime) {
         try {
             if (appointment.getGoogleEventId() == null || appointment.getGoogleEventId().trim().isEmpty()) {
@@ -306,8 +199,7 @@ public class GoogleCalendarService {
             try {
                 event = service.events().get(calendarId, appointment.getGoogleEventId()).execute();
             } catch (Exception e) {
-                System.out.println("The event with Google ID '" + appointment.getGoogleEventId()
-                        + "' was not found. A new one will be created.");
+                log.info("The event with Google ID '{}' was not found. A new one will be created.", appointment.getGoogleEventId());
                 addAppointmentToCalendar(appointment);
                 return;
             }
@@ -324,8 +216,7 @@ public class GoogleCalendarService {
                     "\nEmail: " + appointment.getParentEmail());
 
             service.events().update(calendarId, appointment.getGoogleEventId(), event).execute();
-            System.out.println(
-                    "Google Calendar event updated successfully for appointment ID: " + appointment.getId());
+            log.info("Google Calendar event updated successfully for appointment ID: {}", appointment.getId());
 
         } catch (Exception e) {
             log.error("Critical error syncing the reschedule to Google Calendar for appointment ID {}",
@@ -334,12 +225,29 @@ public class GoogleCalendarService {
         }
     }
 
+    /**
+     * Creates a yearly, all-day birthday event that does not block the calendar and has no
+     * reminders.
+     *
+     * @param teacher teacher with a birthday
+     * @return the Google event ID
+     * @throws IOException if Google Calendar fails
+     * @throws GeneralSecurityException if the HTTPS transport cannot be created
+     */
     public String createBirthdayEvent(User teacher) throws IOException, GeneralSecurityException {
         Calendar service = getCalendarService();
         Event created = service.events().insert(calendarId, buildBirthdayEvent(teacher)).execute();
         return created.getId();
     }
 
+    /**
+     * Updates a teacher's birthday event, or creates it again if it was deleted in Google.
+     *
+     * @param teacher teacher with a birthday and an event ID
+     * @return the event ID, which is new if the event was recreated
+     * @throws IOException if Google Calendar fails
+     * @throws GeneralSecurityException if the HTTPS transport cannot be created
+     */
     public String updateBirthdayEvent(User teacher) throws IOException, GeneralSecurityException {
         Calendar service = getCalendarService();
         try {
@@ -355,6 +263,13 @@ public class GoogleCalendarService {
         }
     }
 
+    /**
+     * Deletes a birthday event. An event that no longer exists is ignored.
+     *
+     * @param eventId Google event ID
+     * @throws IOException if Google Calendar fails
+     * @throws GeneralSecurityException if the HTTPS transport cannot be created
+     */
     public void deleteBirthdayEvent(String eventId) throws IOException, GeneralSecurityException {
         Calendar service = getCalendarService();
         try {
@@ -370,16 +285,20 @@ public class GoogleCalendarService {
 
         return new Event()
                 .setSummary("Cumpleaños: " + teacher.getFirstName() + " " + teacher.getLastName())
-                .setStart(new EventDateTime().setDate(new com.google.api.client.util.DateTime(next.toString())))
+                .setStart(new EventDateTime().setDate(new DateTime(next.toString())))
                 .setEnd(new EventDateTime()
-                        .setDate(new com.google.api.client.util.DateTime(next.plusDays(1).toString())))
+                        .setDate(new DateTime(next.plusDays(1).toString())))
                 .setRecurrence(List.of("RRULE:FREQ=YEARLY"))
                 .setTransparency("transparent")
                 .setReminders(new Event.Reminders().setUseDefault(false));
     }
 
+    /**
+     * @param birthday date of birth
+     * @return the next date (today included) on which the birthday falls, in Costa Rica time
+     */
     private LocalDate nextBirthday(LocalDate birthday) {
-        LocalDate today = LocalDate.now(ZoneId.of("America/Costa_Rica"));
+        LocalDate today = LocalDate.now(CALENDAR_ZONE);
         LocalDate candidate = birthday.withYear(today.getYear());
         return candidate.isBefore(today) ? candidate.plusYears(1) : candidate;
     }

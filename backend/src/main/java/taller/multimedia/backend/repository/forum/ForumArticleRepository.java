@@ -12,6 +12,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import taller.multimedia.backend.model.forum.ForumArticle;
 
+/**
+ * Storage of forum articles.
+ */
 public interface ForumArticleRepository extends JpaRepository<ForumArticle, UUID> {
 
     Page<ForumArticle> findByCreatedAtAfterOrderByCreatedAtDesc(LocalDateTime date, Pageable pageable);
@@ -22,6 +25,12 @@ public interface ForumArticleRepository extends JpaRepository<ForumArticle, UUID
 
     Page<ForumArticle> findByTopicIgnoreCaseOrderByCreatedAtDesc(String topic, Pageable pageable);
 
+    /**
+     * Keeps the articles of a user who is being deleted, without an author.
+     *
+     * @param authorId user being deleted
+     * @return number of articles updated
+     */
     @Modifying
     @Query("UPDATE ForumArticle a SET a.author = NULL WHERE a.author.id = :authorId")
     int unlinkAuthor(@Param("authorId") UUID authorId);

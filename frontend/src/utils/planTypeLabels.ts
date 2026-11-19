@@ -19,6 +19,11 @@ const INTERVAL_UNITS: Record<string, string> = {
   DAYS: 'services.days',
 }
 
+/**
+ * @param type - billing period of a plan, for example `MONTHLY` or `3_MONTHS`
+ * @param t - translation function
+ * @returns the translated period, for example `Mensual` or `3 meses`; the code itself if it is unknown
+ */
 export function getPlanTypeLabel(type: string, t: (key: string) => string): string {
   const exact = PLAN_TYPE_LABELS[type]
   if (exact) return t(exact)

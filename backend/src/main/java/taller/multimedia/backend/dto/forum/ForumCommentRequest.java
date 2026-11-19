@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * Comment that a visitor publishes on a forum article.
+ */
 @Data
 public class ForumCommentRequest {
 

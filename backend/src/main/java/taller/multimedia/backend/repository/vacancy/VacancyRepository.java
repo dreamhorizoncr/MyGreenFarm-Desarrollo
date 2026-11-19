@@ -6,5 +6,8 @@ import taller.multimedia.backend.model.vacancy.Vacancy;
 
 import java.util.UUID;
 
+/**
+ * Storage of job openings.
+ */
 public interface VacancyRepository extends JpaRepository<Vacancy, UUID> {
 }

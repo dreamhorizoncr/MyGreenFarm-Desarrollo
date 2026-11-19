@@ -9,6 +9,7 @@ import {
 } from './validators.ts'
 import type { ReferralSource } from '../types/appointment.ts'
 
+/** Fields of the visit booking form that can be filled from a text. */
 export type BookingField =
   | 'childName'
   | 'reason'
@@ -21,6 +22,7 @@ export type BookingField =
   | 'phone'
   | 'occupation'
 
+/** Values of the booking form. */
 export interface BookingFormValues {
   childName: string
   reason: string
@@ -34,6 +36,7 @@ export interface BookingFormValues {
   occupation: string
 }
 
+/** Fields found in a text pasted or written in the chat; the missing ones are left out. */
 export interface ExtractedBookingData {
   childName?: string
   reason?: string
@@ -47,11 +50,22 @@ export interface ExtractedBookingData {
   occupation?: string
 }
 
+/** Errors of the booking form: the messages and the fields they belong to. */
 export interface BookingValidationResult {
   errors: string[]
   fields: BookingField[]
 }
 
+/**
+ * Fills the booking template that the assistant shows, one field per line, with the form's values.
+ * The invalid fields are left blank so the family writes them again.
+ *
+ * @param form - values of the form
+ * @param invalidFields - fields to leave blank
+ * @param template - translated template, `Label:` on each line in the order of the form
+ * @param referralLabel - translated name of the chosen referral source
+ * @returns the filled template
+ */
 export function buildBookingTemplate(
   form: BookingFormValues,
   invalidFields: BookingField[],
@@ -75,6 +89,7 @@ export function buildBookingTemplate(
   }).join('\n')
 }
 
+/** Labels each field may have in a text, in Spanish, English and French, without accents. */
 const FIELD_ALIASES: Array<[BookingField, string[]]> = [
   ['childName', [
     'nino', 'nina', 'nombre del nino', 'nombre del nino o nina', 'nombre del nino nina',
@@ -156,6 +171,11 @@ const ID_TYPE_CHOICES: Array<[string, string[]]> = [
   ]],
 ]
 
+/**
+ * @param value - a label or value
+ * @returns it in lower case, without accents and with any other symbol turned into a space, to compare
+ *   labels written in different ways
+ */
 export function normalizeKey(value: string): string {
   return value
     .normalize('NFD')
@@ -165,12 +185,14 @@ export function normalizeKey(value: string): string {
     .trim()
 }
 
+/** @returns the line without a leading bullet or number, such as `-`, `•` or `3.` */
 function stripLineDecoration(line: string): string {
   return line
     .replace(/^\s*(?:[-*•]|\d{1,2}\s*[.)-])\s*/, '')
     .trim()
 }
 
+/** @returns whether the value is one of the aliases, or starts with one */
 function choiceMatches(value: string, aliases: string[]): boolean {
   const key = normalizeKey(value)
   return aliases.some((alias) => {
@@ -179,6 +201,10 @@ function choiceMatches(value: string, aliases: string[]): boolean {
   })
 }
 
+/**
+ * @param value - how the family heard about the school, as written
+ * @returns the matching option, or `null`
+ */
 export function parseReferralSource(value: string): ReferralSource | null {
   for (const [source, aliases] of REFERRAL_CHOICES) {
     if (choiceMatches(value, aliases)) return source
@@ -186,6 +212,11 @@ export function parseReferralSource(value: string): ReferralSource | null {
   return null
 }
 
+/**
+ * @param value - referral source and an optional detail after `:`, `;`, `,` or `-`
+ * @returns the option and its detail; text that matches no option becomes `OTHER` with the text as
+ *   detail
+ */
 export function parseReferral(value: string): { source: ReferralSource | null; detail: string } {
   const separator = value.search(/[:;,-]/)
   const sourcePart = separator >= 0 ? value.slice(0, separator) : value
@@ -197,6 +228,10 @@ export function parseReferral(value: string): { source: ReferralSource | null; d
   return { source, detail }
 }
 
+/**
+ * @param value - identification type, as written
+ * @returns the form's value of that type, or `null`
+ */
 export function parseIdType(value: string): string | null {
   for (const [type, aliases] of ID_TYPE_CHOICES) {
     if (choiceMatches(value, aliases)) return type
@@ -204,6 +239,10 @@ export function parseIdType(value: string): string | null {
   return null
 }
 
+/**
+ * @param value - phone number, as written
+ * @returns the number in E.164 format; eight digits are taken as a Costa Rican number
+ */
 export function normalizePhone(value: string): string {
   const digits = value.replace(/\D/g, '')
   if (!digits) return ''
@@ -212,6 +251,7 @@ export function normalizePhone(value: string): string {
   return `+${digits}`
 }
 
+/** @returns the fields of lines written as `Label: value`, or `null` if no line has a known label */
 function extractLabeled(lines: string[]): ExtractedBookingData | null {
   const result: ExtractedBookingData = {}
   let found = 0
@@ -235,6 +275,9 @@ function extractLabeled(lines: string[]): ExtractedBookingData | null {
   return found > 0 ? result : null
 }
 
+/**
+ * @returns the fields of a single line with several labels, such as `Nombre: Ana Correo: ana@x.com`
+ */
 function extractInlineLabeled(text: string): ExtractedBookingData | null {
   const accents: Record<string, string> = {
     a: '[aáàâäã]', e: '[eéèêë]', i: '[iíìîï]',
@@ -261,6 +304,7 @@ function extractInlineLabeled(text: string): ExtractedBookingData | null {
   return result
 }
 
+/** @returns the fields of lines without labels, taken in the order of the form */
 function extractOrdered(lines: string[]): ExtractedBookingData {
   const values = lines.map(stripLineDecoration).filter(Boolean)
   if (values.length === 0) return {}
@@ -290,6 +334,13 @@ function extractOrdered(lines: string[]): ExtractedBookingData {
   return result
 }
 
+/**
+ * Reads the booking data from a text pasted or written in the chat. It accepts lines with labels, one
+ * line with several labels, values separated by `|`, or the values alone in the order of the form.
+ *
+ * @param text - the text
+ * @returns the fields found
+ */
 export function extractBookingData(text: string): ExtractedBookingData {
   const normalizedText = text.replace(/\r\n?/g, '\n').trim()
   if (!normalizedText) return {}
@@ -305,6 +356,14 @@ export function extractBookingData(text: string): ExtractedBookingData {
   return extractLabeled(lines) ?? extractOrdered(lines)
 }
 
+/**
+ * Validates the booking form with the same rules as the page, and numbers each error with its line
+ * of the template.
+ *
+ * @param form - values of the form
+ * @param t - translation function
+ * @returns the errors and their fields; empty when the form can be sent
+ */
 export function validateBookingForm(
   form: BookingFormValues,
   t: TFunction,

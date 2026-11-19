@@ -18,6 +18,7 @@ function scrollToListStart(pagination: HTMLElement | null) {
   if (window.scrollY > top) window.scrollTo({ top: Math.max(0, top), behavior })
 }
 
+/** Props of {@link Pagination}; pages start at 1. */
 interface PaginationProps {
   currentPage: number
   totalPages: number
@@ -26,6 +27,10 @@ interface PaginationProps {
 
 const MAX_VISIBLE_PAGES = 10
 
+/**
+ * Page buttons of a list, with previous and next; changing page scrolls to the top of the list. Hidden
+ * when there is only one page.
+ */
 function Pagination({ currentPage, totalPages, onPageChange }: Readonly<PaginationProps>) {
   const { t } = useTranslation()
   const ref = useRef<HTMLDivElement>(null)

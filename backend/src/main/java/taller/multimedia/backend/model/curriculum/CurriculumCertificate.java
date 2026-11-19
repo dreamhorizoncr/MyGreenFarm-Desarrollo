@@ -13,6 +13,9 @@ import lombok.Data;
 
 import java.util.UUID;
 
+/**
+ * A certificate attached to a job application.
+ */
 @Entity
 @Table(name = "curriculum_certificates")
 @Data

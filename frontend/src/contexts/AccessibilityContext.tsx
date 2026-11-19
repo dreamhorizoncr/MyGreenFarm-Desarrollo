@@ -38,6 +38,10 @@ function readColorMode(): ColorMode {
     return "normal";
 }
 
+/**
+ * Keeps the options of the accessibility menu, saves them in `localStorage` and applies them to the
+ * page as classes of the `<html>` element.
+ */
 export function AccessibilityProvider({ children }: Readonly<{ children: ReactNode }>) {
     const [fontSize, setFontSize] = useState<FontSize>(() => {
         return (localStorage.getItem("a11y_font") as FontSize) || "normal";

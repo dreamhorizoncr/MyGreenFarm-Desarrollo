@@ -5,18 +5,21 @@ import type { Currency } from '../../types/exchangeRate.ts'
 
 const CURRENCIES: Currency[] = ['USD', 'CRC', 'EUR']
 
+/** Props of {@link CurrencyToggle}. */
 interface CurrencyToggleProps {
   value: Currency
   onChange: (currency: Currency) => void
+  /** Whether there is an exchange rate; without it only colones can be chosen. */
   hasExchangeRate: boolean
 }
 
+/** Buttons to show the prices in dollars, colones or euros. */
 function CurrencyToggle({ value, onChange, hasExchangeRate }: Readonly<CurrencyToggleProps>) {
   const { t } = useTranslation()
   const groupId = useId()
 
   return (
-    <div className="isolate flex w-full flex-wrap justify-end gap-1" aria-label={t('moneda.convertTo')}>
+    <div className="isolate flex w-full flex-wrap justify-end gap-1" aria-label={t('currency.convertTo')}>
       {CURRENCIES.map((option) => (
         <button
           key={option}

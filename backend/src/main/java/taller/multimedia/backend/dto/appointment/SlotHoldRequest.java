@@ -8,6 +8,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * Request to hold an appointment slot while the booking form is filled in.
+ */
 @Data
 public class SlotHoldRequest {
 

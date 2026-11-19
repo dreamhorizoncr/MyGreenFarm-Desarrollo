@@ -11,6 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Data of a class group with its teachers and children.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

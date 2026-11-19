@@ -1,29 +1,33 @@
-export type EducationalLevel=
-| 'LACTANTES'
-| 'MATERNAL'
-| 'INTERACTIVO'
-| 'MATERNO'
-| 'KINDER'
-| 'PRIMER_GRADO'
-| 'SEGUNDO_GRADO'
-| 'TERCER_GRADO'
-| 'CUARTO_GRADO'
-| 'QUINTO_GRADO'
-| 'SEXTO_GRADO'
+/** Educational levels of the Costa Rican system, as the backend names them. */
+export type EducationalLevel =
+  | 'LACTANTES'
+  | 'MATERNAL'
+  | 'INTERACTIVO'
+  | 'MATERNO'
+  | 'KINDER'
+  | 'PRIMER_GRADO'
+  | 'SEGUNDO_GRADO'
+  | 'TERCER_GRADO'
+  | 'CUARTO_GRADO'
+  | 'QUINTO_GRADO'
+  | 'SEXTO_GRADO'
 
-export interface Expedient{
-    id:string
-    childName: string
-    studentId: string
-    admisionDate: string
-    educationalLevel: EducationalLevel
-    generalObservations: string|null
-    photoUrl: string|null
+/** Record of a child at the school. */
+export interface Expedient {
+  id: string
+  childName: string
+  studentId: string
+  /** Day the child joined the school, `yyyy-MM-dd`. */
+  admissionDate: string
+  educationalLevel: EducationalLevel
+  generalObservations: string | null
+  photoUrl: string | null
 }
 
-export interface ExpedientRequest{
-    studentId: string
-    admisionDate: string
-    educationalLevel: EducationalLevel
-    generalObservations?: string
+/** Data to create or update a record. */
+export interface ExpedientRequest {
+  studentId: string
+  admissionDate: string
+  educationalLevel: EducationalLevel
+  generalObservations?: string
 }

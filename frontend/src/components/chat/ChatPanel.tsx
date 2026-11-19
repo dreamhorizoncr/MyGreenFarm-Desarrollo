@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { SendIcon, XIcon } from '@animateicons/react/lucide'
 import type { ChatController } from '../../hooks/useChat'
-import type { ChatResponse } from '../../services/chat.service'
+import type { ChatResponse } from '../../services/chat'
 import type { useChatBooking } from '../../hooks/useChatBooking'
 import ChatMessage from './ChatMessage'
 import ChatSuggestions from './ChatSuggestions'
@@ -16,6 +16,7 @@ const THANKS_PATTERN = /\b(gracias|thanks|thank you|merci)\b/i
 const WORD_PATTERN = /\S+\s*/y
 const MAX_BOOKING_INPUT = 3000
 const ACTION_DELAY = 3500
+/** Pages the assistant can take the user to, by the target of its answer. */
 const NAV_TARGETS: Record<string, string> = {
   news: '/news',
   gallery: '/multimedia',
@@ -33,6 +34,7 @@ function nextWordEnd(text: string, from: number) {
   return match ? from + match[0].length : text.length
 }
 
+/** Props of {@link ChatPanel}. */
 interface ChatPanelProps {
   chat: ChatController
   booking: ReturnType<typeof useChatBooking>
@@ -40,6 +42,10 @@ interface ChatPanelProps {
   onOpenTerms: () => void
 }
 
+/**
+ * Window of the chat: the animated assistant, the messages written word by word, the suggestions, the
+ * booking steps and the input. When an answer asks to open a page, it goes there after a moment.
+ */
 export default function ChatPanel({ chat, booking, onClose, onOpenTerms }: Readonly<ChatPanelProps>) {
   const { messages, input, setInput, sendMessage, loading } = chat
   const { t } = useTranslation()

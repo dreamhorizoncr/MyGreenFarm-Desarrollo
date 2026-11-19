@@ -1,10 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import { UsersIcon } from '@animateicons/react/lucide'
 
+/** Props of {@link AboutWallCard}. */
 interface AboutWallCardProps {
+  /** Whether it describes the community instead of the blog. */
   community?: boolean
 }
 
+/** Card of the forum's sidebar that explains what the blog or the community is for. */
 function AboutWallCard({ community = false }: Readonly<AboutWallCardProps>) {
   const { t } = useTranslation()
 

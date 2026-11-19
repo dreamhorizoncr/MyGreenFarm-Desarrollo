@@ -5,6 +5,9 @@ import lombok.Data;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
+/**
+ * Regular opening hours for appointments on one weekday.
+ */
 @Entity
 @Table(name = "weekly_schedules")
 @Data

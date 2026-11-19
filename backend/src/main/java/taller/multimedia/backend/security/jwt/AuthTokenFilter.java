@@ -17,14 +17,23 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import taller.multimedia.backend.security.services.UserDetailsServiceImpl;
+import taller.multimedia.backend.security.service.UserDetailsServiceImpl;
 
+/**
+ * Authenticates each request from the {@code Authorization: Bearer} header. An expired token marks
+ * the request with {@code SESSION_EXPIRED} so {@link AuthEntryPointJwt} can tell the frontend; an
+ * invalid token simply leaves the request unauthenticated.
+ */
 public class AuthTokenFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
     private final UserDetailsServiceImpl userDetailsService;
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
+    /**
+     * @param jwtUtils validates tokens
+     * @param userDetailsService loads the user of a valid token
+     */
     public AuthTokenFilter(JwtUtils jwtUtils, UserDetailsServiceImpl userDetailsService) {
         this.jwtUtils = jwtUtils;
         this.userDetailsService = userDetailsService;
@@ -56,6 +65,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * @param request incoming request
+     * @return the token of the {@code Authorization: Bearer} header, or {@code null}
+     */
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
 

@@ -7,7 +7,12 @@ import LatestPostsCard from './LatestPostsCard.tsx'
 import PublishButtonCard from './PublishButtonCard.tsx'
 import type { BlogPost } from '../../types/forum.ts'
 
+/** Props of {@link ForumSidebar}. */
 interface ForumSidebarProps {
+  /**
+   * Which cards to show: the controls (publish and search), the details (about, latest and popular), or
+   * all; on small screens they go in different places.
+   */
   variant?: 'all' | 'controls' | 'details'
   showPublish?: boolean
   onPublish?: () => void
@@ -19,6 +24,9 @@ interface ForumSidebarProps {
   showPopularTopics?: boolean
 }
 
+/**
+ * Sidebar of the forum: publish button, search of the blog, about card, latest posts and popular topics.
+ */
 function ForumSidebar({
   variant = 'all',
   showPublish = false,

@@ -16,8 +16,12 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import taller.multimedia.backend.security.services.UserDetailsImpl;
+import taller.multimedia.backend.security.service.UserDetailsImpl;
 
+/**
+ * Creates and validates the JWTs used to sign in, signed with HMAC-SHA using {@code
+ * mygreenfarm.app.jwtSecret} (Base64) and valid for {@code mygreenfarm.app.jwtExpirationMs}.
+ */
 @Component
 public class JwtUtils {
   private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
@@ -28,10 +32,18 @@ public class JwtUtils {
   @Value("${mygreenfarm.app.jwtExpirationMs}")
   private int jwtExpirationMs;
 
+  /**
+   * @param userPrincipal authenticated user
+   * @return a signed token for the user
+   */
   public String generateJwtToken(UserDetailsImpl userPrincipal) {
     return generateTokenFromUsername(userPrincipal.getUsername());
   }
 
+  /**
+   * @param username user's email
+   * @return a signed token whose subject is the email
+   */
   public String generateTokenFromUsername(String username) {
     return Jwts.builder()
         .subject(username)
@@ -41,6 +53,10 @@ public class JwtUtils {
         .compact();
   }
 
+  /**
+   * @param token valid token
+   * @return the user's email stored in the token
+   */
   public String getUserNameFromJwtToken(String token) {
     return Jwts.parser()
         .verifyWith(key())
@@ -54,23 +70,47 @@ public class JwtUtils {
     return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
   }
 
+  /**
+   * @param userPrincipal authenticated user
+   * @return an HTTP-only {@code jwt} cookie with a new token, valid as long as the token
+   */
   public ResponseCookie generateJwtCookie(UserDetailsImpl userPrincipal) {
-    String jwt = generateJwtToken(userPrincipal);
+    return generateJwtCookie(generateJwtToken(userPrincipal));
+  }
+
+  /**
+   * @param jwt token already generated for the user
+   * @return an HTTP-only {@code jwt} cookie with the token, valid as long as the token
+   */
+  public ResponseCookie generateJwtCookie(String jwt) {
     return ResponseCookie.from("jwt", jwt)
         .path("/")
         .maxAge(jwtExpirationMs / 1000)
         .httpOnly(true)
+        .secure(true)
+        .sameSite("Lax")
         .build();
   }
 
+  /**
+   * @return an empty, expired {@code jwt} cookie that removes the session from the browser
+   */
   public ResponseCookie getCleanJwtCookie() {
     return ResponseCookie.from("jwt", "")
         .path("/")
         .maxAge(0)
         .httpOnly(true)
+        .secure(true)
+        .sameSite("Lax")
         .build();
   }
 
+  /**
+   * @param authToken token sent by the client
+   * @return {@code true} if the signature is valid, {@code false} if it is malformed, unsupported
+   *     or empty
+   * @throws ExpiredJwtException if the token expired, so the caller can report an expired session
+   */
   public boolean validateJwtToken(String authToken) {
     try {
       Jwts.parser().verifyWith(key()).build().parse(authToken);

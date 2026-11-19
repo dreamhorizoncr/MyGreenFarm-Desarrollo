@@ -18,15 +18,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import taller.multimedia.backend.dto.LoginRequest;
-import taller.multimedia.backend.dto.SignupRequest;
+import taller.multimedia.backend.dto.auth.LoginRequest;
+import taller.multimedia.backend.dto.auth.SignupRequest;
 import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.model.user.User;
 import taller.multimedia.backend.repository.user.UserRepository;
 import taller.multimedia.backend.security.jwt.JwtUtils;
-import taller.multimedia.backend.security.services.UserDetailsImpl;
-import taller.multimedia.backend.service.EmailService;
+import taller.multimedia.backend.security.service.UserDetailsImpl;
+import taller.multimedia.backend.service.email.EmailService;
+import taller.multimedia.backend.util.HashUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -145,6 +146,45 @@ class AuthServiceTest {
 
         verify(userRepository).findByEmail("owner@ejemplo.com");
         verify(emailService).sendPasswordResetEmail(eq("owner@ejemplo.com"), anyString());
+    }
+
+    @Test
+    void forgotPassword_storesOnlyTheHashOfTheTokenItEmails() {
+        User user = new User("owner@ejemplo.com", "hashed-password");
+        when(userRepository.findByEmail("owner@ejemplo.com")).thenReturn(Optional.of(user));
+
+        authService.forgotPassword("owner@ejemplo.com");
+
+        ArgumentCaptor<String> emailedToken = ArgumentCaptor.forClass(String.class);
+        verify(emailService).sendPasswordResetEmail(eq("owner@ejemplo.com"), emailedToken.capture());
+        assertThat(user.getResetPasswordToken())
+                .isNotEqualTo(emailedToken.getValue())
+                .isEqualTo(HashUtils.sha256(emailedToken.getValue()));
+    }
+
+    @Test
+    void forgotPassword_doesNotRevealWhetherTheEmailHasAnAccount() {
+        when(userRepository.findByEmail("nobody@ejemplo.com")).thenReturn(Optional.empty());
+
+        authService.forgotPassword("nobody@ejemplo.com");
+
+        verify(userRepository, never()).save(any());
+        verify(emailService, never()).sendPasswordResetEmail(anyString(), anyString());
+    }
+
+    @Test
+    void resetPassword_findsTheUserByTheHashOfTheTokenAndClearsIt() {
+        User user = new User("owner@ejemplo.com", "old-hash");
+        user.setResetPasswordToken(HashUtils.sha256("emailed-token"));
+        user.setTokenExpirationDate(java.time.LocalDateTime.now().plusMinutes(5));
+        when(userRepository.findByResetPasswordToken(HashUtils.sha256("emailed-token"))).thenReturn(Optional.of(user));
+        when(encoder.encode("N3w$ecret!")).thenReturn("new-hash");
+
+        authService.resetPassword("emailed-token", "N3w$ecret!");
+
+        assertThat(user.getPassword()).isEqualTo("new-hash");
+        assertThat(user.getResetPasswordToken()).isNull();
+        assertThat(user.getTokenExpirationDate()).isNull();
     }
 
     @Test

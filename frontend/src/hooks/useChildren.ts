@@ -45,6 +45,13 @@ async function translateClubNames(children: Child[], targetLang: string): Promis
     return translatedClubName
 }
 
+/**
+ * Children for the admin list, with the names of their clubs translated. Pages are cached by status
+ * and language.
+ *
+ * @returns the children (translated and as stored), the loading and error state, `fetchChildren`,
+ *   `invalidateCache` and the number of pages
+ */
 export function useChildren() {
     const [children, setChildren] = useState<Child[]>([])
     const [sourceChildren, setSourceChildren] = useState<Child[]>([])
@@ -62,10 +69,11 @@ export function useChildren() {
         page = 0,
         lang?: string,
         status: ChildStatusFilter = 'ACTIVE',
+        search = '',
     ) => {
         const requestId = ++requestIdRef.current
         const targetLang = lang?.split('-')[0] || 'es'
-        const cacheKey = `${status}-${page}-${targetLang}`
+        const cacheKey = `${status}-${page}-${targetLang}-${search}`
 
         if (cacheRef.current.has(cacheKey)) {
             const cached = cacheRef.current.get(cacheKey)!
@@ -81,7 +89,7 @@ export function useChildren() {
             setLoading(true)
             setError(null)
 
-            const data = await childService.getAll(page, 10, status)
+            const data = await childService.getAll(page, 10, status, search)
             if (requestId !== requestIdRef.current) return
 
             const rawContent = data.content

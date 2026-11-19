@@ -1,12 +1,17 @@
 import type { ReactNode } from 'react'
-import Navbar from '../components/Navbar.tsx'
-import AdminSidebar from '../components/AdminSidebar.tsx'
+import Navbar from '../components/navigation/Navbar.tsx'
+import AdminSidebar from '../components/navigation/AdminSidebar.tsx'
 import Footer from './Footer.tsx'
 
+/** Props of {@link AdminLayout}. */
 interface AdminLayoutProps {
   children: ReactNode
 }
 
+/**
+ * Frame of the admin pages: navigation bar, sidebar, and the page in a container that scrolls on its
+ * own (`admin-scroll-container`).
+ */
 function AdminLayout({ children }: Readonly<AdminLayoutProps>) {
   return (
     <div className="flex h-svh flex-col overflow-hidden">

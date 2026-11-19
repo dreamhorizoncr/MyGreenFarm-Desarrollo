@@ -6,6 +6,7 @@ import { useModalExit } from '../../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../../hooks/useDialogDismiss.ts'
 import ModalCloseButton from './ModalCloseButton.tsx'
 
+/** Props of {@link DeleteConfirmModal}. */
 interface DeleteConfirmModalProps {
   title: string
   message: string
@@ -14,6 +15,10 @@ interface DeleteConfirmModalProps {
   onClose: () => void
 }
 
+/**
+ * Asks for confirmation before deleting something; it stays open while `onConfirm` runs, and also if
+ * it fails.
+ */
 function DeleteConfirmModal({
   title,
   message,

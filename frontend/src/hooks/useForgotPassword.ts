@@ -4,6 +4,11 @@ import { authService } from '../services/auth.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { ForgotPasswordRequest } from '../types/auth.ts'
 
+/**
+ * Sending of the forgot password form.
+ *
+ * @returns `submitForgotPassword`, and its loading, error and success state
+ */
 export function useForgotPassword() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

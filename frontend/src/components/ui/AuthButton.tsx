@@ -1,12 +1,14 @@
 import type { ReactNode } from 'react'
 import Button from './Button.tsx'
 
+/** Props of {@link AuthButton}. */
 interface AuthButtonProps {
   loading: boolean
   disabled?: boolean
   children: ReactNode
 }
 
+/** Submit button of the sign-in and password forms, with a spinner while sending. */
 function AuthButton({ loading, disabled = false, children }: Readonly<AuthButtonProps>) {
   return (
     <Button

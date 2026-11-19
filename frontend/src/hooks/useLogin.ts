@@ -5,6 +5,11 @@ import { userStorage } from '../utils/userStorage.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { LoginData, UserInfo } from '../types/auth.ts'
 
+/**
+ * Sign-in and sign-out. On sign-in it keeps the token and the user's data.
+ *
+ * @returns `submitLogin`, its loading and error state, the signed-in user and `logout`
+ */
 export function useLogin() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

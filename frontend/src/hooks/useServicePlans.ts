@@ -11,6 +11,11 @@ interface CacheData {
   totalPages: number
 }
 
+/**
+ * Active service plans for the public page, translated and cached by page and language.
+ *
+ * @returns the plans, the loading and error state, `fetchPlans` and the number of pages
+ */
 export function useServicePlans() {
   const [plans, setPlans] = useState<ServicePlan[]>([])
   const [loading, setLoading] = useState(true)

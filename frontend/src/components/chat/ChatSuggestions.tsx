@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import TabHighlight from '../ui/TabHighlight'
 import { tabCarouselClass, useTabCarousel } from '../../hooks/useTabCarousel'
 
+/** Props of {@link ChatSuggestions}. */
 interface ChatSuggestionsProps {
   onSelect: (question: string) => void
 }
@@ -10,6 +11,7 @@ interface ChatSuggestionsProps {
 const SUGGESTIONS = ['booking', 'vacancies'] as const
 const suggestionRowClass = tabCarouselClass.replace(' md:flex-wrap md:overflow-visible', '')
 
+/** Frequent questions the user can send with one click. */
 export default function ChatSuggestions({ onSelect }: Readonly<ChatSuggestionsProps>) {
   const { t } = useTranslation()
   const [selected, setSelected] = useState<string | null>(null)

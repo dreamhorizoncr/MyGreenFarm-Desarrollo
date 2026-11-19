@@ -4,11 +4,13 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useMenuPosition } from '../../hooks/useMenuPosition.ts'
 import { useDropdownMotion } from '../../hooks/useDropdownMotion.ts'
 
+/** An option of {@link Select}. */
 export interface SelectOption {
   value: string
   label: string
 }
 
+/** Props of {@link Select}. */
 interface SelectProps {
   value: string
   onChange: (value: string) => void
@@ -27,6 +29,9 @@ const MENU_MAX_HEIGHT = 240
 const OPTION_HEIGHT = 40
 const MENU_PADDING = 8
 
+/**
+ * Dropdown of the design system, usable with the keyboard; its menu opens above or below as fits.
+ */
 function Select({
   value,
   onChange,

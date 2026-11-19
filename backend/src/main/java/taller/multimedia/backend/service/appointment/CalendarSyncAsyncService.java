@@ -16,6 +16,11 @@ import taller.multimedia.backend.model.user.User;
 import taller.multimedia.backend.repository.appointment.AppointmentRepository;
 import taller.multimedia.backend.repository.user.UserRepository;
 
+/**
+ * Keeps the center's Google Calendar in sync with appointments and teachers' birthdays in the
+ * background, so the user does not wait for Google. Errors are logged and never propagated: the
+ * calendar is a copy, the database is the source of truth.
+ */
 @Service
 public class CalendarSyncAsyncService {
 
@@ -35,6 +40,11 @@ public class CalendarSyncAsyncService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Creates the calendar event of a new appointment and stores its Google event ID.
+     *
+     * @param appointmentId appointment to add
+     */
     @Async("taskExecutor")
     @Transactional
     public void addAppointmentAsync(UUID appointmentId) {
@@ -55,6 +65,13 @@ public class CalendarSyncAsyncService {
         }
     }
 
+    /**
+     * Reflects a status change in the calendar: a confirmed appointment updates its event title and
+     * a cancelled one removes the event. Other statuses do nothing.
+     *
+     * @param appointmentId appointment that changed
+     * @param status its new status
+     */
     @Async("taskExecutor")
     @Transactional
     public void updateAppointmentStatusAsync(
@@ -85,6 +102,13 @@ public class CalendarSyncAsyncService {
         }
     }
 
+    /**
+     * Moves the calendar event of a rescheduled appointment, creating it if it no longer exists in
+     * Google.
+     *
+     * @param appointmentId rescheduled appointment
+     * @param newDate new start date and time
+     */
     @Async("taskExecutor")
     @Transactional
     public void rescheduleAppointmentAsync(
@@ -111,6 +135,12 @@ public class CalendarSyncAsyncService {
         }
     }
 
+/**
+ * Creates, updates or deletes the yearly birthday event of a user: only teachers with a birthday
+ * have one.
+ *
+ * @param userId user whose role or birthday changed
+ */
     @Async
 @Transactional
 public void syncBirthdayAsync(UUID userId) {

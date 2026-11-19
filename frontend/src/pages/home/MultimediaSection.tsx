@@ -12,6 +12,7 @@ import Container from '../../components/home/Container.tsx'
 import MultimediaCard from '../../components/home/MultimediaCard.tsx'
 import { useGallery } from '../../hooks/useGallery.ts'
 
+/** Featured albums of the home page; they load when the section is about to be seen. */
 function MultimediaSection() {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
@@ -34,8 +35,7 @@ function MultimediaSection() {
   useEffect(() => {
     if (!near) return
     void fetchGallery(i18n.language)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [near, i18n.language])
+  }, [fetchGallery, near, i18n.language])
 
   return (
     <section ref={sectionRef} id="multimedia" className="relative flex min-h-[100svh] w-full flex-col bg-pink-400">

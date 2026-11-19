@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { announcementService } from '../services/announcement.ts'
 import type { AnnouncementCategory } from '../types/announcement.ts'
 
+/** Translation key of the name of each built-in category. */
 const CODE_LABEL_KEYS = {
   NEWS: 'newspage.category2',
   EVENT: 'newspage.category3',
@@ -13,12 +14,20 @@ const CODE_LABEL_KEYS = {
 
 const TRANSLATION_TYPE = 'announcement_category'
 
+/** A category as referenced by an announcement: by ID, code or title. */
 interface CategoryRef {
   id?: string | null
   code?: string | null
   title?: string | null
 }
 
+/**
+ * Announcement categories with their names in the current language: built-in categories by their
+ * translation key, the others translated by the backend.
+ *
+ * @returns the categories, `labelFor` to name the category of an announcement, and the actions to
+ *   create and delete categories
+ */
 export function useAnnouncementCategories() {
   const { t, i18n } = useTranslation()
   const language = (i18n.resolvedLanguage ?? i18n.language ?? 'es').split('-')[0]

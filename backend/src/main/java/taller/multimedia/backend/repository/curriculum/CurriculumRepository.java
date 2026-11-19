@@ -9,6 +9,9 @@ import java.util.UUID;
 import java.util.List;
 import java.time.LocalDateTime;
 
+/**
+ * Storage of job applications.
+ */
 public interface CurriculumRepository extends JpaRepository<Curriculum, UUID> {
     List<Curriculum> findByStatusAndSubmittedAtAfterOrderBySubmittedAtDesc(
             CurriculumStatus status, LocalDateTime submittedAt);

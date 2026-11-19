@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { announcementService } from "../services/announcement.ts";
 import { getErrorMessage } from "../utils/error.ts";
 import type {
@@ -10,6 +10,12 @@ import type {
 const SOURCE_LANG = "es";
 const ENTITY_TYPE = "announcement";
 
+/**
+ * News announcements: one page with their texts translated, and the actions to manage them and their
+ * images.
+ *
+ * @returns the announcements, the page totals, the loading and error state, and the actions
+ */
 export function useAnnouncements() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -17,7 +23,7 @@ export function useAnnouncements() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchAnnouncements = async (
+  const fetchAnnouncements = useCallback(async (
     lang: string,
     page: number = 0,
     size: number = 10,
@@ -81,7 +87,7 @@ export function useAnnouncements() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const createAnnouncement = async (dto: AnnouncementRequest) => {
     setLoading(true);

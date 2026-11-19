@@ -256,6 +256,20 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!-- Javadoc: "./mvnw javadoc:javadoc" genera la documentación en target/reports/apidocs y
+			     falla si un comentario tiene etiquetas mal escritas o parámetros que no existen.
+			     No exige comentar todo (sin "missing"): los constructores de inyección no lo necesitan. -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.11.2</version>
+				<configuration>
+					<doclint>all,-missing</doclint>
+					<show>private</show>
+					<quiet>true</quiet>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 

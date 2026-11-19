@@ -7,6 +7,9 @@ import taller.multimedia.backend.model.expedient.EducationalLevel;
 import java.time.LocalDate;
 import java.util.UUID;
 
+/**
+ * A student record, with a temporary link to the child's photo.
+ */
 @Data
 @Builder
 public class ExpedientResponse {
@@ -14,7 +17,7 @@ public class ExpedientResponse {
     private Long childId;
     private String studentId;
     private String childName;
-    private LocalDate admisionDate;
+    private LocalDate admissionDate;
     private EducationalLevel educationalLevel;
     private String generalObservations;
     private String photoUrl;

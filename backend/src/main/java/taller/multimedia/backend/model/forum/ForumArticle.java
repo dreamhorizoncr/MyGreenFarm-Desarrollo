@@ -27,6 +27,9 @@ import taller.multimedia.backend.model.user.User;
         @Index(name = "idx_forum_articles_topic", columnList = "topic"),
         @Index(name = "idx_forum_articles_author_id", columnList = "author_id")
 })
+/**
+ * An article of the forum's blog, written by the owner or a teacher.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -42,6 +45,9 @@ public class ForumArticle {
     @Column(nullable = false, length = 60)
     private String topic;
 
+    /**
+     * User who wrote it, or {@code null} if that user was deleted; the article is kept.
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     private User author;
@@ -64,6 +70,10 @@ public class ForumArticle {
     @Column(name = "ai_summary", columnDefinition = "TEXT")
     private String aiSummary;
 
+    /**
+     * SHA-256 of the content the AI summary was generated from, to know when it must be
+     * regenerated.
+     */
     @Column(name = "ai_summary_content_hash", length = 64)
     private String aiSummaryContentHash;
 

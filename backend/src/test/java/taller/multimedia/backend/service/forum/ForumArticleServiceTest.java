@@ -11,7 +11,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import taller.multimedia.backend.dto.forum.ForumArticleRequest;
-import taller.multimedia.backend.dto.forum.ForumMapper;
 import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.model.user.User;
@@ -19,7 +18,7 @@ import taller.multimedia.backend.repository.forum.ForumArticleLikeRepository;
 import taller.multimedia.backend.repository.forum.ForumArticleRepository;
 import taller.multimedia.backend.repository.forum.ForumCommentRepository;
 import taller.multimedia.backend.repository.user.UserRepository;
-import taller.multimedia.backend.service.StorageService;
+import taller.multimedia.backend.service.storage.StorageService;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;

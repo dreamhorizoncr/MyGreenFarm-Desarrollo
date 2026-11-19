@@ -1,3 +1,7 @@
+/**
+ * SVG filter `blob-goo` that merges shapes that touch, used by the blob buttons. It is rendered once in
+ * the app.
+ */
 function BlobGooFilter() {
   return (
     <svg aria-hidden="true" focusable="false" className="absolute h-0 w-0 overflow-hidden">

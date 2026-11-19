@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Size;
 
 import lombok.Data;
 
+/**
+ * Data of a gallery category.
+ */
 @Data
 public class CategoryGalleryRequest {
 

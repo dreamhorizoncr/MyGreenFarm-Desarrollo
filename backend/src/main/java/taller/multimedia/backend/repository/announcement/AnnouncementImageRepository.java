@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Storage of announcement images.
+ */
 public interface AnnouncementImageRepository extends JpaRepository<AnnouncementImage, UUID> {
-    List<AnnouncementImage> findByAnnouncementId(UUID announcement);
+    List<AnnouncementImage> findByAnnouncementId(UUID announcementId);
 
-    Optional<AnnouncementImage> findByAnnouncementIdAndIsCoverTrue(UUID announcement);
+    Optional<AnnouncementImage> findByAnnouncementIdAndIsCoverTrue(UUID announcementId);
 }

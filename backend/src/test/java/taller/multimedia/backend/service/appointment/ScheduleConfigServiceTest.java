@@ -23,10 +23,10 @@ import static org.mockito.Mockito.verify;
 class ScheduleConfigServiceTest {
 
     @Mock
-    private WeeklyScheduleRepository weeklyRepo;
+    private WeeklyScheduleRepository weeklyScheduleRepository;
 
     @Mock
-    private ScheduleExceptionRepository exceptionRepo;
+    private ScheduleExceptionRepository scheduleExceptionRepository;
 
     @Mock
     private AppointmentRepository appointmentRepository;
@@ -43,7 +43,7 @@ class ScheduleConfigServiceTest {
 
         assertThrows(InvalidFieldException.class, () -> scheduleConfigService.saveException(exception));
 
-        verify(exceptionRepo, never()).save(any());
+        verify(scheduleExceptionRepository, never()).save(any());
     }
 
     @Test
@@ -54,6 +54,6 @@ class ScheduleConfigServiceTest {
 
         scheduleConfigService.saveException(exception);
 
-        verify(exceptionRepo).save(exception);
+        verify(scheduleExceptionRepository).save(exception);
     }
 }

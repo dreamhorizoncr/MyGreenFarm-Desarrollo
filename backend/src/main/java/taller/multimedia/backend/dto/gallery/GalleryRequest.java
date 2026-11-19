@@ -8,6 +8,9 @@ import lombok.Data;
 
 import java.util.UUID;
 
+/**
+ * Data of a photo gallery. At most three galleries can be featured on the home page.
+ */
 @Data
 public class GalleryRequest {
 

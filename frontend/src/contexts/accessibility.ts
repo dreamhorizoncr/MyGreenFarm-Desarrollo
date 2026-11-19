@@ -1,8 +1,11 @@
 import { createContext, useContext } from "react";
 
+/** Text size chosen in the accessibility menu. */
 export type FontSize = "normal" | "large" | "xlarge";
+/** Color filter chosen in the accessibility menu. */
 export type ColorMode = "normal" | "monochrome" | "low-saturation" | "high-saturation";
 
+/** Options of the accessibility menu and their setters. Each option is kept in `localStorage`. */
 export interface AccessibilityContextType {
     fontSize: FontSize;
     setFontSize: (size: FontSize) => void;
@@ -35,8 +38,13 @@ export interface AccessibilityContextType {
     resetAccessibility: () => void;
 }
 
+/** Context of {@link AccessibilityProvider}. */
 export const AccessibilityContext = createContext<AccessibilityContextType | undefined>(undefined);
 
+/**
+ * @returns the options of the accessibility menu
+ * @throws Error if it is used outside {@link AccessibilityProvider}
+ */
 export function useAccessibility() {
     const context = useContext(AccessibilityContext);
     if (!context) {

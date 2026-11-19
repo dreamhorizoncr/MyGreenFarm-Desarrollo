@@ -5,6 +5,10 @@ import java.util.UUID;
 
 import lombok.Data;
 
+/**
+ * An announcement as shown on the site, with its category and its AI summary (empty until it is
+ * generated).
+ */
 @Data
 public class AnnouncementResponse {
         private UUID id;

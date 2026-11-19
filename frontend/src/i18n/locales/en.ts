@@ -84,6 +84,8 @@ export default {
     ownerPanel: "Owner Panel",
     teacherPanel: "Teacher Panel",
     adminPanel: "Admin Panel",
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
   },
   greenHearts: {
     navLabel: "Green Hearts",
@@ -243,6 +245,7 @@ export default {
       like: "Like a photo",
       unlike: "Unlike a photo",
       breadcrumbGallery: "Gallery of Memories",
+      breadcrumbLabel: "Breadcrumb",
       breadcrumbAlbums: "Albums",
       emptyPhotos: "This album has no photos yet.",
       notFoundAlbum: "The requested album was not found.",
@@ -983,7 +986,7 @@ export default {
     usersTitle: "User Management",
     usersSubtitle: "View and manage the educational center users.",
     searchPlaceholder: "Search by name, last name, email or role",
-    addDocente: "Add User",
+    addUser: "Add User",
     allRoles: "All",
     roles: {
       OWNER: "Owner",
@@ -1009,10 +1012,10 @@ export default {
     deleteConfirmFieldLabel: 'To confirm, type "{{name}}"',
     deleteConfirmPlaceholder: 'Type "{{name}}"',
     selfDeleteNotAllowed: "You cannot delete your own account",
-    updateDocenteToastTitle: "User updated",
-    updateDocenteErrorToastTitle: "Couldn't update the user",
-    deleteDocenteToastTitle: "User deleted",
-    deleteDocenteErrorToastTitle: "Couldn't delete the user",
+    updateUserToastTitle: "User updated",
+    updateUserErrorToastTitle: "Couldn't update the user",
+    deleteUserToastTitle: "User deleted",
+    deleteUserErrorToastTitle: "Couldn't delete the user",
     newsletter: {
       title: "Newsletter Management",
       subtitle: "Manage subscribers and parents, and send bulk emails.",
@@ -1382,6 +1385,7 @@ export default {
       description: "Description",
       price: "Informational price",
       currency: "Currency",
+      currencyPlaceholder: "Select a currency",
       serviceFrequency: "Service frequency",
       selectServiceFrequency: "Select the service frequency",
       oneTime: "One time",
@@ -1432,6 +1436,7 @@ export default {
     },
     expedients: {
       noMatches: 'No records found with that name.',
+      loadChildrenError: "The available children could not be loaded.",
       title: "Academic Record Management",
       tabLabel: "Academic records",
       description:
@@ -1439,7 +1444,7 @@ export default {
       searchbutton: "Search child",
       editbutton: "Edit",
       deletebutton: "Delete",
-      admisiondate: "Admission Date:",
+      admissionDate: "Admission Date:",
       grade: "Educational Level:",
       notes: "General Observations",
 
@@ -1887,7 +1892,7 @@ export default {
       noAppointmentsForDay: "No appointments scheduled for this day."
     }
   },
-  moneda: {
+  currency: {
     convertTo: "Show price in",
     buyRate: "Exchange rate",
     todayRate: "Reference rate",
@@ -2027,10 +2032,10 @@ export default {
       identificationNumber: { hint: "No dashes or spaces." },
       cardHolderName: { hint: "Exactly as printed on the card." },
       cardNumber: { hint: "The 16 digits on the front of the card." },
-      expiry: { hint: "Expiration month and year." },
+      expiry: { hint: "Expiration month and year.", placeholder: "MM/YY" },
       cvc: { hint: "The 3 or 4 digits on the back." },
       senderPhone: { hint: "The number you sent the SINPE Móvil from, no dashes." },
-      referenceNumber: { hint: "It appears on the transfer receipt." },
+      referenceNumber: { hint: "It appears on the transfer receipt.", placeholder: "E.g. 123456789" },
     },
     news: {
       title: {

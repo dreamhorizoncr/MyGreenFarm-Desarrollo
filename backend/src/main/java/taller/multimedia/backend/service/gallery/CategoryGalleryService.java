@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Manages the categories that group photo galleries.
+ */
 @Service
 @RequiredArgsConstructor
 public class CategoryGalleryService {
@@ -21,15 +24,23 @@ public class CategoryGalleryService {
     private final GalleryService galleryService;
     private final CategoryGalleryRepository categoryGalleryRepository;
 
+    /**
+     * @param request category title, which is sanitized
+     * @return the created category
+     * @throws taller.multimedia.backend.exception.InvalidFieldException if the title is unsafe
+     */
     @Transactional
-    public CategoryGalleryResponse create(CategoryGalleryRequest dto) {
+    public CategoryGalleryResponse create(CategoryGalleryRequest request) {
         CategoryGallery category = new CategoryGallery();
-        category.setTitle(Sanitizer.requireClean("title", dto.getTitle()));
+        category.setTitle(Sanitizer.requireClean("title", request.getTitle()));
 
         CategoryGallery saved = categoryGalleryRepository.save(category);
         return mapToResponse(saved);
     }
 
+    /**
+     * @return all gallery categories
+     */
     @Transactional(readOnly = true)
     public List<CategoryGalleryResponse> getAll() {
         return categoryGalleryRepository.findAll().stream()
@@ -37,6 +48,11 @@ public class CategoryGalleryService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @param id category ID
+     * @return the category
+     * @throws RuntimeException if it does not exist
+     */
     @Transactional(readOnly = true)
     public CategoryGalleryResponse getById(UUID id) {
         return categoryGalleryRepository.findById(id)
@@ -44,17 +60,32 @@ public class CategoryGalleryService {
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + id));
     }
 
+    /**
+     * Renames a category.
+     *
+     * @param id category ID
+     * @param request new title, which is sanitized
+     * @return the updated category
+     * @throws RuntimeException if the category does not exist
+     * @throws taller.multimedia.backend.exception.InvalidFieldException if the title is unsafe
+     */
     @Transactional
-    public CategoryGalleryResponse update(UUID id, CategoryGalleryRequest dto) {
+    public CategoryGalleryResponse update(UUID id, CategoryGalleryRequest request) {
         CategoryGallery category = categoryGalleryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + id));
 
-        category.setTitle(Sanitizer.requireClean("title", dto.getTitle()));
+        category.setTitle(Sanitizer.requireClean("title", request.getTitle()));
 
         CategoryGallery updated = categoryGalleryRepository.save(category);
         return mapToResponse(updated);
     }
 
+    /**
+     * Deletes a category together with all of its galleries and their images.
+     *
+     * @param id category ID
+     * @throws RuntimeException if the category does not exist
+     */
     @Transactional
     public void delete(UUID id) {
         CategoryGallery category = categoryGalleryRepository.findById(id)

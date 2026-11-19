@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Skeleton from './Skeleton.tsx'
 
+/** The loader only shows when a page takes longer than this, so fast pages do not flash it. */
 const SHOW_AFTER_MS = 600
 
+/** Loader shown while a page's code downloads. */
 function PageLoader() {
   const { t } = useTranslation()
   const [visible, setVisible] = useState(false)

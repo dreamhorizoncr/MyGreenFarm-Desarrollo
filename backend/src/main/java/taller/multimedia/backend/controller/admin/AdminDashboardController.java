@@ -15,6 +15,9 @@ import taller.multimedia.backend.dto.dashboard.DashboardSummaryResponse;
 import taller.multimedia.backend.dto.dashboard.TeacherDashboardResponse;
 import taller.multimedia.backend.service.dashboard.DashboardService;
 
+/**
+ * Data of the admin panel's home page.
+ */
 @RestController
 @RequestMapping("/api/admin/dashboard")
 @RequiredArgsConstructor
@@ -22,6 +25,14 @@ public class AdminDashboardController {
 
     private final DashboardService dashboardService;
 
+    /**
+     * {@code GET /api/admin/dashboard}, owner and admins. Forum activity is only included for the
+     * owner.
+     *
+     * @param date day to show
+     * @param authentication current user
+     * @return the day's dashboard
+     */
     @GetMapping
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public DashboardSummaryResponse getSummary(
@@ -32,6 +43,12 @@ public class AdminDashboardController {
         return dashboardService.getSummary(date, isOwner);
     }
 
+    /**
+     * {@code GET /api/admin/dashboard/teacher}, teachers only.
+     *
+     * @param authentication current teacher
+     * @return the teacher's dashboard
+     */
     @GetMapping("/teacher")
     @PreAuthorize("hasRole('TEACHER')")
     public TeacherDashboardResponse getTeacherSummary(Authentication authentication) {

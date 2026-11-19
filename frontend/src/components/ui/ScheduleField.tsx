@@ -3,6 +3,7 @@ import { PlusIcon, Trash2Icon } from '@animateicons/react/lucide'
 import TimePickerField from './TimePickerField.tsx'
 import { WEEK_DAYS, dayName, emptyScheduleBlock, type ScheduleBlock, type ScheduleValue } from '../../utils/schedule.ts'
 
+/** Props of {@link ScheduleField}. */
 interface ScheduleFieldProps {
   id: string
   label: string
@@ -16,6 +17,7 @@ const dayClassName = (active: boolean) =>
     active ? 'border-green-500 bg-green-500 text-white' : 'border-green-500 bg-white text-heading hover:bg-green-50'
   }`
 
+/** Field of a weekly schedule: blocks of days with their start and end times. */
 function ScheduleField({ id, label, value, onChange, error }: Readonly<ScheduleFieldProps>) {
   const { t, i18n } = useTranslation()
   const language = i18n.resolvedLanguage ?? i18n.language ?? 'es'

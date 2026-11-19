@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { vacancyService } from '../services/vacancy.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { Vacancy, VacancyInput } from '../types/vacancy.ts'
@@ -6,12 +6,17 @@ import type { Vacancy, VacancyInput } from '../types/vacancy.ts'
 const SOURCE_LANG = 'es'
 const ENTITY_TYPE = 'vacancy'
 
+/**
+ * Job vacancies, translated, and the actions to manage them.
+ *
+ * @returns the vacancies, the loading and error state, and the actions
+ */
 export function useVacancies() {
   const [vacancies, setVacancies] = useState<Vacancy[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchVacancies = async (lang: string = SOURCE_LANG) => {
+  const fetchVacancies = useCallback(async (lang: string = SOURCE_LANG) => {
     setLoading(true)
     setError(null)
     try {
@@ -37,7 +42,7 @@ export function useVacancies() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   const createVacancy = async (data: VacancyInput) => {
     setError(null)

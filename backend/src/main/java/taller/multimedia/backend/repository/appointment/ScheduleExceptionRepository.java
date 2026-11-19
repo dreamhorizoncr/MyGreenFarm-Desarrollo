@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDate;
 import java.util.Optional;
 
+/**
+ * Storage of the special hours or closed days of the appointment schedule.
+ */
 public interface ScheduleExceptionRepository extends JpaRepository<ScheduleException, Long> {
     Optional<ScheduleException> findByExceptionDate(LocalDate exceptionDate);
 }

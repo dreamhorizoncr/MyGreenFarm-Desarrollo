@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useCallback, useState, useRef } from "react";
 import { expedientService } from "../services/expedient";
 import { getErrorMessage } from "../utils/error";
 
@@ -12,6 +12,13 @@ interface CacheData {
     totalPages: number;
 }
 
+/**
+ * Records for the admin list, with their observations translated. Pages are cached by number and
+ * language.
+ *
+ * @returns the records (translated and as stored), the loading and error state, `fetchExpedients`
+ *   and the number of pages
+ */
 export function useExpedients() {
     const [expedients, setExpedients] = useState<Expedient[]>([]);
     const [sourceExpedients, setSourceExpedients] = useState<Expedient[]>([]);
@@ -20,10 +27,12 @@ export function useExpedients() {
     const [totalPages, setTotalPages] = useState(0);
 
     const cacheRef = useRef<Map<string, CacheData>>(new Map());
+    const requestIdRef = useRef(0);
 
-    const fetchExpedients = async (page = 0, lang?: string) => {
+    const fetchExpedients = useCallback(async (page = 0, lang?: string, search = "") => {
+        const requestId = ++requestIdRef.current;
         const targetLang = lang?.split('-')[0] || 'es';
-        const cacheKey = `${page}-${targetLang}`;
+        const cacheKey = `${page}-${targetLang}-${search}`;
 
         if (cacheRef.current.has(cacheKey)) {
             const cached = cacheRef.current.get(cacheKey)!;
@@ -37,7 +46,9 @@ export function useExpedients() {
             setLoading(true);
             setError(null);
 
-            const data = await expedientService.getExpedients(page);
+            const data = await expedientService.getExpedients(page, 10, search);
+            // a newer request (another page or search) already started
+            if (requestId !== requestIdRef.current) return;
             const rawContent = data.content;
             
             setSourceExpedients(rawContent);
@@ -64,6 +75,7 @@ export function useExpedients() {
                 }
             }
 
+            if (requestId !== requestIdRef.current) return;
             setExpedients(processedExpedients);
 
             cacheRef.current.set(cacheKey, {
@@ -73,11 +85,11 @@ export function useExpedients() {
             });
 
         } catch (err) {
-            setError(getErrorMessage(err));
+            if (requestId === requestIdRef.current) setError(getErrorMessage(err));
         } finally {
-            setLoading(false);
+            if (requestId === requestIdRef.current) setLoading(false);
         }
-    };
+    }, []);
 
     return {
         expedients,

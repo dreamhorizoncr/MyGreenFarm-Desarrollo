@@ -16,6 +16,9 @@ import taller.multimedia.backend.repository.announcement.AnnouncementCategoryRep
 import taller.multimedia.backend.repository.announcement.AnnouncementRepository;
 import taller.multimedia.backend.util.Sanitizer;
 
+/**
+ * Manages the categories used to group announcements.
+ */
 @Service
 @RequiredArgsConstructor
 public class AnnouncementCategoryService {
@@ -24,6 +27,9 @@ public class AnnouncementCategoryService {
     private final AnnouncementRepository announcementRepository;
     private final AnnouncementService announcementService;
 
+    /**
+     * @return all categories, ordered by position and then by title
+     */
     @Transactional(readOnly = true)
     public List<AnnouncementCategoryResponse> getAll() {
         return categoryRepository.findAllByOrderByPositionAscTitleAsc().stream()
@@ -31,9 +37,17 @@ public class AnnouncementCategoryService {
                 .toList();
     }
 
+    /**
+     * Creates a category at the end of the list.
+     *
+     * @param request category data; the title is sanitized and trimmed
+     * @return the created category
+     * @throws InvalidFieldException if the title is unsafe or another category already has it
+     *     (case-insensitive)
+     */
     @Transactional
-    public AnnouncementCategoryResponse create(AnnouncementCategoryRequest dto) {
-        String title = Sanitizer.requireClean("title", dto.getTitle()).trim();
+    public AnnouncementCategoryResponse create(AnnouncementCategoryRequest request) {
+        String title = Sanitizer.requireClean("title", request.getTitle()).trim();
         if (categoryRepository.existsByTitleIgnoreCase(title)) {
             throw new InvalidFieldException("title", "A category with that name already exists.");
         }
@@ -44,6 +58,12 @@ public class AnnouncementCategoryService {
         return toResponse(categoryRepository.save(category));
     }
 
+    /**
+     * Deletes a category together with all of its announcements (and their images).
+     *
+     * @param id category to delete
+     * @throws InvalidFieldException if the category does not exist
+     */
     @Transactional
     public void delete(UUID id) {
         AnnouncementCategory category = categoryRepository.findById(id)

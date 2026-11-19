@@ -19,6 +19,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import taller.multimedia.backend.model.child.ChildClub;
 
+/**
+ * An extracurricular club.
+ */
 @Entity
 @Table(name = "clubs")
 @Data
@@ -42,6 +45,9 @@ public class Club {
     @Column(name = "max_capacity")
     private Integer maxCapacity;
 
+    /**
+     * Free spots, recalculated from the enrollments whenever they change.
+     */
     @Column(name = "available_spots")
     private Integer availableSpots;
 
@@ -62,19 +68,5 @@ public class Club {
         this.maxCapacity = maxCapacity;
         this.availableSpots = maxCapacity;
         this.isPublished = isPublished;
-    }
-
-    public boolean decrementSpot() {
-        if (this.availableSpots != null && this.availableSpots > 0) {
-            this.availableSpots--;
-            return true;
-        }
-        return false;
-    }
-
-    public void incrementSpot() {
-        if (this.availableSpots != null && (this.maxCapacity == null || this.availableSpots < this.maxCapacity)) {
-            this.availableSpots++;
-        }
     }
 }

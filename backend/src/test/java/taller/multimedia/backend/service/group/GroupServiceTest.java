@@ -81,4 +81,26 @@ class GroupServiceTest {
         assertEquals("The group has no spots left", ex.getMessage());
         verify(childGroupRepository, never()).save(any());
     }
+
+    @Test
+    void addChild_answersWithTheGroupIncludingTheNewChild() {
+        Group group = new Group();
+        group.setId(4L);
+        group.setName("Grupo");
+        group.setChildGroups(new java.util.ArrayList<>());
+        group.setTeacherGroups(new java.util.ArrayList<>());
+        taller.multimedia.backend.model.child.Child child = new taller.multimedia.backend.model.child.Child();
+        child.setId(7L);
+        child.setStudentId("ALU7");
+        child.setFirstName("Ana");
+        child.setLastName("Pérez");
+        when(groupRepository.findByIdWithChildren(4L)).thenReturn(Optional.of(group));
+        when(childRepository.findById(7L)).thenReturn(Optional.of(child));
+        when(childGroupRepository.findByChildIdIn(java.util.Set.of(7L))).thenReturn(List.of());
+
+        var response = groupService.addChild(4L, 7L);
+
+        assertEquals(1, response.getEnrolledChildren());
+        assertEquals(7L, response.getChildren().get(0).getId());
+    }
 }

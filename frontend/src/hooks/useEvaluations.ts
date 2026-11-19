@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useCallback, useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import { evaluationService } from "../services/evaluation";
@@ -18,6 +18,12 @@ interface CacheData {
     sourceEvaluations: Evaluation[];
 }
 
+/**
+ * Evaluations for the admin list, with their texts translated and cached by language.
+ *
+ * @returns the evaluations (translated and as stored), the loading and error state, and
+ *   `fetchEvaluations`
+ */
 export function useEvaluations() {
     const { t } = useTranslation();
     const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
@@ -27,7 +33,7 @@ export function useEvaluations() {
 
     const cacheRef = useRef<Map<string, CacheData>>(new Map());
 
-    const fetchEvaluations = async (lang?: string) => {
+    const fetchEvaluations = useCallback(async (lang?: string) => {
         const targetLang = lang?.split('-')[0] || 'es';
         const cacheKey = `${targetLang}`;
 
@@ -85,13 +91,12 @@ export function useEvaluations() {
                 sourceEvaluations: evaluationsList,
             });
 
-        } catch (err) {
-            console.error("Error loading evaluations:", err);
+        } catch {
             setError(t("admin.evaluations.loadError"));
         } finally {
             setLoading(false);
         }
-    };
+    }, [t]);
 
     return {
         evaluations,

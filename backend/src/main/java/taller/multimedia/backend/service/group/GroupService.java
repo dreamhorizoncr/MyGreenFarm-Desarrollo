@@ -29,6 +29,10 @@ import taller.multimedia.backend.repository.group.GroupRepository;
 import taller.multimedia.backend.repository.user.UserRepository;
 import taller.multimedia.backend.util.Sanitizer;
 
+/**
+ * Class groups: their teachers, their children and their capacity. A child can belong to only one
+ * group.
+ */
 @Service
 @RequiredArgsConstructor
 public class GroupService {
@@ -40,6 +44,15 @@ public class GroupService {
 
         private final ChildGroupRepository childGroupRepository;
 
+        /**
+         * @param request name (unique, case-insensitive), description, capacity, teacher IDs and
+         *     child IDs
+         * @return the created group
+         * @throws InvalidFieldException if the name is taken or a text is unsafe
+         * @throws EntityNotFoundException if a teacher or child does not exist
+         * @throws IllegalArgumentException if a user is not a teacher, there are more children than
+         *     the capacity, or a child is already in another group
+         */
         @Transactional
         public GroupResponse create(GroupRequest request) {
                 Group group = new Group();
@@ -58,6 +71,18 @@ public class GroupService {
                 return mapToResponse(groupRepository.save(group));
         }
 
+        /**
+         * Updates a group and replaces its teachers. Its children are only replaced when the
+         * request includes child IDs.
+         *
+         * @param id group ID
+         * @param request new data
+         * @return the updated group
+         * @throws EntityNotFoundException if the group, a teacher or a child does not exist
+         * @throws InvalidFieldException if the name is taken or a text is unsafe
+         * @throws IllegalArgumentException if a user is not a teacher, there are too many children,
+         *     or a child is in another group
+         */
         @Transactional
         public GroupResponse update(Long id, GroupRequest request) {
                 Group group = groupRepository.findById(id)
@@ -86,6 +111,12 @@ public class GroupService {
                 return mapToResponse(groupRepository.save(group));
         }
 
+        /**
+         * Deletes a group. Its children are not deleted, only removed from it.
+         *
+         * @param id group ID
+         * @throws EntityNotFoundException if it does not exist
+         */
         @Transactional
         public void delete(Long id) {
                 Group group = groupRepository.findByIdWithChildren(id)
@@ -96,6 +127,14 @@ public class GroupService {
                 groupRepository.delete(group);
         }
 
+        /**
+         * @param groupId group ID
+         * @param childId child to add
+         * @return the updated group
+         * @throws EntityNotFoundException if the group or child does not exist
+         * @throws IllegalArgumentException if the group is full or the child already belongs to a
+         *     group
+         */
         @Transactional
         public GroupResponse addChild(Long groupId, Long childId) {
                 Group group = groupRepository.findByIdWithChildren(groupId)
@@ -119,10 +158,18 @@ public class GroupService {
                 childGroup.setGroup(group);
                 childGroup.setChild(child);
                 childGroupRepository.save(childGroup);
+                // the group is already loaded in this transaction, so its list must be updated by hand
+                group.getChildGroups().add(childGroup);
 
                 return getById(groupId);
         }
 
+        /**
+         * @param groupId group ID
+         * @param childId child to remove
+         * @return the updated group
+         * @throws EntityNotFoundException if the child is not in the group
+         */
         @Transactional
         public GroupResponse removeChild(Long groupId, Long childId) {
                 ChildGroup childGroup = childGroupRepository.findByGroupIdAndChildId(groupId, childId)
@@ -135,6 +182,9 @@ public class GroupService {
                 return getById(groupId);
         }
 
+        /**
+         * @return all groups with their teachers and children
+         */
         @Transactional
         public List<GroupResponse> getAll() {
                 return groupRepository.findAllWithChildren()
@@ -143,6 +193,11 @@ public class GroupService {
                                 .toList();
         }
 
+        /**
+         * @param id group ID
+         * @return the group
+         * @throws EntityNotFoundException if it does not exist
+         */
         @Transactional
         public GroupResponse getById(Long id) {
                 Group group = groupRepository.findByIdWithChildren(id)
@@ -151,6 +206,14 @@ public class GroupService {
                 return mapToResponse(group);
         }
 
+        /**
+         * @param id group ID
+         * @param teacherId authenticated teacher
+         * @return the group, if the teacher is assigned to it
+         * @throws EntityNotFoundException if it does not exist
+         * @throws org.springframework.security.access.AccessDeniedException if the teacher is not
+         *     assigned to it
+         */
         @Transactional
         public GroupResponse getByIdForTeacher(Long id, UUID teacherId) {
                 Group group = groupRepository.findByIdWithChildren(id)
@@ -166,6 +229,10 @@ public class GroupService {
                 return mapToResponse(group);
         }
 
+        /**
+         * @param teacherId teacher ID
+         * @return the groups the teacher is assigned to
+         */
         @Transactional
         public List<GroupResponse> getByTeacher(UUID teacherId) {
                 return groupRepository.findByTeacherId(teacherId)
@@ -174,6 +241,12 @@ public class GroupService {
                                 .toList();
         }
 
+        /**
+         * @param teacherId user ID
+         * @return the user
+         * @throws EntityNotFoundException if the user does not exist
+         * @throws IllegalArgumentException if the user is not a teacher
+         */
         private User findTeacher(UUID teacherId) {
                 User teacher = userRepository.findById(teacherId)
                                 .orElseThrow(() -> new EntityNotFoundException(
@@ -198,6 +271,14 @@ public class GroupService {
                                 .toList());
         }
 
+        /**
+         * @param group group being saved
+         * @param childIds children to assign, may be {@code null}
+         * @return the new memberships
+         * @throws IllegalArgumentException if there are more children than the capacity or one is
+         *     already in another group
+         * @throws EntityNotFoundException if a child does not exist
+         */
         private List<ChildGroup> createChildGroups(Group group, Set<Long> childIds) {
                 if (childIds == null || childIds.isEmpty()) {
                         return new ArrayList<>();

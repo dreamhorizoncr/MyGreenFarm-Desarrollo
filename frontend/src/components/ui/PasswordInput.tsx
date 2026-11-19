@@ -1,6 +1,7 @@
 import { useState, type ChangeEvent } from 'react'
 import { EyeIcon, EyeOffIcon } from '@animateicons/react/lucide'
 
+/** Props of {@link PasswordInput}. */
 interface PasswordInputProps {
   id: string
   value: string
@@ -12,6 +13,7 @@ interface PasswordInputProps {
   hideAriaLabel: string
 }
 
+/** Password input with a button to show or hide it. */
 function PasswordInput({
   id,
   value,

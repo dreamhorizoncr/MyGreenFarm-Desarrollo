@@ -13,6 +13,9 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * A job opening.
+ */
 @Entity
 @Table(name = "vacancies")
 @Data
@@ -36,9 +39,15 @@ public class Vacancy {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    /**
+     * Application hired for the vacancy, which closes it, or {@code null}.
+     */
     @Column(name = "filled_by_application_id")
     private UUID filledByApplicationId;
 
+    /**
+     * Fields applicants must fill in, as comma-separated text.
+     */
     @Column(name = "required_fields")
     private String requiredFields;
 }

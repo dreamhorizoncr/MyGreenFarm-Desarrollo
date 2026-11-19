@@ -4,6 +4,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+/**
+ * Data of a parent or guardian.
+ */
 @Data
 public class ParentRequest {
     @NotBlank(message = "The ID number is required")

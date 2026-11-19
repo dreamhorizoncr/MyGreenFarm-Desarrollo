@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { usePopoverPosition } from '../../hooks/usePopoverPosition.ts'
 import { useDropdownMotion } from '../../hooks/useDropdownMotion.ts'
 
+/** Props of {@link DatePickerField}; the dates are `yyyy-MM-dd`. */
 interface DatePickerFieldProps {
   value: string
   onChange: (value: string) => void
@@ -34,6 +35,7 @@ const PANEL_HEIGHT = 290
 const defaultTriggerClassName =
   'mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading'
 
+/** Date field that opens a {@link CalendarPanel} in a popover. */
 function DatePickerField({
   value,
   onChange,

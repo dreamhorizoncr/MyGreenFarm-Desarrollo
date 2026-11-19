@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+/**
+ * Payment request by price. Part of online payments with Onvo, which are currently disabled.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

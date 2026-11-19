@@ -19,6 +19,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import taller.multimedia.backend.model.child.Child;
 
+/**
+ * Student record of a child: admission, educational level, observations and photo. Each child has
+ * at most one.
+ */
 @Entity
 @Table (name = "expedient")
 @Data 
@@ -36,8 +40,12 @@ public class Expedient {
     @JoinColumn(name = "student_id", referencedColumnName = "student_id", nullable = false, unique = true)
     private Child child;
 
-    @Column(name= "admision_date", nullable = false)
-    private LocalDate admisionDate;
+    /**
+     * Admission date. The column keeps its original name ({@code admision_date}) so the existing data
+     * is not lost.
+     */
+    @Column(name = "admision_date", nullable = false)
+    private LocalDate admissionDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "educational_level", nullable = false)

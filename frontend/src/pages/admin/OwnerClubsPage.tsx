@@ -1,0 +1,722 @@
+import StatusMessage from '../../components/ui/StatusMessage.tsx'
+import { Users } from 'lucide-react'
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useTranslation } from "react-i18next";
+import {
+  EyeIcon,
+  EyeOffIcon,
+  PlusIcon,
+  UsersIcon,
+} from "@animateicons/react/lucide";
+import AdminLayout from "../../layout/AdminLayout.tsx";
+import Skeleton from "../../components/ui/Skeleton.tsx";
+import DeleteConfirmModal from "../../components/ui/DeleteConfirmModal.tsx";
+import Pagination from "../../components/ui/Pagination.tsx";
+import { clubService } from "../../services/clubs.ts";
+import type { TranslationItem } from "../../services/translation.ts";
+import { notify, notifyError } from "../../utils/notifications.ts";
+import { useModalExit } from "../../hooks/useModalExit.ts";
+import type {
+  ClubRequest,
+  ClubResponse,
+  ClubImageResponse,
+} from "../../types/clubs.ts";
+import CardActionButton from "../../components/ui/CardActionButton.tsx";
+import ImagePickerButton from "../../components/ui/ImagePickerButton.tsx";
+import ImageThumb, { ImageThumbList } from "../../components/ui/ImageThumb.tsx";
+import { useImageAlts } from "../../hooks/useImageAlts.ts";
+import { validateSafeText } from "../../utils/validators.ts";
+import ModalCloseButton from "../../components/ui/ModalCloseButton.tsx";
+import ScheduleField from "../../components/ui/ScheduleField.tsx";
+import { emptySchedule, parseSchedule, serializeSchedule, validateSchedule, type ScheduleValue } from "../../utils/schedule.ts";
+import SkeletonList from "../../components/ui/SkeletonList.tsx";
+import { useSkeletonCount } from "../../hooks/useSkeletonCount.ts";
+import { useGridPageSize } from "../../hooks/useGridPageSize.ts";
+import FieldHint from "../../components/ui/FieldHint.tsx";
+
+const emptyForm: ClubRequest = {
+  name: "",
+  description: "",
+  schedule: "",
+  maxCapacity: undefined,
+  isPublished: false,
+};
+
+/** Props of {@link ClubCard}; without `club` or while `loading` it shows a skeleton. */
+interface ClubCardProps {
+  club?: ClubResponse;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  loading?: boolean;
+}
+
+/** Card of a club with its status, capacity and the actions to edit and delete it. */
+function ClubCard({ club, onEdit, onDelete, loading = false }: Readonly<ClubCardProps>) {
+  const { t: translate } = useTranslation();
+  const translateKey = translate as (key: string, options?: Record<string, unknown>) => string;
+  const t = (key: string, options?: Record<string, unknown>): string =>
+    translateKey(key.startsWith("admin.") ? key : `admin.${key}`, options);
+
+  if (loading) {
+    return (
+      <div className="flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm">
+        <Skeleton shape="rect" className="h-[180px] w-full rounded-none" />
+        <div className="flex flex-1 flex-col gap-sm p-lg">
+          <Skeleton shape="line" className="h-6 w-3/4" />
+          <Skeleton shape="line" className="h-4 w-full" />
+          <Skeleton shape="line" className="h-4 w-2/3" />
+          <div className="mt-auto flex justify-end gap-sm pt-sm">
+            <Skeleton shape="circle" className="size-10" />
+            <Skeleton shape="circle" className="size-10" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const available = club?.availableSpots ?? club?.maxCapacity ?? 0;
+  const isFull = available <= 0;
+
+  const isPublishedValue = club?.isPublished ?? (club as unknown as { published?: boolean })?.published ?? false;
+
+  return (
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white shadow-sm card-hover">
+      <div className="absolute top-3 left-3 z-10">
+        <span
+          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-body text-caption font-semibold text-white backdrop-blur-md shadow-sm ${isPublishedValue ? "bg-green-600/90" : "bg-neutral-600/90"
+            }`}
+        >
+          {isPublishedValue ? <EyeIcon size={13} /> : <EyeOffIcon size={13} />}
+          {isPublishedValue ? t("ownerClubs.published") : t("ownerClubs.draft")}
+        </span>
+      </div>
+
+      <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
+        {club?.coverImageUrl ? (
+          <img
+            src={club.coverImageUrl}
+            alt={club.images?.find((image) => image.isCover)?.altText || club.name}
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <span className="font-body text-body-sm text-neutral-400">
+              {t("ownerClubs.coverImage")}
+            </span>
+          </div>
+        )}
+        {club?.maxCapacity !== undefined && (
+          <span className="absolute bottom-sm left-sm flex items-center gap-1 rounded-full bg-[var(--pink-400)] px-sm py-2xs font-body text-caption font-semibold text-white shadow">
+            <UsersIcon size={12} />
+            {isFull ? t("ownerClubs.noSpotsShort") : <>{available} {t("ownerClubs.capacityLabel")}</>}
+          </span>
+        )}
+      </div>
+
+      <div className="flex flex-1 flex-col gap-sm px-lg pb-lg pt-md">
+        <div className="flex items-start justify-between gap-sm">
+          <h3 className="m-0 min-w-0 flex-1 text-left font-heading text-h4 font-bold text-green-500 line-clamp-2">
+            {club?.name}
+          </h3>
+        </div>
+
+        <p className="-mt-xs mb-0 min-h-[2lh] text-left font-body text-body-sm leading-relaxed text-neutral-600 line-clamp-2">
+          {club?.description}
+        </p>
+
+        <div className="mt-auto flex justify-end gap-sm pt-sm">
+          <CardActionButton action="edit" label={t("ownerClubs.editClub")} onClick={onEdit} />
+          <CardActionButton action="delete" label={t("ownerClubs.deleteModalTitle")} onClick={onDelete} />
+        </div>
+      </div>
+    </article>
+  );
+}
+
+type ClubTexts = Pick<ClubResponse, "name" | "description" | "schedule">;
+
+/**
+ * Loads the first page of clubs with their images and, in a language other than Spanish, with their
+ * texts translated.
+ *
+ * @param languageCode - two-letter language code
+ * @returns the clubs to show and their texts in Spanish, which the form edits
+ */
+async function loadClubs(languageCode: string): Promise<{ clubs: ClubResponse[]; sources: Map<number, ClubTexts> }> {
+  const data = await clubService.getAll({ lang: languageCode, size: 10 });
+
+  let clubsWithImages = await Promise.all(
+    data.content.map(async (club) => {
+      try {
+        const images = club.images?.length ? club.images : await clubService.getImagesByClub(club.id);
+        const coverImage = images.find((image) => image.isCover) ?? images[0];
+        return {
+          ...club,
+          images,
+          coverImageUrl: coverImage?.fileUrl ?? club.coverImageUrl,
+        };
+      } catch {
+        return club;
+      }
+    })
+  );
+
+  const sources = new Map<number, ClubTexts>(
+    clubsWithImages.map((club) => [club.id, {
+      name: club.name,
+      description: club.description,
+      schedule: club.schedule,
+    }])
+  );
+
+  if (languageCode !== "es" && clubsWithImages.length > 0) {
+    const translationItems: TranslationItem[] = clubsWithImages.flatMap((club) => [
+      { entityId: String(club.id), fieldName: "name", originalText: club.name },
+      { entityId: String(club.id), fieldName: "description", originalText: club.description },
+      ...(club.schedule && !parseSchedule(club.schedule)
+        ? [{ entityId: String(club.id), fieldName: "schedule", originalText: club.schedule }]
+        : []),
+    ]);
+
+    try {
+      const translations = await clubService.translateBatch("club", languageCode, translationItems);
+      clubsWithImages = clubsWithImages.map((club) => ({
+        ...club,
+        name: translations[`${club.id}:name`] ?? club.name,
+        description: translations[`${club.id}:description`] ?? club.description,
+        schedule: club.schedule
+          ? translations[`${club.id}:schedule`] ?? club.schedule
+          : club.schedule,
+      }));
+    } catch {
+      // without a translation the clubs are shown in Spanish
+    }
+  }
+
+  return { clubs: clubsWithImages, sources };
+}
+
+/**
+ * Owner's page of the clubs: list and the form to create or edit a club with its schedule and images.
+ */
+function OwnerClubsPage() {
+  const { t: translate, i18n } = useTranslation();
+  const translateKey = translate as (key: string, options?: Record<string, unknown>) => string;
+  const t = (key: string, options?: Record<string, unknown>): string =>
+    translateKey(key.startsWith("admin.") ? key : `admin.${key}`, options);
+
+  const [clubs, setClubs] = useState<ClubResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [clubFieldErrors, setClubFieldErrors] = useState<Record<string, string | null>>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = useGridPageSize({ base: 1, sm: 2, lg: 3 });
+
+  const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState<ClubResponse | null>(null);
+  const [form, setForm] = useState<ClubRequest>(emptyForm);
+  const [schedule, setSchedule] = useState<ScheduleValue>(emptySchedule);
+
+  const [cover, setCover] = useState<File | null>(null);
+  const [gallery, setGallery] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<ClubImageResponse[]>([]);
+  const imageAlts = useImageAlts();
+
+  const [clubToDelete, setClubToDelete] = useState<ClubResponse | null>(null);
+  const [imageToDelete, setImageToDelete] = useState<ClubImageResponse | null>(null);
+
+  const editImagesClubIdRef = useRef<number | null>(null);
+  const sourceClubsRef = useRef(new Map<number, ClubTexts>());
+
+  const languageCode = (i18n.resolvedLanguage ?? i18n.language ?? "es").split("-")[0];
+  const [reloadCount, setReloadCount] = useState(0);
+  const [loadedLanguage, setLoadedLanguage] = useState(languageCode);
+
+  // a change of language shows the skeleton right away, without a render with the old clubs
+  if (languageCode !== loadedLanguage) {
+    setLoadedLanguage(languageCode);
+    setLoading(true);
+    setError(null);
+  }
+
+  /** Loads the clubs again, for example after saving or deleting one. */
+  const reloadClubs = () => {
+    setLoading(true);
+    setError(null);
+    setReloadCount((count) => count + 1);
+  };
+
+  useEffect(() => {
+    let active = true;
+    loadClubs(languageCode)
+      .then(({ clubs: loadedClubs, sources }) => {
+        if (!active) return;
+        sourceClubsRef.current = sources;
+        setClubs(loadedClubs);
+      })
+      .catch(() => {
+        if (!active) return;
+        setError(translate("admin.ownerClubs.loadError"));
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [languageCode, reloadCount, translate]);
+
+  const openCreate = () => {
+    editImagesClubIdRef.current = null;
+    setEditing(null);
+    setForm(emptyForm);
+    setSchedule(emptySchedule());
+    setCover(null);
+    setGallery([]);
+    setExistingImages([]);
+    imageAlts.reset();
+    setFormOpen(true);
+  };
+
+  const openEdit = (club: ClubResponse) => {
+    const sourceClub = sourceClubsRef.current.get(club.id) ?? club;
+    editImagesClubIdRef.current = club.id;
+    setEditing(club);
+
+    const currentIsPublished = club.isPublished ?? (club as unknown as { published?: boolean }).published ?? false;
+
+    setForm({
+      name: sourceClub.name,
+      description: sourceClub.description,
+      schedule: sourceClub.schedule ?? "",
+      maxCapacity: club.maxCapacity,
+      isPublished: currentIsPublished,
+    });
+    setSchedule(parseSchedule(sourceClub.schedule) ?? emptySchedule());
+    setCover(null);
+    setGallery([]);
+    imageAlts.reset();
+    setExistingImages(club.images ?? []);
+    setFormOpen(true);
+
+    if (!club.images?.length) {
+      void clubService.getImagesByClub(club.id).then((images) => {
+        if (editImagesClubIdRef.current === club.id) {
+          setExistingImages(images);
+        }
+      }).catch((err: unknown) => {
+        console.error(err);
+      });
+    }
+  };
+
+  const closeForm = () => {
+    editImagesClubIdRef.current = null;
+    setFormOpen(false);
+    setEditing(null);
+    setExistingImages([]);
+  };
+  const { closing: formClosing, requestClose } = useModalExit(closeForm);
+
+  const saveImages = async (clubId: number) => {
+    if (cover) await clubService.uploadImages(clubId, [cover], true, imageAlts.altsFor([cover]));
+    if (gallery.length > 0) await clubService.uploadImages(clubId, gallery, false, imageAlts.altsFor(gallery));
+    await Promise.all(imageAlts.changed(existingImages).map(({ id, altText }) => clubService.updateImageAlt(Number(id), altText)));
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const fieldErrors = {
+      name: validateSafeText(form.name, translate),
+      description: validateSafeText(form.description, translate),
+      schedule: validateSchedule(schedule, translate),
+    };
+    setClubFieldErrors(fieldErrors);
+    const altsValid = imageAlts.validate([...(cover ? [cover] : []), ...gallery], existingImages, translate);
+    if (Object.values(fieldErrors).some(Boolean) || !altsValid) return;
+
+    const publishedBool = Boolean(form.isPublished);
+
+    const dataToSend: ClubRequest & { published?: boolean } = {
+      name: form.name,
+      description: form.description,
+      schedule: serializeSchedule(schedule),
+      maxCapacity: form.maxCapacity ? Number(form.maxCapacity) : undefined,
+      isPublished: publishedBool,
+      published: publishedBool,
+    };
+
+    try {
+      if (editing) {
+        const savedClub = await clubService.update(editing.id, dataToSend);
+        await saveImages(savedClub.id);
+      } else {
+        await clubService.createWithImages(
+          dataToSend,
+          cover || undefined,
+          gallery.length > 0 ? gallery : undefined,
+          cover ? imageAlts.altsFor([cover])[0] : undefined,
+          imageAlts.altsFor(gallery)
+        );
+      }
+
+      notify.success(
+        editing
+          ? t("ownerClubs.updatedToastTitle")
+          : t("ownerClubs.createdToastTitle")
+      );
+
+      setCurrentPage(1);
+      requestClose();
+      reloadClubs();
+    } catch (err) {
+      notifyError(t("ownerClubs.saveErrorToastTitle"), err);
+    }
+  };
+
+  const handleDelete = (club: ClubResponse) => {
+    setClubToDelete(club);
+  };
+
+  const confirmDelete = async () => {
+    if (!clubToDelete) return;
+
+    try {
+      await clubService.delete(clubToDelete.id);
+
+      if (editing?.id === clubToDelete.id) {
+        requestClose();
+      }
+
+      notify.success(t("ownerClubs.deletedToastTitle"));
+      reloadClubs();
+    } catch (err) {
+      notifyError(t("ownerClubs.deleteErrorToastTitle"), err);
+      throw err;
+    }
+  };
+
+  const confirmDeleteImage = async () => {
+    if (!imageToDelete) return;
+
+    try {
+      await clubService.deleteImage(imageToDelete.id);
+      setExistingImages((current) => current.filter((item) => item.id !== imageToDelete.id));
+      notify.success(t("ownerClubs.imageDeletedToastTitle"));
+    } catch (err) {
+      notifyError(t("ownerClubs.imageDeleteErrorToastTitle"), err);
+      throw err;
+    }
+  };
+
+  const idleSubmitLabel = editing
+    ? t("ownerClubs.saveChanges")
+    : t("ownerClubs.publish");
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(clubs.length / pageSize),
+  );
+
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+
+  const pagedClubs = clubs.slice(
+    (safeCurrentPage - 1) * pageSize,
+    safeCurrentPage * pageSize,
+  );
+  const skeletonCount = useSkeletonCount("admin-clubs", loading, clubs.length, 3);
+
+  return (
+    <AdminLayout>
+      <div className="flex flex-wrap items-start justify-between gap-md">
+        <div>
+          <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
+            {t("ownerClubs.title")}
+          </h1>
+
+          <p className="mt-2 font-body text-body text-neutral-500">
+            {t("ownerClubs.description")}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={openCreate}
+          className="inline-flex h-11 items-center gap-xs rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600"
+        >
+          <PlusIcon size={18} aria-hidden="true" />
+          {t("ownerClubs.addClub")}
+        </button>
+      </div>
+
+      {error && <StatusMessage variant="error" description={error} className="mt-lg" />}
+
+      <section className="mt-xl grid grid-cols-1 gap-lg sm:grid-cols-2 lg:grid-cols-3">
+        {loading && !formOpen && (
+          <output className="contents">
+            <SkeletonList count={skeletonCount}>{() => <ClubCard loading />}</SkeletonList>
+          </output>
+        )}
+
+        {!loading &&
+          pagedClubs.map((club) => (
+            <ClubCard
+              key={club.id}
+              club={club}
+              onEdit={() => openEdit(club)}
+              onDelete={() => handleDelete(club)}
+            />
+          ))}
+      </section>
+
+      {!loading && clubs.length > 0 && totalPages > 1 && (
+        <Pagination
+          currentPage={safeCurrentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      )}
+
+      {!loading && !error && clubs.length === 0 && (
+        <StatusMessage icon={Users} description={t("ownerClubs.noClubs")} />
+      )}
+
+      {formOpen && (
+        <div className="text-left modal-overlay fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/50 p-[16px] md:p-[30px]">
+          <button
+            type="button"
+            tabIndex={-1}
+            aria-label={t("ownerClubs.cancel")}
+            className="absolute inset-0 size-full cursor-default"
+            onClick={requestClose}
+          />
+
+          <form
+            onSubmit={handleSubmit}
+            className={`relative mx-auto max-h-full modal-scroll w-full max-w-[820px] rounded-[20px] border border-neutral-200 bg-white p-lg shadow-lg md:p-xl ${formClosing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+          >
+            <div className="flex items-center justify-between gap-md">
+              <h2 className="m-0 font-heading text-h4 font-bold text-heading">
+                {editing
+                  ? t("ownerClubs.editClub")
+                  : t("ownerClubs.newClub")}
+              </h2>
+
+              <ModalCloseButton
+                onClick={requestClose}
+                aria-label={t("common.closeForm")}
+              />
+            </div>
+
+            <div className="mt-lg grid grid-cols-1 gap-md md:grid-cols-2">
+              <label className="font-body text-body-sm font-semibold text-heading">
+                {t("ownerClubs.clubName")}
+                <input
+                  required
+                  minLength={3}
+                  maxLength={150}
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  placeholder={translate("fields.club.name.placeholder")}
+                  className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+                />
+                <FieldHint>{translate("fields.club.name.hint")}</FieldHint>
+                {clubFieldErrors.name && (
+                  <span className="mt-xs block font-body text-body-sm font-normal text-danger">{clubFieldErrors.name}</span>
+                )}
+              </label>
+
+              <label className="font-body text-body-sm font-semibold text-heading">
+                {t("ownerClubs.maxCapacity")}
+                <input
+                  type="number"
+                  min={1}
+                  max={500}
+                  value={form.maxCapacity ?? ""}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      maxCapacity: e.target.value ? Number(e.target.value) : undefined,
+                    })
+                  }
+                  placeholder={translate("fields.club.capacity.placeholder")}
+                  className="mt-xs h-11 w-full rounded-xl border border-neutral-200 bg-white px-md font-normal outline-none focus:border-heading"
+                />
+                <FieldHint>{translate("fields.club.capacity.hint")}</FieldHint>
+              </label>
+
+              <label className="font-body text-body-sm font-semibold text-heading md:col-span-2">
+                {t("ownerClubs.descriptionLabel")}
+                <textarea
+                  required
+                  minLength={10}
+                  maxLength={4000}
+                  rows={5}
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  placeholder={translate("fields.club.description.placeholder")}
+                  className="mt-xs w-full resize-y rounded-xl border border-neutral-200 bg-white p-md font-normal outline-none focus:border-heading"
+                />
+                <FieldHint>{translate("fields.club.description.hint")}</FieldHint>
+                {clubFieldErrors.description && (
+                  <span className="mt-xs block font-body text-body-sm font-normal text-danger">{clubFieldErrors.description}</span>
+                )}
+              </label>
+
+              <div className="md:col-span-2">
+                <ScheduleField
+                  id="club-schedule"
+                  label={t("ownerClubs.schedule")}
+                  value={schedule}
+                  onChange={(value) => {
+                    setSchedule(value);
+                    if (clubFieldErrors.schedule) setClubFieldErrors({ ...clubFieldErrors, schedule: null });
+                  }}
+                  error={clubFieldErrors.schedule}
+                />
+                <FieldHint>{translate("fields.club.schedule.hint")}</FieldHint>
+              </div>
+
+              <div className="md:col-span-2 flex items-center gap-md rounded-xl border border-neutral-200 bg-neutral-50 p-md">
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <span className="sr-only">{t("ownerClubs.publishClubLabel")}</span>
+                  <input
+                    type="checkbox"
+                    checked={form.isPublished ?? false}
+                    onChange={(e) => setForm({ ...form, isPublished: e.target.checked })}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-neutral-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                </label>
+                <div>
+                  <span className="block font-body text-body-sm font-semibold text-heading">
+                    {t("ownerClubs.publishClubLabel")}
+                  </span>
+                  <span className="text-caption text-neutral-500">
+                    {t("ownerClubs.publishClubDescription")}
+                  </span>
+                </div>
+              </div>
+
+              <div className="font-body text-body-sm font-semibold text-heading">
+                <span className="block">{t("ownerClubs.coverImage")}</span>
+
+                <ImagePickerButton
+                  label={t("ownerClubs.chooseCover")}
+                  replacesCurrent={existingImages.some((image) => image.isCover)}
+                  accept="image/png,image/jpg,image/jpeg,image/webp,image/svg+xml,image/webp"
+                  onSelect={(files) => setCover(files[0] ?? null)}
+                />
+
+                {cover && (
+                  <ImageThumbList className="mt-sm">
+                    <ImageThumb
+                      file={cover}
+                      label={t('common.imageCover')}
+                      onDelete={() => setCover(null)}
+                      deleteLabel={t("ownerClubs.deleteImage")}
+                      altText={imageAlts.newValue(cover)}
+                      onAltChange={(value) => imageAlts.setNewValue(cover, value)}
+                      altError={imageAlts.newError(cover)}
+                      altLabel={translateKey("common.imageAltLabel")}
+                      altPlaceholder={translateKey("common.imageAltPlaceholder")}
+                    />
+                  </ImageThumbList>
+                )}
+              </div>
+
+              <div className="font-body text-body-sm font-semibold text-heading">
+                <span className="block">{t("ownerClubs.galleryImages")}</span>
+
+                <ImagePickerButton
+                  label={t("ownerClubs.chooseGallery")}
+                  limit={6}
+                  accept="image/png,image/jpg,image/jpeg,image/webp,image/svg+xml,image/webp"
+                  multiple
+                  onSelect={(files) => setGallery(files.slice(0, 6))}
+                />
+
+                {gallery.length > 0 && (
+                  <ImageThumbList className="mt-sm">
+                    {gallery.map((file, index) => (
+                      <ImageThumb
+                        key={`${file.name}-${index}`}
+                        file={file}
+                        label={t('common.imageGallery')}
+                        onDelete={() => setGallery((current) => current.filter((_, i) => i !== index))}
+                        deleteLabel={t("ownerClubs.deleteImage")}
+                        altText={imageAlts.newValue(file)}
+                        onAltChange={(value) => imageAlts.setNewValue(file, value)}
+                        altError={imageAlts.newError(file)}
+                        altLabel={translateKey("common.imageAltLabel")}
+                        altPlaceholder={translateKey("common.imageAltPlaceholder")}
+                      />
+                    ))}
+                  </ImageThumbList>
+                )}
+              </div>
+            </div>
+
+            {existingImages.length > 0 && (
+              <ImageThumbList title={t("ownerClubs.actualImages")}>
+                {existingImages.map((image) => (
+                  <ImageThumb
+                    key={image.id}
+                    src={image.fileUrl}
+                    label={image.isCover ? t('common.imageCover') : t('common.imageGallery')}
+                    onDelete={() => setImageToDelete(image)}
+                    deleteLabel={t("ownerClubs.deleteImage")}
+                    altText={imageAlts.existingValue(image)}
+                    onAltChange={(value) => imageAlts.setExistingValue(image.id, value)}
+                    altError={imageAlts.existingError(image.id)}
+                    altLabel={translateKey("common.imageAltLabel")}
+                    altPlaceholder={translateKey("common.imageAltPlaceholder")}
+                  />
+                ))}
+              </ImageThumbList>
+            )}
+
+            <div className="mt-lg flex justify-end gap-md *:flex-1">
+              <button
+                type="button"
+                onClick={requestClose}
+                className="h-11 rounded-full border border-green-500 px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50"
+              >
+                {t("ownerClubs.cancel")}
+              </button>
+
+              <button
+                type="submit"
+                disabled={!form.name?.trim() || !form.description?.trim() || !schedule.every((block) => block.days.length > 0 && block.start && block.end)}
+                className="h-11 rounded-full blob-fill bg-orange-500 px-lg font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {idleSubmitLabel}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {clubToDelete && (
+        <DeleteConfirmModal
+          title={t("ownerClubs.deleteModalTitle")}
+          message={t("ownerClubs.deleteConfirmMessage", { name: clubToDelete.name })}
+          onConfirm={confirmDelete}
+          onClose={() => setClubToDelete(null)}
+        />
+      )}
+
+      {imageToDelete && (
+        <DeleteConfirmModal
+          title={t("ownerClubs.deleteImageModalTitle")}
+          message={t("ownerClubs.deleteImageModalMessage")}
+          onConfirm={confirmDeleteImage}
+          onClose={() => setImageToDelete(null)}
+        />
+      )}
+    </AdminLayout>
+  );
+}
+
+export default OwnerClubsPage;

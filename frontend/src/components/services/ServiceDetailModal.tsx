@@ -1,0 +1,140 @@
+    import { useEffect, useRef, useState } from 'react'
+    import { BanknoteIcon, CalendarDaysIcon, CircleCheckIcon } from '@animateicons/react/lucide'
+    import { useTranslation } from 'react-i18next'
+    import { useModalExit } from '../../hooks/useModalExit.ts'
+    import { useDialogDismiss } from '../../hooks/useDialogDismiss.ts'
+    import type { ServicePlan } from '../../types/servicePlan.ts'
+    import type { Currency, ExchangeRate } from '../../types/exchangeRate.ts'
+    import { getPlanTypeLabel } from '../../utils/planTypeLabels.ts'
+    import { convertCurrency, currencySymbol, formatCurrency } from '../../utils/currency.ts'
+    import ModalCloseButton from '../ui/ModalCloseButton.tsx'
+    import SchedulePopover from '../clubs/SchedulePopover.tsx'
+import AnimatedNumber from '../ui/AnimatedNumber.tsx'
+import CurrencyToggle from '../currency/CurrencyToggle.tsx'
+
+    /** Props of {@link ServiceDetailModal}. */
+    interface ServiceDetailModalProps {
+        plan: ServicePlan
+        initialCurrency?: Currency
+        exchangeRate?: ExchangeRate | null
+        onClose: () => void
+    }
+
+    const cleanCurrency = (value?: string): Currency => {
+        const upper = value?.toUpperCase()
+        return upper === 'USD' || upper === 'EUR' ? upper : 'CRC'
+    }
+
+    /** Details of a service plan for families: description, what it includes, schedule and price. */
+    function ServiceDetailModal({
+        plan,
+        initialCurrency,
+        exchangeRate,
+        onClose
+    }: Readonly<ServiceDetailModalProps>) {
+        const { t, i18n } = useTranslation()
+        const dialogRef = useRef<HTMLDialogElement>(null)
+
+        const [scheduleOpen, setScheduleOpen] = useState(false)
+        const [currency, setCurrency] = useState<Currency>(() => initialCurrency ?? cleanCurrency(plan.currency),
+        )
+
+        const { closing, requestClose } = useModalExit(onClose)
+        useDialogDismiss(dialogRef, requestClose, !scheduleOpen)
+
+        useEffect(() => {
+            dialogRef.current?.showModal()
+        }, [])
+
+        const price = exchangeRate
+            ? convertCurrency(plan.price, cleanCurrency(plan.currency), currency, 'buy', exchangeRate)
+            : plan.price
+
+        return (
+            <dialog
+                ref={dialogRef}
+                onClose={requestClose}
+                aria-label={plan.name}
+                className={`fixed inset-0 m-auto max-h-[90vh] w-[min(1100px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-page backdrop:bg-black/50 ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'
+                    }`}
+            >
+                <div className="relative px-5.5 pb-11.25 pt-10 md:px-[55px] md:pb-15 md:pt-[55px]">
+                    <ModalCloseButton
+                        onClick={requestClose}
+                        aria-label={t('common.close')}
+                        className="absolute right-lg top-lg z-20 md:right-xl md:top-xl"
+                    />
+
+                    <header className="mx-auto max-w-[850px] text-center">
+                        <h2 className="mt-4 font-heading text-h2 font-bold leading-[1.15] text-heading">
+                            {plan.name}
+                        </h2>
+                        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-[18px] gap-y-[8px] font-body text-body-sm text-neutral-500">
+                            <div className="flex items-center gap-[6px]">
+                                <CalendarDaysIcon size={16} className="text-pink-400" />
+                                <span>{getPlanTypeLabel(plan.type, t as never)}</span>
+                            </div>
+                            <SchedulePopover schedule={plan.schedule} onOpenChange={setScheduleOpen} />
+                        </div>
+                    </header>
+
+                    {plan.imageUrl && (
+                        <div className="mt-10">
+                            <img
+                                src={plan.imageUrl}
+                                alt={plan.imageAlt || plan.name}
+                                className="h-65 w-full rounded-[22px] object-cover sm:h-90 md:h-120"
+                            />
+                        </div>
+                    )}
+
+                    <section className="mx-auto mt-10 max-w-[950px] text-left">
+                        <p className="m-0 whitespace-pre-line font-body text-body-sm leading-[1.85] text-body-text md:text-body">
+                            {plan.description}
+                        </p>
+
+                        <div className="mt-xl flex flex-col gap-xl">
+                            {plan.includes && (
+                                <div className="min-w-0">
+                                    <h3 className="m-0 flex items-center gap-xs font-heading text-h5 font-bold text-heading">
+                                        <CircleCheckIcon size={18} className="text-pink-400" aria-hidden="true" />
+                                        {t('services.includes')}
+                                    </h3>
+                                    <p className="m-0 mt-xs whitespace-pre-line font-body text-body-sm leading-[1.85] text-body-text md:text-body">
+                                        {plan.includes}
+                                    </p>
+                                </div>
+                            )}
+
+                            <div className="min-w-0">
+                                <h3 className="m-0 flex items-center gap-xs font-heading text-h5 font-bold text-heading">
+                                    <BanknoteIcon size={18} className="text-pink-400" aria-hidden="true" />
+                                    {t('services.priceLabel')}
+                                </h3>
+                                <div className="mt-xs flex min-w-0 flex-col items-start gap-xs [&>div:first-child]:justify-start">
+                                    <span className="flex flex-col items-start gap-md font-heading text-h2 font-bold leading-none text-green-500">
+                                        <CurrencyToggle
+                                            value={currency}
+                                            onChange={setCurrency}
+                                            hasExchangeRate={Boolean(exchangeRate)}
+                                        />
+                                        <AnimatedNumber
+                                            value={price}
+                                            format={(n) => `${currencySymbol(currency)}${formatCurrency(n, currency, i18n.language)}`}
+                                        />
+                                    </span>
+                                    
+                                        <span className="font-body text-caption text-neutral-500">{t('services.approxPrice')}</span>
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                    </section>
+                </div>
+            </dialog>
+        )
+    }
+
+    export default ServiceDetailModal
