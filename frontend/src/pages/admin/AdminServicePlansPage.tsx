@@ -1,3 +1,4 @@
+import ResponsiveImage from '../../components/ui/ResponsiveImage.tsx'
 import StatusMessage from '../../components/ui/StatusMessage.tsx'
 import { ClipboardList } from 'lucide-react'
   import { useEffect, useState } from 'react'
@@ -94,7 +95,7 @@ import { ClipboardList } from 'lucide-react'
       <article className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white card-hover">
         <div className="relative h-[180px] w-full overflow-hidden bg-neutral-100">
           {plan!.imageUrl ? (
-            <img src={plan!.imageUrl} alt={plan!.imageAlt || plan!.name} className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" />
+            <ResponsiveImage src={plan!.imageUrl} widths={[400, 640, 960]} sizes="(min-width: 768px) 33vw, 100vw" alt={plan!.imageAlt || plan!.name} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105" />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
               <span className="font-body text-body-sm text-neutral-400">{t('admin.services.chooseImage')}</span>
