@@ -8,9 +8,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
+/**
+ * Picks the language of API messages from the {@code Accept-Language} header.
+ */
 @Configuration
 public class LocaleConfig {
 
+    /**
+     * @return a resolver that supports Spanish, English and French, with Spanish as the default
+     */
     @Bean
     public LocaleResolver localeResolver() {
         AcceptHeaderLocaleResolver resolver = new AcceptHeaderLocaleResolver();

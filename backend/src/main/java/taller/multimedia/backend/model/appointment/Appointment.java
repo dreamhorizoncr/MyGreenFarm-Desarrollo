@@ -16,6 +16,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * A visit appointment booked by a family.
+ */
 @Entity
 @Table(name = "appointments")
 @Data
@@ -64,9 +67,15 @@ public class Appointment {
     @Column(name = "teacher_conclusion", length = 4000)
     private String teacherConclusion;
 
+    /**
+     * ID of the appointment's event in the center's Google Calendar, once synced.
+     */
     @Column(name = "google_event_id")
     private String googleEventId;
 
+    /**
+     * Family's language for the emails: {@code es}, {@code en} or {@code fr}.
+     */
     @Column(name = "language")
     private String language;
 

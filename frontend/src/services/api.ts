@@ -6,20 +6,20 @@ import { userStorage } from '../utils/userStorage.ts'
 
 const API_BASE_URL = `${import.meta.env.VITE_API_URL ?? ''}/api`
 
+/**
+ * HTTP client for the backend API (`VITE_API_URL` + `/api`).
+ *
+ * Every request carries the session token and the current language (`Accept-Language`). When the
+ * session has expired it clears it and goes to the login page; any other 401 outside the public routes
+ * clears the token and fires the `mgf:unauthorized` window event.
+ */
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
   timeout: 20000,
   withCredentials: true
 })
 
-export interface PageResponse<T> {
-  content: T[]
-  totalPages: number
-  totalElements: number
-  number: number
-  size: number
-}
-
+/** Adds the session token and the current language to every request. */
 apiClient.interceptors.request.use((config) => {
   const token = tokenStorage.getToken()
   if (token) config.headers.Authorization = `Bearer ${token}`
@@ -27,6 +27,7 @@ apiClient.interceptors.request.use((config) => {
   return config
 })
 
+/** Ends the session when the backend rejects the token. */
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {

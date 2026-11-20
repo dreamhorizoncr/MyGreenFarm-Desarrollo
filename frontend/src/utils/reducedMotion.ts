@@ -13,11 +13,20 @@ function storedStopMode() {
   }
 }
 
+/**
+ * @returns whether animations should be skipped: the accessibility menu's option is on or the system
+ *   asks for reduced motion
+ */
 export function animationsStopped(): boolean {
   if (typeof window === 'undefined') return false
   return stopModeOn() || window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
+/**
+ * Makes `matchMedia('(prefers-reduced-motion: reduce)')` also match when the accessibility menu stops
+ * the animations, so the libraries that check it (Motion, Swiper) obey the menu too. It is called once
+ * when the app starts.
+ */
 export function installReducedMotionBridge() {
   if (typeof window === 'undefined' || !window.matchMedia) return
   if (storedStopMode()) document.documentElement.classList.add(STOP_CLASS)
@@ -62,6 +71,7 @@ export function installReducedMotionBridge() {
   }
 }
 
+/** Tells the libraries listening to `prefers-reduced-motion` that the menu's option changed. */
 export function notifyReducedMotionChange() {
   changeListeners.forEach((notify) => notify())
 }

@@ -6,6 +6,11 @@ import type { ServicePlan, ServicePlanRequest } from '../types/servicePlan.ts'
 
 const ENTITY_TYPE = 'service_plan'
 
+/**
+ * Service plans for the admin page, translated, with the actions to manage them.
+ *
+ * @returns the plans (translated and as stored), the loading and error state, and the actions
+ */
 export function useServicePlanAdmin() {
   const [plans, setPlans] = useState<ServicePlan[]>([])
   const [sourcePlans, setSourcePlans] = useState<ServicePlan[]>([])

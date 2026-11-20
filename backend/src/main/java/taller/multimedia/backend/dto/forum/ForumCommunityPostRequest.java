@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * Post that a visitor publishes on the community wall.
+ */
 @Data
 public class ForumCommunityPostRequest {
 

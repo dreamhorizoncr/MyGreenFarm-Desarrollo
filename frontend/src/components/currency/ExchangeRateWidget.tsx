@@ -7,6 +7,7 @@ import { useModalExit } from '../../hooks/useModalExit.ts'
 import { useDialogDismiss } from '../../hooks/useDialogDismiss.ts'
 import ModalCloseButton from '../ui/ModalCloseButton.tsx'
 
+/** Props of {@link ExchangeRateWidget}. */
 interface ExchangeRateWidgetProps {
   data: ExchangeRate | null
   loading: boolean
@@ -14,6 +15,10 @@ interface ExchangeRateWidgetProps {
   onOpen: () => void
 }
 
+/**
+ * Today's exchange rate of the dollar and the euro, with a note that the prices in other currencies are
+ * approximate.
+ */
 export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<ExchangeRateWidgetProps>) {
   const { t, i18n } = useTranslation()
   const locale = i18n.language
@@ -31,16 +36,16 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
     : null
 
   function renderStatus() {
-    if (loading) return <p className="m-0 py-md font-body text-body text-neutral-500">{t('moneda.loading')}</p>
-    if (error) return <p className="m-0 py-md font-body text-body text-danger">{t('moneda.error')}</p>
-    if (!data) return <p className="m-0 py-md font-body text-body text-neutral-500">{t('moneda.unavailable')}</p>
+    if (loading) return <p className="m-0 py-md font-body text-body text-neutral-500">{t('currency.loading')}</p>
+    if (error) return <p className="m-0 py-md font-body text-body text-danger">{t('currency.error')}</p>
+    if (!data) return <p className="m-0 py-md font-body text-body text-neutral-500">{t('currency.unavailable')}</p>
 
     return (
       <>
         <div className="grid gap-sm sm:grid-cols-2">
           {[
-            { symbol: '$', name: t('moneda.currency.USD'), buy: data.usdBuy },
-            { symbol: '€', name: t('moneda.currency.EUR'), buy: data.eurBuy },
+            { symbol: '$', name: t('currency.currency.USD'), buy: data.usdBuy },
+            { symbol: '€', name: t('currency.currency.EUR'), buy: data.eurBuy },
           ].map((row) => (
             <div key={row.symbol} className="flex min-w-0 items-center justify-between gap-xs rounded-2xl border border-neutral-200 bg-transparent px-sm py-md">
               <div className="flex min-w-0 flex-1 items-center gap-xs">
@@ -56,7 +61,7 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
           ))}
         </div>
         <p className="m-0 mt-lg rounded-2xl bg-transparent p-md font-body text-body-sm leading-relaxed text-green-700">
-          {t('moneda.priceDisclaimer')}
+          {t('currency.priceDisclaimer')}
         </p>
       </>
     )
@@ -75,7 +80,7 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
         className="inline-flex h-11 items-center gap-xs rounded-full border border-green-500 bg-white px-lg font-body text-body-sm font-semibold text-heading transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-link"
       >
         <BanknoteIcon size={20} aria-hidden="true" />
-        <span>{t('moneda.buyRate')}</span>
+        <span>{t('currency.buyRate')}</span>
       </button>
 
       {isOpen && (
@@ -91,11 +96,11 @@ export function ExchangeRateWidget({ data, loading, error, onOpen }: Readonly<Ex
           <div className="mb-lg flex items-start justify-between gap-md">
             <div className="min-w-0 text-left">
               <h2 id="exchange-rate-title" className="m-0 font-heading text-h4 font-bold text-green-500">
-                {t('moneda.buyRate')}
+                {t('currency.buyRate')}
               </h2>
               {data && lastUpdated && (
                 <p className="m-0 mt-xs font-body text-body-sm text-neutral-500">
-                  {t('moneda.sourceAndDate', { source: data.source, rateDate: lastUpdated })}
+                  {t('currency.sourceAndDate', { source: data.source, rateDate: lastUpdated })}
                 </p>
               )}
             </div>

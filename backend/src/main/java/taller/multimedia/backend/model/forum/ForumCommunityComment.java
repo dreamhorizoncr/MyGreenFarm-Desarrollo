@@ -2,17 +2,47 @@ package taller.multimedia.backend.model.forum;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-import org.hibernate.annotations.CreationTimestamp;
-import jakarta.persistence.*;
-import lombok.*;
 
+import org.hibernate.annotations.CreationTimestamp;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/** Comment that a visitor published on a community post, already moderated. */
 @Entity
 @Table(name = "forum_community_comments", indexes = @Index(name = "idx_community_comments_post", columnList = "community_post_id"))
-@Data @NoArgsConstructor @AllArgsConstructor
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ForumCommunityComment {
-    @Id @GeneratedValue(strategy = GenerationType.UUID) private UUID id;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false) @JoinColumn(name = "community_post_id", nullable = false) private ForumCommunityPost communityPost;
-    @Column(nullable = false, length = 40) private String alias;
-    @Column(nullable = false, length = 4000) private String content;
-    @CreationTimestamp @Column(name = "created_at", nullable = false, updatable = false) private LocalDateTime createdAt;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "community_post_id", nullable = false)
+    private ForumCommunityPost communityPost;
+
+    /** Name the visitor signed with. */
+    @Column(nullable = false, length = 40)
+    private String alias;
+
+    @Column(nullable = false, length = 4000)
+    private String content;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }

@@ -1,13 +1,16 @@
 import type { InputHTMLAttributes, ReactNode } from 'react'
 import FieldHint from './FieldHint.tsx'
 
+/** Props of {@link TextField}; the rest go to the `<input>`. */
 interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string
   error?: string | null
   hint?: string
+  /** A custom input instead of the default one, such as a password input. */
   children?: ReactNode
 }
 
+/** Form field with its label, input, hint and error. */
 function TextField({ label, error, hint, id, children, ...rest }: Readonly<TextFieldProps>) {
   return (
     <div>

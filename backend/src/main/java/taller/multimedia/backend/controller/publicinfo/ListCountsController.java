@@ -10,13 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import taller.multimedia.backend.dto.vacancy.VacancyResponse;
 import taller.multimedia.backend.model.gallery.Gallery;
 import taller.multimedia.backend.repository.gallery.GalleryRepository;
 import taller.multimedia.backend.service.announcement.AnnouncementService;
 import taller.multimedia.backend.service.club.ClubService;
 import taller.multimedia.backend.service.forum.ForumArticleService;
 import taller.multimedia.backend.service.forum.ForumCommunityPostService;
-import taller.multimedia.backend.service.service_plan.ServicePlanService;
+import taller.multimedia.backend.service.serviceplan.ServicePlanService;
 import taller.multimedia.backend.service.user.UserService;
 import taller.multimedia.backend.service.vacancy.VacancyService;
 
@@ -33,6 +34,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 
+/**
+ * Public counts used by the site's menu and home page to hide sections that have no content (news,
+ * gallery, services, vacancies, clubs, forum, teachers).
+ *
+ * <p>Counts are capped at the first page (10) because the frontend only needs to know whether there
+ * is content. They are computed in parallel with a 4-second limit and cached for 30 seconds; while
+ * one request refreshes them, the others get the previous counts.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api/public/list-counts")
@@ -59,22 +68,40 @@ public class ListCountsController {
     private final ReentrantLock refreshing = new ReentrantLock();
     private volatile Snapshot snapshot;
 
+    /**
+     * Counts computed at a moment.
+     *
+     * @param counts number of items by section
+     * @param createdAtNanos when they were computed, from {@link System#nanoTime()}
+     */
     private record Snapshot(Map<String, Integer> counts, long createdAtNanos) {
         boolean isFresh() {
             return System.nanoTime() - createdAtNanos < CACHE_TTL.toNanos();
         }
     }
 
+    /**
+     * Stops the counting threads when the application shuts down.
+     */
     @PreDestroy
     void shutdown() {
         executor.shutdownNow();
     }
 
+    /**
+     * {@code GET /api/public/list-counts}
+     *
+     * @return number of items by section, cacheable by the browser for 30 seconds
+     */
     @GetMapping
     public ResponseEntity<Map<String, Integer>> getCounts() {
         return respond(currentSnapshot());
     }
 
+    /**
+     * @return the cached counts, refreshing them first if they are older than 30 seconds and no
+     *     other request is already doing it
+     */
     private Snapshot currentSnapshot() {
         Snapshot current = snapshot;
         if (current != null && current.isFresh()) return current;
@@ -102,6 +129,10 @@ public class ListCountsController {
         }
     }
 
+    /**
+     * @return the counts that finished within the time limit; a section that failed or timed out is
+     *     left out
+     */
     private Map<String, Integer> computeCounts() {
         CompletableFuture<List<Gallery>> firstGalleries = CompletableFuture.supplyAsync(
                 () -> galleryRepository.findAllByOrderByCreatedAtDesc(PageRequest.of(0, FIRST_PAGE)).getContent(), executor);
@@ -112,9 +143,9 @@ public class ListCountsController {
                 .getTotalElements())));
         tasks.put("gallery", firstGalleries.thenApply(List::size));
         tasks.put("home-multimedia", firstGalleries.thenApply(list ->
-                (int) list.stream().filter(g -> Boolean.TRUE.equals(g.getFeatured())).count()));
+                (int) list.stream().filter(gallery -> Boolean.TRUE.equals(gallery.getFeatured())).count()));
         tasks.put("services", async(() -> servicePlanService.getActivePlans().size()));
-        tasks.put("vacancies", async(() -> (int) vacancyService.getAllVacancies().stream().filter(v -> v.isOpen()).count()));
+        tasks.put("vacancies", async(() -> (int) vacancyService.getAllVacancies().stream().filter(VacancyResponse::isOpen).count()));
         tasks.put("clubs", async(() -> firstPage(clubService.getAll(SOURCE_LANG, PageRequest.of(0, 1, Sort.by("name"))).getTotalElements())));
         tasks.put("forum-blog", async(() -> firstPage(forumArticleService.getAll(null, PageRequest.of(0, 1), null).getTotalElements())));
         tasks.put("forum-community", async(() -> firstPage(forumCommunityPostService.getAll(PageRequest.of(0, 1)).getTotalElements())));
@@ -151,6 +182,10 @@ public class ListCountsController {
         return (int) Math.min(FIRST_PAGE, total);
     }
 
+    /**
+     * Creates daemon threads named {@code list-counts-N}, so they never keep the application from
+     * shutting down.
+     */
     private static final class CountThreadFactory implements java.util.concurrent.ThreadFactory {
         private final AtomicInteger next = new AtomicInteger(1);
 

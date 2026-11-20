@@ -31,16 +31,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
-import taller.multimedia.backend.dto.PublicTeacherResponse;
+import taller.multimedia.backend.dto.user.PublicTeacherResponse;
 import taller.multimedia.backend.dto.vacancy.VacancyResponse;
 import taller.multimedia.backend.model.gallery.Gallery;
-import taller.multimedia.backend.model.service_plans.ServicePlan;
+import taller.multimedia.backend.model.serviceplan.ServicePlan;
 import taller.multimedia.backend.repository.gallery.GalleryRepository;
 import taller.multimedia.backend.service.announcement.AnnouncementService;
 import taller.multimedia.backend.service.club.ClubService;
 import taller.multimedia.backend.service.forum.ForumArticleService;
 import taller.multimedia.backend.service.forum.ForumCommunityPostService;
-import taller.multimedia.backend.service.service_plan.ServicePlanService;
+import taller.multimedia.backend.service.serviceplan.ServicePlanService;
 import taller.multimedia.backend.service.user.UserService;
 import taller.multimedia.backend.service.vacancy.VacancyService;
 

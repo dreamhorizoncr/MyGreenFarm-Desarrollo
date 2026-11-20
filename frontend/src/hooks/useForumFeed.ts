@@ -23,6 +23,12 @@ const ARTICLE_TRANSLATION_TYPE = 'FORUM_ARTICLE'
 const COMMENT_TRANSLATION_TYPE = 'FORUM_COMMENT'
 const COMMUNITY_TRANSLATION_TYPE = 'FORUM_COMMUNITY_POST'
 
+/**
+ * State of the forum shared by its pages (see {@link ForumFeedLayout}): articles, community posts,
+ * their comments and likes, with optimistic updates of the likes.
+ *
+ * @returns the content, the loading and error state, and the actions
+ */
 function useForumFeed() {
   const { i18n } = useTranslation()
   const [communityPosts, setCommunityPosts] = useState<CommunityPost[]>([])

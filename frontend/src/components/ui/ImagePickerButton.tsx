@@ -3,11 +3,13 @@ import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FileImageIcon } from '@animateicons/react/lucide'
 
+/** Props of {@link ImagePickerButton}. */
 interface ImagePickerButtonProps {
   label: string
   accept: string
   multiple?: boolean
   limit?: number
+  /** Whether the chosen image replaces the current one, to say so in the hint. */
   replacesCurrent?: boolean
   disabled?: boolean
   onSelect: (files: File[]) => void
@@ -23,6 +25,7 @@ function formatList(accept: string): string | null {
   return [...new Set(names)].join(', ')
 }
 
+/** Button to choose images, with a hint of the formats and how many can be chosen. */
 function ImagePickerButton({
   label,
   accept,

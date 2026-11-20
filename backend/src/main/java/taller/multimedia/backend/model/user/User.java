@@ -23,6 +23,9 @@ import java.util.UUID;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A staff user (owner, admin or teacher).
+ */
 @Entity
 @Table(name = "users")
 @Data 
@@ -36,6 +39,9 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
+    /**
+     * BCrypt hash of the password.
+     */
     @Column(nullable = false)
     private String password;
 
@@ -62,9 +68,15 @@ public class User {
     @Column(name = "birthday", nullable = true)
     private LocalDate birthday;
 
+    /**
+     * ID of the teacher's yearly birthday event in Google Calendar.
+     */
     @Column(name = "birthday_event_id")
     private String birthdayEventId;
 
+    /**
+     * Token of the pending password reset, valid until {@code tokenExpirationDate}.
+     */
     @Column(name = "reset_password_token")
     private String resetPasswordToken;
 

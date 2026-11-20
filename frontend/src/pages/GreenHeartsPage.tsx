@@ -7,7 +7,7 @@ import { A11y, Grid, Pagination } from 'swiper/modules'
 import type { Swiper as SwiperInstance } from 'swiper'
 import 'swiper/css'
 import 'swiper/css/pagination'
-import Navbar from '../components/Navbar.tsx'
+import Navbar from '../components/navigation/Navbar.tsx'
 import Container from '../components/home/Container.tsx'
 import CarouselArrowIcon from '../components/ui/CarouselArrowIcon.tsx'
 import greenKids from '../assets/imgs/greenKids.webp'
@@ -23,7 +23,7 @@ import puzzlePieceCard from '../assets/imgs/puzzlePieceCard.svg?raw'
 import './greenHearts.css'
 import { setPageSEO } from '../utils/seo.ts'
 import Tag from '../components/ui/Tag.tsx'
-import PuzzlePiece from '../components/PuzzlePiece.tsx'
+import PuzzlePiece from '../components/ui/PuzzlePiece.tsx'
 
 const PURPOSE_UNDERLINE = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 16' preserveAspectRatio='none'%3E%3Cpath d='M4 11C70 4 160 3 296 8' fill='none' stroke='%23F37B25' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E")`
 
@@ -57,6 +57,7 @@ const PUZZLE_ALIGNMENTS = ['left', 'center', 'right'] as const
 
 const pieceFill = (svg: string) => /<path[^>]*\sfill="([^"]+)"/.exec(svg)?.[1]
 
+/** Page of Green Hearts, the school's social action program, with its interactive puzzle. */
 function GreenHeartsPage() {
   const { t } = useTranslation()
   

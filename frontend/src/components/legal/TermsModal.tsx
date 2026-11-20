@@ -1,0 +1,105 @@
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import TermsSection from './TermsSection.tsx'
+import { useModalExit } from '../../hooks/useModalExit.ts'
+import { useDialogDismiss } from '../../hooks/useDialogDismiss.ts'
+import ModalCloseButton from '../ui/ModalCloseButton.tsx'
+import TabHighlight from '../ui/TabHighlight.tsx'
+
+type LegalTab = 'terms' | 'privacy'
+
+/** Props of {@link TermsModal}. */
+interface TermsModalProps {
+  onClose: () => void
+}
+
+/** Terms of use and privacy policy of the site. */
+function TermsModal({ onClose }: Readonly<TermsModalProps>) {
+  const { t } = useTranslation()
+  const dialogRef = useRef<HTMLDialogElement>(null)
+  const { closing, requestClose } = useModalExit(onClose)
+  useDialogDismiss(dialogRef, requestClose)
+  const [activeTab, setActiveTab] = useState<LegalTab>('terms')
+
+  useEffect(() => {
+    dialogRef.current?.showModal()
+  }, [])
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [])
+
+  const termsItems = [
+    { title: t('legalModal.terms1Title'), body: t('legalModal.terms1Body') },
+    { title: t('legalModal.terms2Title'), body: t('legalModal.terms2Body') },
+    { title: t('legalModal.terms3Title'), body: t('legalModal.terms3Body') },
+    { title: t('legalModal.terms4Title'), body: t('legalModal.terms4Body') },
+  ]
+
+  const privacyItems = [
+    { title: t('legalModal.privacy1Title'), body: t('legalModal.privacy1Body') },
+    { title: t('legalModal.privacy2Title'), body: t('legalModal.privacy2Body') },
+    { title: t('legalModal.privacy3Title'), body: t('legalModal.privacy3Body') },
+    { title: t('legalModal.privacy4Title'), body: t('legalModal.privacy4Body') },
+  ]
+
+  const tabClassName = (tab: LegalTab) =>
+    `relative flex min-h-11 w-full items-center justify-center rounded-full border border-green-500 px-sm py-xs text-center font-body text-body-sm font-semibold leading-tight transition-colors duration-300 sm:px-md ${
+      activeTab === tab ? 'text-white' : 'bg-transparent text-heading hover:bg-green-50'
+    }`
+
+  return (
+    <dialog
+      ref={dialogRef}
+      onClose={requestClose}
+      aria-label={t('legalModal.title')}
+      className={`fixed inset-0 m-auto h-[min(90vh,800px)] max-h-[90vh] w-[min(680px,92vw)] max-w-none modal-scroll rounded-[20px] bg-bg-card backdrop:bg-scrim ${closing ? 'animate-[modal-out_0.32s_ease-in]' : 'animate-[modal-in_0.32s_ease-out]'}`}
+    >
+      <div className="relative p-lg md:p-xl">
+        <div className="mb-lg flex items-center justify-between gap-md">
+          <h2 className="m-0 font-heading text-h5 font-bold leading-tight text-heading sm:text-h4">
+            {t('legalModal.title')}
+          </h2>
+          <ModalCloseButton onClick={requestClose} aria-label={t('legalModal.close')} />
+        </div>
+
+        <div className="flex flex-col gap-lg text-left">
+          <div className="isolate grid grid-cols-2 gap-sm" role="tablist">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'terms'}
+              onClick={() => setActiveTab('terms')}
+              className={tabClassName('terms')}
+            >
+              {activeTab === 'terms' && <TabHighlight layoutId="legal-tab" className="bg-green-500" />}
+                            {t('legalModal.tabTerms')}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeTab === 'privacy'}
+              onClick={() => setActiveTab('privacy')}
+              className={tabClassName('privacy')}
+            >
+              {activeTab === 'privacy' && <TabHighlight layoutId="legal-tab" className="bg-green-500" />}
+                            {t('legalModal.tabPrivacy')}
+            </button>
+          </div>
+
+          {activeTab === 'terms' ? (
+            <TermsSection intro={t('legalModal.termsIntro')} items={termsItems} />
+          ) : (
+            <TermsSection intro={t('legalModal.privacyIntro')} items={privacyItems} />
+          )}
+        </div>
+      </div>
+    </dialog>
+  )
+}
+
+export default TermsModal

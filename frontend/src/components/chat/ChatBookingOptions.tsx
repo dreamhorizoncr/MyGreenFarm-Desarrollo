@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import type { ChatBookingOption } from '../../hooks/useChatBooking.ts'
 
+/** Props of {@link ChatBookingOptions}. */
 interface ChatBookingOptionsProps {
   options: ChatBookingOption[]
   disabled?: boolean
@@ -20,6 +21,7 @@ const actionClassName = (variant: ChatBookingOption['variant']) =>
     ? `${ACTION_BASE} blob-fill bg-orange-500 text-white hover:bg-orange-600`
     : `${ACTION_BASE} border border-green-500 bg-white text-heading hover:bg-green-50`
 
+/** Buttons of the current step of the chat booking, such as the days or the times. */
 export default function ChatBookingOptions({
   options,
   disabled = false,

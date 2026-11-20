@@ -17,6 +17,14 @@ import java.util.regex.Pattern;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
+/**
+ * Translates the API's messages from English to Spanish, English or French using the table in
+ * {@code i18n/backend-messages.tsv}.
+ *
+ * <p>Each row matches a message exactly, by its beginning ({@code prefix} keeps the rest, {@code
+ * replace} drops it) or by a {@code template} with {@code {}} placeholders. Messages with several
+ * sentences are translated sentence by sentence. Unknown messages are returned unchanged.
+ */
 @Component
 public class BackendMessageTranslator {
 
@@ -30,10 +38,19 @@ public class BackendMessageTranslator {
     private final List<Entry> prefixes = new ArrayList<>();
     private final List<Entry> templates = new ArrayList<>();
 
+    /**
+     * Loads the translation table from the classpath.
+     *
+     * @throws java.io.UncheckedIOException if the table cannot be read
+     */
     public BackendMessageTranslator() {
         this(new ClassPathResource(RESOURCE));
     }
 
+    /**
+     * @param resource translation table; tests pass their own
+     * @throws java.io.UncheckedIOException if the table cannot be read
+     */
     BackendMessageTranslator(ClassPathResource resource) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8))) {
             reader.lines().skip(1).filter(line -> !line.isBlank()).forEach(this::addLine);
@@ -67,6 +84,12 @@ public class BackendMessageTranslator {
         return Pattern.compile(regex.append("$").toString(), Pattern.DOTALL);
     }
 
+    /**
+     * @param message message in English
+     * @param locale language of the request; anything other than Spanish, English or French becomes
+     *     Spanish
+     * @return the translated message, or the original if it is not in the table
+     */
     public String translate(String message, Locale locale) {
         if (message == null || message.isBlank()) return message;
         String language = languageOf(locale);
@@ -116,6 +139,10 @@ public class BackendMessageTranslator {
         return null;
     }
 
+    /**
+     * @param locale request language, may be {@code null}
+     * @return {@code es}, {@code en} or {@code fr}
+     */
     static String languageOf(Locale locale) {
         String language = locale == null ? "es" : locale.getLanguage();
         return LANGUAGES.contains(language) ? language : "es";

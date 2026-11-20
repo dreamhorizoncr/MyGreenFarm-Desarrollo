@@ -4,6 +4,11 @@ import { authService } from '../services/auth.ts'
 import { getErrorMessage } from '../utils/error.ts'
 import type { ResetPasswordRequest } from '../types/auth.ts'
 
+/**
+ * Sending of the new password with the token from the reset email.
+ *
+ * @returns `submitResetPassword`, and its loading, error and success state
+ */
 export function useResetPassword() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

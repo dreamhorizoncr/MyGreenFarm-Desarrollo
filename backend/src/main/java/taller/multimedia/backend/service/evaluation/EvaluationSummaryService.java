@@ -10,13 +10,17 @@ import taller.multimedia.backend.model.evaluation.Evaluation;
 import taller.multimedia.backend.model.expedient.Expedient;
 import taller.multimedia.backend.repository.evaluation.EvaluationRepository;
 import taller.multimedia.backend.repository.expedient.ExpedientRepository;
-import taller.multimedia.backend.service.EmailService;
+import taller.multimedia.backend.service.email.EmailService;
 import taller.multimedia.backend.service.announcement.GeminiSummaryService;
 import taller.multimedia.backend.service.translation.TranslationService;
 
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Sends parents a semiannual summary of their child's progress, written by AI from the teachers'
+ * evaluations of the last six months.
+ */
 @Service
 @RequiredArgsConstructor
 public class EvaluationSummaryService {
@@ -28,6 +32,14 @@ public class EvaluationSummaryService {
     private final EmailService emailService;
     private final TranslationService translationService;
 
+    /**
+     * Generates and emails the summary for every student record that has evaluations in the last
+     * six months.
+     *
+     * <p>The summary is written in Spanish and translated when the parent prefers another language.
+     * Records without recent evaluations or without a parent are skipped, and an error with one
+     * record is logged without stopping the others.
+     */
     @Transactional (readOnly = true)
     public void generateAndSendSemiannualSummaries() {
         LocalDate sixMonthsAgo = LocalDate.now().minusMonths(6);
@@ -36,7 +48,7 @@ public class EvaluationSummaryService {
         for (Expedient expedient : expedients) {
             try {
                 List<Evaluation> evaluations = evaluationRepository
-                        .findByExpedientIdIdAndEvaluationDateAfterOrderByEvaluationDateAsc(expedient.getId(), sixMonthsAgo);
+                        .findByExpedientIdAndEvaluationDateAfterOrderByEvaluationDateAsc(expedient.getId(), sixMonthsAgo);
 
                 if (evaluations.isEmpty()) {
                     log.info("No recent evaluations for the record of: {}", expedient.getChild().getFirstName());
@@ -92,6 +104,11 @@ public class EvaluationSummaryService {
         }
     }
 
+    /**
+     * @param languageCode parent's language
+     * @return the current semester and year, for example {@code Semester I - 2026} in English or
+     *     {@code Semestre I - 2026} otherwise
+     */
     private String formatPeriodByLanguage(String languageCode) {
         int currentYear = LocalDate.now().getYear();
         boolean isFirstSemester = LocalDate.now().getMonthValue() <= 6;

@@ -15,13 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
-import taller.multimedia.backend.repository.forum.ForumCommunityPostRepository;
-import taller.multimedia.backend.repository.forum.ForumCommunityCommentRepository;
-import taller.multimedia.backend.model.forum.ForumCommunityComment;
 import taller.multimedia.backend.dto.forum.ForumCommunityCommentRequest;
 import taller.multimedia.backend.dto.forum.ForumCommunityCommentResponse;
-import taller.multimedia.backend.util.Sanitizer;
 
+import java.util.UUID;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -29,19 +26,25 @@ import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.forum.ForumCommunityPostRequest;
 import taller.multimedia.backend.dto.forum.ForumCommunityPostResponse;
 import taller.multimedia.backend.service.forum.ForumCommunityPostService;
-import taller.multimedia.backend.service.forum.ForumModerationService;
 
+/**
+ * Community wall of the forum: visitors read and publish posts and comments, which are moderated
+ * before being saved; only the owner may delete them.
+ */
 @Validated
 @RestController
 @RequestMapping("/api/forum/community")
 @RequiredArgsConstructor
 public class ForumCommunityPostController {
 
-    private final ForumCommunityPostService communityPostService;
-    private final ForumCommunityPostRepository postRepository;
-    private final ForumCommunityCommentRepository commentRepository;
-    private final ForumModerationService moderationService;
-
+    private final ForumCommunityPostService communityPostService;
+    /**
+     * {@code GET /api/forum/community}
+     *
+     * @param page page number, from 0
+     * @param size page size, 1 to 10
+     * @return posts, newest first
+     */
     @GetMapping
     @PreAuthorize("permitAll()")
     public ResponseEntity<Page<ForumCommunityPostResponse>> getAll(
@@ -51,6 +54,12 @@ public class ForumCommunityPostController {
         return ResponseEntity.ok(communityPostService.getAll(pageable));
     }
 
+    /**
+     * {@code POST /api/forum/community}
+     *
+     * @param request author name and content
+     * @return 201 with the published post
+     */
     @PostMapping
     @PreAuthorize("permitAll()")
     public ResponseEntity<ForumCommunityPostResponse> create(
@@ -58,51 +67,65 @@ public class ForumCommunityPostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(communityPostService.create(request));
     }
 
+    /**
+     * {@code GET /api/forum/community/{postId}/comments}
+     *
+     * @param postId community post
+     * @param page page number, from 0
+     * @param size page size, 1 to 50
+     * @return the comments, oldest first, or 404 if the post does not exist
+     */
     @GetMapping("/{postId}/comments")
     @PreAuthorize("permitAll()")
     public ResponseEntity<Page<ForumCommunityCommentResponse>> comments(
-            @PathVariable java.util.UUID postId,
+            @PathVariable UUID postId,
             @RequestParam(defaultValue = "0") @Min(0) int page,
             @RequestParam(defaultValue = "50") @Min(1) @Max(50) int size) {
-        if (!postRepository.existsById(postId)) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(commentRepository.findByCommunityPost_IdOrderByCreatedAtAsc(postId, PageRequest.of(page, size))
-                .map(c -> ForumCommunityCommentResponse.builder().id(c.getId()).communityPostId(postId)
-                        .alias(org.apache.commons.text.StringEscapeUtils.unescapeHtml4(c.getAlias()))
-                        .content(org.apache.commons.text.StringEscapeUtils.unescapeHtml4(c.getContent())).createdAt(c.getCreatedAt()).build()));
+        return communityPostService.getComments(postId, PageRequest.of(page, size))
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    /**
+     * {@code POST /api/forum/community/{postId}/comments}
+     *
+     * @param postId community post
+     * @param request alias and content
+     * @return 201 with the published comment, or 404 if the post does not exist
+     */
     @PostMapping("/{postId}/comments")
     @PreAuthorize("permitAll()")
-    public ResponseEntity<ForumCommunityCommentResponse> addComment(@PathVariable java.util.UUID postId,
+    public ResponseEntity<ForumCommunityCommentResponse> addComment(@PathVariable UUID postId,
             @Valid @RequestBody ForumCommunityCommentRequest request) {
-        var post = postRepository.findById(postId).orElse(null);
-        if (post == null) return ResponseEntity.notFound().build();
-        String alias = Sanitizer.requireClean("alias", request.getAlias());
-        moderationService.assertAppropriateName("alias", alias);
-        String content = Sanitizer.requireCleanPreserveLineBreaks("content", request.getContent());
-        content = moderationService.assertAppropriate(content);
-
-        var comment = new ForumCommunityComment();
-        comment.setCommunityPost(post);
-        comment.setAlias(alias);
-        comment.setContent(content);
-        var saved = commentRepository.save(comment);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ForumCommunityCommentResponse.builder().id(saved.getId())
-                .communityPostId(postId).alias(saved.getAlias()).content(saved.getContent()).createdAt(saved.getCreatedAt()).build());
+        return communityPostService.addComment(postId, request)
+                .map(comment -> ResponseEntity.status(HttpStatus.CREATED).body(comment))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    /**
+     * {@code DELETE /api/forum/community/{postId}}: deletes the post with its likes and comments.
+     *
+     * @param postId community post
+     * @return 204, or 404 if it does not exist
+     */
     @DeleteMapping("/{postId}")
     @PreAuthorize("hasRole('OWNER')")
-    public ResponseEntity<Void> delete(@PathVariable java.util.UUID postId) {
+    public ResponseEntity<Void> delete(@PathVariable UUID postId) {
         return communityPostService.delete(postId) ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
+    /**
+     * {@code DELETE /api/forum/community/{postId}/comments/{commentId}}
+     *
+     * @param postId community post
+     * @param commentId comment to delete
+     * @return 204, or 404 if the comment does not exist or belongs to another post
+     */
     @DeleteMapping("/{postId}/comments/{commentId}")
     @PreAuthorize("hasRole('OWNER')")
-    public ResponseEntity<Void> deleteComment(@PathVariable java.util.UUID postId, @PathVariable java.util.UUID commentId) {
-        var comment = commentRepository.findById(commentId).orElse(null);
-        if (comment == null || !comment.getCommunityPost().getId().equals(postId)) return ResponseEntity.notFound().build();
-        commentRepository.delete(comment);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> deleteComment(@PathVariable UUID postId, @PathVariable UUID commentId) {
+        return communityPostService.deleteComment(postId, commentId)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 }

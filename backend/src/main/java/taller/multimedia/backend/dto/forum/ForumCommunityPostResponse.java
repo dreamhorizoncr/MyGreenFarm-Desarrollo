@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * A community post with its like and comment counts.
+ */
 @Data
 @Builder
 @AllArgsConstructor

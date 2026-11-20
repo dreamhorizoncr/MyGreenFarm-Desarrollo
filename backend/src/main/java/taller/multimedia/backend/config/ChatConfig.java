@@ -15,8 +15,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
+/**
+ * Configures the Google Gemini client used by the chat assistant.
+ */
 @Configuration
 public class ChatConfig {
+    /**
+     * Creates the Gemini client only when an API key is configured.
+     *
+     * @param apiKey {@code spring.ai.google.genai.api-key}
+     * @param connectTimeout {@code chat.model.connect-timeout}, 10 seconds by default
+     * @param readTimeout {@code chat.model.read-timeout}, 60 seconds by default
+     * @return the client
+     */
     @Bean
     @org.springframework.boot.autoconfigure.condition.ConditionalOnExpression(
             "T(org.springframework.util.StringUtils).hasText('${spring.ai.google.genai.api-key:}')")
@@ -32,6 +43,13 @@ public class ChatConfig {
                 .build();
     }
 
+    /**
+     * @param builder chat client builder from Spring AI
+     * @param promptResource system prompt
+     * @param activeProfiles active profiles; with {@code dev} the prompts and answers are logged
+     * @return the chat client, with temperature 0.3 and at most 400 tokens per answer
+     * @throws IOException if the system prompt cannot be read
+     */
     @Bean
     public ChatClient chatClient(ChatClient.Builder builder,
             @Value("classpath:prompts/system-prompt.txt") Resource promptResource,

@@ -1,5 +1,9 @@
 package taller.multimedia.backend.service.user;
 
+import taller.multimedia.backend.util.SearchPattern;
+import java.util.Optional;
+import java.util.Arrays;
+import java.util.Locale;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -7,13 +11,11 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import jakarta.transaction.Transactional;
-import taller.multimedia.backend.dto.UpdateUserRequest;
-import taller.multimedia.backend.dto.PublicTeacherResponse;
-import taller.multimedia.backend.dto.UserInfoResponse;
+import taller.multimedia.backend.dto.user.UpdateUserRequest;
+import taller.multimedia.backend.dto.user.PublicTeacherResponse;
+import taller.multimedia.backend.dto.user.UserInfoResponse;
 import taller.multimedia.backend.model.user.Role;
 import taller.multimedia.backend.model.user.User;
 import taller.multimedia.backend.repository.forum.ForumArticleRepository;
@@ -21,7 +23,14 @@ import taller.multimedia.backend.repository.group.TeacherGroupRepository;
 import taller.multimedia.backend.repository.user.UserRepository;
 import taller.multimedia.backend.service.appointment.CalendarSyncAsyncService;
 import taller.multimedia.backend.util.Sanitizer;
+import taller.multimedia.backend.util.AfterCommit;
 
+/**
+ * Staff users (owner, admins and teachers) and the permissions between them.
+ *
+ * <p>Owners and admins may list users. The owner may edit anyone and delete admins and teachers; an
+ * admin may edit itself and teachers and delete teachers. Nobody may delete their own account.
+ */
 @Service
 public class UserService {
 
@@ -38,11 +47,36 @@ public class UserService {
         this.teacherGroupRepository = teacherGroupRepository;
     }
 
+    /**
+     * @param currentEmail email of the authenticated user
+     * @param pageable page to return
+     * @return all users
+     * @throws RuntimeException if the user is not an owner or admin
+     */
     public Page<UserInfoResponse> getAllUsers(String currentEmail, Pageable pageable) {
         return getAllUsers(currentEmail, pageable, null);
     }
 
+    /**
+     * @param currentEmail email of the authenticated user
+     * @param pageable page to return
+     * @param role role to filter by, or {@code null} for all
+     * @return the users
+     * @throws RuntimeException if the user is not an owner or admin
+     */
     public Page<UserInfoResponse> getAllUsers(String currentEmail, Pageable pageable, Role role) {
+        return getAllUsers(currentEmail, pageable, role, null);
+    }
+
+    /**
+     * @param currentEmail email of the authenticated user
+     * @param pageable page to return
+     * @param role role to filter by, or {@code null} for all
+     * @param search text to look for in the name, email and role, optional
+     * @return the users, filtered by the text when there is one
+     * @throws RuntimeException if the user is not an owner or admin
+     */
+    public Page<UserInfoResponse> getAllUsers(String currentEmail, Pageable pageable, Role role, String search) {
         User currentUser = userRepository.findByEmail(currentEmail)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -50,12 +84,25 @@ public class UserService {
             throw new RuntimeException("Only owners and admins can list users");
         }
 
-        Page<User> users = role == null
-                ? userRepository.findAll(pageable)
-                : userRepository.findByRole(role, pageable);
+        Optional<String> pattern = SearchPattern.of(search);
+        Page<User> users;
+        if (pattern.isPresent()) {
+            String text = search.trim().toUpperCase(Locale.ROOT);
+            List<Role> rolesByName = Arrays.stream(Role.values()).filter(r -> r.name().contains(text)).toList();
+            List<Role> roles = role == null ? List.of(Role.values()) : List.of(role);
+            users = userRepository.search(roles, pattern.get(), rolesByName, pageable);
+        } else {
+            users = role == null ? userRepository.findAll(pageable) : userRepository.findByRole(role, pageable);
+        }
         return users.map(this::toResponse);
     }
 
+    /**
+     * @param targetId user to view
+     * @param currentEmail email of the authenticated user
+     * @return the user
+     * @throws RuntimeException if a user does not exist, or a teacher tries to view someone else
+     */
     public UserInfoResponse getUser(UUID targetId, String currentEmail) {
         User currentUser = userRepository.findByEmail(currentEmail)
                 .orElseThrow(() -> new RuntimeException("Current user not found"));
@@ -73,6 +120,19 @@ public class UserService {
         return toResponse(targetUser);
     }
 
+    /**
+     * Updates a user's profile. Users may only change their own email; birthdays, photos and the
+     * About us flag only apply to teachers. A birthday change is synced to Google Calendar after
+     * the transaction commits.
+     *
+     * @param targetId user to update
+     * @param request new data
+     * @param currentEmail email of the authenticated user
+     * @return the updated user
+     * @throws RuntimeException if a user does not exist, permission is missing, the email is taken,
+     *     or a non-teacher gets a birthday or photo
+     * @throws taller.multimedia.backend.exception.InvalidFieldException if a text is unsafe
+     */
     @Transactional
     public UserInfoResponse updateUser(UUID targetId, UpdateUserRequest request, String currentEmail) {
         User currentUser = userRepository.findByEmail(currentEmail)
@@ -147,15 +207,19 @@ public class UserService {
     }
 
     private void scheduleBirthdaySync(UUID userId) {
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-            @Override
-            public void afterCommit() {
-                calendarSyncAsyncService.syncBirthdayAsync(userId);
-            }
-        });
+        AfterCommit.run(() -> calendarSyncAsyncService.syncBirthdayAsync(userId));
 
     }
 
+    /**
+     * Deletes a user. Their forum articles are kept without an author and they are removed from
+     * their groups.
+     *
+     * @param targetId user to delete
+     * @param currentEmail email of the authenticated user
+     * @throws RuntimeException if a user does not exist, it is the user's own account, or
+     *     permission is missing
+     */
     @Transactional
     public void deleteUser(UUID targetId, String currentEmail) {
         User currentUser = userRepository.findByEmail(currentEmail)
@@ -219,6 +283,9 @@ public class UserService {
         return false;
     }
 
+    /**
+     * @return active teachers
+     */
     public List<UserInfoResponse> getTeachers() {
         return userRepository.findByRole(Role.TEACHER)
                 .stream()
@@ -227,6 +294,9 @@ public class UserService {
                 .toList();
     }
 
+    /**
+     * @return active teachers who chose to appear on the About us page, without private data
+     */
     public List<PublicTeacherResponse> getAboutUsTeachers() {
         return userRepository.findByRole(Role.TEACHER)
                 .stream()

@@ -3,16 +3,22 @@ import type { SileoButton, SileoOptions } from 'sileo'
 import i18n from '../i18n/index.ts'
 import { getErrorMessage } from './error.ts'
 
+/** Just a title, or every option of the toast. */
 type NotifyInput = string | SileoOptions
 type SileoKind = 'success' | 'error' | 'warning' | 'info'
 
 const DEFAULT_DURATION = 4000
+/** Longest title that fits in a toast; longer ones become its description. */
 const MAX_TITLE_LENGTH = 36
 
 function toOptions(input: NotifyInput): SileoOptions {
   return typeof input === 'string' ? { title: input } : input
 }
 
+/**
+ * @returns the options with a title that fits: a long one moves into the description and a generic
+ *   title of the kind takes its place
+ */
 function fitTitle(options: SileoOptions, kind: SileoKind): SileoOptions {
   const { title, description } = options
   if (typeof title !== 'string' || title.length <= MAX_TITLE_LENGTH) return options
@@ -31,6 +37,7 @@ function withPeriod(text: string): string {
 
 let modalOpenedSinceRaise = false
 
+/** Shows the toasts' container in the top layer, so they stay above an open `<dialog>`. */
 function raiseViewport(viewport: HTMLElement, restack: boolean) {
   if (typeof viewport.showPopover !== 'function') return
   if (!viewport.hasAttribute('popover')) viewport.setAttribute('popover', 'manual')
@@ -40,6 +47,7 @@ function raiseViewport(viewport: HTMLElement, restack: boolean) {
   viewport.showPopover()
 }
 
+/** Moves the toasts above the dialogs, again if a dialog was opened after them. */
 function raiseViewports() {
   const restack = modalOpenedSinceRaise
   modalOpenedSinceRaise = false
@@ -55,6 +63,10 @@ function withDefaults(options: SileoOptions, fill: string): SileoOptions {
 const pendingIds: string[] = []
 let tapToDismissReady = false
 
+/**
+ * Lets a toast be dismissed by clicking it, and keeps the toasts above the dialogs opened later. It
+ * runs once, with the first toast.
+ */
 function setupTapToDismiss() {
   if (tapToDismissReady) return
   tapToDismissReady = true
@@ -93,6 +105,7 @@ function setupTapToDismiss() {
   observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['open'] })
 }
 
+/** @returns the ID of the toast shown */
 function show(kind: SileoKind, input: NotifyInput, fill: string): string {
   setupTapToDismiss()
   const id = sileo[kind](withDefaults(fitTitle(toOptions(input), kind), fill))
@@ -100,6 +113,10 @@ function show(kind: SileoKind, input: NotifyInput, fill: string): string {
   return id
 }
 
+/**
+ * Toasts of the site, on top of Sileo: colors of the design system, four seconds by default, long titles
+ * moved into the description, and dismissed by clicking them. Every method returns the toast's ID.
+ */
 export const notify = {
   success(input: NotifyInput): string {
     return show('success', input, 'var(--success-default)')
@@ -117,6 +134,11 @@ export const notify = {
     return show('info', input, 'var(--info-default)')
   },
 
+  /**
+   * @param input - title or options
+   * @param button - the toast's button
+   * @returns the toast's ID
+   */
   action(input: NotifyInput, button: SileoButton): string {
     const options = fitTitle(toOptions(input), 'info')
     options.button = button
@@ -134,6 +156,13 @@ export const notify = {
   },
 }
 
+/**
+ * Shows an error toast with the reason of the error as its description.
+ *
+ * @param title - what failed, for example `No se pudo guardar`
+ * @param error - the error; its message is added unless it repeats the title
+ * @returns the toast's ID
+ */
 export function notifyError(title: string, error?: unknown): string {
   const reason = error === undefined ? null : getErrorMessage(error)
   return notify.error(reason && reason !== title ? { title, description: reason } : title)

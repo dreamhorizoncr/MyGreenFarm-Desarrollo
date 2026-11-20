@@ -1,10 +1,12 @@
 import { useTranslation } from 'react-i18next'
 import type { BlogPost } from '../../types/forum.ts'
 
+/** Props of {@link PopularTopicsCard}. */
 interface PopularTopicsCardProps {
   blogPosts: BlogPost[]
 }
 
+/** The topics with the most articles. */
 function PopularTopicsCard({ blogPosts }: Readonly<PopularTopicsCardProps>) {
   const { t } = useTranslation()
   const popularTopics = [...blogPosts]

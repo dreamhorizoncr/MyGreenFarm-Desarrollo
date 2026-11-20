@@ -21,6 +21,9 @@ import lombok.NoArgsConstructor;
 @Table(name = "forum_article_likes", uniqueConstraints = @UniqueConstraint(columnNames = {
         "article_id", "anon_id"
 }))
+/**
+ * Like of an anonymous visitor on a forum article; a visitor can like an article once.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,6 +38,9 @@ public class ForumArticleLike {
     @JoinColumn(name = "article_id", nullable = false)
     private ForumArticle article;
 
+    /**
+     * Random ID stored in the visitor's {@code anon_id} cookie.
+     */
     @Column(name = "anon_id", nullable = false, length = 36)
     private String anonId;
 }

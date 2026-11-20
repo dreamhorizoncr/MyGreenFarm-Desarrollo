@@ -23,6 +23,9 @@ import taller.multimedia.backend.service.spelling.SpellingCorrectionAsyncService
 
 import java.util.UUID;
 
+/**
+ * News and announcements. Reading is public; changes are for the owner and admins.
+ */
 @Validated
 @RestController
 @RequestMapping("/api/announcements")
@@ -33,15 +36,31 @@ public class AnnouncementController {
     private final AnnouncementSummaryAsyncService announcementSummaryAsyncService;
     private final SpellingCorrectionAsyncService spellingCorrectionAsyncService;
 
+    /**
+     * {@code POST /api/announcements}: creates an announcement, then corrects its spelling and
+     * generates its AI summary in the background.
+     *
+     * @param request announcement data
+     * @return 201 with the created announcement
+     */
     @PostMapping
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
-    public ResponseEntity<AnnouncementResponse> create(@RequestBody @Valid AnnouncementRequest dto) {
+    public ResponseEntity<AnnouncementResponse> create(@RequestBody @Valid AnnouncementRequest request) {
 
-        AnnouncementResponse created = announcementService.create(dto);
+        AnnouncementResponse created = announcementService.create(request);
         spellingCorrectionAsyncService.correctAnnouncement(created.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
+    /**
+     * {@code GET /api/announcements}
+     *
+     * @param lang requested language, Spanish by default
+     * @param page page number, from 0
+     * @param size page size, 1 to 10
+     * @param categoryId category to filter by, optional
+     * @return announcements, newest first
+     */
     @GetMapping
     public ResponseEntity<Page<AnnouncementResponse>> getAll(
             @RequestParam(name = "lang", defaultValue = "es") String lang, 
@@ -53,15 +72,29 @@ public class AnnouncementController {
         return ResponseEntity.ok(announcements);
     }
 
+    /**
+     * {@code PUT /api/announcements/{id}}: updates an announcement and corrects its spelling again
+     * in the background.
+     *
+     * @param id announcement ID
+     * @param request new data
+     * @return the updated announcement
+     */
     @PutMapping(value = "/{id}")
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
-    public ResponseEntity<AnnouncementResponse> update( @PathVariable UUID id, @RequestBody @Valid AnnouncementRequest dto) 
+    public ResponseEntity<AnnouncementResponse> update( @PathVariable UUID id, @RequestBody @Valid AnnouncementRequest request) 
     {
-        AnnouncementResponse updated = announcementService.update(id, dto);
+        AnnouncementResponse updated = announcementService.update(id, request);
         spellingCorrectionAsyncService.correctAnnouncement(updated.getId());
         return ResponseEntity.ok(updated);
     }
 
+    /**
+     * {@code DELETE /api/announcements/{id}}: deletes the announcement and its images.
+     *
+     * @param id announcement ID
+     * @return 204
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
@@ -69,6 +102,13 @@ public class AnnouncementController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * {@code POST /api/announcements/{id}/summary/regenerate}: generates the AI summary again in
+     * the background, even if the content did not change.
+     *
+     * @param id announcement ID
+     * @return 202
+     */
     @PostMapping("/{id}/summary/regenerate")
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<Void> regenerateSummary(@PathVariable UUID id) {

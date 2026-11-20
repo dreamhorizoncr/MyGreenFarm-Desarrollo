@@ -13,6 +13,9 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+/**
+ * An image of a club: its cover or one of up to four ordered gallery images.
+ */
 @Entity
 @Table(name = "club_images")
 @Data 

@@ -20,6 +20,9 @@ import taller.multimedia.backend.service.gallery.GalleryService;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Photo galleries. Reading is public; changes are for the owner and admins.
+ */
 @Validated
 @RestController
 @RequestMapping("/api/gallery")
@@ -28,13 +31,27 @@ public class GalleryController {
 
     private final GalleryService galleryService;
 
+    /**
+     * {@code POST /api/gallery}
+     *
+     * @param request category, title and description
+     * @return 201 with the created gallery
+     */
     @PostMapping
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
-    public ResponseEntity<GalleryResponse> create(@RequestBody @Valid GalleryRequest dto) {
-        GalleryResponse created = galleryService.create(dto);
+    public ResponseEntity<GalleryResponse> create(@RequestBody @Valid GalleryRequest request) {
+        GalleryResponse created = galleryService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
+    /**
+     * {@code GET /api/gallery}
+     *
+     * @param categoryId category to filter by, optional
+     * @param page page number, from 0
+     * @param size page size, 1 to 10
+     * @return galleries, newest first, with their first images
+     */
     @GetMapping
     public ResponseEntity<Page<GalleryResponse>> getAll(
             @RequestParam(name = "categoryId", required = false) UUID categoryId,
@@ -48,22 +65,46 @@ public class GalleryController {
         return ResponseEntity.ok(galleries);
     }
 
+    /**
+     * {@code GET /api/gallery/{id}}
+     *
+     * @param id gallery ID
+     * @return the gallery
+     */
     @GetMapping("/{id}")
     public ResponseEntity<GalleryResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(galleryService.getById(id));
     }
 
+    /**
+     * {@code GET /api/gallery/featured}
+     *
+     * @return the galleries featured on the home page
+     */
     @GetMapping("/featured")
     public ResponseEntity<List<GalleryResponse>> getFeaturedGalleries() {
         return ResponseEntity.ok(galleryService.getFeaturedGalleries());
     }
 
+    /**
+     * {@code PUT /api/gallery/{id}}
+     *
+     * @param id gallery ID
+     * @param request new data and featured flag
+     * @return the updated gallery
+     */
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
-    public ResponseEntity<GalleryResponse> update(@PathVariable UUID id, @RequestBody @Valid GalleryRequest dto) {
-        return ResponseEntity.ok(galleryService.update(id, dto));
+    public ResponseEntity<GalleryResponse> update(@PathVariable UUID id, @RequestBody @Valid GalleryRequest request) {
+        return ResponseEntity.ok(galleryService.update(id, request));
     }
 
+    /**
+     * {@code DELETE /api/gallery/{id}}: deletes the gallery and its images.
+     *
+     * @param id gallery ID
+     * @return 204
+     */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {

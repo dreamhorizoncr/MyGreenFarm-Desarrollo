@@ -1,5 +1,6 @@
 import Skeleton from '../ui/Skeleton.tsx'
 
+/** Props of {@link MultimediaCard}; while `loading` it shows a skeleton. */
 interface MultimediaCardProps {
   imageSrc?: string
   alt?: string
@@ -10,6 +11,7 @@ interface MultimediaCardProps {
   loading?: boolean
 }
 
+/** Card of an album on the home page: photo, badge, title and description. */
 function MultimediaCard({ imageSrc, alt, badge, title, description, onClick, loading = false }: Readonly<MultimediaCardProps>) {
   if (loading) {
     return (

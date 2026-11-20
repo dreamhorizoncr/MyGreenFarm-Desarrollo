@@ -5,6 +5,9 @@ import java.util.UUID;
 import jakarta.persistence.*;
 import lombok.Data;
 
+/**
+ * An image of an announcement: its cover or one of up to four gallery images.
+ */
 @Entity
 @Table(name = "announcement_images")
 @Data

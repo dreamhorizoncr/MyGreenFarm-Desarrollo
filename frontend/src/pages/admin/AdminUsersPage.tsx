@@ -1,0 +1,220 @@
+import StatusMessage from '../../components/ui/StatusMessage.tsx'
+import { SearchX, Users } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { PlusIcon, SearchIcon } from '@animateicons/react/lucide'
+import AdminLayout from '../../layout/AdminLayout.tsx'
+import EditUserModal from '../../components/users/EditUserModal.tsx'
+import CreateUserModal from '../../components/users/CreateUserModal.tsx'
+import DeleteUserModal from '../../components/users/DeleteUserModal.tsx'
+import TeacherCard from '../../components/users/TeacherCard.tsx'
+import Pagination from '../../components/ui/Pagination.tsx'
+import { useAdmin } from '../../hooks/useAdmin.ts'
+import { useDebouncedValue } from '../../hooks/useDebouncedValue.ts'
+import { adminService } from '../../services/admin.ts'
+import { notify, notifyError } from '../../utils/notifications.ts'
+import { userStorage } from '../../utils/userStorage.ts'
+import type { UserInfo, UpdateUserData } from '../../types/auth.ts'
+import SkeletonList from '../../components/ui/SkeletonList.tsx'
+import { useSkeletonCount } from '../../hooks/useSkeletonCount.ts'
+import TabHighlight from '../../components/ui/TabHighlight.tsx'
+import { tabCarouselClass, useTabCarousel } from '../../hooks/useTabCarousel.ts'
+
+const ROLE_OPTIONS = ['ALL', 'OWNER', 'ADMIN', 'TEACHER']
+
+/**
+ * Admin page of the staff accounts: filter by role and the forms to create, edit and delete them.
+ */
+function AdminUsersPage() {
+  const { t } = useTranslation()
+  const { users, loading, error, totalPages, fetchUsers, updateUser, deleteUser } = useAdmin()
+
+  const currentUser = userStorage.getUser()
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [userToEdit, setUserToEdit] = useState<UserInfo | null>(null)
+  const [userToDelete, setUserToDelete] = useState<UserInfo | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [roleFilter, setRoleFilter] = useState<string>('ALL')
+  const tabRowRef = useTabCarousel(roleFilter)
+  const [currentPage, setCurrentPage] = useState(1)
+
+  // the search runs in the backend over every user, not only the loaded page
+  const search = useDebouncedValue(searchTerm.trim())
+
+  useEffect(() => {
+    void fetchUsers(currentPage - 1, roleFilter, search)
+  }, [currentPage, fetchUsers, roleFilter, search])
+
+  const roleLabels: Record<string, string> = {
+    OWNER: t('admin.roles.OWNER'),
+    TEACHER: t('admin.roles.TEACHER'),
+    ADMIN: t('admin.roles.ADMIN'),
+  }
+
+  const roleFilterClassName = (active: boolean) =>
+    `relative rounded-full border px-md py-xs font-body text-body-sm font-semibold transition-colors duration-300 ${
+      active ? 'border-green-500 text-white' : 'border-green-500 bg-transparent text-heading hover:bg-green-50'
+    }`
+
+  const handleSave = async (id: string, data: UpdateUserData) => {
+    try {
+      await updateUser(id, data)
+      notify.success(t('admin.updateUserToastTitle'))
+    } catch (err) {
+      notifyError(t('admin.updateUserErrorToastTitle'), err)
+      throw err
+    }
+  }
+
+  const handleUploadPhoto = async (id: string, file: File) => {
+    await adminService.uploadTeacherPhoto(id, file)
+    await fetchUsers(currentPage - 1, roleFilter)
+  }
+
+  const handleDeletePhoto = async (id: string) => {
+    await adminService.deleteTeacherPhoto(id)
+    await fetchUsers(currentPage - 1, roleFilter)
+  }
+
+  const handleEdit = (user: UserInfo) => () => {
+    setUserToEdit(user)
+  }
+
+  const handleDelete = (user: UserInfo) => () => {
+    setUserToDelete(user)
+  }
+
+  const skeletonCount = useSkeletonCount('admin-users', loading, users.length, 4)
+
+  return (
+    <div id="admin-users">
+      <AdminLayout>
+        <div className="flex flex-wrap items-center justify-between gap-md">
+          <div>
+            <h1 className="m-0 font-heading text-page-title font-bold leading-[1.15] text-heading">
+              {t('admin.usersTitle')}
+            </h1>
+            <p className="mt-2 font-body text-body text-neutral-500">
+              {t('admin.usersSubtitle')}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowCreateModal(true)}
+            className="inline-flex h-11 items-center gap-xs whitespace-nowrap rounded-full blob-fill bg-orange-500 px-[var(--scale-600)] font-body text-body-sm font-semibold text-white transition-colors hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-link focus-visible:outline-offset-2"
+          >
+            <PlusIcon size={18} aria-hidden="true" />
+            <span>{t('admin.addUser')}</span>
+          </button>
+        </div>
+
+        <div className="mb-lg mt-xl flex flex-col-reverse gap-md xl:flex-row xl:items-center xl:justify-between">
+          <div ref={tabRowRef} className={`${tabCarouselClass} -my-1 min-w-0 xl:flex-1`}>
+            {ROLE_OPTIONS.map((role) => (
+              <button
+                key={role}
+                type="button"
+                aria-pressed={roleFilter === role}
+                onClick={() => {
+                  setRoleFilter(role)
+                  setCurrentPage(1)
+                }}
+                className={roleFilterClassName(roleFilter === role)}
+              >
+                {roleFilter === role && <TabHighlight layoutId="admin-users-role-tab" className="bg-green-500" />}
+                {role === 'ALL' ? t('admin.allRoles') : roleLabels[role] ?? role}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex h-11 w-full min-w-0 shrink-0 items-center gap-sm rounded-full border border-neutral-200 bg-white px-md transition-colors focus-within:border-green-500 xl:w-[360px]">
+            <SearchIcon size={18} className="shrink-0 text-neutral-500" aria-hidden="true" />
+            <input
+              type="search"
+              className="h-full min-w-0 flex-1 border-none bg-transparent font-body text-body-sm text-body-text-dark outline-none placeholder:text-neutral-400"
+              placeholder={t('admin.searchPlaceholder')}
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value)
+                setCurrentPage(1)
+              }}
+              aria-label={t('admin.searchPlaceholder')}
+            />
+          </div>
+        </div>
+
+        {loading && (
+          <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
+            <SkeletonList count={skeletonCount}>{() => <TeacherCard loading />}</SkeletonList>
+          </div>
+        )}
+
+        {error && <StatusMessage variant="error" description={error} />}
+
+        {!loading && !error && (
+          users.length === 0 ? (
+            <StatusMessage
+              icon={searchTerm.trim() || roleFilter !== 'ALL' ? SearchX : Users}
+              description={searchTerm.trim() || roleFilter !== 'ALL' ? t('admin.noResults') : t('common.noUsers')}
+            />
+          ) : (
+            <>
+              <div className="grid grid-cols-1 gap-md xl:grid-cols-2">
+                {users.map((user) => (
+                  <TeacherCard
+                    key={user.id}
+                    user={user}
+                    isSelf={user.id === currentUser?.id}
+                    onEdit={handleEdit(user)}
+                    onDelete={handleDelete(user)}
+                  />
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+              )}
+            </>
+          )
+        )}
+      </AdminLayout>
+
+      {showCreateModal && (
+        <CreateUserModal
+          onCreated={() => fetchUsers(currentPage - 1, roleFilter)}
+          onClose={() => setShowCreateModal(false)}
+        />
+      )}
+
+      {userToEdit && currentUser && (
+        <EditUserModal
+          userToEdit={userToEdit}
+          currentUser={currentUser}
+          onSave={handleSave}
+          onUploadPhoto={handleUploadPhoto}
+          onDeletePhoto={handleDeletePhoto}
+          onClose={() => setUserToEdit(null)}
+        />
+      )}
+
+      {userToDelete && (
+        <DeleteUserModal
+          user={userToDelete}
+          onConfirm={async (id) => {
+            try {
+              await deleteUser(id)
+              await fetchUsers(currentPage - 1, roleFilter)
+              notify.success(t('admin.deleteUserToastTitle'))
+            } catch (err) {
+              notifyError(t('admin.deleteUserErrorToastTitle'), err)
+              throw err
+            }
+          }}
+          onClose={() => setUserToDelete(null)}
+        />
+      )}
+    </div>
+  )
+}
+
+export default AdminUsersPage

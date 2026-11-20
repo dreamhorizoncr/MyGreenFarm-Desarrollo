@@ -1,3 +1,4 @@
+/** Arrow of the carousels; `flip` points it to the left. */
 function CarouselArrowIcon({ flip = false }: Readonly<{ flip?: boolean }>) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" className={`size-[40%] ${flip ? 'rotate-180' : ''}`}>

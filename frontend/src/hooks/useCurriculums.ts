@@ -8,6 +8,11 @@ function currentLang(): string {
   return (i18n.language ?? 'es').split('-')[0] ?? 'es'
 }
 
+/**
+ * Job applications and the actions to send, accept, reject and delete them.
+ *
+ * @returns the applications, the loading and error state, and the actions
+ */
 export function useCurriculums() {
   const [curriculums, setCurriculums] = useState<Curriculum[]>([])
   const [loading, setLoading] = useState(true)

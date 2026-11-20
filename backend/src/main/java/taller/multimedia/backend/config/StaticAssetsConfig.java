@@ -7,6 +7,11 @@ import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Cache headers for the frontend served by the backend: the built assets have hashed names, so they
+ * are cached for a year; {@code index.html} is never cached so a new deployment is picked up at
+ * once.
+ */
 @Configuration
 public class StaticAssetsConfig implements WebMvcConfigurer {
 

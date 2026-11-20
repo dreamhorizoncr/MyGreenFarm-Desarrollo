@@ -6,6 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * An image of an announcement: its cover or one of its gallery images.
+ */
 @Data
 @Builder
 public class AnnouncementImageResponse {

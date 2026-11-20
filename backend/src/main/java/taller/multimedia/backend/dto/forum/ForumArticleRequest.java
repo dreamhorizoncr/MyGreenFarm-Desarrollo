@@ -4,6 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * Data of a forum article. The author name and role are optional; set {@code removeImage} to delete
+ * the current image.
+ */
 @Data
 public class ForumArticleRequest {
 

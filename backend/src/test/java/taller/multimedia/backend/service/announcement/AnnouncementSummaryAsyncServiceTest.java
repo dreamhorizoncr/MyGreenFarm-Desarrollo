@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import taller.multimedia.backend.model.announcement.Announcement;
 import taller.multimedia.backend.repository.announcement.AnnouncementRepository;
-import taller.multimedia.backend.utils.HashUtils;
+import taller.multimedia.backend.util.HashUtils;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

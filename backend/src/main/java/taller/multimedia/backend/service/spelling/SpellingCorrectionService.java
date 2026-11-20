@@ -20,6 +20,10 @@ import taller.multimedia.backend.util.Sanitizer;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
+/**
+ * Asks Gemini to correct the spelling of Spanish texts (accents, letters, capitalization and
+ * punctuation) without rewriting them.
+ */
 @Service
 @RequiredArgsConstructor
 public class SpellingCorrectionService {
@@ -56,6 +60,17 @@ public class SpellingCorrectionService {
             .readTimeout(30, TimeUnit.SECONDS)
             .build();
 
+    /**
+     * Corrects several texts in a single request.
+     *
+     * <p>A correction is discarded when it looks like a rewrite instead of a spelling fix: if it
+     * changes the length by more than 15% (at least 10 characters are always allowed), changes the
+     * number of lines, is blank, or contains unsafe content.
+     *
+     * @param texts texts by field name; blank values are skipped
+     * @return only the fields whose correction was accepted; empty when nothing changed, Gemini
+     *     failed or no API key is configured
+     */
     public Map<String, String> correct(Map<String, String> texts) {
         Map<String, String> pending = new LinkedHashMap<>();
         texts.forEach((field, value) -> {
@@ -82,6 +97,11 @@ public class SpellingCorrectionService {
         return changes;
     }
 
+    /**
+     * @param original text sent to Gemini
+     * @param candidate text returned by Gemini
+     * @return whether the candidate can replace the original
+     */
     private boolean isSafeCorrection(String original, String candidate) {
         if (candidate.isBlank() || Sanitizer.hasMaliciousContent(candidate)) {
             return false;
@@ -94,9 +114,17 @@ public class SpellingCorrectionService {
     }
 
     private long lineCount(String text) {
-        return text.replace("\r\n", "\n").chars().filter(c -> c == '\n').count();
+        return text.replace("\r\n", "\n").chars().filter(character -> character == '\n').count();
     }
 
+    /**
+     * Sends the texts as a JSON object and reads the corrected JSON object from Gemini's answer.
+     * The temperature is 0 so the model does not get creative.
+     *
+     * @param texts texts by field name
+     * @return the corrected texts by field name, or {@code null} if the call failed or the answer
+     *     was not a JSON object
+     */
     private JsonNode callGemini(Map<String, String> texts) {
         try {
             String url = baseUrl + "/models/" + model + ":generateContent";

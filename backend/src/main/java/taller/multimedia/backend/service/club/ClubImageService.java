@@ -7,7 +7,7 @@ import taller.multimedia.backend.model.club.Club;
 import taller.multimedia.backend.model.club.ClubImage;
 import taller.multimedia.backend.repository.club.ClubImageRepository;
 import taller.multimedia.backend.repository.club.ClubRepository;
-import taller.multimedia.backend.service.StorageService;
+import taller.multimedia.backend.service.storage.StorageService;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
+/**
+ * Images of clubs: one optional cover and up to four ordered images for the club's gallery, stored
+ * in the clubs bucket.
+ */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ClubImageService {
@@ -32,6 +38,20 @@ public class ClubImageService {
     @Value("${supabase.s3.buckets.clubs}")
     private String clubsBucket;
 
+    /**
+     * Uploads images to a club. A new cover replaces the previous one, which is also deleted from
+     * storage.
+     *
+     * @param clubId club ID
+     * @param files images in PNG, JPG, JPEG, SVG or WEBP format
+     * @param isCover {@code true} to upload the cover (only one file allowed)
+     * @param altTexts alternative texts in the same order as the files; missing ones are left empty
+     * @return the saved images
+     * @throws EntityNotFoundException if the club does not exist
+     * @throws IllegalArgumentException if there are no files, more than one cover or a format is
+     *     not allowed
+     * @throws IllegalStateException if the gallery would have more than four images
+     */
     @Transactional
     public List<ClubImageResponse> uploadImages(Long clubId, List<MultipartFile> files, boolean isCover, List<String> altTexts) {
         Club club = clubRepository.findById(clubId)
@@ -46,7 +66,7 @@ public class ClubImageService {
         }
 
         List<ClubImage> existingImages = imageRepository.findByClubIdOrderBySortOrderAsc(clubId);
-        long currentGalleryCount = existingImages.stream().filter(img -> !Boolean.TRUE.equals(img.getIsCover()))
+        long currentGalleryCount = existingImages.stream().filter(image -> !Boolean.TRUE.equals(image.getIsCover()))
                 .count();
 
         if (!isCover && (currentGalleryCount + files.size() > 4)) {
@@ -92,6 +112,18 @@ public class ClubImageService {
         return responses;
     }
 
+    /**
+     * Replaces the file of an image and can turn it into the cover or into a gallery image. The old
+     * file is deleted from storage, as is the previous cover when this image becomes the cover.
+     *
+     * @param imageId image ID
+     * @param file new image in PNG, JPG, JPEG, SVG or WEBP format
+     * @param isCover new role of the image, or {@code null} to keep it
+     * @return the updated image
+     * @throws EntityNotFoundException if the image does not exist
+     * @throws IllegalArgumentException if the file is missing or its format is not allowed
+     * @throws IllegalStateException if the gallery would have more than four images
+     */
     @Transactional
     public ClubImageResponse updateImage(Long imageId, MultipartFile file, Boolean isCover) {
         if (file == null || file.isEmpty()) {
@@ -113,7 +145,7 @@ public class ClubImageService {
         if (!newIsCover) {
             List<ClubImage> existingImages = imageRepository.findByClubIdOrderBySortOrderAsc(clubId);
             long currentGalleryCount = existingImages.stream()
-                    .filter(img -> !Boolean.TRUE.equals(img.getIsCover()) && !img.getId().equals(imageId))
+                    .filter(galleryImage -> !Boolean.TRUE.equals(galleryImage.getIsCover()) && !galleryImage.getId().equals(imageId))
                     .count();
 
             if (currentGalleryCount >= 4) {
@@ -138,7 +170,7 @@ public class ClubImageService {
             try {
                 storageService.deleteFile(clubsBucket, oldFilePath);
             } catch (Exception e) {
-                System.err.println("Could not delete the old image from storage: " + e.getMessage());
+                log.warn("Could not delete the old image from storage: {}", e.getMessage());
             }
         }
 
@@ -152,6 +184,13 @@ public class ClubImageService {
         return mapToResponse(updated);
     }
 
+    /**
+     * @param imageId image ID
+     * @param newSortOrder position in the club's gallery, zero or greater
+     * @return the updated image
+     * @throws IllegalArgumentException if the position is negative or missing
+     * @throws EntityNotFoundException if the image does not exist
+     */
     @Transactional
     public ClubImageResponse updateSortOrder(Long imageId, Integer newSortOrder) {
         if (newSortOrder == null || newSortOrder < 0) {
@@ -167,6 +206,11 @@ public class ClubImageService {
         return mapToResponse(updated);
     }
 
+    /**
+     * @param imageId image ID
+     * @param altText new alternative text; it is cleaned before saving
+     * @throws RuntimeException if the image does not exist
+     */
     @Transactional
     public void updateAltText(Long imageId, String altText) {
         ClubImage image = imageRepository.findById(imageId)
@@ -183,6 +227,10 @@ public class ClubImageService {
                 contentType.equals("image/webp");
     }
 
+    /**
+     * @param clubId club ID
+     * @return the club's images in their gallery order
+     */
     @Transactional(readOnly = true)
     public List<ClubImageResponse> getImagesByClub(Long clubId) {
         return imageRepository.findByClubIdOrderBySortOrderAsc(clubId).stream()
@@ -190,6 +238,13 @@ public class ClubImageService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Deletes an image from storage and from the club. If the file cannot be deleted, the error is
+     * logged and the image is still removed.
+     *
+     * @param imageId image ID
+     * @throws EntityNotFoundException if the image does not exist
+     */
     @Transactional
     public void deleteImage(Long imageId) {
         ClubImage image = imageRepository.findById(imageId)
@@ -202,7 +257,7 @@ public class ClubImageService {
             try {
                 storageService.deleteFile(clubsBucket, filePath);
             } catch (Exception e) {
-                System.err.println("Could not delete the file from the bucket: " + e.getMessage());
+                log.warn("Could not delete the file from the bucket: {}", e.getMessage());
             }
         }
 
@@ -215,6 +270,12 @@ public class ClubImageService {
         }
     }
 
+    /**
+     * Deletes all the images of a club, before the club itself is deleted. A file that cannot be
+     * deleted from storage is logged and skipped.
+     *
+     * @param clubId club ID
+     */
     @Transactional
     public void deleteAllImagesByClub(Long clubId) {
         List<ClubImage> images = imageRepository.findByClubIdOrderBySortOrderAsc(clubId);
@@ -229,7 +290,7 @@ public class ClubImageService {
                 try {
                     storageService.deleteFile(clubsBucket, filePath);
                 } catch (Exception e) {
-                    System.err.println("Could not delete the file from the bucket: " + e.getMessage());
+                    log.warn("Could not delete the file from the bucket: {}", e.getMessage());
                 }
             }
         }
@@ -242,6 +303,11 @@ public class ClubImageService {
         imageRepository.deleteAll(images);
     }
 
+    /**
+     * @param fileUrl public URL of a stored file
+     * @param bucketName bucket that contains the file
+     * @return the file's path inside the bucket, or {@code null} if the URL does not belong to it
+     */
     private String extractPathFromUrl(String fileUrl, String bucketName) {
         try {
             String marker = "/" + bucketName + "/";
@@ -250,7 +316,7 @@ public class ClubImageService {
                 return fileUrl.substring(index + marker.length());
             }
         } catch (Exception e) {
-            System.err.println("Error extracting the path from the URL: " + e.getMessage());
+            log.warn("Error extracting the path from the URL: {}", e.getMessage());
         }
         return null;
     }

@@ -6,6 +6,9 @@ import taller.multimedia.backend.model.gallery.CategoryGallery;
 
 import java.util.UUID;
 
+/**
+ * Storage of gallery categories.
+ */
 public interface CategoryGalleryRepository extends JpaRepository<CategoryGallery, UUID> {
     
 }

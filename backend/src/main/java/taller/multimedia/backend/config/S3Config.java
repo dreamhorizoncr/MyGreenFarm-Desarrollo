@@ -12,6 +12,10 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
+/**
+ * Clients for Supabase Storage through its S3-compatible API ({@code supabase.s3.*}). Path-style
+ * access is required by Supabase.
+ */
 @Configuration
 public class S3Config {
 
@@ -27,6 +31,9 @@ public class S3Config {
         @Value("${supabase.s3.secret-key}")
         private String secretKey;
 
+        /**
+         * @return the client used to upload and delete files
+         */
         @Bean
         public S3Client s3Client() {
                 AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey, secretKey);
@@ -39,6 +46,9 @@ public class S3Config {
                                 .build();
         }
 
+        /**
+         * @return the signer used to create temporary links to private files
+         */
         @Bean
         public S3Presigner s3Presigner() {
                 return S3Presigner.builder()

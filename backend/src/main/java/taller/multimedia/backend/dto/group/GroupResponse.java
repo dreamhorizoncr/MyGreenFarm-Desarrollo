@@ -9,6 +9,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import taller.multimedia.backend.dto.child.ChildOptionResponse;
 
+/**
+ * A class group with its teachers, children and free spots.
+ */
 @Data
 @Builder
 @NoArgsConstructor

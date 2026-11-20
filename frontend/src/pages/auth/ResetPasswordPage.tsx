@@ -1,0 +1,152 @@
+import { useState, type FormEvent } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Link, useSearchParams } from 'react-router-dom'
+import TextField from '../../components/ui/TextField.tsx'
+import AuthButton from '../../components/ui/AuthButton.tsx'
+import AuthLayout from '../../layout/AuthLayout.tsx'
+import { useResetPassword } from '../../hooks/useResetPassword.ts'
+import { validatePassword } from '../../utils/validators.ts'
+import { notify } from '../../utils/notifications.ts'
+import { userStorage } from '../../utils/userStorage.ts'
+
+/** Page to choose a new password with the token of the reset email (`?token=`). */
+function ResetPasswordPage() {
+  const { t } = useTranslation();
+  const isAuthenticated = !!userStorage.getUser();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPasswordError, setShowPasswordError] = useState(false);
+  const passwordValidationError = showPasswordError ? validatePassword(newPassword, t) : null;
+  const [showConfirmError, setShowConfirmError] = useState(false);
+  const confirmValidationError = showConfirmError && confirmPassword !== newPassword
+    ? t('resetPassword.passwordMismatch')
+    : null;
+
+  const { submitResetPassword, loading, error, success } = useResetPassword();
+
+  const handleResetPassword = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!token) return;
+
+    const passwordErrorMessage = validatePassword(newPassword, t);
+    setShowPasswordError(passwordErrorMessage !== null);
+
+    const confirmErrorMessage =
+      confirmPassword === newPassword
+        ? null
+        : t('resetPassword.passwordMismatch')
+    setShowConfirmError(confirmErrorMessage !== null)
+
+    if (passwordErrorMessage || confirmErrorMessage) return;
+
+    await submitResetPassword(
+      { token, newPassword },
+      () => {
+        notify.success({
+          title: t('resetPassword.successToastTitle'),
+          description: t('resetPassword.success'),
+        });
+      },
+      () => {
+        notify.error({
+          title: t('resetPassword.errorToastTitle'),
+          description: t('resetPassword.errorToastDescription'),
+        });
+      },
+    );
+  };
+
+  return (
+    <AuthLayout overtitle={t('resetPassword.overtitle')} closeTo={isAuthenticated ? '/profile' : '/login'}>
+      <h2 className="mb-[50px] text-left font-heading text-h3 leading-tight text-heading">
+        {t('resetPassword.title')}
+      </h2>
+
+      {!token ? (
+        <div className="text-center">
+          <p className="mb-[35px] font-body text-body-sm leading-[1.7] text-body-text">
+            {t('resetPassword.missingToken')}
+          </p>
+
+          <Link
+            to="/forgot-password"
+            className="font-link text-body-sm text-heading transition-opacity hover:opacity-70"
+          >
+            {t('resetPassword.requestNewLink')}
+          </Link>
+        </div>
+      ) : (
+        <form onSubmit={handleResetPassword} noValidate>
+          <TextField
+            hint={t('fields.auth.newPassword.hint')}
+            placeholder={t('fields.auth.newPassword.placeholder')}
+            id="reset-password-new"
+            type="password"
+            value={newPassword}
+            onChange={(e) => {
+              setNewPassword(e.target.value)
+
+              setShowPasswordError(false);
+            }}
+            label={t('resetPassword.newPassword')}
+            error={passwordValidationError}
+          />
+
+          <div className="mt-[35px]">
+            <TextField
+              hint={t('fields.auth.confirmPassword.hint')}
+              placeholder={t('fields.auth.confirmPassword.placeholder')}
+              id="reset-password-confirm"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value)
+
+                setShowConfirmError(false)
+              }}
+              label={t('resetPassword.confirmPassword')}
+              error={confirmValidationError}
+            />
+          </div>
+
+          {error && (
+            <p className="mt-4 text-center font-body text-body-sm text-danger">
+              {error}
+            </p>
+          )}
+
+          {success && (
+            <p className="mt-5 text-center font-body text-body-sm text-body-text">
+              {t('resetPassword.success')}
+            </p>
+          )}
+
+          {!success && (
+            <div className="mt-[28px] w-full md:mt-[35px]">
+              <AuthButton loading={loading} disabled={!newPassword || !confirmPassword}>
+                {loading
+                  ? t('resetPassword.loading')
+                  : t('resetPassword.buttonLabel')}
+              </AuthButton>
+            </div>
+          )}
+
+          <p className="mt-[35px] text-center">
+            <Link
+              to={isAuthenticated ? '/profile' : '/login'}
+              className="font-link text-body-sm text-heading transition-opacity hover:opacity-70"
+            >
+              {isAuthenticated ? t('resetPassword.backToProfile') : t('resetPassword.backToLogin')}
+            </Link>
+          </p>
+        </form>
+      )}
+    </AuthLayout>
+  )
+}
+
+export default ResetPasswordPage

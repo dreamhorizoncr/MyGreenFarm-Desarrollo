@@ -6,6 +6,7 @@ import PostAvatar from './PostAvatar.tsx'
 import Skeleton from '../ui/Skeleton.tsx'
 import CardActionButton from '../ui/CardActionButton.tsx'
 
+/** Props of {@link BlogPostCard}; without `post` or while `loading` it shows a skeleton. */
 interface BlogPostCardProps {
   post?: BlogPost
   commentCount?: number
@@ -17,16 +18,20 @@ interface BlogPostCardProps {
   onEdit?: (postId: string) => void
   onDelete?: (postId: string) => void
   loading?: boolean
+  /** Whether to show the actions to edit and delete it. */
   isAdmin?: boolean
 }
 
+/** Props of {@link LikeControl}. */
 interface LikeControlProps {
+  /** Whether it can be clicked; on the admin page it only shows the count. */
   isInteractive: boolean
   isLiked: boolean
   likeCount: number
   onToggle: () => void
 }
 
+/** Like button of an article with its count. */
 function LikeControl({ isInteractive, isLiked, likeCount, onToggle }: Readonly<LikeControlProps>) {
   const { t } = useTranslation()
 
@@ -61,11 +66,13 @@ function LikeControl({ isInteractive, isLiked, likeCount, onToggle }: Readonly<L
   )
 }
 
+/** Props of {@link CommentsControl}. */
 interface CommentsControlProps {
   commentCount: number
   onOpenComments?: () => void
 }
 
+/** Number of comments of an article; a button when the comments can be opened. */
 function CommentsControl({ commentCount, onOpenComments }: Readonly<CommentsControlProps>) {
   const { t } = useTranslation()
 
@@ -97,6 +104,7 @@ function CommentsControl({ commentCount, onOpenComments }: Readonly<CommentsCont
   )
 }
 
+/** Card of an article of the blog: author, topic, image, title, summary, likes and comments. */
 function BlogPostCard({
   post,
   commentCount,

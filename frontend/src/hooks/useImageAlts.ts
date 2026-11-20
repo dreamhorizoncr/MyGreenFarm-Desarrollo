@@ -2,8 +2,10 @@ import { useCallback, useState } from 'react'
 import type { TFunction } from 'i18next'
 import { validateSafeText } from '../utils/validators.ts'
 
+/** Longest alternative text allowed for an image. */
 export const IMAGE_ALT_MAX_LENGTH = 140
 
+/** An image already uploaded, with its alternative text. */
 interface ImageWithAlt {
   id: string | number
   altText?: string | null
@@ -11,6 +13,13 @@ interface ImageWithAlt {
 
 const fileKey = (file: File) => `${file.name}-${file.size}-${file.lastModified}`
 
+/**
+ * Alternative texts of the images of a form: the ones of new files and the edited ones of images
+ * already uploaded.
+ *
+ * @returns getters and setters for both kinds, their errors, `validate`, `altsFor` (the texts of some
+ *   new files, in order), `changed` (the uploaded images whose text was edited) and `reset`
+ */
 export function useImageAlts() {
   const [newAlts, setNewAlts] = useState<Record<string, string>>({})
   const [editedAlts, setEditedAlts] = useState<Record<string, string>>({})

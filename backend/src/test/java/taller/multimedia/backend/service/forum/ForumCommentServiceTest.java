@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import taller.multimedia.backend.dto.forum.ForumCommentRequest;
-import taller.multimedia.backend.dto.forum.ForumMapper;
 import taller.multimedia.backend.exception.InvalidFieldException;
 import taller.multimedia.backend.model.forum.ForumArticle;
 import taller.multimedia.backend.repository.forum.ForumArticleRepository;

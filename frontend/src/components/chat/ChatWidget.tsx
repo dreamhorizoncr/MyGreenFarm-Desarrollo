@@ -2,12 +2,13 @@ import { useRef, useState } from 'react'
 import { XIcon } from '@animateicons/react/lucide'
 import ChatPanel from './ChatPanel'
 import ChickAvatar from './ChickAvatar'
-import TermsModal from '../TermsModal'
+import TermsModal from '../legal/TermsModal'
 import { useChat } from '../../hooks/useChat'
 import { useChatBooking } from '../../hooks/useChatBooking'
 import { useTranslation } from 'react-i18next'
 import useDismiss from '../../hooks/useDismiss'
 
+/** Floating button of the assistant that opens and closes the chat window. */
 export default function ChatWidget() {
   const [open, setOpen] = useState(false)
   const [termsOpen, setTermsOpen] = useState(false)

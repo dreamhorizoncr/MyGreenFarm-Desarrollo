@@ -16,8 +16,13 @@ import tools.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import taller.multimedia.backend.dto.chat.ChatResponse;
-import taller.multimedia.backend.service.ChatService;
+import taller.multimedia.backend.service.chat.ChatService;
 
+/**
+ * Limits the chat to 10 messages per minute per signed-in user, or per IP address for visitors, to
+ * protect the AI quota. Extra messages get a 429 with a chat reply in the user's language. Counters
+ * live in memory.
+ */
 @Component
 public class ChatRateLimitInterceptor implements HandlerInterceptor {
     private static final int LIMIT = 10;
@@ -31,6 +36,13 @@ public class ChatRateLimitInterceptor implements HandlerInterceptor {
         this.mapper = mapper; this.messages = messages;
     }
 
+    /**
+     * @param request incoming request; only {@code POST /api/chat} is limited
+     * @param response response, written when the limit is exceeded
+     * @param handler target handler
+     * @return {@code false} when the limit is exceeded
+     * @throws Exception if the response cannot be written
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (!"POST".equalsIgnoreCase(request.getMethod()) || !"/api/chat".equals(request.getRequestURI())) return true;

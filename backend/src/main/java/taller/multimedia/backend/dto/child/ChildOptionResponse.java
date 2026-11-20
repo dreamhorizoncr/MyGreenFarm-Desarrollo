@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * A child as an option of a select field.
+ */
 @Data 
 @AllArgsConstructor 
 @NoArgsConstructor 

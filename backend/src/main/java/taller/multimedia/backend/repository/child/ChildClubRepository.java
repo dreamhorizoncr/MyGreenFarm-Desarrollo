@@ -6,9 +6,11 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+/**
+ * Storage of the enrollments of children in clubs.
+ */
 public interface ChildClubRepository extends JpaRepository<ChildClub, Long> {
     long countByClubId(Long clubId);
     void deleteByClubId(Long clubId);
-    void deleteByChildId(Long childId);
     List<ChildClub> findByChildId(Long childId);
 }

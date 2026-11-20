@@ -11,6 +11,9 @@ import taller.multimedia.backend.model.forum.ForumArticleLike;
 
 import jakarta.transaction.Transactional;
 
+/**
+ * Storage of the likes on forum articles.
+ */
 public interface ForumArticleLikeRepository extends JpaRepository<ForumArticleLike, UUID> {
 
     boolean existsByArticleIdAndAnonId(UUID articleId, String anonId);
@@ -25,6 +28,10 @@ public interface ForumArticleLikeRepository extends JpaRepository<ForumArticleLi
 
     List<ForumArticleLike> findByAnonId(String anonId);
 
+    /**
+     * @param articleIds articles to count
+     * @return the likes of each article in one query; articles without likes are not included
+     */
     @Query("SELECT fal.article.id AS articleId, COUNT(fal) AS total "
             + "FROM ForumArticleLike fal "
             + "WHERE fal.article.id IN :articleIds "

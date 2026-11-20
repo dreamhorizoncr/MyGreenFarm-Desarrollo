@@ -10,7 +10,6 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import lombok.extern.slf4j.Slf4j;
 import taller.multimedia.backend.dto.appointment.AppointmentRequest;
 import taller.multimedia.backend.dto.appointment.AppointmentResponse;
@@ -32,34 +29,64 @@ import taller.multimedia.backend.model.appointment.Appointment;
 import taller.multimedia.backend.model.appointment.AppointmentStatus;
 import taller.multimedia.backend.model.appointment.ReferralSource;
 import taller.multimedia.backend.repository.appointment.AppointmentRepository;
-import taller.multimedia.backend.service.EmailService;
+import taller.multimedia.backend.service.email.EmailService;
 import taller.multimedia.backend.util.Sanitizer;
+import taller.multimedia.backend.util.AfterCommit;
 
+/**
+ * Visit appointments that families book through the site, and their life cycle: pending, confirmed
+ * or cancelled.
+ *
+ * <p>Appointments last one hour, are booked at least one day in advance on weekdays, and must match
+ * a free slot of the schedule. Changes are emailed to the family and to the administration, and
+ * synced to Google Calendar in the background. Hourly jobs send 24-hour reminders and cancel
+ * pending appointments whose date passed; a nightly job deletes cancelled appointments older than
+ * 30 days.
+ */
 @Slf4j
 @Service
 public class AppointmentService {
 
     private final CalendarSyncAsyncService calendarSyncAsyncService;
 
-    @Autowired
-    private AppointmentRepository appointmentRepository;
+    private final AppointmentRepository appointmentRepository;
 
-    @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
 
-    @Autowired
-    private ScheduleConfigService scheduleConfigService;
+    private final ScheduleConfigService scheduleConfigService;
 
     @Value("${daycare.mail.admin}")
     private String adminEmail;
 
-    AppointmentService(CalendarSyncAsyncService calendarSyncAsyncService) {
+    /**
+     * @param calendarSyncAsyncService syncs appointments with Google Calendar
+     * @param appointmentRepository appointment storage
+     * @param emailService sends the emails to families and administration
+     * @param scheduleConfigService tells which slots are free
+     */
+    AppointmentService(CalendarSyncAsyncService calendarSyncAsyncService, AppointmentRepository appointmentRepository,
+            EmailService emailService, ScheduleConfigService scheduleConfigService) {
         this.calendarSyncAsyncService = calendarSyncAsyncService;
+        this.appointmentRepository = appointmentRepository;
+        this.emailService = emailService;
+        this.scheduleConfigService = scheduleConfigService;
     }
 
+    /**
+     * Books a pending appointment, emails the family and the administration, and adds it to Google
+     * Calendar after the transaction commits.
+     *
+     * @param request family's data, the slot and the language
+     * @return the saved appointment
+     * @throws RuntimeException if the date is today, in the past or on a weekend
+     * @throws SlotUnavailableException if the slot is not free or is already booked
+     * @throws IllegalArgumentException if the ID number, email, phone or referral detail is not
+     *     valid
+     * @throws taller.multimedia.backend.exception.InvalidFieldException if a text is unsafe
+     */
     @Transactional
-    public Appointment createAppointment(AppointmentRequest dto) {
-        LocalDateTime requestedStart = dto.getAppointmentDate();
+    public Appointment createAppointment(AppointmentRequest request) {
+        LocalDateTime requestedStart = request.getAppointmentDate();
         LocalDate requestedDate = requestedStart.toLocalDate();
 
         LocalTime requestedTime = requestedStart.toLocalTime();
@@ -84,27 +111,27 @@ public class AppointmentService {
 
         LocalDateTime requestedEnd = requestedStart.plusMinutes(59);
 
-        validateParentIdentification(dto.getIdType(), dto.getParentIdentification());
+        validateParentIdentification(request.getIdType(), request.getParentIdentification());
 
-        String parentEmail = Sanitizer.requireClean("parentEmail", dto.getParentEmail());
+        String parentEmail = Sanitizer.requireClean("parentEmail", request.getParentEmail());
         validateAllowedEmail(parentEmail);
 
-        String parentName = Sanitizer.requireClean("parentName", dto.getParentName());
-        String parentOccupation = Sanitizer.requireClean("parentOccupation", dto.getParentOccupation());
-        String childName = Sanitizer.requireClean("childName", dto.getChildName());
-        String parentNotes = Sanitizer.requireCleanPreserveLineBreaks("parentNotes", dto.getParentNotes());
-        String referralOtherDetail = dto.getReferralOtherDetail() == null
+        String parentName = Sanitizer.requireClean("parentName", request.getParentName());
+        String parentOccupation = Sanitizer.requireClean("parentOccupation", request.getParentOccupation());
+        String childName = Sanitizer.requireClean("childName", request.getChildName());
+        String parentNotes = Sanitizer.requireCleanPreserveLineBreaks("parentNotes", request.getParentNotes());
+        String referralOtherDetail = request.getReferralOtherDetail() == null
                 ? null
-                : Sanitizer.requireClean("referralOtherDetail", dto.getReferralOtherDetail());
+                : Sanitizer.requireClean("referralOtherDetail", request.getReferralOtherDetail());
 
-        String formattedPhone = parseAndValidatePhone(dto.getParentPhone());
+        String formattedPhone = parseAndValidatePhone(request.getParentPhone());
 
         List<Appointment> conflictingAppointments = appointmentRepository.findByAppointmentDateBetween(
                 requestedStart.minusMinutes(59),
                 requestedEnd);
 
         boolean isSlotTaken = conflictingAppointments.stream()
-                .anyMatch(a -> a.getStatus() != AppointmentStatus.CANCELLED);
+                .anyMatch(appointment -> appointment.getStatus() != AppointmentStatus.CANCELLED);
 
         if (isSlotTaken) {
             throw new SlotUnavailableException(
@@ -112,22 +139,22 @@ public class AppointmentService {
         }
 
         Appointment appointment = new Appointment();
-        appointment.setParentIdentification(dto.getParentIdentification());
+        appointment.setParentIdentification(request.getParentIdentification());
         appointment.setParentName(parentName);
         appointment.setParentEmail(parentEmail);
         appointment.setParentPhone(formattedPhone);
         appointment.setParentOccupation(parentOccupation);
-        appointment.setReferralSource(dto.getReferralSource());
-        if (dto.getReferralSource() == ReferralSource.OTHER) {
+        appointment.setReferralSource(request.getReferralSource());
+        if (request.getReferralSource() == ReferralSource.OTHER) {
             if (referralOtherDetail == null || referralOtherDetail.isBlank()) {
                 throw new IllegalArgumentException("Tell us how you heard about us.");
             }
             appointment.setReferralOtherDetail(referralOtherDetail);
         }
         appointment.setChildName(childName);
-        String langCode = resolverLangCode(dto.getLanguage());
-        appointment.setLanguage(langCode);
-        appointment.setAppointmentDate(dto.getAppointmentDate());
+        String languageCode = resolveLanguageCode(request.getLanguage());
+        appointment.setLanguage(languageCode);
+        appointment.setAppointmentDate(request.getAppointmentDate());
         appointment.setParentNotes(parentNotes);
 
         appointment.setStatus(AppointmentStatus.PENDING);
@@ -136,20 +163,19 @@ public class AppointmentService {
         log.info("Saving the appointment took {} ms", System.currentTimeMillis() - start);
         appointmentRepository.flush();
 
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-            @Override
-            public void afterCommit() {
-                calendarSyncAsyncService.addAppointmentAsync(savedAppointment.getId());
-            }
-        });
+        AfterCommit.run(() -> calendarSyncAsyncService.addAppointmentAsync(savedAppointment.getId()));
 
-        Locale locale = Locale.forLanguageTag(langCode);
+        Locale locale = Locale.forLanguageTag(languageCode);
 
         emailService.sendAppointmentPendingEmail(savedAppointment, locale);
         emailService.sendAdminNewAppointmentAlert(savedAppointment);
         return savedAppointment;
     }
 
+    /**
+     * @param email family's email
+     * @throws IllegalArgumentException if it is not a Gmail, Hotmail or Outlook address
+     */
     private void validateAllowedEmail(String email) {
         if (email == null || !email.contains("@")) {
             throw new IllegalArgumentException("The email is not valid.");
@@ -168,25 +194,35 @@ public class AppointmentService {
         }
     }
 
-    private String resolverLangCode(String languageFromDto) {
-        if (languageFromDto == null || languageFromDto.isBlank()) {
+    /**
+     * @param requestedLanguage language sent by the booking form
+     * @return {@code fr}, {@code en} or {@code es} (the default)
+     */
+    private String resolveLanguageCode(String requestedLanguage) {
+        if (requestedLanguage == null || requestedLanguage.isBlank()) {
             log.warn("The received language is null or empty. Defaulting to 'es'");
             return "es";
         }
 
-        String normalizado = languageFromDto.toLowerCase().trim();
+        String normalized = requestedLanguage.toLowerCase().trim();
 
-        if (normalizado.contains("fr"))
+        if (normalized.contains("fr"))
             return "fr";
-        if (normalizado.contains("en"))
+        if (normalized.contains("en"))
             return "en";
-        if (normalizado.contains("es"))
+        if (normalized.contains("es"))
             return "es";
 
-        log.warn("Unrecognized language '{}'. Defaulting to 'es'", languageFromDto);
+        log.warn("Unrecognized language '{}'. Defaulting to 'es'", requestedLanguage);
         return "es";
     }
 
+    /**
+     * @param idType {@code Costarricense} (9 or 10 digits) or {@code Extranjero} (6 to 20 letters,
+     *     digits or hyphens)
+     * @param parentIdentification ID number
+     * @throws IllegalArgumentException if the type is unknown or the number does not match it
+     */
     private void validateParentIdentification(String idType, String parentIdentification) {
         if (parentIdentification == null || parentIdentification.trim().isEmpty()) {
             throw new IllegalArgumentException("The ID number cannot be empty.");
@@ -205,6 +241,11 @@ public class AppointmentService {
         }
     }
 
+    /**
+     * @param fullPhoneNumber phone with country code, for example {@code +506 8888-8888}
+     * @return the phone as {@code +506 88888888}
+     * @throws IllegalArgumentException if it is empty, has no country code or has the wrong length
+     */
     private String parseAndValidatePhone(String fullPhoneNumber) {
         if (fullPhoneNumber == null || fullPhoneNumber.trim().isEmpty()) {
             throw new IllegalArgumentException("The phone number cannot be empty.");
@@ -217,7 +258,7 @@ public class AppointmentService {
                     "The phone number must include the country code (e.g. +506...).");
         }
 
-        Pattern pattern = java.util.regex.Pattern.compile("^(\\+\\d{1,3})(\\d{7,12})$");
+        Pattern pattern = Pattern.compile("^(\\+\\d{1,3})(\\d{7,12})$");
         Matcher matcher = pattern.matcher(cleanedPhone);
 
         if (!matcher.matches()) {
@@ -227,6 +268,18 @@ public class AppointmentService {
         return matcher.group(1) + " " + matcher.group(2);
     }
 
+    /**
+     * Searches appointments for the admin panel, sorted by date.
+     *
+     * @param status status to filter by, or {@code null} for all
+     * @param date day to filter by, or {@code null}
+     * @param search text to look for in the child's and parent's name, email and phone, or {@code
+     *     null}
+     * @param excludePast whether to hide appointments before {@code notBefore}
+     * @param notBefore limit for past appointments, or {@code null} for now
+     * @param pageable page and size; its sort is ignored
+     * @return the matching appointments
+     */
     @Transactional(readOnly = true)
     public Page<AppointmentResponse> getAppointments(
             AppointmentStatus status,
@@ -268,11 +321,28 @@ public class AppointmentService {
         return appointmentRepository.findAll(specification, stablePageable).map(AppointmentResponse::from);
     }
 
+    /**
+     * @param id appointment ID
+     * @return the appointment
+     * @throws RuntimeException if it does not exist
+     */
     public Appointment getAppointmentById(UUID id) {
         return appointmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Appointment not found with the ID: " + id));
     }
 
+    /**
+     * Changes the status of an appointment. When it really changes, the family and the
+     * administration are emailed; confirming or cancelling also updates Google Calendar.
+     *
+     * @param id appointment ID
+     * @param newStatus new status
+     * @param teacherConclusion notes after the visit, optional
+     * @param lang language for the email when the appointment has none
+     * @return the updated appointment
+     * @throws RuntimeException if the appointment does not exist
+     * @throws taller.multimedia.backend.exception.InvalidFieldException if the notes are unsafe
+     */
     @Transactional
     public Appointment updateAppointmentStatus(
             UUID id,
@@ -322,6 +392,18 @@ public class AppointmentService {
         return updatedAppointment;
     }
 
+    /**
+     * Moves an appointment to another free slot. A pending appointment becomes confirmed. The
+     * family is emailed and Google Calendar is updated.
+     *
+     * @param id appointment ID
+     * @param newAppointmentDate new slot
+     * @param lang language for the email when the appointment has none
+     * @return the updated appointment
+     * @throws RuntimeException if the date is today, in the past or on a weekend, or the
+     *     appointment does not exist or was cancelled
+     * @throws SlotUnavailableException if the new slot is not free
+     */
     @Transactional
     public Appointment rescheduleAppointment(
             UUID id,
@@ -395,6 +477,10 @@ public class AppointmentService {
         return savedAppointment;
     }
 
+    /**
+     * Every hour, emails a reminder for the confirmed appointments that start between 24 and 25
+     * hours from now. A failed email is logged and the rest are still sent.
+     */
     @Scheduled(cron = "0 0 * * * *")
     @Transactional
     public void send24HourReminders() {
@@ -408,22 +494,25 @@ public class AppointmentService {
 
         for (Appointment appointment : upcomingAppointments) {
             try {
-                String langCode = appointment.getLanguage() != null ? appointment.getLanguage() : "es";
-                Locale locale = Locale.forLanguageTag(langCode);
+                String languageCode = appointment.getLanguage() != null ? appointment.getLanguage() : "es";
+                Locale locale = Locale.forLanguageTag(languageCode);
 
                 emailService.sendAppointmentReminderEmail(appointment, locale);
 
                 appointment.setReminderSent(true);
                 appointmentRepository.save(appointment);
 
-                System.out.println("Reminder email sent for appointment ID: " + appointment.getId());
+                log.info("Reminder email sent for appointment ID: {}", appointment.getId());
             } catch (Exception e) {
-                System.err.println(
-                        "Error sending the reminder for appointment " + appointment.getId() + ": " + e.getMessage());
+                log.warn("Error sending the reminder for appointment {}: {}", appointment.getId(), e.getMessage());
             }
         }
     }
 
+    /**
+     * Every hour, cancels the pending appointments whose date already passed without being
+     * confirmed, notifying the family, the administration and Google Calendar.
+     */
     @Scheduled(cron = "0 0 * * * *")
     @Transactional
     public void autoCancelExpiredPendingAppointments() {
@@ -455,6 +544,10 @@ public class AppointmentService {
         }
     }
 
+    /**
+     * Every night at midnight, deletes the cancelled appointments whose date is more than 30 days
+     * old.
+     */
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void deleteOldCancelledAppointments() {

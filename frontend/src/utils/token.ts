@@ -1,6 +1,7 @@
 
 const TOKEN_KEY = 'mgf_token'
 
+/** Session token, kept in `localStorage` and sent by {@link apiClient} in every request. */
 export const tokenStorage = {
   getToken(): string | null {
     return localStorage.getItem(TOKEN_KEY)

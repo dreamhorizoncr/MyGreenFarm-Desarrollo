@@ -11,6 +11,7 @@ preloadListCounts()
 installReducedMotionBridge()
 installModalScrollbars()
 
+/** Logs the promises that fail without a `catch`, so they are not silent. */
 window.addEventListener("unhandledrejection", (event) => {
   console.error("Unhandled promise rejection:", event.reason);
 });

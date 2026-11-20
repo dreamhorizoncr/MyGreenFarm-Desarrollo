@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.DayOfWeek;
 import java.util.Optional;
 
+/**
+ * Storage of the regular weekly schedule for appointments, one row per weekday.
+ */
 public interface WeeklyScheduleRepository extends JpaRepository<WeeklySchedule, Long> {
     Optional<WeeklySchedule> findByDayOfWeek(DayOfWeek dayOfWeek);
 }

@@ -28,6 +28,9 @@ import taller.multimedia.backend.dto.forum.ForumCommentRequest;
 import taller.multimedia.backend.dto.forum.ForumCommentResponse;
 import taller.multimedia.backend.service.forum.ForumCommentService;
 
+/**
+ * Comments on forum articles. Visitors may read and publish them; only the owner may delete them.
+ */
 @Validated
 @RestController
 @RequestMapping("/api/forum/articles/{articleId}/comments")
@@ -36,6 +39,14 @@ public class ForumCommentController {
 
     private final ForumCommentService commentService;
 
+    /**
+     * {@code GET /api/forum/articles/{articleId}/comments}
+     *
+     * @param articleId forum article
+     * @param page page number, from 0
+     * @param size page size, 1 to 10
+     * @return the comments, newest first
+     */
     @GetMapping
     @PreAuthorize("permitAll()")
     public ResponseEntity<Page<ForumCommentResponse>> getByArticle(
@@ -46,6 +57,14 @@ public class ForumCommentController {
         return ResponseEntity.ok(commentService.getByArticle(articleId, pageable));
     }
 
+    /**
+     * {@code POST /api/forum/articles/{articleId}/comments}: publishes a comment after moderating
+     * it.
+     *
+     * @param articleId forum article
+     * @param request alias and content
+     * @return 201 with the published comment
+     */
     @PostMapping
     @PreAuthorize("permitAll()")
     public ResponseEntity<ForumCommentResponse> create(
@@ -54,6 +73,13 @@ public class ForumCommentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(commentService.create(articleId, request));
     }
 
+    /**
+     * {@code DELETE /api/forum/articles/{articleId}/comments/{commentId}}, owner only.
+     *
+     * @param commentId comment ID
+     * @param context current user
+     * @return 204
+     */
     @DeleteMapping("/{commentId}")
     @PreAuthorize("hasRole('OWNER')")
     public ResponseEntity<Void> delete(

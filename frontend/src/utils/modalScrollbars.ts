@@ -6,6 +6,10 @@ const MAX_THUMB = 56
 
 const updaters = new Map<HTMLElement, () => void>()
 
+/**
+ * Adds a custom scrollbar to a scrollable container: it can be dragged, clicking the track scrolls
+ * there, and it hides when there is nothing to scroll.
+ */
 function enhance(container: HTMLElement) {
   const track = document.createElement('div')
   track.className = 'modal-scrollbar'
@@ -85,6 +89,7 @@ function enhance(container: HTMLElement) {
   update()
 }
 
+/** Adds the scrollbar to the new containers and updates the existing ones. */
 function scan() {
   for (const element of document.querySelectorAll<HTMLElement>(SELECTOR)) {
     if (!updaters.has(element)) enhance(element)
@@ -94,6 +99,10 @@ function scan() {
 
 let installed = false
 
+/**
+ * Gives every element with the `modal-scroll` class the site's scrollbar, also the ones added later.
+ * It is called once when the app starts; later calls do nothing.
+ */
 export function installModalScrollbars() {
   if (installed || typeof window === 'undefined') return
   installed = true

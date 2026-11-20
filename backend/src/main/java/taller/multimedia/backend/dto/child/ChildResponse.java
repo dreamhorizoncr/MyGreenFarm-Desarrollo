@@ -8,6 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import taller.multimedia.backend.model.child.Relationship;
 
+/**
+ * An enrolled child with their parent and clubs.
+ */
 @Data 
 @NoArgsConstructor 
 @AllArgsConstructor 

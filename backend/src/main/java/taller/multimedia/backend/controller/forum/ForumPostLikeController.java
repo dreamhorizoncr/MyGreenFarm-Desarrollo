@@ -15,12 +15,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import taller.multimedia.backend.dto.forum.ForumPostLikeResponse;
+import taller.multimedia.backend.controller.common.AnonymousVisitor;
 import taller.multimedia.backend.service.forum.ForumPostLikeService;
 
+/**
+ * Likes on community posts from anonymous visitors, identified by the {@code anon_id} cookie.
+ */
 @RestController 
 @RequestMapping ("/api/forum/posts/likes")
 @RequiredArgsConstructor 
@@ -28,31 +31,40 @@ public class ForumPostLikeController {
 
     private final ForumPostLikeService postLikeService;
 
+    /**
+     * {@code POST /api/forum/posts/likes/{postId}}: adds or removes the visitor's like. Signed-in
+     * staff may not like posts.
+     *
+     * @param postId community post
+     * @param context security context, to reject signed-in users
+     * @param anonId visitor ID from the cookie; created when missing
+     * @param response response, to set the cookie
+     * @return the post's likes and whether the visitor likes it, or 403 for signed-in users
+     */
     @PostMapping ("/{postId}")
     public ResponseEntity<ForumPostLikeResponse> react(
             @PathVariable("postId") UUID postId,
             @CurrentSecurityContext SecurityContext context,
-            @CookieValue (name = "anon_id", required = false) String anonId,
+            @CookieValue(name = AnonymousVisitor.COOKIE_NAME, required = false) String anonId,
             HttpServletResponse response) {
         if (!(context.getAuthentication() instanceof AnonymousAuthenticationToken)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        if (anonId == null || anonId.isBlank()) {
-            anonId = UUID.randomUUID().toString();
-            Cookie cookie = new Cookie("anon_id", anonId);
-            cookie.setHttpOnly(true);
-            cookie.setMaxAge(60 * 60 * 24 * 365);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-        }
+        anonId = AnonymousVisitor.ensureId(anonId, response);
 
         return ResponseEntity.ok(postLikeService.toggleLike(postId, anonId));
     }
 
+    /**
+     * {@code GET /api/forum/posts/likes/mine}
+     *
+     * @param anonId visitor ID from the cookie, may be missing
+     * @return IDs of the posts the visitor likes
+     */
     @GetMapping ("/mine")
     public ResponseEntity<List<UUID>> myLikes(
-            @CookieValue(name = "anon_id", required = false) String anonId) {
+            @CookieValue(name = AnonymousVisitor.COOKIE_NAME, required = false) String anonId) {
         return ResponseEntity.ok(postLikeService.findLikedPostIds(anonId));
     }
 }

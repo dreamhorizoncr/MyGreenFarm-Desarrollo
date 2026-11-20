@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.Valid;
-import taller.multimedia.backend.dto.ImageAltRequest;
+import taller.multimedia.backend.dto.common.ImageAltRequest;
 import taller.multimedia.backend.util.ImageAltText;
 import tools.jackson.databind.ObjectMapper;
 import taller.multimedia.backend.dto.gallery.GalleryImageResponse;
@@ -25,6 +25,9 @@ import taller.multimedia.backend.service.gallery.GalleryImageService;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Images of the photo galleries. Reading is public; changes are for the owner and admins.
+ */
 @RestController
 @RequestMapping("/api/gallery")
 @RequiredArgsConstructor
@@ -33,6 +36,15 @@ public class GalleryImageController {
     private final GalleryImageService imageService;
     private final ObjectMapper objectMapper;
 
+    /**
+     * {@code POST /api/gallery/{galleryId}/images}, multipart.
+     *
+     * @param galleryId gallery ID
+     * @param files images to upload
+     * @param title title shared by the images
+     * @param altTextsJson JSON array with the alternative text of each file, optional
+     * @return 201 with the saved images
+     */
     @PostMapping(value = "/{galleryId}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<List<GalleryImageResponse>> uploadImages(
@@ -46,6 +58,14 @@ public class GalleryImageController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responses);
     }
 
+    /**
+     * {@code GET /api/gallery/{galleryId}/images}
+     *
+     * @param galleryId gallery ID
+     * @param page page number, from 0
+     * @param size page size, 1 to 10
+     * @return the gallery's images, newest first, with their likes
+     */
     @Validated
     @GetMapping("/{galleryId}/images")
     @PreAuthorize("permitAll()")
@@ -57,6 +77,12 @@ public class GalleryImageController {
         return ResponseEntity.ok(images);
     }
 
+    /**
+     * {@code GET /api/gallery/images/most-liked}
+     *
+     * @param limit number of images, 1 to 20
+     * @return the most liked images
+     */
     @Validated
     @GetMapping("/images/most-liked")
     @PreAuthorize("permitAll()")
@@ -65,6 +91,13 @@ public class GalleryImageController {
         return ResponseEntity.ok(imageService.getMostLiked(limit));
     }
 
+    /**
+     * {@code PATCH /api/gallery/images/{imageId}/alt}
+     *
+     * @param imageId image ID
+     * @param request new alternative text
+     * @return 204
+     */
     @PatchMapping("/images/{imageId}/alt")
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<Void> updateImageAlt(
@@ -74,6 +107,12 @@ public class GalleryImageController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * {@code DELETE /api/gallery/images/{imageId}}
+     *
+     * @param imageId image ID
+     * @return 204
+     */
     @DeleteMapping("/images/{imageId}")
     @PreAuthorize("hasAnyRole('OWNER', 'ADMIN')")
     public ResponseEntity<Void> deleteImage(@PathVariable UUID imageId) {

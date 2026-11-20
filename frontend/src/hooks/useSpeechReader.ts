@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ReadableBlock } from "../utils/readableContent";
 
+/** Longest text spoken in one utterance; some browsers cut longer ones. */
 const MAX_CHUNK_LENGTH = 180;
 
 function delay(ms: number) {
@@ -22,6 +23,7 @@ function splitLongSentence(sentence: string, chunks: string[]) {
   return part;
 }
 
+/** @returns the text split into sentences no longer than {@link MAX_CHUNK_LENGTH} */
 function splitIntoChunks(text: string) {
   const normalized = text.replace(/\s+/g, " ").trim();
   if (!normalized) return [];
@@ -65,6 +67,13 @@ function getSpeechLanguage(language: string) {
   return base;
 }
 
+/**
+ * Reads texts aloud with the browser's speech synthesis, choosing a voice of the language.
+ *
+ * @param language - two-letter language code
+ * @returns whether it is supported and speaking, the voices, `speakBlocks` (highlights each block
+ *   while reading it), `speakText` and `stop`
+ */
 export function useSpeechReader(language: string) {
   const supported = typeof window !== "undefined" && "speechSynthesis" in window;
   const [isSpeaking, setIsSpeaking] = useState(false);

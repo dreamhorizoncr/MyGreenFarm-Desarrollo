@@ -6,6 +6,9 @@ import java.util.UUID;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * An image of a gallery with its like count.
+ */
 @Data
 @Builder
 public class GalleryImageResponse {

@@ -25,6 +25,9 @@ import taller.multimedia.backend.repository.appointment.AppointmentRepository;
 import taller.multimedia.backend.repository.group.GroupRepository;
 import taller.multimedia.backend.repository.user.UserRepository;
 
+/**
+ * Builds the events shown in the dashboard calendar: appointments and birthdays.
+ */
 @Service
 @RequiredArgsConstructor
 public class CalendarEventService {
@@ -32,6 +35,16 @@ public class CalendarEventService {
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
 
+    /**
+     * Events for a teacher: the birthdays of all teachers and of the active children in the
+     * teacher's groups. Appointments are not included.
+     *
+     * @param email teacher's email
+     * @param from first day, inclusive
+     * @param to last day, inclusive
+     * @return the events sorted by start
+     * @throws ResponseStatusException with 404 if the user does not exist
+     */
     @Transactional(readOnly = true)
     public List<CalendarEventResponse> getTeacherEvents(String email, LocalDate from, LocalDate to) {
         User teacher = userRepository.findByEmail(email)
@@ -57,6 +70,14 @@ public class CalendarEventService {
                 .toList();
     }
 
+    /**
+     * Events for the owner and admins: pending and confirmed appointments (one hour each) and the
+     * teachers' birthdays.
+     *
+     * @param from first day, inclusive
+     * @param to last day, inclusive
+     * @return the events sorted by start
+     */
     public List<CalendarEventResponse> getPlatformEvents(LocalDate from, LocalDate to) {
         LocalDateTime start = from.atStartOfDay();
         LocalDateTime end = to.plusDays(1).atStartOfDay();
@@ -98,6 +119,17 @@ public class CalendarEventService {
                 user.getFirstName() + " " + user.getLastName(), from, to);
     }
 
+    /**
+     * Creates an all-day event for each birthday that falls inside the range, which may span
+     * several years. A February 29 birthday is skipped in years where that date does not exist.
+     *
+     * @param key unique part of the event ID
+     * @param birthDate date of birth
+     * @param name person's name, shown in the title
+     * @param from first day, inclusive
+     * @param to last day, inclusive
+     * @return the birthday events in the range
+     */
     private List<CalendarEventResponse> birthdayEvents(String key, LocalDate birthDate, String name,
             LocalDate from, LocalDate to) {
         List<CalendarEventResponse> events = new ArrayList<>();

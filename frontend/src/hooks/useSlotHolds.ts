@@ -3,10 +3,12 @@ import axios from 'axios'
 import { appointmentService } from '../services/appointment.ts'
 import { getErrorMessage } from '../utils/error.ts'
 
+/** Events of the slots stream. */
 type SlotStatus = 'HELD' | 'RELEASED' | 'BOOKED'
 
 const HOLDER_KEY = 'mgf_booking_holder'
 
+/** @returns the random ID of this tab's form, kept in `sessionStorage` so a reload keeps its hold */
 function readHolderId(storageKey: string): string {
   const fresh = crypto.randomUUID()
   try {
@@ -19,6 +21,11 @@ function readHolderId(storageKey: string): string {
   return fresh
 }
 
+/**
+ * @param date - day, `yyyy-MM-dd`
+ * @param time - start time, `HH:mm` or `HH:mm:ss`
+ * @returns the key of the slot, `yyyy-MM-ddTHH:mm`
+ */
 export const slotKey = (date: string, time: string) => `${date}T${time.slice(0, 5)}`
 
 const withoutKey = (set: Set<string>, key: string) => {
@@ -30,7 +37,15 @@ const withoutKey = (set: Set<string>, key: string) => {
 
 const withKey = (set: Set<string>, key: string) => (set.has(key) ? set : new Set(set).add(key))
 
-export function useSlotHolds(storageKey: string = HOLDER_KEY) {
+/**
+ * Holds of the booking slots: listens to the slots held, released or booked by others (Server-Sent
+ * Events), holds the slot this form chooses and releases it when the page closes.
+ *
+ * @param storageKey - `sessionStorage` key of the form's ID; the chat uses its own
+ * @param listening - whether to keep the events stream open; the chat only opens it while booking
+ * @returns the form's ID, its hold, `hold`, `release`, `forget` (after booking) and `isUnavailable`
+ */
+export function useSlotHolds(storageKey: string = HOLDER_KEY, listening = true) {
   const [holderId] = useState(() => readHolderId(storageKey))
   const [heldByOthers, setHeldByOthers] = useState<Set<string>>(() => new Set())
   const [booked, setBooked] = useState<Set<string>>(() => new Set())
@@ -38,7 +53,7 @@ export function useSlotHolds(storageKey: string = HOLDER_KEY) {
   const myHoldRef = useRef<string | null>(null)
 
   useEffect(() => {
-    if (typeof EventSource === 'undefined') return
+    if (!listening || typeof EventSource === 'undefined') return
     const source = new EventSource(appointmentService.slotEventsUrl())
     source.addEventListener('slot', (event) => {
       try {
@@ -56,7 +71,7 @@ export function useSlotHolds(storageKey: string = HOLDER_KEY) {
       }
     })
     return () => source.close()
-  }, [])
+  }, [listening])
 
   useEffect(() => {
     const releaseOnExit = () => {

@@ -6,17 +6,21 @@ import { I18nProvider } from 'react-aria-components'
 import type { CalendarDate } from '@internationalized/date'
 import Select from './Select.tsx'
 
+/** Props of {@link CalendarPanel}. */
 interface CalendarPanelProps {
   value: CalendarDate | null
   onChange: (value: CalendarDate | null) => void
   onFocusChange?: (value: CalendarDate) => void
+  /** Days to mark with a dot, `yyyy-MM-dd`. */
   markedDates?: ReadonlySet<string>
   specialDates?: ReadonlySet<string>
   minValue?: CalendarDate
   maxValue?: CalendarDate
   ariaLabel?: string
+  /** Whether to show the buttons for today, this week and this month. */
   showShortcuts?: boolean
   compact?: boolean
+  /** Without its own border and background, inside another panel. */
   bare?: boolean
   className?: string
 }
@@ -58,7 +62,8 @@ function clampDate(date: CalendarDate, minValue?: CalendarDate, maxValue?: Calen
 const shortcutClassName =
   'min-w-0 flex-1 rounded-2xl px-xs py-2 text-white font-medium hover:bg-green-400/40 transition-colors data-[pressed=true]:scale-95 disabled:opacity-50 sm:px-8'
 
-function CalendarPanel({ value, onChange, onFocusChange, markedDates, specialDates, minValue, maxValue, ariaLabel, showShortcuts = true, compact = false, bare = false, className = '' }: Readonly<CalendarPanelProps>) {
+/** Month calendar to choose a day, with month and year selectors and, optionally, shortcuts. */
+function CalendarPanel({ value, onChange, onFocusChange, markedDates, minValue, maxValue, ariaLabel, showShortcuts = true, compact = false, bare = false, className = '' }: Readonly<CalendarPanelProps>) {
   const { t, i18n } = useTranslation()
   const size = SIZES[compact ? 'compact' : 'regular']
   const [focusedDate, setFocusedDate] = useState<CalendarDate>(value ?? today(getLocalTimeZone()))

@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next'
 import child from '../../assets/imgs/philosophyChild.webp'
 import Container from '../../components/home/Container.tsx'
 import BlobButton from '../../components/ui/BlobButton.tsx'
-import PhilosophyModal from '../../components/PhilosophyModal.tsx'
+import PhilosophyModal from '../../components/home/PhilosophyModal.tsx'
 
+/** The school's philosophy on the home page, with the button to read its pillars. */
 function PhilosophySection() {
   const { t } = useTranslation()
   const items = [

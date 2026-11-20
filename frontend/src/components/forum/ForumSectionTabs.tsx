@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import TabHighlight from '../ui/TabHighlight.tsx'
 import { tabCarouselClass, useTabCarousel } from '../../hooks/useTabCarousel.ts'
 
+/** Sections of the forum page and the anchor of each. */
 const SECTIONS = [
   { id: 'forum-about', labelKey: 'forum.about.title' },
   { id: 'forum-latest', labelKey: 'forum.latest.title' },
@@ -11,6 +12,7 @@ const SECTIONS = [
 
 type SectionId = (typeof SECTIONS)[number]['id']
 
+/** Links to jump between the sections of the forum page on small screens. */
 function ForumSectionTabs() {
   const { t } = useTranslation()
   const [active, setActive] = useState<SectionId>(SECTIONS[0].id)

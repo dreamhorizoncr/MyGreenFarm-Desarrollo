@@ -3,6 +3,10 @@ package taller.multimedia.backend.dto.onvo;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+/**
+ * Breakdown of the price of a service plan payment. Part of online payments with Onvo, which are
+ * currently disabled.
+ */
 public record PaymentQuote(
         UUID servicePlanId,
         BigDecimal baseAmount,

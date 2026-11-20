@@ -3,10 +3,11 @@ import { motion, useReducedMotion } from 'motion/react'
 import { useTranslation } from 'react-i18next'
 import { Heart, ZoomIn } from 'lucide-react'
 import Container from '../home/Container.tsx'
-import PhotoLightbox from '../PhotoLightbox.tsx'
+import PhotoLightbox from './PhotoLightbox.tsx'
 import { galleryService } from '../../services/gallery.ts'
 import type { Gallery, GalleryImage } from '../../types/gallery.ts'
 
+/** Most photos shown. */
 const PHOTO_LIMIT = 10
 
 const COLUMN_BREAKPOINTS = [
@@ -16,10 +17,13 @@ const COLUMN_BREAKPOINTS = [
 
 const columnCount = () => COLUMN_BREAKPOINTS.find(({ query }) => window.matchMedia(query).matches)?.columns ?? 2
 
+/** Props of {@link MostLikedPhotos}. */
 interface MostLikedPhotosProps {
+  /** Albums, to open a photo in the lightbox with the rest of its album. */
   galleries: Gallery[]
 }
 
+/** Masonry of the photos with the most likes; a photo opens in the lightbox. */
 function MostLikedPhotos({ galleries }: Readonly<MostLikedPhotosProps>) {
   const { t } = useTranslation()
   const reduceMotion = useReducedMotion()

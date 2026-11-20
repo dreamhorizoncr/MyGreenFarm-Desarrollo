@@ -289,7 +289,7 @@ class DashboardServiceTest {
         when(groupRepository.findByTeacherId(teacher.getId())).thenReturn(List.of(group));
         when(expedientRepository.findByChildId(1L)).thenReturn(Optional.empty());
         when(expedientRepository.findByChildId(2L)).thenReturn(Optional.of(expedient));
-        when(evaluationRepository.findByExpedientIdId(expedient.getId())).thenReturn(List.of(oldEvaluation));
+        when(evaluationRepository.findByExpedientId(expedient.getId())).thenReturn(List.of(oldEvaluation));
         when(forumArticleRepository.findAllByAuthor_IdOrderByCreatedAtDesc(any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(article)));
         when(geminiSummaryService.generateTeacherDashboardSummary(org.mockito.ArgumentMatchers.argThat(context ->

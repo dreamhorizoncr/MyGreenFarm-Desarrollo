@@ -15,12 +15,21 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Job openings published on the vacancies page. The list of fields an applicant must fill in is
+ * stored as comma-separated text.
+ */
 @Service
 @RequiredArgsConstructor
 public class VacancyService {
 
     private final VacancyRepository vacancyRepository;
 
+    /**
+     * @param request title, description (both sanitized) and the fields applicants must fill in
+     * @return the created vacancy, open by default
+     * @throws taller.multimedia.backend.exception.InvalidFieldException if the title or description is unsafe
+     */
     @Transactional
     public VacancyResponse createVacancy(VacancyRequest request) {
         Vacancy vacancy = new Vacancy();
@@ -32,6 +41,9 @@ public class VacancyService {
         return mapToResponse(saved);
     }
 
+    /**
+     * @return all vacancies, open and closed
+     */
     @Transactional(readOnly = true)
     public List<VacancyResponse> getAllVacancies() {
         return vacancyRepository.findAll().stream()
@@ -39,6 +51,14 @@ public class VacancyService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Opens or closes a vacancy.
+     *
+     * @param id vacancy ID
+     * @param isOpen whether it accepts applications
+     * @return the updated vacancy
+     * @throws RuntimeException if the vacancy does not exist
+     */
     @Transactional
     public VacancyResponse setOpen(UUID id, boolean isOpen) {
         Vacancy vacancy = findEntityById(id);
@@ -48,6 +68,15 @@ public class VacancyService {
         return mapToResponse(saved);
     }
 
+    /**
+     * Records which application filled a vacancy. Setting an application closes the vacancy;
+     * clearing it reopens it.
+     *
+     * @param id vacancy ID
+     * @param applicationId hired application, or {@code null} to reopen the vacancy
+     * @return the updated vacancy
+     * @throws RuntimeException if the vacancy does not exist
+     */
     @Transactional
     public VacancyResponse setFilledBy(UUID id, UUID applicationId) {
         Vacancy vacancy = findEntityById(id);
@@ -58,6 +87,10 @@ public class VacancyService {
         return mapToResponse(saved);
     }
 
+    /**
+     * @param id vacancy to delete
+     * @throws RuntimeException if the vacancy does not exist
+     */
     @Transactional
     public void deleteVacancy(UUID id) {
         Vacancy vacancy = findEntityById(id);

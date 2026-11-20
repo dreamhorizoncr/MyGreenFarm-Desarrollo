@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useSpeechReader } from "../hooks/useSpeechReader";
 import {
@@ -9,19 +9,7 @@ import {
   getTopDialog,
   type ReadableFocusLabels,
 } from "../utils/readableContent";
-
-interface VoiceReaderContextValue {
-  supported: boolean;
-  isSpeaking: boolean;
-  readCurrentView: () => void;
-  readElement: (element: HTMLElement) => void;
-  readSelection: () => void;
-  readFocusTarget: (element: HTMLElement) => void;
-  speakText: (text: string) => void;
-  stop: () => void;
-}
-
-const VoiceReaderContext = createContext<VoiceReaderContextValue | undefined>(undefined);
+import { VoiceReaderContext, type VoiceReaderContextValue } from "./voiceReader";
 
 function isDialogElement(element: HTMLElement) {
   return (
@@ -31,6 +19,7 @@ function isDialogElement(element: HTMLElement) {
   );
 }
 
+/** Provides the voice reader in the current language and stops it when the language changes. */
 export function VoiceReaderProvider({ children }: Readonly<{ children: ReactNode }>) {
   const { i18n, t } = useTranslation();
   const language = (i18n.resolvedLanguage || i18n.language || "es").slice(0, 2);
@@ -117,12 +106,4 @@ export function VoiceReaderProvider({ children }: Readonly<{ children: ReactNode
   );
 
   return <VoiceReaderContext.Provider value={value}>{children}</VoiceReaderContext.Provider>;
-}
-
-export function useVoiceReader() {
-  const context = useContext(VoiceReaderContext);
-  if (!context) {
-    throw new Error("useVoiceReader must be used inside a VoiceReaderProvider");
-  }
-  return context;
 }
