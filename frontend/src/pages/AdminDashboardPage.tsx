@@ -300,7 +300,7 @@ function CalendarAside({ calendar, showAppointmentsLink }: Readonly<{ calendar: 
 }
 
 function ManagerDashboard() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const calendar = useDashboardCalendar()
   const { curriculums, fetchCurriculums } = useCurriculums()
   const [dashboardData, setDashboardData] = useState<AdminDashboardSummary | null>(null)
@@ -315,14 +315,15 @@ function ManagerDashboard() {
   }, [fetchCurriculums])
 
   const selectedDateString = (calendar.selectedDate ?? today(getLocalTimeZone())).toString()
-  const dashboardRequestKey = `${selectedDateString}:${refreshKey}`
+  const language = (i18n.resolvedLanguage ?? i18n.language ?? 'es').split('-')[0]
+  const dashboardRequestKey = `${selectedDateString}:${language}:${refreshKey}`
   const dashboardLoading = dashboardLoadedKey !== dashboardRequestKey
   const currentDashboardError = dashboardError?.key === dashboardRequestKey ? dashboardError.message : null
 
   useEffect(() => {
     let isCurrentRequest = true
 
-    dashboardService.getSummary(selectedDateString)
+    dashboardService.getSummary(selectedDateString, language)
       .then((summary) => {
         if (isCurrentRequest) {
           setDashboardData(summary)
@@ -341,7 +342,7 @@ function ManagerDashboard() {
     return () => {
       isCurrentRequest = false
     }
-  }, [dashboardRequestKey, selectedDateString])
+  }, [dashboardRequestKey, selectedDateString, language])
 
   const stats: StatCard[] = [
     { key: 'todayAppointments', label: t('admin.dashboard.stats.todayAppointments.label'), value: dashboardData?.appointments.length, icon: CalendarDaysIcon, href: '/admin/appointments', linkLabel: t('admin.dashboard.viewPending') },
@@ -395,34 +396,36 @@ function ManagerDashboard() {
 }
 
 function TeacherDashboard() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const calendar = useDashboardCalendar()
   const [data, setData] = useState<TeacherDashboardSummary | null>(null)
-  const [loadedKey, setLoadedKey] = useState<number | null>(null)
-  const [error, setError] = useState<{ key: number; message: string } | null>(null)
+  const [loadedKey, setLoadedKey] = useState<string | null>(null)
+  const [error, setError] = useState<{ key: string; message: string } | null>(null)
   const [refreshKey, setRefreshKey] = useState(0)
-  const loading = loadedKey !== refreshKey
-  const currentError = error?.key === refreshKey ? error.message : null
+  const language = (i18n.resolvedLanguage ?? i18n.language ?? 'es').split('-')[0]
+  const requestKey = `${language}:${refreshKey}`
+  const loading = loadedKey !== requestKey
+  const currentError = error?.key === requestKey ? error.message : null
 
   useEffect(() => {
     let isCurrentRequest = true
-    dashboardService.getTeacherSummary()
+    dashboardService.getTeacherSummary(language)
       .then((summary) => {
         if (!isCurrentRequest) return
         setData(summary)
-        setLoadedKey(refreshKey)
+        setLoadedKey(requestKey)
         setError(null)
       })
       .catch((requestError: unknown) => {
         if (!isCurrentRequest) return
         setData(null)
-        setLoadedKey(refreshKey)
-        setError({ key: refreshKey, message: getErrorMessage(requestError) })
+        setLoadedKey(requestKey)
+        setError({ key: requestKey, message: getErrorMessage(requestError) })
       })
     return () => {
       isCurrentRequest = false
     }
-  }, [refreshKey])
+  }, [requestKey, language])
 
   const stats: StatCard[] = [
     { key: 'myGroups', label: t('admin.dashboard.teacher.stats.myGroups'), value: data?.groups.length, icon: BookOpenTextIcon, href: '/admin/groups', linkLabel: t('admin.dashboard.teacher.viewGroups') },

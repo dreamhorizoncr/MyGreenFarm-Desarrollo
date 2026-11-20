@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -51,6 +55,7 @@ import taller.multimedia.backend.repository.group.GroupRepository;
 import taller.multimedia.backend.repository.user.UserRepository;
 import taller.multimedia.backend.repository.vacancy.VacancyRepository;
 import taller.multimedia.backend.service.announcement.GeminiSummaryService;
+import taller.multimedia.backend.service.translation.TranslationService;
 
 @Service
 @RequiredArgsConstructor
@@ -71,6 +76,7 @@ public class DashboardService {
         private final GroupRepository groupRepository;
         private final ExpedientRepository expedientRepository;
         private final EvaluationRepository evaluationRepository;
+        private final TranslationService translationService;
 
         private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("HH:mm");
 
@@ -86,6 +92,11 @@ public class DashboardService {
 
         @Transactional(readOnly = true)
         public DashboardSummaryResponse getSummary(LocalDate date, boolean includeForum) {
+                return getSummary(date, includeForum, "es");
+        }
+
+        @Transactional(readOnly = true)
+        public DashboardSummaryResponse getSummary(LocalDate date, boolean includeForum, String language) {
                 List<DashboardAppointmentResponse> appointments = appointmentRepository
                                 .findByAppointmentDateGreaterThanEqualAndAppointmentDateLessThanOrderByAppointmentDateAsc(
                                                 date.atStartOfDay(), date.plusDays(1).atStartOfDay())
@@ -136,7 +147,8 @@ public class DashboardService {
                                                 "/admin/curriculums")));
                 priorities.sort(Comparator.comparing(DashboardPriorityResponse::dueAt));
                 List<DashboardPriorityResponse> limitedPriorities = priorities.stream().limit(6).toList();
-                String aiSummary = generateAiSummary(date, appointments, sharedActivities, limitedPriorities);
+                String aiSummary = generateAiSummary(
+                                date, appointments, sharedActivities, limitedPriorities, normalizeLanguage(language));
 
                 return new DashboardSummaryResponse(
                                 appointments,
@@ -149,6 +161,11 @@ public class DashboardService {
 
         @Transactional(readOnly = true)
         public TeacherDashboardResponse getTeacherSummary(String email) {
+                return getTeacherSummary(email, "es");
+        }
+
+        @Transactional(readOnly = true)
+        public TeacherDashboardResponse getTeacherSummary(String email, String language) {
                 User teacher = userRepository.findByEmail(email)
                                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
@@ -220,7 +237,7 @@ public class DashboardService {
                                 priorities.size(),
                                 priorities.stream().limit(6).toList(),
                                 activities,
-                                teacherAiSummary(today, context));
+                                teacherAiSummary(today, context, normalizeLanguage(language)));
         }
 
         static String teacherAiContext(LocalDate date, int groups, int children, long missingExpedients,
@@ -235,40 +252,88 @@ public class DashboardService {
                                 """.formatted(date, groups, children, missingExpedients, dueEvaluations, articles);
         }
 
-        private String teacherAiSummary(LocalDate date, String context) {
+        private String teacherAiSummary(LocalDate date, String context, String language) {
                 String key = date + "|" + context;
                 String cached = teacherSummaries.get(key);
-                if (cached != null) {
-                        return cached;
+                if (cached == null) {
+                        String summary = geminiSummaryService.generateTeacherDashboardSummary(context);
+                        if (summary == null || summary.isBlank()) {
+                                log.error("Could not generate the teacher dashboard AI summary for {}", date);
+                                summary = "";
+                        }
+                        cached = summary;
+                        teacherSummaries.put(key, cached);
                 }
-                String summary = geminiSummaryService.generateTeacherDashboardSummary(context);
-                if (summary == null || summary.isBlank()) {
-                        log.error("Could not generate the teacher dashboard AI summary for {}", date);
-                        summary = "";
-                }
-                teacherSummaries.put(key, summary);
-                return summary;
+                return translateSummary(
+                                "dashboard-teacher",
+                                UUID.nameUUIDFromBytes(("teacher-dashboard:" + key).getBytes(StandardCharsets.UTF_8)),
+                                "ai_summary",
+                                cached,
+                                language,
+                                date);
         }
 
         private String generateAiSummary(
                         LocalDate date,
                         List<DashboardAppointmentResponse> appointments,
                         List<DashboardActivityResponse> activities,
-                        List<DashboardPriorityResponse> priorities) {
-                DashboardSummaryCacheService.SummaryReservation reservation =
-                                dashboardSummaryCacheService.reserveGeneration(date);
-                if (!reservation.shouldGenerate()) {
-                        return reservation.summary() == null ? "" : reservation.summary();
-                }
-
-                String summary = geminiSummaryService.generateDashboardSummary(
-                                aiContext(date, appointments, activities, priorities));
-                if (summary == null || summary.isBlank()) {
-                        log.error("Could not generate the dashboard AI summary for {}", date);
+                        List<DashboardPriorityResponse> priorities,
+                        String language) {
+                if (!isAdminSummaryDateEligible(date)) {
                         return "";
                 }
-                dashboardSummaryCacheService.saveSummary(date, summary);
-                return summary;
+                DashboardSummaryCacheService.SummaryReservation reservation =
+                                dashboardSummaryCacheService.reserveGeneration(date);
+                String summary;
+                if (reservation.shouldGenerate()) {
+                        summary = geminiSummaryService.generateDashboardSummary(
+                                        aiContext(date, appointments, activities, priorities));
+                        if (summary == null || summary.isBlank()) {
+                                log.error("Could not generate the dashboard AI summary for {}", date);
+                                return "";
+                        }
+                        dashboardSummaryCacheService.saveSummary(date, summary);
+                } else {
+                        summary = reservation.summary() == null ? "" : reservation.summary();
+                }
+                return translateSummary(
+                                "dashboard-admin",
+                                UUID.nameUUIDFromBytes(("dashboard-admin:" + date).getBytes(StandardCharsets.UTF_8)),
+                                "ai_summary",
+                                summary,
+                                language,
+                                date);
+        }
+
+        static boolean isAdminSummaryDateEligible(LocalDate date) {
+                if (date == null) {
+                        return false;
+                }
+                LocalDate today = LocalDate.now();
+                return !date.isAfter(today) && !date.isBefore(today.minusMonths(1));
+        }
+
+        private String translateSummary(String entityType, UUID entityId, String fieldName,
+                        String canonicalSpanish, String language, LocalDate date) {
+                if (canonicalSpanish.isBlank() || "es".equals(language)) {
+                        return canonicalSpanish;
+                }
+                try {
+                        return translationService.getOrTranslate(
+                                        entityType, entityId, fieldName, canonicalSpanish, language);
+                } catch (IOException exception) {
+                        log.error("Could not translate the dashboard AI summary for {} to {}", date, language,
+                                        exception);
+                        return canonicalSpanish;
+                }
+        }
+
+        private static String normalizeLanguage(String language) {
+                if (language == null) {
+                        return "es";
+                }
+                String normalized = language.toLowerCase(Locale.ROOT).split("[-_]", 2)[0];
+                return normalized.equals("en") || normalized.equals("fr") ? normalized : "es";
         }
 
         static String aiContext(
