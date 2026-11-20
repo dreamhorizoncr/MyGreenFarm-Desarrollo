@@ -46,24 +46,6 @@ VITE_API_URL=http://localhost:8080
 
 El backend lee su configuración desde variables de entorno. Definilas en tu shell, tu IDE, un archivo `.env` propio o el panel de tu proveedor antes de levantar la aplicación (no subas ese archivo al repositorio):
 
-| Variable | Descripción |
-| --- | --- |
-| `PORT` | Puerto del servidor (por defecto 8080) |
-| `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` | Conexión a PostgreSQL |
-| `JWT_SECRET`, `JWT_EXPIRATION_MS` | Firma y expiración de los tokens de sesión |
-| `FRONTEND_URL`, `FRONTEND_ORIGIN` | URL del frontend (enlaces en correos y CORS) |
-| `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM`, `MAIL_SUPPORT` | Envío de correo por SMTP |
-| `RESEND_TOKEN` | Token del proveedor de envío de correo |
-| `BREVO_API_KEY`, `BREVO_SENDER_EMAIL`, `BREVO_SENDER_NAME` | Envío de boletines (newsletter) |
-| `SUPABASE_ENDPOINT`, `SUPABASE_REGION`, `SUPABASE_ACCESS_KEY`, `SUPABASE_SECRET_KEY` | Conexión al storage S3 |
-| `SUPABASE_ANNOUNCEMENTS`, `SUPABASE_GALLERY`, `SUPABASE_EXPEDIENTS`, `SUPABASE_SERVICE_PLANS`, `SUPABASE_CURRICULUMS`, `SUPABASE_FORUM`, `SUPABASE_CLUBS`, `SUPABASE_USERS` | Buckets usados por cada módulo |
-| `GOOGLE_CLOUD_CREDENTIALS_JSON`, `GOOGLE_CLOUD_PROJECT_ID` | Traducción automática de contenido |
-| `CALENDAR_CREDENTIALS_PATH`, `CALENDAR_ID`, `GOOGLE_CREDENTIALS_JSON` | Sincronización de citas con Google Calendar |
-| `GEMINI_API_KEY`, `GEMINI_MODEL`, `GEMINI_BASE_URL` | Resúmenes con IA y chatbot (`GEMINI_MODEL` usa `gemini-2.5-flash` por defecto) |
-| `SOCIAL_LINK`, `DAYCARE_MAIL_ADMIN` | Datos de contacto usados en correos |
-| `BAC_XML_URL` | Fuente del tipo de cambio. Es obligatoria: sin ella el backend no arranca. Normalmente es `https://www.sucursalelectronica.com/exchangerate/showXmlExchangeRate.do` |
-
-## Uso
 
 ### Desarrollo
 
@@ -135,35 +117,6 @@ MyGreenFarm-Desarrollo/
         ├── types/              # tipos compartidos
         └── utils/              # utilidades (notificaciones, validadores, etc.)
 ```
-
-### Rutas principales
-
-La app usa React Router con rutas públicas y rutas protegidas por sesión y rol (`OWNER`, `ADMIN`, `TEACHER`).
-
-**Públicas**
-- `/` — página de inicio
-- `/booking` — reserva de cita
-- `/login`, `/forgot-password`, `/reset-password`
-- `/news` — noticias
-- `/forum`, `/forum/blog/:id`, `/forum/community/:id` — foro
-- `/multimedia`, `/albums/:id` — galería
-- `/services` — planes de servicio
-- `/clubs` — clubes
-- `/vacancies` — vacantes de empleo
-- `/about-us` — Nosotros
-- `/green-hearts` — Green Hearts
-
-**Panel (requieren sesión)**
-
-| Ruta | Roles |
-| --- | --- |
-| `/profile`, `/admin/dashboard` | Todos (el dashboard cambia según el rol) |
-| `/admin/appointments`, `/admin/users`, `/admin/announcements`, `/admin/gallery`, `/admin/curriculums`, `/admin/clubs`, `/admin/parents`, `/admin/children` | `OWNER`, `ADMIN` |
-| `/admin/availability`, `/admin/newsletter`, `/admin/services` | `OWNER` |
-| `/admin/forum`, `/admin/groups` | `OWNER`, `TEACHER` |
-| `/admin/expedients`, `/admin/evaluations` | `OWNER`, `ADMIN`, `TEACHER` (un docente solo ve a los niños de sus grupos) |
-
-Los usuarios nuevos los crea la administración desde `/admin/users`; no hay registro público.
 
 ### Imágenes
 
