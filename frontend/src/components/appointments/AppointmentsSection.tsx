@@ -292,7 +292,7 @@ function AppointmentsSection() {
               setSelectedDate(date)
               setCurrentPage(1)
             }}
-            markedDates={specialScheduleDates}
+            specialDates={specialScheduleDates}
           />
 
           <div className="flex flex-col gap-md">
