@@ -22,11 +22,18 @@ import { useSkeletonCount } from '../hooks/useSkeletonCount.ts'
 import pencilSharpener from '../assets/imgs/pencilSharpener.svg'
 import glue from '../assets/imgs/glue.svg'
 import { setPageSEO } from '../utils/seo.ts'
+import ResponsiveImage from '../components/ui/ResponsiveImage.tsx'
 
 const cleanCurrency = (value?: string): Currency => {
   const upper = value?.toUpperCase()
   return upper === 'USD' || upper === 'EUR' ? upper : 'CRC'
 }
+
+/**
+ * Widths of the card image offered to the browser. The card is at most about 400 pixels wide, so
+ * 640 is sharp even on phone screens and keeps decoding cheap while scrolling.
+ */
+const CARD_IMAGE_WIDTHS = [400, 640] as const
 
 /** Card of a service plan with its price in the chosen currency. */
 function PlanCard({
@@ -34,11 +41,14 @@ function PlanCard({
   onSelect,
   exchangeRate,
   loading = false,
+  priority = false,
 }: Readonly<{
   plan?: ServicePlan
   onSelect?: (currency: Currency) => void
   exchangeRate?: ExchangeRate | null
   loading?: boolean
+  /** The first card: its image is the largest one on screen, so it loads before the others. */
+  priority?: boolean
 }>) {
   const { t, i18n } = useTranslation()
 
@@ -87,9 +97,15 @@ function PlanCard({
     <article className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-neutral-200 bg-white card-hover">
       <div className="relative h-45 w-full overflow-hidden bg-neutral-100">
         {plan!.imageUrl ? (
-          <img
+          <ResponsiveImage
             src={plan!.imageUrl}
+            widths={CARD_IMAGE_WIDTHS}
+            sizes="(min-width: 768px) 33vw, 100vw"
             alt={plan!.imageAlt || plan!.name}
+            // the resized images are light, so all of them load at once and are ready before
+            // scrolling reaches them; only the first one goes ahead of the rest
+            fetchPriority={priority ? 'high' : 'low'}
+            decoding="async"
             className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
         ) : (
@@ -107,9 +123,9 @@ function PlanCard({
 
       <div className="flex flex-1 flex-col gap-sm px-lg pb-lg pt-md">
         <div className="flex items-start justify-between gap-sm">
-          <h3 className="m-0 min-w-0 flex-1 text-left font-heading text-h4 font-bold text-green-500 line-clamp-2">
+          <h2 className="m-0 min-w-0 flex-1 text-left font-heading text-h4 font-bold tracking-normal text-green-500 line-clamp-2">
             {plan!.name}
-          </h3>
+          </h2>
         </div>
 
         <p className="-mt-xs mb-0 min-h-[2lh] text-left font-body text-body-sm leading-relaxed text-body-text-dark line-clamp-2">
@@ -265,10 +281,11 @@ function ServicesPage() {
               />
             )}
 
-            {!loading && !error && plans.map(plan => (
+            {!loading && !error && plans.map((plan, index) => (
               <PlanCard
                 key={plan.id}
                 plan={plan}
+                priority={index === 0}
                 onSelect={(currency) =>
                   setSelectedPlan({ plan, currency })
                 }

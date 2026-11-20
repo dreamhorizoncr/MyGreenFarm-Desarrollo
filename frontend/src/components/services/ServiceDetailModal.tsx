@@ -11,6 +11,7 @@
     import SchedulePopover from '../clubs/SchedulePopover.tsx'
 import AnimatedNumber from '../ui/AnimatedNumber.tsx'
 import CurrencyToggle from '../currency/CurrencyToggle.tsx'
+import ResponsiveImage from '../ui/ResponsiveImage.tsx'
 
     /** Props of {@link ServiceDetailModal}. */
     interface ServiceDetailModalProps {
@@ -80,9 +81,12 @@ import CurrencyToggle from '../currency/CurrencyToggle.tsx'
 
                     {plan.imageUrl && (
                         <div className="mt-10">
-                            <img
+                            <ResponsiveImage
                                 src={plan.imageUrl}
+                                widths={[640, 1024, 1600]}
+                                sizes="(min-width: 1100px) 1000px, 100vw"
                                 alt={plan.imageAlt || plan.name}
+                                decoding="async"
                                 className="h-65 w-full rounded-[22px] object-cover sm:h-90 md:h-120"
                             />
                         </div>
