@@ -12,13 +12,10 @@ import { ForumFeedLayout } from './contexts/ForumFeedContext.tsx'
 import { AccessibilityProvider } from './contexts/AccessibilityContext.tsx'
 import { useMotionKey } from './hooks/useMotionKey.ts'
 import { VoiceReaderProvider } from './contexts/VoiceReaderContext.tsx'
-import AccessibilityMenu from './components/ui/AccessibilityMenu.tsx'
-import VoiceReaderController from './components/ui/VoiceReaderController.tsx'
 import ReadingGuide from './components/ui/ReadingGuide.tsx'
 import { useSessionExpiredNotice } from './hooks/useSessionExpiredNotice.ts'
 import { ErrorBoundary } from './components/ui/ErrorBoundary.tsx'
 import BlobGooFilter from './components/ui/BlobGooFilter.tsx'
-import ChatWidget from './components/chat/ChatWidget.tsx'
 import PageLoader from './components/ui/PageLoader.tsx'
 import { userStorage } from './utils/userStorage.ts'
 import { setRouteSEO } from './utils/seo.ts'
@@ -41,6 +38,12 @@ function lazyPage(loader: () => Promise<PageModule>, isPrivate = false) {
   ;(isPrivate ? privatePageLoaders : publicPageLoaders).push(loader)
   return lazy(loader)
 }
+
+// Floating widgets: they are not needed for the first paint, so they load in their own chunk
+// instead of slowing every page. Saved accessibility settings are applied by AccessibilityProvider.
+const ChatWidget = lazy(() => import('./components/chat/ChatWidget.tsx'))
+const AccessibilityMenu = lazy(() => import('./components/ui/AccessibilityMenu.tsx'))
+const VoiceReaderController = lazy(() => import('./components/ui/VoiceReaderController.tsx'))
 
 const BookingPage = lazyPage(() => import('./pages/BookingPage.tsx'))
 const LoginPage = lazyPage(() => import('./pages/auth/LoginPage.tsx'))
@@ -279,11 +282,15 @@ function App() {
 
                 <GlobalFooter />
                 <ScrollToTopButton />
-                <ChatWidget />
+                <Suspense fallback={null}>
+                  <ChatWidget />
+                </Suspense>
               </MotionBoundary>
 
-              <AccessibilityMenu />
-              <VoiceReaderController />
+              <Suspense fallback={null}>
+                <AccessibilityMenu />
+                <VoiceReaderController />
+              </Suspense>
               <ReadingGuide />
             </div>
           </VoiceReaderProvider>

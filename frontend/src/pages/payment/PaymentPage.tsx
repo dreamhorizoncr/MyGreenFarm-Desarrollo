@@ -23,6 +23,7 @@ import Select from '../../components/ui/Select.tsx'
 import FieldHint from '../../components/ui/FieldHint.tsx'
 import AutoHeight from '../../components/ui/AutoHeight.tsx'
 import { SUPPORTED_LANGUAGES } from '../../i18n/index.ts'
+import ResponsiveImage from '../../components/ui/ResponsiveImage.tsx'
 
 interface LocationState {
     plan: ServicePlan
@@ -614,8 +615,10 @@ export default function PaymentPage() {
 
                         <div className="mt-md flex gap-md border-b border-neutral-100 pb-md">
                             {plan.imageUrl && (
-                                <img
+                                <ResponsiveImage
                                     src={plan.imageUrl}
+                                    widths={[128, 192]}
+                                    sizes="64px"
                                     alt={plan.imageAlt || displayPlan?.name || plan.name}
                                     className="h-16 w-16 rounded-xl object-cover"
                                 />
