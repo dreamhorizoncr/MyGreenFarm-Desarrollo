@@ -7,7 +7,7 @@ function FooterColumn({ titleKey, links }: Readonly<FooterColumnData>) {
   const { t } = useTranslation()
 
   return (
-    <div className="flex flex-col items-center gap-md md:items-end">
+    <div className="flex flex-col items-center gap-md md:items-center">
       <div className="flex flex-col items-center gap-md md:items-start">
         <h2 className="m-0 font-heading text-h6 font-bold text-center text-white md:text-left">
           {t(titleKey)}
