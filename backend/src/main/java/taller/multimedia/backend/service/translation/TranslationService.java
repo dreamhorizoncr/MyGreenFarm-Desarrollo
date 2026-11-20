@@ -65,6 +65,7 @@ public class TranslationService {
      * @return the translated text
      * @throws IOException if Google Translation fails
      */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public String getOrTranslate(String entityType, UUID entityId, String fieldName,
             String originalText, String targetLanguage) throws IOException {
 
@@ -103,6 +104,7 @@ public class TranslationService {
      * @return translations by {@code entityId:fieldName}
      * @throws IOException if Google Translation fails
      */
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Map<String, String> getOrTranslateBatch(String entityType, List<TranslationItem> items,
         String targetLanguage) throws IOException {
 
